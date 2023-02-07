@@ -5,7 +5,7 @@
 #include "base/sat.h"
 #include "gui/sat_surface.h"
 #include "gui/sat_widget.h"
-#include "gui/sat_window_listener.h"
+#include "gui/sat_widget_listener.h"
 
 //----------------------------------------------------------------------
 
@@ -27,7 +27,7 @@
 
 class SAT_Window
 : public SAT_ImplementedWindow
-, public SAT_WindowListener {
+, public SAT_WidgetListener {
 
 //------------------------------
 private:

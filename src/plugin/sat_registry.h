@@ -143,7 +143,6 @@ public: // factories
     ARegistry->registerDescriptor(&DESC);                                                                                         \
   }                                                                                                                               \
                                                                                                                                   \
-  /*SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {*/  \
   const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) { \
     SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);                                                                              \
     if (AIndex == 0) {                                                                                                            \

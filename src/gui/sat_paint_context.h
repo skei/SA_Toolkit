@@ -1,12 +1,9 @@
-#ifndef sat_widget_listener_included
-#define sat_widget_listener_included
+#ifndef sat_paint_context_included
+#define sat_paint_context_included
 //----------------------------------------------------------------------
 
-class SAT_WidgetListener {
-public:
-
+struct SAT_PaintContext {
 };
 
 //----------------------------------------------------------------------
 #endif
-

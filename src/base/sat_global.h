@@ -44,11 +44,12 @@ public:
 
   void initialize() {
     if (!isInitialized) {
+      //LOG.print("SAT_GLOBAL.initialize\n");
       DEBUG.initialize();
       LOG.initialize();
       REGISTRY.initialize();
       isInitialized = true;
-    }    //LOG.print("SAT_GLOBAL.initialize\n");
+    }
   }
 
   //----------
