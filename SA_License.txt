@@ -1,0 +1,5 @@
+not decided yet.. multi-licensing?
+- opensource
+- free (but closed source)
+- commercial
+
