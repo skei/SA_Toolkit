@@ -1,10 +1,8 @@
-#ifndef sat_widget_included
-#define sat_widget_included
+#ifndef sat_x11_included
+#define sat_x11_included
 //----------------------------------------------------------------------
 
-class SAT_Widget {
-};
+
 
 //----------------------------------------------------------------------
 #endif
-

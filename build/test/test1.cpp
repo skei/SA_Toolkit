@@ -36,10 +36,17 @@ public:
 
   myPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
-    appendParameter( new SAT_Parameter("Param1",0.5) );
-    appendAudioInputPort( new SAT_AudioPort() );
-    appendAudioOutputPort( new SAT_AudioPort() );
+
+    SAT_Print("Hello world!\n");
+
+    //registerExtension(CLAP_EXT_AMBISONIC,&MAmbisonicExt);
+    //registerExtension(CLAP_EXT_GUI,&MGuiExt);
     registerAllExtensions();
+
+    appendStereoInputPort();
+    appendStereoOutputPort();
+
+    appendParameter( new SAT_Parameter("Param1",0.5) );
 
   }
 
@@ -65,5 +72,5 @@ public:
 //----------------------------------------------------------------------
 
 #include "plugin/sat_entry.h"
-SAT_PLUGIN_SIMPLE_ENTRY(myDescriptor,myPlugin);
+SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 

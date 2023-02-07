@@ -18,28 +18,27 @@ public:
 //------------------------------
 
    /*
-   clap_id id;
-   clap_param_info_flags flags;
-   void *cookie;
-   char name[CLAP_NAME_SIZE];
-   char module[CLAP_PATH_SIZE];
-   double min_value;
-   double max_value;
-   double default_value;
+     clap_id id;
+     clap_param_info_flags flags;
+     void *cookie;
+     char name[CLAP_NAME_SIZE];
+     char module[CLAP_PATH_SIZE];
+     double min_value;
+     double max_value;
+     double default_value;
    */
 
-  clap_param_info_t MParamInfo  = {0};
-
-  int32_t           MIndex      = -1;
-  double            MValue      = 0.0;
-  uint32_t          MNumDigits  = 3;
-
+  clap_param_info_t MParamInfo                      = {0};
+  int32_t           MIndex                          = -1;
+  sat_param_t       MValue                          = 0.0;
+  uint32_t          MNumDigits                      = 3;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
+
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Parameter(const char* AName, double AValue=0.0, double AMinValue=0.0, double AMaxValue=1.0) {
+  SAT_Parameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0) {
     MParamInfo.id             = 0;
     MParamInfo.flags          = CLAP_PARAM_IS_AUTOMATABLE;
     MParamInfo.cookie         = this;
@@ -64,13 +63,13 @@ public:
   void *                getCookie()       { return MParamInfo.cookie; }
   char*                 getName()         { return MParamInfo.name; }
   char*                 getModule()       { return MParamInfo.module; }
-  double                getMinValue()     { return MParamInfo.min_value; }
-  double                getMaxValue()     { return MParamInfo.max_value; }
-  double                getDefaultValue() { return MParamInfo.default_value; }
+  sat_param_t           getMinValue()     { return MParamInfo.min_value; }
+  sat_param_t           getMaxValue()     { return MParamInfo.max_value; }
+  sat_param_t           getDefaultValue() { return MParamInfo.default_value; }
 
   int32_t               getIndex()        { return MIndex; }
   clap_param_info_t*    getParamInfo()    { return &MParamInfo; }
-  double                getValue()        { return MValue; }
+  sat_param_t           getValue()        { return MValue; }
 
   //----------
 
@@ -79,31 +78,31 @@ public:
   void setCookie(void* ACookie)               { MParamInfo.cookie = ACookie; }
   void setName(char* AName)                   { strcpy(MParamInfo.name,AName); }
   void setModule(char* AModule)               { strcpy(MParamInfo.module,AModule); }
-  void setMinValue(double AValue)             { MParamInfo.min_value = AValue; }
-  void setMaxValue(double AValue)             { MParamInfo.max_value = AValue; }
-  void setDefaultValue(double AValue)         { MParamInfo.default_value = AValue; }
+  void setMinValue(sat_param_t AValue)             { MParamInfo.min_value = AValue; }
+  void setMaxValue(sat_param_t AValue)             { MParamInfo.max_value = AValue; }
+  void setDefaultValue(sat_param_t AValue)         { MParamInfo.default_value = AValue; }
 
   void setIndex(int32_t AIndex)               { MIndex = AIndex; }
   void setNumDigits(uint32_t ANum)            { MNumDigits = ANum; }
-  void setValue(double AValue)                { MValue = AValue; }
+  void setValue(sat_param_t AValue)                { MValue = AValue; }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual double normalizeValue(double AValue) {
+  virtual sat_param_t normalizeValue(sat_param_t AValue) {
     return AValue;
   }
 
   //----------
 
-  virtual double denormalizeValue(double AValue) {
+  virtual sat_param_t denormalizeValue(sat_param_t AValue) {
     return AValue;
   }
 
   //----------
 
-  virtual bool valueToText(double AValue, char* ABuffer, uint32_t ABufferSize) {
+  virtual bool valueToText(sat_param_t AValue, char* ABuffer, uint32_t ABufferSize) {
     char format[16] = {0};
     format[0] = '%';
     format[1] = '.';
@@ -116,7 +115,7 @@ public:
 
   //----------
 
-  virtual bool textToValue(const char* AText, double* AValue) {
+  virtual bool textToValue(const char* AText, sat_param_t* AValue) {
     //*AValue = 0.0;
     return false;
   }

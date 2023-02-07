@@ -1,10 +1,10 @@
-#ifndef sat_widget_included
-#define sat_widget_included
+#ifndef sat_x11_surface_included
+#define sat_x11_surface_included
 //----------------------------------------------------------------------
 
-class SAT_Widget {
-};
+// pixmap
+
+
 
 //----------------------------------------------------------------------
 #endif
-

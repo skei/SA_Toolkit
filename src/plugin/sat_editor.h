@@ -2,7 +2,18 @@
 #define sat_editor_included
 //----------------------------------------------------------------------
 
-class SAT_Editor {
+#include "plugin/sat_editor_listener.h"
+#include "gui/sat_window.h"
+#include "gui/sat_window_listener.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_Editor
+: public SAT_WindowListener {
 
 //------------------------------
 private:
@@ -15,12 +26,13 @@ private:
   const clap_window_t*  MParent       = nullptr;
   const char*           MTitle        = "";
   bool                  MIsOpen       = false;
+  SAT_EditorListener*   MListener     = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Editor() {
+  SAT_Editor(SAT_EditorListener* AListener) {
   }
 
   //----------
@@ -29,7 +41,7 @@ public:
   }
 
 //------------------------------
-public:
+public: // clap
 //------------------------------
 
   //bool create() {

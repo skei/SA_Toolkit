@@ -2,15 +2,17 @@
 #define sat_plugin_included
 //----------------------------------------------------------------------
 
-#include "plugin/clap/sat_clap_plugin.h"
-//#include "plugin/clap/sat_clap_host.h"
+// aka SAT_PluginImplementation
 
+#include "base/sat.h"
 #include "plugin/sat_audio_port.h"
 #include "plugin/sat_editor.h"
+#include "plugin/sat_editor_listener.h"
 #include "plugin/sat_host.h"
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_process_context.h"
+#include "plugin/clap/sat_clap_plugin.h"
 
 //----------------------------------------------------------------------
 //
@@ -19,7 +21,8 @@
 //----------------------------------------------------------------------
 
 class SAT_Plugin
-: public SAT_ClapPlugin {
+: public SAT_ClapPlugin
+, public SAT_EditorListener {
 
 //------------------------------
 private:
@@ -39,8 +42,7 @@ private:
   SAT_NotePortArray           MNoteInputPorts           = {};
   SAT_NotePortArray           MNoteOutputPorts          = {};
   SAT_ProcessContext          MProcessContext           = {};
-  SAT_ClapPluginExtensions    MExtensions               = {0};
-//SAT_Dictionary<const void*> MExtensions               = {};
+  SAT_Dictionary<const void*> MExtensions               = {};
 
 //------------------------------
 public:
@@ -54,8 +56,12 @@ public:
     SAT_Log("  host vendor %s\n",MHost->getVendor());
     SAT_Log("  host version %s\n",MHost->getVersion());
     SAT_Log("  host url %s\n",MHost->getUrl());
-    logHostExtensions(AHost);
+
+    MHost->logHostExtensions();
+
     //registerAllExtensions();
+    //ext.addItem( CLAP_EXT_AMBISONIC, &MAmbisonicExt );
+
   }
 
 //----------
@@ -189,41 +195,8 @@ public: // plugin
 
   const void* get_extension(const char *id) override {
     SAT_Log("SAT_Plugin.get_extension (id %s)\n",id);
-
-    if (strcmp(id,CLAP_EXT_AMBISONIC)               == 0) return MExtensions.ambisonic;
-    if (strcmp(id,CLAP_EXT_AUDIO_PORTS_ACTIVATION)  == 0) return MExtensions.audio_ports_activation;
-    if (strcmp(id,CLAP_EXT_AUDIO_PORTS_CONFIG)      == 0) return MExtensions.audio_ports_config;
-    if (strcmp(id,CLAP_EXT_AUDIO_PORTS)             == 0) return MExtensions.audio_ports;
-    if (strcmp(id,CLAP_EXT_CHECK_FOR_UPDATE)        == 0) return MExtensions.check_for_update;
-    if (strcmp(id,CLAP_EXT_CONTEXT_MENU)            == 0) return MExtensions.context_menu;
-    if (strcmp(id,CLAP_EXT_CV)                      == 0) return MExtensions.cv;
-    if (strcmp(id,CLAP_EXT_GUI)                     == 0) return MExtensions.gui;
-    if (strcmp(id,CLAP_EXT_LATENCY)                 == 0) return MExtensions.latency;
-    if (strcmp(id,CLAP_EXT_MIDI_MAPPINGS)           == 0) return MExtensions.midi_mappings;
-    if (strcmp(id,CLAP_EXT_NOTE_NAME)               == 0) return MExtensions.note_name;
-    if (strcmp(id,CLAP_EXT_NOTE_PORTS)              == 0) return MExtensions.note_ports;
-    if (strcmp(id,CLAP_EXT_PARAM_INDICATION)        == 0) return MExtensions.param_indication;
-    if (strcmp(id,CLAP_EXT_PARAMS)                  == 0) return MExtensions.params;
-    if (strcmp(id,CLAP_EXT_PRESET_LOAD)             == 0) return MExtensions.preset_load;
-    if (strcmp(id,CLAP_EXT_REMOTE_CONTROLS)         == 0) return MExtensions.remote_controls;
-    if (strcmp(id,CLAP_EXT_RESOURCE_DIRECTORY)      == 0) return MExtensions.resource_directory;
-    if (strcmp(id,CLAP_EXT_RENDER)                  == 0) return MExtensions.render;
-    if (strcmp(id,CLAP_EXT_STATE)                   == 0) return MExtensions.state;
-    if (strcmp(id,CLAP_EXT_STATE_CONTEXT)           == 0) return MExtensions.state_context;
-    if (strcmp(id,CLAP_EXT_SURROUND)                == 0) return MExtensions.surround;
-    if (strcmp(id,CLAP_EXT_THREAD_POOL)             == 0) return MExtensions.thread_pool;
-    if (strcmp(id,CLAP_EXT_TIMER_SUPPORT)           == 0) return MExtensions.timer_support;
-    if (strcmp(id,CLAP_EXT_TRACK_INFO)              == 0) return MExtensions.track_info;
-    if (strcmp(id,CLAP_EXT_TRIGGERS)                == 0) return MExtensions.triggers;
-    if (strcmp(id,CLAP_EXT_TUNING)                  == 0) return MExtensions.tuning;
-    if (strcmp(id,CLAP_EXT_VOICE_INFO)              == 0) return MExtensions.voice_info;
-
-    //for (uint32_t i=0; i<NUM_CLAP_PLUGIN_EXTENSIONS; i++) {
-    //  if (strcmp(id,SAT_ClapPluginExtensionIds[i]) == 0)
-    //    return SAT_ClapPluginExtensions[i]; // todo
-    //}
-
-    return nullptr;
+    SAT_Print("id %s -> %p\n",id,MExtensions.getItem(id));
+    return MExtensions.getItem(id);
   }
 
   //----------
@@ -246,7 +219,7 @@ public: // ambisonic
   // [main-thread]
 
   bool ambisonic_get_info(clap_id config_id, bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) override {
-    SAT_Print("\n");
+    SAT_Print("config_id %i is_input %i port_index %i \n",config_id,is_input,port_index);
     return false;
   }
 
@@ -271,7 +244,7 @@ public: // audio ports activation
   // [active ? audio-thread : main-thread]
 
   bool audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active) override {
-    SAT_Print("\n");
+    SAT_Print("is_input %i port_index %i is_active %i\n",is_input,port_index,is_active);
     return false;
   }
 
@@ -295,7 +268,7 @@ public: // audio ports config
   //TODO: hack.. fix this..
 
   bool audio_ports_config_get(uint32_t index, clap_audio_ports_config_t *config) override {
-    SAT_Print("\n");
+    SAT_Print("index %i\n",index);
     config->id                        = 0;
     strcpy(config->name,"audio ports config 1");
     config->input_port_count          = 2;
@@ -317,7 +290,7 @@ public: // audio ports config
   // [main-thread,plugin-deactivated]
 
   bool audio_ports_config_select(clap_id config_id) override {
-    SAT_Print("\n");
+    SAT_Print("config_id %i\n",config_id);
     MSelectedAudioPortsConfig = config_id;
     return false;
   }
@@ -330,7 +303,7 @@ public: // audio ports
   // [main-thread]
 
   uint32_t audio_ports_count(bool is_input) override {
-    SAT_Print("\n");
+    SAT_Print("is_input %i\n",is_input);
     if (is_input) return MAudioInputPorts.size();
     else return MAudioOutputPorts.size();
   }
@@ -341,7 +314,7 @@ public: // audio ports
   // [main-thread]
 
   bool audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) override {
-    SAT_Print("\n");
+    SAT_Print("index %i is_input %i\n",index,is_input);
     if (is_input) {
       clap_audio_port_info_t* pinfo = MAudioInputPorts[index]->getInfo();
       memcpy(info,pinfo,sizeof(clap_audio_port_info_t));
@@ -419,7 +392,7 @@ public: // gui
   // [main-thread]
 
   bool gui_is_api_supported(const char *api, bool is_floating) override {
-    SAT_Print("\n");
+    SAT_Print("api %s is_floating %i\n",api,is_floating);
     if (is_floating == true) return false;
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
@@ -462,7 +435,7 @@ public: // gui
   // [main-thread]
 
   bool gui_create(const char *api, bool is_floating) override {
-    SAT_Print("\n");
+    SAT_Print("api %s is_floating %i\n",api,is_floating);
     if (is_floating == true) return false;
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
@@ -470,7 +443,7 @@ public: // gui
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
-    MEditor = new SAT_Editor();
+    MEditor = new SAT_Editor(this);
     if (MEditor) {
       //MEditor->create();
       return true;
@@ -500,7 +473,7 @@ public: // gui
   // [main-thread]
 
   bool gui_set_scale(double scale) override {
-    SAT_Print("\n");
+    SAT_Print("scale %f\n",scale);
     return MEditor->set_scale(scale);
   }
 
@@ -553,7 +526,6 @@ public: // gui
   // [main-thread]
 
   bool gui_adjust_size(uint32_t *width, uint32_t *height) override {
-    SAT_Print("\n");
     return MEditor->adjust_size(width,height);
   }
 
@@ -563,7 +535,7 @@ public: // gui
   // [main-thread]
 
   bool gui_set_size(uint32_t width, uint32_t height) override {
-    SAT_Print("\n");
+    SAT_Print("width %i height %i\n",width,height);
     return MEditor->set_size(width,height);
   }
 
@@ -593,7 +565,7 @@ public: // gui
   // [main-thread & floating]
 
   void gui_suggest_title(const char *title) override {
-    SAT_Print("\n");
+    SAT_Print("title %s\n",title);
     return MEditor->suggest_title(title);
   }
 
@@ -646,7 +618,7 @@ public: // midi mappings
   // [main-thread]
 
   bool midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) override {
-    SAT_Print("\n");
+    SAT_Print("index %i\n",index);
     return false;
   }
 
@@ -668,7 +640,7 @@ public: // note name
   // [main-thread]
 
   bool note_name_get(uint32_t index, clap_note_name_t *note_name) override {
-    SAT_Print("\n");
+    SAT_Print("index %i\n",index);
     return false;
   }
 
@@ -680,8 +652,9 @@ public: // note ports
   // [main-thread]
 
   uint32_t note_ports_count(bool is_input) override {
-    SAT_Print("\n");
-    return 0;
+    SAT_Print("is_input %i\n",is_input);
+    if (is_input) return MNoteInputPorts.size();
+    else return MNoteOutputPorts.size();
   }
 
   //----------
@@ -690,7 +663,7 @@ public: // note ports
   // [main-thread]
 
   bool note_ports_get(uint32_t index, bool is_input, clap_note_port_info_t* info) override {
-    SAT_Print("\n");
+    SAT_Print("index %i is_input %i\n",index,is_input);
     return false;
   }
 
@@ -741,7 +714,7 @@ public: // params
   // [main-thread]
 
   bool params_get_info(uint32_t param_index, clap_param_info_t* param_info) override {
-    SAT_Print("\n");
+    SAT_Print("param_index %i\n",param_index);
     SAT_Parameter* parameter = MParameters[param_index];
     clap_param_info_t* info = parameter->getParamInfo();
     memcpy(param_info,info,sizeof(clap_param_info_t));
@@ -754,7 +727,7 @@ public: // params
   // [main-thread]
 
   bool params_get_value(clap_id param_id, double *out_value) override {
-    SAT_Print("\n");
+    SAT_Print("param_id %i\n",param_id);
     double value = MParameters[param_id]->getValue();
     *out_value = value;
     return true;
@@ -767,7 +740,7 @@ public: // params
   // this to format parameter values before displaying it to the user. [main-thread]
 
   bool params_value_to_text(clap_id param_id, double value, char* out_buffer, uint32_t out_buffer_capacity) override {
-    SAT_Print("\n");
+    SAT_Print("param_id %i value %f\n",param_id,value);
     uint32_t index = param_id;
     SAT_Parameter* parameter = MParameters[index];
     return parameter->valueToText(value,out_buffer,out_buffer_capacity);
@@ -780,7 +753,7 @@ public: // params
   // [main-thread]
 
   bool params_text_to_value(clap_id param_id, const char* param_value_text, double* out_value) override {
-    SAT_Print("\n");
+    SAT_Print("param_id %i text %s\n",param_id,param_value_text);
     uint32_t index = param_id;
     SAT_Parameter* parameter = MParameters[index];
     return parameter->textToValue(param_value_text,out_value);
@@ -812,7 +785,7 @@ public: // posix fd support
   // [main-thread]
 
   void posix_fd_support_on_fd(int fd, clap_posix_fd_flags_t flags) override {
-    SAT_Print("\n");
+    SAT_Print("fd %i flags %08x\n",fd,flags);
   }
 
 //------------------------------
@@ -826,7 +799,7 @@ public: // preset load
   // [main-thread]
 
   bool preset_load_from_uri(const char *uri, const char *load_key) override {
-    SAT_Print("\n");
+    SAT_Print("uri %s load:key %s\n",uri,load_key);
     return false;
   }
 
@@ -838,7 +811,7 @@ public: // remote controls
   // [main-thread]
 
   uint32_t remote_controls_count() override {
-    SAT_Print("\n");
+    SAT_Print("-> 1\n");
     return 1;
   }
 
@@ -848,7 +821,7 @@ public: // remote controls
   // [main-thread]
 
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
-    SAT_Print("\n");
+    SAT_Print("-> true\n");
     switch (page_index) {
       case 0: {
         page->page_id = 0;
@@ -903,7 +876,7 @@ public: // resource directory
   // [main-thread]
 
   void resource_directory_set_directory(const char *path, bool is_shared) override {
-    SAT_Print("\n");
+    SAT_Print("path %s is_shared %i\n",path,is_shared);
   }
 
   //----------
@@ -914,7 +887,7 @@ public: // resource directory
   // [main-thread]
 
   void resource_directory_collect(bool all) override {
-    SAT_Print("\n");
+    SAT_Print("all %i\n",all);
   }
 
   //----------
@@ -936,7 +909,7 @@ public: // resource directory
   // [main-thread]
 
   int32_t resource_directory_get_file_path(uint32_t index, char *path, uint32_t path_size) override {
-    SAT_Print("\n");
+    SAT_Print("index %i\n");
     return -1;
   }
 
@@ -978,7 +951,7 @@ public: // state
       }
       total += sizeof(double);
     }
-    SAT_Print("total: %i\n",total);
+    //SAT_Print("total: %i\n",total);
     return true;
   }
 
@@ -1094,7 +1067,7 @@ public: // tail
   // [main-thread,audio-thread]
 
   uint32_t tail_get() override {
-    SAT_Print("\n");
+    SAT_Print("-> 0\n");
     return 0;
   }
 
@@ -1105,7 +1078,7 @@ public: // thread pool
   // Called by the thread pool
 
   void thread_pool_exec(uint32_t task_index) override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
   }
 
 //------------------------------
@@ -1115,7 +1088,7 @@ public: // timer support
   // [main-thread]
 
   void timer_support_on_timer(clap_id timer_id) override {
-    SAT_Print("\n");
+    SAT_Print("timer id %i\n",timer_id);
   }
 
 //------------------------------
@@ -1172,7 +1145,7 @@ public: // triggers
   */
 
   bool triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) override {
-    SAT_Print("\n");
+    SAT_Print("index %i\n",index);
     return false;
   }
 
@@ -1205,10 +1178,10 @@ public: // voice info
 
   bool voice_info_get(clap_voice_info_t *info) override {
     SAT_Print("\n");
-    //info->count     = 32;
-    //info->capacity  = 32;
-    //info->flags     = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
-    //return true;
+    info->voice_count     = 16;
+    info->voice_capacity  = 16;
+    info->flags     = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
+    return true;
     return false;
   }
 
@@ -1226,103 +1199,42 @@ public: // voice info
 public: // extensions
 //------------------------------
 
-  void registerExtension(const char* id) {
-    if (strcmp(id,CLAP_EXT_AMBISONIC) == 0)               MExtensions.ambisonic               = &MAmbisonicExt;
-    if (strcmp(id,CLAP_EXT_AUDIO_PORTS_ACTIVATION) == 0)  MExtensions.audio_ports_activation  = &MAudioPortsActivationExt;
-    if (strcmp(id,CLAP_EXT_AUDIO_PORTS_CONFIG) == 0)      MExtensions.audio_ports_config      = &MAudioPortsConfigExt;
-    if (strcmp(id,CLAP_EXT_AUDIO_PORTS) == 0)             MExtensions.audio_ports             = &MAudioPortsExt;
-    if (strcmp(id,CLAP_EXT_CHECK_FOR_UPDATE) == 0)        MExtensions.check_for_update        = &MCheckForUpdateExt;
-    if (strcmp(id,CLAP_EXT_CONTEXT_MENU) == 0)            MExtensions.context_menu            = &MContextMenuExt;
-    if (strcmp(id,CLAP_EXT_CV) == 0)                      MExtensions.cv                      = &MCVExt;
-    if (strcmp(id,CLAP_EXT_GUI) == 0)                     MExtensions.gui                     = &MGuiExt;
-    if (strcmp(id,CLAP_EXT_LATENCY) == 0)                 MExtensions.latency                 = &MLatencyExt;
-    if (strcmp(id,CLAP_EXT_MIDI_MAPPINGS) == 0)           MExtensions.midi_mappings           = &MMidiMappingsExt;
-    if (strcmp(id,CLAP_EXT_NOTE_NAME) == 0)               MExtensions.note_name               = &MNoteNameExt;
-    if (strcmp(id,CLAP_EXT_NOTE_PORTS) == 0)              MExtensions.note_ports              = &MNotePortsExt;
-    if (strcmp(id,CLAP_EXT_PARAM_INDICATION) == 0)        MExtensions.param_indication        = &MParamIndicationExt;
-    if (strcmp(id,CLAP_EXT_PARAMS) == 0)                  MExtensions.params                  = &MParamsExt;
-    if (strcmp(id,CLAP_EXT_POSIX_FD_SUPPORT) == 0)        MExtensions.posix_fd_support        = &MPosixFdSupportExt;
-    if (strcmp(id,CLAP_EXT_PRESET_LOAD) == 0)             MExtensions.preset_load             = &MPresetLoadExt;
-    if (strcmp(id,CLAP_EXT_REMOTE_CONTROLS) == 0)         MExtensions.remote_controls         = &MRemoteControlsExt;
-    if (strcmp(id,CLAP_EXT_RENDER) == 0)                  MExtensions.render                  = &MRenderExt;
-    if (strcmp(id,CLAP_EXT_RESOURCE_DIRECTORY) == 0)      MExtensions.resource_directory      = &MResourceDirectoryExt;
-    if (strcmp(id,CLAP_EXT_STATE) == 0)                   MExtensions.state                   = &MStateExt;
-    if (strcmp(id,CLAP_EXT_STATE_CONTEXT) == 0)           MExtensions.state_context           = &MStateContextExt;
-    if (strcmp(id,CLAP_EXT_SURROUND) == 0)                MExtensions.surround                = &MSurroundExt;
-    if (strcmp(id,CLAP_EXT_TAIL) == 0)                    MExtensions.tail                    = &MTailExt;
-    if (strcmp(id,CLAP_EXT_THREAD_POOL) == 0)             MExtensions.thread_pool             = &MThreadPoolExt;
-    if (strcmp(id,CLAP_EXT_TIMER_SUPPORT) == 0)           MExtensions.timer_support           = &MTimerSupportExt;
-    if (strcmp(id,CLAP_EXT_TRACK_INFO) == 0)              MExtensions.track_info              = &MTrackInfoExt;
-    if (strcmp(id,CLAP_EXT_TRIGGERS) == 0)                MExtensions.triggers                = &MTriggersExt;
-    if (strcmp(id,CLAP_EXT_TUNING) == 0)                  MExtensions.tuning                  = &MTuningExt;
-    if (strcmp(id,CLAP_EXT_VOICE_INFO) == 0)              MExtensions.voice_info              = &MVoiceInfoExt;
+  void registerExtension(const char* id, const void* ptr) {
+    MExtensions.addItem(id,ptr);
   }
 
   //----------
 
   void registerAllExtensions() {
-    registerExtension(CLAP_EXT_AMBISONIC);
-    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION);
-    registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG);
-    registerExtension(CLAP_EXT_AUDIO_PORTS);
-    registerExtension(CLAP_EXT_CHECK_FOR_UPDATE);
-    registerExtension(CLAP_EXT_CONTEXT_MENU);
-    registerExtension(CLAP_EXT_CV);
-    registerExtension(CLAP_EXT_GUI);
-    registerExtension(CLAP_EXT_LATENCY);
-    registerExtension(CLAP_EXT_MIDI_MAPPINGS);
-    registerExtension(CLAP_EXT_NOTE_NAME);
-    registerExtension(CLAP_EXT_NOTE_PORTS);
-    registerExtension(CLAP_EXT_PARAM_INDICATION);
-    registerExtension(CLAP_EXT_PARAMS);
-    registerExtension(CLAP_EXT_POSIX_FD_SUPPORT);
-    registerExtension(CLAP_EXT_PRESET_LOAD);
-    registerExtension(CLAP_EXT_REMOTE_CONTROLS);
-    registerExtension(CLAP_EXT_RENDER);
-    registerExtension(CLAP_EXT_RESOURCE_DIRECTORY);
-    registerExtension(CLAP_EXT_STATE);
-    registerExtension(CLAP_EXT_STATE_CONTEXT);
-    registerExtension(CLAP_EXT_SURROUND);
-    registerExtension(CLAP_EXT_TAIL);
-    registerExtension(CLAP_EXT_THREAD_POOL);
-    registerExtension(CLAP_EXT_TIMER_SUPPORT);
-    registerExtension(CLAP_EXT_TRACK_INFO);
-    registerExtension(CLAP_EXT_TRIGGERS);
-    registerExtension(CLAP_EXT_TUNING);
-    registerExtension(CLAP_EXT_VOICE_INFO);
-  }
-
-  //----------
-
-  void logHostExtensions(const clap_host_t* host) {
-    if (MHost->ext.ambisonic)           SAT_Log("  host supports draft ext %s\n", CLAP_EXT_AMBISONIC);
-    if (MHost->ext.audio_ports_config)  SAT_Log("  host supports ext %s\n",       CLAP_EXT_AUDIO_PORTS_CONFIG);
-    if (MHost->ext.audio_ports)         SAT_Log("  host supports ext %s\n",       CLAP_EXT_AUDIO_PORTS);
-    if (MHost->ext.check_for_update)    SAT_Log("  host supports draft ext %s\n", CLAP_EXT_CHECK_FOR_UPDATE);
-    if (MHost->ext.context_menu)        SAT_Log("  host supports draft ext %s\n", CLAP_EXT_CONTEXT_MENU);
-    if (MHost->ext.cv)                  SAT_Log("  host supports draft ext %s\n", CLAP_EXT_CV);
-    if (MHost->ext.event_registry)      SAT_Log("  host supports ext %s\n",       CLAP_EXT_EVENT_REGISTRY);
-    if (MHost->ext.gui)                 SAT_Log("  host supports ext %s\n",       CLAP_EXT_GUI);
-    if (MHost->ext.latency)             SAT_Log("  host supports ext %s\n",       CLAP_EXT_LATENCY);
-    if (MHost->ext.log)                 SAT_Log("  host supports ext %s\n",       CLAP_EXT_LOG);
-    if (MHost->ext.midi_mappings)       SAT_Log("  host supports draft ext %s\n", CLAP_EXT_MIDI_MAPPINGS);
-    if (MHost->ext.note_name)           SAT_Log("  host supports ext %s\n",       CLAP_EXT_NOTE_NAME);
-    if (MHost->ext.note_ports)          SAT_Log("  host supports ext %s\n",       CLAP_EXT_NOTE_PORTS);
-    if (MHost->ext.params)              SAT_Log("  host supports ext %s\n",       CLAP_EXT_PARAMS);
-    if (MHost->ext.posix_fd_support)    SAT_Log("  host supports ext %s\n",       CLAP_EXT_POSIX_FD_SUPPORT);
-    if (MHost->ext.preset_load)         SAT_Log("  host supports draft ext %s\n", CLAP_EXT_PRESET_LOAD);
-    if (MHost->ext.remote_controls)     SAT_Log("  host supports draft ext %s\n", CLAP_EXT_REMOTE_CONTROLS);
-    if (MHost->ext.resource_directory)  SAT_Log("  host supports draft ext %s\n", CLAP_EXT_RESOURCE_DIRECTORY);
-    if (MHost->ext.state)               SAT_Log("  host supports ext %s\n",       CLAP_EXT_STATE);
-    if (MHost->ext.surround)            SAT_Log("  host supports draft ext %s\n", CLAP_EXT_SURROUND);
-    if (MHost->ext.tail)                SAT_Log("  host supports ext %s\n",       CLAP_EXT_TAIL);
-    if (MHost->ext.thread_check)        SAT_Log("  host supports ext %s\n",       CLAP_EXT_THREAD_CHECK);
-    if (MHost->ext.thread_pool)         SAT_Log("  host supports ext %s\n",       CLAP_EXT_THREAD_POOL);
-    if (MHost->ext.timer_support)       SAT_Log("  host supports ext %s\n",       CLAP_EXT_TIMER_SUPPORT);
-    if (MHost->ext.track_info)          SAT_Log("  host supports draft ext %s\n", CLAP_EXT_TRACK_INFO);
-    if (MHost->ext.transport_control)   SAT_Log("  host supports draft ext %s\n", CLAP_EXT_TRANSPORT_CONTROL);
-    if (MHost->ext.triggers)            SAT_Log("  host supports draft ext %s\n", CLAP_EXT_TRIGGERS);
-    if (MHost->ext.tuning)              SAT_Log("  host supports draft ext %s\n", CLAP_EXT_TUNING);
+    registerExtension(CLAP_EXT_AMBISONIC,             &MAmbisonicExt);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,&MAudioPortsActivationExt);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,    &MAudioPortsConfigExt);
+    registerExtension(CLAP_EXT_AUDIO_PORTS,           &MAudioPortsExt);
+    registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,      &MCheckForUpdateExt);
+    registerExtension(CLAP_EXT_CONTEXT_MENU,          &MContextMenuExt);
+    registerExtension(CLAP_EXT_CV,                    &MCVExt);
+    registerExtension(CLAP_EXT_GUI,                   &MGuiExt);
+    registerExtension(CLAP_EXT_LATENCY,               &MLatencyExt);
+    registerExtension(CLAP_EXT_MIDI_MAPPINGS,         &MMidiMappingsExt);
+    registerExtension(CLAP_EXT_NOTE_NAME,             &MNoteNameExt);
+    registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
+    registerExtension(CLAP_EXT_PARAM_INDICATION,      &MParamIndicationExt);
+    registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
+    registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,      &MPosixFdSupportExt);
+    registerExtension(CLAP_EXT_PRESET_LOAD,           &MPresetLoadExt);
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS,       &MRemoteControlsExt);
+    registerExtension(CLAP_EXT_RENDER,                &MRenderExt);
+    registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,    &MResourceDirectoryExt);
+    registerExtension(CLAP_EXT_STATE,                 &MStateExt);
+    registerExtension(CLAP_EXT_STATE_CONTEXT,         &MStateContextExt);
+    registerExtension(CLAP_EXT_SURROUND,              &MSurroundExt);
+    registerExtension(CLAP_EXT_TAIL,                  &MTailExt);
+    registerExtension(CLAP_EXT_THREAD_POOL,           &MThreadPoolExt);
+    registerExtension(CLAP_EXT_TIMER_SUPPORT,         &MTimerSupportExt);
+    registerExtension(CLAP_EXT_TRACK_INFO,            &MTrackInfoExt);
+    registerExtension(CLAP_EXT_TRIGGERS,              &MTriggersExt);
+    registerExtension(CLAP_EXT_TUNING,                &MTuningExt);
+    registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
   }
 
 //------------------------------
@@ -1361,12 +1273,6 @@ public: // parameters
   //----------
 
   void setDefaultParameterValues() {
-    //for (uint32_t index=0; index<MParameters.size(); index++) {
-    //  SAT_Parameter* parameter = MParameters[index];
-    //  double value = parameter->getValue();
-    //  queueProcessParamIndex(i);
-    //  queueProcessParamValue(
-    //}
   }
 
   //----------
@@ -1383,9 +1289,17 @@ public: // parameters
 public: // audio input ports
 //------------------------------
 
-  void appendAudioInputPort(SAT_AudioPort* APort) {
-    uint32_t index = MAudioInputPorts.size();
+  SAT_AudioPort* appendAudioInputPort(SAT_AudioPort* APort) {
     MAudioInputPorts.append(APort);
+    return APort;
+  }
+
+  //----------
+
+  SAT_AudioPort* appendStereoInputPort() {
+    SAT_AudioPort* port = new SAT_AudioPort(0,"Audio",CLAP_AUDIO_PORT_IS_MAIN,2,CLAP_PORT_STEREO,CLAP_INVALID_ID);
+    MAudioInputPorts.append(port);
+    return port;
   }
 
   //----------
@@ -1415,9 +1329,17 @@ public: // audio input ports
 public: // audio output ports
 //------------------------------
 
-  void appendAudioOutputPort(SAT_AudioPort* APort) {
-    uint32_t index = MAudioOutputPorts.size();
+  SAT_AudioPort* appendAudioOutputPort(SAT_AudioPort* APort) {
     MAudioOutputPorts.append(APort);
+    return APort;
+  }
+
+  //----------
+
+  SAT_AudioPort* appendStereoOutputPort() {
+    SAT_AudioPort* port = new SAT_AudioPort(0,"Audio",CLAP_AUDIO_PORT_IS_MAIN,2,CLAP_PORT_STEREO,CLAP_INVALID_ID);
+    MAudioOutputPorts.append(port);
+    return port;
   }
 
   //----------
@@ -1447,9 +1369,17 @@ public: // audio output ports
 public: // note input ports
 //------------------------------
 
-  void appendNoteInputPort(SAT_NotePort* APort) {
-    uint32_t index = MNoteInputPorts.size();
+  SAT_NotePort* appendNoteInputPort(SAT_NotePort* APort) {
     MNoteInputPorts.append(APort);
+    return APort;
+  }
+
+  //----------
+
+  SAT_NotePort* appendClapNoteInputPort() {
+    SAT_NotePort* port = new SAT_NotePort( 0, (CLAP_NOTE_DIALECT_CLAP/* | CLAP_NOTE_DIALECT_MIDI | CLAP_NOTE_DIALECT_MIDI_MPE*/), CLAP_NOTE_DIALECT_CLAP, "Notes" );
+    MNoteInputPorts.append(port);
+    return port;
   }
 
   //----------
@@ -1479,9 +1409,17 @@ public: // note input ports
 public: // note output ports
 //------------------------------
 
-  void appendNoteOutputPort(SAT_NotePort* APort) {
-    uint32_t index = MNoteOutputPorts.size();
+  SAT_NotePort* appendNoteOutputPort(SAT_NotePort* APort) {
     MNoteOutputPorts.append(APort);
+    return APort;
+  }
+
+  //----------
+
+  SAT_NotePort* appendClapNoteOutputPort() {
+    SAT_NotePort* port = new SAT_NotePort( 0, (CLAP_NOTE_DIALECT_CLAP/*| CLAP_NOTE_DIALECT_MIDI | CLAP_NOTE_DIALECT_MIDI_MPE*/), CLAP_NOTE_DIALECT_CLAP, "Notes" );
+    MNoteOutputPorts.append(port);
+    return port;
   }
 
   //----------

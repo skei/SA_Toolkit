@@ -19,13 +19,13 @@ class SAT_ClapHost {
 private:
 //------------------------------
 
-  const clap_host_t*    MHost     = nullptr;
+  const clap_host_t* MHost = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_ClapHostExtensions  ext = {};
+  SAT_ClapHostExtensions ext = {};
 
 //------------------------------
 public:
@@ -34,6 +34,55 @@ public:
   SAT_ClapHost(const clap_host_t* AHost) {
     //SAT_Assert(AHost);
     MHost = AHost;
+    initExtensions();
+  };
+
+  //----------
+
+  virtual ~SAT_ClapHost() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual const clap_host_t*  getHost()     { return MHost; }
+  virtual const char*         getName()     { return MHost->name; }
+  virtual const char*         getVendor()   { return MHost->vendor; }
+  virtual const char*         getUrl()      { return MHost->url; }
+  virtual const char*         getVersion()  { return MHost->version; }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual const void* get_extension(const char *extension_id) {
+    return MHost->get_extension(MHost,extension_id);
+  }
+
+  //----------
+
+  virtual void request_restart() {
+    MHost->request_restart(MHost);
+  }
+
+  //----------
+
+  virtual void request_process() {
+    MHost->request_process(MHost);
+  }
+
+  //----------
+
+  virtual void request_callback() {
+    MHost->request_callback(MHost);
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+  void initExtensions() {
     ext.audio_ports_config  = (clap_host_audio_ports_config_t*)MHost->get_extension(MHost,CLAP_EXT_AUDIO_PORTS_CONFIG);
     ext.audio_ports         = (clap_host_audio_ports_t*)MHost->get_extension(MHost,CLAP_EXT_AUDIO_PORTS);
     ext.event_registry      = (clap_host_event_registry_t*)MHost->get_extension(MHost,CLAP_EXT_EVENT_REGISTRY);
@@ -62,63 +111,6 @@ public:
     ext.transport_control   = (clap_host_transport_control_t*)MHost->get_extension(MHost,CLAP_EXT_TRANSPORT_CONTROL);
     ext.triggers            = (clap_host_triggers_t*)MHost->get_extension(MHost,CLAP_EXT_TRIGGERS);
     ext.tuning              = (clap_host_tuning_t*)MHost->get_extension(MHost,CLAP_EXT_TUNING);
-  };
-
-  //----------
-
-  virtual ~SAT_ClapHost() {
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  virtual const clap_host_t* getHost() { return MHost; }
-
-  virtual const void* get_extension(const char *extension_id) {
-    return MHost->get_extension(MHost,extension_id);
-  }
-
-  //----------
-
-  virtual void request_restart() {
-    MHost->request_restart(MHost);
-  }
-
-  //----------
-
-  virtual void request_process() {
-    MHost->request_process(MHost);
-  }
-
-  //----------
-
-  virtual void request_callback() {
-    MHost->request_callback(MHost);
-  }
-
-  //----------
-
-  virtual const char* getName() {
-    return MHost->name;
-  }
-
-  //----------
-
-  virtual const char* getVendor() {
-    return MHost->vendor;
-  }
-
-  //----------
-
-  virtual const char* getUrl() {
-    return MHost->url;
-  }
-
-  //----------
-
-  virtual const char* getVersion() {
-    return MHost->version;
   }
 
 };

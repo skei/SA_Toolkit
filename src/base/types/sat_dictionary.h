@@ -26,6 +26,8 @@ private:
     T value;
   };
 
+  //----------
+
   SAT_Array<SAT_DictionaryItem> MItems;
 
 //------------------------------
@@ -40,16 +42,31 @@ public:
 
   bool hasItem(const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (MItems[i].name == name) return true; // strcmp
+      if (strcmp(name,MItems[i].name) == 0) return true; // strcmp
     }
     return false;
   }
 
   //----------
 
+  T getItem(uint32_t index) {
+    return MItems[index].value;
+  }
+
+  //----------
+
+  T getItem(const char* name) {
+    for (uint32_t i=0; i<size(); i++) {
+      if (strcmp(name,MItems[i].name) == 0) return MItems[i].value;
+    }
+    return nullptr;
+  }
+
+  //----------
+
   int32_t getItemIndex(const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (MItems[i].name == name) return i; // strcmp
+      if (strcmp(name,MItems[i].name) == 0) return i; // strcmp
     }
     return -1;
   }
@@ -70,7 +87,7 @@ public:
 
   T& operator [] (const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (MItems[i].name == name) return MItems[i].value; // strcmp
+      if (strcmp(name,MItems[i].name) == 0) return MItems[i].value; // strcmp
     }
     uint32_t idx = size();
     SAT_DictionaryItem d;
@@ -102,7 +119,7 @@ public:
 
   bool removeItem(const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (MItems[i].name == name) { // strcmp
+      if (strcmp(name,MItems[i].name) == 0) { // strcmp
         MItems.remove(i);
         return true;
       }

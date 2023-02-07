@@ -51,7 +51,9 @@ int main(int argc, char** argv) {
   uint32_t    min_frames_count  = 128;
   uint32_t    max_frames_count  = 128;
 
+  //SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
   SAT_HostImplementation* hostimpl = new SAT_HostImplementation();
+
   const clap_host_t* host = hostimpl->getHost();
   if (!host) {
     SAT_Print("! ERROR: Couldn't create exe host implementation\n");

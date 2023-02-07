@@ -1,8 +1,9 @@
-#ifndef sat_widget_included
-#define sat_widget_included
+#ifndef sat_window_listener_included
+#define sat_window_listener_included
 //----------------------------------------------------------------------
 
-class SAT_Widget {
+class SAT_WindowListener {
+public:
 };
 
 //----------------------------------------------------------------------

@@ -2,6 +2,8 @@
 #define sat_hosted_plugin_included
 //----------------------------------------------------------------------
 
+// aka SAT_PluginReference
+
 #include "plugin/clap/sat_clap_hosted_plugin.h"
 
 //----------------------------------------------------------------------

@@ -22,7 +22,7 @@ class SAT_NotePort {
 private:
 //------------------------------
 
-  clap_note_port_info_t MNotePortInfo = {
+  clap_note_port_info_t MInfo = {
     /*clap_id  .id                    =*/ 0,
     /*uint32_t .supported_dialects    =*/ CLAP_NOTE_DIALECT_CLAP, // | CLAP_NOTE_DIALECT_MIDI | CLAP_NOTE_DIALECT_MIDI_MPE,
     /*uint32_t .preferred_dialect     =*/ CLAP_NOTE_DIALECT_CLAP,
@@ -33,7 +33,28 @@ private:
 public:
 //------------------------------
 
-  clap_note_port_info_t* getInfo() { return &MNotePortInfo; }
+  SAT_NotePort() {
+  }
+
+  //----------
+
+  SAT_NotePort(clap_id id, uint32_t supported_dialects, uint32_t preferred_dialect, const char* name) {
+    MInfo.id            = id;
+    MInfo.supported_dialects  = supported_dialects;
+    MInfo.preferred_dialect   = preferred_dialect;
+    strcpy(MInfo.name,name);
+  }
+
+  //----------
+
+  virtual ~SAT_NotePort() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  clap_note_port_info_t* getInfo() { return &MInfo; }
 
 };
 

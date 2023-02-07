@@ -42,34 +42,34 @@ public:
 
   virtual const void* get_extension(const char *extension_id) {
     //SAT_Print("id %s\n",extension_id);
-
-//    if (strcmp(extension_CLAP_EXT_AMBISONIC)              == 0) return &MAmbisonicExt;
-    if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS)         == 0) return &MAudioPortsExt;
-    if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS_CONFIG)  == 0) return &MAudioPortsExt;
-//    if (strcmp(extension_CLAP_EXT_CHECK_FOR_UPDATE)       == 0) return &MCheckForUpdateExt;
-//    if (strcmp(extension_CLAP_EXT_CV)                     == 0) return &MCVExt;
-//    if (strcmp(extension_CLAP_EXT_EVENT_REGISTRY)         == 0) return &MEventRegistryExt;
-//    if (strcmp(extension_CLAP_EXT_GUI)                    == 0) return &MGuiExt;
-//    if (strcmp(extension_CLAP_EXT_LATENCY)                == 0) return &MLatencyExt;
-//    if (strcmp(extension_CLAP_EXT_MIDI_MAPPINGS)          == 0) return &MMidiMappingsExt;
-//    if (strcmp(extension_CLAP_EXT_NOTE_NAME)              == 0) return &MNoteNameExt;
-//    if (strcmp(extension_CLAP_EXT_NOTE_PORTS)             == 0) return &MNotePortsExt;
-//    if (strcmp(extension_CLAP_EXT_PARAMS)                 == 0) return &MParamsExt;
-//    if (strcmp(extension_CLAP_EXT_POSIX_FD_SUPPORT)       == 0) return &MPosixFdSupportExt;
-//    if (strcmp(extension_CLAP_EXT_PRESET_LOAD)            == 0) return &MPresetLoadExt;
-//    if (strcmp(extension_CLAP_EXT_REMOTE_CONTROLS)        == 0) return &MRemoteControlsExt;
-//    if (strcmp(extension_CLAP_EXT_RESOURCE_CIRECTORY)     == 0) return &MResourceDirectoryExt;
-//    if (strcmp(extension_CLAP_EXT_STATE)                  == 0) return &MStateExt;
-//    if (strcmp(extension_CLAP_EXT_STATE_CONTEXT)          == 0) return &MStateContextExt;
-//    if (strcmp(extension_CLAP_EXT_SURROUND)               == 0) return &MSurroundExt;
-//    if (strcmp(extension_CLAP_EXT_TAIL)                   == 0) return &MTailExt;
-//    if (strcmp(extension_CLAP_EXT_THREAD_POOL)            == 0) return &MThreadPoolExt;
-//    if (strcmp(extension_CLAP_EXT_TIMER_SUPPORT)          == 0) return &MTimerSupportExt;
-//    if (strcmp(extension_CLAP_EXT_TRACK_INFO)             == 0) return &MTrackInfoExt;
-//    if (strcmp(extension_CLAP_EXT_TRANSPORT_CONTROLS)     == 0) return &MTransportControlsExt;
-//    if (strcmp(extension_CLAP_EXT_TRIGGERS)               == 0) return &MTriggersExt;
-//    if (strcmp(extension_CLAP_EXT_TUNING)                 == 0) return &MTuningExt;
-//    if (strcmp(extension_CLAP_EXT_VOICE_INFO)             == 0) return &MVoiceInfoExt;
+    //if (strcmp(extension_id,CLAP_EXT_AMBISONIC)           == 0) return &MAmbisonicExt;
+    //if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS)         == 0) return &MAudioPortsExt;
+    //if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS_CONFIG)  == 0) return &MAudioPortsExt;
+    //if (strcmp(extension_id,CLAP_EXT_CHECK_FOR_UPDATE)    == 0) return &MCheckForUpdateExt;
+    //if (strcmp(extension_id,CLAP_EXT_CV)                  == 0) return &MCVExt;
+    //if (strcmp(extension_id,CLAP_EXT_EVENT_REGISTRY)      == 0) return &MEventRegistryExt;
+    //if (strcmp(extension_id,CLAP_EXT_GUI)                 == 0) return &MGuiExt;
+    //if (strcmp(extension_id,CLAP_EXT_LATENCY)             == 0) return &MLatencyExt;
+    //if (strcmp(extension_id,CLAP_EXT_LOG)                 == 0) return &MLogExt;
+    //if (strcmp(extension_id,CLAP_EXT_MIDI_MAPPINGS)       == 0) return &MMidiMappingsExt;
+    //if (strcmp(extension_id,CLAP_EXT_NOTE_NAME)           == 0) return &MNoteNameExt;
+    //if (strcmp(extension_id,CLAP_EXT_NOTE_PORTS)          == 0) return &MNotePortsExt;
+    //if (strcmp(extension_id,CLAP_EXT_PARAMS)              == 0) return &MParamsExt;
+    //if (strcmp(extension_id,CLAP_EXT_POSIX_FD_SUPPORT)    == 0) return &MPosixFdSupportExt;
+    //if (strcmp(extension_id,CLAP_EXT_PRESET_LOAD)         == 0) return &MPresetLoadExt;
+    //if (strcmp(extension_id,CLAP_EXT_REMOTE_CONTROLS)     == 0) return &MRemoteControlsExt;
+    //if (strcmp(extension_id,CLAP_EXT_RESOURCE_DIRECTORY)  == 0) return &MResourceDirectoryExt;
+    //if (strcmp(extension_id,CLAP_EXT_STATE)               == 0) return &MStateExt;
+    //if (strcmp(extension_id,CLAP_EXT_SURROUND)            == 0) return &MSurroundExt;
+    //if (strcmp(extension_id,CLAP_EXT_TAIL)                == 0) return &MTailExt;
+    //if (strcmp(extension_id,CLAP_EXT_THREAD_CHECK)        == 0) return &MThreadCheckExt;
+    //if (strcmp(extension_id,CLAP_EXT_THREAD_POOL)         == 0) return &MThreadPoolExt;
+    //if (strcmp(extension_id,CLAP_EXT_TIMER_SUPPORT)       == 0) return &MTimerSupportExt;
+    //if (strcmp(extension_id,CLAP_EXT_TRACK_INFO)          == 0) return &MTrackInfoExt;
+    //if (strcmp(extension_id,CLAP_EXT_TRANSPORT_CONTROL)   == 0) return &MTransportControlExt;
+    //if (strcmp(extension_id,CLAP_EXT_TRIGGERS)            == 0) return &MTriggersExt;
+    //if (strcmp(extension_id,CLAP_EXT_TUNING)              == 0) return &MTuningExt;
+    //if (strcmp(extension_id,CLAP_EXT_VOICE_INFO)          == 0) return &MVoiceInfoExt;
     return nullptr;
   }
 
@@ -97,10 +97,12 @@ public: // extensions
   virtual void      audio_ports_rescan(uint32_t flags) {}
   virtual void      audio_ports_config_rescan() {}
   virtual void      check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) {}
+  virtual bool      context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) { return false; }
+  virtual bool      context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
+  virtual bool      context_menu_can_popup() { return false; }
+  virtual bool      context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) { return false; }
   virtual void      cv_changed() {}
   virtual bool      event_registry_query(const char *space_name, uint16_t *space_id) { return false; }
-  virtual void      file_reference_changed() {}
-  virtual void      file_reference_set_dirty(clap_id resource_id) {}
   virtual void      gui_resize_hints_changed() {}
   virtual bool      gui_request_resize(uint32_t width, uint32_t height) { return false; }
   virtual bool      gui_request_show() { return false; }
@@ -108,18 +110,22 @@ public: // extensions
   virtual void      gui_closed(bool was_destroyed) {}
   virtual void      latency_changed() {}
   virtual void      log_log(clap_log_severity severity, const char *msg) {}
+  virtual void      midi_mappings_changed() {}
   virtual void      note_name_changed() {}
   virtual uint32_t  note_ports_supported_dialects() { return 0; }
   virtual void      note_ports_rescan(uint32_t flags) {}
   virtual void      params_rescan(clap_param_rescan_flags flags) {}
   virtual void      params_clear(clap_id param_id, clap_param_clear_flags flags) {}
   virtual void      params_request_flush() {}
-  virtual void      midi_mappings_changed() {}
   virtual bool      posix_fd_support_register_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
   virtual bool      posix_fd_support_modify_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
   virtual bool      posix_fd_support_unregister_fd(int fd) { return false; }
-  virtual void      quick_controls_changed() {}
-  virtual void      quick_controls_suggest_page(clap_id page_id) {}
+  virtual void      preset_load_on_error(const char *uri, int32_t os_error, const char *msg) {}
+  virtual void      preset_load_loaded(const char *uri, const char *load_key) {}
+  virtual void      remote_controls_changed() {}
+  virtual void      remote_controls_suggest_page(clap_id page_id) {}
+  virtual bool      resource_directory_request_directory(bool is_shared) { return false; }
+  virtual void      resource_directory_release_directory(bool is_shared) {}
   virtual void      state_mark_dirty() {}
   virtual void      surround_changed() {}
   virtual void      surround_get_preferred_channel_map(uint8_t *channel_map, uint32_t channel_map_capacity, uint32_t *channel_count) {}
@@ -141,6 +147,8 @@ public: // extensions
   virtual void      transport_control_request_enable_loop(bool is_enabled) {}
   virtual void      transport_control_request_record(bool is_recording) {}
   virtual void      transport_control_request_toggle_record() {}
+  virtual void      triggers_rescan(clap_trigger_rescan_flags flags) {}
+  virtual void      triggers_clear(clap_id trigger_id, clap_trigger_clear_flags flags) {}
   virtual double    tuning_get_relative(clap_id tuning_id, int32_t channel, int32_t key, uint32_t sample_offset) { return 0.0; }
   virtual bool      tuning_should_play(clap_id tuning_id, int32_t channel, int32_t key) { return false; }
   virtual uint32_t  tuning_get_tuning_count() { return 0; }
@@ -173,30 +181,34 @@ private: // host
 
   static void clap_host_request_restart_callback(const struct clap_host *host) {
     SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->request_restart();
+    _host->request_restart();
   }
 
   static void clap_host_request_process_callback(const struct clap_host *host) {
     SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->request_process();
+    _host->request_process();
   }
 
   static void clap_host_request_callback_callback(const struct clap_host *host) {
     SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->request_callback();
+    _host->request_callback();
   }
-
-//------------------------------
-private: //
-//------------------------------
 
 //------------------------------
 private: // ambisonic
 //------------------------------
 
-  //typedef struct clap_host_ambisonic {
-  //   void(CLAP_ABI *changed)(const clap_host_t *host);
-  //} clap_host_ambisonic_t;
+  static
+  void clap_host_ambisonic_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->ambisonic_changed();
+  }
+
+protected:
+
+  clap_host_ambisonic_t MAmbisonicExt = {
+    .changed = clap_host_ambisonic_changed_callback
+  };
 
 //------------------------------
 private: // audio ports
@@ -211,7 +223,7 @@ private: // audio ports
   static
   void clap_host_audio_ports_rescan_callback(const clap_host_t *host, uint32_t flags) {
     SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->audio_ports_rescan(flags);
+    _host->audio_ports_rescan(flags);
   }
 
 protected:
@@ -228,7 +240,7 @@ private: // audio ports config
   static
   void clap_host_audio_ports_config_rescan_callback(const clap_host_t *host) {
     SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->audio_ports_config_rescan();
+    _host->audio_ports_config_rescan();
   }
 
 protected:
@@ -241,255 +253,642 @@ protected:
 private: // check for update
 //------------------------------
 
-  //typedef struct clap_host_check_for_update {
-  //   // [main-thread]
-  //   void(CLAP_ABI *on_new_version)(const clap_host_t *host, const clap_check_for_update_info_t *update_info);
-  //} clap_host_check_for_update_t;
+  static
+  void clap_host_check_for_update_on_new_version_callback(const clap_host_t *host, const clap_check_for_update_info_t *update_info) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->check_for_update_on_new_version(update_info);
+  }
+
+protected:
+
+  clap_host_check_for_update_t MCheckForUpdateExt = {
+    .on_new_version = clap_host_check_for_update_on_new_version_callback
+  };
 
 //------------------------------
 private: // context menu
 //------------------------------
 
-  //typedef struct clap_host_context_menu {
-  //   bool(CLAP_ABI *populate)(const clap_host_t *host, const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder);
-  //   bool(CLAP_ABI *perform)(const clap_host_t *host, const clap_context_menu_target_t *target, clap_id action_id);
-  //   bool(CLAP_ABI *can_popup)(const clap_host_t *host);
-  //   bool(CLAP_ABI *popup)(const clap_host_t *host, const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y);
-  //} clap_host_context_menu_t;
+  static
+  bool clap_host_context_menu_populate_callback(const clap_host_t *host, const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_populate(target,builder);
+  }
+
+  static
+  bool clap_host_context_menu_perform_callback(const clap_host_t *host, const clap_context_menu_target_t *target, clap_id action_id) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_perform(target,action_id);
+  }
+
+  static
+  bool clap_host_context_menu_can_popup_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_can_popup();
+  }
+
+  static
+  bool clap_host_context_menu_popup_callback(const clap_host_t *host, const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_popup(target,screen_index,x,y);
+  }
+
+protected:
+
+  clap_host_context_menu_t MContextMenuExt = {
+    .populate   = clap_host_context_menu_populate_callback,
+    .perform    = clap_host_context_menu_perform_callback,
+    .can_popup  = clap_host_context_menu_can_popup_callback,
+    .popup      = clap_host_context_menu_popup_callback
+  };
 
 //------------------------------
 private: // cv
 //------------------------------
 
-  //typedef struct clap_host_cv {
-  //   void(CLAP_ABI *changed)(const clap_host_t *host);
-  //} clap_host_cv_t
+  static
+  void clap_host_cv_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->cv_changed();
+  }
+
+protected:
+
+  clap_host_cv_t MCVExt = {
+    .changed    = clap_host_cv_changed_callback
+  };
 
 //------------------------------
 private: // event registry
 //------------------------------
 
-  //typedef struct clap_host_event_registry {
-  //   bool (*query)(const clap_host_t *host, const char *space_name, uint16_t *space_id);
-  //} clap_host_event_registry_t;
+  static
+  bool clap_host_event_registry_query_callback(const clap_host_t *host, const char *space_name, uint16_t *space_id) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->event_registry_query(space_name,space_id);
+  }
+
+protected:
+
+  clap_host_event_registry_t MEventRegistryExt = {
+    .query  = clap_host_event_registry_query_callback
+  };
 
 //------------------------------
 private: // gui
 //------------------------------
 
-  //typedef struct clap_host_gui {
-  //   void (*resize_hints_changed)(const clap_host_t *host);
-  //   bool (*request_resize)(const clap_host_t *host, uint32_t width, uint32_t height);
-  //   bool (*request_show)(const clap_host_t *host);
-  //   bool (*request_hide)(const clap_host_t *host);
-  //   void (*closed)(const clap_host_t *host, bool was_destroyed);
-  //} clap_host_gui_t;
+  static
+  void clap_host_gui_resize_hints_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->gui_resize_hints_changed();
+  }
+
+  static
+  bool clap_host_gui_request_resize_callback(const clap_host_t *host, uint32_t width, uint32_t height) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->gui_request_resize(width,height);
+  }
+
+  static
+  bool clap_host_gui_request_show_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->gui_request_show();
+  }
+
+  static
+  bool clap_host_gui_request_hide_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->gui_request_hide();
+  }
+
+  static
+  void clap_host_gui_closed_callback(const clap_host_t *host, bool was_closed) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->gui_closed(was_closed);
+  }
+
+protected:
+
+  clap_host_gui_t MGuiExt = {
+    .resize_hints_changed = clap_host_gui_resize_hints_changed_callback,
+    .request_resize       = clap_host_gui_request_resize_callback,
+    .request_show         = clap_host_gui_request_show_callback,
+    .request_hide         = clap_host_gui_request_hide_callback,
+    .closed               = clap_host_gui_closed_callback
+  };
 
 //------------------------------
 private: // latency
 //------------------------------
 
-  //typedef struct clap_host_latency {
-  //   void (*changed)(const clap_host_t *host);
-  //} clap_host_latency_t;
+  static
+  void clap_host_latency_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->latency_changed();
+  }
+
+protected:
+
+  clap_host_latency_t MLatencyExt = {
+    .changed  = clap_host_latency_changed_callback
+  };
 
 //------------------------------
 private: // log
 //------------------------------
 
-  //typedef struct clap_host_log {
-  //   void (*log)(const clap_host_t *host, clap_log_severity severity, const char *msg);
-  //} clap_host_log_t;
+  static
+  void clap_host_log_log_callback(const clap_host_t *host, clap_log_severity severity, const char *msg) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->log_log(severity,msg);
+  }
+
+protected:
+
+  clap_host_log_t MLogExt = {
+    .log  = clap_host_log_log_callback
+  };
 
 //------------------------------
 private: // midi mappings
 //------------------------------
 
-  //typedef struct clap_host_midi_mappings {
-  //   void(CLAP_ABI *changed)(const clap_host_t *host);
-  //} clap_host_midi_mappings_t;
+  static
+  void clap_host_midi_mappings_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->midi_mappings_changed();
+  }
 
+protected:
+
+  clap_host_midi_mappings_t MMidiMappingsExt = {
+    .changed  = clap_host_midi_mappings_changed_callback
+  };
 
 //------------------------------
 private: // note name
 //------------------------------
 
+  static
+  void clap_host_note_name_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->note_name_changed();
+  }
 
-  //typedef struct clap_host_note_name {
-  //   void (*changed)(const clap_host_t *host);
-  //} clap_host_note_name_t;
+protected:
 
+  clap_host_note_name_t MNoteNameExt = {
+    .changed  = clap_host_note_name_changed_callback
+  };
 
 //------------------------------
 private: // note ports
 //------------------------------
 
+  static
+  uint32_t clap_host_note_ports_supported_dialects_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->note_ports_supported_dialects();
+  }
 
-  //typedef struct clap_host_note_ports {
-  //   uint32_t (*supported_dialects)(const clap_host_t *host);
-  //   void (*rescan)(const clap_host_t *host, uint32_t flags);
-  //} clap_host_note_ports_t;
+  static
+  void clap_host_note_ports_rescan_callback(const clap_host_t *host, uint32_t flags) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->note_ports_rescan(flags);
+  }
+
+protected:
+
+  clap_host_note_ports_t MNotePortsExt = {
+    .supported_dialects  = clap_host_note_ports_supported_dialects_callback,
+    .rescan              = clap_host_note_ports_rescan_callback
+  };
 
 
 //------------------------------
 private: // params
 //------------------------------
 
+  static
+  void clap_host_params_rescan_callback(const clap_host_t *host, clap_param_rescan_flags flags) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->params_rescan(flags);
+  }
 
-  //typedef struct clap_host_params {
-  //   void (*rescan)(const clap_host_t *host, clap_param_rescan_flags flags);
-  //   void (*clear)(const clap_host_t *host, clap_id param_id, clap_param_clear_flags flags);
-  //   void (*request_flush)(const clap_host_t *host);
-  //} clap_host_params_t;
+  static
+  void clap_host_params_clear_callback(const clap_host_t *host, clap_id param_id, clap_param_clear_flags flags) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->params_clear(param_id,flags);
+  }
 
+  static
+  void clap_host_params_request_flush_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->params_request_flush();
+  }
+
+protected:
+
+  clap_host_params_t MParamsExt = {
+    .rescan         = clap_host_params_rescan_callback,
+    .clear          = clap_host_params_clear_callback,
+    .request_flush  = clap_host_params_request_flush_callback
+  };
 
 //------------------------------
 private: // posix fd support
 //------------------------------
 
+  static
+  bool clap_host_posix_fd_support_register_fd_callback(const clap_host_t *host, int fd, clap_posix_fd_flags_t flags) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->posix_fd_support_register_fd(fd,flags);
+  }
 
-  //typedef struct clap_host_posix_fd_support {
-  //   bool (*register_fd)(const clap_host_t *host, int fd, clap_posix_fd_flags_t flags);
-  //   bool (*modify_fd)(const clap_host_t *host, int fd, clap_posix_fd_flags_t flags);
-  //   bool (*unregister_fd)(const clap_host_t *host, int fd);
-  //} clap_host_posix_fd_support_t;
+  static
+  bool clap_host_posix_fd_support_modify_fd_callback(const clap_host_t *host, int fd, clap_posix_fd_flags_t flags) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->posix_fd_support_modify_fd(fd,flags);
+  }
 
+  static
+  bool clap_host_posix_fd_support_unregister_fd_callback(const clap_host_t *host, int fd) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->posix_fd_support_unregister_fd(fd);
+  }
+
+protected:
+
+  clap_host_posix_fd_support_t MPosixFdSupportExt = {
+    .register_fd    = clap_host_posix_fd_support_register_fd_callback,
+    .modify_fd      = clap_host_posix_fd_support_modify_fd_callback,
+    .unregister_fd  = clap_host_posix_fd_support_unregister_fd_callback
+  };
 
 //------------------------------
 private: // preset load
 //------------------------------
 
+  static
+  void clap_host_preset_load_on_error_callback(const clap_host_t *host, const char *uri, int32_t os_error, const char *msg) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->preset_load_on_error(uri,os_error,msg);
+  }
 
-  //typedef struct clap_host_preset_load {
-  //  void(CLAP_ABI *on_error)(const clap_host_t *host, const char *uri, int32_t os_error, const char *msg);
-  //  void(CLAP_ABI *loaded)(const clap_host_t *host, const char *uri, const char *load_key);
-  //} clap_host_preset_load_t;
+  static
+  void clap_host_preset_load_loaded_callback(const clap_host_t *host, const char *uri, const char *load_key) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->preset_load_loaded(uri,load_key);
+  }
 
+protected:
+
+  clap_host_preset_load_t MPresetLoadExt = {
+    .on_error = clap_host_preset_load_on_error_callback,
+    .loaded   = clap_host_preset_load_loaded_callback
+  };
 
 //------------------------------
 private: // remote controls
 //------------------------------
 
-  //typedef struct clap_host_remote_controls {
-  //   void(CLAP_ABI *changed)(const clap_host_t *host);
-  //   void(CLAP_ABI *suggest_page)(const clap_host_t *host, clap_id page_id);
-  //} clap_host_remote_controls_t;
+  static
+  void clap_host_remote_controls_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->remote_controls_changed();
+  }
 
+  static
+  void clap_host_remote_controls_suggest_page_callback(const clap_host_t *host, clap_id page_id) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->remote_controls_suggest_page(page_id);
+  }
+
+protected:
+
+  clap_host_remote_controls_t MRemoteControlsExt = {
+    .changed      = clap_host_remote_controls_changed_callback,
+    .suggest_page = clap_host_remote_controls_suggest_page_callback
+  };
 
 //------------------------------
 private: // resource directory
 //------------------------------
 
+  static
+  bool clap_host_resource_directory_request_directory_callback(const clap_host_t *host, bool is_shared) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->resource_directory_request_directory(is_shared);
+  }
 
-  //typedef struct clap_host_resource_directory {
-  //   bool(CLAP_ABI *request_directory)(const clap_host_t *host, bool is_shared);
-  //   void(CLAP_ABI *release_directory)(const clap_host_t *host, bool is_shared);
-  //} clap_host_resource_directory_t;
+  static
+  void clap_host_resource_directory_release_directory_callback(const clap_host_t *host, bool is_shared) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->resource_directory_release_directory(is_shared);
+  }
+
+protected:
+
+  clap_host_resource_directory_t MResourceDirectoryExt = {
+    .request_directory  = clap_host_resource_directory_request_directory_callback,
+    .release_directory  = clap_host_resource_directory_release_directory_callback
+  };
 
 //------------------------------
 private: // state
 //------------------------------
 
-  //typedef struct clap_host_state {
-  //   void (*mark_dirty)(const clap_host_t *host);
-  //} clap_host_state_t;
+  static
+  void clap_host_state_mark_dirty_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->state_mark_dirty();
+  }
+
+protected:
+
+  clap_host_state_t MStateExt = {
+    .mark_dirty  = clap_host_state_mark_dirty_callback
+  };
 
 //------------------------------
 private: // surround
 //------------------------------
 
-  //typedef struct clap_host_surround {
-  //   void(CLAP_ABI *changed)(const clap_host_t *host);
-  //   void(CLAP_ABI *get_preferred_channel_map)(const clap_host_t *host, uint8_t *channel_map, uint32_t channel_map_capacity, uint32_t *channel_count);
-  //} clap_host_surround_t;
+  static
+  void clap_host_surround_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->surround_changed();
+  }
+
+  static
+  void clap_host_surround_get_preferred_channel_map_callback(const clap_host_t *host, uint8_t *channel_map, uint32_t channel_map_capacity, uint32_t *channel_count) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->surround_get_preferred_channel_map(channel_map,channel_map_capacity,channel_count);
+  }
+
+protected:
+
+  clap_host_surround_t MSurroundExt = {
+    .changed                    = clap_host_surround_changed_callback,
+    .get_preferred_channel_map  = clap_host_surround_get_preferred_channel_map_callback
+  };
 
 //------------------------------
 private: // tail
 //------------------------------
 
-  //typedef struct clap_host_tail {
-  //   void (*changed)(const clap_host_t *host);
-  //} clap_host_tail_t;
+  static
+  void clap_host_tail_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->tail_changed();
+  }
+
+protected:
+
+  clap_host_tail_t MTailExt = {
+    .changed  = clap_host_tail_changed_callback
+  };
 
 //------------------------------
 private: // thread check
 //------------------------------
 
-  //typedef struct clap_host_thread_check {
-  //   bool (*is_main_thread)(const clap_host_t *host);
-  //   bool (*is_audio_thread)(const clap_host_t *host);
-  //} clap_host_thread_check_t;
+  static
+  bool clap_host_thread_check_is_main_thread_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->thread_check_is_main_thread();
+  }
+
+  static
+  bool clap_host_thread_check_is_audio_thread_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->thread_check_is_audio_thread();
+  }
+
+protected:
+
+  clap_host_thread_check_t MThreadCheckExt = {
+    .is_main_thread   = clap_host_thread_check_is_main_thread_callback,
+    .is_audio_thread  = clap_host_thread_check_is_audio_thread_callback
+  };
 
 //------------------------------
 private: //thread pool
 //------------------------------
 
-  //typedef struct clap_host_thread_pool {
-  //   bool (*request_exec)(const clap_host_t *host, uint32_t num_tasks);
-  //} clap_host_thread_pool_t;
+  static
+  bool clap_host_thread_pool_request_exec_callback(const clap_host_t *host, uint32_t num_tasks) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->thread_pool_request_exec(num_tasks);
+  }
+
+protected:
+
+  clap_host_thread_pool_t MThreadPoolExt = {
+    .request_exec  = clap_host_thread_pool_request_exec_callback
+  };
 
 //------------------------------
 private: // timer support
 //------------------------------
 
-  //typedef struct clap_host_timer_support {
-  //   bool (*register_timer)(const clap_host_t *host, uint32_t period_ms, clap_id *timer_id);
-  //   bool (*unregister_timer)(const clap_host_t *host, clap_id timer_id);
-  //} clap_host_timer_support_t;
+  static
+  bool clap_host_timer_support_register_timer_callback(const clap_host_t *host, uint32_t period_ms, clap_id *timer_id) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->timer_support_register_timer(period_ms,timer_id);
+  }
+
+  static
+  bool clap_host_timer_support_unregister_timer_callback(const clap_host_t *host, clap_id timer_id) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->timer_support_unregister_timer(timer_id);
+  }
+
+protected:
+
+  clap_host_timer_support_t MTimerSupportExt = {
+    .register_timer   = clap_host_timer_support_register_timer_callback,
+    .unregister_timer = clap_host_timer_support_unregister_timer_callback
+  };
 
 //------------------------------
 private: // track info
 //------------------------------
 
-  //typedef struct clap_host_track_info {
-  //   bool(CLAP_ABI *get)(const clap_host_t *host, clap_track_info_t *info);
-  //} clap_host_track_info_t;
+  static
+  bool clap_host_track_info_get_callback(const clap_host_t *host, clap_track_info_t *info) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->track_info_get(info);
+  }
+
+protected:
+
+  clap_host_track_info_t MTrackInfoExt = {
+    .get  = clap_host_track_info_get_callback
+  };
 
 //------------------------------
 private: // transport controls
 //------------------------------
 
-  //typedef struct clap_host_transport_control {
-  //   void(CLAP_ABI *request_start)(const clap_host_t *host);
-  //   void(CLAP_ABI *request_stop)(const clap_host_t *host);
-  //   void(CLAP_ABI *request_continue)(const clap_host_t *host);
-  //   void(CLAP_ABI *request_pause)(const clap_host_t *host);
-  //   void(CLAP_ABI *request_toggle_play)(const clap_host_t *host);
-  //   void(CLAP_ABI *request_jump)(const clap_host_t *host, clap_beattime position);
-  //   void(CLAP_ABI *request_loop_region)(const clap_host_t *host, clap_beattime start, clap_beattime duration);
-  //   void(CLAP_ABI *request_toggle_loop)(const clap_host_t *host);
-  //   void(CLAP_ABI *request_enable_loop)(const clap_host_t *host, bool is_enabled);
-  //   void(CLAP_ABI *request_record)(const clap_host_t *host, bool is_recording);
-  //   void(CLAP_ABI *request_toggle_record)(const clap_host_t *host);
-  //} clap_host_transport_control_t;
+  static
+  void clap_host_transport_control_request_start_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_start();
+  }
+
+  static
+  void clap_host_transport_control_request_stop_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_stop();
+  }
+
+  static
+  void clap_host_transport_control_request_continue_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_continue();
+  }
+
+  static
+  void clap_host_transport_control_request_pause_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_pause();
+  }
+
+  static
+  void clap_host_transport_control_request_toggle_play_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_toggle_play();
+  }
+
+  static
+  void clap_host_transport_control_request_jump_callback(const clap_host_t *host, clap_beattime position) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_jump(position);
+  }
+
+  static
+  void clap_host_transport_control_request_loop_region_callback(const clap_host_t *host, clap_beattime start, clap_beattime duration) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_loop_region(start,duration);
+  }
+
+  static
+  void clap_host_transport_control_request_toggle_loop_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_toggle_loop();
+  }
+
+  static
+  void clap_host_transport_control_request_enable_loop_callback(const clap_host_t *host, bool is_enabled) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_enable_loop(is_enabled);
+  }
+
+  static
+  void clap_host_transport_control_request_record_callback(const clap_host_t *host, bool is_recording) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_record(is_recording);
+  }
+
+  static
+  void clap_host_transport_control_request_toggle_record_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->transport_control_request_toggle_record();
+  }
+
+protected:
+
+  clap_host_transport_control_t MTransportControlExt = {
+    .request_start          = clap_host_transport_control_request_start_callback,
+    .request_stop           = clap_host_transport_control_request_stop_callback,
+    .request_continue       = clap_host_transport_control_request_continue_callback,
+    .request_pause          = clap_host_transport_control_request_pause_callback,
+    .request_toggle_play    = clap_host_transport_control_request_toggle_play_callback,
+    .request_jump           = clap_host_transport_control_request_jump_callback,
+    .request_loop_region    = clap_host_transport_control_request_loop_region_callback,
+    .request_toggle_loop    = clap_host_transport_control_request_toggle_loop_callback,
+    .request_enable_loop    = clap_host_transport_control_request_enable_loop_callback,
+    .request_record         = clap_host_transport_control_request_record_callback,
+    .request_toggle_record  = clap_host_transport_control_request_toggle_record_callback
+  };
 
 //------------------------------
 private: // triggers
 //------------------------------
 
-  //typedef struct clap_host_triggers {
-  //   void(CLAP_ABI *rescan)(const clap_host_t *host, clap_trigger_rescan_flags flags);
-  //   void(CLAP_ABI *clear)(const clap_host_t *host, clap_id trigger_id, clap_trigger_clear_flags flags);
-  //} clap_host_triggers_t;
+  static
+  void clap_host_triggers_rescan_callback(const clap_host_t *host, clap_trigger_rescan_flags flags) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->triggers_rescan(flags);
+  }
+
+  static
+  void clap_host_triggers_clear_callback(const clap_host_t *host, clap_id trigger_id, clap_trigger_clear_flags flags) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->triggers_clear(trigger_id,flags);
+  }
+
+protected:
+
+  clap_host_triggers_t MTriggersExt = {
+    .rescan = clap_host_triggers_rescan_callback,
+    .clear  = clap_host_triggers_clear_callback
+  };
 
 //------------------------------
 private: // tuning
 //------------------------------
 
-  //typedef struct clap_host_tuning {
-  //   double(CLAP_ABI *get_relative)(const clap_host_t *host, clap_id tuning_id, int32_t channel, int32_t key, uint32_t sample_offset);
-  //   bool(CLAP_ABI *should_play)(const clap_host_t *host, clap_id tuning_id, int32_t channel, int32_t key);
-  //   uint32_t(CLAP_ABI *get_tuning_count)(const clap_host_t *host);
-  //   bool(CLAP_ABI *get_info)(const clap_host_t  *host, uint32_t tuning_index, clap_tuning_info_t *info);
-  //} clap_host_tuning_t;
+  static
+  double clap_host_tuning_get_relative_callback(const clap_host_t *host, clap_id tuning_id, int32_t channel, int32_t key, uint32_t sample_offset) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->tuning_get_relative(tuning_id,channel,key,sample_offset);
+  }
+
+  static
+  bool clap_host_tuning_should_play_callback(const clap_host_t *host, clap_id tuning_id, int32_t channel, int32_t key) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->tuning_should_play(tuning_id,channel,key);
+  }
+
+  static
+  uint32_t clap_host_tuning_get_tuning_count_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->tuning_get_tuning_count();
+  }
+
+  static
+  bool clap_host_tuning_get_info_callback(const clap_host_t *host, uint32_t tuning_index, clap_tuning_info_t *info) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->tuning_get_info(tuning_index,info);
+  }
+
+protected:
+
+  clap_host_tuning_t MTuningExt = {
+    .get_relative     = clap_host_tuning_get_relative_callback,
+    .should_play      = clap_host_tuning_should_play_callback,
+    .get_tuning_count = clap_host_tuning_get_tuning_count_callback,
+    .get_info         = clap_host_tuning_get_info_callback
+  };
 
 //------------------------------
 private: // voice info
 //------------------------------
 
-  //typedef struct clap_host_voice_info {
-  //   void (*changed)(const clap_host_t *host);
-  //} clap_host_voice_info_t;
+  static
+  void clap_host_voice_info_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->voice_info_changed();
+  }
+
+protected:
+
+  clap_host_voice_info_t MVoiceInfoExt = {
+    .changed  = clap_host_voice_info_changed_callback
+  };
 
 };
 
