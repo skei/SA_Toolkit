@@ -13,6 +13,7 @@
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_process_context.h"
 #include "plugin/clap/sat_clap_plugin.h"
+#include "plugin/clap/sat_clap_utils.h"
 
 //----------------------------------------------------------------------
 //
@@ -31,7 +32,6 @@ private:
   bool                        MIsInitialized            = false;
   bool                        MIsActivated              = false;
   bool                        MIsProcessing             = false;
-//bool                        MIsEditorOpen             = false;
   clap_id                     MSelectedAudioPortsConfig = 0;
   clap_plugin_render_mode     MRenderMode               = CLAP_RENDER_REALTIME;
   SAT_Editor*                 MEditor                   = nullptr;
@@ -57,7 +57,7 @@ public:
     SAT_Log("  host version %s\n",MHost->getVersion());
     SAT_Log("  host url %s\n",MHost->getUrl());
 
-    MHost->logHostExtensions();
+    SAT_LogClapHostExtensions(MHost);
 
     //registerAllExtensions();
     //ext.addItem( CLAP_EXT_AMBISONIC, &MAmbisonicExt );
@@ -167,6 +167,7 @@ public: // plugin
 
   void reset() override {
     SAT_Log("SAT_Plugin.reset\n");
+    MProcessContext.counter = 0;
   }
 
   //----------
@@ -178,11 +179,12 @@ public: // plugin
 
   clap_process_status process(const clap_process_t* process) override {
     MProcessContext.process = process;
-    // processTransport
-    // processEvents
-    // processAudio
-    // postProcess
+    if (process->transport) handleTransport(process->transport);
+    handleEvents(process->in_events,process->out_events);
+    processAudio(process);
+    MProcessContext.counter += 1;
     return CLAP_PROCESS_CONTINUE;
+
   }
 
   //----------
@@ -210,7 +212,7 @@ public: // plugin
   }
 
 //------------------------------
-public: // ambisonic
+public: // ambisonic (draft)
 //------------------------------
 
   // Returns true on success
@@ -224,7 +226,39 @@ public: // ambisonic
   }
 
 //------------------------------
-public: // audio ports activation
+public: // audio ports
+//------------------------------
+
+  // number of ports, for either input or output
+  // [main-thread]
+
+  uint32_t audio_ports_count(bool is_input) override {
+    SAT_Print("is_input %i\n",is_input);
+    if (is_input) return MAudioInputPorts.size();
+    else return MAudioOutputPorts.size();
+  }
+
+  //----------
+
+  // get info about about an audio port.
+  // [main-thread]
+
+  bool audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) override {
+    SAT_Print("index %i is_input %i\n",index,is_input);
+    if (is_input) {
+      clap_audio_port_info_t* pinfo = MAudioInputPorts[index]->getInfo();
+      memcpy(info,pinfo,sizeof(clap_audio_port_info_t));
+      return true;
+    }
+    else {
+      clap_audio_port_info_t* pinfo = MAudioOutputPorts[index]->getInfo();
+      memcpy(info,pinfo,sizeof(clap_audio_port_info_t));
+      return true;
+    }
+  }
+
+//------------------------------
+public: // audio ports activation (draft)
 //------------------------------
 
   // Returns true if the plugin supports activation/deactivation while processing.
@@ -293,38 +327,6 @@ public: // audio ports config
     SAT_Print("config_id %i\n",config_id);
     MSelectedAudioPortsConfig = config_id;
     return false;
-  }
-
-//------------------------------
-public: // audio ports
-//------------------------------
-
-  // number of ports, for either input or output
-  // [main-thread]
-
-  uint32_t audio_ports_count(bool is_input) override {
-    SAT_Print("is_input %i\n",is_input);
-    if (is_input) return MAudioInputPorts.size();
-    else return MAudioOutputPorts.size();
-  }
-
-  //----------
-
-  // get info about about an audio port.
-  // [main-thread]
-
-  bool audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) override {
-    SAT_Print("index %i is_input %i\n",index,is_input);
-    if (is_input) {
-      clap_audio_port_info_t* pinfo = MAudioInputPorts[index]->getInfo();
-      memcpy(info,pinfo,sizeof(clap_audio_port_info_t));
-      return true;
-    }
-    else {
-      clap_audio_port_info_t* pinfo = MAudioOutputPorts[index]->getInfo();
-      memcpy(info,pinfo,sizeof(clap_audio_port_info_t));
-      return true;
-    }
   }
 
 //------------------------------
@@ -1007,8 +1009,24 @@ public: // state
   }
 
 //------------------------------
-public: // state context
+public: // state context (draft)
 //------------------------------
+
+  /*
+    This extension lets the host save and load the plugin state with different semantics depending
+    on the context.
+    Briefly, when loading a preset or duplicating a device, the plugin may want to partially load
+    the state and initialize certain things differently.
+    Save and Load operations may have a different context.
+    All three operations should be equivalent:
+    1. clap_plugin_state_context.load(clap_plugin_state.save(), CLAP_STATE_CONTEXT_FOR_PRESET)
+    2. clap_plugin_state.load(clap_plugin_state_context.save(CLAP_STATE_CONTEXT_FOR_PRESET))
+    3. clap_plugin_state_context.load(clap_plugin_state_context.save(CLAP_STATE_CONTEXT_FOR_PRESET),CLAP_STATE_CONTEXT_FOR_PRESET)
+    If the plugin implements CLAP_EXT_STATE_CONTEXT then it is mandatory to also implement
+    CLAP_EXT_STATE.
+  */
+
+  //----------
 
   // Saves the plugin state into stream, according to context_type.
   // Returns true if the state was correctly saved.
@@ -1018,6 +1036,16 @@ public: // state context
 
   bool state_context_save(const clap_ostream_t *stream, uint32_t context_type) override {
     SAT_Print("\n");
+    switch (context_type) {
+      case CLAP_STATE_CONTEXT_FOR_DUPLICATE: {
+        // suitable for duplicating a plugin instance
+        return false;
+      }
+      case CLAP_STATE_CONTEXT_FOR_PRESET: {
+        // suitable for loading a state as a preset
+        return state_save(stream);
+      }
+    }
     return false;
   }
 
@@ -1031,6 +1059,16 @@ public: // state context
 
   bool state_context_load(const clap_istream_t *stream, uint32_t context_type) override {
     SAT_Print("\n");
+    switch (context_type) {
+      case CLAP_STATE_CONTEXT_FOR_DUPLICATE: {
+        // suitable for duplicating a plugin instance
+        return false;
+      }
+      case CLAP_STATE_CONTEXT_FOR_PRESET: {
+        // suitable for loading a state as a preset
+        return state_load(stream);
+      }
+    }
     return false;
   }
 
@@ -1102,7 +1140,7 @@ public: // track info
     SAT_Print("\n");
     clap_track_info_t info;
     if (MHost->ext.track_info) {
-      char flags_text[256] = {0};
+      //char flags_text[256] = {0};
       MHost->ext.track_info->get(MHost->getHost(),&info);
       SAT_Print("track_info:\n");
       SAT_Print("  name: %s color %.2f,.2f,.2f\n",info.name,info.color.red,info.color.green,info.color.blue);
@@ -1237,6 +1275,18 @@ public: // extensions
     registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
   }
 
+  //----------
+
+  void registerDefaultExtensions() {
+    registerExtension(CLAP_EXT_AUDIO_PORTS,           &MAudioPortsExt);
+    registerExtension(CLAP_EXT_GUI,                   &MGuiExt);
+    registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
+    registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
+    registerExtension(CLAP_EXT_STATE,                 &MStateExt);
+    //registerExtension(CLAP_EXT_THREAD_POOL,           &MThreadPoolExt);
+    //registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
+  }
+
 //------------------------------
 public: // parameters
 //------------------------------
@@ -1271,19 +1321,6 @@ public: // parameters
   }
 
   //----------
-
-  void setDefaultParameterValues() {
-  }
-
-  //----------
-
-  void updateProcessParameterValues() {
-  }
-
-  //----------
-
-  void updateEditorParameterValues() {
-  }
 
 //------------------------------
 public: // audio input ports
@@ -1377,7 +1414,7 @@ public: // note input ports
   //----------
 
   SAT_NotePort* appendClapNoteInputPort() {
-    SAT_NotePort* port = new SAT_NotePort( 0, (CLAP_NOTE_DIALECT_CLAP/* | CLAP_NOTE_DIALECT_MIDI | CLAP_NOTE_DIALECT_MIDI_MPE*/), CLAP_NOTE_DIALECT_CLAP, "Notes" );
+    SAT_NotePort* port = new SAT_NotePort( 0, CLAP_NOTE_DIALECT_CLAP, CLAP_NOTE_DIALECT_CLAP, "Notes" );
     MNoteInputPorts.append(port);
     return port;
   }
@@ -1417,7 +1454,7 @@ public: // note output ports
   //----------
 
   SAT_NotePort* appendClapNoteOutputPort() {
-    SAT_NotePort* port = new SAT_NotePort( 0, (CLAP_NOTE_DIALECT_CLAP/*| CLAP_NOTE_DIALECT_MIDI | CLAP_NOTE_DIALECT_MIDI_MPE*/), CLAP_NOTE_DIALECT_CLAP, "Notes" );
+    SAT_NotePort* port = new SAT_NotePort( 0, CLAP_NOTE_DIALECT_CLAP, CLAP_NOTE_DIALECT_CLAP, "Notes" );
     MNoteOutputPorts.append(port);
     return port;
   }
@@ -1443,6 +1480,77 @@ public: // note output ports
 
   SAT_NotePort* getNoteOutputPort(uint32_t AIndex) {
     return MNoteOutputPorts[AIndex];
+  }
+
+//------------------------------
+public: // events
+//------------------------------
+
+  virtual void on_note_on(const clap_event_note_t* event) {}
+  virtual void on_note_off(const clap_event_note_t* event) {}
+  virtual void on_note_choke(const clap_event_note_t* event) {}
+  virtual void on_note_edpression(const clap_event_note_expression_t* event) {}
+  virtual void on_param_value(const clap_event_param_value_t* event) {}
+  virtual void on_param_mod(const clap_event_param_mod_t* event) {}
+  virtual void on_transport(const clap_event_transport_t* event) {}
+  virtual void on_midi(const clap_event_midi_t* event) {}
+  virtual void on_midi_sysex(const clap_event_midi_sysex_t* event) {}
+  virtual void on_midi2(const clap_event_midi2_t* event) {}
+
+  //----------
+
+  virtual void handleEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+    uint32_t size = in_events->size(in_events);
+    for (uint32_t i=0; i<size; i++) {
+      const clap_event_header_t* header = in_events->get(in_events,i);
+      switch (header->type) {
+        case CLAP_EVENT_NOTE_ON:          handleNoteOn(         (clap_event_note_t*)header);            break;
+        case CLAP_EVENT_NOTE_OFF:         handleNoteOff(        (clap_event_note_t*)header);            break;
+        case CLAP_EVENT_NOTE_CHOKE:       handleNoteChoke(      (clap_event_note_t*)header);            break;
+        case CLAP_EVENT_NOTE_EXPRESSION:  handleNoteExpression( (clap_event_note_expression_t*)header); break;
+        case CLAP_EVENT_PARAM_VALUE:      handleParamValue(     (clap_event_param_value_t*)header);     break;
+        case CLAP_EVENT_PARAM_MOD:        handleParamMod(       (clap_event_param_mod_t*)header);       break;
+        case CLAP_EVENT_TRANSPORT:        handleTransport(      (clap_event_transport_t*)header);       break;
+        case CLAP_EVENT_MIDI:             handleMidi(           (clap_event_midi_t*)header);            break;
+        case CLAP_EVENT_MIDI_SYSEX:       handleMidiSysex(      (clap_event_midi_sysex_t*)header);      break;
+        case CLAP_EVENT_MIDI2:            handleMidi2(          (clap_event_midi2_t*)header);           break;
+      }
+    }
+  }
+
+  void handleNoteOn(const clap_event_note_t* event) {
+  }
+
+  void handleNoteOff(const clap_event_note_t* event) {
+  }
+
+  void handleNoteChoke(const clap_event_note_t* event) {
+  }
+
+  void handleNoteExpression(const clap_event_note_expression_t* event) {
+  }
+
+  void handleParamValue(const clap_event_param_value_t* event) {
+    uint32_t  index   = event->param_id;
+    double    value   = event->value;
+    MParameters[index]->setValue(value);
+    //queueAudioParam(index,value);
+    //queueGuiParam(index,value);
+  }
+
+  void handleParamMod(const clap_event_param_mod_t* event) {
+  }
+
+  void handleTransport(const clap_event_transport_t* event) {}
+  void handleMidi(const clap_event_midi_t* event) {}
+  void handleMidiSysex(const clap_event_midi_sysex_t* event) {}
+  void handleMidi2(const clap_event_midi2_t* event) {}
+
+//------------------------------
+public: // audio
+//------------------------------
+
+  virtual void processAudio(const clap_process_t* process) {
   }
 
 };

@@ -377,6 +377,10 @@ public: // posix fd support
 
   // [main-thread]
 
+  // CLAP_POSIX_FD_READ
+  // CLAP_POSIX_FD_WRITE
+  // CLAP_POSIX_FD_ERROR
+
   bool posix_fd_support_register_fd(int fd, clap_posix_fd_flags_t flags) override {
     return false;
   }

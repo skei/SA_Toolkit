@@ -14,8 +14,8 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-fno-pie" />
-					<Add option="-DSAT_DEBUG" />
 					<Add option="-DSAT_EXE" />
+					<Add option="-DSAT_DEBUG" />
 				</Compiler>
 				<Linker>
 					<Add option="-fno-pie" />
@@ -48,8 +48,8 @@
 				<Compiler>
 					<Add option="-fPIC" />
 					<Add option="-g" />
-					<Add option="-DSAT_DEBUG" />
 					<Add option="-DSAT_PLUGIN" />
+					<Add option="-DSAT_DEBUG" />
 				</Compiler>
 				<Linker>
 					<Add option="-fPIE" />
@@ -90,15 +90,11 @@
 		<Unit filename="../src/audio/io/sat_io_jack.h" />
 		<Unit filename="../src/audio/sat_audio_dsp.h" />
 		<Unit filename="../src/audio/sat_audio_io.h" />
-		<Unit filename="../src/audio/sat_audio_processor.h" />
-		<Unit filename="../src/audio/sat_event_processor.h" />
-		<Unit filename="../src/audio/sat_voice_processor.h" />
 		<Unit filename="../src/base/sat.h" />
 		<Unit filename="../src/base/sat_attributes.h" />
 		<Unit filename="../src/base/sat_config.h" />
 		<Unit filename="../src/base/sat_const.h" />
 		<Unit filename="../src/base/sat_debug.h" />
-		<Unit filename="../src/base/sat_defines.h" />
 		<Unit filename="../src/base/sat_enums.h" />
 		<Unit filename="../src/base/sat_global.h" />
 		<Unit filename="../src/base/sat_linux.h" />
@@ -108,12 +104,13 @@
 		<Unit filename="../src/base/sat_win32.h" />
 		<Unit filename="../src/base/system/linux/sat_linux_paths.h" />
 		<Unit filename="../src/base/system/linux/sat_linux_time.h" />
+		<Unit filename="../src/base/system/linux/sat_linux_timer.h" />
 		<Unit filename="../src/base/system/sat_file.h" />
 		<Unit filename="../src/base/system/sat_paths.h" />
 		<Unit filename="../src/base/system/sat_thread.h" />
 		<Unit filename="../src/base/system/sat_time.h" />
+		<Unit filename="../src/base/system/sat_timer.h" />
 		<Unit filename="../src/base/types/sat_array.h" />
-		<Unit filename="../src/base/types/sat_bgra.h" />
 		<Unit filename="../src/base/types/sat_buffer.h" />
 		<Unit filename="../src/base/types/sat_color.h" />
 		<Unit filename="../src/base/types/sat_complex.h" />
@@ -124,6 +121,7 @@
 		<Unit filename="../src/base/types/sat_quaternion.h" />
 		<Unit filename="../src/base/types/sat_queue.h" />
 		<Unit filename="../src/base/types/sat_rect.h" />
+		<Unit filename="../src/base/types/sat_rgba.h" />
 		<Unit filename="../src/base/types/sat_stack.h" />
 		<Unit filename="../src/base/types/sat_string.h" />
 		<Unit filename="../src/base/types/sat_tree.h" />
@@ -134,6 +132,7 @@
 		<Unit filename="../src/base/utils/sat_integer_math.h" />
 		<Unit filename="../src/base/utils/sat_interpolation.h" />
 		<Unit filename="../src/base/utils/sat_log_file.h" />
+		<Unit filename="../src/base/utils/sat_math.h" />
 		<Unit filename="../src/base/utils/sat_windowing.h" />
 		<Unit filename="../src/extern/clap/audio-buffer.h" />
 		<Unit filename="../src/extern/clap/clap.h" />
@@ -188,27 +187,26 @@
 		<Unit filename="../src/extern/clap/string-sizes.h" />
 		<Unit filename="../src/extern/clap/version.h" />
 		<Unit filename="../src/gfx/sat_bitmap.h" />
-		<Unit filename="../src/gui/linux/sat_glx.h" />
-		<Unit filename="../src/gui/linux/sat_glx_painter.h" />
-		<Unit filename="../src/gui/linux/sat_xcb.h" />
-		<Unit filename="../src/gui/linux/sat_xcb_painter.h" />
-		<Unit filename="../src/gui/linux/sat_xcb_surface.h" />
-		<Unit filename="../src/gui/linux/sat_xcb_window.h" />
-		<Unit filename="../src/gui/linux/sat_xlib.h" />
+		<Unit filename="../src/gui/nanovg/sat_nanovg.h" />
+		<Unit filename="../src/gui/nanovg/sat_nanovg_surface.h" />
+		<Unit filename="../src/gui/nanovg/sat_nanovg_utils.h" />
+		<Unit filename="../src/gui/sat_opengl.h" />
 		<Unit filename="../src/gui/sat_paint_context.h" />
-		<Unit filename="../src/gui/sat_paint_source.h" />
-		<Unit filename="../src/gui/sat_paint_target.h" />
-		<Unit filename="../src/gui/sat_painter.h" />
 		<Unit filename="../src/gui/sat_surface.h" />
 		<Unit filename="../src/gui/sat_widget.h" />
+		<Unit filename="../src/gui/sat_widget_listener.h" />
 		<Unit filename="../src/gui/sat_window.h" />
-		<Unit filename="../src/gui/windows/sat_gdi.h" />
-		<Unit filename="../src/gui/windows/sat_gdi_painter.h" />
-		<Unit filename="../src/gui/windows/sat_gdi_surface.h" />
-		<Unit filename="../src/gui/windows/sat_wgl.h" />
-		<Unit filename="../src/gui/windows/sat_wgl_painter.h" />
-		<Unit filename="../src/gui/windows/sat_win32.h.h" />
-		<Unit filename="../src/gui/windows/sat_win32_window.h" />
+		<Unit filename="../src/gui/sat_window_listener.h" />
+		<Unit filename="../src/gui/win32/sat_win32.h" />
+		<Unit filename="../src/gui/win32/sat_win32_opengl.h" />
+		<Unit filename="../src/gui/win32/sat_win32_surface.h" />
+		<Unit filename="../src/gui/win32/sat_win32_utils.h" />
+		<Unit filename="../src/gui/win32/sat_win32_window.h" />
+		<Unit filename="../src/gui/x11/sat_x11.h" />
+		<Unit filename="../src/gui/x11/sat_x11_opengl.h" />
+		<Unit filename="../src/gui/x11/sat_x11_surface.h" />
+		<Unit filename="../src/gui/x11/sat_x11_utils.h" />
+		<Unit filename="../src/gui/x11/sat_x11_window.h" />
 		<Unit filename="../src/plugin/clap/factory/sat_clap_invalidation_factory.h" />
 		<Unit filename="../src/plugin/clap/factory/sat_clap_plugin_factory.h" />
 		<Unit filename="../src/plugin/clap/factory/sat_clap_preset_discovery_factory.h" />
@@ -229,11 +227,15 @@
 		<Unit filename="../src/plugin/sat_host_implementation.h" />
 		<Unit filename="../src/plugin/sat_hosted_plugin.h" />
 		<Unit filename="../src/plugin/sat_note.h" />
+		<Unit filename="../src/plugin/sat_note_manager.h" />
 		<Unit filename="../src/plugin/sat_note_port.h" />
 		<Unit filename="../src/plugin/sat_parameter.h" />
 		<Unit filename="../src/plugin/sat_plugin.h" />
 		<Unit filename="../src/plugin/sat_process_context.h" />
 		<Unit filename="../src/plugin/sat_registry.h" />
+		<Unit filename="../src/plugin/sat_voice.h" />
+		<Unit filename="../src/plugin/sat_voice_context.h" />
+		<Unit filename="../src/plugin/sat_voice_manager.h" />
 		<Unit filename="../src/plugin/vst2/sat_vst2_entry.h" />
 		<Unit filename="../src/plugin/vst3/sat_vst3_entry.h" />
 		<Unit filename="build.cpp" />

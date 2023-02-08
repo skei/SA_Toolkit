@@ -30,9 +30,14 @@ public:
 
   clap_param_info_t MParamInfo                      = {0};
   int32_t           MIndex                          = -1;
+
   sat_param_t       MValue                          = 0.0;
-  uint32_t          MNumDigits                      = 3;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
+  uint32_t          MNumDigits                      = 2;
+
+  sat_param_t       MModulation                     = 0.0;
+  bool              MIsModulated                    = false;
+  uint32_t          MLastModulated                  = 0;
 
 //------------------------------
 public:
@@ -40,13 +45,16 @@ public:
 
   SAT_Parameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0) {
     MParamInfo.id             = 0;
-    MParamInfo.flags          = CLAP_PARAM_IS_AUTOMATABLE;
+    MParamInfo.flags          = CLAP_PARAM_IS_AUTOMATABLE
+                              | CLAP_PARAM_IS_MODULATABLE
+                              | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;
     MParamInfo.cookie         = this;
     strcpy(MParamInfo.name,AName);
     //strcpy(MParamInfo.module,AModule);
     MParamInfo.default_value  = AValue;
     MParamInfo.min_value      = AMinValue;
     MParamInfo.max_value      = AMaxValue;
+    MValue                    = AValue;
   }
 
   //----------
@@ -58,33 +66,46 @@ public:
 public:
 //------------------------------
 
-  clap_id               getId()           { return MParamInfo.id; }
-  clap_param_info_flags getFlags()        { return MParamInfo.flags; }
-  void *                getCookie()       { return MParamInfo.cookie; }
-  char*                 getName()         { return MParamInfo.name; }
-  char*                 getModule()       { return MParamInfo.module; }
-  sat_param_t           getMinValue()     { return MParamInfo.min_value; }
-  sat_param_t           getMaxValue()     { return MParamInfo.max_value; }
-  sat_param_t           getDefaultValue() { return MParamInfo.default_value; }
-
-  int32_t               getIndex()        { return MIndex; }
-  clap_param_info_t*    getParamInfo()    { return &MParamInfo; }
-  sat_param_t           getValue()        { return MValue; }
+  clap_id               getId()               { return MParamInfo.id; }
+  clap_param_info_flags getFlags()            { return MParamInfo.flags; }
+  void *                getCookie()           { return MParamInfo.cookie; }
+  char*                 getName()             { return MParamInfo.name; }
+  char*                 getModule()           { return MParamInfo.module; }
+  sat_param_t           getMinValue()         { return MParamInfo.min_value; }
+  sat_param_t           getMaxValue()         { return MParamInfo.max_value; }
+  sat_param_t           getDefaultValue()     { return MParamInfo.default_value; }
 
   //----------
+
+  int32_t               getIndex()            { return MIndex; }
+  clap_param_info_t*    getParamInfo()        { return &MParamInfo; }
+  sat_param_t           getValue()            { return MValue; }
+  sat_param_t           getModulatione()      { return MModulation; }
+
+  bool                  getIsModulated()      { return MIsModulated; }
+  uint32_t              getLastModulated()    { return MLastModulated; }
+
+//------------------------------
+public:
+//------------------------------
 
   void setId(clap_id AId)                     { MParamInfo.id = AId; }
   void setFlags(clap_param_info_flags AFlags) { MParamInfo.flags = AFlags; }
   void setCookie(void* ACookie)               { MParamInfo.cookie = ACookie; }
   void setName(char* AName)                   { strcpy(MParamInfo.name,AName); }
   void setModule(char* AModule)               { strcpy(MParamInfo.module,AModule); }
-  void setMinValue(sat_param_t AValue)             { MParamInfo.min_value = AValue; }
-  void setMaxValue(sat_param_t AValue)             { MParamInfo.max_value = AValue; }
-  void setDefaultValue(sat_param_t AValue)         { MParamInfo.default_value = AValue; }
+  void setMinValue(sat_param_t AValue)        { MParamInfo.min_value = AValue; }
+  void setMaxValue(sat_param_t AValue)        { MParamInfo.max_value = AValue; }
+  void setDefaultValue(sat_param_t AValue)    { MParamInfo.default_value = AValue; }
+
+  //----------
 
   void setIndex(int32_t AIndex)               { MIndex = AIndex; }
-  void setNumDigits(uint32_t ANum)            { MNumDigits = ANum; }
-  void setValue(sat_param_t AValue)                { MValue = AValue; }
+  void setModulation(sat_param_t AValue)      { MModulation = AValue; }
+  void setValue(sat_param_t AValue)           { MValue = AValue; }
+
+  void setIsModulated(bool AState)            { MIsModulated = AState; }
+  void setLastModulated(uint32_t ALast)       { MLastModulated = ALast; }
 
 //------------------------------
 public:
