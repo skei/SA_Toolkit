@@ -13,6 +13,10 @@
 #include "gui/sat_widget_listener.h"
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 #ifdef SAT_LINUX
   #include "gui/x11/sat_x11_window.h"
@@ -38,25 +42,23 @@ class SAT_Window
 private:
 //------------------------------
 
-  SAT_Surface*        MBufferSurface  = nullptr;
-  SAT_Widget*         MRootWidget     = nullptr;
+  //SAT_Surface*        MBufferSurface  = nullptr;
+  //SAT_Widget*         MRootWidget     = nullptr;
 
-  uint32_t            MWindowWidth    = 0;
-  uint32_t            MWindowHeight   = 0;
-  const char*         MWindowTitle    = "SAT_Window";
-  intptr_t            MWindowParent   = 0;
+  //uint32_t            MWindowWidth    = 0;
+  //uint32_t            MWindowHeight   = 0;
+  //const char*         MWindowTitle    = "SAT_Window";
+  //intptr_t            MWindowParent   = 0;
 
-  uint32_t            MBufferWidth    = 0;
-  uint32_t            MBufferHeight   = 0;
+  //uint32_t            MBufferWidth    = 0;
+  //uint32_t            MBufferHeight   = 0;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
-    MWindowWidth  = AWidth;
-    MWindowHeight = AHeight;
-    MWindowParent = AParent;
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent)
+  : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
   }
 
   //----------
@@ -68,31 +70,30 @@ public:
 public:
 //------------------------------
 
-  virtual void setPos(uint32_t AXpos, uint32_t AYpos) {
+  void setPos(uint32_t AXpos, uint32_t AYpos) override {
+    SAT_ImplementedWindow::setPos(AXpos,AYpos);
   }
 
-  virtual void setSize(uint32_t AWidth, uint32_t AHeight) {
-    MWindowWidth  = AWidth;
-    MWindowHeight = AHeight;
+  void setSize(uint32_t AWidth, uint32_t AHeight) override {
+    SAT_ImplementedWindow::setSize(AWidth,AHeight);
   }
 
-  virtual void setTitle(const char* ATitle) {
-    MWindowTitle  = ATitle;
+  void setTitle(const char* ATitle) override {
+    SAT_ImplementedWindow::setTitle(ATitle);
   }
 
-  virtual void setParent(intptr_t AParent) {
-    MWindowParent = AParent;
+  void setParent(intptr_t AParent) override {
+    SAT_ImplementedWindow::setParent(AParent);
   }
 
-//----------
-
-  virtual void show() {
+  void show() override {
+    SAT_ImplementedWindow::show();
   }
 
-  //----------
-
-  virtual void hide() {
+  void hide() override {
+    SAT_ImplementedWindow::hide();
   }
+
 
 };
 

@@ -9,7 +9,9 @@ class SAT_Voice {
 private:
 //------------------------------
 
-  VOICE   MVoice = {};
+  VOICE     MVoice        = {};
+  uint32_t  MNoteOnTime   = 0;
+  uint32_t  MNoteOffTime  = 0;
 
 //------------------------------
 public

@@ -2,6 +2,11 @@
 #define sat_editor_included
 //----------------------------------------------------------------------
 
+/*
+  * delay window creation until first show()
+  * delete window in destructor (if created)
+*/
+
 #include "plugin/sat_editor_listener.h"
 #include "gui/sat_window.h"
 #include "gui/sat_window_listener.h"
@@ -27,6 +32,11 @@ private:
   const char*           MTitle        = "";
   bool                  MIsOpen       = false;
   SAT_EditorListener*   MListener     = nullptr;
+  SAT_Window*           MWindow       = nullptr;
+
+  //uint32_t MPendingWidth
+  //uint32_t MPendingHeight
+  //uint32_t MPendingScale
 
 //------------------------------
 public:
@@ -38,20 +48,23 @@ public:
   //----------
 
   virtual ~SAT_Editor() {
+    if (MWindow) {
+      delete MWindow;
+    }
   }
 
 //------------------------------
 public: // clap
 //------------------------------
 
-  //bool create() {
-  //  return true;
-  //}
+  bool create() {
+    return true;
+  }
 
   //----------
 
-  //void destroy() {
-  //}
+  void destroy() {
+  }
 
   //----------
 
@@ -81,7 +94,7 @@ public: // clap
     hints->can_resize_vertically    = true;
     hints->preserve_aspect_ratio    = false;
     hints->aspect_ratio_width       = MWidth;
-    hints->aspect_ratio_height      = MWidth;
+    hints->aspect_ratio_height      = MHeight;
     return true;
   }
 
@@ -121,16 +134,36 @@ public: // clap
   //----------
 
   bool show() {
-    MIsOpen = true;
+    if (!MWindow) {
+      MWindow = new SAT_Window(MWidth,MHeight,MParent->x11);
+      MWindow->show();
+    }
+    if (!MIsOpen) {
+      MIsOpen = true;
+      //...
+    }
     return true;
   }
 
   //----------
 
   bool hide() {
-    MIsOpen = false;
+    if (MIsOpen) {
+      MWindow->hide();
+      MIsOpen = false;
+      //..
+    }
     return true;
   }
+
+//------------------------------
+private:
+//------------------------------
+
+  //void openWindow(); {}
+  //void closeWindow(); {}
+  //void startTimer() {}
+  //void stopTimer() {}
 
 };
 

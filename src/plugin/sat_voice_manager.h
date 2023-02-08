@@ -2,6 +2,15 @@
 #define sat_voice_manager_included
 //----------------------------------------------------------------------
 
+/*
+  keep track of 'age' of voices..
+  - number of process frames since note on
+  - count samples, or process blocks
+
+*/
+
+
+
 #include "plugin/sat_voice.h"
 
 //----------------------------------------------------------------------

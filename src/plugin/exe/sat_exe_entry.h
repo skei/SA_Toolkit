@@ -28,9 +28,19 @@ void handle_plugin(const clap_plugin_t* plugin) {
   plugin->init(plugin);
   plugin->activate(plugin,44100,128,128);
   plugin->start_processing(plugin);
-  clap_process_t process;
-  //process.
+
+  clap_process_t process = {0};
+    process.audio_inputs        = nullptr;
+    process.audio_inputs_count  = 0;
+    process.audio_outputs       = nullptr;
+    process.audio_outputs_count = 0;
+    process.frames_count        = 128;
+    process.in_events           = nullptr;
+    process.out_events          = nullptr;
+    process.steady_time         = 0;
+    process.transport           = nullptr;
   plugin->process(plugin,&process);
+
   open_editor(plugin);
   plugin->stop_processing(plugin);
   plugin->deactivate(plugin);
