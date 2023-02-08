@@ -128,8 +128,8 @@ public:
     format[0] = '%';
     format[1] = '.';
     format[2] = '0' + MNumDigits;
-    format[2] = 'f';
-    format[3] = 0;
+    format[3] = 'f';
+    format[4] = 0;
     sprintf(ABuffer,format,AValue);
     return true;;
   }
