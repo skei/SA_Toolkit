@@ -22,11 +22,6 @@
 
 //----------------------------------------------------------------------
 
-//#define SAT_RECT  SAT_DRect
-//#define SAT_POINT SAT_DPoint
-
-//----------------------------------------------------------------------
-
 #ifdef SAT_LINUX
   #include "base/sat_linux.h"
 #endif

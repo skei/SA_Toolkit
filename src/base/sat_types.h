@@ -2,8 +2,6 @@
 #define sat_types_included
 //----------------------------------------------------------------------
 
-typedef char    sat_char_t;
-typedef double  sat_coord_t;
 typedef double  sat_param_t;
 typedef float   sat_sample_t;
 
@@ -19,7 +17,7 @@ typedef float   sat_sample_t;
 #include "types/sat_point.h"
 #include "types/sat_quaternion.h"
 #include "types/sat_queue.h"
-#include "types/sat_bgra.h"
+#include "types/sat_rgba.h"
 #include "types/sat_rect.h"
 #include "types/sat_stack.h"
 #include "types/sat_string.h"

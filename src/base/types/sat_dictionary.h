@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 /*
-  based on:
+  initially based on:
     http://www.codeproject.com/Articles/149879/Associative-Array-in-C
     by Arnav Mukhopadhyay
 */
@@ -42,7 +42,7 @@ public:
 
   bool hasItem(const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (strcmp(name,MItems[i].name) == 0) return true; // strcmp
+      if (strcmp(name,MItems[i].name) == 0) return true;
     }
     return false;
   }
@@ -66,7 +66,7 @@ public:
 
   int32_t getItemIndex(const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (strcmp(name,MItems[i].name) == 0) return i; // strcmp
+      if (strcmp(name,MItems[i].name) == 0) return i;
     }
     return -1;
   }
@@ -87,7 +87,7 @@ public:
 
   T& operator [] (const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (strcmp(name,MItems[i].name) == 0) return MItems[i].value; // strcmp
+      if (strcmp(name,MItems[i].name) == 0) return MItems[i].value;
     }
     uint32_t idx = size();
     SAT_DictionaryItem d;
@@ -119,7 +119,7 @@ public:
 
   bool removeItem(const char* name) {
     for (uint32_t i=0; i<size(); i++) {
-      if (strcmp(name,MItems[i].name) == 0) { // strcmp
+      if (strcmp(name,MItems[i].name) == 0) {
         MItems.remove(i);
         return true;
       }

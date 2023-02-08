@@ -11,7 +11,6 @@
 //
 //----------------------------------------------------------------------
 
-template <typename T>
 class SAT_Rect {
 
 //------------------------------
@@ -19,8 +18,8 @@ public:
 //------------------------------
 
   union {
-    struct { T x,y,w,h; };
-    struct { T left,top,right,bottom; };
+    struct { double x,y,w,h; };
+    struct { double left,top,right,bottom; };
   };
 
 //------------------------------
@@ -34,50 +33,50 @@ public:
     h = 0;
   }
 
-  SAT_Rect(T _v) {
+  SAT_Rect(double _v) {
     x = 0;
     y = 0;
     w = _v;
     h = _v;
   }
 
-  SAT_Rect(T _w, T _h) {
+  SAT_Rect(double _w, double _h) {
     x = 0;
     y = 0;
     w = _w;
     h = _h;
   }
 
-  SAT_Rect(T _x, T _y, T _w, T _h) {
+  SAT_Rect(double _x, double _y, double _w, double _h) {
     x = _x;
     y = _y;
     w = _w;
     h = _h;
   }
 
-  SAT_Rect(SAT_Point<T> APos) {}
-  SAT_Rect(SAT_Point<T> APos, SAT_Point<T> ASize) {}
+  SAT_Rect(SAT_Point APos) {}
+  SAT_Rect(SAT_Point APos, SAT_Point ASize) {}
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Rect<T>& operator += (SAT_Rect<T> R) {
+  SAT_Rect& operator += (SAT_Rect R) {
     add(R);
     return *this;
   }
 
-  SAT_Rect<T>& operator -= (SAT_Rect<T> R) {
+  SAT_Rect& operator -= (SAT_Rect R) {
     sub(R);
     return *this;
   }
 
-//  SAT_Rect<T>& operator += (SAT_Point<T> P) {
+//  SAT_Rect& operator += (SAT_Point> P) {
 //    add(P);
 //    return *this;
 //  }
 //
-//  SAT_Rect<T>& operator -= (SAT_Point<T> P) {
+//  SAT_Rect& operator -= (SAT_Point P) {
 //    sub(P);
 //    return *this;
 //  }
@@ -86,71 +85,71 @@ public:
 public:
 //------------------------------
 
-  void setX1(T _x1) { w -= (_x1 - x);   x = _x1; }
-  void setY1(T _y1) { h -= (_y1 - y);   y = _y1; }
-  void setX2(T _x2) { w += (_x2 - x - w); }
-  void setY2(T _y2) { h += (_y2 - y - h); }
+  void setX1(double _x1) { w -= (_x1 - x);   x = _x1; }
+  void setY1(double _y1) { h -= (_y1 - y);   y = _y1; }
+  void setX2(double _x2) { w += (_x2 - x - w); }
+  void setY2(double _y2) { h += (_y2 - y - h); }
 
-  T x1() { return x; }
-  T y1() { return y; }
-  T x2() { return x + w; }
-  T y2() { return y + h; }
+  double x1() { return x; }
+  double y1() { return y; }
+  double x2() { return x + w; }
+  double y2() { return y + h; }
 
-  SAT_Point<T> getPos()   { return SAT_Point<T>(x,y); }
-  SAT_Point<T> getSize()  { return SAT_Point<T>(w,h); }
+  SAT_Point getPos()   { return SAT_Point(x,y); }
+  SAT_Point getSize()  { return SAT_Point(w,h); }
 
   //----------
 
-  void setPos(SAT_Point<T> APos) {
+  void setPos(SAT_Point APos) {
     x = APos.x;
     y = APos.y;
   }
 
   //----------
 
-  void setPos(T AXpos, T AYpos) {
+  void setPos(double AXpos, double AYpos) {
     x = AXpos;
     y = AYpos;
   }
 
   //----------
 
-  void setSize(SAT_Point<T> ASize) {
+  void setSize(SAT_Point ASize) {
     w = ASize.w;
     h = ASize.h;
   }
 
   //----------
 
-  void setSize(T AWidth, T AHeight) {
+  void setSize(double AWidth, double AHeight) {
     w = AWidth;
     h = AHeight;
   }
 
   //----------
 
-  void scale(T AScale) {
+  void scale(double AScale) {
     x *= AScale;
     y *= AScale;
     w *= AScale;
     h *= AScale;
   }
 
-  void scale(T sx, T sy) {
+  void scale(double sx, double sy) {
     x *= sx;
     y *= sy;
     w *= sx;
     h *= sy;
   }
 
-  void scale(SAT_Point<T> s) {
+  void scale(SAT_Point s) {
     x *= s.x;
     y *= s.y;
     w *= s.x;
     h *= s.y;
   }
 
-  void scale(T sx, T sy, T sw, T sh) {
+  void scale(double sx, double sy, double sw, double sh) {
     x *= sx;
     y *= sy;
     w *= sw;
@@ -160,123 +159,123 @@ public:
 
   //----------
 
-  void add(T AValue) {
+  void add(double AValue) {
     x += AValue;
     y += AValue;
     w += AValue;
     h += AValue;
   }
 
-  void add(T ax, T ay, T aw, T ah) {
+  void add(double ax, double ay, double aw, double ah) {
     x += ax;
     y += ay;
     w += aw;
     h += ah;
   }
 
-  void add(SAT_Rect<T> R) {
+  void add(SAT_Rect R) {
     x += R.x;
     y += R.y;
     w += R.w;
     h += R.h;
   }
 
-  void addPos(SAT_Point<T> P) {
+  void addPos(SAT_Point P) {
     x += P.x;
     y += P.y;
   }
 
-  void sub(T AValue) {
+  void sub(double AValue) {
     x -= AValue;
     y -= AValue;
     w -= AValue;
     h -= AValue;
   }
 
-  void sub(T ax, T ay, T aw, T ah) {
+  void sub(double ax, double ay, double aw, double ah) {
     x -= ax;
     y -= ay;
     w -= aw;
     h -= ah;
   }
 
-  void sub(SAT_Rect<T> R) {
+  void sub(SAT_Rect R) {
     x -= R.x;
     y -= R.y;
     w -= R.w;
     h -= R.h;
   }
 
-  void subPos(SAT_Point<T> P) {
+  void subPos(SAT_Point P) {
     x += P.x;
     y += P.y;
   }
 
-  void grow(T AValue) {
+  void grow(double AValue) {
     x -= AValue;
     y -= AValue;
     w += (AValue + AValue);
     h += (AValue + AValue);
   }
 
-  void grow(T ax, T ay, T aw, T ah) {
+  void grow(double ax, double ay, double aw, double ah) {
     x -= ax;
     y -= ay;
     w += (ax + aw);
     h += (ay + ah);
   }
 
-  void grow(SAT_Rect<T> R) {
+  void grow(SAT_Rect R) {
     x -= R.x;
     y -= R.y;
     w += (R.x + R.w);
     h += (R.y + R.h);
   }
 
-  void grow(SAT_Point<T> P) {
+  void grow(SAT_Point P) {
     x -= P.x;
     y -= P.y;
     w += (P.x * 2.0);
     h += (P.y * 2.0);
   }
 
-  void shrink(T AValue) {
+  void shrink(double AValue) {
     x += AValue;
     y += AValue;
     w -= (AValue + AValue);
     h -= (AValue + AValue);
   }
 
-  void shrink(T ax, T ay, T aw, T ah) {
+  void shrink(double ax, double ay, double aw, double ah) {
     x += ax;
     y += ay;
     w -= (ax + aw);
     h -= (ay + ah);
   }
 
-  void shrink(SAT_Rect<T> R) {
+  void shrink(SAT_Rect R) {
     x += R.x;
     y += R.y;
     w -= (R.x + R.w);
     h -= (R.y + R.h);
   }
 
-  void shrink(SAT_Point<T> P) {
+  void shrink(SAT_Point P) {
     x += P.x;
     y += P.y;
     w -= (P.x * 2.0);
     h -= (P.y * 2.0);
   }
 
-  void addLeft(T ASize)    { x -= ASize; w += ASize; }
-  void addRight(T ASize)   { w += ASize; }
-  void addTop(T ASize)     { y -= ASize; h += ASize; }
-  void addBottom(T ASize)  { h += ASize; }
+  void addLeft(double ASize)    { x -= ASize; w += ASize; }
+  void addRight(double ASize)   { w += ASize; }
+  void addTop(double ASize)     { y -= ASize; h += ASize; }
+  void addBottom(double ASize)  { h += ASize; }
 
-  void removeLeft(T ASize)    { x += ASize; w -= ASize; }
-  void removeRight(T ASize)   { w -= ASize; }
-  void removeTop(T ASize)     { y += ASize; h -= ASize; }
-  void removeBottom(T ASize)  { h -= ASize; }
+  void removeLeft(double ASize)    { x += ASize; w -= ASize; }
+  void removeRight(double ASize)   { w -= ASize; }
+  void removeTop(double ASize)     { y += ASize; h -= ASize; }
+  void removeBottom(double ASize)  { h -= ASize; }
 
 //------------------------------
 public: // tests
@@ -302,7 +301,7 @@ public: // tests
   // if widget.inside(cliprect)
 
   /*
-  bool inside(SAT_Rect<T> ARect) {
+  bool inside(SAT_Rect ARect) {
     if (ARect.x     < x   ) return false;
     if (ARect.x2()  > x2()) return false;
     if (ARect.y     < y   ) return false;
@@ -322,7 +321,7 @@ public: // tests
   // ax2 < x
   // ax > x2
 
-  //bool touches(SAT_Rect<T> ARect) {
+  //bool touches(SAT_Rect ARect) {
   //  if (ARect.x     > x2()) return false;
   //  if (ARect.x2()  < x   ) return false;
   //  if (ARect.y     > y2()) return false;
@@ -335,7 +334,7 @@ public: // tests
 
   // returns true if any of the edges intersects
 
-  bool intersects(SAT_Rect<T> R) {
+  bool intersects(SAT_Rect R) {
     if (R.x1() > x2() ) return false; // too far right
     if (R.y1() > y2() ) return false; // too far down
     if (R.x2() < x1() ) return false; // too far left
@@ -362,7 +361,7 @@ public: // tests
   // returns true if APoint is inside
   // if widget.contains(mousex,mousey)
 
-  bool contains(T xpos, T ypos) {
+  bool contains(double xpos, double ypos) {
     if (xpos < x   ) return false;
     if (xpos > x2()) return false;
     if (ypos < y   ) return false;
@@ -397,7 +396,7 @@ public: // change
   // largest x
   // smallest x2
 
-  void overlap(SAT_Rect<T> R) {
+  void overlap(SAT_Rect R) {
 
     //if (intersects(R)) {
       if ( R.x1() > x1() ) setX1( R.x1() );
@@ -412,7 +411,7 @@ public: // change
     //}
   }
 
-//  void overlap(SAT_Rect<T> R) {
+//  void overlap(SAT_Rect R) {
 //    if ( R.x1() > x1() ) setX1( R.x1() );
 //    if ( R.y1() > y1() ) setY1( R.y1() );
 //    if ( R.x2() < x2() ) setX2( R.x2() );
@@ -433,7 +432,7 @@ public: // change
   // (so that both of them fits inside)
   // parent.combine(child)
 
-  void combine(SAT_Rect<T> R) {
+  void combine(SAT_Rect R) {
     //printf("combine %.0f,%.0f,%.0f,%.0f R %.0f,%.0f,%.0f,%.0f -> ",x,y,w,h,R.x,R.y,R.w,R.h);
     if ( R.x1() < x1() ) setX1( R.x1() );
     if ( R.x2() > x2() ) setX2( R.x2() );
@@ -446,24 +445,24 @@ public: // change
 
   // remove ARect (so that it lies outside)
 
-  void remove(SAT_Rect<T> ARect)   {
+  void remove(SAT_Rect ARect)   {
   }
 
 
 //  // largest x
 //  // smallest x2
 //
-//  void intersection(SAT_Rect<T> ARect) {
+//  void intersection(SAT_Rect ARect) {
 //    if (ARect.x2()  > x2()) x2(ARect.x2());
 //  }
 
 
   //----------
 
-//  void shrink(SAT_Rect<T> ARect) {
+//  void shrink(SAT_Rect ARect) {
 //  }
 
-//  void grow(SAT_Rect<T> ARect) {
+//  void grow(SAT_Rect ARect) {
 //  }
 
   //----------
@@ -479,9 +478,6 @@ public: // change
 //
 //----------------------------------------------------------------------
 
-typedef SAT_Rect<float>    SAT_FRect;
-typedef SAT_Rect<int32_t>  SAT_IRect;
-typedef SAT_Rect<double>   SAT_DRect;
 
 //----------------------------------------------------------------------
 #endif

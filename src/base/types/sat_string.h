@@ -16,7 +16,7 @@
 
 template <int SIZE>
 class SAT_StaticString
-: public SAT_StaticBuffer<sat_char_t,SIZE> {
+: public SAT_StaticBuffer<char,SIZE> {
 };
 
 //----------------------------------------------------------------------
@@ -29,7 +29,7 @@ class SAT_StaticString
 
 template <int SIZE>
 class SAT_DynamicString
-: public SAT_DynamicBuffer<sat_char_t,SIZE> {
+: public SAT_DynamicBuffer<char,SIZE> {
 };
 
 //----------------------------------------------------------------------

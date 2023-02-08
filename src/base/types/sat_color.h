@@ -4,30 +4,30 @@
 
 #include "base/sat.h"
 
-template <typename T>
 class SAT_Color {
 
 public:
 
-  //T r = 0.0f;
-  //T g = 0.0f;
-  //T b = 0.0f;
-  //T a = 1.0f;
-
   union {
-    T bgra[4];
-    struct { T r,g,b,a; };
+    struct {
+      double r = 0.0;
+      double g = 0.0;
+      double b = 0.0;
+      double a = 1.0;
+    };
+    double rgba[4];
   };
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Color() {}
+  SAT_Color() {
+  }
 
   //----------
 
-  SAT_Color(T v) {
+  SAT_Color(double v) {
     r = v;
     g = v;
     b = v;
@@ -36,7 +36,7 @@ public:
 
   //----------
 
-  SAT_Color(T ar, T ag, T ab, T aa=1.0f) {
+  SAT_Color(double ar, double ag, double ab, double aa=1.0f) {
     r = ar;
     g = ag;
     b = ab;
@@ -59,10 +59,10 @@ public:
   //----------
 
   SAT_Color& operator = (uint32_t color) {
-    T aa = (color & 0xff000000) >> 24;
-    T rr = (color & 0x00ff0000) >> 16;
-    T gg = (color & 0x0000ff00) >> 8;
-    T bb = (color & 0x000000ff);
+    double aa = (color & 0xff000000) >> 24;
+    double rr = (color & 0x00ff0000) >> 16;
+    double gg = (color & 0x0000ff00) >> 8;
+    double bb = (color & 0x000000ff);
     r = rr * SAT_INV255;
     g = gg * SAT_INV255;
     b = bb * SAT_INV255;
@@ -114,7 +114,7 @@ public:
 
   //----------
 
-  void blend(SAT_Color color, T alpha) {
+  void blend(SAT_Color color, double alpha) {
     r = (color.r * alpha) + (r * (1.0 - alpha));
     g = (color.g * alpha) + (g * (1.0 - alpha));
     b = (color.b * alpha) + (b * (1.0 - alpha));
@@ -135,89 +135,78 @@ public:
 //
 //----------------------------------------------------------------------
 
-typedef SAT_Color<float>    SAT_FColor;
-typedef SAT_Color<int32_t>  SAT_IColor;
-typedef SAT_Color<double>   SAT_DColor;
+#define SAT_DarkRed        SAT_Color( 0.25, 0.00, 0.00 )
+#define SAT_Red            SAT_Color( 0.50, 0.00, 0.00 )
+#define SAT_LightRed       SAT_Color( 0.75, 0.00, 0.00 )
+#define SAT_BrightRed      SAT_Color( 1.00, 0.00, 0.00 )
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
+#define SAT_DarkOrange     SAT_Color( 0.25, 0.12, 0.00 )
+#define SAT_Orange         SAT_Color( 0.50, 0.25, 0.00 )
+#define SAT_LightOrange    SAT_Color( 0.75, 0.37, 0.00 )
+#define SAT_Brightorange   SAT_Color( 1.00, 0.50, 0.00 )
 
-/*
-const SAT_Color SAT_COLOR_DARK_RED        = SAT_Color( 0.25, 0.00, 0.00 );
-const SAT_Color SAT_COLOR_RED             = SAT_Color( 0.50, 0.00, 0.00 );
-const SAT_Color SAT_COLOR_LIGHT_RED       = SAT_Color( 0.75, 0.00, 0.00 );
-const SAT_Color SAT_COLOR_BRIGHT_RED      = SAT_Color( 1.00, 0.00, 0.00 );
+#define SAT_DarkYellow     SAT_Color( 0.25, 0.25, 0.00 )
+#define SAT_Yellow         SAT_Color( 0.50, 0.50, 0.00 )
+#define SAT_LightYellow    SAT_Color( 0.75, 0.75, 0.00 )
+#define SAT_BrightYellow   SAT_Color( 1.00, 1.00, 0.00 )
 
-const SAT_Color SAT_COLOR_DARK_ORANGE     = SAT_Color( 0.25, 0.12, 0.00 );
-const SAT_Color SAT_COLOR_ORANGE          = SAT_Color( 0.50, 0.25, 0.00 );
-const SAT_Color SAT_COLOR_LIGHT_ORANGE    = SAT_Color( 0.75, 0.37, 0.00 );
-const SAT_Color SAT_COLOR_BRIGHT_ORANGE   = SAT_Color( 1.00, 0.50, 0.00 );
+#define SAT_DarkLime       SAT_Color( 0.12, 0.25, 0.00 )
+#define SAT_Lime           SAT_Color( 0.25, 0.50, 0.00 )
+#define SAT_LightLime      SAT_Color( 0.37, 0.75, 0.00 )
+#define SAT_BrightLime     SAT_Color( 0.50, 1.00, 0.00 )
 
-const SAT_Color SAT_COLOR_DARK_YELLOW     = SAT_Color( 0.25, 0.25, 0.00 );
-const SAT_Color SAT_COLOR_YELLOW          = SAT_Color( 0.50, 0.50, 0.00 );
-const SAT_Color SAT_COLOR_LIGHT_YELLOW    = SAT_Color( 0.75, 0.75, 0.00 );
-const SAT_Color SAT_COLOR_BRIGHT_YELLOW   = SAT_Color( 1.00, 1.00, 0.00 );
+#define SAT_DarkGreen      SAT_Color( 0.00, 0.25, 0.00 )
+#define SAT_Green          SAT_Color( 0.00, 0.50, 0.00 )
+#define SAT_LightGreen     SAT_Color( 0.00, 0.75, 0.00 )
+#define SAT_BrightGreen    SAT_Color( 0.00, 1.00, 0.00 )
 
-const SAT_Color SAT_COLOR_DARK_LIME       = SAT_Color( 0.12, 0.25, 0.00 );
-const SAT_Color SAT_COLOR_LIME            = SAT_Color( 0.25, 0.50, 0.00 );
-const SAT_Color SAT_COLOR_LIGHT_LIME      = SAT_Color( 0.37, 0.75, 0.00 );
-const SAT_Color SAT_COLOR_BRIGHT_LIME     = SAT_Color( 0.50, 1.00, 0.00 );
+#define SAT_DarkGreen2     SAT_Color( 0.00, 0.25, 0.12 )
+#define SAT_Green2         SAT_Color( 0.00, 0.50, 0.35 )
+#define SAT_LightGreen2    SAT_Color( 0.00, 0.75, 0.37 )
+#define SAT_BrightGreen2   SAT_Color( 0.00, 1.00, 0.50 )
 
+#define SAT_DarkCyan       SAT_Color( 0.00, 0.25, 0.25 )
+#define SAT_Cyan           SAT_Color( 0.00, 0.50, 0.50 )
+#define SAT_LightCyan      SAT_Color( 0.00, 0.75, 0.75 )
+#define SAT_BrightCyan     SAT_Color( 0.00, 1.00, 1.00 )
 
-const SAT_Color SAT_COLOR_DARK_GREEN      = SAT_Color( 0.00, 0.25, 0.00 );
-const SAT_Color SAT_COLOR_GREEN           = SAT_Color( 0.00, 0.50, 0.00 );
-const SAT_Color SAT_COLOR_LIGHT_GREEN     = SAT_Color( 0.00, 0.75, 0.00 );
-const SAT_Color SAT_COLOR_BRIGHT_GREEN    = SAT_Color( 0.00, 1.00, 0.00 );
+#define SAT_DarkCyan2      SAT_Color( 0.00, 0.18, 0.25 )
+#define SAT_Cyan2          SAT_Color( 0.00, 0.37, 0.50 )
+#define SAT_LightCyan2     SAT_Color( 0.00, 0.50, 0.75 )
+#define SAT_BrightCyan2    SAT_Color( 0.00, 0.75, 1.00 )
 
-const SAT_Color SAT_COLOR_DARK_GREEN2     = SAT_Color( 0.00, 0.25, 0.12 );
-const SAT_Color SAT_COLOR_GREEN2          = SAT_Color( 0.00, 0.50, 0.35 );
-const SAT_Color SAT_COLOR_LIGHT_GREEN2    = SAT_Color( 0.00, 0.75, 0.37 );
-const SAT_Color SAT_COLOR_BRIGHT_GREEN2   = SAT_Color( 0.00, 1.00, 0.50 );
+#define SAT_DarkBlue1      SAT_Color( 0.00, 0.12, 0.25 )
+#define SAT_Blue1          SAT_Color( 0.00, 0.25, 0.50 )
+#define SAT_LightBlue1     SAT_Color( 0.00, 0.37, 0.75 )
+#define SAT_BrightBlue1    SAT_Color( 0.00, 0.50, 1.00 )
 
-const SAT_Color SAT_COLOR_DARK_CYAN       = SAT_Color( 0.00, 0.25, 0.25 );
-const SAT_Color SAT_COLOR_CYAN            = SAT_Color( 0.00, 0.50, 0.50 );
-const SAT_Color SAT_COLOR_LIGHT_CYAN      = SAT_Color( 0.00, 0.75, 0.75 );
-const SAT_Color SAT_COLOR_BRIGHT_CYAN     = SAT_Color( 0.00, 1.00, 1.00 );
+#define SAT_DarkBlue       SAT_Color( 0.00, 0.00, 0.25 )
+#define SAT_Blue           SAT_Color( 0.00, 0.00, 0.50 )
+#define SAT_LightBlue      SAT_Color( 0.00, 0.00, 0.75 )
+#define SAT_BrightBlue     SAT_Color( 0.00, 0.00, 1.00 )
 
-const SAT_Color SAT_COLOR_DARK_CYAN2      = SAT_Color( 0.00, 0.18, 0.25 );
-const SAT_Color SAT_COLOR_CYAN2           = SAT_Color( 0.00, 0.37, 0.50 );
-const SAT_Color SAT_COLOR_LIGHT_CYAN2     = SAT_Color( 0.00, 0.50, 0.75 );
-const SAT_Color SAT_COLOR_BRIGHT_CYAN2    = SAT_Color( 0.00, 0.75, 1.00 );
+#define SAT_DarkBlue2      SAT_Color( 0.12, 0.00, 0.25 )
+#define SAT_Blue2          SAT_Color( 0.25, 0.00, 0.50 )
+#define SAT_LightBlue2     SAT_Color( 0.37, 0.00, 0.75 )
+#define SAT_BrightBlue2    SAT_Color( 0.50, 0.00, 1.00 )
 
-const SAT_Color SAT_COLOR_DARK_BLUE1      = SAT_Color( 0.00, 0.12, 0.25 );
-const SAT_Color SAT_COLOR_BLUE1           = SAT_Color( 0.00, 0.25, 0.50 );
-const SAT_Color SAT_COLOR_LIGHT_BLUE1     = SAT_Color( 0.00, 0.37, 0.75 );
-const SAT_Color SAT_COLOR_BRIGHT_BLUE1    = SAT_Color( 0.00, 0.50, 1.00 );
+#define SAT_DarkMagenta    SAT_Color( 0.25, 0.00, 0.25 )
+#define SAT_Magenta        SAT_Color( 0.50, 0.00, 0.50 )
+#define SAT_LightMagenta   SAT_Color( 0.75, 0.00, 0.75 )
+#define SAT_BrightMagenta  SAT_Color( 1.00, 0.00, 1.00 )
 
-const SAT_Color SAT_COLOR_DARK_BLUE       = SAT_Color( 0.00, 0.00, 0.25 );
-const SAT_Color SAT_COLOR_BLUE            = SAT_Color( 0.00, 0.00, 0.50 );
-const SAT_Color SAT_COLOR_LIGHT_BLUE      = SAT_Color( 0.00, 0.00, 0.75 );
-const SAT_Color SAT_COLOR_BRIGHT_BLUE     = SAT_Color( 0.00, 0.00, 1.00 );
+#define SAT_DarkRed2       SAT_Color( 0.25, 0.00, 0.12 )
+#define SAT_Red2           SAT_Color( 0.50, 0.00, 0.25 )
+#define SAT_LightRed2      SAT_Color( 0.75, 0.00, 0.37 )
+#define SAT_BrightRed2     SAT_Color( 1.00, 0.00, 0.50 )
 
-const SAT_Color SAT_COLOR_DARK_BLUE2      = SAT_Color( 0.12, 0.00, 0.25 );
-const SAT_Color SAT_COLOR_BLUE2           = SAT_Color( 0.25, 0.00, 0.50 );
-const SAT_Color SAT_COLOR_LIGHT_BLUE2     = SAT_Color( 0.37, 0.00, 0.75 );
-const SAT_Color SAT_COLOR_BRIGHT_BLUE2    = SAT_Color( 0.50, 0.00, 1.00 );
-
-const SAT_Color SAT_COLOR_DARK_MAGENTA    = SAT_Color( 0.25, 0.00, 0.25 );
-const SAT_Color SAT_COLOR_MAGENTA         = SAT_Color( 0.50, 0.00, 0.50 );
-const SAT_Color SAT_COLOR_LIGHT_MAGENTA   = SAT_Color( 0.75, 0.00, 0.75 );
-const SAT_Color SAT_COLOR_BRIGHT_MAGENTA  = SAT_Color( 1.00, 0.00, 1.00 );
-
-const SAT_Color SAT_COLOR_DARK_RED2       = SAT_Color( 0.25, 0.00, 0.12 );
-const SAT_Color SAT_COLOR_RED2            = SAT_Color( 0.50, 0.00, 0.25 );
-const SAT_Color SAT_COLOR_LIGHT_RED2      = SAT_Color( 0.75, 0.00, 0.37 );
-const SAT_Color SAT_COLOR_BRIGHT_RED2     = SAT_Color( 1.00, 0.00, 0.50 );
-
-const SAT_Color SAT_COLOR_BLACK           = SAT_Color( 0.00 );
-const SAT_Color SAT_COLOR_DARK_GRAY       = SAT_Color( 0.25 );
-const SAT_Color SAT_COLOR_GRAY            = SAT_Color( 0.50 );
-const SAT_Color SAT_COLOR_LIGHT_GRAY      = SAT_Color( 0.75 );
-const SAT_Color SAT_COLOR_WHITE           = SAT_Color( 1.00 );
-*/
+#define SAT_Black          SAT_Color( 0.00  )
+#define SAT_DarkGray       SAT_Color( 0.25  )
+#define SAT_DarkGray2      SAT_Color( 0.375 )
+#define SAT_Grey           SAT_Color( 0.50  )
+#define SAT_LightGray2     SAT_Color( 0.625 )
+#define SAT_LightGray      SAT_Color( 0.75  )
+#define SAT_White          SAT_Color( 1.00  )
 
 //----------------------------------------------------------------------
 #endif

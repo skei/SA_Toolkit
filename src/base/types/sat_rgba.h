@@ -1,8 +1,8 @@
-#ifndef sat_bgra_included
-#define sat_bgra_included
+#ifndef sat_rgba_included
+#define sat_rgba_included
 //----------------------------------------------------------------------
 
-typedef uint32_t SAT_BGRA;
+typedef uint32_t SAT_RGBA;
 
 //----------------------------------------------------------------------
 //

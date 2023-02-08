@@ -2,15 +2,14 @@
 #define sat_point_included
 //----------------------------------------------------------------------
 
-template <typename T>
 class SAT_Point {
 
 public:
 
   union {
-    struct { T x,y; };
-    struct { T w,h; };
-    struct { T horiz,vert; };
+    struct { double x,y; };
+    struct { double w,h; };
+    struct { double horiz,vert; };
   };
 
 public:
@@ -20,17 +19,17 @@ public:
     y = 0;
   }
 
-  SAT_Point(T v) {
+  SAT_Point(double v) {
     x = v;
     y = v;
   }
 
-  SAT_Point(T x_, T y_) {
+  SAT_Point(double x_, double y_) {
     x = x_;
     y = y_;
   }
 
-  //SAT_Point(SAT_Point<T> APoint) {}
+  //SAT_Point(SAT_Point APoint) {}
 
 public:
 
@@ -38,22 +37,22 @@ public:
 public:
 //------------------------------
 
-  SAT_Point<T>& operator += (SAT_Point<T> P) {
+  SAT_Point& operator += (SAT_Point P) {
     add(P);
     return *this;
   }
 
-  SAT_Point<T>& operator -= (SAT_Point<T> P) {
+  SAT_Point& operator -= (SAT_Point P) {
     sub(P);
     return *this;
   }
 
-//  SAT_Rect<T>& operator += (SAT_Point<T> P) {
+//  SAT_Rect& operator += (SAT_Point P) {
 //    add(P);
 //    return *this;
 //  }
 //
-//  SAT_Rect<T>& operator -= (SAT_Point<T> P) {
+//  SAT_Rect& operator -= (SAT_Point P) {
 //    sub(P);
 //    return *this;
 //  }
@@ -62,41 +61,51 @@ public:
 public:
 //------------------------------
 
-  void scale(T AScale) {
+  void scale(double AScale) {
     x *= AScale;
     y *= AScale;
   }
 
-  void scale(T sx, T sy) {
+  void scale(double sx, double sy) {
     x *= sx;
     y *= sy;
   }
 
-  void scale(SAT_Point<T> s) {
+  void scale(SAT_Point s) {
     x *= s.x;
     y *= s.y;
   }
 
   //----------
 
-  void add(T AValue) {
+  void add(double AValue) {
     x += AValue;
     y += AValue;
   }
 
-  void add(T ax, T ay) {
+  void add(SAT_Point APoint) {
+    x += APoint.x;
+    y += APoint.y;
+  }
+
+  void add(double ax, double ay) {
     x += ax;
     y += ay;
   }
 
-  void sub(T AValue) {
+  void sub(double AValue) {
     x -= AValue;
     y -= AValue;
   }
 
-  void sub(T ax, T ay) {
+  void sub(double ax, double ay) {
     x -= ax;
     y -= ay;
+  }
+
+  void sub(SAT_Point APoint) {
+    x -= APoint.x;
+    y -= APoint.y;
   }
 
 };
@@ -108,9 +117,6 @@ public:
 //----------------------------------------------------------------------
 
 
-typedef SAT_Point<float>    SAT_FPoint;
-typedef SAT_Point<double>   SAT_DPoint;
-typedef SAT_Point<int32_t>  SAT_IPoint;
 
 //----------------------------------------------------------------------
 #endif
