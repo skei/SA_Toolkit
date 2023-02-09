@@ -20,7 +20,6 @@
 				<Linker>
 					<Add option="-fno-pie" />
 					<Add option="-no-pie" />
-					<Add library="dl" />
 				</Linker>
 			</Target>
 			<Target title="linux exe release">
@@ -81,6 +80,12 @@
 		<Linker>
 			<Add option="-static-libstdc++" />
 			<Add option="-static-libgcc" />
+			<Add library="pthread" />
+			<Add library="rt" />
+			<Add library="dl" />
+			<Add library="X11" />
+			<Add library="X11-xcb" />
+			<Add library="xcb" />
 		</Linker>
 		<Unit filename="../src/audio/dsp/sat_dsp_filter.h" />
 		<Unit filename="../src/audio/dsp/sat_dsp_phasor.h" />
@@ -89,7 +94,10 @@
 		<Unit filename="../src/audio/io/sat_io_alsa.h" />
 		<Unit filename="../src/audio/io/sat_io_jack.h" />
 		<Unit filename="../src/audio/sat_audio_dsp.h" />
+		<Unit filename="../src/audio/sat_audio_file.h" />
 		<Unit filename="../src/audio/sat_audio_io.h" />
+		<Unit filename="../src/audio/sat_audio_math.h" />
+		<Unit filename="../src/audio/sat_audio_utils.h" />
 		<Unit filename="../src/base/sat.h" />
 		<Unit filename="../src/base/sat_attributes.h" />
 		<Unit filename="../src/base/sat_config.h" />
@@ -98,7 +106,6 @@
 		<Unit filename="../src/base/sat_enums.h" />
 		<Unit filename="../src/base/sat_global.h" />
 		<Unit filename="../src/base/sat_linux.h" />
-		<Unit filename="../src/base/sat_sys.h" />
 		<Unit filename="../src/base/sat_test.h" />
 		<Unit filename="../src/base/sat_types.h" />
 		<Unit filename="../src/base/sat_win32.h" />

@@ -2,13 +2,12 @@
 #define sat_const_included
 //----------------------------------------------------------------------
 
-//const char* SAT_VERSION       = "0.0.1";
-//const char* SAT_VENDOR        = "skei.audio";
-//const char* SAT_URL           = "https://github.com/skei/SA_Toolkit";
+#define SAT_VERSION                 "0.4.0"
+#define SAT_VENDOR                  "skei.audio"
+#define SAT_URL                     "https://github.com/skei/SA_Toolkit"
 
-#define SAT_VERSION           "0.4.0"
-#define SAT_VENDOR            "skei.audio"
-#define SAT_URL               "https://github.com/skei/SA_Toolkit"
+#define SAT_MAX_NAME_LENGTH         256
+#define SAT_MAX_PATH_LENGTH         512
 
 const char  SAT_HEX_TABLE[]   = "0123456789ABCDEF";
 const char  SAT_CSYMBOLS[]    = "________________________________________________0123456789_______ABCDEFGHIJKLMNOPQRSTUVWXYZ______abcdefghijklmnopqrstuvwxyz_____";
@@ -19,33 +18,51 @@ const char  SAT_NULL_STRING[] = "";
 // abcdefghijklmnopqrstuvwxyz
 // 5f = _
 
-#define SAT_MAGIC        0x4d5f0000    // 'M_'   // + 0x0000
-#define SAT_MAGIC_USER   0x6d5f0000    // 'm_'   // + 0x0000
-#define SAT_MAGIC_M_PL   0x4d5f504c    // M_PL   // plugin
-#define SAT_MAGIC_M_ED   0x4d5f4544    // M_ED   // editor
+//#define SAT_MAGIC       0x535f0000 // 'M_'   // + 0x0000
+//#define SAT_MAGIC_USER  0x6d5f0000 // 'm_'   // + 0x0000
+//#define SAT_MAGIC_M_PL  0x535f504c // M_PL   // plugin
+//#define SAT_MAGIC_M_ED  0x4d5f4544 // M_ED   // editor
+
+#define SAT_MAGIC                   0x5341545f  // 'SAT_'
+#define SAT_MAGIC_PLUGIN            0x53415450  // 'SATP'
+#define SAT_MAGIC_EDITOR            0x53415445  // 'SATE'
+#define SAT_MAGIC_USER              0x7361745f  // 'sat_'
 
 //#ifndef SAT_CPP11
 //  #define nullptr 0
 //#endif
 
-#define SAT_MAX_NAME_LENGTH         256
-#define SAT_MAX_PATH_LENGTH         512
-
 //----------------------------------------------------------------------
-// midi
+//
 //----------------------------------------------------------------------
 
-#define SAT_MIDI_NOTE_OFF            0x80
-#define SAT_MIDI_NOTE_ON             0x90
-#define SAT_MIDI_POLY_AFTERTOUCH     0xA0
-#define SAT_MIDI_CONTROL_CHANGE      0xB0
-#define SAT_MIDI_PROGRAM_CHANGE      0xC0
-#define SAT_MIDI_CHANNEL_AFTERTOUCH  0xD0
-#define SAT_MIDI_PITCHBEND           0xE0
-#define SAT_MIDI_SYS                 0xF0
+#define SAT_AUDIO_FILE_READ         0x10
+#define SAT_AUDIO_FILE_WRITE        0x20
+#define SAT_AUDIO_FILE_RDWR         0x30
+
+#define SAT_FILE_READ_BINARY        (char*)"rb"
+#define SAT_FILE_READ_TEXT          (char*)"r"
+#define SAT_FILE_WRITE_BINARY       (char*)"wb"
+#define SAT_FILE_WRITE_TEXT         (char*)"w"
+#define SAT_FILE_APPEND_BINARY      (char*)"ab"
+#define SAT_FILE_APPEND_TEXT        (char*)"a"
+
+#define SAT_MIDI_NOTE_OFF           0x80
+#define SAT_MIDI_NOTE_ON            0x90
+#define SAT_MIDI_POLY_AFTERTOUCH    0xA0
+#define SAT_MIDI_CONTROL_CHANGE     0xB0
+#define SAT_MIDI_PROGRAM_CHANGE     0xC0
+#define SAT_MIDI_CHANNEL_AFTERTOUCH 0xD0
+#define SAT_MIDI_PITCHBEND          0xE0
+#define SAT_MIDI_SYS                0xF0
+
+#define SAT_PLUGIN_MAX_PARAMETERS   1024
+
+#define SAT_THREAD_ID_KILL          666
+
 
 //----------------------------------------------------------------------
-// math
+//
 //----------------------------------------------------------------------
 
 #define SAT_PI              3.1415926535
@@ -70,7 +87,7 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_SQRT2           sqrt(2.0f)
 
 //----------------------------------------------------------------------
-// type sizes
+//
 //----------------------------------------------------------------------
 
 #define SAT_CHAR_BIT        8
@@ -102,6 +119,11 @@ const char  SAT_NULL_STRING[] = "";
 //#define SAT_RANDMAX        RAND_MAX  // 2147483647
 #define SAT_RANDMAX        0x7fffffff
 #define SAT_INVRANDMAX     (1.0 / (double)SAT_RANDMAX)
+
+//----------------------------------------------------------------------
+// enums
+//----------------------------------------------------------------------
+
 
 //----------------------------------------------------------------------
 #endif

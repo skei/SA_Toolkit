@@ -13,14 +13,9 @@
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_process_context.h"
-
 #include "plugin/clap/sat_clap_plugin.h"
 #include "plugin/clap/sat_clap_utils.h"
-
 #include "audio/sat_audio_utils.h"
-
-
-#define SAT_PLUGIN_MAX_PARAMETERS 1024
 
 //----------------------------------------------------------------------
 //
@@ -482,7 +477,7 @@ public: // gui
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
-    MEditor = new SAT_Editor(this);
+    MEditor = new SAT_Editor(this,640,480);
     if (MEditor) {
       return true;
     }
@@ -510,7 +505,6 @@ public: // gui
   // [main-thread]
 
   bool gui_set_scale(double scale) override {
-    SAT_Print("scale %f\n",scale);
     return MEditor->set_scale(scale);
   }
 
@@ -521,7 +515,6 @@ public: // gui
   // [main-thread]
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
-    SAT_Print("\n");
     return MEditor->get_size(width,height);
   }
 
@@ -532,7 +525,6 @@ public: // gui
   // [main-thread]
 
   bool gui_can_resize() override {
-    SAT_Print("\n");
     return MEditor->can_resize();
   }
 
@@ -550,7 +542,6 @@ public: // gui
   //} clap_gui_resize_hints_t;
 
   bool gui_get_resize_hints(clap_gui_resize_hints_t *hints) override {
-    SAT_Print("\n");
     return MEditor->get_resize_hints(hints);
   }
 
@@ -572,7 +563,6 @@ public: // gui
   // [main-thread]
 
   bool gui_set_size(uint32_t width, uint32_t height) override {
-    SAT_Print("width %i height %i\n",width,height);
     return MEditor->set_size(width,height);
   }
 
@@ -582,7 +572,6 @@ public: // gui
   // [main-thread & !floating]
 
   bool gui_set_parent(const clap_window_t *window) override {
-    SAT_Print("\n");
     return MEditor->set_parent(window);
   }
 
@@ -592,7 +581,6 @@ public: // gui
   // [main-thread & floating]
 
   bool gui_set_transient(const clap_window_t *window) override {
-    SAT_Print("\n");
     return MEditor->set_transient(window);
   }
 
@@ -602,7 +590,6 @@ public: // gui
   // [main-thread & floating]
 
   void gui_suggest_title(const char *title) override {
-    SAT_Print("title %s\n",title);
     return MEditor->suggest_title(title);
   }
 
@@ -612,7 +599,6 @@ public: // gui
   // [main-thread]
 
   bool gui_show() override {
-    SAT_Print("\n");
     return MEditor->show();
   }
 
@@ -623,7 +609,6 @@ public: // gui
   // [main-thread]
 
   bool gui_hide() override {
-    SAT_Print("\n");
     return MEditor->hide();
   }
 

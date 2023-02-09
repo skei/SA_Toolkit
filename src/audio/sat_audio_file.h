@@ -2,9 +2,6 @@
 #define sat_audio_file_included
 //----------------------------------------------------------------------
 
-#define SAT_AUDIO_FILE_READ   0x10
-#define SAT_AUDIO_FILE_WRITE  0x20
-#define SAT_AUDIO_FILE_RDWR   0x30
 
 //----------------------------------------------------------------------
 #ifdef SAT_WIN32

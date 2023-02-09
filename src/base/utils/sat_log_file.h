@@ -9,16 +9,11 @@
 
 #include "plugin/clap/sat_clap.h"
 
-//#define SAT_LOG_FILE_APPEND
-//#ifdef SAT_LOGGING
-
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
-
-//#ifdef SAT_LOGGING
 
 class SAT_LogFile {
 
@@ -248,23 +243,6 @@ public:
 //------------------------------
 
 };
-
-//----------------------------------------------------------------------
-
-//#else // SAT_LOGGING
-//
-//class SAT_LogFile {
-//public:
-//  SAT_LogFile(const char* AName) {}
-//  ~SAT_LogFile() {}
-//public:
-//  void print_header() {}
-//  void print_string(char* str) {}
-//  void print(const char* format, ...) {}
-//  void print_if(bool cond, const char* format, ...) {}
-//};
-//
-//#endif // SAT_LOGGING
 
 //----------------------------------------------------------------------
 //

@@ -2,6 +2,10 @@
 #define sat_config_included
 //----------------------------------------------------------------------
 
+
+
+
+
 #ifdef __gnu_linux__
   #define SAT_LINUX
 #endif
@@ -12,9 +16,20 @@
   #define  SAT_WIN32
 #endif
 
+
+
+
+
+
 //----------------------------------------------------------------------
 // base
 //----------------------------------------------------------------------
+
+//TODO
+//#define SAT_LOG_FILE_ENABLE
+
+// append to existing log file, or create new
+#define SAT_LOG_FILE_APPEND
 
 //--------------------
 // debug
@@ -48,6 +63,8 @@
 // removes all traces of gui/editor in the plugin
 //#define SAT_NO_GUI
 
+// waits for notify event before returning when opening windows..
+#define MIP_X11_WAIT_FOR_MAPNOTIFY
 
 
 
@@ -104,6 +121,12 @@
     #define SAT_PLUGIN_CLAP
   #endif
 #endif
+
+//--------------------
+// gui
+//--------------------
+
+
 
 //----------------------------------------------------------------------
 #endif

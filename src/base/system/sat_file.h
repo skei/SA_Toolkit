@@ -20,12 +20,6 @@
 
 // file modes
 
-#define SAT_FILE_READ_BINARY    (char*)"rb"
-#define SAT_FILE_READ_TEXT      (char*)"r"
-#define SAT_FILE_WRITE_BINARY   (char*)"wb"
-#define SAT_FILE_WRITE_TEXT     (char*)"w"
-#define SAT_FILE_APPEND_BINARY  (char*)"ab"
-#define SAT_FILE_APPEND_TEXT    (char*)"a"
 
 //----------------------------------------------------------------------
 
