@@ -3,19 +3,10 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "gui/sat_opengl.h"
+//#include "gui/sat_opengl.h"
 #include "gui/x11/sat_x11.h"
+#include "gui/x11/sat_x11_opengl.h"
 #include "gui/x11/sat_x11_utils.h"
-
-// is this needed ???
-static
-bool sat_initialize_xlib() {
-  XInitThreads();
-  return true;
-}
-
-static
-bool sat_xlib_is_initialized = sat_initialize_xlib();
 
 //----------------------------------------------------------------------
 //
@@ -48,11 +39,16 @@ private:
   uint32_t                    MYpos                         = 0;
   uint32_t                    MWidth                        = 0;
   uint32_t                    MHeight                       = 0;
-  SAT_OpenGL                  MOpenGL                       = {};
+  SAT_X11OpenGL*              MOpenGL                       = nullptr;
 
-  bool MFillBackground = true;
-  SAT_Color MBackgroundColor = SAT_DarkGray;
-  //uint32_t MBackgroundColor = 0x800080;
+  xcb_key_symbols_t*          MKeySyms                      = nullptr;
+  //xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
+  //xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
+  //xcb_cursor_t                MWindowCursor                 = XCB_NONE;
+
+  bool                        MFillBackground               = true;
+  SAT_Color                   MBackgroundColor              = SAT_DarkGreen;
+  //uint32_t                    MBackgroundColor              = 0x800080;
 
 //------------------------------
 public:
@@ -65,13 +61,9 @@ public:
     //MConnection = xcb_connect(ADisplayName,&MDefaultScreen);
     MDisplay = XOpenDisplay(nullptr);
     SAT_Log("MDisplay: %p\n",MDisplay);
-
-
     MConnection = XGetXCBConnection(MDisplay);
     SAT_Log("MConnection: %p\n",MConnection);
-
     XSetEventQueueOwner(MDisplay,XCBOwnsEventQueue);
-
     MDefaultScreen = DefaultScreen(MDisplay); // ???
     SAT_Log("MDefaultScreen: %i\n",MDefaultScreen);
 
@@ -87,13 +79,13 @@ public:
       }
     }
 
-//    MScreenWidth    = MScreen->width_in_pixels;
-//    MScreenHeight   = MScreen->height_in_pixels;
-//    MScreenDepth    = MScreen->root_depth;
-//    MScreenWindow   = MScreen->root;
-//    MScreenColormap = MScreen->default_colormap;
-//    MScreenVisual   = MScreen->root_visual;
-//    MScreenDrawable = MScreen->root;
+    //MScreenWidth    = MScreen->width_in_pixels;
+    //MScreenHeight   = MScreen->height_in_pixels;
+    //MScreenDepth    = MScreen->root_depth;
+    //MScreenWindow   = MScreen->root;
+    //MScreenColormap = MScreen->default_colormap;
+    //MScreenVisual   = MScreen->root_visual;
+    //MScreenDrawable = MScreen->root;
 
     //initScreenGC();
 
@@ -134,7 +126,9 @@ public:
       event_mask,
       MScreen->default_colormap
     };
+
     MWindow = xcb_generate_id(MConnection);
+
     xcb_create_window(
       MConnection,                        // connection
       XCB_COPY_FROM_PARENT,               // depth (same as root)
@@ -151,6 +145,7 @@ public:
 
     //initMouseCursor();
     //initKeyboard();
+    MKeySyms = xcb_key_symbols_alloc(MConnection);
 
     if (AParent) {
       MIsEmbedded = true;
@@ -163,48 +158,57 @@ public:
 
     //setTitle(MWindowTitle);
     //MGuiTimer = new MIP_Timer(this);
-
+    MOpenGL = new SAT_X11OpenGL(MDisplay,MWindow,AWidth,AHeight);
   }
 
   //----------
 
   virtual ~SAT_X11Window() {
-
     if (MIsMapped) hide();
-
+    delete MOpenGL;
     //if (MGuiTimer) {
     //  LOG.print("XCB Stopping gui timer (destructor)\n");
     //  MGuiTimer->stop();
     //  delete MGuiTimer;
     //}
-
     //cleanupKeyboard();
+    xcb_key_symbols_free(MKeySyms);
     //cleanupMouseCursor();
-
     //cleanupWindow();
     xcb_destroy_window(MConnection,MWindow);
-
     //cleanupScreenGC();
     xcb_free_gc(MConnection,MScreenGC);
-
     //cleanupScreen();
-
     //cleanupConnection();
     XSetEventQueueOwner(MDisplay,XlibOwnsEventQueue);
     XCloseDisplay(MDisplay);
-
     MDisplay = nullptr;
     MConnection = nullptr;
-
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void on_window_move(uint32_t AXpos, uint32_t AYpos) {}
-  virtual void on_window_resize(uint32_t AWidth, uint32_t AHeight) {}
-  virtual void on_window_paint(uint32_t AXpos, uint32_t AYpos, uint32_t AWidth, uint32_t AHeight) {}
+  void setFillBackground(bool AFill=true)   { MFillBackground = AFill; }
+  void setBackgroundColor(SAT_Color AColor) { MBackgroundColor = AColor; }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void on_window_open() {}
+  virtual void on_window_close() {}
+  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
+  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
+  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
+  virtual void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_mouse_click(uint32_t AButton, uint32_t AState, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_release(uint32_t AButton, uint32_t AState, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_move(uint32_t s, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_client_message(uint32_t AData) {}
 
 //------------------------------
@@ -247,13 +251,13 @@ public:
 
   //----------
 
-  virtual void setParent(intptr_t AParent) {
-    if (AParent != 0) {
-      MIsEmbedded = true;
-      xcb_reparent_window(MConnection,MWindow,AParent,0,0);
-      xcb_flush(MConnection);
-    }
-  }
+//  virtual void setParent(intptr_t AParent) {
+//    if (AParent != 0) {
+//      MIsEmbedded = true;
+//      xcb_reparent_window(MConnection,MWindow,AParent,0,0);
+//      xcb_flush(MConnection);
+//    }
+//  }
 
   //----------
 
@@ -340,7 +344,7 @@ public:
   void stopEventThread() {
     void* ret;
     MIsEventThreadActive = false;
-    sendClientMessage(SAT_THREAD_ID_KILL,0);
+    sendClientMessage(SAT_WINDOW_THREAD_ID_KILL,0);
     pthread_join(MEventThread,&ret);
   }
 
@@ -418,8 +422,6 @@ private:
   xcb_atom_t MWMProtocolsAtom    = XCB_NONE;
   xcb_atom_t MWMDeleteWindowAtom = XCB_NONE;
 
-  //----------
-
   void wantQuitEvents() {
     xcb_intern_atom_cookie_t  protocol_cookie = xcb_intern_atom_unchecked(MConnection, 1, 12, "WM_PROTOCOLS");
     xcb_intern_atom_cookie_t  close_cookie    = xcb_intern_atom_unchecked(MConnection, 0, 16, "WM_DELETE_WINDOW");
@@ -480,9 +482,7 @@ private:
     }
   }
 
-//------------------------------
-private:
-//------------------------------
+  //----------
 
   void waitForMapNotify() {
     xcb_flush(MConnection);
@@ -497,6 +497,8 @@ private:
       }
     }
   }
+
+  //----------
 
   // returns null if no events
   // caller must free(event) !!!!
@@ -515,6 +517,72 @@ private:
 
   //----------
 
+  // https://github.com/etale-cohomology/xcb/blob/master/loop.c
+
+  uint32_t remapKey(uint32_t AKey, uint32_t AState) {
+    int col = 0;
+    xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
+//    xcb_keycode_t* keycode = xcb_key_symbols_get_keycode(MKeySyms,keysym);
+    //MIP_Print("AKey %i AState %i keysym %i keycode %i\n",AKey,AState,keysym,keycode[0]);
+    /*
+    //SAT_Print("AKey %i : keysym %i keycode ",AKey, keysym);
+    if (*keycode != XCB_NO_SYMBOL) {
+      uint32_t i = 0;
+      while (keycode[i] != XCB_NO_SYMBOL) {
+        uint8_t c = keycode[i];
+        //SAT_DPrint("%i '%c' ",c,c);
+        i++;
+      }
+      //SAT_DPrint(" (%i)\n",i);
+    }
+    */
+    /*
+    char keysym_name[64];
+    xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
+    SAT_DPrint("  keysym_name '%s'\n",keysym_name);
+    */
+    uint32_t ks = 0;
+    switch (keysym) {
+      case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
+      case XKB_KEY_space:       ks = SAT_KEY_ESC;       break;
+      case XKB_KEY_Home:        ks = SAT_KEY_HOME;      break;
+      case XKB_KEY_End:         ks = SAT_KEY_END;       break;
+      case XKB_KEY_leftarrow:   ks = SAT_KEY_LEFT;      break;
+      case XKB_KEY_rightarrow:  ks = SAT_KEY_RIGHT;     break;
+      case XKB_KEY_Delete:      ks = SAT_KEY_DELETE;    break;
+      case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
+    }
+//    free(keycode);
+    return ks;
+  }
+
+  //----------
+
+  uint32_t remapButton(uint32_t AButton, uint32_t AState) {
+    //MIP_Print("AButton %i AState %i\n",AButton,AState);
+    uint32_t b = AButton;
+    return b;
+  }
+
+  //----------
+
+  uint32_t remapState(uint32_t AState) {
+    uint32_t s = SAT_KEY_NONE;
+    if (AState & XCB_MOD_MASK_SHIFT)    s += SAT_KEY_SHIFT;
+    if (AState & XCB_MOD_MASK_LOCK)     s += SAT_KEY_CAPS;
+    if (AState & XCB_MOD_MASK_CONTROL)  s += SAT_KEY_CTRL;
+    if (AState & XCB_MOD_MASK_1)        s += SAT_KEY_ALT;
+    if (AState & XCB_MOD_MASK_5)        s += SAT_KEY_ALTGR;
+    //if (AState & XCB_MOD_MASK_1) MIP_Print("1\n");
+    //if (AState & XCB_MOD_MASK_2) MIP_Print("2\n");
+    //if (AState & XCB_MOD_MASK_3) MIP_Print("3\n");
+    //if (AState & XCB_MOD_MASK_4) MIP_Print("4\n");
+    //if (AState & XCB_MOD_MASK_5) MIP_Print("5\n");
+    return s;
+  }
+
+  //----------
+
   // returns false if we received MWMDeleteWindowAtom
   // -> we are done (quit)
   // frees AEvent
@@ -525,13 +593,13 @@ private:
 
       case XCB_MAP_NOTIFY: {
         MIsMapped = true;
-//        on_window_open();
+        on_window_open();
         break;
       }
 
       case XCB_UNMAP_NOTIFY: {
         MIsMapped = false;
-//        on_window_close();
+        on_window_close();
         break;
       }
 
@@ -594,91 +662,91 @@ private:
       }
 
       case XCB_KEY_PRESS: {
-//        //if (!MWindowMapped) break;
-//        xcb_key_press_event_t* key_press = (xcb_key_press_event_t*)AEvent;
-//        uint8_t  k  = key_press->detail;
-//        uint16_t s  = key_press->state;
-//        uint32_t ts = key_press->time;
-//        k = remapKey(k,s);
-//        s = remapState(s);
-//        on_window_key_press(k,s,ts);
-        break;
+        //if (!MWindowMapped) break;
+        xcb_key_press_event_t* key_press = (xcb_key_press_event_t*)AEvent;
+        uint8_t  k  = key_press->detail;
+        uint16_t s  = key_press->state;
+        uint32_t ts = key_press->time;
+        k = remapKey(k,s);
+        s = remapState(s);
+        on_window_key_press(k,s,ts);
+       break;
       }
 
       case XCB_KEY_RELEASE: {
-//        //if (!MWindowMapped) break;
-//        xcb_key_release_event_t* key_release = (xcb_key_release_event_t*)AEvent;
-//        uint8_t  k  = key_release->detail;
-//        uint16_t s  = key_release->state;
-//        uint32_t ts = key_release->time;
-//        k = remapKey(k,s);
-//        s = remapState(s);
-//        on_window_key_release(k,s,ts);
+        //if (!MWindowMapped) break;
+        xcb_key_release_event_t* key_release = (xcb_key_release_event_t*)AEvent;
+        uint8_t  k  = key_release->detail;
+        uint16_t s  = key_release->state;
+        uint32_t ts = key_release->time;
+        k = remapKey(k,s);
+        s = remapState(s);
+        on_window_key_release(k,s,ts);
         break;
       }
 
       case XCB_BUTTON_PRESS: {
-//        //if (!MWindowMapped) break;
-//        xcb_button_press_event_t* button_press = (xcb_button_press_event_t*)AEvent;
-//        uint8_t  b  = button_press->detail;
-//        uint32_t s  = button_press->state;
-//        int32_t  x  = button_press->event_x;
-//        int32_t  y  = button_press->event_y;
-//        uint32_t ts = button_press->time;
-//        b = remapButton(b,s);
-//        s = remapState(s);
-//        on_window_mouse_click(b,s,x,y,ts);
+        //if (!MWindowMapped) break;
+        xcb_button_press_event_t* button_press = (xcb_button_press_event_t*)AEvent;
+        uint8_t  b  = button_press->detail;
+        uint32_t s  = button_press->state;
+        int32_t  x  = button_press->event_x;
+        int32_t  y  = button_press->event_y;
+        uint32_t ts = button_press->time;
+        b = remapButton(b,s);
+        s = remapState(s);
+        on_window_mouse_click(b,s,x,y,ts);
         break;
       }
 
       case XCB_BUTTON_RELEASE: {
-//        //if (!MWindowMapped) break;
-//        xcb_button_release_event_t* button_release = (xcb_button_release_event_t*)AEvent;
-//        uint32_t b  = button_release->detail;
-//        uint32_t s  = button_release->state;
-//        int32_t  x  = button_release->event_x;
-//        int32_t  y  = button_release->event_y;
-//        uint32_t ts = button_release->time;
-//        b = remapButton(b,s);
-//        s = remapState(s);
-//        on_window_mouse_release(b,s,x,y,ts);
+        //if (!MWindowMapped) break;
+        xcb_button_release_event_t* button_release = (xcb_button_release_event_t*)AEvent;
+        uint32_t b  = button_release->detail;
+        uint32_t s  = button_release->state;
+        int32_t  x  = button_release->event_x;
+        int32_t  y  = button_release->event_y;
+        uint32_t ts = button_release->time;
+        b = remapButton(b,s);
+        s = remapState(s);
+        on_window_mouse_release(b,s,x,y,ts);
         break;
       }
 
       case XCB_MOTION_NOTIFY: {
-//        //if (!MWindowMapped) break;
-//        xcb_motion_notify_event_t* motion_notify = (xcb_motion_notify_event_t*)AEvent;
-//        //uint32_t  b = motion_notify->detail;
-//        uint32_t  s = motion_notify->state;
-//        int32_t   x = motion_notify->event_x;
-//        int32_t   y = motion_notify->event_y;
-//        uint32_t ts = motion_notify->time;
-//        s = remapState(s);
-//        on_window_mouse_move(s,x,y,ts);
+        //if (!MWindowMapped) break;
+        xcb_motion_notify_event_t* motion_notify = (xcb_motion_notify_event_t*)AEvent;
+        //uint32_t  b = motion_notify->detail;
+        uint32_t  s = motion_notify->state;
+        int32_t   x = motion_notify->event_x;
+        int32_t   y = motion_notify->event_y;
+        uint32_t ts = motion_notify->time;
+        s = remapState(s);
+        on_window_mouse_move(s,x,y,ts);
         break;
       }
 
       case XCB_ENTER_NOTIFY: {
-//        if (!MWindowMapped) break;
-//        xcb_enter_notify_event_t* enter_notify = (xcb_enter_notify_event_t*)AEvent;
-//        //uint32_t  m = enter_notify->mode;
-//        //uint32_t  s = enter_notify->state;
-//        int32_t   x = enter_notify->event_x;
-//        int32_t   y = enter_notify->event_y;
-//        uint32_t ts = enter_notify->time;
-//        on_window_enter(x,y,ts);
+        if (!MIsMapped) break;
+        xcb_enter_notify_event_t* enter_notify = (xcb_enter_notify_event_t*)AEvent;
+        //uint32_t  m = enter_notify->mode;
+        //uint32_t  s = enter_notify->state;
+        int32_t   x = enter_notify->event_x;
+        int32_t   y = enter_notify->event_y;
+        uint32_t ts = enter_notify->time;
+        on_window_enter(x,y,ts);
         break;
       }
 
       case XCB_LEAVE_NOTIFY: {
-//        if (!MWindowMapped) break;
-//        xcb_leave_notify_event_t* leave_notify = (xcb_leave_notify_event_t*)AEvent;
-//        //uint32_t  m = leave_notify->mode;
-//        //uint32_t  s = leave_notify->state;
-//        int32_t   x = leave_notify->event_x;
-//        int32_t   y = leave_notify->event_y;
-//        uint32_t ts = leave_notify->time;
-//        on_window_leave(x,y,ts);
+        if (!MIsMapped) break;
+        xcb_leave_notify_event_t* leave_notify = (xcb_leave_notify_event_t*)AEvent;
+        //uint32_t  m = leave_notify->mode;
+        //uint32_t  s = leave_notify->state;
+        int32_t   x = leave_notify->event_x;
+        int32_t   y = leave_notify->event_y;
+        uint32_t ts = leave_notify->time;
+        on_window_leave(x,y,ts);
         break;
       }
 
@@ -688,6 +756,11 @@ private:
         uint32_t data = client_message->data.data32[0];
         on_window_client_message(data);
         switch(data) {
+          case SAT_WINDOW_THREAD_ID_KILL:
+            free(AEvent); // not malloc'ed
+            return false; // we re finished
+          default:
+            break;
           /*
           case MIP_THREAD_ID_TIMER:
             on_window_timer();
@@ -701,11 +774,6 @@ private:
             on_window_clientMessage(data,nullptr);
             break;
           */
-          case SAT_THREAD_ID_KILL:
-            free(AEvent); // not malloc'ed
-            return false; // we re finished
-          default:
-            break;
         }
         if (type == MWMProtocolsAtom) {
           if (data == MWMDeleteWindowAtom) {
@@ -741,7 +809,7 @@ private:
             xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
             xcb_atom_t type = client_message->type;
             uint32_t data = client_message->data.data32[0];
-            if (data == SAT_THREAD_ID_KILL) {
+            if (data == SAT_WINDOW_THREAD_ID_KILL) {
               //SAT_Print("KILL\n");
               return nullptr;
             }

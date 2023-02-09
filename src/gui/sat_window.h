@@ -70,29 +70,37 @@ public:
 public:
 //------------------------------
 
-  void setPos(uint32_t AXpos, uint32_t AYpos) override {
-    SAT_ImplementedWindow::setPos(AXpos,AYpos);
-  }
+  //void setPos(uint32_t AXpos, uint32_t AYpos)
+  //void setSize(uint32_t AWidth, uint32_t AHeight)
+  //void setTitle(const char* ATitle)
+  //void setParent(intptr_t AParent)
+  //void show()
+  //void hide()
 
-  void setSize(uint32_t AWidth, uint32_t AHeight) override {
-    SAT_ImplementedWindow::setSize(AWidth,AHeight);
-  }
+  //void reparent(intptr_t AParent)
+  //void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight)
+  //void sendClientMessage(uint32_t AData, uint32_t AType)
+  //void startEventThread()
+  //void stopEventThread()
+  //uint32_t eventLoop()
+  //void beginPaint()
+  //void endPaint()
+  //void paint()
+  //void paint(int32_t x, int32_t y, int32_t w, int32_t h)
+  //void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor)
+  //void fill(uint32_t AColor) {
 
-  void setTitle(const char* ATitle) override {
-    SAT_ImplementedWindow::setTitle(ATitle);
-  }
 
-  void setParent(intptr_t AParent) override {
-    SAT_ImplementedWindow::setParent(AParent);
-  }
 
-  void show() override {
-    SAT_ImplementedWindow::show();
-  }
 
-  void hide() override {
-    SAT_ImplementedWindow::hide();
-  }
+
+
+
+
+
+
+
+
 
 
 };

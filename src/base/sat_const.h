@@ -40,12 +40,39 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_AUDIO_FILE_WRITE        0x20
 #define SAT_AUDIO_FILE_RDWR         0x30
 
+#define MIP_BUTTON_NONE             0
+#define MIP_BUTTON_LEFT             1
+#define MIP_BUTTON_MIDDLE           2
+#define MIP_BUTTON_RIGHT            3
+#define MIP_BUTTON_SCROLL_UP        4
+#define MIP_BUTTON_SCROLL_DOWN      5
+#define MIP_BUTTON_BACKWARD         8
+#define MIP_BUTTON_FORWARD          9
+
 #define SAT_FILE_READ_BINARY        (char*)"rb"
 #define SAT_FILE_READ_TEXT          (char*)"r"
 #define SAT_FILE_WRITE_BINARY       (char*)"wb"
 #define SAT_FILE_WRITE_TEXT         (char*)"w"
 #define SAT_FILE_APPEND_BINARY      (char*)"ab"
 #define SAT_FILE_APPEND_TEXT        (char*)"a"
+
+#define SAT_KEY_NONE                0x00
+#define SAT_KEY_SHIFT               0x01
+#define SAT_KEY_CAPS                0x02
+#define SAT_KEY_CTRL                0x04
+#define SAT_KEY_ALT                 0x08
+#define SAT_KEY_ALTGR               0x10
+
+#define SAT_KEY_ENTER               13
+
+#define SAT_KEY_ENTER               13
+#define SAT_KEY_ESC                 27
+#define SAT_KEY_HOME                36
+#define SAT_KEY_END                 35
+#define SAT_KEY_LEFT                37
+#define SAT_KEY_RIGHT               39
+#define SAT_KEY_DELETE              46
+#define SAT_KEY_BACKSPACE           8
 
 #define SAT_MIDI_NOTE_OFF           0x80
 #define SAT_MIDI_NOTE_ON            0x90
@@ -56,10 +83,12 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_MIDI_PITCHBEND          0xE0
 #define SAT_MIDI_SYS                0xF0
 
+#define SAT_OPENGL_MAJOR            3
+#define SAT_OPENGL_MINOR            2
+
 #define SAT_PLUGIN_MAX_PARAMETERS   1024
 
-#define SAT_THREAD_ID_KILL          666
-
+#define SAT_WINDOW_THREAD_ID_KILL          666
 
 //----------------------------------------------------------------------
 //
