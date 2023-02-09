@@ -6,9 +6,14 @@
 
 //----------------------------------------------------------------------
 
-  void SAT_LogClapHostExtensions(SAT_ClapHost* AHost) {
+  void SAT_LogClapHostInfo(SAT_ClapHost* AHost) {
 
     const clap_host_t* host = AHost->getHost();
+
+    SAT_Log("  host name %s\n",AHost->getName());
+    SAT_Log("  host vendor %s\n",AHost->getVendor());
+    SAT_Log("  host version %s\n",AHost->getVersion());
+    SAT_Log("  host url %s\n",AHost->getUrl());
 
     if (AHost->ext.ambisonic) {
       SAT_Log("  host supports ext '%s' (draft)\n", CLAP_EXT_AMBISONIC);

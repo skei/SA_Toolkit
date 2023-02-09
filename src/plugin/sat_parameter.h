@@ -30,6 +30,7 @@ public:
 
   clap_param_info_t MInfo                           = {0};
   int32_t           MIndex                          = -1;
+  void*             MWidget                         = nullptr;
 
   //sat_param_t       MValue                          = 0.0;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
@@ -52,8 +53,6 @@ public:
     MInfo.default_value  = AValue;
     MInfo.min_value      = AMinValue;
     MInfo.max_value      = AMaxValue;
-    //MValue                    = AValue;
-    //MModulation               = 0.0;
   }
 
   //----------
@@ -87,13 +86,9 @@ public:
   sat_param_t           getMaxValue()         { return MInfo.max_value; }
   sat_param_t           getDefaultValue()     { return MInfo.default_value; }
 
-  //----------
-
   int32_t               getIndex()            { return MIndex; }
   clap_param_info_t*    getParamInfo()        { return &MInfo; }
-  //sat_param_t           getValue()            { return MValue; }
-  //sat_param_t           getModulatione()      { return MModulation; }
-
+  void*                 getWidget()           { return MWidget; }
   bool                  getIsModulated()      { return MIsModulated; }
   uint32_t              getLastModulated()    { return MLastModulated; }
 
@@ -110,16 +105,12 @@ public:
   void setMaxValue(sat_param_t AValue)        { MInfo.max_value = AValue; }
   void setDefaultValue(sat_param_t AValue)    { MInfo.default_value = AValue; }
 
-  //----------
-
   void setIndex(int32_t AIndex) {
     MIndex    = AIndex;
     MInfo.id  = AIndex;
   }
 
-  //void setValue(sat_param_t AValue)           { MValue = AValue; }
-  //void setModulation(sat_param_t AValue)      { MModulation = AValue; }
-
+  void setWidget(void* AWidget)               { MWidget = AWidget; }
   void setIsModulated(bool AState)            { MIsModulated = AState; }
   void setLastModulated(uint32_t ALast)       { MLastModulated = ALast; }
 

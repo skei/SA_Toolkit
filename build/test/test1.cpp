@@ -38,7 +38,10 @@ public:
   myPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
     SAT_Print("Hello world!\n");
-    registerAllExtensions();
+
+    //registerAllExtensions();
+    registerDefaultExtensions();
+
     appendClapNoteInputPort();
     appendStereoInputPort();
     appendStereoOutputPort();
@@ -64,44 +67,54 @@ public:
 public:
 //------------------------------
 
-  void handleNoteOn(const clap_event_note_t* event) final {
+  bool handleNoteOn(const clap_event_note_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleNoteOff(const clap_event_note_t* event) final {
+  bool handleNoteOff(const clap_event_note_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleNoteChoke(const clap_event_note_t* event) final {
+  bool handleNoteChoke(const clap_event_note_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleNoteExpression(const clap_event_note_expression_t* event) final {
+  bool handleNoteExpression(const clap_event_note_expression_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleParamValue(const clap_event_param_value_t* event) final {
+  bool handleParamValue(const clap_event_param_value_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleParamMod(const clap_event_param_mod_t* event) final {
+  bool handleParamMod(const clap_event_param_mod_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleTransport(const clap_event_transport_t* event) final {
+  bool handleTransport(const clap_event_transport_t* event) final {
     //SAT_Print("\n");
+    return false;
   }
 
-  void handleMidi(const clap_event_midi_t* event) final {
+  bool handleMidi(const clap_event_midi_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleMidiSysex(const clap_event_midi_sysex_t* event) final {
+  bool handleMidiSysex(const clap_event_midi_sysex_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
-  void handleMidi2(const clap_event_midi2_t* event) final {
+  bool handleMidi2(const clap_event_midi2_t* event) final {
     SAT_Print("\n");
+    return false;
   }
 
 //------------------------------

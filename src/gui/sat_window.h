@@ -8,7 +8,7 @@
 // painting
 
 #include "base/sat.h"
-#include "gui/sat_surface.h"
+#include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 #include "gui/sat_widget_listener.h"
 
@@ -42,7 +42,8 @@ class SAT_Window
 private:
 //------------------------------
 
-  //SAT_Surface*        MBufferSurface  = nullptr;
+  SAT_OpenGL*         MOpenGL         = nullptr;
+  SAT_Painter*        MScreenPainter  = nullptr;
   //SAT_Widget*         MRootWidget     = nullptr;
 
   //uint32_t            MWindowWidth    = 0;
@@ -53,55 +54,51 @@ private:
   //uint32_t            MBufferWidth    = 0;
   //uint32_t            MBufferHeight   = 0;
 
+  bool                MFillBackground   = true;
+  SAT_Color           MBackgroundColor  = SAT_DarkGray;
+
 //------------------------------
 public:
 //------------------------------
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+    #ifdef SAT_LINUX
+      Display*      display = getX11Display();
+      xcb_window_t  window  = getX11Window();
+      MOpenGL = new SAT_OpenGL(display,window);
+    #endif
+    MScreenPainter = new SAT_Painter(MOpenGL);
   }
 
   //----------
 
   virtual ~SAT_Window() {
+    delete MOpenGL;
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  //void setPos(uint32_t AXpos, uint32_t AYpos)
-  //void setSize(uint32_t AWidth, uint32_t AHeight)
-  //void setTitle(const char* ATitle)
-  //void setParent(intptr_t AParent)
-  //void show()
-  //void hide()
+  void setFillBackground(bool AFill=true)   { MFillBackground = AFill; }
+  void setBackgroundColor(SAT_Color AColor) { MBackgroundColor = AColor; }
 
-  //void reparent(intptr_t AParent)
-  //void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight)
-  //void sendClientMessage(uint32_t AData, uint32_t AType)
-  //void startEventThread()
-  //void stopEventThread()
-  //uint32_t eventLoop()
-  //void beginPaint()
-  //void endPaint()
-  //void paint()
-  //void paint(int32_t x, int32_t y, int32_t w, int32_t h)
-  //void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor)
-  //void fill(uint32_t AColor) {
+//------------------------------
+public:
+//------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
+  void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+    MOpenGL->beginPaint(0,0,MWidth,MHeight);
+    MScreenPainter->beginFrame(MWidth,MHeight,1.0);
+    if (MFillBackground) {
+      MScreenPainter->setFillColor(MBackgroundColor);
+      //MScreenPainter->fillRect(AXpos,AYpos,AWidth,AHeight);
+      MScreenPainter->fillRect(0,0,MWidth,MHeight);
+    }
+    MScreenPainter->endFrame();
+    MOpenGL->endPaint();
+  }
 
 };
 

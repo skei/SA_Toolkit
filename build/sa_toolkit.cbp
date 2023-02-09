@@ -86,6 +86,14 @@
 			<Add library="X11" />
 			<Add library="X11-xcb" />
 			<Add library="xcb" />
+			<Add library="xcb-util" />
+			<Add library="xcb-image" />
+			<Add library="xcb-cursor" />
+			<Add library="xcb-keysyms" />
+			<Add library="xkbcommon" />
+			<Add library="GL" />
+			<Add library="GLX" />
+			<Add library="GLU" />
 		</Linker>
 		<Unit filename="../src/audio/dsp/sat_dsp_filter.h" />
 		<Unit filename="../src/audio/dsp/sat_dsp_phasor.h" />
@@ -193,13 +201,25 @@
 		<Unit filename="../src/extern/clap/stream.h" />
 		<Unit filename="../src/extern/clap/string-sizes.h" />
 		<Unit filename="../src/extern/clap/version.h" />
+		<Unit filename="../src/extern/nanovg/fontstash.h" />
+		<Unit filename="../src/extern/nanovg/nanovg.c">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="../src/extern/nanovg/nanovg.h" />
+		<Unit filename="../src/extern/nanovg/nanovg_gl.h" />
+		<Unit filename="../src/extern/nanovg/nanovg_gl_utils.h" />
+		<Unit filename="../src/extern/sogl/simple-opengl-loader.h" />
+		<Unit filename="../src/extern/stb/stb_image.h" />
+		<Unit filename="../src/extern/stb/stb_truetype.h" />
 		<Unit filename="../src/gfx/sat_bitmap.h" />
 		<Unit filename="../src/gui/nanovg/sat_nanovg.h" />
-		<Unit filename="../src/gui/nanovg/sat_nanovg_surface.h" />
+		<Unit filename="../src/gui/nanovg/sat_nanovg_painter.h" />
 		<Unit filename="../src/gui/nanovg/sat_nanovg_utils.h" />
 		<Unit filename="../src/gui/sat_opengl.h" />
 		<Unit filename="../src/gui/sat_paint_context.h" />
-		<Unit filename="../src/gui/sat_surface.h" />
+		<Unit filename="../src/gui/sat_painter.h" />
 		<Unit filename="../src/gui/sat_widget.h" />
 		<Unit filename="../src/gui/sat_widget_listener.h" />
 		<Unit filename="../src/gui/sat_window.h" />
@@ -211,7 +231,7 @@
 		<Unit filename="../src/gui/win32/sat_win32_window.h" />
 		<Unit filename="../src/gui/x11/sat_x11.h" />
 		<Unit filename="../src/gui/x11/sat_x11_opengl.h" />
-		<Unit filename="../src/gui/x11/sat_x11_surface.h" />
+		<Unit filename="../src/gui/x11/sat_x11_painter.h" />
 		<Unit filename="../src/gui/x11/sat_x11_utils.h" />
 		<Unit filename="../src/gui/x11/sat_x11_window.h" />
 		<Unit filename="../src/plugin/clap/factory/sat_clap_invalidation_factory.h" />

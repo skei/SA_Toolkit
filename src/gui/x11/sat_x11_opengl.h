@@ -121,52 +121,52 @@ public:
 
   //MIP_PaintTarget* ATarget
 
-  SAT_X11OpenGL(Display* display, xcb_window_t window, uint32_t width, uint32_t height) {
-
+  SAT_X11OpenGL(Display* display, xcb_window_t window/*, uint32_t width, uint32_t height*/) {
     //MTarget = ATarget;
     //old_x_error_handler = XSetErrorHandler(x_error_handler);
     //MIP_XlibInitErrorHandler();
 
-    MWidth    = width;//ATarget->tgtGetWidth();
-    MHeight   = height;//ATarget->tgtGetHeight();
-    MDisplay  = display;//ATarget->tgtGetDisplay();
+    //MWidth    = width;    //ATarget->tgtGetWidth();
+    //MHeight   = height;   //ATarget->tgtGetHeight();
+    MDisplay  = display;  //ATarget->tgtGetDisplay();
 
     SAT_Assert(MDisplay);
 
-//    if (ATarget->tgtIsWindow()) {
+    //if (ATarget->tgtIsWindow()) {
 
-      //MIP_Print("window\n");
+      // window
+
       MFBConfig = findFBConfig(MIP_GlxWindowAttribs);
       MContext = createContext(MFBConfig);
-//      xcb_window_t window = ATarget->tgtGetWindow();
+      //xcb_window_t window = ATarget->tgtGetWindow();
       SAT_Assert(window);
       MDrawable = glXCreateWindow(MDisplay,MFBConfig,window,nullptr);
-//      MDrawableIsWindow = true;
+      //MDrawableIsWindow = true;
       disableVSync(MDisplay,MDrawable);
 
-//    }
-//    else if (ATarget->tgtIsSurface()) { // todo
-//      //MIP_Print("pixmap\n");
-//      MFBConfig = findFBConfig(MIP_GlxPixmapAttribs); // crash..
-//      MContext = createContext(MFBConfig);
-//      xcb_pixmap_t pixmap = ATarget->tgtGetPixmap();
-//      MIP_Assert(pixmap);
-//      MDrawable = glXCreatePixmap(MDisplay,MFBConfig,pixmap,nullptr);
-//      MDrawableIsWindow = false;
-//    }
+    //}
+    //else if (ATarget->tgtIsSurface()) { // todo
+    //
+    //  // pixmap
+    //
+    //  MFBConfig = findFBConfig(MIP_GlxPixmapAttribs); // crash..
+    //  MContext = createContext(MFBConfig);
+    //  xcb_pixmap_t pixmap = ATarget->tgtGetPixmap();
+    //  MIP_Assert(pixmap);
+    //  MDrawable = glXCreatePixmap(MDisplay,MFBConfig,pixmap,nullptr);
+    //  MDrawableIsWindow = false;
+    //
+    //}
 
     disableVSync(MDisplay,MDrawable);
-
     //resetCurrent();
     //makeCurrent(0);
-
     MIsCurrent = true;
-
   }
 
   //----------
 
-  ~SAT_X11OpenGL() {
+  virtual ~SAT_X11OpenGL() {
     //MIP_PRINT;
 //    if (MDrawableIsWindow) {
       glXDestroyWindow(MDisplay,MDrawable);
@@ -189,19 +189,28 @@ public:
 
   //----------
 
-  void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AMode) {
-    makeCurrent(AMode);
+  void beginPaint() {
+    makeCurrent();
+  }
+
+
+  void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) { //, uint32_t AMode) {
+    //makeCurrent(AMode);
+    makeCurrent();
     //glViewport(0,0,AWidth,AHeight);
-//    setViewport(0,0,AWidth,AHeight);
+    setViewport(0,0,AWidth,AHeight);
     //setClip(MIP_DRect(AXpos,AYpos,AWidth,AHeight));
   }
 
   //----------
 
-  void endPaint(uint32_t AMode) {
-    swapBuffers(AMode);
+  //void endPaint(uint32_t AMode) {
+  void endPaint() {
+    //swapBuffers(AMode);
+    swapBuffers();
     //resetClip();
-    resetCurrent(AMode);
+    //resetCurrent(AMode);
+    resetCurrent();
   }
 
   //----------
@@ -230,7 +239,8 @@ public:
     (if any) remain unchanged.
   */
 
-  bool makeCurrent(uint32_t AMode) {
+  //bool makeCurrent(uint32_t AMode) {
+  bool makeCurrent() {
     //MIP_PRINT;
     //MPrevContext = glXGetCurrentContext();
     bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
@@ -251,7 +261,8 @@ public:
 
   //TODO: restore prev context?
 
-  bool resetCurrent(uint32_t AMode) {
+  //bool resetCurrent(uint32_t AMode) {
+  bool resetCurrent() {
     //MIP_PRINT;
     bool res = glXMakeContextCurrent(MDisplay,0,0,0);
     //bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MPrevContext); // error
@@ -265,7 +276,8 @@ public:
 
   //----------
 
-  void swapBuffers(uint32_t AMode) {
+  //void swapBuffers(uint32_t AMode) {
+  void swapBuffers() {
     //MIP_PRINT;
     glXSwapBuffers(MDisplay,MDrawable);
   }

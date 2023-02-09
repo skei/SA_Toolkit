@@ -36,6 +36,20 @@ private:
 public:
 //------------------------------
 
+  #ifdef SAT_LINUX
+
+    SAT_OpenGL(Display* display, xcb_window_t window)
+    : SAT_X11OpenGL(display,window) {
+    }
+
+    virtual ~SAT_OpenGL() {
+    }
+
+    #endif
+
+
+
+
   //----------
 
 };

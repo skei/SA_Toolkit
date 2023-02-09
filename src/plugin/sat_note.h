@@ -7,14 +7,14 @@
 struct SAT_Note {
 
   union {
-    uint64_t  data = 0;
     struct {
       int16_t noteid  = -1;
       int16_t key     = -1;
       int16_t channel = -1;
       int16_t port    = -1;
     };
-  }
+    uint64_t  data;// = 0;
+  };
 
   SAT_Note(int16_t n=-1, int16_t k=-1, int16_t c=-1, int16_t p=-1) {
     noteid  = n;

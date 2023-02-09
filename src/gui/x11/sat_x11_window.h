@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-//#include "gui/sat_opengl.h"
+#include "gui/sat_opengl.h"
 #include "gui/x11/sat_x11.h"
-#include "gui/x11/sat_x11_opengl.h"
+//#include "gui/x11/sat_x11_opengl.h"
 #include "gui/x11/sat_x11_utils.h"
 
 //----------------------------------------------------------------------
@@ -35,20 +35,25 @@ private:
   bool                        MIsEmbedded                   = false;
   bool                        MIsMapped                     = false;
   bool                        MIsExposed                    = false;
+  xcb_key_symbols_t*          MKeySyms                      = nullptr;
+
+  //SAT_X11OpenGL*              MOpenGL                       = nullptr;
+  //xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
+  //xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
+  //xcb_cursor_t                MWindowCursor                 = XCB_NONE;
+  //uint32_t                    MBackgroundColor              = 0x800080;
+
+//------------------------------
+protected:
+//------------------------------
+
   uint32_t                    MXpos                         = 0;
   uint32_t                    MYpos                         = 0;
   uint32_t                    MWidth                        = 0;
   uint32_t                    MHeight                       = 0;
-  SAT_X11OpenGL*              MOpenGL                       = nullptr;
 
-  xcb_key_symbols_t*          MKeySyms                      = nullptr;
-  //xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
-  //xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
-  //xcb_cursor_t                MWindowCursor                 = XCB_NONE;
-
-  bool                        MFillBackground               = true;
-  SAT_Color                   MBackgroundColor              = SAT_DarkGreen;
-  //uint32_t                    MBackgroundColor              = 0x800080;
+//  bool                        MFillBackground               = true;
+//  SAT_Color                   MBackgroundColor              = SAT_DarkGreen;
 
 //------------------------------
 public:
@@ -158,14 +163,18 @@ public:
 
     //setTitle(MWindowTitle);
     //MGuiTimer = new MIP_Timer(this);
-    MOpenGL = new SAT_X11OpenGL(MDisplay,MWindow,AWidth,AHeight);
+
+    //MOpenGL = new SAT_X11OpenGL(MDisplay,MWindow);//,AWidth,AHeight);
+
   }
 
   //----------
 
   virtual ~SAT_X11Window() {
     if (MIsMapped) hide();
-    delete MOpenGL;
+
+    //delete MOpenGL;
+
     //if (MGuiTimer) {
     //  LOG.print("XCB Stopping gui timer (destructor)\n");
     //  MGuiTimer->stop();
@@ -190,8 +199,11 @@ public:
 public:
 //------------------------------
 
-  void setFillBackground(bool AFill=true)   { MFillBackground = AFill; }
-  void setBackgroundColor(SAT_Color AColor) { MBackgroundColor = AColor; }
+//  void setFillBackground(bool AFill=true)   { MFillBackground = AFill; }
+//  void setBackgroundColor(SAT_Color AColor) { MBackgroundColor = AColor; }
+
+  Display*      getX11Display() { return MDisplay;}
+  xcb_window_t  getX11Window()  { return MWindow;}
 
 //------------------------------
 public:
@@ -248,16 +260,6 @@ public:
     );
     xcb_flush(MConnection);
   }
-
-  //----------
-
-//  virtual void setParent(intptr_t AParent) {
-//    if (AParent != 0) {
-//      MIsEmbedded = true;
-//      xcb_reparent_window(MConnection,MWindow,AParent,0,0);
-//      xcb_flush(MConnection);
-//    }
-//  }
 
   //----------
 
@@ -334,6 +336,20 @@ public:
 
   //----------
 
+  uint32_t eventLoop() {
+    xcb_generic_event_t* event = getEvent(true);
+    while (event) {
+      bool quit = !processEvent(event);
+      if (quit) break;
+      event = getEvent(true);
+    }
+    return 0;
+  }
+
+//------------------------------
+private:
+//------------------------------
+
   void startEventThread() {
     MIsEventThreadActive = true;
     pthread_create(&MEventThread,nullptr,xcb_event_thread_proc,this);
@@ -344,20 +360,8 @@ public:
   void stopEventThread() {
     void* ret;
     MIsEventThreadActive = false;
-    sendClientMessage(SAT_WINDOW_THREAD_ID_KILL,0);
+    sendClientMessage(SAT_WINDOW_THREAD_KILL,0);
     pthread_join(MEventThread,&ret);
-  }
-
-  //----------
-
-  uint32_t eventLoop() {
-    xcb_generic_event_t* event = getEvent(true);
-    while (event) {
-      bool quit = !processEvent(event);
-      if (quit) break;
-      event = getEvent(true);
-    }
-    return 0;
   }
 
   //----------
@@ -375,20 +379,20 @@ public:
 
   void paint() {
     beginPaint();
-    uint32_t color = MBackgroundColor;
-    if (MFillBackground) fill(0,0,MWidth,MHeight,color);
+    //uint32_t color = MBackgroundColor;
+    //if (MFillBackground) fill(0,0,MWidth,MHeight,color);
     on_window_paint(0,0,MWidth,MHeight);
     endPaint();
   }
 
   //----------
 
-  void paint(int32_t x, int32_t y, int32_t w, int32_t h) {
-    beginPaint();
-    if (MFillBackground) fill(x,y,w,h,MBackgroundColor);
-    on_window_paint(x,y,w,h);
-    endPaint();
-  }
+//  void paint(int32_t x, int32_t y, int32_t w, int32_t h) {
+//    beginPaint();
+//    if (MFillBackground) fill(x,y,w,h,MBackgroundColor);
+//    on_window_paint(x,y,w,h);
+//    endPaint();
+//  }
 
   //----------
 
@@ -652,11 +656,11 @@ private:
         int16_t w = expose->width;
         int16_t h = expose->height;
 
-        paint(x,y,w,h);
-        //beginPaint();
+        //paint(x,y,w,h);
+        beginPaint();
         //if (MFillBackground) fill(x,y,w,h,MBackgroundColor);
-        //on_window_paint(x,y,w,h);
-        //endPaint();
+        on_window_paint(x,y,w,h);
+        endPaint();
 
         break;
       }
@@ -756,7 +760,7 @@ private:
         uint32_t data = client_message->data.data32[0];
         on_window_client_message(data);
         switch(data) {
-          case SAT_WINDOW_THREAD_ID_KILL:
+          case SAT_WINDOW_THREAD_KILL:
             free(AEvent); // not malloc'ed
             return false; // we re finished
           default:
@@ -809,7 +813,7 @@ private:
             xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
             xcb_atom_t type = client_message->type;
             uint32_t data = client_message->data.data32[0];
-            if (data == SAT_WINDOW_THREAD_ID_KILL) {
+            if (data == SAT_WINDOW_THREAD_KILL) {
               //SAT_Print("KILL\n");
               return nullptr;
             }

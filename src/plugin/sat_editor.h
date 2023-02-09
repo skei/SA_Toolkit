@@ -42,6 +42,13 @@ private:
 public:
 //------------------------------
 
+  void updateParameterFromHost(uint32_t AIndex, sat_param_t AValue, bool ARedraw) {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) {
     MWidth = AWidth;
     MHeight = AHeight;
@@ -71,7 +78,7 @@ public: // clap
   //----------
 
   bool set_scale(double scale) {
-    SAT_Print("scale %f\n",scale);
+    //SAT_Print("scale %f\n",scale);
     MScale = scale;
     //if (MWindow) MWindow->setScale(scale);
     return true;
@@ -80,7 +87,7 @@ public: // clap
   //----------
 
   bool get_size(uint32_t *width, uint32_t *height) {
-    SAT_Print("-> %i,%i\n",MWidth,MHeight);
+    //SAT_Print("-> %i,%i\n",MWidth,MHeight);
     *width = MWidth;
     *height = MHeight;
     return true;
@@ -96,7 +103,7 @@ public: // clap
   //----------
 
   bool get_resize_hints(clap_gui_resize_hints_t *hints) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     hints->can_resize_horizontally  = true;
     hints->can_resize_vertically    = true;
     hints->preserve_aspect_ratio    = false;
@@ -116,7 +123,7 @@ public: // clap
   */
 
   bool adjust_size(uint32_t *width, uint32_t *height) {
-    SAT_Print("(%i,%i) -> %i,%i\n",*width,*height,MWidth,MHeight);
+    //SAT_Print("(%i,%i) -> %i,%i\n",*width,*height,MWidth,MHeight);
     MWidth = *width;
     MHeight = *height;
     //*width = MWidth;
@@ -127,7 +134,7 @@ public: // clap
   //----------
 
   bool set_size(uint32_t width, uint32_t height) {
-    SAT_Print("width %i height %i\n",width,height);
+    //SAT_Print("width %i height %i\n",width,height);
     MWidth = width;
     MHeight = height;
     if (MWindow) {
@@ -142,7 +149,7 @@ public: // clap
   //----------
 
   bool set_parent(const clap_window_t *window) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     MParent = window;
     if (!MWindow) {
       MWindow = new SAT_Window(MWidth,MHeight,window->x11);
@@ -156,14 +163,14 @@ public: // clap
   //----------
 
   bool set_transient(const clap_window_t *window) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     return true;
   }
 
   //----------
 
   void suggest_title(const char *title) {
-    SAT_Print("title %s\n",title);
+    //SAT_Print("title %s\n",title);
     MTitle = title;
     if (MWindow) MWindow->setTitle(title);
   }
@@ -171,7 +178,7 @@ public: // clap
   //----------
 
   bool show() {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     //if (!MWindow) MWindow = new SAT_Window(MWidth,MHeight,MParent);
     if (MWindow && !MIsOpen) {
       MWindow->show();
@@ -185,7 +192,7 @@ public: // clap
   //----------
 
   bool hide() {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MWindow && MIsOpen) {
       MWindow->hide();
       MIsOpen = false;
