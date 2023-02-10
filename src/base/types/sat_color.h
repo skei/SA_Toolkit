@@ -201,11 +201,11 @@ public:
 #define SAT_BrightRed2     SAT_Color( 1.00, 0.00, 0.50 )
 
 #define SAT_Black          SAT_Color( 0.00  )
-#define SAT_DarkGray       SAT_Color( 0.25  )
-#define SAT_DarkGray2      SAT_Color( 0.375 )
+#define SAT_DarkGrey       SAT_Color( 0.25  )
+#define SAT_DarkGrey2      SAT_Color( 0.375 )
 #define SAT_Grey           SAT_Color( 0.50  )
-#define SAT_LightGray2     SAT_Color( 0.625 )
-#define SAT_LightGray      SAT_Color( 0.75  )
+#define SAT_LightGrey2     SAT_Color( 0.625 )
+#define SAT_LightGrey      SAT_Color( 0.75  )
 #define SAT_White          SAT_Color( 1.00  )
 
 //----------------------------------------------------------------------

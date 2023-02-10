@@ -73,6 +73,14 @@ protected:
 public:
 //------------------------------
 
+  /*
+  NVGcreateFlags
+    NVG_ANTIALIAS       // Flag indicating if geometry based anti-aliasing is used (may not be needed when using MSAA).
+    NVG_STENCIL_STROKES // Flag indicating if strokes should be drawn using stencil buffer. The rendering will be a little
+                        // slower, but path overlaps (i.e. self-intersecting or sharp turns) will be drawn just once.
+    NVG_DEBUG           // Flag indicating that additional debug checks are done.
+  */
+
   SAT_NanoVGPainter(SAT_OpenGL* AOpenGL) {
     MOpenGL = AOpenGL;
 
@@ -611,6 +619,22 @@ public:
 public:
 //------------------------------
 
+  /*
+
+    NVGimageFlags
+      NVG_IMAGE_GENERATE_MIPMAPS  Generate mipmaps during creation of the image.
+      NVG_IMAGE_REPEATX           Repeat image in X direction.
+      NVG_IMAGE_REPEATY           Repeat image in Y direction.
+      NVG_IMAGE_FLIPY             Flips (inverses) image in Y direction when rendered.
+      NVG_IMAGE_PREMULTIPLIED     Image data has premultiplied alpha.
+      NVG_IMAGE_NEAREST           Image interpolation is Nearest instead Linear
+
+    // additional flags on top of NVGimageFlags.
+    NVGimageFlagsGL
+      NVG_IMAGE_NODELETE          Do not delete GL texture handle.
+
+  */
+
   void* createRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
     int flags = 0;
     //MIP_Print("is_current %i\n",MIsCurrent);
@@ -634,16 +658,29 @@ public:
     nvgluDeleteFramebuffer(fb);
   }
 
-  void selectRenderBuffer(void* buffer) {
-    NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
-    nvgluBindFramebuffer(fb);
-  }
-
   int32_t getImageFromRenderBuffer(void* buffer) {
     SAT_Assert(buffer);
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     return fb->image;
   }
+
+  void selectRenderBuffer(void* buffer) {
+    NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
+    nvgluBindFramebuffer(fb);
+  }
+
+  void selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) {
+    NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
+    nvgluBindFramebuffer(fb);
+    MOpenGL->setViewport(0,0,width,height);
+  }
+
+  void selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) {
+    NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
+    nvgluBindFramebuffer(fb);
+    MOpenGL->setViewport(xpos,ypos,width,height);
+  }
+
 
 };
 

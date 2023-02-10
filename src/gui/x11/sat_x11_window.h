@@ -47,10 +47,10 @@ private:
 protected:
 //------------------------------
 
-  uint32_t                    MXpos                         = 0;
-  uint32_t                    MYpos                         = 0;
-  uint32_t                    MWidth                        = 0;
-  uint32_t                    MHeight                       = 0;
+  uint32_t                    MWindowXpos                   = 0;
+  uint32_t                    MWindowYpos                   = 0;
+  uint32_t                    MWindowWidth                  = 0;
+  uint32_t                    MWindowHeight                 = 0;
 
 //  bool                        MFillBackground               = true;
 //  SAT_Color                   MBackgroundColor              = SAT_DarkGreen;
@@ -104,10 +104,10 @@ public:
 
     //initWindow(AWidth,AHeight);
 
-    MXpos   = 0;
-    MYpos   = 0;
-    MWidth  = AWidth;
-    MHeight = AHeight;
+    MWindowXpos   = 0;
+    MWindowYpos   = 0;
+    MWindowWidth  = AWidth;
+    MWindowHeight = AHeight;
 
     uint32_t event_mask =
       XCB_EVENT_MASK_KEY_PRESS          |
@@ -228,8 +228,8 @@ public:
 //------------------------------
 
   virtual void setPos(uint32_t AXpos, uint32_t AYpos) {
-    MXpos = AXpos;
-    MYpos = AYpos;
+    MWindowXpos = AXpos;
+    MWindowYpos = AYpos;
     uint32_t values[] = { AXpos, AYpos };
     xcb_configure_window(MConnection,MWindow,XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y,values);
     xcb_flush(MConnection);
@@ -238,8 +238,8 @@ public:
   //----------
 
   virtual void setSize(uint32_t AWidth, uint32_t AHeight) {
-    MWidth = AWidth;
-    MHeight = AHeight;
+    MWindowWidth = AWidth;
+    MWindowHeight = AHeight;
     uint32_t values[] = { AWidth, AHeight };
     xcb_configure_window(MConnection,MWindow,XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,values);
     xcb_flush(MConnection);
@@ -381,7 +381,7 @@ private:
     beginPaint();
     //uint32_t color = MBackgroundColor;
     //if (MFillBackground) fill(0,0,MWidth,MHeight,color);
-    on_window_paint(0,0,MWidth,MHeight);
+    on_window_paint(0,0,MWindowWidth,MWindowHeight);
     endPaint();
   }
 
@@ -416,7 +416,7 @@ private:
   //----------
 
   void fill(uint32_t AColor) {
-    fill(0,0,MWidth,MHeight,AColor);
+    fill(0,0,MWindowWidth,MWindowHeight,AColor);
   }
 
 //------------------------------
@@ -624,15 +624,15 @@ private:
         int16_t y = configure_notify->y;
         int16_t w = configure_notify->width;
         int16_t h = configure_notify->height;
-        if ((x != MXpos) || (y != MYpos)) {
+        if ((x != MWindowXpos) || (y != MWindowYpos)) {
           on_window_move(x,y);
-          MXpos = x;
-          MYpos = y;
+          MWindowXpos = x;
+          MWindowYpos = y;
         }
-        if ((w != MWidth) || (h != MHeight)) {
+        if ((w != MWindowWidth) || (h != MWindowHeight)) {
           on_window_resize(w,h);
-          MWidth  = w;
-          MHeight = h;
+          MWindowWidth  = w;
+          MWindowHeight = h;
         }
         break;
       }

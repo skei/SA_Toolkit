@@ -454,19 +454,22 @@ public: // gui
   // [main-thread]
 
   bool gui_create(const char *api, bool is_floating) override {
+
     //SAT_Print("api %s is_floating %i\n",api,is_floating);
+
     if (is_floating == true) return false;
+
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
     #endif
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
-    MEditor = new SAT_Editor(this,640,480);
-    if (MEditor) {
-      return true;
-    }
-    return false;
+
+    //MEditor = new SAT_Editor(this,640,480);
+    MEditor = createEditor(this,500,350);
+    return (MEditor);
+
   }
 
   //----------
@@ -555,6 +558,11 @@ public: // gui
 
   // Embbeds the plugin window into the given window.
   // [main-thread & !floating]
+
+  /*
+    looks like bitwig checks a while (a second or two) afterwards,
+    and destroyed the gui if it's not parented (yet)..
+  */
 
   bool gui_set_parent(const clap_window_t *window) override {
     return MEditor->set_parent(window);
@@ -1282,6 +1290,14 @@ public: // extensions
     registerExtension(CLAP_EXT_STATE,                 &MStateExt);
     //registerExtension(CLAP_EXT_THREAD_POOL,           &MThreadPoolExt);
     //registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
+  }
+
+//------------------------------
+public: // editor
+//------------------------------
+
+  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) {
+    return new SAT_Editor(AListener,AWidth,AHeight);
   }
 
 //------------------------------

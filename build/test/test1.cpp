@@ -3,6 +3,10 @@
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_utils.h"
 
+#define NANOSVG_IMPLEMENTATION
+//#define NANOSVG_IMPLEMENTATION
+#include "extern/nanosvg/nanosvgrast.h"
+
 //----------------------------------------------------------------------
 //
 // descriptor
@@ -32,6 +36,12 @@ class myPlugin
 : public SAT_Plugin {
 
 //------------------------------
+private:
+//------------------------------
+
+  NSVGimage* image = nullptr;;
+
+//------------------------------
 public:
 //------------------------------
 
@@ -59,9 +69,42 @@ public:
 public:
 //------------------------------
 
-  //void destroy() final {
-  //  delete this;
-  //}
+  bool init() final {
+    bool result = SAT_Plugin::init();
+    if (result) {
+
+      //struct NSVGimage* image;
+      image = nsvgParseFromFile("/DISKS/sda2/skei.audio/logo/export/SVG/SA_black sircle.svg", "px", 96);
+      SAT_Print("size: %f x %f\n", image->width, image->height);
+
+      //// Use...
+      //for (NSVGshape* shape = image->shapes; shape != NULL; shape = shape->next) {
+      //  for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
+      //    for (int i = 0; i < path->npts-1; i += 3) {
+      //      float* p = &path->pts[i*2];
+      //      drawCubicBez(p[0],p[1], p[2],p[3], p[4],p[5], p[6],p[7]);
+      //    }
+      //  }
+      //}
+
+    }
+    return result;
+  }
+
+  //----------
+
+  void destroy() final {
+    nsvgDelete(image);
+    SAT_Plugin::destroy();
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) final {
+    return new SAT_Editor(AListener,AWidth,AHeight);
+  }
 
 //------------------------------
 public:
