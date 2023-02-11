@@ -94,9 +94,9 @@ public:
   bool read(_T* AItem) {
     uint32_t wp = MWritePos;
     uint32_t rp = MReadPos;
-    if (( (wp-rp) & MBufferMask ) > 0) {
+    if (( (wp - rp) & MBufferMask ) > 0) {
       *AItem = MBuffer[rp];
-      uint32_t next = (rp+1) & MBufferMask;
+      uint32_t next = (rp + 1) & MBufferMask;
       MReadPos = next;
       return true;
     }
@@ -113,9 +113,13 @@ public:
   bool write(_T AItem) {
     uint32_t rp = MReadPos;
     uint32_t wp = MWritePos;
-    if (((wp-rp) & MBufferMask) < (MBufferSize-1)) { // -1 to avoid filling the entire buffer.. .. which could be mis-interpreted by read() as empty..
+
+    // -1 to avoid filling the entire buffer..
+    // .. which could be mis-interpreted by read() as empty..
+
+    if (((wp - rp) & MBufferMask) < (MBufferSize - 1)) {
       MBuffer[wp] = AItem;
-      uint32_t next = (wp+1) & MBufferMask;
+      uint32_t next = (wp + 1) & MBufferMask;
       MWritePos = next;
       return true;
     }
@@ -222,6 +226,23 @@ private:
   //_T* read(void) {
   //}
 
+};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+template<class _T, int SIZE>
+class SAT_MPMCQueue {
+public:
+  SAT_MPMCQueue() {}
+  ~SAT_MPMCQueue() {}
+public:
+  void clear(void) {}
+  bool read(_T* AItem) { return false; }
+  bool write(_T AItem) { return false; }
 };
 
 //----------------------------------------------------------------------

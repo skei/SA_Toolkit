@@ -7,12 +7,20 @@
 // buffer
 // painting
 
+/*
+  to redraw a widget: call queueDirtyWidget(widget), and it will be
+  picked up next time a on_window_paint() is called
+*/
+
 #include "base/sat.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 #include "gui/sat_widget_listener.h"
 #include "gui/sat_window_listener.h"
 
+#define SAT_WINDOW_MAX_DIRTY_WIDGETS 1024
+
+typedef SAT_SPSCQueue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS> SAT_DirtyWidgetsQueue;
 //----------------------------------------------------------------------
 //
 //
@@ -43,14 +51,17 @@ class SAT_Window
 private:
 //------------------------------
 
-  SAT_OpenGL*         MOpenGL           = nullptr;
-  SAT_Painter*        MWindowPainter    = nullptr;
-  void*               MRenderBuffer     = nullptr;
-  uint32_t            MBufferWidth      = 0;
-  uint32_t            MBufferHeight     = 0;
-  SAT_Widget*         MRootWidget       = nullptr;
-  SAT_PaintContext    MPaintContext     = {};
-  SAT_WindowListener* MListener         = nullptr;
+  SAT_OpenGL*           MOpenGL         = nullptr;
+  SAT_Painter*          MWindowPainter  = nullptr;
+  void*                 MRenderBuffer   = nullptr;
+  uint32_t              MBufferWidth    = 0;
+  uint32_t              MBufferHeight   = 0;
+  SAT_Widget*           MRootWidget     = nullptr;
+  SAT_PaintContext      MPaintContext   = {};
+  SAT_WindowListener*   MListener       = nullptr;
+  SAT_DirtyWidgetsQueue MDirtyWidgets   = {};
+
+  //SAT_SPSCQueue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS>  MDirtyWidgets = {};
 
 //------------------------------
 public:
@@ -84,14 +95,6 @@ public:
     deleteBuffer();
     delete MWindowPainter;
     delete MOpenGL;
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  void setRootWidget(SAT_Widget* AWidget) {
-    MRootWidget = AWidget;
   }
 
 //------------------------------
@@ -148,9 +151,33 @@ private: // buffer
     MWindowPainter->endFrame();
   }
 
+  //----------
+
+  /*
+    called at the start of SAT_Window.on_window_paint(),
+    to see if we need to paint any dirty widgets..
+  */
+
+  void checkBufferSize() {
+    if ((MWindowWidth != MBufferWidth) || (MWindowHeight != MBufferHeight)) {
+      resizeBuffer(MWindowWidth,MWindowHeight);
+      if (MRootWidget) queueDirtyWidget(MRootWidget);
+      //invalidate(R.x,R.y,R.w,R.h);
+      //invalidate(0,0,MWindowWidth,MWindowHeight);
+    }
+  }
+
 //------------------------------
-public: // editor
+public: // widgets
 //------------------------------
+
+  void setRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
+    MRootWidget = AWidget;
+    if (AListener) AWidget->setListener(AListener);
+    else AWidget->setListener(this);
+  }
+
+  //----------
 
   // called from
   // - SAT_Window.on_window_open()
@@ -159,32 +186,84 @@ public: // editor
   virtual void prepareWidgets() {
     if (MRootWidget) {
       MRootWidget->prepare(this,true);
+      // set root widget as dirty, to force filling the back buffer
+      SAT_Rect R = MRootWidget->getRect();
+      queueDirtyWidget(MRootWidget);
+      invalidateWidget(MRootWidget);
     }
   }
 
   //----------
 
-  //TODO
-  // don't blindly redraw entire gui..
-  // flush dirty widgets (draw to buffer)
-  // draw buffer (update_rect)to screen
+  /*
+    add widget to dirty widgets queue
 
-  virtual void paintWidgets(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
-    if (!MRootWidget) return;
-    MRootWidget->on_widget_paint(&MPaintContext);
+    called from
+    - SAT_Window.prepareWidgets()
+    - SAT_Window.checkBufferSize()
+  */
+
+
+  virtual void queueDirtyWidget(SAT_Widget* AWidget) {
+    if (MDirtyWidgets.write(AWidget)) {
+    }
   }
 
+  //----------
+
+  /*
+    redraw all widgets marked/queued as dirty
+
+    called from:
+    - SAT_Window.on_window_paint() -> paintWidgets()
+  */
+
+  virtual void flushDirtyWidgets() {
+    SAT_Widget* widget = nullptr;
+    while (MDirtyWidgets.read(&widget)) {
+      //SAT_PRINT;
+      widget->on_widget_paint(&MPaintContext);
+    }
+  }
+
+  //----------
+
+  /*
+    flush dirty widgets (draw to buffer)
+    (before drawing buffer (update_rect) to screen)
+
+    called from
+    - SAT_Window.on_window_paint()
+  */
+
+  virtual void paintWidgets(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
+    //if (!MRootWidget) return;
+    //MRootWidget->on_widget_paint(&MPaintContext);
+    flushDirtyWidgets();
+  }
+
+  //----------
+
+  /*
+    called from:
+    - SAT_Window.prepareWidgets()
+  */
+
+  virtual void invalidateWidget(SAT_Widget* AWidget) {
+    SAT_Rect R = AWidget->getRect();
+    invalidate(R.x,R.y,R.w,R.h);
+  }
+
+
 //------------------------------
-public:
+public: // window
 //------------------------------
 
   /*
     called from:
     - SAT_X11Window.processEvent(), XCB_MAP_NOTIFY
     - SAT_Editor.show()
-
   */
-
 
   void on_window_open() override {
     prepareWidgets();
@@ -194,9 +273,8 @@ public:
 
   /*
     called from:
-    - ~SAT_Editor()
     - SAT_X11Window.processEvent(), XCB_UNMAP_NOTIFY
-    - (SAT_Editor.destroy)
+    - ~SAT_Editor()
   */
 
   void on_window_close() override {
@@ -216,20 +294,22 @@ public:
 
     MOpenGL->makeCurrent();
 
-    if ((MWindowWidth != MBufferWidth) || (MWindowHeight != MBufferHeight)) {
-      resizeBuffer(MWindowWidth,MWindowHeight);
-    }
+    checkBufferSize();
 
     MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
     MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-    paintWidgets(AXpos,AYpos,AWidth,AHeight);
-    MWindowPainter->endFrame();
 
+    paintWidgets(AXpos,AYpos,AWidth,AHeight);
+
+    MWindowPainter->endFrame();
     //copyBuffer(nullptr,MWindowWidth,MWindowHeight,MRenderBuffer,0,0,MWindowWidth,MWindowHeight);
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
 
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
+
+    MPaintContext.counter += 1;
+
   }
 
   //----------
@@ -237,6 +317,26 @@ public:
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
     //SAT_Print("\n");
     if (MRootWidget) MRootWidget->setSize(AWidth,AHeight);
+  }
+
+//------------------------------
+public: // widget listener
+//------------------------------
+
+  void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+    if (MListener) MListener->do_window_listener_update_widget(ASender,AMode,AIndex);
+  }
+
+  void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+    if (MListener) MListener->do_window_listener_redraw_widget(ASender,AMode,AIndex);
+  }
+
+  void do_widget_set_state(SAT_Widget* ASender, uint32_t AState) override {
+    if (MListener) MListener->do_window_listener_set_widget_state(ASender,AState);
+  }
+
+  void do_widget_set_cursor(SAT_Widget* ASender, uint32_t ACursor) override {
+    if (MListener) MListener->do_window_listener_set_cursor(ASender,ACursor);
   }
 
 //------------------------------

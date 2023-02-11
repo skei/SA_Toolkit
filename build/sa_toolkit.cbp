@@ -36,7 +36,6 @@
 					<Add option="-s" />
 					<Add option="-fno-pie" />
 					<Add option="-no-pie" />
-					<Add library="dl" />
 				</Linker>
 			</Target>
 			<Target title="linux plugin debug">
@@ -52,7 +51,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="-fPIE" />
-					<Add library="dl" />
 				</Linker>
 			</Target>
 			<Target title="linux plugin release">
@@ -69,7 +67,6 @@
 				<Linker>
 					<Add option="-s" />
 					<Add option="-fPIE" />
-					<Add library="dl" />
 				</Linker>
 			</Target>
 		</Build>

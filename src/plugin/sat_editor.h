@@ -113,6 +113,30 @@ public: // window listener
     //SAT_PRINT;
   }
 
+  //----------
+
+  //void do_window_listener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+  //  //SAT_PRINT;
+  //}
+
+  //----------
+
+  void do_window_listener_redraw_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+    //SAT_PRINT;
+  }
+
+  //----------
+
+  //void do_window_listener_set_widget_state(SAT_Widget* ASender, uint32_t AState) override {
+  //  //SAT_PRINT;
+  //}
+
+  //----------
+
+  //void do_window_listener_set_cursor(SAT_Widget* ASender, uint32_t ACursor) override {
+  //  //SAT_PRINT;
+  //}
+
 //------------------------------
 public: // clap
 //------------------------------

@@ -130,7 +130,7 @@ public:
   }
 
 //------------------------------
-public: // runtime, downwards
+public: // widget
 //------------------------------
 
   virtual void on_widget_move(double AXpos, double AYpos) {
@@ -165,7 +165,7 @@ public: // runtime, downwards
   }
 
 //------------------------------
-public: // runtime, upwards
+public: // widget listener
 //------------------------------
 
   void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
