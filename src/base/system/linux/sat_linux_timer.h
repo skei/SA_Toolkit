@@ -44,7 +44,9 @@ class SAT_TimerListener {
 
 class SAT_Timer {
 
+//------------------------------
 private:
+//------------------------------
 
   //friend
   //static void sat_timer_callback(sigval val);
@@ -59,15 +61,19 @@ private:
     }
   }
 
+//------------------------------
 private:
+//------------------------------
 
-  sigevent            MSigEvent;
-  timer_t             MTimer;
-  itimerspec          MTimerSpec;
-  bool                MRunning  = false;
-  SAT_TimerListener*  MTimerListener = nullptr;
+  sigevent            MSigEvent       = {};
+  timer_t             MTimer          = nullptr;
+  itimerspec          MTimerSpec      = {};
+  bool                MRunning        = false;
+  SAT_TimerListener*  MTimerListener  = nullptr;
 
+//------------------------------
 public:
+//------------------------------
 
   SAT_Timer(SAT_TimerListener* AListener/*, void* AUserPtr*/) {
 
@@ -106,7 +112,14 @@ public:
     timer_delete(MTimer);
   }
 
+//------------------------------
+public:
+//------------------------------
+
+  bool isRunning() { return MRunning; }
+
   //----------
+
 
   void start(float ms, bool oneshot=false) {
     if (!MRunning) {
@@ -169,7 +182,7 @@ public:
   //----------
 
   void on_timer() {
-    if (MTimerListener) MTimerListener->on_timer_callback(this);
+    if (MTimerListener) MTimerListener->do_timer_callback(this);
   }
 
 };

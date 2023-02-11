@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
+#include "base/system/sat_timer.h"
 #include "gui/sat_opengl.h"
 #include "gui/x11/sat_x11.h"
 //#include "gui/x11/sat_x11_opengl.h"
@@ -14,7 +15,8 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_X11Window {
+class SAT_X11Window
+: public SAT_TimerListener {
 
 //------------------------------
 private:
@@ -36,6 +38,7 @@ private:
   bool                        MIsMapped                     = false;
   bool                        MIsExposed                    = false;
   xcb_key_symbols_t*          MKeySyms                      = nullptr;
+  SAT_Timer*                  MTimer                        = nullptr;
 
   //SAT_X11OpenGL*              MOpenGL                       = nullptr;
   //xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
@@ -162,7 +165,7 @@ public:
     }
 
     //setTitle(MWindowTitle);
-    //MGuiTimer = new MIP_Timer(this);
+    MTimer = new SAT_Timer(this);
 
     //MOpenGL = new SAT_X11OpenGL(MDisplay,MWindow);//,AWidth,AHeight);
 
@@ -175,11 +178,15 @@ public:
 
     //delete MOpenGL;
 
-    //if (MGuiTimer) {
-    //  LOG.print("XCB Stopping gui timer (destructor)\n");
-    //  MGuiTimer->stop();
-    //  delete MGuiTimer;
-    //}
+    if (MTimer) {
+      if (MTimer->isRunning()) {
+        //LOG.print("XCB Stopping gui timer (destructor)\n");
+        //SAT_Print("stopping timer\n");
+        MTimer->stop();
+      }
+      delete MTimer;
+    }
+
     //cleanupKeyboard();
     xcb_key_symbols_free(MKeySyms);
     //cleanupMouseCursor();
@@ -222,6 +229,7 @@ public:
   virtual void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_client_message(uint32_t AData) {}
+  virtual void on_window_timer() {}
 
 //------------------------------
 public:
@@ -266,15 +274,19 @@ public:
   virtual void show() {
     xcb_map_window(MConnection,MWindow);
     xcb_flush(MConnection);
-    #ifdef MIP_X11_WAIT_FOR_MAPNOTIFY
+    #ifdef SAT_X11_WAIT_FOR_MAPNOTIFY
       waitForMapNotify();
     #endif
     startEventThread();
+    //SAT_Print("starting timer\n");
+    MTimer->start(SAT_WINDOW_TIMER_MS,false);
   }
 
   //----------
 
   virtual void hide() {
+    //SAT_Print("stopping timer\n");
+    MTimer->stop();
     stopEventThread();
     xcb_unmap_window(MConnection,MWindow);
     xcb_flush(MConnection);
@@ -571,12 +583,12 @@ private:
   //----------
 
   uint32_t remapState(uint32_t AState) {
-    uint32_t s = SAT_KEY_NONE;
-    if (AState & XCB_MOD_MASK_SHIFT)    s += SAT_KEY_SHIFT;
-    if (AState & XCB_MOD_MASK_LOCK)     s += SAT_KEY_CAPS;
-    if (AState & XCB_MOD_MASK_CONTROL)  s += SAT_KEY_CTRL;
-    if (AState & XCB_MOD_MASK_1)        s += SAT_KEY_ALT;
-    if (AState & XCB_MOD_MASK_5)        s += SAT_KEY_ALTGR;
+    uint32_t s = SAT_STATE_NONE;
+    if (AState & XCB_MOD_MASK_SHIFT)    s += SAT_STATE_SHIFT;
+    if (AState & XCB_MOD_MASK_LOCK)     s += SAT_STATE_CAPS;
+    if (AState & XCB_MOD_MASK_CONTROL)  s += SAT_STATE_CTRL;
+    if (AState & XCB_MOD_MASK_1)        s += SAT_STATE_ALT;
+    if (AState & XCB_MOD_MASK_5)        s += SAT_STATE_ALTGR;
     //if (AState & XCB_MOD_MASK_1) MIP_Print("1\n");
     //if (AState & XCB_MOD_MASK_2) MIP_Print("2\n");
     //if (AState & XCB_MOD_MASK_3) MIP_Print("3\n");
@@ -840,6 +852,17 @@ private:
     //LOG.print("XCB Returning from event thread\n");
     return nullptr;
   }
+
+//
+
+//------------------------------
+public:
+//------------------------------
+
+//  void do_timer_callback(SAT_Timer* ATimer) final {
+//    SAT_PRINT;
+//    on_window_timer();
+//  }
 
 };
 

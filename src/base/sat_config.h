@@ -63,7 +63,7 @@
 //#define SAT_NO_GUI
 
 // waits for notify event before returning when opening windows..
-#define MIP_X11_WAIT_FOR_MAPNOTIFY
+#define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 
 

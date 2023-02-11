@@ -47,18 +47,20 @@ class SAT_Widget
 private:
 //------------------------------
 
-  //SAT_Widget*     MParent   = nullptr;
   SAT_WidgetListener* MListener   = nullptr;
   SAT_WidgetArray     MChildren = {};
   uint32_t            MIndex    = 0;
   SAT_Rect            MRect     = {};
 
+  //uint32_t            MDirtyFlags = 0; // all, value,modulation, ..
+
 //------------------------------
 protected:
 //------------------------------
 
-  const char* MHint   = "";
-  uint32_t    MCursor = 0;
+  const char*         MHint   = "";
+  uint32_t            MCursor = 0;
+
 
 //------------------------------
 public:
@@ -79,9 +81,13 @@ public:
 //------------------------------
 
   void        setListener(SAT_WidgetListener* AListener)  { MListener = AListener; }
-
   void        setIndex(uint32_t AIndex)                   { MIndex = AIndex; }
   void        setRect(SAT_Rect ARect)                     { MRect = ARect; }
+
+//void        setDirtyFlags(uint32_t AFlags)              { MDirtyFlags = AFlags; }
+//void        setDirtyFlag(uint32_t AFlag)                { MDirtyFlags |= AFlag; }
+//void        clearDirtyFlag(uint32_t AFlag)              { MDirtyFlags &= ~AFlag; }
+//bool        hasDirtyFlag(uint32_t AFlag)                { return (MDirtyFlags & AFlag); }
 
   uint32_t    getIndex()                                  { return MIndex; }
   SAT_Rect    getRect()                                   { return MRect; }
@@ -90,12 +96,37 @@ public:
 public:
 //------------------------------
 
-  void setPos(double AXpos, double AYpos) {
+  // called from SAT_Editor.show()
+
+  virtual void prepare(SAT_WidgetListener* AWindow, bool ARecursive) {
+    uint32_t num = MChildren.size();
+    for (uint32_t i=0; i<num; i++) {
+      MChildren[i]->prepare(AWindow,ARecursive);
+    }
   }
 
   //----------
 
-  void setSize(double AWidth, double AHeight) {
+  virtual void paintChildren(SAT_PaintContext* AContext) {
+    uint32_t num = MChildren.size();
+    for (uint32_t i=0; i<num; i++) {
+      SAT_Widget* child = MChildren[i];
+      child->on_widget_paint(AContext);
+    }
+  }
+
+  //----------
+
+  virtual void setPos(double AXpos, double AYpos) {
+    MRect.x = AXpos;
+    MRect.y = AYpos;
+  }
+
+  //----------
+
+  virtual void setSize(double AWidth, double AHeight) {
+    MRect.w = AWidth;
+    MRect.h = AHeight;
   }
 
 //------------------------------
@@ -109,6 +140,7 @@ public: // runtime, downwards
   }
 
   virtual void on_widget_paint(SAT_PaintContext* AContext) {
+    paintChildren(AContext);
   }
 
   virtual void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {

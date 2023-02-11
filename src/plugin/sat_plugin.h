@@ -18,6 +18,11 @@
 #include "plugin/clap/sat_clap_utils.h"
 #include "audio/sat_audio_utils.h"
 
+#define SAT_PLUGIN_DEFAULT_CONSTRUCTOR(PLUGIN)                                  \
+  PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
+  : SAT_Plugin(ADescriptor,AHost) {                                             \
+  }
+
 //----------------------------------------------------------------------
 //
 //
@@ -49,6 +54,9 @@ private:
   SAT_ProcessContext          MProcessContext                               = {};
   SAT_Dictionary<const void*> MExtensions                                   = {};
 
+  uint32_t                    MInitialEditorWidth                           = 640;
+  uint32_t                    MInitialEditorHeight                          = 480;
+
 //------------------------------
 public:
 //------------------------------
@@ -73,6 +81,12 @@ public:
     #endif
     delete MHost;
   }
+
+//------------------------------
+public: // plugin
+//------------------------------
+
+  SAT_Editor* getEditor() { return MEditor; }
 
 //------------------------------
 public: // plugin
@@ -454,22 +468,19 @@ public: // gui
   // [main-thread]
 
   bool gui_create(const char *api, bool is_floating) override {
-
     //SAT_Print("api %s is_floating %i\n",api,is_floating);
-
     if (is_floating == true) return false;
-
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
     #endif
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
-
-    //MEditor = new SAT_Editor(this,640,480);
-    MEditor = createEditor(this,500,350);
+    MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight);
+    if (!MEditor) {
+      // create default editor..
+    }
     return (MEditor);
-
   }
 
   //----------
@@ -565,7 +576,12 @@ public: // gui
   */
 
   bool gui_set_parent(const clap_window_t *window) override {
-    return MEditor->set_parent(window);
+    bool result = MEditor->set_parent(window);
+    if (result) {
+      SAT_Window* win = MEditor->getWindow();
+      initEditorWindow(win);
+    }
+    return result;
   }
 
   //----------
@@ -1296,8 +1312,18 @@ public: // extensions
 public: // editor
 //------------------------------
 
+  // called from SAT_Plugin.gui_create()
+
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) {
     return new SAT_Editor(AListener,AWidth,AHeight);
+  }
+
+  //----------
+
+  // called from SAT_Plugin.gui_set_parent()
+
+  virtual bool initEditorWindow(SAT_Window* AWindow) {
+    return true;
   }
 
 //------------------------------
@@ -1311,10 +1337,28 @@ public: // editor listener
     host queue is flushed at the end of process()
   */
 
-  void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) override {
+  void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) final {
     // if connected to parameter (checked in sender?
     queueParamFromGuiToHost(AIndex,AValue);
     queueParamFromGuiToProcess(AIndex,AValue);
+  }
+
+  //----------
+
+  SAT_Parameter* do_editor_listener_get_parameter(uint32_t AIndex) final {
+    return MParameters[AIndex];
+  }
+
+  //----------
+
+  sat_param_t do_editor_listener_get_parameter_value(uint32_t AIndex) final {
+    return MParameterValues[AIndex];
+  }
+
+  //----------
+
+  sat_param_t do_editor_listener_get_modulation_value(uint32_t AIndex) final {
+    return MModulationValues[AIndex];
   }
 
 //------------------------------
@@ -1365,15 +1409,15 @@ public: // queues
 
   //----------
 
-  //void queueNoteEndFromProcessToHost() {
-  //  SAT_Print("\n");
-  //}
+  void queueNoteEndFromProcessToHost() {
+    //SAT_Print("\n");
+  }
 
   //----------
 
-  //void flushNoteEndFromProcessToHost() {
-  //  SAT_Print("\n");
-  //}
+  void flushNoteEndFromProcessToHost() {
+    //SAT_Print("\n");
+  }
 
 //------------------------------
 public: // parameters
@@ -1451,7 +1495,7 @@ public: // parameters
   void updateEditorParameterValues() {
     for (uint32_t i=0; i<MParameters.size(); i++) {
       double v = MParameterValues[i];
-      MEditor->updateParameterFromHost(i,v,false);                      // !!!!!
+      MEditor->updateEditorParameterValue(i,v,false);                      // !!!!!
     }
   }
 
@@ -1708,18 +1752,20 @@ private:
 
   //----------
 
-
   void handleNoteOnEvent(const clap_event_note_t* event) {
     bool handled = handleNoteOn(event);
-    if (!handled) {
-      //queueNoteEndFromProcessToHost();
-    }
+    //if (!handled) {
+    //  queueNoteEndFromProcessToHost();
+    //}
   }
 
   //----------
 
   void handleNoteOffEvent(const clap_event_note_t* event) {
-    handleNoteOff(event);
+    bool handled = handleNoteOff(event);
+    if (!handled) {
+      queueNoteEndFromProcessToHost();
+    }
   }
 
   //----------

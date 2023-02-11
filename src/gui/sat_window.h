@@ -11,6 +11,7 @@
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 #include "gui/sat_widget_listener.h"
+#include "gui/sat_window_listener.h"
 
 //----------------------------------------------------------------------
 //
@@ -42,33 +43,23 @@ class SAT_Window
 private:
 //------------------------------
 
-  SAT_OpenGL*         MOpenGL         = nullptr;
-  SAT_Painter*        MScreenPainter  = nullptr;
-  void*               MRenderBuffer   = nullptr;
-
-
-  //SAT_Widget*         MRootWidget     = nullptr;
-
-  //uint32_t            MWindowWidth    = 0;
-  //uint32_t            MWindowHeight   = 0;
-  //const char*         MWindowTitle    = "SAT_Window";
-  //intptr_t            MWindowParent   = 0;
-
-  uint32_t            MBufferWidth    = 0;
-  uint32_t            MBufferHeight   = 0;
-
-  bool                MFillBackground   = true;
-  SAT_Color           MBackgroundColor  = SAT_Grey;
+  SAT_OpenGL*         MOpenGL           = nullptr;
+  SAT_Painter*        MWindowPainter    = nullptr;
+  void*               MRenderBuffer     = nullptr;
+  uint32_t            MBufferWidth      = 0;
+  uint32_t            MBufferHeight     = 0;
+  SAT_Widget*         MRootWidget       = nullptr;
+  SAT_PaintContext    MPaintContext     = {};
+  SAT_WindowListener* MListener         = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent)
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, SAT_WindowListener* AListener)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
 
-//    MBufferWidth = AWidth;
-//    MBufferHeight = AHeight;
+    MListener = AListener;
 
     #ifdef SAT_LINUX
       Display* display = getX11Display();
@@ -76,22 +67,22 @@ public:
       MOpenGL = new SAT_OpenGL(display,window);
     #endif
 
-    MScreenPainter = new SAT_Painter(MOpenGL);
+    #ifdef SAT_WIN32
+    #endif
 
     MOpenGL->makeCurrent();
-    //MRenderBuffer = MScreenPainter->createRenderBuffer(AWidth,AHeight);
-    createBuffer(AWidth,AHeight);
+      MWindowPainter = new SAT_Painter(MOpenGL);
+      createBuffer(AWidth,AHeight);
     MOpenGL->resetCurrent();
 
-    //SAT_Print("MRenderBuffer %p\n",MRenderBuffer);
+    //setFillBackground(false);
   }
 
   //----------
 
   virtual ~SAT_Window() {
-    //MScreenPainter->deleteRenderBuffer(MRenderBuffer);
     deleteBuffer();
-    delete MScreenPainter;
+    delete MWindowPainter;
     delete MOpenGL;
   }
 
@@ -99,46 +90,46 @@ public:
 public:
 //------------------------------
 
+  void setRootWidget(SAT_Widget* AWidget) {
+    MRootWidget = AWidget;
+  }
+
+//------------------------------
+private: // buffer
+//------------------------------
+
   void createBuffer(uint32_t AWidth, uint32_t AHeight) {
     uint32_t width = SAT_NextPowerOfTwo(AWidth);
     uint32_t height = SAT_NextPowerOfTwo(AHeight);
     MBufferWidth = width;
     MBufferHeight = height;
-    MRenderBuffer = MScreenPainter->createRenderBuffer(width,height);
+    MRenderBuffer = MWindowPainter->createRenderBuffer(width,height);
   }
 
   //----------
 
   void deleteBuffer() {
     if (MRenderBuffer) {
-      MScreenPainter->deleteRenderBuffer(MRenderBuffer);
+      MWindowPainter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = nullptr;
     }
   }
 
   //----------
 
-  void resizeBuffer(uint32_t AWidth, uint32_t AHeight) {
-    if (!MRenderBuffer) {
+  void resizeBuffer(uint32_t AWidth, uint32_t AHeight, bool ACopyBuffer=true) {
+    if (MRenderBuffer) {
       createBuffer(AWidth,AHeight);
     }
     else {
       uint32_t new_width  = SAT_NextPowerOfTwo(AWidth);
       uint32_t new_height = SAT_NextPowerOfTwo(AHeight);
       if ((new_width != MBufferWidth) || (new_height != MBufferHeight)) {
-        // create new buffer
-        void* new_buffer = MScreenPainter->createRenderBuffer(new_width,new_height);
-        // copy old to new buffer
-        MScreenPainter->selectRenderBuffer(new_buffer,new_width,new_height);
-        MScreenPainter->beginFrame(new_width,new_height,1.0);
-        int32_t image = MScreenPainter->getImageFromRenderBuffer(MRenderBuffer);
-        MScreenPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
-        MScreenPainter->fillRect(0,0,MBufferWidth,MBufferHeight);
-        MScreenPainter->endFrame();
-        MScreenPainter->selectRenderBuffer(nullptr);
-        // delete old buffer
-        MScreenPainter->deleteRenderBuffer(MRenderBuffer);
-        // switch
+        void* new_buffer = MWindowPainter->createRenderBuffer(new_width,new_height);
+        if (ACopyBuffer) {
+          copyBuffer(new_buffer,0,0,new_width,new_height,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
+        }
+        MWindowPainter->deleteRenderBuffer(MRenderBuffer);
         MRenderBuffer = new_buffer;
         MBufferWidth  = new_width;
         MBufferHeight = new_height;
@@ -146,70 +137,118 @@ public:
     }
   }
 
+  //----------
+
+  void copyBuffer(void* ADst, uint32_t ADstXpos, uint32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, uint32_t ASrcXpos, uint32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
+    MWindowPainter->selectRenderBuffer(ADst,ADstWidth,ADstHeight);
+    MWindowPainter->beginFrame(ADstWidth,ADstHeight);
+    int32_t image = MWindowPainter->getImageFromRenderBuffer(ASrc);
+    MWindowPainter->setFillImage(image, ASrcXpos,ASrcYpos, 1,1, 1.0, 0.0);
+    MWindowPainter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
+    MWindowPainter->endFrame();
+  }
+
+//------------------------------
+public: // editor
+//------------------------------
+
+  // called from
+  // - SAT_Window.on_window_open()
+  // - SA_Editor.show()
+
+  virtual void prepareWidgets() {
+    if (MRootWidget) {
+      MRootWidget->prepare(this,true);
+    }
+  }
+
+  //----------
+
+  //TODO
+  // don't blindly redraw entire gui..
+  // flush dirty widgets (draw to buffer)
+  // draw buffer (update_rect)to screen
+
+  virtual void paintWidgets(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
+    if (!MRootWidget) return;
+    MRootWidget->on_widget_paint(&MPaintContext);
+  }
+
 //------------------------------
 public:
 //------------------------------
 
-  void setFillBackground(bool AFill=true)   { MFillBackground = AFill; }
-  void setBackgroundColor(SAT_Color AColor) { MBackgroundColor = AColor; }
+  /*
+    called from:
+    - SAT_X11Window.processEvent(), XCB_MAP_NOTIFY
+    - SAT_Editor.show()
 
-//------------------------------
-public:
-//------------------------------
+  */
 
-//  void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-//    SAT_Print("%i,%i\n",AWidth,AHeight);
-//    //MOpenGL->makeCurrent();
-//    //resizeBuffer(AWidth,AHeight);
-//    //MOpenGL->resetCurrent();
-//  }
+
+  void on_window_open() override {
+    prepareWidgets();
+  }
+
+  //----------
+
+  /*
+    called from:
+    - ~SAT_Editor()
+    - SAT_X11Window.processEvent(), XCB_UNMAP_NOTIFY
+    - (SAT_Editor.destroy)
+  */
+
+  void on_window_close() override {
+  }
 
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+
+    MPaintContext.painter       = MWindowPainter;
+    MPaintContext.update_rect.x = AXpos;
+    MPaintContext.update_rect.y = AYpos;
+    MPaintContext.update_rect.w = AWidth;
+    MPaintContext.update_rect.h = AHeight;
+    MPaintContext.window_width  = MWindowWidth;
+    MPaintContext.window_height = MWindowHeight;
+
     MOpenGL->makeCurrent();
 
-    //SAT_Print("window %i,%i buffer %i,%i\n",MWindowWidth,MWindowHeight,MBufferWidth,MBufferHeight);
     if ((MWindowWidth != MBufferWidth) || (MWindowHeight != MBufferHeight)) {
       resizeBuffer(MWindowWidth,MWindowHeight);
     }
 
-    MScreenPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-    MScreenPainter->beginFrame(MBufferWidth,MBufferHeight,1.0);
+    MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+    MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
+    paintWidgets(AXpos,AYpos,AWidth,AHeight);
+    MWindowPainter->endFrame();
 
-      if (MFillBackground) {
-        MScreenPainter->setFillColor(MBackgroundColor);
-        MScreenPainter->fillRect(0,0,MWindowWidth,MWindowHeight);
-      }
-
-      //paintChildren();
-      {
-        // cross
-        MScreenPainter->setDrawColor(SAT_White);
-        MScreenPainter->setLineWidth(5);
-        double w = MWindowWidth;
-        double h = MWindowHeight;
-        MScreenPainter->drawLine(0,0, w,h);
-        MScreenPainter->drawLine(w,0, 0,h);
-        // rect
-        MScreenPainter->setFillColor(SAT_Red);
-        MScreenPainter->fillRect(50,50,100,100);
-      }
-
-    MScreenPainter->endFrame();
-
-    // paint render buffer to screen
-    MScreenPainter->selectRenderBuffer(nullptr,MWindowWidth,MWindowHeight);
-    MScreenPainter->beginFrame(MWindowWidth,MWindowHeight,1.0);
-    int32_t image = MScreenPainter->getImageFromRenderBuffer(MRenderBuffer);
-    MScreenPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
-    MScreenPainter->fillRect(0,0,MWindowWidth,MWindowHeight);
-    MScreenPainter->endFrame();
+    //copyBuffer(nullptr,MWindowWidth,MWindowHeight,MRenderBuffer,0,0,MWindowWidth,MWindowHeight);
+    copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
 
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
-
   }
+
+  //----------
+
+  void on_window_resize(int32_t AWidth, int32_t AHeight) override {
+    //SAT_Print("\n");
+    if (MRootWidget) MRootWidget->setSize(AWidth,AHeight);
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void do_timer_callback(SAT_Timer* ATimer) final {
+    //SAT_PRINT;
+    if (MListener) MListener->do_window_listener_timer(this);
+    //on_window_timer();
+  }
+
 
 };
 

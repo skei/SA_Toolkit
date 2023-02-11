@@ -81,12 +81,12 @@ public:
     NVG_DEBUG           // Flag indicating that additional debug checks are done.
   */
 
+  // assumes opengl context already made current
+
   SAT_NanoVGPainter(SAT_OpenGL* AOpenGL) {
     MOpenGL = AOpenGL;
 
-    //MIP_GlxPainter::makeCurrent(0);
-    //MIP_WglPainter::makeCurrent(0);
-    MOpenGL->makeCurrent();
+    //MOpenGL->makeCurrent();
 
     #if SAT_OPENGL_MAJOR >= 3
       MContext = nvgCreateGL3(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
@@ -99,9 +99,8 @@ public:
 //    nvgFontFaceId(MContext,MDefaultFont);
 //    nvgFontSize(MContext,MTextSize);
 
-    //MIP_GlxPainter::resetCurrent(0);
-    //MIP_WglPainter::resetCurrent(0);
-    MOpenGL->resetCurrent();
+    //MOpenGL->resetCurrent();
+
   }
 
   //----------
@@ -206,7 +205,7 @@ public:
 public:
 //------------------------------
 
-  void beginFrame(int32_t AWidth, int32_t AHeight, double APixelRatio) {
+  void beginFrame(int32_t AWidth, int32_t AHeight, double APixelRatio=1.0) {
 //    MFrameWidth       = AWidth;
 //    MFrameHeight      = AHeight;
 //    MFramePixelRatio  = APixelRatio;

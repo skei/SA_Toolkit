@@ -201,6 +201,8 @@
 		<Unit filename="../src/extern/clap/stream.h" />
 		<Unit filename="../src/extern/clap/string-sizes.h" />
 		<Unit filename="../src/extern/clap/version.h" />
+		<Unit filename="../src/extern/nanosvg/nanosvg.h" />
+		<Unit filename="../src/extern/nanosvg/nanosvgrast.h" />
 		<Unit filename="../src/extern/nanovg/fontstash.h" />
 		<Unit filename="../src/extern/nanovg/nanovg.c">
 			<Option compilerVar="CC" />
@@ -212,6 +214,7 @@
 		<Unit filename="../src/extern/nanovg/nanovg_gl_utils.h" />
 		<Unit filename="../src/extern/sogl/simple-opengl-loader.h" />
 		<Unit filename="../src/extern/stb/stb_image.h" />
+		<Unit filename="../src/extern/stb/stb_image_write.h" />
 		<Unit filename="../src/extern/stb/stb_truetype.h" />
 		<Unit filename="../src/gfx/sat_bitmap.h" />
 		<Unit filename="../src/gui/nanovg/sat_nanovg.h" />

@@ -5,6 +5,26 @@
 #include "plugin/sat_host_implementation.h"
 #include "plugin/clap/sat_clap_entry.h"
 
+class SAT_ExeHost {
+
+//----------
+public:
+//----------
+
+  SAT_ExeHost() {
+  }
+
+  //----------
+
+  ~SAT_ExeHost() {
+  }
+
+//----------
+public:
+//----------
+
+};
+
 //----------------------------------------------------------------------
 //
 // editor
@@ -15,6 +35,28 @@ void open_editor(const clap_plugin_t* plugin) {
   const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);
   if (gui) {
     SAT_Print("plugin has gui\n");
+
+    uint32_t width,height;
+    gui->create(plugin,CLAP_WINDOW_API_X11,false);
+    gui->get_size(plugin,&width,&height);
+    gui->set_scale(plugin,1.0);
+    //gui->set_size(plugin,width,height);
+
+//    SAT_ImplementedWindow* window = new SAT_ImplementedWindow(width,height,0);
+//    xcb_window_t x11window = window->getX11Window();
+//    const clap_window_t clapwindow = {
+//      .api = CLAP_WINDOW_API_X11,
+//      .x11 = x11window
+//    };
+//    gui->set_parent(plugin,&clapwindow);
+
+    gui->show(plugin);
+    //SAT_Sleep(1000);
+    gui->hide(plugin);
+    gui->destroy(plugin);
+
+//    delete window;
+
   }
 }
 
@@ -39,9 +81,10 @@ void handle_plugin(const clap_plugin_t* plugin) {
     process.out_events          = nullptr;
     process.steady_time         = 0;
     process.transport           = nullptr;
-  plugin->process(plugin,&process);
+  //plugin->process(plugin,&process);
 
   open_editor(plugin);
+
   plugin->stop_processing(plugin);
   plugin->deactivate(plugin);
   plugin->destroy(plugin);

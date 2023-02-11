@@ -34,6 +34,7 @@
 #define __SAT_ASM_VOLATILE        __asm__ __volatile__
 #define __SAT_CLEANUP(x)          __attribute__ ((__cleanup__(x)))
 #define __SAT_COLD                __attribute__ ((cold))
+#define __SAT_CONSTEXPR           constexpr
 #define __SAT_CONSTRUCTOR         __attribute__ ((constructor))
 #define __SAT_DEPRECATED          __attribute__ ((deprecated))
 #define __SAT_DESTRUCTOR          __attribute__ ((destructor))

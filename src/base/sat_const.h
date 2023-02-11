@@ -115,15 +115,6 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_FILE_APPEND_BINARY      (char*)"ab"
 #define SAT_FILE_APPEND_TEXT        (char*)"a"
 
-#define SAT_KEY_NONE                0x00
-#define SAT_KEY_SHIFT               0x01
-#define SAT_KEY_CAPS                0x02
-#define SAT_KEY_CTRL                0x04
-#define SAT_KEY_ALT                 0x08
-#define SAT_KEY_ALTGR               0x10
-
-#define SAT_KEY_ENTER               13
-
 #define SAT_KEY_ENTER               13
 #define SAT_KEY_ESC                 27
 #define SAT_KEY_HOME                36
@@ -147,7 +138,17 @@ const char  SAT_NULL_STRING[] = "";
 
 #define SAT_PLUGIN_MAX_PARAMETERS   1024
 
+#define SAT_STATE_NONE              0x00
+#define SAT_STATE_SHIFT             0x01
+#define SAT_STATE_CAPS              0x02
+#define SAT_STATE_CTRL              0x04
+#define SAT_STATE_ALT               0x08
+#define SAT_STATE_ALTGR             0x10
+
 #define SAT_WINDOW_THREAD_KILL      666
+#define SAT_WINDOW_TIMER_MS         100
+
+
 
 //----------------------------------------------------------------------
 #endif
