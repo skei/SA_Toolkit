@@ -106,7 +106,13 @@ public:
       }
     }
 
-    //
+    // test
+
+    int32_t font = painter->getHeaderFont();
+    painter->selectFont(font);
+    painter->setTextColor(SAT_BrightYellow);
+    painter->setTextSize(64);
+    painter->drawTextBox( mrect, "SA_Toolkit",SAT_TEXT_ALIGN_CENTER);
 
   }
 

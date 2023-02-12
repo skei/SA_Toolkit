@@ -44,15 +44,15 @@
 //----------
 
 #include "gui/x11/sat_x11.h"
-//#include "gui/glx/mip_glx_utils.h"
-//#include "gui/xlib/mip_xlib_utils.h"
+//#include "gui/glx/sat_glx_utils.h"
+//#include "gui/xlib/sat_xlib_utils.h"
 
 #include <GL/gl.h>
 #include <GL/glx.h>
 
 //----------------------------------------------------------------------
 
-  GLint MIP_GlxPixmapAttribs[] = {
+  GLint SAT_GlxPixmapAttribs[] = {
     GLX_X_RENDERABLE,   True,
     GLX_X_VISUAL_TYPE,  GLX_TRUE_COLOR,
     GLX_DRAWABLE_TYPE,  GLX_PIXMAP_BIT,
@@ -73,7 +73,7 @@
 
   //----------
 
-  GLint MIP_GlxWindowAttribs[] = {
+  GLint SAT_GlxWindowAttribs[] = {
     GLX_X_RENDERABLE,   True,
     GLX_X_VISUAL_TYPE,  GLX_TRUE_COLOR,
     GLX_DRAWABLE_TYPE,  GLX_WINDOW_BIT,
@@ -104,7 +104,7 @@ class SAT_X11OpenGL {
 private:
 //------------------------------
 
-//  MIP_PaintTarget*  MTarget           = nullptr;
+//  SAT_PaintTarget*  MTarget           = nullptr;
   Display*          MDisplay          = None;
   GLXContext        MContext          = nullptr;
 //  GLXContext        MPrevContext      = nullptr;
@@ -119,12 +119,12 @@ private:
 public:
 //------------------------------
 
-  //MIP_PaintTarget* ATarget
+  //SAT_PaintTarget* ATarget
 
   SAT_X11OpenGL(Display* display, xcb_window_t window/*, uint32_t width, uint32_t height*/) {
     //MTarget = ATarget;
     //old_x_error_handler = XSetErrorHandler(x_error_handler);
-    //MIP_XlibInitErrorHandler();
+    //SAT_XlibInitErrorHandler();
 
     //MWidth    = width;    //ATarget->tgtGetWidth();
     //MHeight   = height;   //ATarget->tgtGetHeight();
@@ -136,7 +136,7 @@ public:
 
       // window
 
-      MFBConfig = findFBConfig(MIP_GlxWindowAttribs);
+      MFBConfig = findFBConfig(SAT_GlxWindowAttribs);
       MContext = createContext(MFBConfig);
       //xcb_window_t window = ATarget->tgtGetWindow();
       SAT_Assert(window);
@@ -149,10 +149,10 @@ public:
     //
     //  // pixmap
     //
-    //  MFBConfig = findFBConfig(MIP_GlxPixmapAttribs); // crash..
+    //  MFBConfig = findFBConfig(SAT_GlxPixmapAttribs); // crash..
     //  MContext = createContext(MFBConfig);
     //  xcb_pixmap_t pixmap = ATarget->tgtGetPixmap();
-    //  MIP_Assert(pixmap);
+    //  SAT_Assert(pixmap);
     //  MDrawable = glXCreatePixmap(MDisplay,MFBConfig,pixmap,nullptr);
     //  MDrawableIsWindow = false;
     //
@@ -167,7 +167,7 @@ public:
   //----------
 
   virtual ~SAT_X11OpenGL() {
-    //MIP_PRINT;
+    //SAT_PRINT;
 //    if (MDrawableIsWindow) {
       glXDestroyWindow(MDisplay,MDrawable);
 //    }
@@ -176,7 +176,7 @@ public:
 //    }
     destroyContext();
     //XSetErrorHandler(old_x_error_handler);
-//    MIP_XlibCleanupErrorHandler();
+//    SAT_XlibCleanupErrorHandler();
   }
 
 //------------------------------
@@ -199,7 +199,7 @@ public:
     makeCurrent();
     //glViewport(0,0,AWidth,AHeight);
     setViewport(0,0,AWidth,AHeight);
-    //setClip(MIP_DRect(AXpos,AYpos,AWidth,AHeight));
+    //setClip(SAT_DRect(AXpos,AYpos,AWidth,AHeight));
   }
 
   //----------
@@ -241,7 +241,7 @@ public:
 
   //bool makeCurrent(uint32_t AMode) {
   bool makeCurrent() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     //MPrevContext = glXGetCurrentContext();
     bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
     if (!res) {
@@ -263,7 +263,7 @@ public:
 
   //bool resetCurrent(uint32_t AMode) {
   bool resetCurrent() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     bool res = glXMakeContextCurrent(MDisplay,0,0,0);
     //bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MPrevContext); // error
     if (!res) {
@@ -278,7 +278,7 @@ public:
 
   //void swapBuffers(uint32_t AMode) {
   void swapBuffers() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     glXSwapBuffers(MDisplay,MDrawable);
   }
 
@@ -395,17 +395,17 @@ private:
 //------------------------------
 
   // ADisplay : X11 Display*
-  // AAttribs : MIP_GlxPixmapAttribs or MIP_GlxWindowAttribs
+  // AAttribs : SAT_GlxPixmapAttribs or SAT_GlxWindowAttribs
   // Use XFree to free the memory returned by glXChooseFBConfig.
 
   GLXFBConfig findFBConfig(const int* AAttribs) {
-    //MIP_PRINT;
+    //SAT_PRINT;
     int num_fbc = 0;
-    //MIP_Print("Display: %p\n",MDisplay);
-    //MIP_Print("Screen: %i\n",DefaultScreen(MDisplay));
-    //MIP_Print("AAttribs: %p\n",AAttribs);
+    //SAT_Print("Display: %p\n",MDisplay);
+    //SAT_Print("Screen: %i\n",DefaultScreen(MDisplay));
+    //SAT_Print("AAttribs: %p\n",AAttribs);
     GLXFBConfig* fbconfigs = glXChooseFBConfig(MDisplay,DefaultScreen(MDisplay),AAttribs,&num_fbc);
-    //MIP_Print("num_fbc: %i\n",num_fbc);
+    //SAT_Print("num_fbc: %i\n",num_fbc);
     GLXFBConfig fbconfig = fbconfigs[0];
     XFree(fbconfigs);
     return fbconfig;
@@ -414,8 +414,8 @@ private:
   //----------
 
   //glXCreateContextAttribsARBFUNC glXCreateContextAttribsARB = (glXCreateContextAttribsARBFUNC)glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
-  //MIP_Assert(glXCreateContextAttribsARB);
-  //MContext = glXCreateContextAttribsARB(MDisplay,MFBConfig,nullptr,True,MIP_GlxContextAttribs);
+  //SAT_Assert(glXCreateContextAttribsARB);
+  //MContext = glXCreateContextAttribsARB(MDisplay,MFBConfig,nullptr,True,SAT_GlxContextAttribs);
   //    MContext = glXCreateNewContext(MDisplay,MFBConfig,GLX_RGBA_TYPE,nullptr,True);
   //    loadOpenGL();
 
@@ -429,7 +429,7 @@ private:
   //----------
 
   void destroyContext() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     unloadExtensions();
     glXDestroyContext(MDisplay,MContext);
   }
@@ -437,7 +437,7 @@ private:
   //----------
 
   bool getGlxVersion(int* AMajor, int* AMinor) {
-    //MIP_PRINT;
+    //SAT_PRINT;
     bool res = glXQueryVersion(MDisplay,AMajor,AMinor);
     if (!res) {
       SAT_Print("Error: getGlxVersion returned false\n");
@@ -463,7 +463,7 @@ private:
   //----------
 
   Display* getCurrentDisplay() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     return glXGetCurrentDisplay();
   }
 
@@ -472,7 +472,7 @@ private:
   // If there is no current context, NULL is returned.
 
   GLXContext getCurrentContext() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     return glXGetCurrentContext();
   }
 
@@ -482,14 +482,14 @@ private:
   // If there is no current draw drawable, None is returned.
 
   GLXDrawable getCurrentDrawable() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     return glXGetCurrentDrawable();
   }
 
   //----------
 
   GLXDrawable getCurrentReadDrawable() {
-    //MIP_PRINT;
+    //SAT_PRINT;
     return glXGetCurrentReadDrawable();
   }
 

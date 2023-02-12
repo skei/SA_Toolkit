@@ -25,7 +25,7 @@
   #include <xcb/xkb.h>
   #undef explicit
 
-#ifdef MIP_USE_XRENDER
+#ifdef SAT_USE_XRENDER
   //#include <X11/extensions/Xrender.h>
   #include <xcb/render.h>
   #include <xcb/xcb_renderutil.h>

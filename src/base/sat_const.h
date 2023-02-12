@@ -99,14 +99,14 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_AUDIO_FILE_WRITE        0x20
 #define SAT_AUDIO_FILE_RDWR         0x30
 
-#define MIP_BUTTON_NONE             0
-#define MIP_BUTTON_LEFT             1
-#define MIP_BUTTON_MIDDLE           2
-#define MIP_BUTTON_RIGHT            3
-#define MIP_BUTTON_SCROLL_UP        4
-#define MIP_BUTTON_SCROLL_DOWN      5
-#define MIP_BUTTON_BACKWARD         8
-#define MIP_BUTTON_FORWARD          9
+#define SAT_BUTTON_NONE             0
+#define SAT_BUTTON_LEFT             1
+#define SAT_BUTTON_MIDDLE           2
+#define SAT_BUTTON_RIGHT            3
+#define SAT_BUTTON_SCROLL_UP        4
+#define SAT_BUTTON_SCROLL_DOWN      5
+#define SAT_BUTTON_BACKWARD         8
+#define SAT_BUTTON_FORWARD          9
 
 #define SAT_FILE_READ_BINARY        (char*)"rb"
 #define SAT_FILE_READ_TEXT          (char*)"r"
@@ -136,6 +136,8 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_OPENGL_MAJOR            3
 #define SAT_OPENGL_MINOR            2
 
+#define SAT_PAINTER_CLIP_RECT_SIZE  256
+
 #define SAT_PLUGIN_MAX_PARAMETERS   1024
 
 #define SAT_STATE_NONE              0x00
@@ -144,6 +146,17 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_STATE_CTRL              0x04
 #define SAT_STATE_ALT               0x08
 #define SAT_STATE_ALTGR             0x10
+
+#define SAT_TEXT_ALIGN_NONE         0
+#define SAT_TEXT_ALIGN_CENTER       0
+#define SAT_TEXT_ALIGN_LEFT         0x01
+#define SAT_TEXT_ALIGN_RIGHT        0x02
+#define SAT_TEXT_ALIGN_TOP          0x04
+#define SAT_TEXT_ALIGN_BOTTOM       0x08
+
+//#define SAT_WIDGET_TYPE_DEFAULT     0
+//#define SAT_WIDGET_TYPE_ROOT        1
+//#define SAT_WIDGET_TYPE_PANEL       2
 
 #define SAT_WINDOW_THREAD_KILL      666
 #define SAT_WINDOW_TIMER_MS         100

@@ -18,6 +18,7 @@
 #include "gui/sat_widget_listener.h"
 #include "gui/sat_window_listener.h"
 
+// max number of widgets before flushing
 #define SAT_WINDOW_MAX_DIRTY_WIDGETS 1024
 
 typedef SAT_SPSCQueue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS> SAT_DirtyWidgetsQueue;
@@ -199,13 +200,15 @@ public: // widgets
     add widget to dirty widgets queue
 
     called from
-    - SAT_Window.prepareWidgets()
-    - SAT_Window.checkBufferSize()
+    - SAT_Window.prepareWidgets()   (on_window_show)
+    - SAT_Window.checkBufferSize()  (on_window_paint)
   */
 
 
   virtual void queueDirtyWidget(SAT_Widget* AWidget) {
-    if (MDirtyWidgets.write(AWidget)) {
+    SAT_PRINT;
+    if (!MDirtyWidgets.write(AWidget)) {
+      SAT_Log("queueDirtyWidget: Couldn't write to queue\n");
     }
   }
 
@@ -219,11 +222,16 @@ public: // widgets
   */
 
   virtual void flushDirtyWidgets() {
+    uint32_t count = 0;
     SAT_Widget* widget = nullptr;
     while (MDirtyWidgets.read(&widget)) {
-      //SAT_PRINT;
+      SAT_PRINT;
       widget->on_widget_paint(&MPaintContext);
+      count += 1;
     }
+    #ifdef SAT_DEBUG
+      SAT_GLOBAL.DEBUG.reportNumDirtyWidgets(count);
+    #endif
   }
 
   //----------

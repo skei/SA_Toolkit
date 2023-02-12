@@ -35,6 +35,12 @@ public:
 
   //----------
 
+  void reset() {
+    MStackTop = 0;
+  }
+
+  //----------
+
   void push(T AItem) {
     if (MStackTop < SIZE) MStack[MStackTop++] = AItem;
   }

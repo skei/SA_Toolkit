@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "gui/sat_paint_context.h"
+#include "gui/sat_paint_style.h"
 #include "gui/sat_widget_listener.h"
 
   // normal, modal, disabled, mouse_capture, mouse_lock, key_capture
@@ -48,9 +49,10 @@ private:
 //------------------------------
 
   SAT_WidgetListener* MListener   = nullptr;
-  SAT_WidgetArray     MChildren = {};
-  uint32_t            MIndex    = 0;
-  SAT_Rect            MRect     = {};
+  SAT_WidgetArray     MChildren   = {};
+  uint32_t            MIndex      = 0;
+  SAT_Rect            MRect       = {};
+  SAT_PaintStyle*     MPaintStyle = nullptr;//SAT_DefaultPaintStyle;
 
   //uint32_t            MDirtyFlags = 0; // all, value,modulation, ..
 
@@ -98,10 +100,23 @@ public:
 
   // called from SAT_Editor.show()
 
-  virtual void prepare(SAT_WidgetListener* AWindow, bool ARecursive) {
+  virtual void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) {
     uint32_t num = MChildren.size();
-    for (uint32_t i=0; i<num; i++) {
-      MChildren[i]->prepare(AWindow,ARecursive);
+    if (ARecursive) {
+      for (uint32_t i=0; i<num; i++) {
+        MChildren[i]->prepare(AWindow,ARecursive);
+      }
+    }
+  }
+
+  //----------
+
+  virtual void setPaintStyle(SAT_PaintStyle* AStyle, bool ARecursive=true) {
+    uint32_t num = MChildren.size();
+    if (ARecursive) {
+      for (uint32_t i=0; i<num; i++) {
+        MChildren[i]->setPaintStyle(AStyle,ARecursive);
+      }
     }
   }
 

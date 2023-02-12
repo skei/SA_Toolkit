@@ -63,7 +63,7 @@ public:
 
   //----------
 
-  // called from MIP_Plugin.updateEditorParameterValues()
+  // called from SAT_Plugin.updateEditorParameterValues()
   // - before editor is opened
   // - (loading state)
 

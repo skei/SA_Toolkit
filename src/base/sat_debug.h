@@ -102,6 +102,12 @@ private:
     SAT_MemTraceNodes MMemTraceNodes = {};
   #endif
 
+  uint32_t MMaxParamFromHostToProcess   = 0;
+  uint32_t MMaxParamFromProcessToGui    = 0;
+  uint32_t MMaxParamFromGuiToProcess    = 0;
+  uint32_t MMaxParamFromGuiToHost       = 0;
+  uint32_t MMaxNoteEndFromProcessToHost = 0;
+
 //------------------------------
 public:
 //------------------------------
@@ -206,7 +212,56 @@ public: // print
     va_end(args); // move this up?
     clear_prefix();
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  void startAudioBlock() {
+    MMaxParamFromHostToProcess   = 0;
+    MMaxParamFromProcessToGui    = 0;
+    MMaxParamFromGuiToProcess    = 0;
+    MMaxParamFromGuiToHost       = 0;
+    MMaxNoteEndFromProcessToHost = 0;
+  }
+
   //----------
+
+  void endAudioBlock() {
+  }
+
+  //----------
+
+  void reportNumParamFromHostToProcess(uint32_t ANum) {
+    if (ANum > MMaxParamFromHostToProcess) {
+      MMaxParamFromHostToProcess = ANum;
+    }
+  }
+
+  //----------
+
+  void reportNumParamFromProcessToGui(uint32_t ANum) {
+  }
+
+  //----------
+
+  void reportNumParamFromGuiToProcess(uint32_t ANum) {
+  }
+
+  //----------
+
+  void reportNumParamFromGuiToHost(uint32_t ANum) {
+  }
+
+  //----------
+
+  void reportNumNoteEndFromProcessToHost(uint32_t ANum) {
+  }
+
+  //----------
+
+  void reportNumDirtyWidgets(uint32_t ANum) {
+  }
 
 //------------------------------
 private: // socket
@@ -394,6 +449,8 @@ private: // helpers
   }
 
   #endif // print_time
+
+  //----------
 
 };
 

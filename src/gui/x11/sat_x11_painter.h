@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-//#include "gui/mip_paint_source.h"
-//#include "gui/mip_paint_target.h"
+//#include "gui/sat_paint_source.h"
+//#include "gui/sat_paint_target.h"
 
 //----------------------------------------------------------------------
 //
