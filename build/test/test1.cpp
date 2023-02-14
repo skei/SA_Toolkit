@@ -1,124 +1,8 @@
 
 #include "base/sat.h"
+#include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_utils.h"
-
-#define NANOSVG_IMPLEMENTATION
-//#define NANOSVG_IMPLEMENTATION
-#include "extern/nanosvg/nanosvgrast.h"
-
-//----------------------------------------------------------------------
-//
-// widget
-//
-//----------------------------------------------------------------------
-
-class myWidget
-: public SAT_Widget {
-
-//------------------------------
-private:
-//------------------------------
-
-  NSVGimage*  MLogo          = nullptr;
-  //SAT_Window* MOwnerWindow   = nullptr;
-  bool        MFillBackground   = true;
-  SAT_Color   MBackgroundColor  = SAT_Grey;
-
-//------------------------------
-public:
-//------------------------------
-
-  myWidget(SAT_Rect ARect)
-  : SAT_Widget(ARect) {
-    MLogo = nsvgParseFromFile("/DISKS/sda2/skei.audio/logo/export/SVG/SA_black sircle.svg", "px", 96);
-    SAT_Assert(MLogo);
-  }
-
-  //----------
-
-  virtual ~myWidget() {
-    SAT_Assert(MLogo);
-    nsvgDelete(MLogo);
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  void setFillBackground(bool AFill=true)   { MFillBackground = AFill; }
-  void setBackgroundColor(SAT_Color AColor) { MBackgroundColor = AColor; }
-
-//------------------------------
-public:
-//------------------------------
-
-  //void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) final {
-  //  MOwnerWindow = (SAT_Window*)AWindow;
-  //  SAT_Widget::prepare(AWindow,ARecursive);
-  //}
-
-  //----------
-
-  void on_widget_paint(SAT_PaintContext* AContext) final {
-
-    SAT_Assert(AContext);
-    SAT_Assert(MLogo);
-
-    SAT_Painter* painter = AContext->painter;
-    SAT_Assert(painter);
-    SAT_Rect mrect = getRect();
-
-    if (MFillBackground) {
-      painter->setFillColor(MBackgroundColor);
-      painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
-    }
-
-
-    // border
-
-    painter->setDrawColor(SAT_White);
-    painter->setLineWidth(1);
-    painter->drawRect(mrect.x,mrect.y,mrect.w,mrect.h);
-
-    // logo
-
-    painter->setDrawColor(SAT_White);
-    painter->setLineWidth(6);
-
-    double offset = 50.0;
-    double scale  = (100.0 / MLogo->width);
-
-    for (NSVGshape* shape = MLogo->shapes; shape != NULL; shape = shape->next) {
-      for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
-        for (int i = 0; i < path->npts-1; i += 3) {
-          float* p = &path->pts[i*2];
-          double x1 = offset + (p[0] * scale);
-          double y1 = offset + (p[1] * scale);
-          double x2 = offset + (p[2] * scale);
-          double y2 = offset + (p[3] * scale);
-          double x3 = offset + (p[4] * scale);
-          double y3 = offset + (p[5] * scale);
-          double x4 = offset + (p[6] * scale);
-          double y4 = offset + (p[7] * scale);
-          painter->drawCurveBezier(x1,y1, x4,y4, x2,y2, x3,y3);
-        }
-      }
-    }
-
-    // test
-
-    int32_t font = painter->getHeaderFont();
-    painter->selectFont(font);
-    painter->setTextColor(SAT_BrightYellow);
-    painter->setTextSize(64);
-    painter->drawTextBox( mrect, "SA_Toolkit",SAT_TEXT_ALIGN_CENTER);
-
-  }
-
-  //----------
-
-};
 
 //----------------------------------------------------------------------
 //
@@ -152,7 +36,11 @@ class myPlugin
 private:
 //------------------------------
 
-  myWidget* MWidget = nullptr;
+  SAT_PanelWidget*  MRootPanel  = nullptr;
+  SAT_LogoWidget*   MLogo       = nullptr;
+  SAT_TextWidget*   MText       = nullptr;
+  SAT_ValueWidget*  MValue1     = nullptr;
+  SAT_DragValueWidget*  MValue2     = nullptr;
 
 //------------------------------
 public:
@@ -176,7 +64,8 @@ public:
   //----------
 
   void destroy() final {
-    if (MWidget) delete MWidget;
+    // root widget is not automatically deleted
+    if (MRootPanel) delete MRootPanel;
     SAT_Plugin::destroy();
   }
 
@@ -192,12 +81,34 @@ public:
 
   //----------
 
-  bool initEditorWindow(SAT_Window* AWindow) final {
+  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     SAT_PRINT;
-    MWidget = new myWidget( SAT_Rect(0,0,256,256) );
-    MWidget->setFillBackground(true);
-    MWidget->setBackgroundColor(SAT_DarkerGrey);
-    AWindow->setRootWidget(MWidget);
+
+    //MWidget = new myWidget( SAT_Rect(0,0,256,256) );
+
+    MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,256,256) );
+    AWindow->setRootWidget(MRootPanel);
+    MRootPanel->setFillBackground(true);
+
+    MLogo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
+    MRootPanel->appendChildWidget(MLogo);
+    MLogo->setLogoColor(SAT_White);
+
+    MText = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
+    MRootPanel->appendChildWidget(MText);
+    MText->setTextSize(12);
+
+    MValue1 = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
+    MRootPanel->appendChildWidget(MValue1);
+    MValue1->setTextSize(12);
+
+    MValue2 = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
+    MRootPanel->appendChildWidget(MValue2);
+    MValue2->setTextSize(12);
+
+    AEditor->connect(MValue1, getParameter(0));
+    AEditor->connect(MValue2, getParameter(1));
+
     return true;
   }
 

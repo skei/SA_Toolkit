@@ -20,34 +20,28 @@
 
 //----------------------------------------------------------------------
 
-// from process to host per block
-#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK    1024
-
-// from host per block
-#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK 1024
-
-// from gui per block
-#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   32
-
-//----------
-
-//struct sat_queue_param_value {
-//  uint32_t  index;
-//  double    value;
-//};
-//
-//typedef SAT_Note* sat_queue_note_end_t;
-
+#if 0
 typedef uint32_t  sat_queue_param_value_t;
 typedef void*     sat_queue_note_end_t;
+typedef SAT_LockFreeQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;      // when the host changes a parameter, we need to redraw it
+typedef SAT_LockFreeQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;     // twweak knob, send parameter value to audio process
+typedef SAT_LockFreeQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;      // tell host about parameter change
+typedef SAT_LockFreeQueue<sat_queue_note_end_t,   SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>     SAT_NoteEndFromAudioToHostQueue;  // tell host note has ended)
+#endif
 
-typedef SAT_SPSCQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToProcessQueue;    // init, state, preset
-typedef SAT_SPSCQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromProcessToGuiQueue;     // when the host changes a parameter, we need to redraw it
-typedef SAT_SPSCQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToProcessQueue;     // twweak knob, send parameter value to audio process
-typedef SAT_SPSCQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;        // tell host about parameter change
-typedef SAT_SPSCQueue<sat_queue_note_end_t,   SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>     SAT_NoteEndFromProcessToHostQueue;  // tell host note has ended)
+struct SAT_QueueItem {
+  uint32_t    type;
+  uint32_t    index;
+  union {
+    double    value;
+    SAT_Note  note;
+  };
+};
 
-//----------
+typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;
+typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;
+typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;
+typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>     SAT_NoteEndFromAudioToHostQueue;
 
 #define SAT_PLUGIN_DEFAULT_CONSTRUCTOR(PLUGIN)                                  \
   PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
@@ -88,11 +82,20 @@ private:
   uint32_t                          MInitialEditorWidth                           = 640;
   uint32_t                          MInitialEditorHeight                          = 480;
 
-  SAT_ParamFromHostToProcessQueue   MParamFromHostToProcessQueue                  = {};   // init, state, preset
-  SAT_ParamFromProcessToGuiQueue    MParamFromProcessToGui                        = {};   // when the host changes a parameter, we need to redraw it
-  SAT_ParamFromGuiToProcessQueue    MParamFromGuiToProcess                        = {};   // twweak knob, send parameter value to audio process
-  SAT_ParamFromGuiToHostQueue       MParamFromGuiToHost                           = {};   // tell host about parameter change
-  SAT_NoteEndFromProcessToHostQueue MNoteEndFromProcessToHost                     = {};   // tell host note has ended)
+  SAT_ParamFromHostToGuiQueue       MParamFromHostToGuiQueue                      = {};   // when the host changes a parameter, we need to redraw it
+  SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
+  SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
+  SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHostQueue                  = {};   // tell host note has ended)
+
+//  uint32_t                          MParamFromHostToGuiCount        = 0;
+//  uint32_t                          MParamFromGuiToAudioCount       = 0;
+//  uint32_t                          MParamFromGuiToHostCount        = 0;
+//  uint32_t                          MNoteEndFromProcessToHostCount  = 0;
+
+//  SAT_QueueItem                     MParamFromProcessToGuiItems   [ SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK ] = {0};
+//  SAT_QueueItem                     MParamFromGuiToProcessItems   [ SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   ] = {0};
+//  SAT_QueueItem                     MParamFromGuiToHostItems      [ SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   ] = {0};
+//  SAT_QueueItem                     MNoteEndFromProcessToHostItems[ SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK    ] = {0};
 
 //------------------------------
 public:
@@ -105,7 +108,7 @@ public:
     SAT_LogClapHostInfo(MHost);
   }
 
-//----------
+  //----------
 
   virtual ~SAT_Plugin() {
     SAT_Log("~SAT_Plugin()\n");
@@ -227,12 +230,12 @@ public: // plugin
 
   clap_process_status process(const clap_process_t* process) override {
     MProcessContext.process = process;
-    flushParamFromHostToProcess();
-    flushParamFromGuiToProcess();
+//    flushParamLoad();
+    flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
     handleEvents(process->in_events,process->out_events);
     processAudio(&MProcessContext);
-    flushParamFromGuiToHost();
+    flushParamFromGuiToHost(process->out_events);
     //flushNoteEndFromProcessToHost();
     MProcessContext.counter += 1;
     return CLAP_PROCESS_CONTINUE;
@@ -617,7 +620,7 @@ public: // gui
     bool result = MEditor->set_parent(window);
     if (result) {
       SAT_Window* win = MEditor->getWindow();
-      initEditorWindow(win);
+      initEditorWindow(MEditor,win);
     }
     return result;
   }
@@ -1363,13 +1366,21 @@ public: // editor
 
   // called from SAT_Plugin.gui_set_parent()
 
-  virtual bool initEditorWindow(SAT_Window* AWindow) {
+  virtual bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
     return true;
   }
 
 //------------------------------
 public: // editor listener
 //------------------------------
+
+  // window -> editor -> this
+
+  void do_editor_listener_timer() override{
+    //SAT_PRINT;
+    flushParamFromHostToGui();
+  }
+
 
   /*
     a knob or some other widget has been tweaked on the gui.
@@ -1379,9 +1390,9 @@ public: // editor listener
   */
 
   void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) final {
-    // if connected to parameter (checked in sender?
+    SAT_PRINT;
     queueParamFromGuiToHost(AIndex,AValue);
-    queueParamFromGuiToProcess(AIndex,AValue);
+    queueParamFromGuiToAudio(AIndex,AValue);
   }
 
   //----------
@@ -1406,48 +1417,9 @@ public: // editor listener
 public: // queues
 //------------------------------
 
-  //paramFromHostToProcess    // init, state, preset
-  //paramFromProcessToGui     // when the host changes a parameter, we need to redraw it
-  //paramFromGuiToProcess     // twweak knob, send parameter value to audio process
-  //paramFromGuiToHost        // tell host about parameter change
-  //noteEndFromProcessToHost  // tell host note has ended)
-
-  //TODO:
-  //  ModFromHostToProcess
-  //  ModFromProcessToGui
-
-  //----------
-
-  /*
-    called from:
-    - SAT_Plugin.setDefaultParameterValues (init)
-    - SAT_Plugin.updateParameterValues
-  */
-
-  void queueParamFromHostToProcess(uint32_t AIndex, sat_param_t AValue) {
-    SAT_Print("%i = %f\n",AIndex,AValue);
-    if (!MParamFromHostToProcessQueue.write(AIndex)) {
-      SAT_Log("queueParamFromHostToProcess: couldn't write to queue\n");
-    }
-  }
-
-  //----------
-
-  /*
-    called from:
-    - SAT_Plugin.process
-  */
-
-
-  void flushParamFromHostToProcess() {
-    //SAT_Print("\n");
-    uint32_t index; // sat_queue_param_value_t
-    while (MParamFromHostToProcessQueue.read(&index)) {
-      SAT_Print("%i\n",index);
-    }
-  }
-
-  //----------
+//--------------------
+// param, host -> gui
+//--------------------
 
   /*
     called from:
@@ -1455,40 +1427,54 @@ public: // queues
     - SAT_Plugin.handleParamModEvent
   */
 
-  void queueParamFromProcessToGui(uint32_t AIndex, sat_param_t AValue) {
-    SAT_Print("%i = %f\n",AIndex,AValue);
-    if (!MParamFromProcessToGui.write(AIndex)) {
-      SAT_Log("queueParamFromProcessToGui: couldn't write to queue\n");
+  void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_QueueItem item;
+    item.type   = CLAP_EVENT_PARAM_VALUE;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MParamFromHostToGuiQueue.write(item)) {
+      SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
     }
+
   }
 
   //----------
 
   /*
     TODO: check for duplicated (param/mod)
+
     called from:
-    - (TODO: gui timer..)
+    - SAT_Plugin.do_editor_listener_timer
   */
 
-  void flushParamFromProcessToGui() {
+  void flushParamFromHostToGui() {
     //SAT_Print("\n");
-    uint32_t index; // sat_queue_param_value_t
-    while (MParamFromProcessToGui.read(&index)) {
-      SAT_Print("%i\n",index);
+    SAT_QueueItem item;
+    while (MParamFromHostToGuiQueue.read(&item)) {
+      //SAT_Print("%i = %f\n",item.index, item.value);
+      SAT_Parameter* parameter = MParameters[item.index];
+      MEditor->updateParameterFromHost(parameter,item.value);
     }
   }
 
-  //----------
+//--------------------
+// param, gui -> audio
+//--------------------
 
   /*
     called from:
     - SAT_Plugin.do_editor_listener_parameter_update
   */
 
-  void queueParamFromGuiToProcess(uint32_t AIndex, sat_param_t AValue) {
-    SAT_Print("%i = %f\n",AIndex,AValue);
-    if (!MParamFromGuiToProcess.write(AIndex)) {
-      SAT_Log("queueParamFromGuiToProcess: couldn't write to queue\n");
+  void queueParamFromGuiToAudio(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_QueueItem item;
+    item.type   = CLAP_EVENT_PARAM_VALUE;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MParamFromGuiToAudioQueue.write(item)) {
+      SAT_Log("queueParamFromGuiToAudio: couldn't write to queue\n");
     }
   }
 
@@ -1500,15 +1486,31 @@ public: // queues
     - SAT_Plugin.process
   */
 
-  void flushParamFromGuiToProcess() {
+  void flushParamFromGuiToAudio() {
     //SAT_Print("\n");
-    uint32_t index; // sat_queue_param_value_t
-    while (MParamFromGuiToProcess.read(&index)) {
-      SAT_Print("%i\n",index);
+    SAT_QueueItem item;
+    while (MParamFromGuiToAudioQueue.read(&item)) {
+      //SAT_PRINT;
+      clap_event_param_value_t event;
+      event.header.size     = sizeof(clap_event_param_value_t);
+      event.header.time     = 0;
+      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+      event.header.type     = CLAP_EVENT_PARAM_VALUE;
+      event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+      event.param_id        = item.index;
+      event.cookie          = nullptr;
+      event.note_id         = -1;
+      event.port_index      = -1;
+      event.channel         = -1;
+      event.key             = -1;
+      event.value           = item.value;
+      handleParamValue(&event);
     }
   }
 
-  //----------
+//--------------------
+// param, gui -> host
+//--------------------
 
   /*
     called from:
@@ -1516,8 +1518,12 @@ public: // queues
   */
 
   void queueParamFromGuiToHost(uint32_t AIndex, sat_param_t AValue) {
-    SAT_Print("%i = %f\n",AIndex,AValue);
-    if (!MParamFromGuiToHost.write(AIndex)) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_QueueItem item;
+    item.type   = CLAP_EVENT_PARAM_VALUE;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MParamFromGuiToHostQueue.write(item)) {
       SAT_Log("queueParamFromGuiToHost: couldn't write to queue\n");
     }
   }
@@ -1530,27 +1536,79 @@ public: // queues
     - SAT_Plugin.process()
   */
 
-
-  void flushParamFromGuiToHost() {
+  void flushParamFromGuiToHost(const clap_output_events_t *out_events) {
     //SAT_Print("\n");
-    uint32_t index; // sat_queue_param_value_t
-    while (MParamFromGuiToHost.read(&index)) {
-      SAT_Print("%i\n",index);
+    SAT_QueueItem item;
+    while (MParamFromGuiToHostQueue.read(&item)) {
+      //SAT_PRINT;
+      //CLAP_EVENT_PARAM_GESTURE_BEGIN
+
+      {
+        clap_event_param_gesture_t event;
+        event.header.size     = sizeof(clap_event_param_gesture_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_GESTURE_BEGIN;
+        event.header.flags    = 0;
+        event.param_id        = item.index;
+        const clap_event_header_t* header = (const clap_event_header_t*)&event;
+        out_events->try_push(out_events,header);
+      }
+
+      {
+        clap_event_param_value_t event;
+        event.header.size     = sizeof(clap_event_param_value_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_VALUE;
+        event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+        event.param_id        = item.index;
+        event.cookie          = nullptr;
+        event.note_id         = -1;
+        event.port_index      = -1;
+        event.channel         = -1;
+        event.key             = -1;
+        event.value           = item.value;
+        // to host..
+        const clap_event_header_t* header = (const clap_event_header_t*)&event;
+        out_events->try_push(out_events,header);
+      }
+
+      {
+        clap_event_param_gesture_t event;
+        event.header.size     = sizeof(clap_event_param_gesture_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_GESTURE_END;
+        event.header.flags    = 0;
+        event.param_id        = item.index;
+        const clap_event_header_t* header = (const clap_event_header_t*)&event;
+        out_events->try_push(out_events,header);
+      }
+
     }
   }
 
-  //----------
+//--------------------
+// note_end
+//--------------------
 
   /*
     called from:
     - SAT_Plugin.handleNoteOffEvent (process)
   */
 
-  void queueNoteEndFromProcessToHost() {
+  void queueNoteEndFromAudioToHost(SAT_Note ANote) {
     //SAT_Print("\n");
-    void* note = nullptr;//sat_queue_note_end_t
-    if (!MNoteEndFromProcessToHost.write(note)) {
-      SAT_Log("queueNoteEndFromProcessToHost: couldn't write to queue\n");
+    SAT_QueueItem item;
+    item.type         = CLAP_EVENT_NOTE_END;
+    item.index        = 0;
+    item.note.port    = ANote.port;
+    item.note.channel = ANote.channel;
+    item.note.key     = ANote.key;
+    item.note.noteid  = ANote.noteid;
+    if (!MNoteEndFromAudioToHostQueue.write(item)) {
+      SAT_Log("queueNoteEndFromAudioToHost: couldn't write to queue\n");
     }
   }
 
@@ -1561,18 +1619,53 @@ public: // queues
     - todo: end of SAT_Plugin.process
   */
 
-  void flushNoteEndFromProcessToHost() {
+  void flushNoteEndFromAudioToHost(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("\n");
     //SAT_Print("\n");
-    void* note = nullptr; //sat_queue_note_end_t
-    while (MNoteEndFromProcessToHost.read(&note)) {
-      SAT_Print("%p\n",note);
+
+    //void* note = nullptr; //sat_queue_note_end_t
+    //while (MNoteEndFromAudioToHostQueue.read(&note)) {
+
+    SAT_QueueItem item;
+    while (MNoteEndFromAudioToHostQueue.read(&item)) {
+
+      //SAT_Print("(unhandled) type %i\n",item.type);
+      /*
+      clap_event_note_t event;
+      event.header.size     = sizeof(clap_event_param_value_t);
+      event.header.time     = 0;
+      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+      event.header.type     = CLAP_EVENT_NOTE_END;
+      event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+      event.note_id         =
+      event.port_index      =
+      event.channel         =
+      event.key             =
+      event.velocity        =
+      //event to hosu out_events..
+      */
     }
   }
 
 //------------------------------
 public: // parameters
 //------------------------------
+
+  // "i'm going to send you 'num' parameters through the paramload queue,
+  // and let you know (by calling endParameterLoad) when i'm done,
+  // so you can start picking them out from the queue.."
+
+  //----------
+
+  // start of num parameters
+  virtual void beginParameterLoad(uint32_t num) {
+  }
+
+ // doesn't mean events are received, just sent..
+  virtual void endParameterLoad() {
+  }
+
+  //----------
 
   void appendParameter(SAT_Parameter* AParameter) {
     uint32_t index = MParameters.size();
@@ -1624,12 +1717,15 @@ public: // parameters
   */
 
   void setDefaultParameterValues() {
-    for (uint32_t i=0; i<MParameters.size(); i++) {
+    uint32_t num = MParameters.size();
+    beginParameterLoad(num);
+    for (uint32_t i=0; i<num; i++) {
       double value = MParameters[i]->getDefaultValue();
       MParameterValues[i] = value;
-      //queueParamFromGuiToProcess(i,value);                              // !!!!!
-      queueParamFromHostToProcess(i,value);                              // !!!!!
+      //queueParamFromGuiToProcess(i,value);
+//      queueParamLoad(i,value);
     }
+    endParameterLoad();
   }
 
   //----------
@@ -1646,7 +1742,7 @@ public: // parameters
   //void updateParameterValues() {
   //  for (uint32_t i=0; i<MParameters.size(); i++) {
   //    double value = MParameterValues[i];
-  //    queueParamFromHostToProcess(i,value);                              // !!!!!
+  //    queueParamFromHostToProcess(i,value);
   //  }
   //}
 
@@ -1655,7 +1751,7 @@ public: // parameters
   void updateEditorParameterValues() {
     for (uint32_t i=0; i<MParameters.size(); i++) {
       double v = MParameterValues[i];
-      MEditor->updateEditorParameterValue(i,v,false);                      // !!!!!
+      MEditor->updateEditorParameterValue(i,v,false);
     }
   }
 
@@ -1924,7 +2020,12 @@ private:
   void handleNoteOffEvent(const clap_event_note_t* event) {
     bool handled = handleNoteOff(event);
     if (!handled) {
-      queueNoteEndFromProcessToHost();
+      SAT_Note note;
+      note.port     = event->port_index;
+      note.channel  = event->channel;
+      note.key      = event->key;
+      note.noteid   = event->note_id;
+      queueNoteEndFromAudioToHost(note);
     }
   }
 
@@ -1958,7 +2059,7 @@ private:
     double    value   = event->value;
     MParameterValues[index] = value;
     //if (MParameters[index]->getWidget()) {
-      queueParamFromProcessToGui(index,value);
+      queueParamFromHostToGui(index,value);
     //}
     handleParamValue(event);
   }
@@ -1970,7 +2071,7 @@ private:
     double    value   = event->amount;
     MModulationValues[index] = value;
     if (MParameters[index]->getWidget()) {
-      queueParamFromProcessToGui(index,value);
+      //queueParamModFromHostToGui(index,value);
     }
     handleParamMod(event);
   }

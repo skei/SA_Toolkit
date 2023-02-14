@@ -85,6 +85,27 @@ public:
 public:
 //------------------------------
 
+  void set(double _v) {
+    x = _v;
+    y = _v;
+    w = _v;
+    h = _v;
+  }
+
+  void set(double _w, double _h) {
+    x = 0;
+    y = 0;
+    w = _w;
+    h = _h;
+  }
+
+  void set(double _x, double _y, double _w, double _h) {
+    x = _x;
+    y = _y;
+    w = _w;
+    h = _h;
+  }
+
   void setX1(double _x1) { w -= (_x1 - x);   x = _x1; }
   void setY1(double _y1) { h -= (_y1 - y);   y = _y1; }
   void setX2(double _x2) { w += (_x2 - x - w); }

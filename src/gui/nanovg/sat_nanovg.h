@@ -34,6 +34,10 @@
     #include "extern/nanovg/nanovg.c"
   #pragma GCC diagnostic pop
 
+//----------
+
+#define NANOSVG_IMPLEMENTATION
+#include "extern/nanosvg/nanosvgrast.h"
 
 //----------------------------------------------------------------------
 #endif

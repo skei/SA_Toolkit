@@ -43,6 +43,7 @@
 
 #define SAT_Assert(x) {                       \
   if (!(x)) {                                 \
+    SAT_Log("SAT_Assert(%s) failed!\n",#x);   \
     SAT_Print("SAT_Assert(%s) failed!\n",#x); \
     exit(1);                                  \
   }                                           \

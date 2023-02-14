@@ -209,6 +209,7 @@
 		<Unit filename="../src/extern/nanovg/nanovg.h" />
 		<Unit filename="../src/extern/nanovg/nanovg_gl.h" />
 		<Unit filename="../src/extern/nanovg/nanovg_gl_utils.h" />
+		<Unit filename="../src/extern/rigtorp/MPMCQueue.h" />
 		<Unit filename="../src/extern/sogl/simple-opengl-loader.h" />
 		<Unit filename="../src/extern/stb/stb_image.h" />
 		<Unit filename="../src/extern/stb/stb_image_write.h" />
@@ -222,8 +223,11 @@
 		<Unit filename="../src/gui/sat_painter.h" />
 		<Unit filename="../src/gui/sat_widget.h" />
 		<Unit filename="../src/gui/sat_widget_listener.h" />
+		<Unit filename="../src/gui/sat_widgets.h" />
 		<Unit filename="../src/gui/sat_window.h" />
 		<Unit filename="../src/gui/sat_window_listener.h" />
+		<Unit filename="../src/gui/widgets/sat_logo_widget.h" />
+		<Unit filename="../src/gui/widgets/sat_panel_widget.h" />
 		<Unit filename="../src/gui/win32/sat_win32.h" />
 		<Unit filename="../src/gui/win32/sat_win32_opengl.h" />
 		<Unit filename="../src/gui/win32/sat_win32_surface.h" />

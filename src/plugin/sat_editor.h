@@ -74,11 +74,35 @@ public:
 
   //----------
 
+  // called from flushParamFromHostToGui()
+
+  //virtual
+  void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
+    if (MIsOpen) {
+      SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
+      if (widget) {
+        widget->setValue(AValue);
+        //widget->update();
+        widget->redraw();
+      }
+    }
+  }
+
+  //----------
+
   // called from SAT_Editor.set_parent()
 
   virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
     SAT_Window* window = new SAT_Window(AWidth,AHeight,AParent,this);
     return window;
+  }
+
+  //----------
+
+  virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
+    //MConnections.append
+    AWidget->connect(AParameter,AIndex);
+    AParameter->connect(AWidget);
   }
 
 //------------------------------
@@ -111,13 +135,22 @@ public: // window listener
 
   void do_window_listener_timer(SAT_Window* ASender) override { // final {
     //SAT_PRINT;
+    if (MListener) MListener->do_editor_listener_timer();
+    //on_window_timer();
   }
 
   //----------
 
-  //void do_window_listener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
-  //  //SAT_PRINT;
-  //}
+  void do_window_listener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+    if (MListener) {
+      SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection();
+      if (param) {
+        uint32_t index = param->getIndex();
+        double value = ASender->getValue();
+        MListener->do_editor_listener_parameter_update(index,value);
+      }
+    }
+  }
 
   //----------
 

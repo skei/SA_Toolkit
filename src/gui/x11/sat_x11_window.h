@@ -223,13 +223,13 @@ public:
   virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
   virtual void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_click(uint32_t AButton, uint32_t AState, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_mouse_release(uint32_t AButton, uint32_t AState, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_mouse_move(uint32_t s, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_client_message(uint32_t AData) {}
-  virtual void on_window_timer() {}
+  //virtual void on_window_timer() {}
 
 //------------------------------
 public:
@@ -293,6 +293,8 @@ public:
     MIsMapped = false;
     MIsExposed = false;
   }
+
+  //----------
 
 //------------------------------
 public:
@@ -711,7 +713,7 @@ private:
         uint32_t ts = button_press->time;
         b = remapButton(b,s);
         s = remapState(s);
-        on_window_mouse_click(b,s,x,y,ts);
+        on_window_mouse_click(x,y,b,s,ts);
         break;
       }
 
@@ -725,7 +727,7 @@ private:
         uint32_t ts = button_release->time;
         b = remapButton(b,s);
         s = remapState(s);
-        on_window_mouse_release(b,s,x,y,ts);
+        on_window_mouse_release(x,y,b,s,ts);
         break;
       }
 
@@ -738,7 +740,7 @@ private:
         int32_t   y = motion_notify->event_y;
         uint32_t ts = motion_notify->time;
         s = remapState(s);
-        on_window_mouse_move(s,x,y,ts);
+        on_window_mouse_move(x,y,s,ts);
         break;
       }
 

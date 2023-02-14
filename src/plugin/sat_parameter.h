@@ -32,9 +32,11 @@ public:
   int32_t           MIndex                          = -1;
   void*             MWidget                         = nullptr;
 
+  void*             MConnection                     = nullptr;
+
   //sat_param_t       MValue                          = 0.0;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
-  uint32_t          MNumDigits                      = 2;
+  uint32_t          MNumDigits                      = 3;
 
   //sat_param_t       MModulation                     = 0.0;
   bool              MIsModulated                    = false;
@@ -92,6 +94,8 @@ public:
   bool                  getIsModulated()      { return MIsModulated; }
   uint32_t              getLastModulated()    { return MLastModulated; }
 
+  void*                 getConnection()       { return MConnection; }
+
 //------------------------------
 public:
 //------------------------------
@@ -109,6 +113,12 @@ public:
     MIndex    = AIndex;
     MInfo.id  = AIndex;
   }
+
+  void connect(void* AWidget) {
+    MConnection = AWidget;
+  }
+
+  //----------
 
   void setWidget(void* AWidget)               { MWidget = AWidget; }
   void setIsModulated(bool AState)            { MIsModulated = AState; }

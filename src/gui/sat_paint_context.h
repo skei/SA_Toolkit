@@ -2,6 +2,9 @@
 #define sat_paint_context_included
 //----------------------------------------------------------------------
 
+#include "base/sat.h"
+#include "gui/sat_painter.h"
+
 struct SAT_PaintContext {
   SAT_Painter*  painter       = nullptr;
   SAT_Rect      update_rect   = {};
