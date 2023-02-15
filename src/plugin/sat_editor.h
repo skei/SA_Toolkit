@@ -288,13 +288,15 @@ public: // clap
   */
 
   bool show() {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     if (MWindow && !MIsOpen) {
       if (!MPreparedWidgets) {
         MWindow->on_window_open(); // -> prepareWidgets();
         MPreparedWidgets = true;
       }
       MWindow->show();
+      //SAT_Widget* rootwidget = MWindow->getRootWidget();
+      //MWindow->invalidateWidget(rootwidget);
       MIsOpen = true;
     }
     return true;
@@ -307,6 +309,7 @@ public: // clap
     if (MWindow && MIsOpen) {
       MWindow->hide();
       MIsOpen = false;
+      MPreparedWidgets = false;
     }
     return true;
   }

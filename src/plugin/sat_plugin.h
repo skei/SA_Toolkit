@@ -1381,6 +1381,7 @@ public: // editor listener
     flushParamFromHostToGui();
   }
 
+  //----------
 
   /*
     a knob or some other widget has been tweaked on the gui.
@@ -1390,7 +1391,7 @@ public: // editor listener
   */
 
   void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) final {
-    SAT_PRINT;
+    //SAT_PRINT;
     queueParamFromGuiToHost(AIndex,AValue);
     queueParamFromGuiToAudio(AIndex,AValue);
   }

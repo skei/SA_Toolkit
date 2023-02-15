@@ -93,9 +93,9 @@ public:
 
   //----------
 
-  uint32_t estimate_size() {
-    uint32_t wp = MWritePos;
+  int32_t size() {
     uint32_t rp = MReadPos;
+    uint32_t wp = MWritePos;
     return (wp - rp) & MBufferMask;
   }
 

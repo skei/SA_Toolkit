@@ -108,6 +108,12 @@ public:
   }
 
 //------------------------------
+public:
+//------------------------------
+
+  SAT_Widget* getRootWidget() { return MRootWidget; }
+
+//------------------------------
 private: // buffer
 //------------------------------
 
@@ -200,7 +206,6 @@ public: // widgets
   // - SA_Editor.show()
 
   virtual void prepareWidgets() {
-    //SAT_PRINT;
     if (MRootWidget) {
       MRootWidget->prepare(this,true);
       SAT_Rect R = MRootWidget->getRect();
@@ -332,7 +337,7 @@ public: // window
       } // modal
 
       if (MHoverWidget) {
-        SAT_Print("click\n");
+        //SAT_Print("click\n");
         //MMouseLockedWidget = MHoverWidget;
         MCapturedWidget = MHoverWidget;
         MHoverWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
@@ -348,7 +353,7 @@ public: // window
     //}
     if (MCapturedWidget) {
       if (MMouseClickedB == AButton) {
-        SAT_Print("release\n");
+        //AT_Print("release\n");
         //MMouseLockedWidget = nullptr;
         MCapturedWidget->on_widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
         MCapturedWidget = nullptr;
@@ -464,7 +469,7 @@ public: // timer listener
 
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
     if (MListener) MListener->do_window_listener_timer(this);
-    if (MDirtyWidgets.estimate_size() > 0) {
+    if (MDirtyWidgets.size() > 0) {
       invalidateWidget(MRootWidget);
     }
     //on_window_timer();
