@@ -59,7 +59,7 @@ public:
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
 
-      mrect.overlap(AContext->update_rect);
+      //mrect.overlap(AContext->update_rect);
 
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;

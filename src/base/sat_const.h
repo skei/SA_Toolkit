@@ -108,6 +108,12 @@ const char  SAT_NULL_STRING[] = "";
 #define SAT_BUTTON_BACKWARD                   8
 #define SAT_BUTTON_FORWARD                    9
 
+#define SAT_DIRECTION_NONE                    0
+#define SAT_DIRECTION_LEFT                    1
+#define SAT_DIRECTION_RIGHT                   2
+#define SAT_DIRECTION_UP                      3
+#define SAT_DIRECTION_DOWN                    4
+
 #define SAT_FILE_READ_BINARY                  (char*)"rb"
 #define SAT_FILE_READ_TEXT                    (char*)"r"
 #define SAT_FILE_WRITE_BINARY                 (char*)"wb"

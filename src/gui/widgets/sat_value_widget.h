@@ -63,6 +63,7 @@ public:
       mrect.shrink(MValueOffset);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
+
       sprintf(MValueText,"%.3f",getValue());
       painter->setTextColor(MValueColor);
       painter->setTextSize(MValueSize);
@@ -76,6 +77,7 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
+    //SAT_PRINT;
     fillBackground(AContext);
     drawText(AContext);
     drawValue(AContext);

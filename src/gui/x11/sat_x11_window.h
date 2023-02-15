@@ -54,6 +54,8 @@ protected:
   uint32_t                    MWindowYpos                   = 0;
   uint32_t                    MWindowWidth                  = 0;
   uint32_t                    MWindowHeight                 = 0;
+  uint32_t                    MPreviousWindowWidth                  = 0;
+  uint32_t                    MPreviousWindowHeight                 = 0;
 
 //  bool                        MFillBackground               = true;
 //  SAT_Color                   MBackgroundColor              = SAT_DarkGreen;
@@ -111,6 +113,7 @@ public:
     MWindowYpos   = 0;
     MWindowWidth  = AWidth;
     MWindowHeight = AHeight;
+    //SAT_Print("MWindowWidth/Height %i,%i\n",MWindowWidth,MWindowHeight);
 
     uint32_t event_mask =
       XCB_EVENT_MASK_KEY_PRESS          |
@@ -248,6 +251,7 @@ public:
   virtual void setSize(uint32_t AWidth, uint32_t AHeight) {
     MWindowWidth = AWidth;
     MWindowHeight = AHeight;
+    //SAT_Print("MWindowWidth/Height %i,%i\n",MWindowWidth,MWindowHeight);
     uint32_t values[] = { AWidth, AHeight };
     xcb_configure_window(MConnection,MWindow,XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,values);
     xcb_flush(MConnection);
@@ -380,32 +384,13 @@ private:
 
   //----------
 
-  void beginPaint() {
-  }
-
-  //----------
-
-  void endPaint() {
-    xcb_flush(MConnection);
-  }
-
-  //----------
-
-  void paint() {
-    beginPaint();
-    //uint32_t color = MBackgroundColor;
-    //if (MFillBackground) fill(0,0,MWidth,MHeight,color);
-    on_window_paint(0,0,MWindowWidth,MWindowHeight);
-    endPaint();
-  }
-
-  //----------
-
-//  void paint(int32_t x, int32_t y, int32_t w, int32_t h) {
-//    beginPaint();
-//    if (MFillBackground) fill(x,y,w,h,MBackgroundColor);
-//    on_window_paint(x,y,w,h);
-//    endPaint();
+//  void beginPaint() {
+//  }
+//
+//  //----------
+//
+//  void endPaint() {
+//    xcb_flush(MConnection);
 //  }
 
   //----------
@@ -610,12 +595,14 @@ private:
     switch (AEvent->response_type & ~0x80) {
 
       case XCB_MAP_NOTIFY: {
+        SAT_Print("XCB_MAP_NOTIFY\n");
         MIsMapped = true;
         on_window_open();
         break;
       }
 
       case XCB_UNMAP_NOTIFY: {
+        SAT_Print("XCB_UNMAP_NOTIFY\n");
         MIsMapped = false;
         on_window_close();
         break;
@@ -632,18 +619,21 @@ private:
       */
 
       case XCB_CONFIGURE_NOTIFY: {
-
         xcb_configure_notify_event_t* configure_notify = (xcb_configure_notify_event_t*)AEvent;
-        int16_t x = configure_notify->x;
-        int16_t y = configure_notify->y;
-        int16_t w = configure_notify->width;
-        int16_t h = configure_notify->height;
+        int16_t x  = configure_notify->x;
+        int16_t y  = configure_notify->y;
+        uint16_t w = configure_notify->width;
+        uint16_t h = configure_notify->height;
+        //SAT_Print("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i\n",x,y,w,h);
+
         if ((x != MWindowXpos) || (y != MWindowYpos)) {
+          //SAT_Print("new MWindowXpos/Ypos %i,%i\n",MWindowXpos,MWindowYpos);
           on_window_move(x,y);
           MWindowXpos = x;
           MWindowYpos = y;
         }
         if ((w != MWindowWidth) || (h != MWindowHeight)) {
+          //SAT_Print("new MWindowWidth/Height %i,%i\n",MWindowWidth,MWindowHeight);
           on_window_resize(w,h);
           MWindowWidth  = w;
           MWindowHeight = h;
@@ -661,21 +651,15 @@ private:
       //}
 
       case XCB_EXPOSE: {
-
-        MIsExposed = true;
         xcb_expose_event_t* expose = (xcb_expose_event_t *)AEvent;
-
-        int16_t x = expose->x;
-        int16_t y = expose->y;
-        int16_t w = expose->width;
-        int16_t h = expose->height;
-
-        //paint(x,y,w,h);
-        beginPaint();
-        //if (MFillBackground) fill(x,y,w,h,MBackgroundColor);
+        uint16_t x = expose->x;
+        uint16_t y = expose->y;
+        uint16_t w = expose->width;
+        uint16_t h = expose->height;
+        //SAT_Print("XCB_EXPOSE x %i y %i w %i h %i\n",x,y,w,h);
         on_window_paint(x,y,w,h);
-        endPaint();
-
+        xcb_flush(MConnection);
+        MIsExposed = true;
         break;
       }
 

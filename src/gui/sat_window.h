@@ -54,8 +54,8 @@ private:
   SAT_Widget*           MRootWidget           = nullptr;
   SAT_PaintContext      MPaintContext         = {};
   SAT_WindowListener*   MListener             = nullptr; // editor
-  SAT_DirtyWidgetsQueue MDirtyWidgets         = {};
-
+  SAT_DirtyWidgetsQueue MPendingDirtyWidgets  = {};
+  SAT_DirtyWidgetsQueue MPaintDirtyWidgets    = {};
 
   SAT_Widget*           MHoverWidget          = nullptr;
   SAT_Widget*           MCapturedWidget          = nullptr;
@@ -179,11 +179,46 @@ private: // buffer
 
   */
 
-  void checkBufferSize() {
-    if (resizeBuffer(MWindowWidth,MWindowHeight)) {
-      if (!MDirtyWidgets.write(MRootWidget)) { SAT_Log("checkBufferSize: Couldn't write to queue\n"); }
-
+  bool checkBufferSize() {
+    bool resized = resizeBuffer(MWindowWidth,MWindowHeight);
+    if (resized) {
+      //MPendingDirtyWidgets.write(MRootWidget);
     }
+    return resized;
+  }
+
+  //
+
+  uint32_t flushDirtyWidgets(SAT_Rect* ARect) {
+    uint32_t count = 0;
+    ARect->set(0);
+    SAT_Widget* widget = nullptr;
+    while (MPendingDirtyWidgets.read(&widget)) {
+      //widget->on_widget_paint(&MPaintContext);
+      ARect->combine(widget->getRect());
+      MPaintDirtyWidgets.write(widget);
+      count += 1;
+    }
+    return count;
+  }
+
+  //
+
+  uint32_t paintDirtyWidgets(SAT_PaintContext* AContext, SAT_Widget* ARoot=nullptr) {
+    uint32_t count = 0;
+    SAT_Widget* widget = nullptr;
+    if (ARoot) {
+      while (MPaintDirtyWidgets.read(&widget)) {} // empty queue
+      ARoot->on_widget_paint(&MPaintContext);
+      count = 1;
+    }
+    else {
+      while (MPaintDirtyWidgets.read(&widget)) {
+        widget->on_widget_paint(&MPaintContext);
+        count += 1;
+      }
+    }
+    return count;
   }
 
 //------------------------------
@@ -209,7 +244,7 @@ public: // widgets
     if (MRootWidget) {
       MRootWidget->prepare(this,true);
       SAT_Rect R = MRootWidget->getRect();
-      if (!MDirtyWidgets.write(MRootWidget)) { SAT_Log("prepareWidgets: Couldn't write to queue\n"); }
+      MPendingDirtyWidgets.write(MRootWidget);
       invalidateWidget(MRootWidget);
     }
   }
@@ -238,6 +273,7 @@ public: // window
   */
 
   void on_window_open() override {
+    //SAT_Print("\n");
     prepareWidgets();
   }
 
@@ -250,57 +286,52 @@ public: // window
   */
 
   void on_window_close() override {
+    //SAT_Print("\n");
   }
 
   //----------
 
   void on_window_move(int32_t AXpos, int32_t AYpos) override {
+    //SAT_Print("%i,%i\n",AXpos,AYpos);
   }
 
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-    //SAT_Print("\n");
+    //SAT_Print("%i,%i\n",AWidth,AHeight);
     if (MRootWidget) {
       MRootWidget->setSize(AWidth,AHeight);
-      //queueDirtyWidget(MRootWidget);
-      if (!MDirtyWidgets.write(MRootWidget)) { SAT_Log("on_window_resize: Couldn't write to queue\n"); }
-
+      MPendingDirtyWidgets.write(MRootWidget);
     }
   }
 
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    SAT_Widget* widget = nullptr;
-    if (MDirtyWidgets.read(&widget)) {
-      //SAT_PRINT;
-      MPaintContext.painter       = MWindowPainter;
-      MPaintContext.update_rect.x = AXpos;
-      MPaintContext.update_rect.y = AYpos;
-      MPaintContext.update_rect.w = AWidth;
-      MPaintContext.update_rect.h = AHeight;
-      MPaintContext.window_width  = MWindowWidth;
-      MPaintContext.window_height = MWindowHeight;
-      MOpenGL->makeCurrent();
-        checkBufferSize();
-        MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-        MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-          widget->on_widget_paint(&MPaintContext);
-          uint32_t count = 1;
-          while (MDirtyWidgets.read(&widget)) {
-            widget->on_widget_paint(&MPaintContext);
-            count += 1;
-          }
-          #ifdef SAT_DEBUG
-          SAT_GLOBAL.DEBUG.reportNumDirtyWidgets(count);
-          #endif
-        MWindowPainter->endFrame();
-        copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
-        MOpenGL->swapBuffers();
-      MOpenGL->resetCurrent();
-      MPaintContext.counter += 1;
-    }
+    //SAT_Print("%i,%i,%i,%i\n",AXpos,AYpos,AWidth,AHeight);
+    MPaintContext.painter       = MWindowPainter;
+    MPaintContext.update_rect.x = AXpos;
+    MPaintContext.update_rect.y = AYpos;
+    MPaintContext.update_rect.w = AWidth;
+    MPaintContext.update_rect.h = AHeight;
+    MPaintContext.window_width  = MWindowWidth;
+    MPaintContext.window_height = MWindowHeight;
+    MOpenGL->makeCurrent();
+
+    bool resized = checkBufferSize();
+
+    MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+    MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
+
+    if (resized) paintDirtyWidgets(&MPaintContext,MRootWidget);
+    else paintDirtyWidgets(&MPaintContext);
+
+    MWindowPainter->endFrame();
+    //SAT_Print("copybuffer %i,%i,%i,%i (window %i,%i)\n",AXpos,AYpos,AWidth,AHeight,MWindowWidth,MWindowHeight);
+    copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
+    MOpenGL->swapBuffers();
+    MOpenGL->resetCurrent();
+    MPaintContext.counter += 1;
   }
 
   //----------
@@ -446,7 +477,7 @@ public: // widget listener
 
   void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     //SAT_PRINT;
-    if (!MDirtyWidgets.write(ASender)) { SAT_Log("do_widget_redraw: Couldn't write to queue\n"); }
+    MPendingDirtyWidgets.write(ASender);
     //invalidateWidget(ASender);
     if (MListener) MListener->do_window_listener_redraw_widget(ASender,AMode,AIndex);
   }
@@ -469,10 +500,15 @@ public: // timer listener
 
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
     if (MListener) MListener->do_window_listener_timer(this);
-    if (MDirtyWidgets.size() > 0) {
-      invalidateWidget(MRootWidget);
-    }
     //on_window_timer();
+    SAT_Rect rect;
+    uint32_t num = flushDirtyWidgets(&rect);
+    if (num > 0) {
+      invalidate(rect.x,rect.y,rect.w,rect.h);
+      //#ifdef SAT_DEBUG
+      //SAT_GLOBAL.DEBUG.reportNumDirtyWidgets(num);
+      //#endif
+    }
   }
 
 //------------------------------

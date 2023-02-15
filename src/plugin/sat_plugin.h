@@ -1392,6 +1392,9 @@ public: // editor listener
 
   void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT;
+
+    setParameterValue(AIndex,AValue);
+
     queueParamFromGuiToHost(AIndex,AValue);
     queueParamFromGuiToAudio(AIndex,AValue);
   }
@@ -1541,8 +1544,8 @@ public: // queues
     //SAT_Print("\n");
     SAT_QueueItem item;
     while (MParamFromGuiToHostQueue.read(&item)) {
-      //SAT_PRINT;
-      //CLAP_EVENT_PARAM_GESTURE_BEGIN
+      //SAT_Print("%i = %.3f\n",item.index,item.value);
+      SAT_Parameter* parameter = getParameter(item.index);
 
       {
         clap_event_param_gesture_t event;
@@ -1556,6 +1559,10 @@ public: // queues
         out_events->try_push(out_events,header);
       }
 
+      /*
+        reaper needs the event.cookie ??
+      */
+
       {
         clap_event_param_value_t event;
         event.header.size     = sizeof(clap_event_param_value_t);
@@ -1564,7 +1571,7 @@ public: // queues
         event.header.type     = CLAP_EVENT_PARAM_VALUE;
         event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
         event.param_id        = item.index;
-        event.cookie          = nullptr;
+        event.cookie          = parameter->getCookie();
         event.note_id         = -1;
         event.port_index      = -1;
         event.channel         = -1;

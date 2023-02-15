@@ -7,6 +7,7 @@
 #include "gui/widgets/sat_drag_value_widget.h"
 #include "gui/widgets/sat_logo_widget.h"
 #include "gui/widgets/sat_panel_widget.h"
+#include "gui/widgets/sat_slider_widget.h"
 #include "gui/widgets/sat_text_widget.h"
 #include "gui/widgets/sat_value_widget.h"
 

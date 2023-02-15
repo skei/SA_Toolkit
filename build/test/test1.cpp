@@ -38,9 +38,9 @@ private:
 
   SAT_PanelWidget*  MRootPanel  = nullptr;
   SAT_LogoWidget*   MLogo       = nullptr;
-  SAT_TextWidget*   MText       = nullptr;
-  SAT_ValueWidget*  MValue1     = nullptr;
-  SAT_DragValueWidget*  MValue2     = nullptr;
+  //SAT_TextWidget*   MText       = nullptr;
+  //SAT_ValueWidget*  MValue1     = nullptr;
+  //SAT_DragValueWidget*  MValue2     = nullptr;
 
 //------------------------------
 public:
@@ -74,7 +74,7 @@ public:
 //------------------------------
 
   SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) final {
-    SAT_PRINT;
+    //SAT_PRINT;
     SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight);
     return editor;
   }
@@ -82,7 +82,7 @@ public:
   //----------
 
   bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-    SAT_PRINT;
+    //SAT_PRINT;
 
     //MWidget = new myWidget( SAT_Rect(0,0,256,256) );
 
@@ -94,20 +94,25 @@ public:
     MRootPanel->appendChildWidget(MLogo);
     MLogo->setLogoColor(SAT_White);
 
-    MText = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
+    SAT_TextWidget* MText = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
     MRootPanel->appendChildWidget(MText);
     MText->setTextSize(12);
 
-    MValue1 = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
-    MRootPanel->appendChildWidget(MValue1);
-    MValue1->setTextSize(12);
+    SAT_ValueWidget* value = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
+    MRootPanel->appendChildWidget(value);
+    value->setTextSize(12);
 
-    MValue2 = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
-    MRootPanel->appendChildWidget(MValue2);
-    MValue2->setTextSize(12);
+    SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
+    MRootPanel->appendChildWidget(dragvalue);
+    dragvalue->setTextSize(12);
 
-    AEditor->connect(MValue1, getParameter(0));
-    AEditor->connect(MValue2, getParameter(1));
+    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,360,200,20),"Param 3", 0.0);
+    MRootPanel->appendChildWidget(slider);
+    slider->setTextSize(12);
+
+    AEditor->connect(value,     getParameter(0));
+    AEditor->connect(dragvalue, getParameter(1));
+    AEditor->connect(slider,    getParameter(2));
 
     return true;
   }

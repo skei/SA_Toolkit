@@ -69,7 +69,7 @@ public:
 
   //virtual
   void updateEditorParameterValue(uint32_t AIndex, sat_param_t AValue, bool ARedraw) {
-    SAT_Print("%i = %.3f %s\n",AIndex,AValue,ARedraw?" (redraw)":"");
+    //SAT_Print("%i = %.3f %s\n",AIndex,AValue,ARedraw?" (redraw)":"");
   }
 
   //----------
@@ -288,9 +288,12 @@ public: // clap
   */
 
   bool show() {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
       if (!MPreparedWidgets) {
+
+        //SAT_Print(".. open & prepare\n");
+
         MWindow->on_window_open(); // -> prepareWidgets();
         MPreparedWidgets = true;
       }
@@ -309,7 +312,7 @@ public: // clap
     if (MWindow && MIsOpen) {
       MWindow->hide();
       MIsOpen = false;
-      MPreparedWidgets = false;
+      //MPreparedWidgets = false;
     }
     return true;
   }
