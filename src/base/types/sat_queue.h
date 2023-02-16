@@ -26,6 +26,7 @@
   - single producer
   - single consumer
   - reading/writing single uint32_t is atomic (x86)
+  - todo: malloc'ed buffer?
 */
 
 //----------
@@ -100,6 +101,168 @@ public:
   }
 
 };
+
+//----------------------------------------------------------------------
+//
+// atomic queue
+//
+//----------------------------------------------------------------------
+
+// https://www.linkedin.com/pulse/lock-free-single-producer-consumer-queue-c11-sander-jobing
+
+/*
+  File:   SpScLockFreeQueue.h
+  Author: Sander Jobing
+  Created on July 29, 2017, 5:17 PM
+  This class implements a Single Producer - Single Consumer lock-free and
+  wait-free queue. Only 1 thread can fill the queue, another thread can read
+  from the queue, but no more threads are allowed. This lock-free queue
+  is a fifo queue, the first element inserted is the first element which
+  comes out.
+  Thanks to Timur Doumler, Juce
+  https://www.youtube.com/watch?v=qdrp6k4rcP4
+*/
+
+#include <array>
+#include <atomic>
+#include <cassert>
+
+template <typename T, size_t fixedSize>
+class SAT_AtomicQueue {
+
+//------------------------------
+private:
+//------------------------------
+
+  // A lock-free queue is basically a ring buffer.
+
+  static constexpr size_t       RingBufferSize  = fixedSize + 1;
+  std::array<T, RingBufferSize> m_ringBuffer;
+  std::atomic<size_t>           m_readPosition  = {0};
+  std::atomic<size_t>           m_writePosition = {0};
+
+//------------------------------
+public:
+//------------------------------
+
+  // Asserts when the underlying type is not lock free
+
+  SAT_AtomicQueue() {
+    std::atomic<size_t> test;
+    assert(test.is_lock_free());
+  }
+
+  SAT_AtomicQueue(const SAT_AtomicQueue& src) = delete;
+
+  virtual ~SAT_AtomicQueue() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  // Pushes an element to the queue
+  // element  The element to add
+  // True when the element was added, false when the queue is full
+
+  bool write(const T& element) {
+    const size_t oldWritePosition = m_writePosition.load();
+    const size_t newWritePosition = getPositionAfter(oldWritePosition);
+    const size_t readPosition = m_readPosition.load();
+    if (newWritePosition == readPosition) {
+      // The queue is full
+      return false;
+    }
+    m_ringBuffer[oldWritePosition] = element;
+    m_writePosition.store(newWritePosition);
+    return true;
+  }
+
+  //----------
+
+  // Pops an element from the queue
+  // element The returned element
+  // True when succeeded, false when the queue is empty
+
+  bool read(T& element) {
+    if (empty()) {
+      // The queue is empty
+      return false;
+    }
+    const size_t readPosition = m_readPosition.load();
+    element = std::move(m_ringBuffer[readPosition]);
+    m_readPosition.store(getPositionAfter(readPosition));
+    return true;
+  }
+
+  //----------
+
+  // return True when empty
+
+  bool empty() const noexcept {
+    bool isEmpty = false;
+    const size_t readPosition = m_readPosition.load();
+    const size_t writePosition = m_writePosition.load();
+    if (readPosition == writePosition) {
+      isEmpty = true;
+    }
+    return isEmpty;
+  }
+
+  //----------
+
+
+
+  //----------
+
+  // Clears the content from the queue
+
+  void clear() noexcept {
+    const size_t readPosition = m_readPosition.load();
+    const size_t writePosition = m_writePosition.load();
+    if (readPosition != writePosition) {
+      m_readPosition.store(writePosition);
+    }
+  }
+
+  //----------
+
+  // Returns the maximum size of the queue
+  // The maximum number of elements the queue can hold
+
+  constexpr size_t max_size() const noexcept {
+    return RingBufferSize - 1;
+  }
+
+  //----------
+
+  // Returns the actual number of elements in the queue
+  // The actual size or 0 when empty
+
+  size_t size() const noexcept {
+    const size_t readPosition = m_readPosition.load();
+    const size_t writePosition = m_writePosition.load();
+    if (readPosition == writePosition) {
+      return 0;
+    }
+    size_t size = 0;
+    if (writePosition < readPosition) {
+      size = RingBufferSize - readPosition + writePosition;
+    }
+    else {
+      size = writePosition - readPosition;
+    }
+    return size;
+  }
+
+  //----------
+
+  static constexpr size_t getPositionAfter(size_t pos) noexcept {
+    return ((pos + 1 == RingBufferSize) ? 0 : pos + 1);
+  }
+
+};
+
 
 //----------------------------------------------------------------------
 //
