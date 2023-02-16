@@ -127,19 +127,17 @@ public:
 #include <atomic>
 #include <cassert>
 
-template <typename T, size_t fixedSize>
+template <typename T, size_t SIZE>
 class SAT_AtomicQueue {
 
 //------------------------------
 private:
 //------------------------------
 
-  // A lock-free queue is basically a ring buffer.
-
-  static constexpr size_t       RingBufferSize  = fixedSize + 1;
-  std::array<T, RingBufferSize> m_ringBuffer;
-  std::atomic<size_t>           m_readPosition  = {0};
-  std::atomic<size_t>           m_writePosition = {0};
+  static constexpr size_t     MBufferSize  = SIZE + 1;
+  std::array<T, MBufferSize>  MBuffer;
+  std::atomic<size_t>         MReadPos    = {0};
+  std::atomic<size_t>         MWritePos   = {0};
 
 //------------------------------
 public:
@@ -152,7 +150,11 @@ public:
     assert(test.is_lock_free());
   }
 
+  //----------
+
   SAT_AtomicQueue(const SAT_AtomicQueue& src) = delete;
+
+  //----------
 
   virtual ~SAT_AtomicQueue() {
   }
@@ -166,15 +168,15 @@ public:
   // True when the element was added, false when the queue is full
 
   bool write(const T& element) {
-    const size_t oldWritePosition = m_writePosition.load();
+    const size_t oldWritePosition = MWritePos.load();
     const size_t newWritePosition = getPositionAfter(oldWritePosition);
-    const size_t readPosition = m_readPosition.load();
+    const size_t readPosition = MReadPos.load();
     if (newWritePosition == readPosition) {
       // The queue is full
       return false;
     }
-    m_ringBuffer[oldWritePosition] = element;
-    m_writePosition.store(newWritePosition);
+    MBuffer[oldWritePosition] = element;
+    MWritePos.store(newWritePosition);
     return true;
   }
 
@@ -189,9 +191,9 @@ public:
       // The queue is empty
       return false;
     }
-    const size_t readPosition = m_readPosition.load();
-    element = std::move(m_ringBuffer[readPosition]);
-    m_readPosition.store(getPositionAfter(readPosition));
+    const size_t readPosition = MReadPos.load();
+    element = std::move(MBuffer[readPosition]);
+    MReadPos.store(getPositionAfter(readPosition));
     return true;
   }
 
@@ -201,8 +203,8 @@ public:
 
   bool empty() const noexcept {
     bool isEmpty = false;
-    const size_t readPosition = m_readPosition.load();
-    const size_t writePosition = m_writePosition.load();
+    const size_t readPosition = MReadPos.load();
+    const size_t writePosition = MWritePos.load();
     if (readPosition == writePosition) {
       isEmpty = true;
     }
@@ -218,10 +220,10 @@ public:
   // Clears the content from the queue
 
   void clear() noexcept {
-    const size_t readPosition = m_readPosition.load();
-    const size_t writePosition = m_writePosition.load();
+    const size_t readPosition = MReadPos.load();
+    const size_t writePosition = MWritePos.load();
     if (readPosition != writePosition) {
-      m_readPosition.store(writePosition);
+      MReadPos.store(writePosition);
     }
   }
 
@@ -231,7 +233,7 @@ public:
   // The maximum number of elements the queue can hold
 
   constexpr size_t max_size() const noexcept {
-    return RingBufferSize - 1;
+    return MBufferSize - 1;
   }
 
   //----------
@@ -240,14 +242,14 @@ public:
   // The actual size or 0 when empty
 
   size_t size() const noexcept {
-    const size_t readPosition = m_readPosition.load();
-    const size_t writePosition = m_writePosition.load();
+    const size_t readPosition = MReadPos.load();
+    const size_t writePosition = MWritePos.load();
     if (readPosition == writePosition) {
       return 0;
     }
     size_t size = 0;
     if (writePosition < readPosition) {
-      size = RingBufferSize - readPosition + writePosition;
+      size = MBufferSize - readPosition + writePosition;
     }
     else {
       size = writePosition - readPosition;
@@ -258,7 +260,7 @@ public:
   //----------
 
   static constexpr size_t getPositionAfter(size_t pos) noexcept {
-    return ((pos + 1 == RingBufferSize) ? 0 : pos + 1);
+    return ((pos + 1 == MBufferSize) ? 0 : pos + 1);
   }
 
 };

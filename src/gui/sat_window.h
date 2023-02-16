@@ -58,20 +58,20 @@ private:
   SAT_DirtyWidgetsQueue MPaintDirtyWidgets    = {};
 
   SAT_Widget*           MHoverWidget          = nullptr;
-  SAT_Widget*           MCapturedWidget          = nullptr;
+  SAT_Widget*           MCapturedWidget       = nullptr;
   SAT_Widget*           MModalWidget          = nullptr;
   SAT_Widget*           MMouseLockedWidget    = nullptr;
 
-//  SAT_Widget*           MKeyEventRecipient    = nullptr;
-//  SAT_Widget*           MMouseEventRecipient  = nullptr;
+  int32_t               MCurrentCursor        = SAT_CURSOR_DEFAULT;
 
-  int32_t MMouseClickedX = 0;
-  int32_t MMouseClickedY = 0;
-  uint32_t  MMouseClickedB = 0;
-  int32_t MMousePreviousX = 0;
-  int32_t MMousePreviousY = 0;
-  int32_t MMouseDragX = 0;
-  int32_t MMouseDragY = 0;
+  int32_t               MMouseClickedX        = 0;
+  int32_t               MMouseClickedY        = 0;
+  uint32_t              MMouseClickedB        = 0;
+  int32_t               MMousePreviousX       = 0;
+  int32_t               MMousePreviousY       = 0;
+  int32_t               MMouseDragX           = 0;
+  int32_t               MMouseDragY           = 0;
+
 
 //------------------------------
 public:
@@ -362,7 +362,7 @@ public: // window
           }
         } // left
         if (AButton == SAT_BUTTON_RIGHT) {
-          //MIP_PRINT;
+          //SAT_PRINT;
           MModalWidget->on_widget_notify(0,0);
         } // right
       } // modal
@@ -410,7 +410,7 @@ public: // window
       if (MCapturedWidget) {
         MCapturedWidget->on_widget_mouse_move(MMouseDragX,MMouseDragY,AState,ATime);
       }
-//      setCursorPos(MMouseClickedX,MMouseClickedY);
+      setCursorPos(MMouseClickedX,MMouseClickedY);
     }
     else {
 
@@ -491,7 +491,39 @@ public: // widget listener
   //----------
 
   void do_widget_set_cursor(SAT_Widget* ASender, uint32_t ACursor) override {
-    if (MListener) MListener->do_window_listener_set_cursor(ASender,ACursor);
+    //if (MListener) MListener->do_window_listener_set_cursor(ASender,ACursor);
+    switch (ACursor) {
+      case SAT_CURSOR_LOCK:
+        MMouseLockedWidget = ASender;
+        break;
+      case SAT_CURSOR_UNLOCK:
+        MMouseLockedWidget = nullptr;
+        break;
+      case SAT_CURSOR_SHOW:
+        showCursor();
+        setCursor(MCurrentCursor);
+        break;
+      case SAT_CURSOR_HIDE:
+        hideCursor();
+        break;
+      default:
+        if (ACursor != MCurrentCursor) {
+          setCursor(ACursor);
+          MCurrentCursor = ACursor;
+        }
+        break;
+    }
+  }
+
+  //----------
+
+  //void do_widget_set_cursor_pos(SAT_Widget* ASender, int32_t AXpos, int32_t AYpos) override {
+  //  setCursorPos(AXpos,AYpos);
+  //}
+
+  //----------
+
+  void do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) override {
   }
 
 //------------------------------
@@ -524,11 +556,11 @@ private:
       if (hover != MHoverWidget) {
         if (MHoverWidget) {
 //          MHoverWidget->setHovering(false);
-//          MHoverWidget->on_widget_leave(AXpos,AYpos);
+          MHoverWidget->on_widget_mouse_leave(hover,AXpos,AYpos,0);
         }
         if (hover) {
 //          hover->setHovering(true);
-//          hover->on_widget_enter(AXpos,AYpos);
+          hover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
         }
       }
       MHoverWidget = hover;
@@ -540,7 +572,7 @@ private:
   // when releasing mouse cursor after dragging, and entering window
   // (when we don't know the 'from' widget)
 
-  //void updateHoverWidgetFrom(MIP_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
+  //void updateHoverWidgetFrom(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
   //  if (MHoverWidget != AFrom) {
   //    if (AFrom) AFrom->on_widget_leave(MHoverWidget,AXpos,AYpos,ATime);
   //    if (MHoverWidget) MHoverWidget->on_widget_enter(AFrom,AXpos,AYpos,ATime);

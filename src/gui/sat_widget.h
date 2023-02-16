@@ -237,6 +237,10 @@ public: // widget listener
     if (MListener) MListener->do_widget_set_cursor(ASender,ACursor);
   }
 
+  void do_widget_set_hint(SAT_Widget* ASender, const char* AHint) override {
+    if (MListener) MListener->do_widget_set_hint(ASender,AHint);
+  }
+
 //------------------------------
 public: // children
 //------------------------------

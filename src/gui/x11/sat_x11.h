@@ -49,4 +49,55 @@ bool sat_initialize_xlib() {
 bool sat_xlib_is_initialized = sat_initialize_xlib();
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+// https://tronche.com/gui/x/xlib/appendix/b/
+
+const char* SAT_XCB_WM_CURSORS[SAT_CURSOR_COUNT] = {
+
+  "left_ptr",             // SAT_CURSOR_DEFAULT
+  "left_ptr",             // SAT_CURSOR_ARROW
+
+  "sb_up_arrow",          // SAT_CURSOR_ARROW_UP
+  "sb_down_arrow",        // SAT_CURSOR_ARROW_DOWN
+  "sb_left_arrow",        // SAT_CURSOR_ARROW_LEFT
+  "sb_right_arrow",       // SAT_CURSOR_ARROW_RIGHT
+
+  "sb_v_double_arrow",    // SAT_CURSOR_ARROW_UP_DOWN
+  "sb_h_double_arrow",    // SAT_CURSOR_ARROW_LEFT_RIGHT
+
+  "top_left_corner",      // SAT_CURSOR_ARROW_TOP_LEFT
+  "top_right_corner",     // SAT_CURSOR_ARROW_TOP_RIGHT
+  "bottom_left_corner",   // SAT_CURSOR_ARROW_BOTTOM_LEFT
+  "bottom_right_corner",  // SAT_CURSOR_ARROW_BOTTOM_RIGHT
+
+  "left_side",            // SAT_CURSOR_ARROW_LEFT_SIDE
+  "right_side",           // SAT_CURSOR_ARROW_RIGHT_SIDE
+  "top_side",             // SAT_CURSOR_ARROW_TOP_SIDE
+  "bottom_side",          // SAT_CURSOR_ARROW_BOTTOM_SIDE
+
+  "fleur",                // SAT_CURSOR_MOVE
+  "watch",                // SAT_CURSOR_WAIT
+  "clock",                // SAT_CURSOR_ARROW_WAIT    !!!
+  "hand2",                // SAT_CURSOR_HAND
+  "hand1",                // SAT_CURSOR_FINGER
+  "crosshair",            // SAT_CURSOR_CROSS
+  "cross",                // SAT_CURSOR_CROSS2
+  "pencil",               // SAT_CURSOR_PENCIL
+  "plus",                 // SAT_CURSOR_PLUS
+  "question_arrow",       // SAT_CURSOR_QUESTION
+  "xterm",                // SAT_CURSOR_IBEAM
+
+  "circle",               // SAT_CURSOR_ARROW_INVALID
+  "crossed_circle",       // SAT_CURSOR_INVALID
+
+  "pirate"                // SAT_CURSOR_X
+
+};
+
+
+//----------------------------------------------------------------------
 #endif

@@ -37,6 +37,8 @@ public:
   : SAT_ValueWidget(ARect,AText,AValue) {
   }
 
+  //----------
+
   virtual ~SAT_DragValueWidget() {
   }
 
@@ -63,14 +65,20 @@ public:
       MDragValue    = getValue();
       MPreviousXpos = AXpos;
       MPreviousYpos = AYpos;
+      do_widget_set_cursor(this,SAT_CURSOR_LOCK);
     }
   }
+
+  //----------
 
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
+      do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
     }
   }
+
+  //----------
 
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
     if (MIsDragging) {
