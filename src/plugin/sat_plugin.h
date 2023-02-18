@@ -38,6 +38,7 @@ struct SAT_QueueItem {
   };
 };
 
+typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ModFromHostToGuiQueue;
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;
@@ -67,8 +68,8 @@ private:
   bool                              MIsProcessing                                 = false;
   clap_id                           MSelectedAudioPortsConfig                     = 0;
   clap_plugin_render_mode           MRenderMode                                   = CLAP_RENDER_REALTIME;
-  sat_param_t                       MParameterValues[SAT_PLUGIN_MAX_PARAMETERS]   = {0};
-  sat_param_t                       MModulationValues[SAT_PLUGIN_MAX_PARAMETERS]  = {0};
+  //sat_param_t                       MParameterValues[SAT_PLUGIN_MAX_PARAMETERS]   = {0};
+  //sat_param_t                       MModulationValues[SAT_PLUGIN_MAX_PARAMETERS]  = {0};
   SAT_Editor*                       MEditor                                       = nullptr;
   SAT_Host*                         MHost                                         = nullptr;
   SAT_ParameterArray                MParameters                                   = {};
@@ -82,6 +83,7 @@ private:
   uint32_t                          MInitialEditorWidth                           = 640;
   uint32_t                          MInitialEditorHeight                          = 480;
 
+  SAT_ModFromHostToGuiQueue         MModFromHostToGuiQueue                        = {};
   SAT_ParamFromHostToGuiQueue       MParamFromHostToGuiQueue                      = {};   // when the host changes a parameter, we need to redraw it
   SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
   SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
@@ -96,6 +98,21 @@ private:
 //  SAT_QueueItem                     MParamFromGuiToProcessItems   [ SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   ] = {0};
 //  SAT_QueueItem                     MParamFromGuiToHostItems      [ SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   ] = {0};
 //  SAT_QueueItem                     MNoteEndFromProcessToHostItems[ SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK    ] = {0};
+
+//  uint32_t        MPaintParametersCount = 0;
+//  SAT_Parameter*  MPaintParameters[SAT_PLUGIN_MAX_PARAMETERS] = {0};
+
+  // contains MProcessContext.counter for last handled time..
+
+//  uint32_t  MParamLastUpdated[SAT_PLUGIN_MAX_PARAMETERS]        = {0};
+//  double    MParamLastUpdatedValue[SAT_PLUGIN_MAX_PARAMETERS]   = {0};
+//
+//  uint32_t  MParamLastModulated[SAT_PLUGIN_MAX_PARAMETERS]      = {0};
+//  double    MParamLastModulatedValue[SAT_PLUGIN_MAX_PARAMETERS] = {0};
+
+  //----------
+
+
 
 //------------------------------
 public:
@@ -127,6 +144,11 @@ public: // plugin
 //------------------------------
 
   SAT_Editor* getEditor() { return MEditor; }
+
+  void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight) {
+    MInitialEditorWidth = AWidth;
+    MInitialEditorHeight = AHeight;
+  }
 
 //------------------------------
 public: // plugin
@@ -804,8 +826,8 @@ public: // params
 
   bool params_get_value(clap_id param_id, double *out_value) override {
     //SAT_Print("param_id %i\n",param_id);
-    //double value = MParameters[param_id]->getValue();
-    double value = MParameterValues[param_id];
+    double value = MParameters[param_id]->getValue();
+    //double value = MParameterValues[param_id];
     *out_value = value;
     return true;
   }
@@ -1023,8 +1045,8 @@ public: // state
     total += sizeof(uint32_t);
     // param values
     for (uint32_t i=0; i<num_params; i++) {
-      //double value = MParameters[i]->getValue();
-      double value = MParameterValues[i];
+      double value = MParameters[i]->getValue();
+      //double value = MParameterValues[i];
       written = stream->write(stream,&value,sizeof(double));
       if (written != sizeof(double)) {
         //SAT_Print("state_load: error writing parameter %i\n",i);
@@ -1077,8 +1099,8 @@ public: // state
         return false;
       }
       total += sizeof(double);
-      //MParameters[i]->setValue(value);
-      MParameterValues[i] = value;
+      MParameters[i]->setValue(value);
+      //MParameterValues[i] = value;
     }
 
     //SAT_Print("total: %i\n",total);
@@ -1376,8 +1398,17 @@ public: // editor listener
 
   // window -> editor -> this
 
+  /*
+    todo:
+    don't redraw params & modulations several times per frame..
+    especially modulations..
+  */
+
+  //
+
   void do_editor_listener_timer() override{
     //SAT_PRINT;
+    flushModFromHostToGui();
     flushParamFromHostToGui();
   }
 
@@ -1392,9 +1423,7 @@ public: // editor listener
 
   void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT;
-
     setParameterValue(AIndex,AValue);
-
     queueParamFromGuiToHost(AIndex,AValue);
     queueParamFromGuiToAudio(AIndex,AValue);
   }
@@ -1408,27 +1437,84 @@ public: // editor listener
   //----------
 
   sat_param_t do_editor_listener_get_parameter_value(uint32_t AIndex) final {
-    return MParameterValues[AIndex];
+    //return MParameterValues[AIndex];
+    return MParameters[AIndex]->getValue();
   }
 
   //----------
 
   sat_param_t do_editor_listener_get_modulation_value(uint32_t AIndex) final {
-    return MModulationValues[AIndex];
+    //return MModulationValues[AIndex];
+    return MParameters[AIndex]->getModulation();;
   }
 
 //------------------------------
 public: // queues
 //------------------------------
 
-//--------------------
-// param, host -> gui
-//--------------------
+// mod, host -> gui
 
   /*
     called from:
-    - SAT_Plugin.handleParamValueEvent
     - SAT_Plugin.handleParamModEvent
+  */
+
+  void queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_QueueItem item;
+    item.type   = CLAP_EVENT_PARAM_MOD;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MModFromHostToGuiQueue.write(item)) {
+      SAT_Log("queueModFromHostToGui: couldn't write to queue\n");
+    }
+  }
+
+  //----------
+
+  /*
+    TODO: check for duplicates
+    pop updates to array, check array for duplicates..
+
+    called from:
+    - SAT_Plugin.do_editor_listener_timer
+  */
+
+  void flushModFromHostToGui() {
+    //SAT_Print("\n");
+    SAT_QueueItem item;
+    while (MModFromHostToGuiQueue.read(&item)) {
+
+      //SAT_Print("%i = %f\n",item.index, item.value);
+      SAT_Parameter* parameter = MParameters[item.index];
+      MEditor->updateModulationFromHost(parameter,item.value);
+
+//      SAT_Parameter* parameter = MParameters[item.index];
+//      if (parameter->getLastPainted() >= 0) {
+//        double value = parameter->getLastModulatedValue();
+//
+//        SAT_Print("%i = %.3f -> %.3f\n",item.index,item.value,value);
+//
+//        MEditor->updateModulationFromHost(parameter,value);
+//        parameter->setLastPainted(-1);
+//      }
+//      else {
+//        SAT_Print("(%i = %.3f)\n",item.index,item.value);
+//      }
+
+    }
+  }
+
+  //----------
+
+// param, host -> gui
+
+  /*
+    TODO: check for duplicates
+    pop updates to array, check array for duplicates..
+
+    called from:
+    - SAT_Plugin.handleParamValueEvent
   */
 
   void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
@@ -1456,15 +1542,31 @@ public: // queues
     //SAT_Print("\n");
     SAT_QueueItem item;
     while (MParamFromHostToGuiQueue.read(&item)) {
+
       //SAT_Print("%i = %f\n",item.index, item.value);
       SAT_Parameter* parameter = MParameters[item.index];
       MEditor->updateParameterFromHost(parameter,item.value);
+
+//      //SAT_Print("%i = %f\n",item.index, item.value);
+//      SAT_Parameter* parameter = MParameters[item.index];
+//      if (parameter->getLastPainted() >= 0) {
+//        double value = parameter->getLastUpdatedValue();
+//
+//        SAT_Print("%i = %.3f -> %.3f\n",item.index,item.value,value);
+//
+//        MEditor->updateParameterFromHost(parameter,value);
+//        parameter->setLastPainted(-1);
+//      }
+//      else {
+//        SAT_Print("(%i = %.3f)\n",item.index,item.value);
+//      }
+
     }
   }
 
-//--------------------
+  //----------
+
 // param, gui -> audio
-//--------------------
 
   /*
     called from:
@@ -1512,9 +1614,9 @@ public: // queues
     }
   }
 
-//--------------------
+  //----------
+
 // param, gui -> host
-//--------------------
 
   /*
     called from:
@@ -1547,6 +1649,8 @@ public: // queues
       //SAT_Print("%i = %.3f\n",item.index,item.value);
       SAT_Parameter* parameter = getParameter(item.index);
 
+      // gesture begin
+
       {
         clap_event_param_gesture_t event;
         event.header.size     = sizeof(clap_event_param_gesture_t);
@@ -1559,9 +1663,7 @@ public: // queues
         out_events->try_push(out_events,header);
       }
 
-      /*
-        reaper needs the event.cookie ??
-      */
+      // param value
 
       {
         clap_event_param_value_t event;
@@ -1571,7 +1673,7 @@ public: // queues
         event.header.type     = CLAP_EVENT_PARAM_VALUE;
         event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
         event.param_id        = item.index;
-        event.cookie          = parameter->getCookie();
+        event.cookie          = parameter->getCookie(); // reaper needs the event.cookie ??
         event.note_id         = -1;
         event.port_index      = -1;
         event.channel         = -1;
@@ -1581,6 +1683,8 @@ public: // queues
         const clap_event_header_t* header = (const clap_event_header_t*)&event;
         out_events->try_push(out_events,header);
       }
+
+      // gesture end
 
       {
         clap_event_param_gesture_t event;
@@ -1597,9 +1701,9 @@ public: // queues
     }
   }
 
-//--------------------
-// note_end
-//--------------------
+  //----------
+
+// note_end -> host
 
   /*
     called from:
@@ -1627,7 +1731,7 @@ public: // queues
     - todo: end of SAT_Plugin.process
   */
 
-  void flushNoteEndFromAudioToHost(uint32_t AIndex, sat_param_t AValue) {
+  void flushNoteEndFromAudioToHost() {
     //SAT_Print("\n");
     //SAT_Print("\n");
 
@@ -1675,11 +1779,12 @@ public: // parameters
 
   //----------
 
-  void appendParameter(SAT_Parameter* AParameter) {
+  SAT_Parameter* appendParameter(SAT_Parameter* AParameter) {
     uint32_t index = MParameters.size();
     AParameter->setIndex(index);
     MParameters.append(AParameter);
     //MParameterValues[index] = AParameter->getDefaultValue();
+    return AParameter;
   }
 
   //----------
@@ -1708,13 +1813,15 @@ public: // parameters
   //----------
 
   sat_param_t getParameterValue(uint32_t AIndex) {
-    return MParameterValues[AIndex];
+    //return MParameterValues[AIndex];
+    return MParameters[AIndex]->getValue();
   }
 
   //----------
 
   void setParameterValue(uint32_t AIndex, sat_param_t AValue) {
-    MParameterValues[AIndex] = AValue;
+    //MParameterValues[AIndex] = AValue;
+    MParameters[AIndex]->setValue(AValue);
   }
 
   //----------
@@ -1729,7 +1836,8 @@ public: // parameters
     beginParameterLoad(num);
     for (uint32_t i=0; i<num; i++) {
       double value = MParameters[i]->getDefaultValue();
-      MParameterValues[i] = value;
+      //MParameterValues[i] = value;
+      MParameters[i]->setValue(value);
       //queueParamFromGuiToProcess(i,value);
 //      queueParamLoad(i,value);
     }
@@ -1758,7 +1866,8 @@ public: // parameters
 
   void updateEditorParameterValues() {
     for (uint32_t i=0; i<MParameters.size(); i++) {
-      double v = MParameterValues[i];
+      //double v = MParameterValues[i];
+      double v = MParameters[i]->getValue();
       MEditor->updateEditorParameterValue(i,v,false);
     }
   }
@@ -1768,13 +1877,15 @@ public: // modulation
 //------------------------------
 
   sat_param_t getModulationValue(uint32_t AIndex) {
-    return MModulationValues[AIndex];
+    //return MModulationValues[AIndex];
+    return MParameters[AIndex]->getModulation();
   }
 
   //----------
 
   void setModulationValue(uint32_t AIndex, sat_param_t AValue) {
-    MModulationValues[AIndex] = AValue;
+    //MModulationValues[AIndex] = AValue;
+    MParameters[AIndex]->setModulation(AValue);
   }
 
 //------------------------------
@@ -2063,10 +2174,18 @@ private:
   //----------
 
   void handleParamValueEvent(const clap_event_param_value_t* event) {
-    uint32_t  index   = event->param_id;
-    double    value   = event->value;
-    MParameterValues[index] = value;
+    uint32_t  process_count = MProcessContext.counter;
+    uint32_t  index         = event->param_id;
+    double    value         = event->value;
+    //MParameterValues[index] = value;
+    MParameters[index]->setValue(value);
+    MParameters[index]->setLastUpdated(process_count);
+    MParameters[index]->setLastUpdatedValue(value);
+    //if (MParamLastUpdated[index] == process_count) { SAT_Print("[%i] %i = %.3f (duplicate)\n",process_count,index,value); }
+    //else { SAT_Print("[%i] %i = %.3f\n",process_count,index,value); }
+
     //if (MParameters[index]->getWidget()) {
+      // TODO: queue only last value..
       queueParamFromHostToGui(index,value);
     //}
     handleParamValue(event);
@@ -2074,13 +2193,26 @@ private:
 
   //----------
 
+  /*
+    TODO: don't send ALL mods to gui.. only last one in block
+    set flag (this modulator changed..) and check in at end of process
+
+  */
+
   void handleParamModEvent(const clap_event_param_mod_t* event) {
+    uint32_t  process_count = MProcessContext.counter;
     uint32_t  index   = event->param_id;
     double    value   = event->amount;
-    MModulationValues[index] = value;
-    if (MParameters[index]->getWidget()) {
-      //queueParamModFromHostToGui(index,value);
-    }
+    //MModulationValues[index] = value;
+    MParameters[index]->setModulation(value);
+    MParameters[index]->setLastModulated(process_count);
+    MParameters[index]->setLastModulatedValue(value);
+    //if (MParamLastModulated[index] == process_count) { SAT_Print("[%i] %i = %.3f (duplicate)\n",process_count,index,value); }
+    //else { SAT_Print("[%i] %i = %.3f\n",process_count,index,value); }
+    //if (MParameters[index]->getWidget()) {
+      // TODO: queue only last value..
+      queueModFromHostToGui(index,value);
+    //}
     handleParamMod(event);
   }
 

@@ -57,16 +57,19 @@ public:
   virtual void drawValue(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawValue) {
+      double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
-      mrect.shrink(MValueOffset);
+      SAT_Rect valueoffset = MValueOffset;
+      valueoffset.scale(S);
+      mrect.shrink(valueoffset);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
 
       sprintf(MValueText,"%.3f",getValue());
       painter->setTextColor(MValueColor);
-      painter->setTextSize(MValueSize);
+      painter->setTextSize(MValueSize*S);
       painter->drawTextBox(mrect,MValueText,MValueAlignment);
     }
   }

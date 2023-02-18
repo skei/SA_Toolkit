@@ -27,14 +27,23 @@ private:
   uint32_t            MIndex                              = 0;
 
   double              MValues[SAT_WIDGET_MAX_VALUES]      = {0};
+  double              MModulations[SAT_WIDGET_MAX_VALUES] = {0};
   void*               MConnections[SAT_WIDGET_MAX_VALUES] = {0};
 
   bool                MIsActive                           = true;
   bool                MIsVisible                          = true;
 
-  const char*         MHint                               = "";
-  uint32_t            MCursor                             = 0;
   SAT_Rect            MRect                               = {};
+  SAT_Rect            MInitialRect                        = {};
+  uint32_t            MCursor                             = SAT_CURSOR_DEFAULT;
+  char                MHint[256]                          = "";
+
+  bool                MAutoCursor                         = true;
+  bool                MAutoHint                           = true;
+
+  double              MWindowScale                        = 1.0;
+
+  int32_t             MLastPainted                        = -1;
 
 //------------------------------
 public:
@@ -42,6 +51,7 @@ public:
 
   SAT_Widget(SAT_Rect ARect) {
     MRect = ARect;
+    MInitialRect = ARect;
   }
 
   //----------
@@ -56,28 +66,31 @@ public:
 public:
 //------------------------------
 
-  void        setListener(SAT_WidgetListener* AListener)  { MListener = AListener; }
-  void        setIndex(uint32_t AIndex)                   { MIndex = AIndex; }
-  void        setRect(SAT_Rect ARect)                     { MRect = ARect; }
-  void        setValue(double AValue, uint32_t AIndex=0)  { MValues[AIndex] = AValue; }
-  void        addValue(double AValue, uint32_t AIndex=0)  { MValues[AIndex] += AValue; }
+  void        setListener(SAT_WidgetListener* AListener)      { MListener = AListener; }
+  void        setIndex(uint32_t AIndex)                       { MIndex = AIndex; }
+  void        setRect(SAT_Rect ARect)                         { MRect = ARect; }
+  void        setValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] = AValue; }
+  void        addValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] += AValue; }
+  void        setModulation(double AValue, uint32_t AIndex=0) { MModulations[AIndex] = AValue; }
+  void        setCursor(uint32_t ACursor)                     { MCursor = ACursor; }
+  void        setHint(const char* AHint)                      { strcpy(MHint,AHint); }
+  void        setAutoCursor(bool AState=true)                 { MAutoCursor = AState; }
+  void        setAutoHint(bool AState=true)                   { MAutoHint = AState; }
+  void        setActive(bool AState=true)                     { MIsActive = AState; }
+  void        setVisible(bool AState=true)                    { MIsVisible = AState; }
+  void        setLastPainted(int32_t ACount)                  { MLastPainted = ACount; }
 
-  void        setActive(bool AState=true)                 { MIsActive = AState; }
-  void        setVisible(bool AState=true)                { MIsVisible = AState; }
+public:
 
-  uint32_t    getIndex()                                  { return MIndex; }
-  SAT_Rect    getRect()                                   { return MRect; }
-  double      getValue(uint32_t AIndex=0)                 { return MValues[AIndex]; }
-
-  void*       getConnection(uint32_t AIndex=0)            { return MConnections[AIndex]; }
-
-  bool        isActive()                                  { return MIsActive; }
-  bool        isVisible()                                 { return MIsVisible; }
-
-//void        setDirtyFlags(uint32_t AFlags)              { MDirtyFlags = AFlags; }
-//void        setDirtyFlag(uint32_t AFlag)                { MDirtyFlags |= AFlag; }
-//void        clearDirtyFlag(uint32_t AFlag)              { MDirtyFlags &= ~AFlag; }
-//bool        hasDirtyFlag(uint32_t AFlag)                { return (MDirtyFlags & AFlag); }
+  uint32_t    getIndex()                                      { return MIndex; }
+  SAT_Rect    getRect()                                       { return MRect; }
+  double      getValue(uint32_t AIndex=0)                     { return MValues[AIndex]; }
+  double      getModulation(uint32_t AIndex=0)                { return MModulations[AIndex]; }
+  void*       getConnection(uint32_t AIndex=0)                { return MConnections[AIndex]; }
+  bool        isActive()                                      { return MIsActive; }
+  bool        isVisible()                                     { return MIsVisible; }
+  double      getWindowScale()                                { return MWindowScale; }
+  int32_t     getLastPainted()                                { return MLastPainted; }
 
 //------------------------------
 public:
@@ -114,6 +127,20 @@ public:
 
   //----------
 
+  virtual void scale(double AScale, bool ARecursive=true) {
+    MWindowScale = AScale;
+    //MRect.scale(AScale);
+    MRect = MInitialRect;
+    MRect.scale(AScale);
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildren.size(); i++) {
+        MChildren[i]->scale(AScale);
+      }
+    }
+  }
+
+  //----------
+
   //virtual void setPaintStyle(SAT_PaintStyle* AStyle, bool ARecursive=true) {
   //  uint32_t num = MChildren.size();
   //  if (ARecursive) {
@@ -132,6 +159,16 @@ public:
 //      child->on_widget_paint(AContext);
 //    }
 //  }
+
+  //----------
+
+  virtual void scaleChildWidgets(double AScale) {
+    uint32_t num = MChildren.size();
+    for (uint32_t i=0; i<num; i++) {
+    }
+  }
+
+  //----------
 
   virtual void paintChildWidgets(SAT_PaintContext* AContext, bool ARecursive=true) {
 //    SAT_Rect updaterect = AContext->update_rect;
@@ -209,9 +246,13 @@ public: // widget
   }
 
   virtual void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) {
+    if (MAutoCursor) do_widget_set_cursor(this,MCursor);
+    if (MAutoHint) do_widget_set_hint(this,MHint);
   }
 
   virtual void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) {
+    if (MAutoCursor) do_widget_set_cursor(this,SAT_CURSOR_DEFAULT);
+    if (MAutoHint) do_widget_set_hint(this,"");
   }
 
   virtual void on_widget_notify(uint32_t AReason=0, int32_t AValue=0) {
@@ -250,7 +291,7 @@ public: // children
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);
     AWidget->setIndex(index);
-    AWidget->addPos(MRect.x,MRect.y);
+    //AWidget->addPos(MRect.x,MRect.y);
     MChildren.append(AWidget);
     return AWidget;
   }

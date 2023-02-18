@@ -21,7 +21,7 @@ private:
   bool        MDrawLogo   = true;
   NSVGimage*  MLogoImage  = nullptr;
   SAT_Color   MLogoColor  = SAT_White;
-  double      MLogoWidth  = 6;
+  double      MLogoWidth  = 8;
 
 //------------------------------
 public:
@@ -59,6 +59,8 @@ public:
 
     if (MDrawLogo) {
 
+      double S = getWindowScale();
+
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
 
@@ -68,16 +70,16 @@ public:
       if (MLogoImage->width <= 0.0 ) return;
       if (MLogoImage->height <= 0.0 ) return;
 
-      //painter->setFillColor(MBackgroundColor);
-      //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
-
       painter->setDrawColor(MLogoColor);
-      painter->setLineWidth(MLogoWidth);
+      painter->setLineWidth(MLogoWidth*S);
+      painter->setLineCap(NVG_ROUND);       // NVG_BUTT (default), NVG_ROUND, NVG_SQUARE
+      //painter->setLineJoin(NVG_MITER);    // NVG_MITER (default), NVG_ROUND, NVG_BEVEL
 
       double scale  = (mrect.w / MLogoImage->width);
 
       for (NSVGshape* shape = MLogoImage->shapes; shape != NULL; shape = shape->next) {
         for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
+          //painter->setLineWidth( S * shape->strokeWidth );
           for (int i = 0; i < path->npts-1; i += 3) {
             float* p = &path->pts[i*2];
             double x1 = mrect.x + (p[0] * scale);
@@ -92,6 +94,10 @@ public:
           }
         }
       }
+
+      // reset
+      painter->setLineCap(NVG_BUTT);
+
     }
   }
 

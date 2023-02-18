@@ -4,6 +4,7 @@
 
 #include "base/sat.h"
 #include "base/utils/sat_math.h"
+#include "base/utils/sat_interpolation.h"
 #include "gui/widgets/sat_value_widget.h"
 
 //----------------------------------------------------------------------
@@ -19,15 +20,23 @@ class SAT_DragValueWidget
 private:
 //------------------------------
 
-  bool    MIsDragging       = false;
-  double  MClickedXpos      = 0.0;
-  double  MClickedYpos      = 0.0;
-  double  MPreviousXpos     = 0.0;
-  double  MPreviousYpos     = 0.0;
+  bool      MIsDragging       = false;
+  double    MClickedXpos      = 0.0;
+  double    MClickedYpos      = 0.0;
+  double    MPreviousXpos     = 0.0;
+  double    MPreviousYpos     = 0.0;
+  double    MDragValue        = 0.0;
 
-  double  MDragValue        = 0.0;
-  double MDragSensitivity   = 0.004;
-  double MShiftSensitivity  = 0.05;
+  uint32_t  MDragDirection    = SAT_DIRECTION_UP;
+  double    MDragSensitivity  = 0.004;
+  double    MShiftSensitivity = 0.05;
+  bool      MAutoHideCursor   = true;
+  bool      MAutoLockCursor   = true;
+  bool      MSnap             = false;
+  double    MSnapPos          = 0.5;
+  double    MSnapDist         = 0.1;
+  double    MSnapSpeed        = 1.5;
+  bool      MQuantize         = false;
 
 //------------------------------
 public:
@@ -35,6 +44,7 @@ public:
 
   SAT_DragValueWidget(SAT_Rect ARect, const char* AText, double AValue)
   : SAT_ValueWidget(ARect,AText,AValue) {
+    setCursor(SAT_CURSOR_ARROW_UP_DOWN);
   }
 
   //----------
@@ -46,16 +56,44 @@ public:
 public:
 //------------------------------
 
+  void setDragDirection(uint32_t ADir)    { MDragDirection = ADir; }
+  void setDragSensitivity(double ASens)   { MDragSensitivity = ASens; }
+  void setShiftSensitivity(double ASens)  { MShiftSensitivity = ASens; }
+  void setAutoHideCursor(bool AAuto)      { MAutoHideCursor = AAuto; }
+  void setAutoLockCursor(bool AAuto)      { MAutoLockCursor = AAuto; }
+  void setSnap(bool ASnap)                { MSnap = ASnap; }
+  void setSnapPos(double APos)            { MSnapPos = APos; }
+  void setSnapDist(double ADist)          { MSnapDist = ADist; }
+  void setSnapSpeed(double ASpeed)        { MSnapSpeed = ASpeed; }
+  void setQuantize(bool AQuant)           { MQuantize = AQuant; }
+
+//------------------------------
+private:
+//------------------------------
+
+  double snapValue(double AValue) {
+    double value = AValue;
+    if (MSnapDist > 0) {
+      double diff = abs(MSnapPos - value);
+      if (diff < MSnapDist) {
+        double s = 1.0 - (diff / MSnapDist); // 1 at snappos, 0 at snapdist
+        s *= MSnapSpeed;
+        s = SAT_Clamp(s,0,1);
+        value = SAT_Interpolate_Linear(s,value,MSnapPos);
+        //SAT_Print("sdiff %.3f s %.3f\n",sdiff,s);
+      }
+    }
+    return value;
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-
-
-//------------------------------
-public:
-//------------------------------
+  /*
+    we should set the MDragValue to the value needed for snapValue
+    to result in the current value..
+  */
 
   void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
@@ -63,9 +101,11 @@ public:
       MClickedYpos  = AYpos;
       MClickedYpos  = AYpos;
       MDragValue    = getValue();
+      //if (MSnap) MDragValue = snapValue(MDragValue);
       MPreviousXpos = AXpos;
       MPreviousYpos = AYpos;
-      do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+      if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);;
+      if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
     }
   }
 
@@ -74,7 +114,8 @@ public:
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
-      do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+      if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_SHOW);
+      if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
     }
   }
 
@@ -82,12 +123,24 @@ public:
 
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
     if (MIsDragging) {
-      double diff = (MPreviousYpos - AYpos);
-      diff *= MDragSensitivity;
-      if (AState & SAT_STATE_SHIFT) diff *= MShiftSensitivity;
-      MDragValue += diff;
-      MDragValue = SAT_Clamp(MDragValue,0,1);
-      setValue(MDragValue);
+
+      double value = MDragValue;
+
+      double sens = MDragSensitivity;
+      if (AState & SAT_STATE_CTRL) sens *= MShiftSensitivity;
+
+      double ydiff = MPreviousYpos - AYpos;
+      value += (ydiff * sens);
+
+      MDragValue = SAT_Clamp(value,0,1);
+
+      if (MSnap && !(AState & SAT_STATE_SHIFT)) {
+        value = snapValue(value);
+      }
+
+      value = SAT_Clamp(value,0,1);
+
+      setValue(value);
       do_widget_update(this,0);
       do_widget_redraw(this,0);
     }

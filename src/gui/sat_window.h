@@ -72,6 +72,12 @@ private:
   int32_t               MMouseDragX           = 0;
   int32_t               MMouseDragY           = 0;
 
+  double MInitialWidth  = 0.0;
+  double MInitialHeight = 0.0;
+  double MScale        = 1.0;
+  //double MYScale        = 1.0;
+
+  bool MAutoScaleWidgets = true;
 
 //------------------------------
 public:
@@ -81,6 +87,8 @@ public:
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
 
     MListener = AListener;
+    MInitialWidth = AWidth;
+    MInitialHeight = AHeight;
 
     #ifdef SAT_LINUX
       Display* display = getX11Display();
@@ -111,7 +119,28 @@ public:
 public:
 //------------------------------
 
-  SAT_Widget* getRootWidget() { return MRootWidget; }
+  SAT_Widget* getRootWidget() {
+    return MRootWidget;
+  }
+
+  //----------
+
+  SAT_PaintContext* getPaintContext() {
+    return &MPaintContext;
+  }
+
+  //----------
+
+  double getScale() {
+    return MScale;
+  }
+
+  //----------
+
+  void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
+    MInitialWidth = AWidth;
+    MInitialHeight = AHeight;
+  }
 
 //------------------------------
 private: // buffer
@@ -205,17 +234,26 @@ private: // buffer
   //
 
   uint32_t paintDirtyWidgets(SAT_PaintContext* AContext, SAT_Widget* ARoot=nullptr) {
+    uint32_t paint_count = MPaintContext.counter;
     uint32_t count = 0;
     SAT_Widget* widget = nullptr;
     if (ARoot) {
-      while (MPaintDirtyWidgets.read(&widget)) {} // empty queue
+      // we will draw everything, so just empty queue
+      while (MPaintDirtyWidgets.read(&widget)) {  }
       ARoot->on_widget_paint(&MPaintContext);
       count = 1;
     }
     else {
       while (MPaintDirtyWidgets.read(&widget)) {
-        widget->on_widget_paint(&MPaintContext);
-        count += 1;
+        if (widget->getLastPainted() != paint_count) {
+          //SAT_Print("draw\n");
+          widget->on_widget_paint(&MPaintContext);
+          widget->setLastPainted(paint_count);
+          count += 1;
+        }
+        //else {
+        //  SAT_Print("skip draw\n");
+        //}
       }
     }
     return count;
@@ -298,8 +336,21 @@ public: // window
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-    //SAT_Print("%i,%i\n",AWidth,AHeight);
+
+    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
+      double xscale = AWidth / MInitialWidth;
+      double yscale = AHeight / MInitialHeight;
+      if (xscale < yscale) MScale = xscale;
+      else MScale =  yscale;
+    }
+    else MScale = 1.0;
+
+//    SAT_Print("%i,%i scale %.3f\n",AWidth,AHeight,MScale);
+
     if (MRootWidget) {
+      if (MAutoScaleWidgets) {
+        MRootWidget->scale(MScale);
+      }
       MRootWidget->setSize(AWidth,AHeight);
       MPendingDirtyWidgets.write(MRootWidget);
     }
@@ -535,7 +586,7 @@ public: // timer listener
     //on_window_timer();
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
-    if (num > 0) {
+    if (num > 0) { // && (rect.isNotEmpty()) {
       invalidate(rect.x,rect.y,rect.w,rect.h);
       //#ifdef SAT_DEBUG
       //SAT_GLOBAL.DEBUG.reportNumDirtyWidgets(num);

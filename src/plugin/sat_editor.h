@@ -79,9 +79,22 @@ public:
   //virtual
   void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
+      //SAT_PaintContext* pc = MWindow->getPaintContext();
+      //uint32_t counter = pc->counter;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
       if (widget) {
         widget->setValue(AValue);
+        //widget->update();
+        widget->redraw();
+      }
+    }
+  }
+
+  void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
+    if (MIsOpen) {
+      SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
+      if (widget) {
+        widget->setModulation(AValue);
         //widget->update();
         widget->redraw();
       }

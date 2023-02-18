@@ -56,14 +56,17 @@ public:
   virtual void drawText(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawText) {
+      double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
-      mrect.shrink(MTextOffset);
+      SAT_Rect textoffset = MTextOffset;
+      textoffset.scale(S);
+      mrect.shrink(textoffset);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       painter->setTextColor(MTextColor);
-      painter->setTextSize(MTextSize);
+      painter->setTextSize(MTextSize*S);
       painter->drawTextBox(mrect,MText,MTextAlignment);
     }
   }

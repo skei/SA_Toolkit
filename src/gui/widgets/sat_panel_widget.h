@@ -73,6 +73,7 @@ public:
   virtual void drawBorder(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawBorder) {
+      double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
@@ -80,7 +81,7 @@ public:
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       painter->setDrawColor(MBorderColor);
-      painter->setLineWidth(MBorderWidth);
+      painter->setLineWidth(MBorderWidth * S);
       painter->drawRect(mrect.x,mrect.y,mrect.w,mrect.h);
     }
   }

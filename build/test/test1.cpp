@@ -10,6 +10,11 @@
 //
 //----------------------------------------------------------------------
 
+#define EDITOR_WIDTH  (50 + 200 + 50)
+#define EDITOR_HEIGHT (50 + 200 + (4 * (10 + 20)) + 50)
+
+//----------
+
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
   .id           = "me/myPlugin/0",
@@ -37,10 +42,6 @@ private:
 //------------------------------
 
   SAT_PanelWidget*  MRootPanel  = nullptr;
-  SAT_LogoWidget*   MLogo       = nullptr;
-  //SAT_TextWidget*   MText       = nullptr;
-  //SAT_ValueWidget*  MValue1     = nullptr;
-  //SAT_DragValueWidget*  MValue2     = nullptr;
 
 //------------------------------
 public:
@@ -55,9 +56,11 @@ public:
     appendClapNoteInputPort();
     appendStereoInputPort();
     appendStereoOutputPort();
-    appendParameter( new SAT_Parameter("Param1",0.0) );
-    appendParameter( new SAT_Parameter("Param2",0.5) );
-    appendParameter( new SAT_Parameter("Param3",1.5) );
+    SAT_Parameter* par1 = appendParameter( new SAT_Parameter("Param1",0.0) );
+    SAT_Parameter* par2 = appendParameter( new SAT_Parameter("Param2",0.5) );
+    SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",1.5) );
+    par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT);
     return SAT_Plugin::init();
   }
 
@@ -86,17 +89,17 @@ public:
 
     //MWidget = new myWidget( SAT_Rect(0,0,256,256) );
 
-    MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,256,256) );
+    MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,EDITOR_WIDTH,EDITOR_HEIGHT) );
     AWindow->setRootWidget(MRootPanel);
     MRootPanel->setFillBackground(true);
 
-    MLogo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
-    MRootPanel->appendChildWidget(MLogo);
-    MLogo->setLogoColor(SAT_White);
+    SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
+    MRootPanel->appendChildWidget(logo);
+    logo->setLogoColor(SAT_White);
 
-    SAT_TextWidget* MText = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
-    MRootPanel->appendChildWidget(MText);
-    MText->setTextSize(12);
+    SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
+    MRootPanel->appendChildWidget(text);
+    text->setTextSize(12);
 
     SAT_ValueWidget* value = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
     MRootPanel->appendChildWidget(value);
@@ -105,10 +108,23 @@ public:
     SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
     MRootPanel->appendChildWidget(dragvalue);
     dragvalue->setTextSize(12);
+    dragvalue->setSnap(true);
+    dragvalue->setSnapPos(0.75);
+    dragvalue->setAutoHideCursor(false);
+    dragvalue->setAutoLockCursor(true);
 
     SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,360,200,20),"Param 3", 0.0);
     MRootPanel->appendChildWidget(slider);
     slider->setTextSize(12);
+    slider->setBipolar(true);
+    slider->setBipolarCenter(0.3);
+    slider->setSnap(true);
+    slider->setSnapPos(0.3);
+    slider->setAutoHideCursor(true);
+    slider->setAutoLockCursor(true);
+    slider->setModulation(0.25);
+    slider->setDrawModulation(true);
+    slider->setModulationColor( SAT_Color(1,1,1,0.25) );
 
     AEditor->connect(value,     getParameter(0));
     AEditor->connect(dragvalue, getParameter(1));
@@ -181,7 +197,7 @@ public:
     float** inputs = process->audio_inputs[0].data32;
     float** outputs = process->audio_outputs[0].data32;
     SAT_CopyStereoBuffer(outputs,inputs,length);
-    sat_param_t scale = getParameterValue(0);
+    sat_param_t scale = getParameterValue(2);
     SAT_ScaleStereoBuffer(outputs,scale,length);
   }
 

@@ -389,49 +389,47 @@ public: // set
     nvgFontBlur(MContext,blur);
   }
 
-  //--------------------
-  // Render styles
-  //--------------------
+  //----------
 
-  void shapeAntiAlias(int enabled) {
+  void setShapeAntiAlias(int enabled) {
     nvgShapeAntiAlias(MContext,enabled);
   }
 
   //----------
 
-  void strokePaint(sat_nanovg_paint_t paint) {
+  void setStrokePaint(sat_nanovg_paint_t paint) {
     nvgStrokePaint(MContext,paint);
   }
 
   //----------
 
-  void fillPaint(sat_nanovg_paint_t paint) {
+  void setFillPaint(sat_nanovg_paint_t paint) {
     nvgFillPaint(MContext,paint);
   }
 
   //----------
 
-  void miterLimit(double limit) {
+  void setMiterLimit(double limit) {
     nvgMiterLimit(MContext,limit);
   }
 
   //----------
 
-  void lineCap(int cap) {
+  // NVG_BUTT (default), NVG_ROUND, NVG_SQUARE
+
+  void setLineCap(int cap) {
     nvgLineCap(MContext,cap);
   }
 
   //----------
 
-  void lineJoin(int join) {
+  // NVG_MITER (default), NVG_ROUND, NVG_BEVEL
+
+  void setLineJoin(int join) {
     nvgLineJoin(MContext,join);
   }
 
   //----------
-
-  void globalAlpha(double alpha) {
-    nvgGlobalAlpha(MContext,alpha);
-  }
 
 //------------------------------
 public: // draw
