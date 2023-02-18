@@ -72,9 +72,9 @@ private:
   int32_t               MMouseDragX           = 0;
   int32_t               MMouseDragY           = 0;
 
-  double MInitialWidth  = 0.0;
-  double MInitialHeight = 0.0;
-  double MScale        = 1.0;
+  double                MInitialWidth         = 0.0;
+  double                MInitialHeight        = 0.0;
+  double                MScale                = 1.0;
   //double MYScale        = 1.0;
 
   bool MAutoScaleWidgets = true;
@@ -137,9 +137,23 @@ public:
 
   //----------
 
+  double recalcScale(int32_t AWidth, int32_t AHeight) {
+    double scale = 1.0;
+    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
+      double xscale = AWidth / MInitialWidth;
+      double yscale = AHeight / MInitialHeight;
+      if (xscale < yscale) scale = xscale;
+      else scale =  yscale;
+    }
+    return scale;
+  }
+
+  //----------
+
   void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
+    MScale = recalcScale(MWindowWidth,MWindowHeight);
   }
 
 //------------------------------
@@ -337,13 +351,15 @@ public: // window
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
 
-    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
-      double xscale = AWidth / MInitialWidth;
-      double yscale = AHeight / MInitialHeight;
-      if (xscale < yscale) MScale = xscale;
-      else MScale =  yscale;
-    }
-    else MScale = 1.0;
+    MScale = recalcScale(AWidth,AHeight);
+
+//    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
+//      double xscale = AWidth / MInitialWidth;
+//      double yscale = AHeight / MInitialHeight;
+//      if (xscale < yscale) MScale = xscale;
+//      else MScale =  yscale;
+//    }
+//    else MScale = 1.0;
 
 //    SAT_Print("%i,%i scale %.3f\n",AWidth,AHeight,MScale);
 

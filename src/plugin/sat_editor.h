@@ -106,6 +106,7 @@ public:
   // called from SAT_Editor.set_parent()
 
   virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
+    //SAT_Window* window = new SAT_Window(AWidth,AHeight,AParent,this);
     SAT_Window* window = new SAT_Window(AWidth,AHeight,AParent,this);
     return window;
   }
@@ -188,12 +189,14 @@ public: // clap
 //------------------------------
 
   bool create() {
+    //SAT_Print("\n");
     return true;
   }
 
   //----------
 
   void destroy() {
+    //SAT_Print("\n");
     //if (MWindow) MWindow->on_window_close();
   }
 
@@ -243,7 +246,7 @@ public: // clap
   */
 
   bool adjust_size(uint32_t *width, uint32_t *height) {
-    //SAT_Print("(%i,%i) -> %i,%i\n",*width,*height,MWidth,MHeight);
+    //SAT_Print("(%i,%i)\n",*width,*height);
     return true;
   }
 
@@ -304,9 +307,7 @@ public: // clap
     //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
       if (!MPreparedWidgets) {
-
         //SAT_Print(".. open & prepare\n");
-
         MWindow->on_window_open(); // -> prepareWidgets();
         MPreparedWidgets = true;
       }

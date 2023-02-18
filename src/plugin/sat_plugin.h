@@ -642,7 +642,10 @@ public: // gui
     bool result = MEditor->set_parent(window);
     if (result) {
       SAT_Window* win = MEditor->getWindow();
+      win->setInitialSize(MInitialEditorWidth,MInitialEditorHeight);
       initEditorWindow(MEditor,win);
+
+
     }
     return result;
   }
