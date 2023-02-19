@@ -5,18 +5,26 @@
 #include "plugin/sat_host_implementation.h"
 #include "plugin/clap/sat_clap_entry.h"
 
-class SAT_ExeHost {
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_ExeHostImplementation
+: public SAT_HostImplementation {
 
 //----------
 public:
 //----------
 
-  SAT_ExeHost() {
+  SAT_ExeHostImplementation(int argc, char** argv)
+  : SAT_HostImplementation() {
   }
 
   //----------
 
-  ~SAT_ExeHost() {
+  ~SAT_ExeHostImplementation() {
   }
 
 //----------
@@ -51,7 +59,9 @@ void open_editor(const clap_plugin_t* plugin) {
 //    gui->set_parent(plugin,&clapwindow);
 
     gui->show(plugin);
+
     //SAT_Sleep(1000);
+
     gui->hide(plugin);
     gui->destroy(plugin);
 
@@ -81,7 +91,7 @@ void handle_plugin(const clap_plugin_t* plugin) {
     process.out_events          = nullptr;
     process.steady_time         = 0;
     process.transport           = nullptr;
-  //plugin->process(plugin,&process);
+  //plugin->process(plugin,&process); // will probably crash..
 
   open_editor(plugin);
 
@@ -100,12 +110,13 @@ int main(int argc, char** argv) {
 
   uint32_t    plugin_index      = 0;
   const char* plugin_path       = "";
+
   double      sample_rate       = 44100;
   uint32_t    min_frames_count  = 128;
   uint32_t    max_frames_count  = 128;
 
-  //SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
-  SAT_HostImplementation* hostimpl = new SAT_HostImplementation();
+  //SAT_HostImplementation* hostimpl = new SAT_HostImplementation();
+  SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
 
   const clap_host_t* host = hostimpl->getHost();
   if (!host) {

@@ -30,6 +30,9 @@
 // append to existing log file, or create new
 #define SAT_LOG_FILE_APPEND
 
+//
+//#define SAT_MATH_EXTRA_PRECISION
+
 //--------------------
 // debug
 //--------------------
@@ -54,6 +57,15 @@
 // delete plugin ('delete this') in SAT_Plugin.destroy()
 // otherwise, override destroy() and do it manually
 #define SAT_DELETE_PLUGIN_IN_DESTROY
+
+// parameter changes not meant for a specific voice, will be sent to ALL voices
+#define SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
+
+// modulation not meant for a specific voice, will be sent to ALL voices
+#define SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
+
+// convert regular MIDI to note events
+#define SAT_VOICE_MANAGER_CONVERT_MIDI
 
 //----------------------------------------------------------------------
 // gui

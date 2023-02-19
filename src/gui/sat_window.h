@@ -386,6 +386,7 @@ public: // window
     MOpenGL->makeCurrent();
 
     bool resized = checkBufferSize();
+    //bool resized = resizeBuffer(MWindowWidth,MWindowHeight);
 
     MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
     MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);

@@ -34,10 +34,8 @@ private:
   void*             MConnection                     = nullptr;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
   uint32_t          MNumDigits                      = 3;
-
   sat_param_t       MValue                          = 0.0;
   sat_param_t       MModulation                     = 0.0;
-
   int32_t           MLastPainted                    = -1;
   int32_t           MLastUpdated                    = 0;
   int32_t           MLastModulated                  = 0;
@@ -89,15 +87,12 @@ public:
   sat_param_t           getMinValue()           { return MInfo.min_value; }
   sat_param_t           getMaxValue()           { return MInfo.max_value; }
   sat_param_t           getDefaultValue()       { return MInfo.default_value; }
-
   int32_t               getIndex()              { return MIndex; }
   clap_param_info_t*    getParamInfo()          { return &MInfo; }
   void*                 getWidget()             { return MWidget; }
   void*                 getConnection()         { return MConnection; }
-
   sat_param_t           getValue()              { return MValue; }
   sat_param_t           getModulation()         { return MModulation; }
-
   int32_t               getLastPainted()        { return MLastPainted; }
   int32_t               getLastUpdated()        { return MLastUpdated; }
   int32_t               getLastModulated()      { return MLastModulated; }
@@ -120,26 +115,15 @@ public:
   void setWidget(void* AWidget)               { MWidget = AWidget; }
   void setFlag(clap_param_info_flags AFlag)   { MInfo.flags |= AFlag; }
   void clearFlag(clap_param_info_flags AFlag) { MInfo.flags &= ~AFlag; }
-
-  void setIndex(int32_t AIndex) {
-    MIndex    = AIndex;
-    MInfo.id  = AIndex;
-  }
-
-  void connect(void* AWidget) {
-    MConnection = AWidget;
-  }
-
-  void setValue(double AValue)      { MValue = AValue; }
-  void setModulation(double AValue) { MModulation = AValue; }
-
+  void setIndex(int32_t AIndex)               { MIndex = AIndex; MInfo.id = AIndex; }
+  void connect(void* AWidget)                 { MConnection = AWidget; }
+  void setValue(double AValue)                { MValue = AValue; }
+  void setModulation(double AValue)           { MModulation = AValue; }
   void setLastPainted(uint32_t ALast)         { MLastPainted = ALast; }
   void setLastUpdated(uint32_t ALast)         { MLastUpdated = ALast; }
   void setLastModulated(uint32_t ALast)       { MLastModulated = ALast; }
   void setLastUpdatedValue(double AValue)     { MLastUpdatedValue = AValue; }
   void setLastModulatedValue(double AValue)   { MLastModulatedValue = AValue; }
-
-
 
 //------------------------------
 public:
@@ -171,8 +155,9 @@ public:
   //----------
 
   virtual bool textToValue(const char* AText, sat_param_t* AValue) {
-    //*AValue = 0.0;
-    return false;
+    double value = atof(AText);
+    *AValue = value;
+    return true;
   }
 
 };

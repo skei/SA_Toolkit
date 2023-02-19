@@ -264,7 +264,6 @@
 		<Unit filename="../src/plugin/sat_host_implementation.h" />
 		<Unit filename="../src/plugin/sat_hosted_plugin.h" />
 		<Unit filename="../src/plugin/sat_note.h" />
-		<Unit filename="../src/plugin/sat_note_manager.h" />
 		<Unit filename="../src/plugin/sat_note_port.h" />
 		<Unit filename="../src/plugin/sat_parameter.h" />
 		<Unit filename="../src/plugin/sat_plugin.h" />

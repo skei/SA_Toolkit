@@ -20,14 +20,13 @@
 
 //----------------------------------------------------------------------
 
-#if 0
-typedef uint32_t  sat_queue_param_value_t;
-typedef void*     sat_queue_note_end_t;
-typedef SAT_LockFreeQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;      // when the host changes a parameter, we need to redraw it
-typedef SAT_LockFreeQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;     // twweak knob, send parameter value to audio process
-typedef SAT_LockFreeQueue<sat_queue_param_value_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;      // tell host about parameter change
-typedef SAT_LockFreeQueue<sat_queue_note_end_t,   SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>     SAT_NoteEndFromAudioToHostQueue;  // tell host note has ended)
-#endif
+/*
+  note to self:
+  are we absolutely sure that the queue handles non-atomic items?
+  double/triple-check, and plan fall-back option if not 100% sure..
+*/
+
+// 16 bytes
 
 struct SAT_QueueItem {
   uint32_t    type;
@@ -42,7 +41,7 @@ typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;
-typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>     SAT_NoteEndFromAudioToHostQueue;
+//typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>     SAT_NoteEndFromAudioToHostQueue;
 
 #define SAT_PLUGIN_DEFAULT_CONSTRUCTOR(PLUGIN)                                  \
   PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
@@ -63,15 +62,9 @@ class SAT_Plugin
 private:
 //------------------------------
 
-  bool                              MIsInitialized                                = false;
-  bool                              MIsActivated                                  = false;
-  bool                              MIsProcessing                                 = false;
-  clap_id                           MSelectedAudioPortsConfig                     = 0;
-  clap_plugin_render_mode           MRenderMode                                   = CLAP_RENDER_REALTIME;
-  //sat_param_t                       MParameterValues[SAT_PLUGIN_MAX_PARAMETERS]   = {0};
-  //sat_param_t                       MModulationValues[SAT_PLUGIN_MAX_PARAMETERS]  = {0};
-  SAT_Editor*                       MEditor                                       = nullptr;
   SAT_Host*                         MHost                                         = nullptr;
+  SAT_Editor*                       MEditor                                       = nullptr;
+
   SAT_ParameterArray                MParameters                                   = {};
   SAT_AudioPortArray                MAudioInputPorts                              = {};
   SAT_AudioPortArray                MAudioOutputPorts                             = {};
@@ -83,36 +76,22 @@ private:
   uint32_t                          MInitialEditorWidth                           = 640;
   uint32_t                          MInitialEditorHeight                          = 480;
 
-  SAT_ModFromHostToGuiQueue         MModFromHostToGuiQueue                        = {};
+  //
+
+  bool                              MIsInitialized                                = false;
+  bool                              MIsActivated                                  = false;
+  bool                              MIsProcessing                                 = false;
+  clap_id                           MSelectedAudioPortsConfig                     = 0;
+  clap_plugin_render_mode           MRenderMode                                   = CLAP_RENDER_REALTIME;
+
+  // runtime
+
+  // alignment..
   SAT_ParamFromHostToGuiQueue       MParamFromHostToGuiQueue                      = {};   // when the host changes a parameter, we need to redraw it
+  SAT_ModFromHostToGuiQueue         MModFromHostToGuiQueue                        = {};   // --"-- modulation
   SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
   SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
-  SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHostQueue                  = {};   // tell host note has ended)
-
-//  uint32_t                          MParamFromHostToGuiCount        = 0;
-//  uint32_t                          MParamFromGuiToAudioCount       = 0;
-//  uint32_t                          MParamFromGuiToHostCount        = 0;
-//  uint32_t                          MNoteEndFromProcessToHostCount  = 0;
-
-//  SAT_QueueItem                     MParamFromProcessToGuiItems   [ SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK ] = {0};
-//  SAT_QueueItem                     MParamFromGuiToProcessItems   [ SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   ] = {0};
-//  SAT_QueueItem                     MParamFromGuiToHostItems      [ SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   ] = {0};
-//  SAT_QueueItem                     MNoteEndFromProcessToHostItems[ SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK    ] = {0};
-
-//  uint32_t        MPaintParametersCount = 0;
-//  SAT_Parameter*  MPaintParameters[SAT_PLUGIN_MAX_PARAMETERS] = {0};
-
-  // contains MProcessContext.counter for last handled time..
-
-//  uint32_t  MParamLastUpdated[SAT_PLUGIN_MAX_PARAMETERS]        = {0};
-//  double    MParamLastUpdatedValue[SAT_PLUGIN_MAX_PARAMETERS]   = {0};
-//
-//  uint32_t  MParamLastModulated[SAT_PLUGIN_MAX_PARAMETERS]      = {0};
-//  double    MParamLastModulatedValue[SAT_PLUGIN_MAX_PARAMETERS] = {0};
-
-  //----------
-
-
+  //SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHostQueue                  = {};   // tell host note has ended)
 
 //------------------------------
 public:
@@ -252,13 +231,13 @@ public: // plugin
 
   clap_process_status process(const clap_process_t* process) override {
     MProcessContext.process = process;
-//    flushParamLoad();
+    //flushParamLoad();
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
     handleEvents(process->in_events,process->out_events);
     processAudio(&MProcessContext);
     flushParamFromGuiToHost(process->out_events);
-    //flushNoteEndFromProcessToHost();
+    //flushNoteEndFromAudioToHost(process->out_events);
     MProcessContext.counter += 1;
     return CLAP_PROCESS_CONTINUE;
   }
@@ -375,7 +354,8 @@ public: // audio ports config
   // gets information about a configuration
   // [main-thread]
 
-  //TODO: hack.. fix this..
+  //TODO: fix this..
+  // uses first input/output audio port
 
   bool audio_ports_config_get(uint32_t index, clap_audio_ports_config_t *config) override {
     //SAT_Print("index %i\n",index);
@@ -634,8 +614,8 @@ public: // gui
   // [main-thread & !floating]
 
   /*
-    looks like bitwig checks a while (a second or two) afterwards,
-    and destroyed the gui if it's not parented (yet)..
+    - looks like bitwig checks a while (a second or two) afterwards,
+      and destroyed the gui if it's not parented (yet)..
   */
 
   bool gui_set_parent(const clap_window_t *window) override {
@@ -716,6 +696,9 @@ public: // midi mappings
 
   bool midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) override {
     //SAT_Print("index %i\n",index);
+    //mapping->channel
+    //mapping->number
+    //mapping->param_id
     return false;
   }
 
@@ -738,6 +721,10 @@ public: // note name
 
   bool note_name_get(uint32_t index, clap_note_name_t *note_name) override {
     //SAT_Print("index %i\n",index);
+    //note_name->name
+    //note_name->port
+    //note_name->key
+    //note_name->channel
     return false;
   }
 
@@ -1236,12 +1223,12 @@ public: // track info
       //SAT_Print("track_info:\n");
       //SAT_Print("  name: %s color %.2f,.2f,.2f\n",info.name,info.color.red,info.color.green,info.color.blue);
       //SAT_Print("  channels: %i port: %s\n",info.audio_channel_count,info.audio_port_type);
-      if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME)      {}//SAT_Print("  CLAP_TRACK_INFO_HAS_TRACK_NAME");
-      if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR)     {}//SAT_Print("  CLAP_TRACK_INFO_HAS_TRACK_COLOR");
-      if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL)   {}//SAT_Print("  CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL");
-      if (info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK) {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK");
-      if (info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)          {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_BUS");
-      if (info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)       {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_MASTER");
+      //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME)      {}//SAT_Print("  CLAP_TRACK_INFO_HAS_TRACK_NAME");
+      //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR)     {}//SAT_Print("  CLAP_TRACK_INFO_HAS_TRACK_COLOR");
+      //if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL)   {}//SAT_Print("  CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL");
+      //if (info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK) {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK");
+      //if (info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)          {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_BUS");
+      //if (info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)       {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_MASTER");
     }
   }
 
@@ -1373,8 +1360,8 @@ public: // extensions
     registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
     registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                 &MStateExt);
-    //registerExtension(CLAP_EXT_THREAD_POOL,           &MThreadPoolExt);
-    //registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
+  //registerExtension(CLAP_EXT_THREAD_POOL,           &MThreadPoolExt);
+  //registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
   }
 
 //------------------------------
@@ -1401,14 +1388,6 @@ public: // editor listener
 
   // window -> editor -> this
 
-  /*
-    todo:
-    don't redraw params & modulations several times per frame..
-    especially modulations..
-  */
-
-  //
-
   void do_editor_listener_timer() override{
     //SAT_PRINT;
     flushModFromHostToGui();
@@ -1433,29 +1412,75 @@ public: // editor listener
 
   //----------
 
-  SAT_Parameter* do_editor_listener_get_parameter(uint32_t AIndex) final {
-    return MParameters[AIndex];
-  }
+  //SAT_Parameter* do_editor_listener_get_parameter(uint32_t AIndex) final {
+  //  return MParameters[AIndex];
+  //}
 
   //----------
 
-  sat_param_t do_editor_listener_get_parameter_value(uint32_t AIndex) final {
-    //return MParameterValues[AIndex];
-    return MParameters[AIndex]->getValue();
-  }
+  //sat_param_t do_editor_listener_get_parameter_value(uint32_t AIndex) final {
+  //  //return MParameterValues[AIndex];
+  //  return MParameters[AIndex]->getValue();
+  //}
 
   //----------
 
-  sat_param_t do_editor_listener_get_modulation_value(uint32_t AIndex) final {
-    //return MModulationValues[AIndex];
-    return MParameters[AIndex]->getModulation();;
-  }
+  //sat_param_t do_editor_listener_get_modulation_value(uint32_t AIndex) final {
+  //  //return MModulationValues[AIndex];
+  //  return MParameters[AIndex]->getModulation();;
+  //}
 
 //------------------------------
 public: // queues
 //------------------------------
 
-// mod, host -> gui
+  // parameter, host -> gui
+  // (automation, host-provided generic plugin interface)
+
+  //-----
+
+  /*
+    TODO: check for duplicates
+    pop updates to array, check array for duplicates..
+    called from:
+    - SAT_Plugin.handleParamValueEvent
+  */
+
+  void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_QueueItem item;
+    item.type   = CLAP_EVENT_PARAM_VALUE;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MParamFromHostToGuiQueue.write(item)) {
+      SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
+    }
+
+  }
+
+  //----------
+
+  /*
+    TODO: check for duplicated (param/mod)
+    called from:
+    - SAT_Plugin.do_editor_listener_timer
+  */
+
+  void flushParamFromHostToGui() {
+    //SAT_Print("\n");
+    SAT_QueueItem item;
+    while (MParamFromHostToGuiQueue.read(&item)) {
+      SAT_Parameter* parameter = MParameters[item.index];
+      MEditor->updateParameterFromHost(parameter,item.value);
+    }
+  }
+
+  //----------
+
+  // modulation, host -> gui
+  // (modulation)
+
+  //-----
 
   /*
     called from:
@@ -1478,7 +1503,6 @@ public: // queues
   /*
     TODO: check for duplicates
     pop updates to array, check array for duplicates..
-
     called from:
     - SAT_Plugin.do_editor_listener_timer
   */
@@ -1487,89 +1511,17 @@ public: // queues
     //SAT_Print("\n");
     SAT_QueueItem item;
     while (MModFromHostToGuiQueue.read(&item)) {
-
-      //SAT_Print("%i = %f\n",item.index, item.value);
       SAT_Parameter* parameter = MParameters[item.index];
       MEditor->updateModulationFromHost(parameter,item.value);
-
-//      SAT_Parameter* parameter = MParameters[item.index];
-//      if (parameter->getLastPainted() >= 0) {
-//        double value = parameter->getLastModulatedValue();
-//
-//        SAT_Print("%i = %.3f -> %.3f\n",item.index,item.value,value);
-//
-//        MEditor->updateModulationFromHost(parameter,value);
-//        parameter->setLastPainted(-1);
-//      }
-//      else {
-//        SAT_Print("(%i = %.3f)\n",item.index,item.value);
-//      }
-
     }
   }
 
   //----------
 
-// param, host -> gui
+  // parameter, gui -> audio
+  // (tweak knob)
 
-  /*
-    TODO: check for duplicates
-    pop updates to array, check array for duplicates..
-
-    called from:
-    - SAT_Plugin.handleParamValueEvent
-  */
-
-  void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
-    //SAT_Print("%i = %f\n",AIndex,AValue);
-    SAT_QueueItem item;
-    item.type   = CLAP_EVENT_PARAM_VALUE;
-    item.index  = AIndex;
-    item.value  = AValue;
-    if (!MParamFromHostToGuiQueue.write(item)) {
-      SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
-    }
-
-  }
-
-  //----------
-
-  /*
-    TODO: check for duplicated (param/mod)
-
-    called from:
-    - SAT_Plugin.do_editor_listener_timer
-  */
-
-  void flushParamFromHostToGui() {
-    //SAT_Print("\n");
-    SAT_QueueItem item;
-    while (MParamFromHostToGuiQueue.read(&item)) {
-
-      //SAT_Print("%i = %f\n",item.index, item.value);
-      SAT_Parameter* parameter = MParameters[item.index];
-      MEditor->updateParameterFromHost(parameter,item.value);
-
-//      //SAT_Print("%i = %f\n",item.index, item.value);
-//      SAT_Parameter* parameter = MParameters[item.index];
-//      if (parameter->getLastPainted() >= 0) {
-//        double value = parameter->getLastUpdatedValue();
-//
-//        SAT_Print("%i = %.3f -> %.3f\n",item.index,item.value,value);
-//
-//        MEditor->updateParameterFromHost(parameter,value);
-//        parameter->setLastPainted(-1);
-//      }
-//      else {
-//        SAT_Print("(%i = %.3f)\n",item.index,item.value);
-//      }
-
-    }
-  }
-
-  //----------
-
-// param, gui -> audio
+  //-----
 
   /*
     called from:
@@ -1613,13 +1565,16 @@ public: // queues
       event.channel         = -1;
       event.key             = -1;
       event.value           = item.value;
-      handleParamValue(&event);
+      handleParamValue(&event); // handleParamValueEvent ?
     }
   }
 
   //----------
 
-// param, gui -> host
+  // parameter, gui -> host
+  // (tweak knob)
+
+  //-----
 
   /*
     called from:
@@ -1706,26 +1661,29 @@ public: // queues
 
   //----------
 
-// note_end -> host
+  // note_end -> host
+  // (synth note ends)
+
+  //-----
 
   /*
     called from:
     - SAT_Plugin.handleNoteOffEvent (process)
   */
 
-  void queueNoteEndFromAudioToHost(SAT_Note ANote) {
-    //SAT_Print("\n");
-    SAT_QueueItem item;
-    item.type         = CLAP_EVENT_NOTE_END;
-    item.index        = 0;
-    item.note.port    = ANote.port;
-    item.note.channel = ANote.channel;
-    item.note.key     = ANote.key;
-    item.note.noteid  = ANote.noteid;
-    if (!MNoteEndFromAudioToHostQueue.write(item)) {
-      SAT_Log("queueNoteEndFromAudioToHost: couldn't write to queue\n");
-    }
-  }
+  //void queueNoteEndFromAudioToHost(SAT_Note ANote) {
+  //  //SAT_Print("\n");
+  //  SAT_QueueItem item;
+  //  item.type         = CLAP_EVENT_NOTE_END;
+  //  item.index        = 0;
+  //  item.note.port    = ANote.port;
+  //  item.note.channel = ANote.channel;
+  //  item.note.key     = ANote.key;
+  //  item.note.noteid  = ANote.noteid;
+  //  if (!MNoteEndFromAudioToHostQueue.write(item)) {
+  //    SAT_Log("queueNoteEndFromAudioToHost: couldn't write to queue\n");
+  //  }
+  //}
 
   //----------
 
@@ -1734,33 +1692,26 @@ public: // queues
     - todo: end of SAT_Plugin.process
   */
 
-  void flushNoteEndFromAudioToHost() {
-    //SAT_Print("\n");
-    //SAT_Print("\n");
-
-    //void* note = nullptr; //sat_queue_note_end_t
-    //while (MNoteEndFromAudioToHostQueue.read(&note)) {
-
-    SAT_QueueItem item;
-    while (MNoteEndFromAudioToHostQueue.read(&item)) {
-
-      //SAT_Print("(unhandled) type %i\n",item.type);
-      /*
-      clap_event_note_t event;
-      event.header.size     = sizeof(clap_event_param_value_t);
-      event.header.time     = 0;
-      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-      event.header.type     = CLAP_EVENT_NOTE_END;
-      event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-      event.note_id         =
-      event.port_index      =
-      event.channel         =
-      event.key             =
-      event.velocity        =
-      //event to hosu out_events..
-      */
-    }
-  }
+  //void flushNoteEndFromAudioToHost(const clap_output_events_t* out_events) {
+  //  //SAT_Print("\n");
+  //  SAT_QueueItem item;
+  //  while (MNoteEndFromAudioToHostQueue.read(&item)) {
+  //    //SAT_Print("(unhandled) type %i\n",item.type);
+  //    clap_event_note_t event;
+  //    event.header.size     = sizeof(clap_event_note_t);
+  //    event.header.time     = 0;
+  //    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+  //    event.header.type     = CLAP_EVENT_NOTE_END;
+  //    event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+  //    event.note_id         = item.note.noteid;
+  //    event.port_index      = item.note.port;
+  //    event.channel         = item.note.channel;
+  //    event.key             = item.note.key;
+  //    event.velocity        = item.value;
+  //    const clap_event_header_t* header = (const clap_event_header_t*)&event;
+  //    out_events->try_push(out_events,header);
+  //  }
+  //}
 
 //------------------------------
 public: // parameters
@@ -1769,6 +1720,8 @@ public: // parameters
   // "i'm going to send you 'num' parameters through the paramload queue,
   // and let you know (by calling endParameterLoad) when i'm done,
   // so you can start picking them out from the queue.."
+  //
+  // called from setDefaultParameterValues()
 
   //----------
 
@@ -1777,7 +1730,7 @@ public: // parameters
   }
 
  // doesn't mean events are received, just sent..
-  virtual void endParameterLoad() {
+  virtual void endParameterLoad(uint32_t num) {
   }
 
   //----------
@@ -1797,6 +1750,22 @@ public: // parameters
       if (MParameters[i]) {
         delete MParameters[i];
         MParameters[i] = nullptr;
+      }
+    }
+  }
+
+  //----------
+
+  int32_t findParameter(const char* AName, const char* AModule=nullptr) {
+    for (uint32_t i=0; i<MParameters.size(); i++) {
+      const char* name = MParameters[i]->getName();
+      if (strcmp(name,AName) == 0) {
+        if (AModule) {
+          const char* module = MParameters[i]->getModule();
+          if (strcmp(module,AModule) == 0) return i;
+          else return -1;
+        }
+        return i;
       }
     }
   }
@@ -1836,7 +1805,7 @@ public: // parameters
 
   void setDefaultParameterValues() {
     uint32_t num = MParameters.size();
-    beginParameterLoad(num);
+//    beginParameterLoad(num);
     for (uint32_t i=0; i<num; i++) {
       double value = MParameters[i]->getDefaultValue();
       //MParameterValues[i] = value;
@@ -1844,7 +1813,7 @@ public: // parameters
       //queueParamFromGuiToProcess(i,value);
 //      queueParamLoad(i,value);
     }
-    endParameterLoad();
+//    endParameterLoad(num);
   }
 
   //----------
@@ -1867,29 +1836,29 @@ public: // parameters
 
   //----------
 
-  void updateEditorParameterValues() {
-    for (uint32_t i=0; i<MParameters.size(); i++) {
-      //double v = MParameterValues[i];
-      double v = MParameters[i]->getValue();
-      MEditor->updateEditorParameterValue(i,v,false);
-    }
-  }
+//  void updateEditorParameterValues() {
+//    for (uint32_t i=0; i<MParameters.size(); i++) {
+//      //double v = MParameterValues[i];
+//      double v = MParameters[i]->getValue();
+//      MEditor->updateEditorParameterValue(i,v,false);
+//    }
+//  }
 
 //------------------------------
 public: // modulation
 //------------------------------
 
-  sat_param_t getModulationValue(uint32_t AIndex) {
-    //return MModulationValues[AIndex];
-    return MParameters[AIndex]->getModulation();
-  }
-
-  //----------
-
-  void setModulationValue(uint32_t AIndex, sat_param_t AValue) {
-    //MModulationValues[AIndex] = AValue;
-    MParameters[AIndex]->setModulation(AValue);
-  }
+//  sat_param_t getModulationValue(uint32_t AIndex) {
+//    //return MModulationValues[AIndex];
+//    return MParameters[AIndex]->getModulation();
+//  }
+//
+//  //----------
+//
+//  void setModulationValue(uint32_t AIndex, sat_param_t AValue) {
+//    //MModulationValues[AIndex] = AValue;
+//    MParameters[AIndex]->setModulation(AValue);
+//  }
 
 //------------------------------
 public: // audio input ports
@@ -2091,6 +2060,8 @@ public: // events
 
   //----------
 
+  // called from SAT_Plugin.process(), just before processAudio()
+
   virtual void handleEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
     if (!in_events) return;
     //if (!out_events) return;
@@ -2132,23 +2103,20 @@ private:
 
   void handleNoteOnEvent(const clap_event_note_t* event) {
     bool handled = handleNoteOn(event);
-    //if (!handled) {
-    //  queueNoteEndFromProcessToHost();
-    //}
   }
 
   //----------
 
   void handleNoteOffEvent(const clap_event_note_t* event) {
     bool handled = handleNoteOff(event);
-    if (!handled) {
-      SAT_Note note;
-      note.port     = event->port_index;
-      note.channel  = event->channel;
-      note.key      = event->key;
-      note.noteid   = event->note_id;
-      queueNoteEndFromAudioToHost(note);
-    }
+    //if (!handled) {
+    //  SAT_Note note;
+    //  note.port     = event->port_index;
+    //  note.channel  = event->channel;
+    //  note.key      = event->key;
+    //  note.noteid   = event->note_id;
+    //  queueNoteEndFromAudioToHost(note);
+    //}
   }
 
   //----------
@@ -2180,17 +2148,10 @@ private:
     uint32_t  process_count = MProcessContext.counter;
     uint32_t  index         = event->param_id;
     double    value         = event->value;
-    //MParameterValues[index] = value;
     MParameters[index]->setValue(value);
     MParameters[index]->setLastUpdated(process_count);
     MParameters[index]->setLastUpdatedValue(value);
-    //if (MParamLastUpdated[index] == process_count) { SAT_Print("[%i] %i = %.3f (duplicate)\n",process_count,index,value); }
-    //else { SAT_Print("[%i] %i = %.3f\n",process_count,index,value); }
-
-    //if (MParameters[index]->getWidget()) {
-      // TODO: queue only last value..
-      queueParamFromHostToGui(index,value);
-    //}
+    queueParamFromHostToGui(index,value);
     handleParamValue(event);
   }
 
@@ -2199,23 +2160,16 @@ private:
   /*
     TODO: don't send ALL mods to gui.. only last one in block
     set flag (this modulator changed..) and check in at end of process
-
   */
 
   void handleParamModEvent(const clap_event_param_mod_t* event) {
     uint32_t  process_count = MProcessContext.counter;
     uint32_t  index   = event->param_id;
     double    value   = event->amount;
-    //MModulationValues[index] = value;
     MParameters[index]->setModulation(value);
     MParameters[index]->setLastModulated(process_count);
     MParameters[index]->setLastModulatedValue(value);
-    //if (MParamLastModulated[index] == process_count) { SAT_Print("[%i] %i = %.3f (duplicate)\n",process_count,index,value); }
-    //else { SAT_Print("[%i] %i = %.3f\n",process_count,index,value); }
-    //if (MParameters[index]->getWidget()) {
-      // TODO: queue only last value..
-      queueModFromHostToGui(index,value);
-    //}
+    queueModFromHostToGui(index,value);
     handleParamMod(event);
   }
 
@@ -2225,24 +2179,24 @@ private:
     bool handled = handleTransport(event);
     if (!handled) {
       if (event->flags & CLAP_TRANSPORT_HAS_TEMPO) {
-        //MProcessContext.tempo     = event->tempo;     // in bpm
-        //MProcessContext.tempo_inc = event->tempo_inc; // tempo increment for each samples and until the next time info event
+        //MProcessContext.tempo     = event->tempo;             // in bpm
+        //MProcessContext.tempo_inc = event->tempo_inc;         // tempo increment for each samples and until the next time info event
       }
       if (event->flags & CLAP_TRANSPORT_HAS_BEATS_TIMELINE) {
-        //MProcessContext. = clap_beattime song_pos_beats;     // position in beats
+        //MProcessContext. = clap_beattime song_pos_beats;      // position in beats
         //clap_beattime loop_start_beats;
         //clap_beattime loop_end_beats;
-        //clap_beattime bar_start;          // start pos of the current bar
-        //int32_t       bar_number;         // bar at song pos 0 has the number 0
+        //clap_beattime bar_start;                              // start pos of the current bar
+        //int32_t       bar_number;                             // bar at song pos 0 has the number 0
       }
       if (event->flags & CLAP_TRANSPORT_HAS_SECONDS_TIMELINE) {
-        //clap_sectime  song_pos_seconds;   // position in seconds
+        //clap_sectime  song_pos_seconds;                       // position in seconds
         //clap_sectime  loop_start_seconds;
         //clap_sectime  loop_end_seconds;
       }
       if (event->flags & CLAP_TRANSPORT_HAS_TIME_SIGNATURE) {
-        //uint16_t      tsig_num;           // time signature numerator
-        //uint16_t      tsig_denom;         // time signature denominator
+        //uint16_t      tsig_num;                               // time signature numerator
+        //uint16_t      tsig_denom;                             // time signature denominator
       }
       if (event->flags & CLAP_TRANSPORT_IS_PLAYING) {}
       if (event->flags & CLAP_TRANSPORT_IS_RECORDING) {}
@@ -2256,26 +2210,52 @@ private:
   void handleMidiEvent(const clap_event_midi_t* event) {
     bool handled = handleMidi(event);
     if (!handled) {
-      uint8_t data1 = event->data[0];
-      uint8_t data2 = event->data[1];
-      uint8_t data3 = event->data[2];
-      uint32_t msg  = data1 & 0xf0;
-      uint32_t chan = data1 & 0x0f;
+      uint8_t msg0 = event->data[0];
+      uint8_t index = event->data[1];
+      uint8_t value = event->data[2];
+      uint32_t msg  = msg0 & 0xf0;
+      uint32_t chan = msg0 & 0x0f;
       switch (msg) {
         case SAT_MIDI_NOTE_OFF: {
           //SAT_Print("MIDI NOTE OFF. chan %i key %i vel %i\n",chan,data2,data3);
+          //clap_event_note_t note_event;
+          //note_event.header.size     = sizeof(clap_event_note_t);
+          //note_event.header.time     = 0;
+          //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+          //note_event.header.type     = CLAP_EVENT_NOTE_OFF;
+          //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+          //note_event.note_id         = (chan * 128) + index;
+          //note_event.port_index      = event->port_index;
+          //note_event.channel         = chan;
+          //note_event.key             = index;
+          //note_event.velocity        = value * (double)SAT_INV127;
+          //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
           break;
         }
         case SAT_MIDI_NOTE_ON: {
           //SAT_Print("MIDI NOTE ON. chan %i key %i vel %i\n",chan,data2,data3);
+          //clap_event_note_t note_event;
+          //note_event.header.size     = sizeof(clap_event_note_t);
+          //note_event.header.time     = 0;
+          //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+          //note_event.header.type     = CLAP_EVENT_NOTE_ON;
+          //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+          //note_event.note_id         = (chan * 128) + index;
+          //note_event.port_index      = event->port_index;
+          //note_event.channel         = chan;
+          //note_event.key             = index;
+          //note_event.velocity        = value * (double)SAT_INV127;
+          //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
           break;
         }
         case SAT_MIDI_POLY_AFTERTOUCH: {
           //SAT_Print("MIDI POLY AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
+          // pressure note expression
           break;
         }
         case SAT_MIDI_CONTROL_CHANGE: {
           //SAT_Print("MIDI CONTROL_CHANGE. chan %i index %i val %i\n",chan,data2,data3);
+          // cc74: brightness
           break;
         }
         case SAT_MIDI_PROGRAM_CHANGE: {
@@ -2284,10 +2264,12 @@ private:
         }
         case SAT_MIDI_CHANNEL_AFTERTOUCH: {
           //SAT_Print("MIDI CHANNEL AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
+          // pressure note expression
           break;
         }
         case SAT_MIDI_PITCHBEND: {
           //SAT_Print("MIDI PITCH BEND. chan %i data1 %i data2 %i\n",chan,data2,data3);
+          // tuning note expression
           break;
         }
         case SAT_MIDI_SYS: {

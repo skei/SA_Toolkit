@@ -32,7 +32,6 @@
 
 //----------------------------------------------------------------------
 
-//#define SAT_RECT_STACK_SIZE 1024
 typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_SIZE> SAT_RectStack;
 
 //----------------------------------------------------------------------

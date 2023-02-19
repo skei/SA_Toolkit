@@ -63,20 +63,23 @@ public:
 
   //----------
 
-  // called from SAT_Plugin.updateEditorParameterValues()
-  // - before editor is opened
-  // - (loading state)
+  /*
+    called from SAT_Plugin.updateEditorParameterValues()
+    - before editor is opened
+    - (loading state)
+  */
 
-  //virtual
   void updateEditorParameterValue(uint32_t AIndex, sat_param_t AValue, bool ARedraw) {
     //SAT_Print("%i = %.3f %s\n",AIndex,AValue,ARedraw?" (redraw)":"");
   }
 
   //----------
 
-  // called from flushParamFromHostToGui()
+  /*
+    called from flushParamFromHostToGui()
+    timer thread
+  */
 
-  //virtual
   void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
       //SAT_PaintContext* pc = MWindow->getPaintContext();
@@ -103,10 +106,12 @@ public:
 
   //----------
 
-  // called from SAT_Editor.set_parent()
+  /*
+    called from
+    - SAT_Editor.set_parent()
+  */
 
   virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
-    //SAT_Window* window = new SAT_Window(AWidth,AHeight,AParent,this);
     SAT_Window* window = new SAT_Window(AWidth,AHeight,AParent,this);
     return window;
   }
@@ -114,7 +119,6 @@ public:
   //----------
 
   virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
-    //MConnections.append
     AWidget->connect(AParameter,AIndex);
     AParameter->connect(AWidget);
   }
@@ -128,26 +132,7 @@ public: // window listener
     push update into gui thread somwhow..
   */
 
-  /*
-    push dirty widgets
-    invalidate combined rect
-
-    whenever we redraw (on_window_paint)
-    (as result of invalidate?)
-
-      redraw (to buffer) dirty widgets
-      copy update rectangle from buffer
-      swapbuffers
-
-    be sure to clip when drawing
-    (so we're sure not to touch wrong pixels in buffer)
-
-    push root widget as initial dirty rect,
-    (to be sure we have a filled buffer)
-
-  */
-
-  void do_window_listener_timer(SAT_Window* ASender) override { // final {
+  void do_window_listener_timer(SAT_Window* ASender) override { // final
     //SAT_PRINT;
     if (MListener) MListener->do_editor_listener_timer();
     //on_window_timer();
@@ -307,13 +292,10 @@ public: // clap
     //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
       if (!MPreparedWidgets) {
-        //SAT_Print(".. open & prepare\n");
-        MWindow->on_window_open(); // -> prepareWidgets();
+        MWindow->on_window_open();
         MPreparedWidgets = true;
       }
       MWindow->show();
-      //SAT_Widget* rootwidget = MWindow->getRootWidget();
-      //MWindow->invalidateWidget(rootwidget);
       MIsOpen = true;
     }
     return true;
@@ -326,19 +308,9 @@ public: // clap
     if (MWindow && MIsOpen) {
       MWindow->hide();
       MIsOpen = false;
-      //MPreparedWidgets = false;
     }
     return true;
   }
-
-//------------------------------
-private:
-//------------------------------
-
-  //void openWindow(); {}
-  //void closeWindow(); {}
-  //void startTimer() {}
-  //void stopTimer() {}
 
 };
 

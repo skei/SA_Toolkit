@@ -135,7 +135,7 @@ public: // factories
 //
 //----------------------------------------------------------------------
 
-#define SAT_PLUGIN_ENTRY(DESC,PLUG)                                                                                        \
+#define SAT_PLUGIN_ENTRY(DESC,PLUG)                                                                                               \
                                                                                                                                   \
   void SAT_Register(SAT_Registry* ARegistry) {                                                                                    \
     uint32_t index = ARegistry->getNumDescriptors();                                                                              \

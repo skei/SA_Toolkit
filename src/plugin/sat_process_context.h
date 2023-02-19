@@ -36,8 +36,8 @@ struct SAT_ProcessContext {
 
 
   //uint32_t              oversampling  = 1;        // oversampling for current block
-  //float**               block_buffer  = nullptr;  // voice/output buffer
-  //uint32_t              block_length  = 0;        // length
+  float**               block_buffer  = nullptr;  // voice/output buffer
+  uint32_t              block_length  = 0;        // length
 
 
 };

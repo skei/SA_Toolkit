@@ -1,8 +1,9 @@
 
 #include "base/sat.h"
+#include "audio/sat_audio_utils.h"
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
-#include "audio/sat_audio_utils.h"
+#include "plugin/sat_voice_manager.h"
 
 //----------------------------------------------------------------------
 //
@@ -76,18 +77,16 @@ public:
 public:
 //------------------------------
 
-  SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) final {
-    //SAT_PRINT;
-    SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight);
-    return editor;
-  }
+  //SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) final {
+  //  //SAT_PRINT;
+  //  SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight);
+  //  return editor;
+  //}
 
   //----------
 
   bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     //SAT_PRINT;
-
-    //MWidget = new myWidget( SAT_Rect(0,0,256,256) );
 
     MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,EDITOR_WIDTH,EDITOR_HEIGHT) );
     AWindow->setRootWidget(MRootPanel);
@@ -196,9 +195,11 @@ public:
     uint32_t length = process->frames_count;
     float** inputs = process->audio_inputs[0].data32;
     float** outputs = process->audio_outputs[0].data32;
+
     SAT_CopyStereoBuffer(outputs,inputs,length);
     sat_param_t scale = getParameterValue(2);
     SAT_ScaleStereoBuffer(outputs,scale,length);
+
   }
 
 };
@@ -209,6 +210,8 @@ public:
 //
 //----------------------------------------------------------------------
 
-#include "plugin/sat_entry.h"
-SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+#ifndef SAT_NO_ENTRY
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+#endif
 

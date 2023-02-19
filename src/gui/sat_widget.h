@@ -120,6 +120,8 @@ public:
     if (MListener) MListener->do_widget_update(this,0,0);
   }
 
+  //----------
+
   virtual void redraw() {
     //SAT_PRINT;
     if (MListener) MListener->do_widget_redraw(this,0,0);
