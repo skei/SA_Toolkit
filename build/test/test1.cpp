@@ -31,6 +31,55 @@ const clap_plugin_descriptor_t myDescriptor = {
 
 //----------------------------------------------------------------------
 //
+// voice
+//
+//----------------------------------------------------------------------
+
+#define NUM_VOICES 32
+
+class myVoice {
+//------------------------------
+public:
+//------------------------------
+
+  void init(uint32_t AIndex, SAT_VoiceContext* AContext) {}
+
+  sat_sample_t getEnvLevel() { return 0.0; }
+
+  uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
+    //float* buffer = MContext->buffer;
+    //buffer += AOffset;
+    //buffer += (MIndex * MIP_VOICE_MANAGER_MAX_BLOCK_SIZE);
+    //if ((AState == MIP_VOICE_PLAYING) || (AState == MIP_VOICE_RELEASED)) {
+    //  for (uint32_t i=0; i<ALength; i++) {
+    //    ph = MIP_Fract(ph);
+    //    float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
+    //    *buffer++ = v * 0.1;
+    //    ph += phadd;
+    //  }
+    //} // playing
+    //else {
+    //  memset(buffer,0,ALength * sizeof(float));
+    //}
+    return AState;
+  }
+
+  uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
+    return AState;
+  }
+
+  uint32_t noteOn(uint32_t AKey, double AVelocity) { return SAT_VOICE_PLAYING; }
+  uint32_t noteOff(uint32_t AKey, double AVelocity) { return SAT_VOICE_FINISHED; }
+  /*uint32_t*/ void noteChoke(uint32_t AKey, double AVelocity) {}
+  /*uint32_t*/ void noteExpression(uint32_t AExpression, double AValue) {}
+  void parameter(uint32_t AIndex, double AValue) {}
+  void modulation(uint32_t AIndex, double AValue) {}
+
+
+};
+
+//----------------------------------------------------------------------
+//
 // plugin
 //
 //----------------------------------------------------------------------
@@ -42,7 +91,8 @@ class myPlugin
 private:
 //------------------------------
 
-  SAT_PanelWidget*  MRootPanel  = nullptr;
+  SAT_PanelWidget*                      MRootPanel    = nullptr;
+  SAT_VoiceManager<myVoice,NUM_VOICES>  MVoiceManager = {};
 
 //------------------------------
 public:
@@ -54,6 +104,10 @@ public:
 
   bool init() final {
     registerDefaultExtensions();
+    registerExtension(CLAP_EXT_THREAD_POOL,&MThreadPoolExt);
+    registerExtension(CLAP_EXT_VOICE_INFO,&MVoiceInfoExt);
+    MVoiceManager.setProcessThreaded(false);
+    MVoiceManager.setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
     appendClapNoteInputPort();
     appendStereoInputPort();
     appendStereoOutputPort();
@@ -62,6 +116,12 @@ public:
     SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",1.5) );
     par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT);
+
+    SAT_Host* host = getHost();
+    const clap_plugin_t*  clapplugin = getPlugin();
+    const clap_host_t* claphost = host->getHost();
+    MVoiceManager.init(clapplugin,claphost);
+
     return SAT_Plugin::init();
   }
 
@@ -72,6 +132,29 @@ public:
     if (MRootPanel) delete MRootPanel;
     SAT_Plugin::destroy();
   }
+
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MVoiceManager.activate(sample_rate,min_frames_count,max_frames_count);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+  //----------
+
+  void thread_pool_exec(uint32_t task_index) final {
+    MVoiceManager.thread_pool_exec(task_index);
+  }
+
+  //----------
+
+  bool voice_info_get(clap_voice_info_t *info) final {
+    info->voice_count     = NUM_VOICES;
+    info->voice_capacity  = NUM_VOICES;
+    info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
+    return true;
+  }
+
 
 //------------------------------
 public:
@@ -136,34 +219,48 @@ public:
 public:
 //------------------------------
 
+  //void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
+  //  MVoiceManager.preProcessEvents(in_events,out_events);
+  //}
+
+  //void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
+  //  MVoiceManager.postProcessEvents(in_events,out_events);
+  //}
+
   bool handleNoteOn(const clap_event_note_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processNoteOn(event);
+    return true;
   }
 
   bool handleNoteOff(const clap_event_note_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processNoteOff(event);
+    return true;
   }
 
   bool handleNoteChoke(const clap_event_note_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processNoteChoke(event);
+    return true;
   }
 
   bool handleNoteExpression(const clap_event_note_expression_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processNoteExpression(event);
+    return true;
   }
 
   bool handleParamValue(const clap_event_param_value_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processParamValue(event);
+    return true;
   }
 
   bool handleParamMod(const clap_event_param_mod_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processParamMod(event);
+    return true;
   }
 
   bool handleTransport(const clap_event_transport_t* event) final {
@@ -173,17 +270,20 @@ public:
 
   bool handleMidi(const clap_event_midi_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processMidi(event);
+    return true;
   }
 
   bool handleMidiSysex(const clap_event_midi_sysex_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processMidiSysex(event);
+    return true;
   }
 
   bool handleMidi2(const clap_event_midi2_t* event) final {
     //SAT_Print("\n");
-    return false;
+    MVoiceManager.processMidi2(event);
+    return true;
   }
 
 //------------------------------
@@ -191,14 +291,16 @@ public:
 //------------------------------
 
   void processAudio(SAT_ProcessContext* AContext) final {
-    const clap_process_t* process = AContext->process;
-    uint32_t length = process->frames_count;
-    float** inputs = process->audio_inputs[0].data32;
-    float** outputs = process->audio_outputs[0].data32;
 
-    SAT_CopyStereoBuffer(outputs,inputs,length);
-    sat_param_t scale = getParameterValue(2);
-    SAT_ScaleStereoBuffer(outputs,scale,length);
+    MVoiceManager.processAudioBlock(AContext);
+
+    //const clap_process_t* process = AContext->process;
+    //uint32_t length = process->frames_count;
+    //float** inputs = process->audio_inputs[0].data32;
+    //float** outputs = process->audio_outputs[0].data32;
+    //SAT_CopyStereoBuffer(outputs,inputs,length);
+    //sat_param_t scale = getParameterValue(2);
+    //SAT_ScaleStereoBuffer(outputs,scale,length);
 
   }
 

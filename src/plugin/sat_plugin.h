@@ -123,6 +123,7 @@ public: // plugin
 //------------------------------
 
   SAT_Editor* getEditor() { return MEditor; }
+  SAT_Host*   getHost()   { return MHost; }
 
   void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight) {
     MInitialEditorWidth = AWidth;
@@ -234,10 +235,16 @@ public: // plugin
     //flushParamLoad();
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
+
+//    preProcessEvents();
+
     handleEvents(process->in_events,process->out_events);
     processAudio(&MProcessContext);
     flushParamFromGuiToHost(process->out_events);
     //flushNoteEndFromAudioToHost(process->out_events);
+
+//    postProcessEvents();
+
     MProcessContext.counter += 1;
     return CLAP_PROCESS_CONTINUE;
   }

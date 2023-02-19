@@ -12,17 +12,25 @@
   #define  SAT_WIN32
 #endif
 
+
 //----------------------------------------------------------------------
+//
+//
 //
 //----------------------------------------------------------------------
 
-#define SAT_VERSION "0.4.0"
+
+#define SAT_VERSION "0.4.1"
 #define SAT_VENDOR  "skei.audio"
 #define SAT_URL     "https://github.com/skei/SA_Toolkit"
 
+
 //----------------------------------------------------------------------
+//
 // base
+//
 //----------------------------------------------------------------------
+
 
 //TODO
 //#define SAT_LOG_FILE_ENABLE
@@ -50,9 +58,13 @@
 // print time (in seconds, with microsecond granularity)
 //#define SAT_DEBUG_PRINT_TIME
 
+
 //----------------------------------------------------------------------
+//
 // plugin
+//
 //----------------------------------------------------------------------
+
 
 // delete plugin ('delete this') in SAT_Plugin.destroy()
 // otherwise, override destroy() and do it manually
@@ -67,15 +79,20 @@
 // convert regular MIDI to note events
 #define SAT_VOICE_MANAGER_CONVERT_MIDI
 
+
 //----------------------------------------------------------------------
+//
 // gui
+//
 //----------------------------------------------------------------------
+
 
 // removes all traces of gui/editor in the plugin
 //#define SAT_NO_GUI
 
 // waits for notify event before returning when opening windows..
 #define SAT_X11_WAIT_FOR_MAPNOTIFY
+
 
 //----------------------------------------------------------------------
 //

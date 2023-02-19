@@ -104,7 +104,7 @@ public:
 
   //----------
 
-  void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count, SAT_ParameterArray* AParameters) {
+  void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) { //, SAT_ParameterArray* AParameters) {
     //SAT_Print("AParameters %p\n",AParameters);
 
     MVoiceContext.process_context   = nullptr; //
