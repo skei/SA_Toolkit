@@ -10,6 +10,8 @@
 */
 
 #include "base/sat.h"
+#include "plugin/sat_parameter.h"
+#include "plugin/sat_process_context.h"
 
 //----------------------------------------------------------------------
 //
@@ -25,10 +27,10 @@ private:
 
 
 //------------------------------
-public
+public:
 //------------------------------
 
-  SAT_AudioProcessor() {
+  SAT_AudioProcessor(SAT_ParameterArray* AParameters, SAT_ProcessContext* AContext) {
   }
 
   //----------
@@ -40,8 +42,15 @@ public
 public:
 //------------------------------
 
+  virtual void handleEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
+
+  //----------
+
+  virtual void processAudio(SAT_ProcessContext* AContext) {
+  }
+
 };
 
 //----------------------------------------------------------------------
 #endif
-

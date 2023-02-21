@@ -17,6 +17,7 @@
 #include "plugin/clap/sat_clap_plugin.h"
 #include "plugin/clap/sat_clap_utils.h"
 #include "audio/sat_audio_utils.h"
+#include "audio/processor/sat_audio_processor.h"
 
 //----------------------------------------------------------------------
 
@@ -64,27 +65,21 @@ private:
 
   SAT_Host*                         MHost                                         = nullptr;
   SAT_Editor*                       MEditor                                       = nullptr;
-
+  SAT_Dictionary<const void*>       MExtensions                                   = {};
   SAT_ParameterArray                MParameters                                   = {};
   SAT_AudioPortArray                MAudioInputPorts                              = {};
   SAT_AudioPortArray                MAudioOutputPorts                             = {};
   SAT_NotePortArray                 MNoteInputPorts                               = {};
   SAT_NotePortArray                 MNoteOutputPorts                              = {};
-  SAT_ProcessContext                MProcessContext                               = {};
-  SAT_Dictionary<const void*>       MExtensions                                   = {};
-
   uint32_t                          MInitialEditorWidth                           = 640;
   uint32_t                          MInitialEditorHeight                          = 480;
 
-  //
-
+  SAT_ProcessContext                MProcessContext                               = {};
   bool                              MIsInitialized                                = false;
   bool                              MIsActivated                                  = false;
   bool                              MIsProcessing                                 = false;
   clap_id                           MSelectedAudioPortsConfig                     = 0;
   clap_plugin_render_mode           MRenderMode                                   = CLAP_RENDER_REALTIME;
-
-  // runtime
 
   // alignment..
   SAT_ParamFromHostToGuiQueue       MParamFromHostToGuiQueue                      = {};   // when the host changes a parameter, we need to redraw it
@@ -92,6 +87,8 @@ private:
   SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
   SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
   //SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHostQueue                  = {};   // tell host note has ended)
+
+  SAT_AudioProcessor* MAudioProcessor = nullptr;
 
 //------------------------------
 public:
@@ -122,12 +119,17 @@ public:
 public: // plugin
 //------------------------------
 
-  SAT_Editor* getEditor() { return MEditor; }
-  SAT_Host*   getHost()   { return MHost; }
+  SAT_Editor*         getEditor()         { return MEditor; }
+  SAT_Host*           getHost()           { return MHost; }
+  SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
 
   void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight) {
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
+  }
+
+  void setAudioProcessor(SAT_AudioProcessor* AProcessor) {
+    MAudioProcessor = AProcessor;
   }
 
 //------------------------------
@@ -232,19 +234,22 @@ public: // plugin
 
   clap_process_status process(const clap_process_t* process) override {
     MProcessContext.process = process;
+
     //flushParamLoad();
+
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
 
-//    preProcessEvents();
+    //handleEvents(process->in_events,process->out_events);
+    //preProcessEvents();
 
-    handleEvents(process->in_events,process->out_events);
-    processAudio(&MProcessContext);
+    //processAudioBlock(&MProcessContext);
+    processInterleaved(&MProcessContext);
+
+    //postProcessEvents();
+
     flushParamFromGuiToHost(process->out_events);
     //flushNoteEndFromAudioToHost(process->out_events);
-
-//    postProcessEvents();
-
     MProcessContext.counter += 1;
     return CLAP_PROCESS_CONTINUE;
   }
@@ -867,7 +872,7 @@ public: // params
 
   void params_flush(const clap_input_events_t  *in, const clap_output_events_t *out) override {
     //SAT_Print("\n");
-    handleEvents(in,out);
+    processEvents(in,out);
     //flushParamFromGuiToHost();
     //flushNoteEndFromProcessToHost();
 
@@ -1791,6 +1796,12 @@ public: // parameters
 
   //----------
 
+  SAT_ParameterArray* getParameters() {
+    return &MParameters;
+  }
+
+  //----------
+
   sat_param_t getParameterValue(uint32_t AIndex) {
     //return MParameterValues[AIndex];
     return MParameters[AIndex]->getValue();
@@ -1855,17 +1866,17 @@ public: // parameters
 public: // modulation
 //------------------------------
 
-//  sat_param_t getModulationValue(uint32_t AIndex) {
-//    //return MModulationValues[AIndex];
-//    return MParameters[AIndex]->getModulation();
-//  }
-//
-//  //----------
-//
-//  void setModulationValue(uint32_t AIndex, sat_param_t AValue) {
-//    //MModulationValues[AIndex] = AValue;
-//    MParameters[AIndex]->setModulation(AValue);
-//  }
+  sat_param_t getModulationValue(uint32_t AIndex) {
+    //return MModulationValues[AIndex];
+    return MParameters[AIndex]->getModulation();
+  }
+
+  //----------
+
+  void setModulationValue(uint32_t AIndex, sat_param_t AValue) {
+    //MModulationValues[AIndex] = AValue;
+    MParameters[AIndex]->setModulation(AValue);
+  }
 
 //------------------------------
 public: // audio input ports
@@ -2054,6 +2065,31 @@ public: // note output ports
 public: // events
 //------------------------------
 
+  //virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  //}
+
+
+  //----------
+
+  // called from SAT_Plugin.process(), just before processAudio()
+
+  virtual void processEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+    if (!in_events) return;
+    //if (!out_events) return;
+    uint32_t size = in_events->size(in_events);
+    for (uint32_t i=0; i<size; i++) {
+      const clap_event_header_t* header = in_events->get(in_events,i);
+      handleEvent(header);
+    }
+  }
+
+  //----------
+
+  //virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  //}
+
+  //----------
+
   virtual bool handleNoteOn(const clap_event_note_t* event) { return false; }
   virtual bool handleNoteOff(const clap_event_note_t* event) { return false; }
   virtual bool handleNoteChoke(const clap_event_note_t* event) { return false; }
@@ -2064,20 +2100,6 @@ public: // events
   virtual bool handleMidi(const clap_event_midi_t* event) { return false; }
   virtual bool handleMidiSysex(const clap_event_midi_sysex_t* event) { return false; }
   virtual bool handleMidi2(const clap_event_midi2_t* event) { return false; }
-
-  //----------
-
-  // called from SAT_Plugin.process(), just before processAudio()
-
-  virtual void handleEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-    if (!in_events) return;
-    //if (!out_events) return;
-    uint32_t size = in_events->size(in_events);
-    for (uint32_t i=0; i<size; i++) {
-      const clap_event_header_t* header = in_events->get(in_events,i);
-      handleEvent(header);
-    }
-  }
 
   //----------
 
@@ -2097,7 +2119,7 @@ public: // events
   }
 
 //------------------------------
-private:
+private: // handle events
 //------------------------------
 
   /*
@@ -2303,7 +2325,7 @@ private:
   }
 
 //------------------------------
-public: // audio
+public: // process audio
 //------------------------------
 
   /*
@@ -2318,6 +2340,100 @@ public: // audio
     float** outputs = process->audio_outputs[0].data32;
     SAT_CopyStereoBuffer(outputs,inputs,length);
   }
+
+  //----------
+
+  virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) {
+  }
+
+  //----------
+
+  virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset) {
+  }
+
+  //----------
+
+  virtual void processInterleaved(SAT_ProcessContext* AContext) {
+
+    const clap_input_events_t*  in_events     = AContext->process->in_events;
+    uint32_t                    remaining     = AContext->process->frames_count;
+    uint32_t                    num_events    = in_events->size(in_events);
+    uint32_t                    current_time  = 0;
+    uint32_t                    current_event = 0;
+
+    while (remaining > 0) {
+      if (current_event < num_events) {
+        const clap_event_header_t* header = in_events->get(in_events,current_event);
+        current_event += 1;
+        int32_t length = header->time - current_time;
+
+        //while (length > 0) {
+        if (length > 0) {
+          processAudio(AContext,current_time,length);
+          remaining -= length;    // -= 32;
+          current_time += length; // -= 32;
+        }
+        //processEventInterleaved(header);
+        handleEvent(header);
+      }
+      else { // no more events
+        int32_t length = remaining;
+        processAudio(AContext,current_time,length);
+        remaining -= length;
+        current_time += length;
+      }
+    }
+    //SAT_Assert( events.read(&event) == false );
+  }
+
+  //----------
+
+  /*
+
+  void handleQuantizedEvents() {
+
+    uint32_t buffer_length = context->process_context->block_length;
+
+    uint32_t        current_time  = 0;
+    uint32_t        remaining     = buffer_length;
+    uint32_t        next_event    = 0;
+    SAT_VoiceEvent  event         = {};
+    if (events.read(&event)) {
+      next_event = event.time;
+      do {
+        // process events for next slice
+        while (next_event < (current_time + SAT_PLUGIN_QUANTIZED_SIZE)) {
+          handleEvent(event);
+          if (events.read(&event)) next_event = event.time;
+          else next_event = buffer_length; // ???
+        }
+        // process next slice
+        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) {
+          state = voice.process(state,current_time,remaining);
+          current_time += remaining;
+          remaining = 0;
+        }
+        else {
+          state = voice.processSlice(state,current_time);
+          current_time += SAT_PLUGIN_QUANTIZED_SIZE;
+          remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
+        }
+      } while (remaining > 0);
+    }
+    else {
+      // no events..
+      do {
+        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) state = voice.process(state,current_time,remaining);
+        else state = voice.processSlice(state,current_time);
+        current_time += SAT_PLUGIN_QUANTIZED_SIZE;
+        remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
+      } while (remaining > 0);
+    }
+    //SAT_Assert( events.read(&event) == false );
+  }
+
+  */
+
 
 };
 

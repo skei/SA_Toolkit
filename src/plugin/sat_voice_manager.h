@@ -32,7 +32,7 @@ private:
   SAT_VoiceContext              MVoiceContext           = {};
 
   __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
-  float MVoiceBuffer[COUNT * SAT_AUDIO_MAX_BLOCK_SIZE]  = {0};
+  float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE]  = {0};
 
   uint32_t                      MNumPlayingVoices       = 0;
   uint32_t                      MNumReleasedVoices      = 0;
@@ -411,6 +411,15 @@ public:
 public:
 //------------------------------
 
+  /*
+    fill AProcessContext->block_length number of samples into
+    AProcessContext->block_buffer
+
+    float* buffer = MContext->voice_buffer;
+    buffer += AOffset;
+    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
+  */
+
   void processAudioBlock(SAT_ProcessContext* AProcessContext) {
 
     MVoiceContext.process_context = AProcessContext;
@@ -453,7 +462,7 @@ public:
       for (uint32_t i=0; i<MNumActiveVoices; i++) {
         uint32_t voice = MActiveVoices[i];
         float* buffer = MVoiceBuffer;
-        buffer += (voice * SAT_AUDIO_MAX_BLOCK_SIZE);// * MVoiceContext->); // * block_size? process->max_frames_count?
+        buffer += (voice * SAT_PLUGIN_MAX_BLOCK_SIZE);// * MVoiceContext->); // * block_size? process->max_frames_count?
         SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
       }
 

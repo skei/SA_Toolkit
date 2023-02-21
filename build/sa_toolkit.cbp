@@ -100,6 +100,8 @@
 		<Unit filename="../src/audio/dsp/sat_dsp_waveform.h" />
 		<Unit filename="../src/audio/io/sat_io_alsa.h" />
 		<Unit filename="../src/audio/io/sat_io_jack.h" />
+		<Unit filename="../src/audio/processor/sat_audio_processor.h" />
+		<Unit filename="../src/audio/processor/sat_voice_processor.h" />
 		<Unit filename="../src/audio/sat_audio_dsp.h" />
 		<Unit filename="../src/audio/sat_audio_file.h" />
 		<Unit filename="../src/audio/sat_audio_io.h" />

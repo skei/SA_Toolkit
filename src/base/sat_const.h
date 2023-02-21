@@ -82,9 +82,6 @@
 #define SAT_AUDIO_FILE_WRITE                    0x20
 #define SAT_AUDIO_FILE_RDWR                     0x30
 
-#define SAT_AUDIO_MAX_BLOCK_SIZE                4096
-#define SAT_AUDIO_QUANTIZED_SIZE                16
-
 #define SAT_BUTTON_NONE                         0
 #define SAT_BUTTON_LEFT                         1
 #define SAT_BUTTON_MIDDLE                       2
@@ -169,11 +166,13 @@
 
 #define SAT_PAINTER_CLIP_RECT_SIZE              256
 
+#define SAT_PLUGIN_MAX_BLOCK_SIZE               4096
 #define SAT_PLUGIN_MAX_PARAMETERS               1024
 #define SAT_PLUGIN_MAX_EVENTS_PER_BLOCK         1024
 #define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK     32
 #define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK      1024
 #define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK   1024
+#define SAT_PLUGIN_QUANTIZED_SIZE               16
 
 #define SAT_STATE_NONE                          0x00
 #define SAT_STATE_SHIFT                         0x01
