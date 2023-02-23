@@ -306,7 +306,7 @@ private: // draft: check for update
 //------------------------------
 
   static
-  void clap_plugin_check_for_update_check(const clap_plugin_t *plugin, bool include_preview) {
+  void clap_plugin_check_for_update_check_callback(const clap_plugin_t *plugin, bool include_preview) {
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
     plug->check_for_updates_check(include_preview);
   }
@@ -314,7 +314,7 @@ private: // draft: check for update
 protected:
 
   const clap_plugin_check_for_update_t MCheckForUpdateExt = {
-    .check = clap_plugin_check_for_update_check
+    .check = clap_plugin_check_for_update_check_callback
   };
 
 //------------------------------

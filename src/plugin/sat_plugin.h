@@ -88,7 +88,7 @@ private:
   SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
   //SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHostQueue                  = {};   // tell host note has ended)
 
-  SAT_AudioProcessor* MAudioProcessor = nullptr;
+//  SAT_AudioProcessor*               MAudioProcessor                               = nullptr;
 
 //------------------------------
 public:
@@ -128,9 +128,9 @@ public: // plugin
     MInitialEditorHeight = AHeight;
   }
 
-  void setAudioProcessor(SAT_AudioProcessor* AProcessor) {
-    MAudioProcessor = AProcessor;
-  }
+  //void setAudioProcessor(SAT_AudioProcessor* AProcessor) {
+  //  MAudioProcessor = AProcessor;
+  //}
 
 //------------------------------
 public: // plugin
@@ -223,6 +223,7 @@ public: // plugin
   void reset() override {
     SAT_Log("SAT_Plugin.reset\n");
     MProcessContext.counter = 0;
+    //TODO
   }
 
   //----------
@@ -234,20 +235,14 @@ public: // plugin
 
   clap_process_status process(const clap_process_t* process) override {
     MProcessContext.process = process;
-
     //flushParamLoad();
-
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
-
     //handleEvents(process->in_events,process->out_events);
     //preProcessEvents();
-
-    //processAudioBlock(&MProcessContext);
+    //processAudio(&MProcessContext);
     processInterleaved(&MProcessContext);
-
     //postProcessEvents();
-
     flushParamFromGuiToHost(process->out_events);
     //flushNoteEndFromAudioToHost(process->out_events);
     MProcessContext.counter += 1;
@@ -1366,6 +1361,8 @@ public: // extensions
 
   //----------
 
+  //TODO: check descriptor for _INSTRUMENT flag?
+
   void registerDefaultExtensions() {
     registerExtension(CLAP_EXT_AUDIO_PORTS,           &MAudioPortsExt);
     registerExtension(CLAP_EXT_GUI,                   &MGuiExt);
@@ -1567,7 +1564,7 @@ public: // queues
       clap_event_param_value_t event;
       event.header.size     = sizeof(clap_event_param_value_t);
       event.header.time     = 0;
-      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID; // SAT_EVENT_SPACE_ID
       event.header.type     = CLAP_EVENT_PARAM_VALUE;
       event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
       event.param_id        = item.index;
@@ -1734,16 +1731,17 @@ public: // parameters
   // so you can start picking them out from the queue.."
   //
   // called from setDefaultParameterValues()
+  // preset/state load?
 
   //----------
 
   // start of num parameters
-  virtual void beginParameterLoad(uint32_t num) {
-  }
+  //virtual void beginParameterLoad(uint32_t num) {
+  //}
 
  // doesn't mean events are received, just sent..
-  virtual void endParameterLoad(uint32_t num) {
-  }
+  //virtual void endParameterLoad(uint32_t num) {
+  //}
 
   //----------
 
@@ -2068,6 +2066,20 @@ public: // events
   //virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
   //}
 
+  //----------
+
+  //virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  //}
+
+  //----------
+
+  /*
+    if threading: push events onto each voice's oqn event queue, and handle
+    them individually for each voice during audio processing..
+  */
+
+  virtual void prepareEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
 
   //----------
 
@@ -2117,6 +2129,11 @@ public: // events
       case CLAP_EVENT_MIDI2:            handleMidi2Event(         (clap_event_midi2_t*)header);           break;
     }
   }
+
+  //----------
+
+  //void prepareEvent(const clap_event_header_t* header) {
+  //}
 
 //------------------------------
 private: // handle events
@@ -2344,22 +2361,32 @@ public: // process audio
   //----------
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) {
+    const clap_process_t* process = AContext->process;
+    //uint32_t length = process->frames_count;
+    float* inputs[2];
+    float* outputs[2];
+    inputs[0]  = process->audio_inputs[0].data32[0] + offset;
+    inputs[1]  = process->audio_inputs[0].data32[1] + offset;
+    outputs[0] = process->audio_outputs[0].data32[0] + offset;
+    outputs[1] = process->audio_outputs[0].data32[1] + offset;
+    SAT_CopyStereoBuffer(outputs,inputs,length);
   }
 
   //----------
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset) {
+    processAudio(AContext,offset,SAT_PLUGIN_QUANTIZED_SIZE);
   }
 
   //----------
 
   virtual void processInterleaved(SAT_ProcessContext* AContext) {
 
-    const clap_input_events_t*  in_events     = AContext->process->in_events;
-    uint32_t                    remaining     = AContext->process->frames_count;
-    uint32_t                    num_events    = in_events->size(in_events);
-    uint32_t                    current_time  = 0;
-    uint32_t                    current_event = 0;
+    const clap_input_events_t* in_events = AContext->process->in_events;
+    uint32_t remaining = AContext->process->frames_count;
+    uint32_t num_events = in_events->size(in_events);
+    uint32_t current_time = 0;
+    uint32_t current_event = 0;
 
     while (remaining > 0) {
       if (current_event < num_events) {
@@ -2388,52 +2415,66 @@ public: // process audio
 
   //----------
 
-  /*
+  void processQuantized(SAT_ProcessContext* AContext) {
 
-  void handleQuantizedEvents() {
+    uint32_t buffer_length = AContext->process->frames_count;
+    uint32_t remaining = buffer_length;
 
-    uint32_t buffer_length = context->process_context->block_length;
+    uint32_t current_time = 0;
+    uint32_t current_event = 0;
+    uint32_t next_event = 0;
 
-    uint32_t        current_time  = 0;
-    uint32_t        remaining     = buffer_length;
-    uint32_t        next_event    = 0;
-    SAT_VoiceEvent  event         = {};
-    if (events.read(&event)) {
-      next_event = event.time;
+    const clap_input_events_t* in_events = AContext->process->in_events;
+    uint32_t num_events = in_events->size(in_events);
+
+    if (num_events > 0) {
+      const clap_event_header_t* header = in_events->get(in_events,current_event);
+      current_event += 1;
+      next_event = header->time;
       do {
+
         // process events for next slice
         while (next_event < (current_time + SAT_PLUGIN_QUANTIZED_SIZE)) {
-          handleEvent(event);
-          if (events.read(&event)) next_event = event.time;
-          else next_event = buffer_length; // ???
+
+          handleEvent(header);
+
+          if (current_event < num_events) {
+            header = in_events->get(in_events,current_event);
+            // if (header)
+            current_event += 1;
+            next_event = header->time;
+          }
+          else {
+            next_event = buffer_length; // ???
+          }
+
         }
+
         // process next slice
         if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) {
-          state = voice.process(state,current_time,remaining);
+          processAudio(AContext,current_time,remaining);
           current_time += remaining;
           remaining = 0;
         }
         else {
-          state = voice.processSlice(state,current_time);
+          processAudio(AContext,current_time);
           current_time += SAT_PLUGIN_QUANTIZED_SIZE;
           remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
+
         }
       } while (remaining > 0);
     }
-    else {
-      // no events..
+
+    else { // no events..
+
       do {
-        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) state = voice.process(state,current_time,remaining);
-        else state = voice.processSlice(state,current_time);
+        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) processAudio(AContext,current_time,remaining);
+        else processAudio(AContext,current_time);
         current_time += SAT_PLUGIN_QUANTIZED_SIZE;
         remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
       } while (remaining > 0);
     }
-    //SAT_Assert( events.read(&event) == false );
   }
-
-  */
-
 
 };
 

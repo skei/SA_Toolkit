@@ -2,16 +2,19 @@
 #define sat_const_included
 //----------------------------------------------------------------------
 
+
+
 // 4           4  5         5
 // 123456789abcdef0123456789a
 // abcdefghijklmnopqrstuvwxyz
 // 5f = _
 
-#define SAT_MAGIC                               'SAT_' // 0x5341545f  // 'SAT_'
-#define SAT_MAGIC_PLUGIN                        'SATP' // 0x53415450  // 'SATP'
-#define SAT_MAGIC_EDITOR                        'SATE' // 0x53415445  // 'SATE'
-#define SAT_MAGIC_USER                          'sat_' // 0x7361745f  // 'sat_'
+#define SAT_MAGIC                               'SAT_'    // 0x5341545f  // 'SAT_'
+#define SAT_MAGIC_PLUGIN                        'SATP'    // 0x53415450  // 'SATP'
+#define SAT_MAGIC_EDITOR                        'SATE'    // 0x53415445  // 'SATE'
+#define SAT_MAGIC_USER                          'sat_'    // 0x7361745f  // 'sat_'
 
+#define SAT_EVENT_SPACE_ID                      SAT_MAGIC // CLAP_CORE_EVENT_SPACE_ID
 //----------------------------------------------------------------------
 //
 //----------------------------------------------------------------------

@@ -29,6 +29,7 @@ const clap_plugin_descriptor_t myDescriptor = {
   .version      = "0",
   .description  = "...",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  //.features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
 };
 
 //----------------------------------------------------------------------
@@ -117,7 +118,7 @@ class myPlugin
 private:
 //------------------------------
 
-  SAT_PanelWidget*                      MRootPanel    = nullptr;
+  SAT_PanelWidget* MRootPanel = nullptr;
   //SAT_VoiceManager<myVoice,NUM_VOICES>  MVoiceManager = {};
 
 //------------------------------
@@ -146,10 +147,6 @@ public:
     //const clap_plugin_t*  clapplugin = getPlugin();
     //const clap_host_t* claphost = host->getHost();
     //MVoiceManager.init(clapplugin,claphost);
-
-//    SAT_AudioProcessor* processor = new SAT_AudioProcessor(getParameters(),getProcessContext());
-//    setAudioProcessor(processor);
-
     return SAT_Plugin::init();
   }
 
@@ -248,11 +245,11 @@ public:
 //------------------------------
 
 // TODO
-//
+
 //  void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
 //    MVoiceManager.preProcessEvents(in_events,out_events);
 //  }
-//
+
 //  void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
 //    MVoiceManager.postProcessEvents(in_events,out_events);
 //  }
@@ -260,60 +257,50 @@ public:
   //----------
 
   bool handleNoteOn(const clap_event_note_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processNoteOn(event);
     return true;
   }
 
   bool handleNoteOff(const clap_event_note_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processNoteOff(event);
     return true;
   }
 
   bool handleNoteChoke(const clap_event_note_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processNoteChoke(event);
     return true;
   }
 
   bool handleNoteExpression(const clap_event_note_expression_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processNoteExpression(event);
     return true;
   }
 
   bool handleParamValue(const clap_event_param_value_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processParamValue(event);
     return true;
   }
 
   bool handleParamMod(const clap_event_param_mod_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processParamMod(event);
     return true;
   }
 
   bool handleTransport(const clap_event_transport_t* event) final {
-    //SAT_Print("\n");
     return false;
   }
 
   bool handleMidi(const clap_event_midi_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processMidi(event);
     return true;
   }
 
   bool handleMidiSysex(const clap_event_midi_sysex_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processMidiSysex(event);
     return true;
   }
 
   bool handleMidi2(const clap_event_midi2_t* event) final {
-    //SAT_Print("\n");
     //MVoiceManager.processMidi2(event);
     return true;
   }
@@ -336,7 +323,9 @@ public:
   //----------
 
   void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
+
     //MVoiceManager.processAudioBlock(AContext);
+
     const clap_process_t* process = AContext->process;
     //uint32_t length = process->frames_count;
 
@@ -352,7 +341,9 @@ public:
 
     sat_param_t scale = getParameterValue(2) + getModulationValue(2);
     scale = SAT_Clamp(scale,0,1);
+
     SAT_ScaleStereoBuffer(outputs,scale,length);
+
   }
 
 };

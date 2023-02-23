@@ -6,6 +6,11 @@
   initially based on:
     http://www.codeproject.com/Articles/149879/Associative-Array-in-C
     by Arnav Mukhopadhyay
+
+    ---
+
+    "abc" = 0xffff
+    todo: hashing?
 */
 
 //----------------------------------------------------------------------
