@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "plugin/sat_process_context.h"
-#include "plugin/sat_voice_context.h"
+#include "audio/sat_voice_context.h"
 
 //----------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ public:
   SAT_VoiceContext*   context     = nullptr;
   SAT_Note            note        = {};
   uint32_t            state       = SAT_VOICE_OFF;
-  uint32_t            event_mode  = SAT_VOICE_EVENT_MODE_BLOCK;
+  uint32_t            event_mode  = SAT_PLUGIN_EVENT_MODE_BLOCK;
   SAT_VoiceEventQueue events      = {};
 
 //SAT_ParameterArray* parameters  = nullptr;
@@ -72,15 +72,15 @@ public:
 
   void process() {
     switch (event_mode) {
-      case SAT_VOICE_EVENT_MODE_BLOCK: {
+      case SAT_PLUGIN_EVENT_MODE_BLOCK: {
         handleAllEvents();
         break;
       }
-      case SAT_VOICE_EVENT_MODE_INTERLEAVED: {
+      case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
         handleInterleavedEvents();
         break;
       }
-      case SAT_VOICE_EVENT_MODE_QUANTIZED: {
+      case SAT_PLUGIN_EVENT_MODE_QUANTIZED: {
         handleQuantizedEvents();
         break;
       }

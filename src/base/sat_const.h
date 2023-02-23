@@ -169,13 +169,18 @@
 
 #define SAT_PAINTER_CLIP_RECT_SIZE              256
 
+#define SAT_PLUGIN_EVENT_MODE_BLOCK             0
+#define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
+#define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
+
 #define SAT_PLUGIN_MAX_BLOCK_SIZE               4096
 #define SAT_PLUGIN_MAX_PARAMETERS               1024
 #define SAT_PLUGIN_MAX_EVENTS_PER_BLOCK         1024
 #define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK     32
 #define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK      1024
 #define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK   1024
-#define SAT_PLUGIN_QUANTIZED_SIZE               16
+
+#define SAT_PLUGIN_QUANTIZED_SIZE               32
 
 #define SAT_STATE_NONE                          0x00
 #define SAT_STATE_SHIFT                         0x01
@@ -196,10 +201,6 @@
 #define SAT_VOICE_PLAYING                       2
 #define SAT_VOICE_RELEASED                      3
 #define SAT_VOICE_FINISHED                      4
-
-#define SAT_VOICE_EVENT_MODE_BLOCK              0
-#define SAT_VOICE_EVENT_MODE_INTERLEAVED        1
-#define SAT_VOICE_EVENT_MODE_QUANTIZED          2
 
 #define SAT_VOICE_MAX_EVENTS_PER_BLOCK          4096
 #define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK  4096

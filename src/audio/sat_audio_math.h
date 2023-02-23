@@ -95,7 +95,7 @@ float SAT_KillDenormal2(float val) {
 
 double SAT_NoteToHz(double ANote) {
 
-  return 440.0 * pow(2.0,(ANote - 69) * SAT_INV12F);
+  return 440.0 * pow(2.0,(ANote - 69) * SAT_INV12);
   //return 440.0 * SAT_PowF2(2.0,(ANote - 69) * SAT_INV12F);
 
 }

@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------
 
 #include "plugin/sat_note.h"
-#include "plugin/sat_voice.h"
+#include "audio/sat_voice.h"
 
 //----------
 
@@ -44,6 +44,7 @@ private:
   const clap_host_thread_pool*  MThreadPool             = nullptr;
 
   bool                          MProcessThreaded        = false;
+  uint32_t                      MEventMode              = SAT_PLUGIN_EVENT_MODE_BLOCK;
   uint32_t                      MNumActiveVoices        = 0;
   uint32_t                      MActiveVoices[COUNT]    = {};
 
@@ -52,6 +53,7 @@ public:
 //------------------------------
 
   SAT_VoiceManager() {
+    SAT_PRINT;
   }
 
   //----------
@@ -68,6 +70,7 @@ public:
   }
 
   void setEventMode(uint32_t AMode) {
+    MEventMode = AMode;
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].event_mode = AMode;
     }
@@ -87,6 +90,14 @@ public:
 
   uint32_t getVoiceState(uint32_t AIndex) {
     return MVoices[AIndex].state;
+  }
+
+  bool isProcessingThreaded() {
+    return MProcessThreaded;
+  }
+
+  uint32_t getEventMode() {
+    return MEventMode;
   }
 
 //------------------------------
@@ -157,7 +168,7 @@ public:
 
   // process -> prepare
 
-  void processNoteOn(const clap_event_note_t* event) {
+  void handleNoteOn(const clap_event_note_t* event) {
     int32_t voice = findFreeVoice(SAT_VOICE_MANAGER_STEAL_VOICES);
     if (voice >= 0) {
       MVoices[voice].state        = SAT_VOICE_WAITING;
@@ -172,7 +183,7 @@ public:
 
   //----------
 
-  void processNoteOff(const clap_event_note_t* event) {
+  void handleNoteOff(const clap_event_note_t* event) {
 
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
@@ -203,7 +214,7 @@ public:
 
   //----------
 
-  void processNoteChoke(const clap_event_note_t* event) {
+  void handleNoteChoke(const clap_event_note_t* event) {
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -231,7 +242,7 @@ public:
 
   //----------
 
-  void processNoteExpression(const clap_event_note_expression_t* event) {
+  void handleNoteExpression(const clap_event_note_expression_t* event) {
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -259,7 +270,7 @@ public:
 
   //----------
 
-  void processParamValue(const clap_event_param_value_t* event) {
+  void handleParamValue(const clap_event_param_value_t* event) {
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -294,7 +305,7 @@ public:
     see param_value
   */
 
-  void processParamMod(const clap_event_param_mod_t* event) {
+  void handleParamMod(const clap_event_param_mod_t* event) {
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -328,7 +339,7 @@ public:
 
   //----------
 
-  void processMidi(const clap_event_midi_t* event) {
+  void handleMidi(const clap_event_midi_t* event) {
     #ifdef SAT_VOICE_MANAGER_CONVERT_MIDI
     uint8_t msg   = event->data[0] & 0xf0;
     uint8_t chan  = event->data[0] & 0x0f;
@@ -374,12 +385,12 @@ public:
 
   //----------
 
-  void processMidiSysex(const clap_event_midi_sysex_t* event) {
+  void handleMidiSysex(const clap_event_midi_sysex_t* event) {
   }
 
   //----------
 
-  void processMidi2(const clap_event_midi2_t* event) {
+  void handleMidi2(const clap_event_midi2_t* event) {
   }
 
 //------------------------------
@@ -420,7 +431,7 @@ public:
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
   */
 
-  void processAudioBlock(SAT_ProcessContext* AProcessContext) {
+  void processAudio(SAT_ProcessContext* AProcessContext) {
 
     MVoiceContext.process_context = AProcessContext;
     uint32_t blocksize = AProcessContext->block_length;

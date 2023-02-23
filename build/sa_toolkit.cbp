@@ -107,6 +107,9 @@
 		<Unit filename="../src/audio/sat_audio_io.h" />
 		<Unit filename="../src/audio/sat_audio_math.h" />
 		<Unit filename="../src/audio/sat_audio_utils.h" />
+		<Unit filename="../src/audio/sat_voice.h" />
+		<Unit filename="../src/audio/sat_voice_context.h" />
+		<Unit filename="../src/audio/sat_voice_manager.h" />
 		<Unit filename="../src/base/sat.h" />
 		<Unit filename="../src/base/sat_attributes.h" />
 		<Unit filename="../src/base/sat_config.h" />
@@ -271,9 +274,6 @@
 		<Unit filename="../src/plugin/sat_plugin.h" />
 		<Unit filename="../src/plugin/sat_process_context.h" />
 		<Unit filename="../src/plugin/sat_registry.h" />
-		<Unit filename="../src/plugin/sat_voice.h" />
-		<Unit filename="../src/plugin/sat_voice_context.h" />
-		<Unit filename="../src/plugin/sat_voice_manager.h" />
 		<Unit filename="../src/plugin/vst2/sat_vst2_entry.h" />
 		<Unit filename="../src/plugin/vst3/sat_vst3_entry.h" />
 		<Unit filename="build.cpp" />

@@ -17,7 +17,9 @@
 #include "plugin/clap/sat_clap_plugin.h"
 #include "plugin/clap/sat_clap_utils.h"
 #include "audio/sat_audio_utils.h"
-#include "audio/processor/sat_audio_processor.h"
+
+#include "audio/sat_voice_manager.h"
+
 
 //----------------------------------------------------------------------
 
@@ -90,12 +92,16 @@ private:
 
 //  SAT_AudioProcessor*               MAudioProcessor                               = nullptr;
 
+  bool                              MProcessThreaded                              = false;
+  uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
+
 //------------------------------
 public:
 //------------------------------
 
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor) {
+    SAT_PRINT;
     SAT_Log("SAT_Plugin()\n");
     MHost = new SAT_Host(AHost);
     SAT_LogClapHostInfo(MHost);
@@ -131,6 +137,15 @@ public: // plugin
   //void setAudioProcessor(SAT_AudioProcessor* AProcessor) {
   //  MAudioProcessor = AProcessor;
   //}
+
+  void setProcessThreaded(bool AThreaded=true) {
+    MProcessThreaded = AThreaded;
+  }
+
+  void setEventMode(uint32_t AMode) {
+    MEventMode = AMode;
+  }
+
 
 //------------------------------
 public: // plugin
@@ -238,11 +253,23 @@ public: // plugin
     //flushParamLoad();
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
-    //handleEvents(process->in_events,process->out_events);
-    //preProcessEvents();
-    //processAudio(&MProcessContext);
-    processInterleaved(&MProcessContext);
-    //postProcessEvents();
+    preProcessEvents(process->in_events,process->out_events);
+    switch (MEventMode) {
+      case SAT_PLUGIN_EVENT_MODE_BLOCK: {
+        processEvents(process->in_events,process->out_events);
+        processAudio(&MProcessContext);
+        break;
+      }
+      case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
+        processInterleaved(&MProcessContext);
+        break;
+      }
+      case SAT_PLUGIN_EVENT_MODE_QUANTIZED: {
+        processQuantized(&MProcessContext);
+        break;
+      }
+    }
+    postProcessEvents(process->in_events,process->out_events);
     flushParamFromGuiToHost(process->out_events);
     //flushNoteEndFromAudioToHost(process->out_events);
     MProcessContext.counter += 1;
@@ -2063,13 +2090,13 @@ public: // note output ports
 public: // events
 //------------------------------
 
-  //virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  //}
+  virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
 
   //----------
 
-  //virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  //}
+  virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
 
   //----------
 
@@ -2345,11 +2372,6 @@ private: // handle events
 public: // process audio
 //------------------------------
 
-  /*
-    - event handling (block, interleaved, quantize)
-    - threaded (voices)
-  */
-
   virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
@@ -2419,37 +2441,29 @@ public: // process audio
 
     uint32_t buffer_length = AContext->process->frames_count;
     uint32_t remaining = buffer_length;
-
     uint32_t current_time = 0;
     uint32_t current_event = 0;
-    uint32_t next_event = 0;
-
+    uint32_t next_event_time = 0;
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t num_events = in_events->size(in_events);
-
     if (num_events > 0) {
       const clap_event_header_t* header = in_events->get(in_events,current_event);
       current_event += 1;
-      next_event = header->time;
+      next_event_time = header->time;
       do {
-
         // process events for next slice
-        while (next_event < (current_time + SAT_PLUGIN_QUANTIZED_SIZE)) {
-
+        while (next_event_time < (current_time + SAT_PLUGIN_QUANTIZED_SIZE)) {
           handleEvent(header);
-
           if (current_event < num_events) {
             header = in_events->get(in_events,current_event);
             // if (header)
             current_event += 1;
-            next_event = header->time;
+            next_event_time = header->time;
           }
           else {
-            next_event = buffer_length; // ???
+            next_event_time = buffer_length; // ???
           }
-
         }
-
         // process next slice
         if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) {
           processAudio(AContext,current_time,remaining);
@@ -2460,13 +2474,10 @@ public: // process audio
           processAudio(AContext,current_time);
           current_time += SAT_PLUGIN_QUANTIZED_SIZE;
           remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
-
         }
       } while (remaining > 0);
     }
-
     else { // no events..
-
       do {
         if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) processAudio(AContext,current_time,remaining);
         else processAudio(AContext,current_time);
