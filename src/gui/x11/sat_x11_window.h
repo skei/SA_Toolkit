@@ -372,10 +372,54 @@ public:
 
   //----------
 
+//  void eventLoop() override {
+//    MQuitEventLoop = false;
+//    xcb_flush(MConnection);
+//    xcb_generic_event_t* event;// = xcb_wait_for_event(MConnection);
+//    //while (event) {
+//    while ((event = xcb_wait_for_event(MConnection))) {
+//      uint32_t e = event->response_type & ~0x80;
+//      if (e == XCB_CLIENT_MESSAGE) {
+//        xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
+//        xcb_atom_t  type = client_message->type;
+//        uint32_t      data = client_message->data.data32[0];
+//        if (type == MWMProtocolsAtom) {
+//          if (data == MWMDeleteWindowAtom) {
+//            free(event); // not malloc'ed
+//            //MQuitEventLoop = true;
+//            break;
+//          }
+//        }
+//      }
+//      eventHandler(event);
+//      free(event); // not malloc'ed
+//      if (MQuitEventLoop) break;
+//      //event = xcb_wait_for_event(MConnection);
+//    }
+//  }
+
+  //----------
+
   uint32_t eventLoop() {
     xcb_generic_event_t* event = getEvent(true);
     while (event) {
+
+      uint32_t e = event->response_type & ~0x80;
+      if (e == XCB_CLIENT_MESSAGE) {
+        xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
+        xcb_atom_t  type = client_message->type;
+        uint32_t data = client_message->data.data32[0];
+        if (type == MWMProtocolsAtom) {
+          if (data == MWMDeleteWindowAtom) {
+            //free(event); // not malloc'ed
+            //MQuitEventLoop = true;
+            break;
+          }
+        }
+      }
+
       bool quit = !processEvent(event);
+      //free(event); // not malloc'ed
       if (quit) break;
       event = getEvent(true);
     }
@@ -957,7 +1001,7 @@ private:
             xcb_atom_t type = client_message->type;
             uint32_t data = client_message->data.data32[0];
             if (data == SAT_WINDOW_THREAD_KILL) {
-              SAT_Print("KILL\n");
+              //SAT_Print("KILL\n");
               return nullptr;
             }
           }
