@@ -42,6 +42,9 @@ private:
   double            MLastUpdatedValue               = 0.0;
   double            MLastModulatedValue             = 0.0;
 
+  sat_param_t       MSmoothValue                    = 0.0;
+  sat_param_t       MSmoothFactor                   = 1.0;
+
 //------------------------------
 public:
 //------------------------------
@@ -91,8 +94,10 @@ public:
   clap_param_info_t*    getParamInfo()          { return &MInfo; }
   void*                 getWidget()             { return MWidget; }
   void*                 getConnection()         { return MConnection; }
+
   sat_param_t           getValue()              { return MValue; }
   sat_param_t           getModulation()         { return MModulation; }
+
   int32_t               getLastPainted()        { return MLastPainted; }
   int32_t               getLastUpdated()        { return MLastUpdated; }
   int32_t               getLastModulated()      { return MLastModulated; }
@@ -117,13 +122,18 @@ public:
   void clearFlag(clap_param_info_flags AFlag) { MInfo.flags &= ~AFlag; }
   void setIndex(int32_t AIndex)               { MIndex = AIndex; MInfo.id = AIndex; }
   void connect(void* AWidget)                 { MConnection = AWidget; }
+
   void setValue(double AValue)                { MValue = AValue; }
   void setModulation(double AValue)           { MModulation = AValue; }
+
   void setLastPainted(uint32_t ALast)         { MLastPainted = ALast; }
   void setLastUpdated(uint32_t ALast)         { MLastUpdated = ALast; }
   void setLastModulated(uint32_t ALast)       { MLastModulated = ALast; }
   void setLastUpdatedValue(double AValue)     { MLastUpdatedValue = AValue; }
   void setLastModulatedValue(double AValue)   { MLastModulatedValue = AValue; }
+
+  void setSmoothValue(double AValue)          { MSmoothValue = AValue; }
+  void setSmoothFactor(double AFactor)        { MSmoothFactor = AFactor; }
 
 //------------------------------
 public:
@@ -158,6 +168,29 @@ public:
     double value = atof(AText);
     *AValue = value;
     return true;
+  }
+
+  //----------
+
+  virtual void updateSmoothing() {
+    sat_param_t target = MValue + MModulation;
+    MSmoothValue += (target - MSmoothValue) * MSmoothFactor;
+  }
+
+  //----------
+
+  // http://www.kvraudio.com/forum/viewtopic.php?p=6515525#p6515525
+
+  virtual void updateSmoothing(uint32_t ASteps) {
+    if (ASteps==0) updateSmoothing();
+    sat_param_t target = MValue + MModulation;
+    MSmoothValue += (target - MSmoothValue) * (1 - pow(1.0 - MSmoothFactor, ASteps));
+  }
+
+  //----------
+
+  virtual sat_param_t getSmoothedValue() {
+    return MSmoothValue;
   }
 
 };

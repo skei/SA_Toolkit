@@ -553,7 +553,17 @@ public: // widget listener
   //----------
 
   void do_widget_set_state(SAT_Widget* ASender, uint32_t AState) override {
-    if (MListener) MListener->do_window_listener_set_widget_state(ASender,AState);
+    //if (MListener) MListener->do_window_listener_set_widget_state(ASender,AState);
+    switch (AState) {
+      case SAT_WIDGET_STATE_MODAL: {
+        MModalWidget = ASender;
+        break;
+      }
+      case SAT_WIDGET_STATE_NORMAL: {
+        MModalWidget = nullptr;
+        break;
+      }
+    }
   }
 
   //----------

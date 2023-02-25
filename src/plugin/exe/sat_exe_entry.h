@@ -11,6 +11,56 @@
 //
 //----------------------------------------------------------------------
 
+class SAT_ExeWindow
+: public SAT_ImplementedWindow {
+
+private:
+
+  const clap_plugin_t*      MPlugin = nullptr;
+  const clap_plugin_gui_t*  MGui    = nullptr;
+
+public:
+
+  SAT_ExeWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, const clap_plugin_t* APlugin, const clap_plugin_gui_t* AGui)
+  : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+    MPlugin = APlugin;
+    MGui = AGui;
+  }
+
+  virtual ~SAT_ExeWindow() {
+  }
+
+public:
+
+  void on_window_open() final {
+    SAT_PRINT;
+  }
+
+  void on_window_close() final {
+    SAT_PRINT;
+  }
+
+  void on_window_resize(int32_t AWidth, int32_t AHeight) final {
+    //SAT_PRINT;
+    MGui->set_size(MPlugin,AWidth,AHeight);
+  }
+
+  //void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
+  //  SAT_PRINT;
+  //}
+
+  void on_window_client_message(uint32_t AData) final {
+    SAT_Print("%i\n",AData);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
 class SAT_ExeHostImplementation
 : public SAT_HostImplementation {
 
@@ -39,6 +89,24 @@ public:
 //
 //----------------------------------------------------------------------
 
+/*
+  Showing the GUI works as follow:
+    1.  clap_plugin_gui->is_api_supported(), check what can work
+    2.  clap_plugin_gui->create(), allocates gui resources
+    3.  if the plugin window is floating
+    4.     -> clap_plugin_gui->set_transient()
+    5.     -> clap_plugin_gui->suggest_title()
+    6.  else
+    7.     -> clap_plugin_gui->set_scale()
+    8.     -> clap_plugin_gui->can_resize()
+    9.     -> if resizable and has known size from previous session, clap_plugin_gui->set_size()
+    10.    -> else clap_plugin_gui->get_size(), gets initial size
+    11.    -> clap_plugin_gui->set_parent()
+    12. clap_plugin_gui->show()
+    13. clap_plugin_gui->hide()/show() ...
+    14. clap_plugin_gui->destroy() when done with the gui
+*/
+
 void open_editor(const clap_plugin_t* plugin) {
   const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);
   if (gui) {
@@ -46,26 +114,26 @@ void open_editor(const clap_plugin_t* plugin) {
 
     uint32_t width,height;
     gui->create(plugin,CLAP_WINDOW_API_X11,false);
-    gui->get_size(plugin,&width,&height);
     gui->set_scale(plugin,1.0);
+    gui->get_size(plugin,&width,&height);
     //gui->set_size(plugin,width,height);
 
-//    SAT_ImplementedWindow* window = new SAT_ImplementedWindow(width,height,0);
-//    xcb_window_t x11window = window->getX11Window();
-//    const clap_window_t clapwindow = {
-//      .api = CLAP_WINDOW_API_X11,
-//      .x11 = x11window
-//    };
-//    gui->set_parent(plugin,&clapwindow);
+    SAT_ExeWindow* window = new SAT_ExeWindow(width,height,0,plugin,gui);
 
+    xcb_window_t x11window = window->getX11Window();
+    const clap_window_t clapwindow = {
+      .api = CLAP_WINDOW_API_X11,
+      .x11 = x11window
+    };
+    gui->set_parent(plugin,&clapwindow);
     gui->show(plugin);
 
-    //SAT_Sleep(1000);
-
+    window->show();
+    window->eventLoop();
     gui->hide(plugin);
     gui->destroy(plugin);
-
-//    delete window;
+    window->hide();
+    delete window;
 
   }
 }
@@ -97,7 +165,12 @@ void handle_plugin(const clap_plugin_t* plugin) {
 
   plugin->stop_processing(plugin);
   plugin->deactivate(plugin);
+
   plugin->destroy(plugin);
+
+  //SAT_Plugin* splug = (SAT_Plugin*)plugin->plugin_data;
+  //delete splug;
+
 }
 
 //----------------------------------------------------------------------

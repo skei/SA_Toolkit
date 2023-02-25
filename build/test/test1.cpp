@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------
 
 #define EDITOR_WIDTH  (50 + 200                   + 50)
-#define EDITOR_HEIGHT (50 + 200 + (4 * (10 + 20)) + 50)
+#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20)) + 50)
 
 //----------
 
@@ -155,9 +155,20 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin);
+  //SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin);
 
-  //----------
+  myPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+    //SAT_Print("sizeof(myPlugin) : %i\n",sizeof(myPlugin));
+  }
+
+  virtual ~myPlugin() {
+    //SAT_Print("yepp, we are being deleted..\n");
+  }
+
+//------------------------------
+public:
+//------------------------------
 
   bool init() final {
     registerDefaultExtensions();
@@ -271,6 +282,13 @@ public:
     //slider->setModulation(0.25);
     slider->setDrawModulation(true);
     slider->setModulationColor( SAT_Color(1,1,1,0.25) );
+
+    SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(50,390,95,20));
+    MRootPanel->appendChildWidget(button1);
+
+    SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(155,390,95,20));
+    MRootPanel->appendChildWidget(button2);
+    button2->setIsToggle(true);
 
     AEditor->connect(value,     getParameter(0));
     AEditor->connect(dragvalue, getParameter(1));
@@ -396,6 +414,23 @@ public:
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+
+  //SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+
+  void SAT_Register(SAT_Registry* ARegistry) {
+    uint32_t index = ARegistry->getNumDescriptors();
+    SAT_Log("SAT_Register -> id %s index %i\n",myDescriptor.id,index);
+    ARegistry->registerDescriptor(&myDescriptor);
+  }
+
+  const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
+    SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);
+    if (AIndex == 0) {
+      myPlugin* plugin = new myPlugin(ADescriptor,AHost);
+      return plugin->getPlugin();
+    }
+    return nullptr;
+  }
+
 #endif
 

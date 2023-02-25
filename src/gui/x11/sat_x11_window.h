@@ -56,6 +56,7 @@ protected:
   uint32_t                    MWindowYpos           = 0;
   uint32_t                    MWindowWidth          = 0;
   uint32_t                    MWindowHeight         = 0;
+
   //uint32_t                    MPreviousWindowWidth  = 0;
   //uint32_t                    MPreviousWindowHeight = 0;
 
@@ -951,13 +952,12 @@ private:
       while (window->MIsEventThreadActive) {
         xcb_generic_event_t* event = xcb_wait_for_event(connection);
         if (event) {
-
           if ((event->response_type & ~0x80) == XCB_CLIENT_MESSAGE) {
             xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
             xcb_atom_t type = client_message->type;
             uint32_t data = client_message->data.data32[0];
             if (data == SAT_WINDOW_THREAD_KILL) {
-              //SAT_Print("KILL\n");
+              SAT_Print("KILL\n");
               return nullptr;
             }
           }
