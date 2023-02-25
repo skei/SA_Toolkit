@@ -15,6 +15,7 @@
 #define SAT_MAGIC_USER                          'sat_'    // 0x7361745f  // 'sat_'
 
 #define SAT_EVENT_SPACE_ID                      SAT_MAGIC // CLAP_CORE_EVENT_SPACE_ID
+
 //----------------------------------------------------------------------
 //
 //----------------------------------------------------------------------
@@ -164,6 +165,24 @@
 #define SAT_MIDI_PITCHBEND                      0xE0
 #define SAT_MIDI_SYS                            0xF0
 
+#define SAT_MODMATRIX_MAX_SRC_COUNT             64
+#define SAT_MODMATRIX_MAX_DST_COUNT             64
+#define SAT_MODMATRIX_MAX_MOD_COUNT             64
+
+#define SAT_MODMATRIX_MODE_OFF                  0
+#define SAT_MODMATRIX_MODE_GLOBAL               1
+#define SAT_MODMATRIX_MODE_VOICE                2
+
+#define SAT_MODMATRIX_MODE_SAMPLE               3
+#define SAT_MODMATRIX_MODE_EVENT                4
+#define SAT_MODMATRIX_MODE_BLOCK                5
+#define SAT_MODMATRIX_MODE_SMOOTH               6
+
+//#define SAT_MODMATRIX_UPDATE_OFF                0
+//#define SAT_MODMATRIX_UPDATE_SAMPLE             1
+//#define SAT_MODMATRIX_UPDATE_EVENT              2
+//#define SAT_MODMATRIX_UPDATE_BLOCK              3
+
 #define SAT_OPENGL_MAJOR                        3
 #define SAT_OPENGL_MINOR                        2
 
@@ -227,9 +246,12 @@
 
 //----------------------------------------------------------------------
 
-const char  SAT_HEX_TABLE[]   = "0123456789ABCDEF";
-const char  SAT_CSYMBOLS[]    = "________________________________________________0123456789_______ABCDEFGHIJKLMNOPQRSTUVWXYZ______abcdefghijklmnopqrstuvwxyz_____";
 const char  SAT_NULL_STRING[] = "";
+const char  SAT_HEX_TABLE[]   = "0123456789ABCDEF";
+const char  SAT_CSYMBOLS[]    = "________________________________"
+                                "________________0123456789______"
+                                "_ABCDEFGHIJKLMNOPQRSTUVWXYZ_____"
+                                "_abcdefghijklmnopqrstuvwxyz_____";
 
 //----------------------------------------------------------------------
 #endif

@@ -53,7 +53,7 @@ public:
 //------------------------------
 
   SAT_VoiceManager() {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   //----------

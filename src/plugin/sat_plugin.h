@@ -14,12 +14,11 @@
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_process_context.h"
+
 #include "plugin/clap/sat_clap_plugin.h"
 #include "plugin/clap/sat_clap_utils.h"
+
 #include "audio/sat_audio_utils.h"
-
-#include "audio/sat_voice_manager.h"
-
 
 //----------------------------------------------------------------------
 
@@ -92,7 +91,7 @@ private:
 
 //  SAT_AudioProcessor*               MAudioProcessor                               = nullptr;
 
-  bool                              MProcessThreaded                              = false;
+  bool                              MProcessThreaded                              = false; // not used here?
   uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
 
 //------------------------------
@@ -101,7 +100,7 @@ public:
 
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor) {
-    SAT_PRINT;
+    //SAT_PRINT;
     SAT_Log("SAT_Plugin()\n");
     MHost = new SAT_Host(AHost);
     SAT_LogClapHostInfo(MHost);
@@ -261,6 +260,7 @@ public: // plugin
         break;
       }
       case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
+        SAT_PRINT;
         processInterleaved(&MProcessContext);
         break;
       }
@@ -2382,6 +2382,19 @@ public: // process audio
 
   //----------
 
+  /*
+    if MEventMode is SAT_PLUGIN_EVENT_MODE_BLOCK (the default)
+    handleEvents will first be called, and then this, to habndle the
+    entire audio block in one go..
+
+    if SAT_PLUGIN_EVENT_MODE_INTERLEAVED or SAT_PLUGIN_EVENT_MODE_QUANTIZED
+    this will be called to fill each smaller block inbetween events
+
+    also called from instruments, as the voices handles the event handling
+    themselves..
+
+  */
+
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) {
     const clap_process_t* process = AContext->process;
     //uint32_t length = process->frames_count;
@@ -2396,11 +2409,19 @@ public: // process audio
 
   //----------
 
+  // called from QUANTIZED, when we know the (const) slice size
+  // (SAT_PLUGIN_QUANTIZED_SIZE), and hope the optimizer will run
+  // amok with loop unrolling, inlining, const propagation, etc, etc..
+  //
+  // but currently, we just cheat.. :-/
+
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset) {
     processAudio(AContext,offset,SAT_PLUGIN_QUANTIZED_SIZE);
   }
 
   //----------
+
+  // processes events at their sample accurate place, and audio inbetween
 
   virtual void processInterleaved(SAT_ProcessContext* AContext) {
 
@@ -2436,6 +2457,11 @@ public: // process audio
   }
 
   //----------
+
+  // split audio block in smaller, regular sizes, and quantize events
+  // (process all events 'belonging' to the slice, at the atart ot the slice,
+  // and then the audio)..
+  // events could be processed up to (slicesize - 1) samples 'early'..
 
   void processQuantized(SAT_ProcessContext* AContext) {
 

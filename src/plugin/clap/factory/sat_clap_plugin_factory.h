@@ -28,10 +28,9 @@ const clap_plugin_t* clap_plugin_factory_create_plugin_callback(const struct cla
     //LOG.print("  - index %i\n",index);
     if (index >= 0) {
       const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
-      const clap_plugin_t* plugin = SAT_CreatePlugin(index,descriptor,host);//,host);
+      const clap_plugin_t* plugin = SAT_CreatePlugin(index,descriptor,host);
       SAT_Log("CLAP: FACTORY.create_plugin (plugin_id %s) -> %p\n",plugin_id,plugin);
       return plugin;
-
     }
   }
   SAT_Log("CLAP: FACTORY.create_plugin (plugin_id %s) -> null\n",plugin_id);

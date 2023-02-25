@@ -1,11 +1,14 @@
 
 #include "base/sat.h"
+
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
+#include "audio/sat_modulation_matrix.h"
 #include "audio/sat_voice_manager.h"
-#include "gui/sat_widgets.h"
-#include "plugin/sat_plugin.h"
 
+#include "gui/sat_widgets.h"
+
+#include "plugin/sat_plugin.h"
 
 //----------------------------------------------------------------------
 //
@@ -13,7 +16,7 @@
 //
 //----------------------------------------------------------------------
 
-#define EDITOR_WIDTH  (50 + 200 + 50)
+#define EDITOR_WIDTH  (50 + 200                   + 50)
 #define EDITOR_HEIGHT (50 + 200 + (4 * (10 + 20)) + 50)
 
 //----------
@@ -40,7 +43,7 @@ const clap_plugin_descriptor_t myDescriptor = {
 
 #define NUM_VOICES 32
 
-class myVoice {
+class myVoice /*final*/ {
 
 //------------------------------
 private:
@@ -50,7 +53,7 @@ private:
   SAT_VoiceContext* MContext  = nullptr;
 
   float srate = 0.0;
-  float ph = 0.0;
+  float ph    = 0.0;
   float phadd = 0.0;
 
 //------------------------------
@@ -80,6 +83,7 @@ public:
       for (uint32_t i=0; i<ALength; i++) {
         ph = SAT_Fract(ph);
         float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
+        //v = sin(v * SAT_PI2);
         *buffer++ = v * 0.1;
         ph += phadd;
       }
@@ -99,34 +103,32 @@ public:
   //----------
 
   uint32_t noteOn(uint32_t AKey, double AVelocity) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     ph = 0.0;
     float hz = SAT_NoteToHz(AKey);
-    float spl = SAT_HzToSamples(hz,srate);
-    phadd = 1.0 / spl;
-
+    phadd = 1.0 / SAT_HzToSamples(hz,srate);
     return SAT_VOICE_PLAYING;
   }
 
   uint32_t noteOff(uint32_t AKey, double AVelocity) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     return SAT_VOICE_FINISHED;
   }
 
   void noteChoke(uint32_t AKey, double AVelocity) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
   }
 
   void noteExpression(uint32_t AExpression, double AValue) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
   }
 
   void parameter(uint32_t AIndex, double AValue) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
   }
 
   void modulation(uint32_t AIndex, double AValue) {
-    SAT_Print("\n");
+    //SAT_Print("\n");
   }
 
 };
@@ -147,6 +149,8 @@ private:
   SAT_PanelWidget* MRootPanel = nullptr;
   SAT_VoiceManager<myVoice,NUM_VOICES>  MVoiceManager = {};
 
+  SAT_ModulationMatrix MModMatrix = {};
+
 //------------------------------
 public:
 //------------------------------
@@ -160,7 +164,7 @@ public:
     registerExtension(CLAP_EXT_THREAD_POOL,&MThreadPoolExt);
     registerExtension(CLAP_EXT_VOICE_INFO,&MVoiceInfoExt);
     appendClapNoteInputPort();
-    appendStereoInputPort();
+    //appendStereoInputPort();
     appendStereoOutputPort();
     SAT_Parameter* par1 = appendParameter( new SAT_Parameter("Param1",0.0) );
     SAT_Parameter* par2 = appendParameter( new SAT_Parameter("Param2",0.5) );
@@ -175,8 +179,12 @@ public:
     const clap_plugin_t*  clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
-    MVoiceManager.setProcessThreaded(false);
+
+    MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
+
+    //setProcessThreaded(false);
+    //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
 
     return SAT_Plugin::init();
   }
@@ -233,7 +241,7 @@ public:
 
     SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
     MRootPanel->appendChildWidget(logo);
-    logo->setLogoColor(SAT_White);
+    logo->setLogoColor(SAT_DarkMagenta);
 
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
     MRootPanel->appendChildWidget(text);
@@ -343,15 +351,20 @@ public:
 //------------------------------
 
   void processAudio(SAT_ProcessContext* AContext) final {
+
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
-    float** inputs = process->audio_inputs[0].data32;
+    //float** inputs = process->audio_inputs[0].data32; // instrument, n o input..
     float** outputs = process->audio_outputs[0].data32;
+
     AContext->block_buffer = outputs;
     AContext->block_length = length;
+
     MVoiceManager.processAudio(AContext);
+
     sat_param_t scale = getParameterValue(2);
     SAT_ScaleStereoBuffer(outputs,scale,length);
+
   }
 
   //----------
