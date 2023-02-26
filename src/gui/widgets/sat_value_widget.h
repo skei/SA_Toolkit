@@ -25,6 +25,16 @@ private:
   SAT_Rect  MValueOffset    = {};
   char      MValueText[256] = {0};
 
+  SAT_Color MDisabledColor  = SAT_Grey;
+  double    MDisabledAlpha  = 0.5;
+
+  bool      MDrawModulation = true;
+  bool      MIsInteracting  = false;
+
+//------------------------------
+protected:
+//------------------------------
+
 //------------------------------
 public:
 //------------------------------
@@ -44,11 +54,19 @@ public:
 public:
 //------------------------------
 
-  virtual void setDrawValue(bool ADraw=true)      { MDrawValue = ADraw; }
-  virtual void setValueColor(SAT_Color AColor)    { MValueColor = AColor; }
-  virtual void setValueSize(double ASize)         { MValueSize = ASize; }
-  virtual void setValueAlignment(uint32_t AAlign) { MValueAlignment = AAlign; }
-  virtual void setValueOffset(SAT_Rect AOffset)   { MValueOffset = AOffset; }
+  virtual SAT_Color getDisabledColor()  { return MDisabledColor; }
+  virtual double    getDisabledAlpha()  { return MDisabledAlpha; }
+  virtual bool      getDrawModulation()  { return MDrawModulation; }
+  virtual bool      getDrawValue()       { return MDrawValue; }
+  virtual bool      isInteracting()     { return MIsInteracting; }
+
+  virtual void      setIsInteracting(bool AState=true) { MIsInteracting = AState; }
+  virtual void      setDrawValue(bool ADraw=true)      { MDrawValue = ADraw; }
+  virtual void      setValueColor(SAT_Color AColor)    { MValueColor = AColor; }
+  virtual void      setValueSize(double ASize)         { MValueSize = ASize; }
+  virtual void      setValueAlignment(uint32_t AAlign) { MValueAlignment = AAlign; }
+  virtual void      setValueOffset(SAT_Rect AOffset)   { MValueOffset = AOffset; }
+  virtual void      setDrawModulation(bool ADraw=true) { MDrawModulation = ADraw; }
 
 //------------------------------
 public:
@@ -71,6 +89,13 @@ public:
       painter->setTextColor(MValueColor);
       painter->setTextSize(MValueSize*S);
       painter->drawTextBox(mrect,MValueText,MValueAlignment);
+    }
+  }
+
+  //----------
+
+  virtual void drawModulation(SAT_PaintContext* AContext) {
+    if (MDrawModulation) {
     }
   }
 

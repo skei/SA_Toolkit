@@ -110,6 +110,7 @@ public:
   //----------
 
   virtual ~SAT_Window() {
+    SAT_PRINT;
     deleteBuffer();
     delete MWindowPainter;
     delete MOpenGL;
@@ -338,7 +339,7 @@ public: // window
   */
 
   void on_window_close() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
   //----------
@@ -545,6 +546,7 @@ public: // widget listener
 
   void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     //SAT_PRINT;
+    if (!ASender) ASender = MRootWidget;
     MPendingDirtyWidgets.write(ASender);
     //invalidateWidget(ASender);
     if (MListener) MListener->do_window_listener_redraw_widget(ASender,AMode,AIndex);

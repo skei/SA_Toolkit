@@ -110,32 +110,22 @@ public:
 void open_editor(const clap_plugin_t* plugin) {
   const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);
   if (gui) {
-    SAT_Print("plugin has gui\n");
-
     uint32_t width,height;
     gui->create(plugin,CLAP_WINDOW_API_X11,false);
     gui->set_scale(plugin,1.0);
     gui->get_size(plugin,&width,&height);
-    //gui->set_size(plugin,width,height);
-
     SAT_ExeWindow* window = new SAT_ExeWindow(width,height,0,plugin,gui);
-
     xcb_window_t x11window = window->getX11Window();
-    const clap_window_t clapwindow = {
-      .api = CLAP_WINDOW_API_X11,
-      .x11 = x11window
-    };
+    const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
     gui->set_parent(plugin,&clapwindow);
     gui->show(plugin);
     gui->set_size(plugin,width,height);
-
     window->show();
     window->eventLoop();
     gui->hide(plugin);
     gui->destroy(plugin);
     window->hide();
     delete window;
-
   }
 }
 
@@ -149,29 +139,23 @@ void handle_plugin(const clap_plugin_t* plugin) {
   plugin->init(plugin);
   plugin->activate(plugin,44100,128,128);
   plugin->start_processing(plugin);
-
   clap_process_t process = {0};
-    process.audio_inputs        = nullptr;
-    process.audio_inputs_count  = 0;
-    process.audio_outputs       = nullptr;
-    process.audio_outputs_count = 0;
-    process.frames_count        = 128;
-    process.in_events           = nullptr;
-    process.out_events          = nullptr;
-    process.steady_time         = 0;
-    process.transport           = nullptr;
+  process.audio_inputs        = nullptr;
+  process.audio_inputs_count  = 0;
+  process.audio_outputs       = nullptr;
+  process.audio_outputs_count = 0;
+  process.frames_count        = 128;
+  process.in_events           = nullptr;
+  process.out_events          = nullptr;
+  process.steady_time         = 0;
+  process.transport           = nullptr;
   //plugin->process(plugin,&process); // will probably crash..
-
   open_editor(plugin);
-
   plugin->stop_processing(plugin);
   plugin->deactivate(plugin);
-
   plugin->destroy(plugin);
-
   //SAT_Plugin* splug = (SAT_Plugin*)plugin->plugin_data;
   //delete splug;
-
 }
 
 //----------------------------------------------------------------------

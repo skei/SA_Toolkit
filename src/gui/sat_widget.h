@@ -32,6 +32,7 @@ private:
 
   bool                MIsActive                           = true;
   bool                MIsVisible                          = true;
+  bool                MIsDisabled                         = false;
 
   SAT_Rect            MRect                               = {};
   SAT_Rect            MInitialRect                        = {};
@@ -66,31 +67,37 @@ public:
 public:
 //------------------------------
 
-  void        setListener(SAT_WidgetListener* AListener)      { MListener = AListener; }
-  void        setIndex(uint32_t AIndex)                       { MIndex = AIndex; }
-  void        setRect(SAT_Rect ARect)                         { MRect = ARect; }
-  void        setValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] = AValue; }
-  void        addValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] += AValue; }
-  void        setModulation(double AValue, uint32_t AIndex=0) { MModulations[AIndex] = AValue; }
-  void        setCursor(uint32_t ACursor)                     { MCursor = ACursor; }
-  void        setHint(const char* AHint)                      { strcpy(MHint,AHint); }
-  void        setAutoCursor(bool AState=true)                 { MAutoCursor = AState; }
-  void        setAutoHint(bool AState=true)                   { MAutoHint = AState; }
-  void        setActive(bool AState=true)                     { MIsActive = AState; }
-  void        setVisible(bool AState=true)                    { MIsVisible = AState; }
-  void        setLastPainted(int32_t ACount)                  { MLastPainted = ACount; }
+  virtual void        setListener(SAT_WidgetListener* AListener)      { MListener = AListener; }
+  virtual void        setIndex(uint32_t AIndex)                       { MIndex = AIndex; }
+  virtual void        setRect(SAT_Rect ARect)                         { MRect = ARect; }
+  virtual void        setValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] = AValue; }
+  virtual void        addValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] += AValue; }
+  virtual void        setModulation(double AValue, uint32_t AIndex=0) { MModulations[AIndex] = AValue; }
+  virtual void        setCursor(uint32_t ACursor)                     { MCursor = ACursor; }
+  virtual void        setHint(const char* AHint)                      { strcpy(MHint,AHint); }
+  virtual void        setAutoCursor(bool AState=true)                 { MAutoCursor = AState; }
+  virtual void        setAutoHint(bool AState=true)                   { MAutoHint = AState; }
+  virtual void        setActive(bool AState=true)                     { MIsActive = AState; }
+  virtual void        setVisible(bool AState=true)                    { MIsVisible = AState; }
+  virtual void        setDisabled(bool AState=true)                   { MIsDisabled = AState; }
+  virtual void        setLastPainted(int32_t ACount)                  { MLastPainted = ACount; }
+
+  virtual void setInitialRect(SAT_Rect ARect) { MInitialRect = ARect; }
 
 public:
 
-  uint32_t    getIndex()                                      { return MIndex; }
-  SAT_Rect    getRect()                                       { return MRect; }
-  double      getValue(uint32_t AIndex=0)                     { return MValues[AIndex]; }
-  double      getModulation(uint32_t AIndex=0)                { return MModulations[AIndex]; }
-  void*       getConnection(uint32_t AIndex=0)                { return MConnections[AIndex]; }
-  bool        isActive()                                      { return MIsActive; }
-  bool        isVisible()                                     { return MIsVisible; }
-  double      getWindowScale()                                { return MWindowScale; }
-  int32_t     getLastPainted()                                { return MLastPainted; }
+  virtual uint32_t    getIndex()                                      { return MIndex; }
+  virtual SAT_Rect    getRect()                                       { return MRect; }
+  virtual double      getWidth()                                      { return MRect.w; }
+  virtual double      getHeight()                                     { return MRect.h; }
+  virtual double      getValue(uint32_t AIndex=0)                     { return MValues[AIndex]; }
+  virtual double      getModulation(uint32_t AIndex=0)                { return MModulations[AIndex]; }
+  virtual void*       getConnection(uint32_t AIndex=0)                { return MConnections[AIndex]; }
+  virtual bool        isActive()                                      { return MIsActive; }
+  virtual bool        isVisible()                                     { return MIsVisible; }
+  virtual bool        isDisabled()                                    { return MIsDisabled; }
+  virtual double      getWindowScale()                                { return MWindowScale; }
+  virtual int32_t     getLastPainted()                                { return MLastPainted; }
 
 //------------------------------
 public:
@@ -125,6 +132,13 @@ public:
   virtual void redraw() {
     //SAT_PRINT;
     if (MListener) MListener->do_widget_redraw(this,0,0);
+  }
+
+  //----------
+
+  virtual void redrawAll() {
+    //SAT_PRINT;
+    if (MListener) MListener->do_widget_redraw(nullptr,0,0);
   }
 
   //----------
@@ -288,7 +302,7 @@ public: // widget listener
 public: // children
 //------------------------------
 
-  SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
+  virtual SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     uint32_t index = MChildren.size();
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);
@@ -300,7 +314,7 @@ public: // children
 
   //----------
 
-  void deleteChildWidgets() {
+  virtual void deleteChildWidgets() {
     for (uint32_t i=0; i<MChildren.size(); i++) {
       if (MChildren[i]) delete MChildren[i];
       MChildren[i] = nullptr;
@@ -314,7 +328,7 @@ public: // children
     or self if no sub-widget at that point
   */
 
-  SAT_Widget* findChildWidget(double AXpos, double AYpos, bool ARecursive=true) {
+  virtual SAT_Widget* findChildWidget(double AXpos, double AYpos, bool ARecursive=true) {
     uint32_t num = MChildren.size();
     if (num > 0) {
       for (int32_t i=num-1; i>=0; i--) {

@@ -14,6 +14,18 @@
 
 //----------------------------------------------------------------------
 
+#ifdef __gnu_linux__
+  #define SAT_LINUX
+#endif
+
+//----------
+
+#if defined _WIN32 || defined __CYGWIN__
+  #define  SAT_WIN32
+#endif
+
+//----------------------------------------------------------------------
+
 #include "base/sat_config.h"
 #include "base/sat_attributes.h"
 #include "base/sat_const.h"

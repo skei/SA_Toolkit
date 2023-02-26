@@ -483,7 +483,7 @@ public: // draw
     ////a2 += a1;
     //a2 = a1 - a2;
     // 0 = clockwise, 1 = counter-clockwise
-    nvgArc(MContext,cx,cy,r,a1,a2,0);
+    nvgArc(MContext,cx,cy,r,a1,a2,2);
     nvgStroke(MContext);
   }
 

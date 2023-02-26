@@ -38,6 +38,9 @@ private:
   double    MSnapSpeed        = 1.5;
   bool      MQuantize         = false;
 
+  bool      MBipolar          = false;
+  double    MBipolarCenter    = 0.5;
+
 //------------------------------
 public:
 //------------------------------
@@ -56,16 +59,23 @@ public:
 public:
 //------------------------------
 
-  void setDragDirection(uint32_t ADir)    { MDragDirection = ADir; }
-  void setDragSensitivity(double ASens)   { MDragSensitivity = ASens; }
-  void setShiftSensitivity(double ASens)  { MShiftSensitivity = ASens; }
-  void setAutoHideCursor(bool AAuto)      { MAutoHideCursor = AAuto; }
-  void setAutoLockCursor(bool AAuto)      { MAutoLockCursor = AAuto; }
-  void setSnap(bool ASnap)                { MSnap = ASnap; }
-  void setSnapPos(double APos)            { MSnapPos = APos; }
-  void setSnapDist(double ADist)          { MSnapDist = ADist; }
-  void setSnapSpeed(double ASpeed)        { MSnapSpeed = ASpeed; }
-  void setQuantize(bool AQuant)           { MQuantize = AQuant; }
+  virtual void setDragDirection(uint32_t ADir)    { MDragDirection = ADir; }
+  virtual void setDragSensitivity(double ASens)   { MDragSensitivity = ASens; }
+  virtual void setShiftSensitivity(double ASens)  { MShiftSensitivity = ASens; }
+  virtual void setAutoHideCursor(bool AAuto)      { MAutoHideCursor = AAuto; }
+  virtual void setAutoLockCursor(bool AAuto)      { MAutoLockCursor = AAuto; }
+  virtual void setSnap(bool ASnap)                { MSnap = ASnap; }
+  virtual void setSnapPos(double APos)            { MSnapPos = APos; }
+  virtual void setSnapDist(double ADist)          { MSnapDist = ADist; }
+  virtual void setSnapSpeed(double ASpeed)        { MSnapSpeed = ASpeed; }
+  virtual void setQuantize(bool AQuant)           { MQuantize = AQuant; }
+
+  virtual void setBipolar(bool ABipolar)          { MBipolar = ABipolar; }
+  virtual void setBipolarCenter(double APos)      { MBipolarCenter = APos; }
+
+  virtual bool      isBipolar()           { return MBipolar; }
+  virtual double    getBipolarCenter()    { return MBipolarCenter; }
+
 
 //------------------------------
 private:

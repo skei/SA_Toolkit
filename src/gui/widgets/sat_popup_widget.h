@@ -25,6 +25,8 @@ public:
 
   SAT_PopupWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
+    setActive(false);
+    setVisible(false);
   }
 
   //----------
@@ -37,11 +39,20 @@ public:
 //------------------------------
 
   virtual bool open(SAT_Rect ARect) {
+    SAT_PRINT;
     do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
     setPos(ARect.x,ARect.y);
     setSize(ARect.w,ARect.h);
+
+    double S = getWindowScale();
+    ARect.scale( 1.0 / S );
+    setInitialRect(ARect);
+
     setActive(true);
     setVisible(true);
+
+    setValue(1);
+
     redraw();
     return true;
   }
@@ -52,7 +63,11 @@ public:
     do_widget_set_state(this,SAT_WIDGET_STATE_NORMAL);
     setActive(false);
     setVisible(false);
-    redraw();
+
+    setValue(0);
+    update();
+
+    redrawAll();
   }
 
 //------------------------------

@@ -139,7 +139,7 @@ private:
     SAT_VoiceEvent event;
     while (events.read(&event)) handleEvent(event);
 
-    uint32_t length = context->process_context->block_length;
+    uint32_t length = context->process_context->voice_length;
 
     state = voice.process(state,0,length);
   }
@@ -149,7 +149,7 @@ private:
   void handleInterleavedEvents() {
     uint32_t current_time = 0;
 
-    uint32_t remaining = context->process_context->block_length;
+    uint32_t remaining = context->process_context->voice_length;
 
     SAT_VoiceEvent event = {};
     while (remaining > 0) {
@@ -178,7 +178,7 @@ private:
 
   void handleQuantizedEvents() {
 
-    uint32_t buffer_length = context->process_context->block_length;
+    uint32_t buffer_length = context->process_context->voice_length;
 
     uint32_t        current_time  = 0;
     uint32_t        remaining     = buffer_length;

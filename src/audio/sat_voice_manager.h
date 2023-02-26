@@ -434,8 +434,8 @@ public:
   void processAudio(SAT_ProcessContext* AProcessContext) {
 
     MVoiceContext.process_context = AProcessContext;
-    uint32_t blocksize = AProcessContext->block_length;
-    float** output = AProcessContext->block_buffer;
+    uint32_t blocksize = AProcessContext->voice_length;
+    float** output = AProcessContext->voice_buffer;
 
     SAT_ClearStereoBuffer(output,blocksize);
 

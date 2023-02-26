@@ -32,9 +32,6 @@ private:
   double    MSliderEdgeWidth    = 5;
   SAT_Color MSliderEdgeColor    = SAT_White;
 
-  bool      MBipolar            = true;
-  double    MBipolarCenter      = 0.5;
-
 //------------------------------
 public:
 //------------------------------
@@ -50,18 +47,19 @@ public:
 public:
 //------------------------------
 
-  void setDrawSliderBar(bool ADraw)          { MDrawSliderBar = ADraw; }
-  void setSliderBarColor(SAT_Color AColor)   { MSliderBarColor = AColor; }
-  void setSliderBarDirection(uint32_t  ADir) { MSliderBarDirection = ADir; }
-  void setSliderBarOffset(SAT_Rect AOffset)  { MSliderBarOffset = AOffset; }
-  void setDrawSliderEdge(bool ADraw)         { MDrawSliderEdge = ADraw; }
-  void setSliderEdgeWidth(double AWidth)     { MSliderEdgeWidth = AWidth; }
-  void setSliderEdgeColor(SAT_Color AColor)  { MSliderEdgeColor = AColor; }
-  void setBipolar(bool ABipolar)             { MBipolar = ABipolar; }
-  void setBipolarCenter(double APos)         { MBipolarCenter = APos; }
+  virtual void setDrawSliderBar(bool ADraw)          { MDrawSliderBar = ADraw; }
+  virtual void setSliderBarColor(SAT_Color AColor)   { MSliderBarColor = AColor; }
+  virtual void setSliderBarDirection(uint32_t  ADir) { MSliderBarDirection = ADir; }
+  virtual void setSliderBarOffset(SAT_Rect AOffset)  { MSliderBarOffset = AOffset; }
+  virtual void setDrawSliderEdge(bool ADraw)         { MDrawSliderEdge = ADraw; }
+  virtual void setSliderEdgeWidth(double AWidth)     { MSliderEdgeWidth = AWidth; }
+  virtual void setSliderEdgeColor(SAT_Color AColor)  { MSliderEdgeColor = AColor; }
 
-  void setDrawModulation(bool ADraw)         { MDrawModulation = ADraw; }
-  void setModulationColor(SAT_Color AColor)  { MModulationColor = AColor; }
+  virtual void setDrawModulation(bool ADraw)         { MDrawModulation = ADraw; }
+  virtual void setModulationColor(SAT_Color AColor)  { MModulationColor = AColor; }
+
+  //
+
 
 //------------------------------
 public:
@@ -93,14 +91,15 @@ public:
       painter->setFillColor(MSliderBarColor);
       double value = getValue();
 
-      if (MBipolar) {
+      if (isBipolar()) {
         double v1,v2;
-        if (value < MBipolarCenter) {
+        double bpc = getBipolarCenter();
+        if (value < bpc) {
           v1 = value;
-          v2 = MBipolarCenter;
+          v2 = bpc;
         }
-        else if (value > MBipolarCenter) {
-          v1 = MBipolarCenter;
+        else if (value > bpc) {
+          v1 = bpc;
           v2 = value;
         }
         double x1 = mrect.x + (v1 * mrect.w);

@@ -201,6 +201,7 @@ public:
   //----------
 
   virtual ~SAT_X11Window() {
+    SAT_PRINT;
     if (MIsMapped) hide();
     if (MTimer) {
       if (MTimer->isRunning()) {
@@ -309,6 +310,7 @@ public:
   //----------
 
   virtual void hide() {
+    SAT_PRINT;
     //SAT_Print("stopping timer\n");
     MTimer->stop();
     stopEventThread();
@@ -401,28 +403,40 @@ public:
   //----------
 
   uint32_t eventLoop() {
-    xcb_generic_event_t* event = getEvent(true);
-    while (event) {
 
-      uint32_t e = event->response_type & ~0x80;
-      if (e == XCB_CLIENT_MESSAGE) {
-        xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
-        xcb_atom_t  type = client_message->type;
-        uint32_t data = client_message->data.data32[0];
-        if (type == MWMProtocolsAtom) {
-          if (data == MWMDeleteWindowAtom) {
-            //free(event); // not malloc'ed
-            //MQuitEventLoop = true;
-            break;
-          }
-        }
+    xcb_generic_event_t* event = getEvent(true);
+
+    while (event) {
+    //do {
+
+      bool result = processEvent(event);
+      if (result == false) {
+        SAT_Print("processEvent returned false, returning..\n");
+        //free(event); // not malloc'ed
+        //break;
+        return 1;
       }
 
-      bool quit = !processEvent(event);
-      //free(event); // not malloc'ed
-      if (quit) break;
+      //uint32_t e = event->response_type & ~0x80;
+      //if (e == XCB_CLIENT_MESSAGE) {
+      //  xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
+      //  xcb_atom_t type = client_message->type;
+      //  uint32_t data = client_message->data.data32[0];
+      //  //if (type == MWMProtocolsAtom) {
+      //    if (data == MWMDeleteWindowAtom) {
+      //      //free(event); // not malloc'ed
+      //      //MQuitEventLoop = true;
+      //      break;
+      //      return 2;
+      //    }
+      //  //}
+      //}
+
       event = getEvent(true);
-    }
+
+    //}
+    } while (event);
+
     return 0;
   }
 
@@ -441,6 +455,7 @@ private:
     void* ret;
     MIsEventThreadActive = false;
     sendClientMessage(SAT_WINDOW_THREAD_KILL,0);
+    //xcb_flush(MConnection);
     pthread_join(MEventThread,&ret);
   }
 
@@ -780,7 +795,6 @@ private:
   // -> we are done (quit)
   // frees AEvent
 
-
   bool processEvent(xcb_generic_event_t* AEvent) {
     switch (AEvent->response_type & ~0x80) {
 
@@ -947,37 +961,48 @@ private:
         xcb_atom_t type = client_message->type;
         uint32_t data = client_message->data.data32[0];
         on_window_client_message(data);
-        switch(data) {
-          case SAT_WINDOW_THREAD_KILL:
-            free(AEvent); // not malloc'ed
-            return false; // we re finished
-          default:
-            break;
-          /*
-          case SAT_THREAD_ID_TIMER:
-            on_window_timer();
-            break;
-          case SAT_THREAD_ID_IDLE:
-            if (MMapped && MExposed) {
-              on_window_idle();
-            }
-            break;
-          default:
-            on_window_clientMessage(data,nullptr);
-            break;
-          */
+
+        //switch(data) {
+        //  case SAT_WINDOW_THREAD_KILL:
+        //    SAT_Print("SAT_WINDOW_THREAD_KILL\n");
+        //    free(AEvent); // not malloc'ed
+        //    return false; // we re finished, die!
+        //  //default:
+        //  //  break;
+        //  /*
+        //  case SAT_THREAD_ID_TIMER:
+        //    on_window_timer();
+        //    break;
+        //  case SAT_THREAD_ID_IDLE:
+        //    if (MMapped && MExposed) {
+        //      on_window_idle();
+        //    }
+        //    break;
+        //  default:
+        //    on_window_clientMessage(data,nullptr);
+        //    break;
+        //  */
+        //}
+
+        if (data == SAT_WINDOW_THREAD_KILL) {
+          SAT_Print("SAT_WINDOW_THREAD_KILL\n");
+          free(AEvent); // not malloc'ed
+          return false; // we re finished
         }
-        if (type == MWMProtocolsAtom) {
+
+        //if (type == MWMProtocolsAtom) {
           if (data == MWMDeleteWindowAtom) {
+            SAT_Print("MWMDeleteWindowAtom\n");
             free(AEvent); // not malloc'ed
             return false; // we re finished
           }
-        }
+        //}
 
         break;
       } // switch
 
     }
+
     free(AEvent);
     return true; // we are still alive
   }
@@ -996,28 +1021,30 @@ private:
       while (window->MIsEventThreadActive) {
         xcb_generic_event_t* event = xcb_wait_for_event(connection);
         if (event) {
-          if ((event->response_type & ~0x80) == XCB_CLIENT_MESSAGE) {
-            xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
-            xcb_atom_t type = client_message->type;
-            uint32_t data = client_message->data.data32[0];
-            if (data == SAT_WINDOW_THREAD_KILL) {
-              //SAT_Print("KILL\n");
-              return nullptr;
-            }
-          }
+
+          //if ((event->response_type & ~0x80) == XCB_CLIENT_MESSAGE) {
+          //  xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
+          //  xcb_atom_t type = client_message->type;
+          //  uint32_t data = client_message->data.data32[0];
+          //  if (data == SAT_WINDOW_THREAD_KILL) {
+          //    SAT_Print("KILL\n");
+          //    return nullptr;
+          //  }
+          //}
 
           // double-check (in case we have closed the window before processing
           // all events in queue
           //SAT_PRINT;
 
           if (window->MIsEventThreadActive) {
-
             if (!window->processEvent(event)) {
+              SAT_Print("window->processEvent returned false\n");
               //window->xcb_event_thread_stop_callback(window);
               //LOG.print("XCB Returning from event thread\n");
               return nullptr;
             }
           } // active
+
         } // event
       } // while
       //window->xcb_event_thread_stop_callback(window);

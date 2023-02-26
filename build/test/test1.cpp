@@ -12,14 +12,20 @@
 
 //----------------------------------------------------------------------
 //
-// descriptor
+//
 //
 //----------------------------------------------------------------------
 
-#define EDITOR_WIDTH  (50 + 200                   + 50)
-#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20)) + 50)
+#define EDITOR_WIDTH  (50 + 200                   + 10 + 200  + 50)
+#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20))             + 50)
 
-//----------
+const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
+
+//----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
@@ -246,9 +252,17 @@ public:
   bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     //SAT_PRINT;
 
+    // root
+
     MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,EDITOR_WIDTH,EDITOR_HEIGHT) );
     AWindow->setRootWidget(MRootPanel);
     MRootPanel->setFillBackground(true);
+
+    // menu
+
+    SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(0,0,100,200));
+
+    // widgets
 
     SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
     MRootPanel->appendChildWidget(logo);
@@ -266,7 +280,7 @@ public:
     MRootPanel->appendChildWidget(dragvalue);
     dragvalue->setTextSize(12);
     dragvalue->setSnap(true);
-    dragvalue->setSnapPos(0.75);
+    dragvalue->setSnapPos(0.5);
     dragvalue->setAutoHideCursor(false);
     dragvalue->setAutoLockCursor(true);
 
@@ -274,9 +288,9 @@ public:
     MRootPanel->appendChildWidget(slider);
     slider->setTextSize(12);
     slider->setBipolar(true);
-    slider->setBipolarCenter(0.3);
+    slider->setBipolarCenter(0.5);
     slider->setSnap(true);
-    slider->setSnapPos(0.3);
+    slider->setSnapPos(0.5);
     slider->setAutoHideCursor(true);
     slider->setAutoLockCursor(true);
     //slider->setModulation(0.25);
@@ -289,6 +303,29 @@ public:
     SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(155,390,95,20));
     MRootPanel->appendChildWidget(button2);
     button2->setIsToggle(true);
+
+    // column 2
+
+    SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(260,50,200,20),menu);
+    MRootPanel->appendChildWidget(selector);
+
+    SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(260,80,200,200),16,16);
+    MRootPanel->appendChildWidget(grid);
+
+    SAT_ButtonRowWidget* buttonrow = new SAT_ButtonRowWidget(SAT_Rect(260,290,200,20),5,buttontext,SAT_BUTTON_ROW_MULTI);
+    MRootPanel->appendChildWidget(buttonrow);
+    buttonrow->setValueIsBits(true,8);
+
+    SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(260,320,50,50),"%",0.0);
+    MRootPanel->appendChildWidget(knob);
+    knob->setBipolar(true);
+    knob->setBipolarCenter(0.5);
+    knob->setSnap(true);
+    knob->setSnapPos(0.5);
+
+    //
+
+    MRootPanel->appendChildWidget(menu);
 
     AEditor->connect(value,     getParameter(0));
     AEditor->connect(dragvalue, getParameter(1));
@@ -375,8 +412,8 @@ public:
     //float** inputs = process->audio_inputs[0].data32; // instrument, n o input..
     float** outputs = process->audio_outputs[0].data32;
 
-    AContext->block_buffer = outputs;
-    AContext->block_length = length;
+    AContext->voice_buffer = outputs;
+    AContext->voice_length = length;
 
     MVoiceManager.processAudio(AContext);
 
