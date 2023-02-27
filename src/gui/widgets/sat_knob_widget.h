@@ -25,14 +25,19 @@ protected:
 
 
   bool      MDrawArc                  = true;
-  SAT_Color MArcBackColor             = SAT_DarkGrey;
-  SAT_Color MArcValueColor            = SAT_LightGrey;
+  SAT_Color MArcBackColor             = SAT_DarkGray;
+  SAT_Color MArcValueColor            = SAT_LightGray;
   SAT_Color MInteractiveArcValueColor = SAT_White;
   double    MArcThickness             = 8.0;
 
   double    MModArcOffset             = 2.0;// 13.0;
   double    MModArcThickness          = 4.0;
   //SAT_Color MModArcColor              = SAT_COLOR_LIGHT_RED;
+
+  bool      MDrawMarker               = true;
+  double    MMarkerValue              = 0.75;
+  SAT_Color MMarkerColor              = SAT_White;
+  double    MMarkerThickness          = 0.01;
 
 //------------------------------
 public:
@@ -48,13 +53,13 @@ public:
     setDrawValue(true);
     setValueAlignment(SAT_TEXT_ALIGN_CENTER);
     setValueOffset(0);
-    setValueSize(8);
+    setValueSize(12);
 
     //setDrawText(false);
     setDrawText(true);
     setTextAlignment(SAT_TEXT_ALIGN_BOTTOM);
     setTextOffset(0);
-    setTextSize(8);
+    setTextSize(10);
 
     //setDrawIndicator(true);
 
@@ -109,7 +114,7 @@ public:
 
       // draw background arc
 
-      SAT_Color color = SAT_DarkerGrey;//SAT_Black;//MArcBackColor;
+      SAT_Color color = SAT_DarkerGray;//SAT_Black;//MArcBackColor;
       //if (isDisabled()) color.blend(getDisabledColor(),getDisabledAlpha());
       painter->setDrawColor(color);
       painter->setLineWidth(thickness);
@@ -183,19 +188,24 @@ public:
 
       // draw indicator
 
-  //    if (MDrawIndicator) {
-  //      if (!isDisabled()) {
-  //        if (MIndicatorValue >= 0.0) {
-  //          double iv = MIndicatorValue + (0.02 * 0.5);
-  //          double a1 = (0.35 + (iv * 0.8)) * SAT_PI2;
-  //          double a2 =  0.02 * SAT_PI2;
-  //          painter->setLineWidth(thickness);
-  //          color = MIndicatorColor;
-  //          painter->setDrawColor(color);
-  //          painter->drawArc(cx,cy,r,a1,a2);
-  //        }
-  //      }
-  //    }
+      if (MDrawMarker) {
+        if (!isDisabled()) {
+          if (MMarkerValue >= 0.0) {
+            //double iv = MMarkerValue + (0.02 * 0.5);
+            //double a1 = (0.35 + (iv * 0.8)) * SAT_PI2;
+            //double a2 =  0.02 * SAT_PI2;
+
+            double ms = MMarkerThickness * 0.5;
+            double a1 = 0.35 + ((MMarkerValue - ms) * 0.8);
+            double a2 = a1   + ((          ms + ms) * 0.8);
+
+            painter->setLineWidth(thickness);
+            color = MMarkerColor;
+            painter->setDrawColor(color);
+            painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
+          }
+        }
+      }
 
     }
   }

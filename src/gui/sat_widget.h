@@ -258,7 +258,7 @@ public: // widget
   virtual void on_widget_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) {
   }
 
-  virtual void on_widget_mouse_release(uint32_t AKey, uint32_t AState, uint32_t ATime) {
+  virtual void on_widget_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) {
   }
 
   virtual void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) {

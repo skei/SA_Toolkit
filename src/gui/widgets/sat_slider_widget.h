@@ -29,7 +29,7 @@ private:
   SAT_Rect  MModulationOffset   = SAT_Rect(0,0,0,0);
 
   bool      MDrawSliderEdge     = true;
-  double    MSliderEdgeWidth    = 5;
+  double    MSliderEdgeWidth    = 2;
   SAT_Color MSliderEdgeColor    = SAT_White;
 
 //------------------------------

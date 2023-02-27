@@ -21,7 +21,7 @@ public:
   SAT_SelectorWidget(SAT_Rect ARect, SAT_MenuWidget* AMenu)
   : SAT_ButtonWidget(ARect) {
     MMenu = AMenu;
-    setIsToggle(true);
+    setIsToggle(false);
   }
 
   //----------
@@ -34,7 +34,7 @@ public:
   void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     double value = ASender->getValue();
     SAT_Print("value %.3f\n",value);
-    if (MMenu) {
+    if (MMenu && (value > 0.5)) {
       double S = getWindowScale();
       SAT_Rect rect = getRect();
       rect.y += (20 * S);

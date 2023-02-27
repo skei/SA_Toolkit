@@ -635,11 +635,11 @@ private:
         hover = MRootWidget->findChildWidget(AXpos,AYpos,true);
       if (hover != MHoverWidget) {
         if (MHoverWidget) {
-//          MHoverWidget->setHovering(false);
+          //MHoverWidget->setHovering(false);
           MHoverWidget->on_widget_mouse_leave(hover,AXpos,AYpos,0);
         }
         if (hover) {
-//          hover->setHovering(true);
+          //hover->setHovering(true);
           hover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
         }
       }

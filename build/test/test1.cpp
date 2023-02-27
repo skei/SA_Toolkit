@@ -260,7 +260,7 @@ public:
 
     // menu
 
-    SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(0,0,100,200));
+    SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(0,0,150,150));
 
     // widgets
 
@@ -322,6 +322,9 @@ public:
     knob->setBipolarCenter(0.5);
     knob->setSnap(true);
     knob->setSnapPos(0.5);
+
+    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,320,140,20),"MenuItem");
+    MRootPanel->appendChildWidget(menuitem);
 
     //
 
@@ -414,7 +417,6 @@ public:
 
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
-
     MVoiceManager.processAudio(AContext);
 
     sat_param_t scale = getParameterValue(2);

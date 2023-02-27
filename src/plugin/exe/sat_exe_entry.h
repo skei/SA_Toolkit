@@ -121,7 +121,9 @@ void open_editor(const clap_plugin_t* plugin) {
     gui->show(plugin);
     gui->set_size(plugin,width,height);
     window->show();
+
     window->eventLoop();
+
     gui->hide(plugin);
     gui->destroy(plugin);
     window->hide();

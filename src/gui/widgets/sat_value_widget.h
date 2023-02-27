@@ -25,7 +25,7 @@ private:
   SAT_Rect  MValueOffset    = {};
   char      MValueText[256] = {0};
 
-  SAT_Color MDisabledColor  = SAT_Grey;
+  SAT_Color MDisabledColor  = SAT_Gray;
   double    MDisabledAlpha  = 0.5;
 
   bool      MDrawModulation = true;
@@ -85,7 +85,7 @@ public:
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
 
-      sprintf(MValueText,"%.3f",getValue());
+      sprintf(MValueText,"%.2f",getValue());
       painter->setTextColor(MValueColor);
       painter->setTextSize(MValueSize*S);
       painter->drawTextBox(mrect,MValueText,MValueAlignment);

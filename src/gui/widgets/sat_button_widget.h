@@ -18,9 +18,11 @@ class SAT_ButtonWidget
 private:
 //------------------------------
 
-  bool        MIsToggle = false;
-  const char* MOnText   = "ON";
-  const char* MOffText  = "OFF";
+  bool        MIsToggle     = false;
+
+  char        MOnText[256]  = "ON";
+  char        MOffText[256] = "OFF";
+
 
 //------------------------------
 public:
@@ -45,7 +47,12 @@ public:
 public:
 //------------------------------
 
-  void setIsToggle(bool AState)    { MIsToggle = AState; }
+  virtual void setIsToggle(bool AState) { MIsToggle = AState; }
+
+  virtual void setText(const char* AOnText, const char* AOffText) {
+    strcpy(MOnText,AOnText);
+    strcpy(MOffText,AOffText);
+  }
 
 //------------------------------
 public:
@@ -82,8 +89,8 @@ public:
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_PRINT;
     fillBackground(AContext);
-    if (getValue() > 0.5) setText(MOnText);
-    else setText(MOffText);
+    if (getValue() > 0.5) SAT_TextWidget::setText(MOnText);
+    else SAT_TextWidget::setText(MOffText);
     drawText(AContext);
     //paintChildren(AContext);
     drawBorder(AContext);

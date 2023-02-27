@@ -33,7 +33,7 @@ private:
   void*             MWidget                         = nullptr;
   void*             MConnection                     = nullptr;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
-  uint32_t          MNumDigits                      = 3;
+  uint32_t          MNumDigits                      = 2;
   sat_param_t       MValue                          = 0.0;
   sat_param_t       MModulation                     = 0.0;
   int32_t           MLastPainted                    = -1;

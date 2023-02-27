@@ -19,10 +19,10 @@ private:
 //------------------------------
 
   bool      MFillBackground   = true;
-  SAT_Color MBackgroundColor  = SAT_DarkGrey;
+  SAT_Color MBackgroundColor  = SAT_DarkGray;
 
   bool      MDrawBorder       = true;
-  SAT_Color MBorderColor      = SAT_LightGrey;
+  SAT_Color MBorderColor      = SAT_LightGray;
   double    MBorderWidth      = 1.0;
 
 //------------------------------
