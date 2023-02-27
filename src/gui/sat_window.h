@@ -365,10 +365,12 @@ public: // window
 //    SAT_Print("%i,%i scale %.3f\n",AWidth,AHeight,MScale);
 
     if (MRootWidget) {
+      //MRootWidget->realignChildWidgets();
       if (MAutoScaleWidgets) {
-        MRootWidget->scale(MScale);
+        MRootWidget->scaleWidget(MScale);
       }
       MRootWidget->setSize(AWidth,AHeight);
+      MRootWidget->realignChildWidgets();
       MPendingDirtyWidgets.write(MRootWidget);
     }
   }

@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
+#include "base/utils/sat_random.h"
 #include "gui/widgets/sat_button_widget.h"
 
 class SAT_SelectorWidget
@@ -37,7 +38,12 @@ public:
     if (MMenu && (value > 0.5)) {
       double S = getWindowScale();
       SAT_Rect rect = getRect();
-      rect.y += (20 * S);
+
+      rect.x = SAT_RandomRange(0,200);
+      rect.y = SAT_RandomRange(0,200);
+
+      //rect.y += (20 * S);
+
       rect.w = MMenu->getWidth();
       rect.h = MMenu->getHeight();
       SAT_Print("x %.2f y %.2f w %.2f h %.2f\n",rect.x,rect.y,rect.w,rect.h);

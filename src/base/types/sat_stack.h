@@ -41,16 +41,72 @@ public:
 
   //----------
 
+  int getSize() {
+    return SIZE;
+  }
+
+  //----------
+
+  int getNumItems() {
+    return MStackTop;
+  }
+
+  //----------
+
+  bool isEmpty() {
+    return (MStackTop > 0);
+  }
+
+  //----------
+
+  T* getTop(void) {
+    return &MStack[MStackTop-1];
+  }
+
+  //----------
+
+  // c  ->  a b -  ->  c a b -
+
   void push(T AItem) {
     if (MStackTop < SIZE) MStack[MStackTop++] = AItem;
   }
 
   //----------
 
+  // a b -  ->  b - -  -> [a]
+
   T pop() {
     if (MStackTop > 0) return MStack[--MStackTop];
     else return MNullItem;
   }
+
+  //----------
+
+  // a b -  ->  a a b -
+
+  void dup(void) {
+    MStack[MStackTop] = MStack[MStackTop-1];
+    MStackTop++;
+  }
+
+  //----------
+
+  // a b -  ->  b a b -
+
+  void dup2(void) {
+    MStack[MStackTop] = MStack[MStackTop-2];
+    MStackTop++;
+  }
+
+  //----------
+
+  // a b -  ->  b - -  ->
+
+  void drop(void) {
+    MStackTop--;
+  }
+
+  //----------
 
 };
 

@@ -5,9 +5,7 @@
 #include "audio/sat_audio_utils.h"
 #include "audio/sat_modulation_matrix.h"
 #include "audio/sat_voice_manager.h"
-
 #include "gui/sat_widgets.h"
-
 #include "plugin/sat_plugin.h"
 
 //----------------------------------------------------------------------
@@ -260,7 +258,20 @@ public:
 
     // menu
 
-    SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(0,0,150,150));
+    SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(260,70,150,150));
+
+      SAT_MenuItemWidget* i1 = new SAT_MenuItemWidget(SAT_Rect(5,5,140,15),"Item 1");
+      menu->appendChildWidget(i1);
+      i1->setDrawBorder(false);
+
+      SAT_MenuItemWidget* i2 = new SAT_MenuItemWidget(SAT_Rect(5,20,140,15),"Item 2");
+      menu->appendChildWidget(i2);
+      i2->setDrawBorder(false);
+
+      SAT_MenuItemWidget* i3 = new SAT_MenuItemWidget(SAT_Rect(5,35,140,15),"Item 3");
+      menu->appendChildWidget(i3);
+      i3->setDrawBorder(false);
+
 
     // widgets
 

@@ -40,19 +40,27 @@ public:
 
   virtual bool open(SAT_Rect ARect) {
     SAT_PRINT;
-    do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
-    setPos(ARect.x,ARect.y);
-    setSize(ARect.w,ARect.h);
 
+    //SAT_Rect mrect = getRect();
+    //double x = mrect.x;
+    //double y = mrect.y;
     double S = getWindowScale();
-    ARect.scale( 1.0 / S );
-    setInitialRect(ARect);
+    //SAT_Print("x %.2f y %.2f s %.2f\n",x,y,s);
 
+    setPos(ARect.x,ARect.y);
+
+    SAT_Rect basisrect = getBasisRect();
+    basisrect.x = ARect.x / S;
+    basisrect.y = ARect.y / S;
+    setBasisRect(basisrect);
+
+    realignChildWidgets();
+    //setInitialRect();
+
+    do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
     setActive(true);
     setVisible(true);
-
     setValue(1);
-
     redraw();
     return true;
   }
@@ -63,10 +71,8 @@ public:
     do_widget_set_state(this,SAT_WIDGET_STATE_NORMAL);
     setActive(false);
     setVisible(false);
-
     setValue(0);
     update();
-
     redrawAll();
   }
 
