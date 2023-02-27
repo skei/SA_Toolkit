@@ -1,5 +1,5 @@
-#ifndef sat_enums_included
-#define sat_enums_included
+#ifndef sat_win32_painter_included
+#define sat_win32_painter_included
 //----------------------------------------------------------------------
 
 

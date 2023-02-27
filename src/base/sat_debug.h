@@ -143,9 +143,6 @@ public:
 
     #ifdef SAT_DEBUG_MEMTRACE
       dump_memtrace();
-    #endif
-
-    #ifdef SAT_DEBUG_MEMTRACE
       cleanup_memtrace();
     #endif
     #ifdef SAT_DEBUG_PRINT_SOCKET

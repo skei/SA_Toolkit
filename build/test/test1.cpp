@@ -103,7 +103,7 @@ public:
   //----------
 
   uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
-    return process(AState,AOffset,SAT_PLUGIN_QUANTIZED_SIZE);
+    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
   }
 
   //----------

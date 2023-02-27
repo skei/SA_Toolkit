@@ -2410,13 +2410,13 @@ public: // process audio
   //----------
 
   // called from QUANTIZED, when we know the (const) slice size
-  // (SAT_PLUGIN_QUANTIZED_SIZE), and hope the optimizer will run
+  // (SAT_AUDIO_QUANTIZED_SIZE), and hope the optimizer will run
   // amok with loop unrolling, inlining, const propagation, etc, etc..
   //
   // but currently, we just cheat.. :-/
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset) {
-    processAudio(AContext,offset,SAT_PLUGIN_QUANTIZED_SIZE);
+    processAudio(AContext,offset,SAT_AUDIO_QUANTIZED_SIZE);
   }
 
   //----------
@@ -2478,7 +2478,7 @@ public: // process audio
       next_event_time = header->time;
       do {
         // process events for next slice
-        while (next_event_time < (current_time + SAT_PLUGIN_QUANTIZED_SIZE)) {
+        while (next_event_time < (current_time + SAT_AUDIO_QUANTIZED_SIZE)) {
           handleEvent(header);
           if (current_event < num_events) {
             header = in_events->get(in_events,current_event);
@@ -2491,24 +2491,24 @@ public: // process audio
           }
         }
         // process next slice
-        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) {
+        if (remaining < SAT_AUDIO_QUANTIZED_SIZE) {
           processAudio(AContext,current_time,remaining);
           current_time += remaining;
           remaining = 0;
         }
         else {
           processAudio(AContext,current_time);
-          current_time += SAT_PLUGIN_QUANTIZED_SIZE;
-          remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
+          current_time += SAT_AUDIO_QUANTIZED_SIZE;
+          remaining -= SAT_AUDIO_QUANTIZED_SIZE;
         }
       } while (remaining > 0);
     }
     else { // no events..
       do {
-        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) processAudio(AContext,current_time,remaining);
+        if (remaining < SAT_AUDIO_QUANTIZED_SIZE) processAudio(AContext,current_time,remaining);
         else processAudio(AContext,current_time);
-        current_time += SAT_PLUGIN_QUANTIZED_SIZE;
-        remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
+        current_time += SAT_AUDIO_QUANTIZED_SIZE;
+        remaining -= SAT_AUDIO_QUANTIZED_SIZE;
       } while (remaining > 0);
     }
   }

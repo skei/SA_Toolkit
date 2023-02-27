@@ -35,7 +35,7 @@
 //#define SAT_DEBUG_MEMTRACE
 
 // prints through socket.
-// output to consile: nc -U -l -k /tmp/sat.socket
+// output to console: nc -U -l -k /tmp/sat.socket
 
 //#define SAT_DEBUG_PRINT_SOCKET
 
@@ -43,7 +43,7 @@
 
 //#define SAT_DEBUG_PRINT_THREAD
 
-// print time (in seconds, with microsecond granularity)
+// print time
 
 //#define SAT_DEBUG_PRINT_TIME
 

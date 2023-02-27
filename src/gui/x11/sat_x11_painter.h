@@ -1,5 +1,5 @@
-#ifndef sat_x11_surface_included
-#define sat_x11_surface_included
+#ifndef sat_x11_painter_included
+#define sat_x11_painter_included
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
@@ -12,18 +12,18 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_X11Surface {
+class SAT_X11Painter {
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_X11Surface() {
+  SAT_X11Painter() {
   }
 
   //----------
 
-  virtual ~SAT_X11Surface() {
+  virtual ~SAT_X11Painter() {
   }
 
 //------------------------------

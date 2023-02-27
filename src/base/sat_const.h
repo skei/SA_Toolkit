@@ -10,9 +10,9 @@
 // 5f = _
 
 #define SAT_MAGIC                               'SAT_'    // 0x5341545f  // 'SAT_'
+#define SAT_MAGIC_USER                          'sat_'    // 0x7361745f  // 'sat_'
 #define SAT_MAGIC_PLUGIN                        'SATP'    // 0x53415450  // 'SATP'
 #define SAT_MAGIC_EDITOR                        'SATE'    // 0x53415445  // 'SATE'
-#define SAT_MAGIC_USER                          'sat_'    // 0x7361745f  // 'sat_'
 
 #define SAT_EVENT_SPACE_ID                      SAT_MAGIC // CLAP_CORE_EVENT_SPACE_ID
 
@@ -85,6 +85,8 @@
 #define SAT_AUDIO_FILE_READ                     0x10
 #define SAT_AUDIO_FILE_WRITE                    0x20
 #define SAT_AUDIO_FILE_RDWR                     0x30
+
+#define SAT_AUDIO_QUANTIZED_SIZE                32
 
 #define SAT_BUTTON_NONE                         0
 #define SAT_BUTTON_LEFT                         1
@@ -172,7 +174,6 @@
 #define SAT_MODMATRIX_MODE_OFF                  0
 #define SAT_MODMATRIX_MODE_GLOBAL               1
 #define SAT_MODMATRIX_MODE_VOICE                2
-
 #define SAT_MODMATRIX_MODE_SAMPLE               3
 #define SAT_MODMATRIX_MODE_EVENT                4
 #define SAT_MODMATRIX_MODE_BLOCK                5
@@ -193,13 +194,10 @@
 #define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
 
 #define SAT_PLUGIN_MAX_BLOCK_SIZE               4096
-#define SAT_PLUGIN_MAX_PARAMETERS               1024
-#define SAT_PLUGIN_MAX_EVENTS_PER_BLOCK         1024
 #define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK     32
 #define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK      1024
 #define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK   1024
-
-#define SAT_PLUGIN_QUANTIZED_SIZE               32
+#define SAT_PLUGIN_MAX_PARAMETERS               1024
 
 #define SAT_STATE_NONE                          0x00
 #define SAT_STATE_SHIFT                         0x01
@@ -222,23 +220,26 @@
 #define SAT_VOICE_FINISHED                      4
 
 #define SAT_VOICE_MAX_EVENTS_PER_BLOCK          4096
+
 #define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK  4096
 #define SAT_VOICE_MANAGER_STEAL_VOICES          true
 
-
-//#define SAT_WIDGET_TYPE_DEFAULT               0
-//#define SAT_WIDGET_TYPE_ROOT                  1
-//#define SAT_WIDGET_TYPE_PANEL                 2
-
 #define SAT_WIDGET_MAX_VALUES                   16
-#define SAT_WIDGET_STATE_NORMAL                 0
-#define SAT_WIDGET_STATE_MODAL                  1
-#define SAT_WIDGET_UPDATE_VALUE                 0
+
 #define SAT_WIDGET_REDRAW_FULL                  0
 #define SAT_WIDGET_REDRAW_VALUE                 1
 #define SAT_WIDGET_REDRAW_MOD                   2
 #define SAT_WIDGET_REDRAW_HOVER                 3
 #define SAT_WIDGET_REDRAW_INTERACT              4
+
+#define SAT_WIDGET_STATE_NORMAL                 0
+#define SAT_WIDGET_STATE_MODAL                  1
+
+//#define SAT_WIDGET_TYPE_DEFAULT               0
+//#define SAT_WIDGET_TYPE_ROOT                  1
+//#define SAT_WIDGET_TYPE_PANEL                 2
+
+#define SAT_WIDGET_UPDATE_VALUE                 0
 
 #define SAT_WINDOW_MAX_DIRTY_WIDGETS            1024
 #define SAT_WINDOW_THREAD_KILL                  666

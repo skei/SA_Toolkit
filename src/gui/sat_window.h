@@ -384,6 +384,8 @@ public: // window
     MPaintContext.update_rect.h = AHeight;
     MPaintContext.window_width  = MWindowWidth;
     MPaintContext.window_height = MWindowHeight;
+    MPaintContext.window_scale  = MScale;
+
     MOpenGL->makeCurrent();
 
     bool resized = checkBufferSize();

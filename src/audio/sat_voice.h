@@ -188,31 +188,31 @@ private:
       next_event = event.time;
       do {
         // process events for next slice
-        while (next_event < (current_time + SAT_PLUGIN_QUANTIZED_SIZE)) {
+        while (next_event < (current_time + SAT_AUDIO_QUANTIZED_SIZE)) {
           handleEvent(event);
           if (events.read(&event)) next_event = event.time;
           else next_event = buffer_length; // ???
         }
         // process next slice
-        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) {
+        if (remaining < SAT_AUDIO_QUANTIZED_SIZE) {
           state = voice.process(state,current_time,remaining);
           current_time += remaining;
           remaining = 0;
         }
         else {
           state = voice.processSlice(state,current_time);
-          current_time += SAT_PLUGIN_QUANTIZED_SIZE;
-          remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
+          current_time += SAT_AUDIO_QUANTIZED_SIZE;
+          remaining -= SAT_AUDIO_QUANTIZED_SIZE;
         }
       } while (remaining > 0);
     }
     else {
       // no events..
       do {
-        if (remaining < SAT_PLUGIN_QUANTIZED_SIZE) state = voice.process(state,current_time,remaining);
+        if (remaining < SAT_AUDIO_QUANTIZED_SIZE) state = voice.process(state,current_time,remaining);
         else state = voice.processSlice(state,current_time);
-        current_time += SAT_PLUGIN_QUANTIZED_SIZE;
-        remaining -= SAT_PLUGIN_QUANTIZED_SIZE;
+        current_time += SAT_AUDIO_QUANTIZED_SIZE;
+        remaining -= SAT_AUDIO_QUANTIZED_SIZE;
       } while (remaining > 0);
     }
     //SAT_Assert( events.read(&event) == false );
