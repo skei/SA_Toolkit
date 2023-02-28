@@ -80,6 +80,16 @@ public:
 public:
 //------------------------------
 
+  void on_widget_notify(uint32_t AReason=0, int32_t AValue=0) override {
+    SAT_PRINT;
+    close();
+    SAT_PanelWidget::on_widget_notify(AReason,AValue);
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   // close if:
   // - left click outside
   // - right click

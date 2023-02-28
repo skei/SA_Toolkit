@@ -420,7 +420,16 @@ public: // window
   //----------
 
   void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    if (!MCapturedWidget) {
+
+    if (MHoverWidget == nullptr) {
+      SAT_Print("hover = null\n");
+      if (MModalWidget) {
+        SAT_Print("modal != null\n");
+        MModalWidget->on_widget_notify(0,0);
+      }
+    }
+
+    else if (!MCapturedWidget) {
       MMouseClickedX = AXpos;
       MMouseClickedY = AYpos;
       MMouseClickedB = AButton;
@@ -632,23 +641,27 @@ private:
 //------------------------------
 
   void updateHoverWidget(int32_t AXpos, int32_t AYpos, SAT_Widget* ARoot=nullptr) {
-    if (MRootWidget) {
-      SAT_Widget* hover = nullptr;
-      if (ARoot) hover = ARoot->findChildWidget(AXpos,AYpos,true);
-      else
-        hover = MRootWidget->findChildWidget(AXpos,AYpos,true);
-      if (hover != MHoverWidget) {
-        if (MHoverWidget) {
-          //MHoverWidget->setHovering(false);
-          MHoverWidget->on_widget_mouse_leave(hover,AXpos,AYpos,0);
-        }
-        if (hover) {
-          //hover->setHovering(true);
-          hover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
-        }
-      }
-      MHoverWidget = hover;
+    SAT_Widget* hover = nullptr;
+
+    if (ARoot) {
+      hover = ARoot->findChildWidget(AXpos,AYpos,true);
     }
+    else {
+      if (MRootWidget) hover = MRootWidget->findChildWidget(AXpos,AYpos,true);
+    }
+
+    if (hover != MHoverWidget) {
+      if (MHoverWidget) {
+        //MHoverWidget->setHovering(false);
+        MHoverWidget->on_widget_mouse_leave(hover,AXpos,AYpos,0);
+      }
+      if (hover) {
+        //hover->setHovering(true);
+        hover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
+      }
+    }
+
+    MHoverWidget = hover;
   }
 
   //----------

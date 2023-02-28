@@ -4,10 +4,10 @@
 
 #include "base/sat.h"
 #include "base/utils/sat_random.h"
-#include "gui/widgets/sat_button_widget.h"
+#include "gui/widgets/sat_text_widget.h"
 
 class SAT_SelectorWidget
-: public SAT_ButtonWidget {
+: public SAT_TextWidget {
 
 //------------------------------
 private:
@@ -19,10 +19,9 @@ private:
 public:
 //------------------------------
 
-  SAT_SelectorWidget(SAT_Rect ARect, SAT_MenuWidget* AMenu)
-  : SAT_ButtonWidget(ARect) {
+  SAT_SelectorWidget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu)
+  : SAT_TextWidget(ARect,AText) {
     MMenu = AMenu;
-    setIsToggle(false);
   }
 
   //----------
@@ -32,29 +31,33 @@ public:
 
   //----------
 
-  void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    double value = ASender->getValue();
-    SAT_Print("value %.3f\n",value);
-    if (MMenu && (value > 0.5)) {
-      double S = getWindowScale();
-      SAT_Rect rect = getRect();
+  //void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    //double value = ASender->getValue();
+    //SAT_Print("value %.3f\n",value);
+    if (AButton == SAT_BUTTON_LEFT) {
+      //if (MMenu && (value > 0.5)) {
+      if (MMenu) {
+        double S = getWindowScale();
+        SAT_Rect rect = getRect();
 
-      rect.x = SAT_RandomRange(0,200);
-      rect.y = SAT_RandomRange(0,200);
+        rect.x = AXpos;
+        rect.y = AYpos;
 
-      //rect.y += (20 * S);
+        //rect.y += (20 * S);
 
-      rect.w = MMenu->getWidth();
-      rect.h = MMenu->getHeight();
-      SAT_Print("x %.2f y %.2f w %.2f h %.2f\n",rect.x,rect.y,rect.w,rect.h);
-      if (value > 0.5) {
-        MMenu->open(rect);
+        rect.w = MMenu->getWidth();
+        rect.h = MMenu->getHeight();
+        //SAT_Print("x %.2f y %.2f w %.2f h %.2f\n",rect.x,rect.y,rect.w,rect.h);
+        //if (value > 0.5) {
+          MMenu->open(rect);
+        //}
+        //else {
+        //  MMenu->close();
+        //}
       }
-      else {
-        MMenu->close();
-      }
+      //SAT_ButtonWidget::do_widget_update(ASender,AMode,AIndex);
     }
-    SAT_ButtonWidget::do_widget_update(ASender,AMode,AIndex);
   }
 
 

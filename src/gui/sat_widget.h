@@ -234,6 +234,7 @@ public:
   */
 
   virtual SAT_Widget* findChildWidget(double AXpos, double AYpos, bool ARecursive=true) {
+    if (!MRect.contains(AXpos,AYpos)) return nullptr;
     uint32_t num = MChildren.size();
     if (num > 0) {
       for (int32_t i=num-1; i>=0; i--) {

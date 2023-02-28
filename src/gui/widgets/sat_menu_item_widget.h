@@ -55,9 +55,9 @@ public:
     SAT_TextWidget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATime);
   }
 
-  void on_widget_notify(uint32_t AReason=0, int32_t AValue=0) override {
-    SAT_TextWidget::on_widget_notify(AReason,AValue);
-  }
+  //void on_widget_notify(uint32_t AReason=0, int32_t AValue=0) override {
+  //  SAT_TextWidget::on_widget_notify(AReason,AValue);
+  //}
 
 
 

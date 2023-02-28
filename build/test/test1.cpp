@@ -317,7 +317,7 @@ public:
 
     // column 2
 
-    SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(260,50,200,20),menu);
+    SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(260,50,200,20),"Select",menu);
     MRootPanel->appendChildWidget(selector);
 
     SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(260,80,200,200),16,16);
