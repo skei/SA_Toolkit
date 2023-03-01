@@ -201,7 +201,7 @@ public:
   //----------
 
   virtual ~SAT_X11Window() {
-    SAT_PRINT;
+    //SAT_PRINT;
     if (MIsMapped) hide();
     if (MTimer) {
       if (MTimer->isRunning()) {
@@ -310,7 +310,7 @@ public:
   //----------
 
   virtual void hide() {
-    SAT_PRINT;
+    //SAT_PRINT;
     //SAT_Print("stopping timer\n");
     MTimer->stop();
     stopEventThread();
@@ -411,7 +411,7 @@ public:
 
       bool result = processEvent(event);
       if (result == false) {
-        SAT_Print("processEvent returned false, returning..\n");
+        //SAT_Print("processEvent returned false, returning..\n");
         //free(event); // not malloc'ed
         //break;
         return 1;
@@ -985,14 +985,14 @@ private:
         //}
 
         if (data == SAT_WINDOW_THREAD_KILL) {
-          SAT_Print("SAT_WINDOW_THREAD_KILL\n");
+          //SAT_Print("SAT_WINDOW_THREAD_KILL\n");
           free(AEvent); // not malloc'ed
           return false; // we re finished
         }
 
         //if (type == MWMProtocolsAtom) {
           if (data == MWMDeleteWindowAtom) {
-            SAT_Print("MWMDeleteWindowAtom\n");
+            //SAT_Print("MWMDeleteWindowAtom\n");
             free(AEvent); // not malloc'ed
             return false; // we re finished
           }
@@ -1038,7 +1038,7 @@ private:
 
           if (window->MIsEventThreadActive) {
             if (!window->processEvent(event)) {
-              SAT_Print("window->processEvent returned false\n");
+              //SAT_Print("window->processEvent returned false\n");
               //window->xcb_event_thread_stop_callback(window);
               //LOG.print("XCB Returning from event thread\n");
               return nullptr;

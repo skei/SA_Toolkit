@@ -259,6 +259,7 @@ public:
     // menu
 
     SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(260,70,150,150));
+    menu->setRightClickClose(true);
 
       SAT_MenuItemWidget* i1 = new SAT_MenuItemWidget(SAT_Rect(5,5,140,15),"Item 1");
       menu->appendChildWidget(i1);

@@ -11,6 +11,7 @@ public:
   virtual void do_widget_set_state(SAT_Widget* ASender, uint32_t AState) {}
   virtual void do_widget_set_cursor(SAT_Widget* ASender, uint32_t ACursor) {}
   virtual void do_widget_set_hint(SAT_Widget* ASender, const char* AHint) {}
+  virtual void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) {}
 };
 
 //----------------------------------------------------------------------

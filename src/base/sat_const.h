@@ -232,6 +232,10 @@
 #define SAT_WIDGET_REDRAW_HOVER                 3
 #define SAT_WIDGET_REDRAW_INTERACT              4
 
+#define SAT_WIDGET_NOTIFY_NONE                  0
+#define SAT_WIDGET_NOTIFY_CLOSE                 1
+#define SAT_WIDGET_NOTIFY_SELECT                2
+
 #define SAT_WIDGET_STATE_NORMAL                 0
 #define SAT_WIDGET_STATE_MODAL                  1
 

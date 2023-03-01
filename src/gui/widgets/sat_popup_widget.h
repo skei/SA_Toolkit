@@ -4,6 +4,7 @@
 
 #include "base/sat.h"
 #include "gui/widgets/sat_panel_widget.h"
+#include "gui/sat_window.h"
 
 //----------------------------------------------------------------------
 //
@@ -18,6 +19,7 @@ class SAT_PopupWidget
 private:
 //------------------------------
 
+  SAT_Window*     MWindow = nullptr;
 
 //------------------------------
 public:
@@ -38,29 +40,31 @@ public:
 public:
 //------------------------------
 
+  void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
+    SAT_PanelWidget::prepare(AWindow,ARecursive);
+    MWindow = (SAT_Window*)AWindow;
+  }
+
+  //----------
+
   virtual bool open(SAT_Rect ARect) {
-    SAT_PRINT;
-
-    //SAT_Rect mrect = getRect();
-    //double x = mrect.x;
-    //double y = mrect.y;
+    SAT_Rect rect = ARect;
     double S = getWindowScale();
-    //SAT_Print("x %.2f y %.2f s %.2f\n",x,y,s);
-
-    setPos(ARect.x,ARect.y);
-
+    uint32_t winw = MWindow->getWidth();
+    uint32_t winh = MWindow->getHeight();
+    if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - 5;
+    if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - 5;
+    setPos(rect.x,rect.y);
     SAT_Rect basisrect = getBasisRect();
-    basisrect.x = ARect.x / S;
-    basisrect.y = ARect.y / S;
+    basisrect.x = rect.x / S;
+    basisrect.y = rect.y / S;
     setBasisRect(basisrect);
-
     realignChildWidgets();
-    //setInitialRect();
-
     do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
     setActive(true);
     setVisible(true);
-    setValue(1);
+    //setValue(1);
+    //update();
     redraw();
     return true;
   }
@@ -71,41 +75,24 @@ public:
     do_widget_set_state(this,SAT_WIDGET_STATE_NORMAL);
     setActive(false);
     setVisible(false);
-    setValue(0);
-    update();
-    redrawAll();
+    //setValue(0);
+    //update();
+    redrawAll(); // redraw entire parent
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  void on_widget_notify(uint32_t AReason=0, int32_t AValue=0) override {
-    SAT_PRINT;
-    close();
-    SAT_PanelWidget::on_widget_notify(AReason,AValue);
+  // called from window
+  // (clicking outside of modal widget)
+
+  void on_widget_notify(uint32_t AReason=SAT_WIDGET_NOTIFY_NONE) override {
+    //SAT_PanelWidget::on_widget_notify(AReason,AValue);
+    if (AReason == SAT_WIDGET_NOTIFY_CLOSE) {
+      close();
+    }
   }
-
-//------------------------------
-public:
-//------------------------------
-
-  // close if:
-  // - left click outside
-  // - right click
-
-  //void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-  //  if (AButton == SAT_BUTTON_RIGHT) close();
-  //}
-
-  //----------
-
-  // close if:
-  // - esc pressed
-
-  //void on_widget_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) override {
-  //  if (AKey == SAT_KEY_ESC) close();
-  //}
 
 //------------------------------
 public:

@@ -77,6 +77,9 @@ private:
   double                MScale                = 1.0;
   //double MYScale        = 1.0;
 
+  uint32_t MWidth = 0;
+  uint32_t MHeight = 0;
+
   bool MAutoScaleWidgets = true;
 
 //------------------------------
@@ -85,6 +88,9 @@ public:
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, SAT_WindowListener* AListener)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+
+    MWidth = AWidth;
+    MHeight = AHeight;
 
     MListener = AListener;
     MInitialWidth = AWidth;
@@ -110,7 +116,7 @@ public:
   //----------
 
   virtual ~SAT_Window() {
-    SAT_PRINT;
+    //SAT_PRINT;
     deleteBuffer();
     delete MWindowPainter;
     delete MOpenGL;
@@ -135,6 +141,11 @@ public:
   double getScale() {
     return MScale;
   }
+
+  //----------
+
+  uint32_t getWidth()   { return MWidth; }
+  uint32_t getHeight()  { return MHeight; }
 
   //----------
 
@@ -339,7 +350,7 @@ public: // window
   */
 
   void on_window_close() override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
   }
 
   //----------
@@ -351,6 +362,9 @@ public: // window
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
+
+    MWidth = AWidth;
+    MHeight = AHeight;
 
     MScale = recalcScale(AWidth,AHeight);
 
@@ -422,10 +436,10 @@ public: // window
   void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
 
     if (MHoverWidget == nullptr) {
-      SAT_Print("hover = null\n");
+      //SAT_Print("hover = null\n");
       if (MModalWidget) {
-        SAT_Print("modal != null\n");
-        MModalWidget->on_widget_notify(0,0);
+        //SAT_Print("modal != null\n");
+        MModalWidget->on_widget_notify(SAT_WIDGET_NOTIFY_CLOSE);
       }
     }
 
@@ -437,16 +451,9 @@ public: // window
       MMouseDragY = AYpos;
 
       if (MModalWidget) {
-        if (AButton == SAT_BUTTON_LEFT) {
-          if (!MModalWidget->getRect().contains(AXpos,AYpos)) {
-            //SAT_PRINT;
-            MModalWidget->on_widget_notify(0,0);
-          }
-        } // left
-        if (AButton == SAT_BUTTON_RIGHT) {
-          //SAT_PRINT;
-          MModalWidget->on_widget_notify(0,0);
-        } // right
+        if (!MModalWidget->getRect().contains(AXpos,AYpos)) {
+          MModalWidget->on_widget_notify(SAT_WIDGET_NOTIFY_CLOSE);
+        }
       } // modal
 
       if (MHoverWidget) {

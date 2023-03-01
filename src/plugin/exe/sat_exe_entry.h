@@ -33,11 +33,11 @@ public:
 public:
 
   void on_window_open() final {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   void on_window_close() final {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) final {
@@ -50,7 +50,7 @@ public:
   //}
 
   void on_window_client_message(uint32_t AData) final {
-    SAT_Print("%i\n",AData);
+    //SAT_Print("%i\n",AData);
   }
 
 };
