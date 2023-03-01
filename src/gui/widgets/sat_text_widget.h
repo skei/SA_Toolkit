@@ -49,6 +49,8 @@ public:
   virtual void setTextOffset(SAT_Rect AOffset)    { MTextOffset = AOffset; }
   virtual void setText(const char* AText)         { strcpy(MText,AText); }
 
+  virtual const char* getText() { return MText; }
+
 //------------------------------
 public:
 //------------------------------

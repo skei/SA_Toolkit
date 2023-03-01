@@ -163,6 +163,18 @@ public:
 
   //----------
 
+  virtual void cleanup(SAT_Painter* APainter, bool ARecursive=true) {
+    uint32_t num = MChildren.size();
+    if (ARecursive) {
+      for (uint32_t i=0; i<num; i++) {
+        MChildren[i]->cleanup(APainter,ARecursive);
+      }
+    }
+  }
+
+
+  //----------
+
   virtual void connect(void* AParameter, uint32_t AIndex=0) {
     MConnections[AIndex] = AParameter;
   }

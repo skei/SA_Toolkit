@@ -31,7 +31,7 @@ class SAT_MenuWidget
 private:
 //------------------------------
 
-  SAT_MenuListener* MListener         = nullptr;
+  SAT_MenuListener* MMenuListener         = nullptr;
   bool              MRightClickClose  = true;
 
 //------------------------------
@@ -51,8 +51,8 @@ public:
 public:
 //------------------------------
 
-  virtual void setRightClickClose(bool AClose=true)     { MRightClickClose = AClose; }
-  virtual void setListener(SAT_MenuListener* AListener) { MListener = AListener; }
+  virtual void setRightClickClose(bool AClose=true)         { MRightClickClose = AClose; }
+  virtual void setMenuListener(SAT_MenuListener* AListener) { MMenuListener = AListener; }
 
 //------------------------------
 public:
@@ -71,12 +71,12 @@ public:
     //SAT_PopupWidget::do_widget_notify(ASender,AReason,AValue);
     switch (AReason) {
       case SAT_WIDGET_NOTIFY_SELECT: {
-        SAT_Print("select %i\n",AValue);
+        if (MMenuListener) MMenuListener->do_menu_select(AValue);
         close();
         break;
       }
       case SAT_WIDGET_NOTIFY_CLOSE: {
-        //SAT_Print("close\n");
+        if (MMenuListener) MMenuListener->do_menu_cancel();
         close();
         break;
       }

@@ -4,6 +4,7 @@
 
 #include "base/sat.h"
 #include "base/utils/sat_random.h"
+#include "gui/widgets/sat_menu_widget.h"
 #include "gui/widgets/sat_text_widget.h"
 
 //----------------------------------------------------------------------
@@ -13,7 +14,8 @@
 //----------------------------------------------------------------------
 
 class SAT_SelectorWidget
-: public SAT_TextWidget {
+: public SAT_TextWidget
+, public SAT_MenuListener {
 
 //------------------------------
 private:
@@ -29,6 +31,7 @@ public:
   : SAT_TextWidget(ARect,AText) {
     setCursor(SAT_CURSOR_FINGER);
     MMenu = AMenu;
+    MMenu->setMenuListener(this);
   }
 
   //----------
@@ -36,7 +39,9 @@ public:
   virtual ~SAT_SelectorWidget() {
   }
 
-  //----------
+//------------------------------
+public: // widget
+//------------------------------
 
   void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
@@ -51,6 +56,21 @@ public:
     }
   }
 
+//------------------------------
+public: // menu lisyener
+//------------------------------
+
+  void do_menu_select(int32_t AIndex) override {
+    SAT_TextWidget* widget = (SAT_TextWidget*)MMenu->getChildWidget(AIndex);
+    const char* text = widget->getText();
+    setText(text);
+    redraw();
+  }
+
+  //----------
+
+  void do_menu_cancel() override {
+  }
 
 };
 

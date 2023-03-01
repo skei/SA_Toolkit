@@ -118,6 +118,7 @@ public:
   virtual ~SAT_Window() {
     //SAT_PRINT;
     deleteBuffer();
+    if (MRootWidget) MRootWidget->cleanup(MWindowPainter);
     delete MWindowPainter;
     delete MOpenGL;
   }
