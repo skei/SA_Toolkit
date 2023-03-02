@@ -14,8 +14,8 @@
 //
 //----------------------------------------------------------------------
 
-#define EDITOR_WIDTH  (50 + 200                   + 10 + 200  + 50)
-#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20))             + 50)
+#define EDITOR_WIDTH  (50 + 200                   + 10 + 200 + 10 + 200 + 50)
+#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20))                       + 50)
 
 const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
@@ -335,10 +335,24 @@ public:
     knob->setSnap(true);
     knob->setSnapPos(0.5);
 
-    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,320,140,20),"MenuItem");
-    MRootPanel->appendChildWidget(menuitem);
+    // column 3
+
+    SAT_GraphWidget* graph = new SAT_GraphWidget(SAT_Rect(470,50,200,230));
+    MRootPanel->appendChildWidget(graph);
+    graph->setFillBackground(true);
+
+    for (uint32_t i=0; i<5; i++) {
+      SAT_GraphModule* module = new SAT_GraphModule();
+      module->numInputs = 2;
+      module->inputs[0] = SAT_PIN_SIGNAL;
+      module->numOutputs = 2;
+      graph->addModule(module,i*10,i*10,"module");
+    }
 
     //
+
+    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,320,140,20),"MenuItem");
+    MRootPanel->appendChildWidget(menuitem);
 
     MRootPanel->appendChildWidget(menu);
 
