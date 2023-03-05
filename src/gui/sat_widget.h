@@ -399,7 +399,7 @@ public: // widget listener
     if (MListener) MListener->do_widget_set_state(ASender,AState);
   }
 
-  void do_widget_set_cursor(SAT_Widget* ASender, uint32_t ACursor) override {
+  void do_widget_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
     if (MListener) MListener->do_widget_set_cursor(ASender,ACursor);
   }
 

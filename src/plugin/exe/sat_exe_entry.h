@@ -141,16 +141,16 @@ void handle_plugin(const clap_plugin_t* plugin) {
   plugin->init(plugin);
   plugin->activate(plugin,44100,128,128);
   plugin->start_processing(plugin);
-  clap_process_t process = {0};
-  process.audio_inputs        = nullptr;
-  process.audio_inputs_count  = 0;
-  process.audio_outputs       = nullptr;
-  process.audio_outputs_count = 0;
-  process.frames_count        = 128;
-  process.in_events           = nullptr;
-  process.out_events          = nullptr;
-  process.steady_time         = 0;
-  process.transport           = nullptr;
+  //clap_process_t process = {0};
+  //process.audio_inputs        = nullptr;
+  //process.audio_inputs_count  = 0;
+  //process.audio_outputs       = nullptr;
+  //process.audio_outputs_count = 0;
+  //process.frames_count        = 128;
+  //process.in_events           = nullptr;
+  //process.out_events          = nullptr;
+  //process.steady_time         = 0;
+  //process.transport           = nullptr;
   //plugin->process(plugin,&process); // will probably crash..
   open_editor(plugin);
   plugin->stop_processing(plugin);
@@ -169,11 +169,10 @@ void handle_plugin(const clap_plugin_t* plugin) {
 int main(int argc, char** argv) {
 
   uint32_t    plugin_index      = 0;
-  const char* plugin_path       = "";
-
-  double      sample_rate       = 44100;
-  uint32_t    min_frames_count  = 128;
-  uint32_t    max_frames_count  = 128;
+  //const char* plugin_path       = "";
+  //double      sample_rate       = 44100;
+  //uint32_t    min_frames_count  = 128;
+  //uint32_t    max_frames_count  = 128;
 
   //SAT_HostImplementation* hostimpl = new SAT_HostImplementation();
   SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
@@ -188,7 +187,7 @@ int main(int argc, char** argv) {
       SAT_Print("! ERROR: clap_entry is null\n");
     }
     else {
-      uint32_t count = entry->init(plugin_path);
+      //uint32_t count = entry->init(plugin_path);
       const clap_plugin_factory_t* factory = (const clap_plugin_factory_t*)entry->get_factory(CLAP_PLUGIN_FACTORY_ID);
       if (!factory) {
         SAT_Print("! ERROR: Couldn't get factory from entry\n");

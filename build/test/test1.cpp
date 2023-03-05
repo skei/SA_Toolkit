@@ -181,10 +181,11 @@ public:
     appendClapNoteInputPort();
     //appendStereoInputPort();
     appendStereoOutputPort();
-    SAT_Parameter* par1 = appendParameter( new SAT_Parameter("Param1",0.0) );
-    SAT_Parameter* par2 = appendParameter( new SAT_Parameter("Param2",0.5) );
-    SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",1.5) );
-    par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    SAT_Parameter* par;
+    par = appendParameter( new SAT_Parameter("Param1",0.0) );
+    par = appendParameter( new SAT_Parameter("Param2",0.5) );
+    par = appendParameter( new SAT_Parameter("Param3",1.5) );
+    par->setFlag(CLAP_PARAM_IS_MODULATABLE);
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT);
 
     //setProcessThreaded(false);
@@ -483,6 +484,7 @@ public:
   //SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
   void SAT_Register(SAT_Registry* ARegistry) {
+    SAT_PRINT;
     uint32_t index = ARegistry->getNumDescriptors();
     SAT_Log("SAT_Register -> id %s index %i\n",myDescriptor.id,index);
     ARegistry->registerDescriptor(&myDescriptor);

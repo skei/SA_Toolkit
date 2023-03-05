@@ -261,7 +261,7 @@ private: // buffer
   //
 
   uint32_t paintDirtyWidgets(SAT_PaintContext* AContext, SAT_Widget* ARoot=nullptr) {
-    uint32_t paint_count = MPaintContext.counter;
+     int32_t paint_count = MPaintContext.counter;
     uint32_t count = 0;
     SAT_Widget* widget = nullptr;
     if (ARoot) {
@@ -308,7 +308,7 @@ public: // widgets
   virtual void prepareWidgets() {
     if (MRootWidget) {
       MRootWidget->prepare(this,true);
-      SAT_Rect R = MRootWidget->getRect();
+      //SAT_Rect R = MRootWidget->getRect();
       MPendingDirtyWidgets.write(MRootWidget);
       invalidateWidget(MRootWidget);
     }
@@ -591,7 +591,7 @@ public: // widget listener
 
   //----------
 
-  void do_widget_set_cursor(SAT_Widget* ASender, uint32_t ACursor) override {
+  void do_widget_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
     //if (MListener) MListener->do_window_listener_set_cursor(ASender,ACursor);
     switch (ACursor) {
       case SAT_CURSOR_LOCK:

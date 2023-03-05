@@ -1,8 +1,9 @@
+#define SAT_EXE
 
 
-#include "../build/test/test1.cpp"
 
 
+#include "test/test1.cpp"
 
 
 //----------------------------------------------------------------------

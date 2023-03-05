@@ -52,8 +52,8 @@ private:
 protected:
 //------------------------------
 
-  uint32_t                    MWindowXpos           = 0;
-  uint32_t                    MWindowYpos           = 0;
+   int32_t                    MWindowXpos           = 0;
+   int32_t                    MWindowYpos           = 0;
   uint32_t                    MWindowWidth          = 0;
   uint32_t                    MWindowHeight         = 0;
 
@@ -958,7 +958,7 @@ private:
 
       case XCB_CLIENT_MESSAGE: {
         xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)AEvent;
-        xcb_atom_t type = client_message->type;
+        //xcb_atom_t type = client_message->type;
         uint32_t data = client_message->data.data32[0];
         on_window_client_message(data);
 

@@ -918,7 +918,7 @@ public: // paints
   sat_nanovg_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
-    sat_nanovg_paint_t paint;
+    //sat_nanovg_paint_t paint;
     return nvgBoxGradient(MContext,x,y,w,h,r,f,ic,oc);
   }
 

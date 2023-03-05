@@ -157,8 +157,8 @@ public: // plugin
 
   bool init() override {
     SAT_Log("SAT_Plugin.init\n");
-    uint32_t num = MParameters.size();
-    uint32_t size = num * sizeof(sat_param_t);
+    //uint32_t num = MParameters.size();
+    //uint32_t size = num * sizeof(sat_param_t);
     setDefaultParameterValues();
     MIsInitialized = true;
     return true;
@@ -785,7 +785,7 @@ public: // note ports
     const clap_note_port_info_t* port_info = nullptr;
     if (is_input) port_info = MNoteInputPorts[index]->getInfo();
     else port_info = MNoteOutputPorts[index]->getInfo();
-    memcpy(info,port_info,sizeof(info));
+    memcpy(info,port_info,sizeof(clap_note_port_info_t));
     return true;
   }
 
@@ -2175,13 +2175,13 @@ private: // handle events
   //----------
 
   void handleNoteOnEvent(const clap_event_note_t* event) {
-    bool handled = handleNoteOn(event);
+    /*bool handled =*/ handleNoteOn(event);
   }
 
   //----------
 
   void handleNoteOffEvent(const clap_event_note_t* event) {
-    bool handled = handleNoteOff(event);
+    /*bool handled =*/ handleNoteOff(event);
     //if (!handled) {
     //  SAT_Note note;
     //  note.port     = event->port_index;
@@ -2284,10 +2284,10 @@ private: // handle events
     bool handled = handleMidi(event);
     if (!handled) {
       uint8_t msg0 = event->data[0];
-      uint8_t index = event->data[1];
-      uint8_t value = event->data[2];
+      //uint8_t index = event->data[1];
+      //uint8_t value = event->data[2];
       uint32_t msg  = msg0 & 0xf0;
-      uint32_t chan = msg0 & 0x0f;
+      //uint32_t chan = msg0 & 0x0f;
       switch (msg) {
         case SAT_MIDI_NOTE_OFF: {
           //SAT_Print("MIDI NOTE OFF. chan %i key %i vel %i\n",chan,data2,data3);
