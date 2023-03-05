@@ -224,7 +224,7 @@ public: // clap
   //----------
 
   /*
-    ?? *width/*height contains 'suggested' (resized) size
+    ?? *width / *height contains 'suggested' (resized) size
     return wanted/new size
     bitwig seems to call this repeatedly until the suggested, and returned
     sizes are equal, so be careful with rounding/scaling..
