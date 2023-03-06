@@ -16,15 +16,16 @@
 
 
 //TODO
-//#define SAT_LOG_FILE_ENABLE
+
+  //#define SAT_LOG_FILE_ENABLE
 
 // append to existing log file, or create new
 
-#define SAT_LOG_FILE_APPEND
+  #define SAT_LOG_FILE_APPEND
 
-//
+// additional precision (for math approximations)
 
-//#define SAT_MATH_EXTRA_PRECISION
+  //#define SAT_MATH_EXTRA_PRECISION
 
 //--------------------
 // debug
@@ -32,20 +33,20 @@
 
 // trace memcalls (malloc/new vs free/delete)
 
-//#define SAT_DEBUG_MEMTRACE
+  //#define SAT_DEBUG_MEMTRACE
 
-// prints through socket.
+// SAT_Print outputs through socket.
 // output to console: nc -U -l -k /tmp/sat.socket
 
-//#define SAT_DEBUG_PRINT_SOCKET
+  //#define SAT_DEBUG_PRINT_SOCKET
 
-// print thread id
+// print thread id (in SAT_Print)
 
-//#define SAT_DEBUG_PRINT_THREAD
+  //#define SAT_DEBUG_PRINT_THREAD
 
-// print time
+// print time (in SAT_Print)
 
-//#define SAT_DEBUG_PRINT_TIME
+  //#define SAT_DEBUG_PRINT_TIME
 
 
 //----------------------------------------------------------------------
@@ -58,19 +59,19 @@
 // delete plugin ('delete this') in SAT_Plugin.destroy()
 // otherwise, override destroy() and do it manually
 
-#define SAT_DELETE_PLUGIN_IN_DESTROY
+  #define SAT_DELETE_PLUGIN_IN_DESTROY
 
 // parameter changes not meant for a specific voice, will be sent to ALL voices
 
-#define SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
+  #define SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
 // modulation not meant for a specific voice, will be sent to ALL voices
 
-#define SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
+  #define SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
 
 // convert regular MIDI to note events
 
-#define SAT_VOICE_MANAGER_CONVERT_MIDI
+  #define SAT_VOICE_MANAGER_CONVERT_MIDI
 
 
 //----------------------------------------------------------------------
@@ -82,11 +83,11 @@
 
 // removes all traces of gui/editor in the plugin
 
-//#define SAT_NO_GUI
+  //#define SAT_NO_GUI
 
 // waits for notify event before returning when opening windows..
 
-#define SAT_X11_WAIT_FOR_MAPNOTIFY
+  #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 
 //----------------------------------------------------------------------
@@ -118,6 +119,10 @@
 //--------------------
 // plugin
 //--------------------
+
+/*
+  if no plugin format is specificed, we use CLAP for plugins, and EXE for standalone
+*/
 
 #undef SAT_PLUGIN_DEFINED
 

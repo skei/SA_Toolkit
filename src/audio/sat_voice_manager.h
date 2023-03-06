@@ -468,12 +468,18 @@ public:
           process_voice(v);
         }
       }
+      
       // mix, (post-process)
 
       for (uint32_t i=0; i<MNumActiveVoices; i++) {
         uint32_t voice = MActiveVoices[i];
         float* buffer = MVoiceBuffer;
-        buffer += (voice * SAT_PLUGIN_MAX_BLOCK_SIZE);// * MVoiceContext->); // * block_size? process->max_frames_count?
+
+        //buffer += (voice * SAT_PLUGIN_MAX_BLOCK_SIZE);
+
+        uint32_t index = MVoices[voice].index;
+        buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
+
         SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
       }
 

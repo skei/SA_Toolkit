@@ -4,7 +4,7 @@
     <File Name="../build.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
-    <File Name="../test/test1.cpp" ExcludeProjConfig="linux_exe_debug;"/>
+    <File Name="../test/test1.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
   </VirtualDirectory>
   <VirtualDirectory Name="data">
     <VirtualDirectory Name="fonts">
@@ -93,6 +93,10 @@
         <File Name="../../src/plugin/exe/sat_exe_entry.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="vst3">
+        <File Name="../../src/plugin/vst3/sat_vst3_utils.h"/>
+        <File Name="../../src/plugin/vst3/sat_vst3.h"/>
+        <File Name="../../src/plugin/vst3/sat_vst3_plugin.h"/>
+        <File Name="../../src/plugin/vst3/sat_vst3_factory.h"/>
         <File Name="../../src/plugin/vst3/sat_vst3_entry.h"/>
       </VirtualDirectory>
     </VirtualDirectory>
@@ -221,16 +225,16 @@
         <File Name="../../src/extern/nanosvg/nanosvgrast.h"/>
         <File Name="../../src/extern/nanosvg/nanosvg.h"/>
         <VirtualDirectory Name="example">
-          <File Name="../../src/extern/nanosvg/example/example2.c" ExcludeProjConfig="linux_exe_debug;"/>
-          <File Name="../../src/extern/nanosvg/example/example1.c" ExcludeProjConfig="linux_exe_debug;"/>
+          <File Name="../../src/extern/nanosvg/example/example2.c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/nanosvg/example/example1.c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="nanovg">
         <File Name="../../src/extern/nanovg/nanovg.h"/>
         <File Name="../../src/extern/nanovg/fontstash.h"/>
         <File Name="../../src/extern/nanovg/nanovg_gl.h"/>
-        <File Name="../../src/extern/nanovg/nanovg (copy).c" ExcludeProjConfig="linux_exe_debug;Debug;"/>
-        <File Name="../../src/extern/nanovg/nanovg.c" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+        <File Name="../../src/extern/nanovg/nanovg (copy).c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+        <File Name="../../src/extern/nanovg/nanovg.c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
         <File Name="../../src/extern/nanovg/nanovg_gl_utils.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="sogl">
@@ -309,14 +313,14 @@
         <File Name="../../src/extern/rigtorp/SPSCQueue.h"/>
         <File Name="../../src/extern/rigtorp/MPMCQueue.h"/>
         <VirtualDirectory Name="mpmc">
-          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueExample.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
-          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueTest.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueExample.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueTest.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
         </VirtualDirectory>
         <VirtualDirectory Name="spsc">
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExample.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueTest.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExampleHugepages.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueBenchmark.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExample.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueTest.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExampleHugepages.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueBenchmark.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
@@ -326,7 +330,7 @@
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
-  <Settings Type="Executable">
+  <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -370,7 +374,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName) ../../bin/$(ProjectName)_debug</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>
@@ -411,7 +417,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName) ../../bin/$(ProjectName)</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>
@@ -433,15 +441,15 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="linux_plugin_debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="linux_plugin_debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;-static;-fPIC" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="SAT_PLUGIN"/>
         <Preprocessor Value="SAT_DEBUG"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -452,7 +460,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug.so</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>
@@ -474,15 +484,15 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="linux_plugin_release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+    <Configuration Name="linux_plugin_release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall;-static;-fPIC" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_PLUGIN"/>
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -493,7 +503,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName).so</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>

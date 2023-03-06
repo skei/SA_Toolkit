@@ -2,9 +2,9 @@
 ## Auto Generated makefile by CodeLite IDE
 ## any manual changes will be erased      
 ##
-## linux_exe_debug
+## linux_plugin_debug
 ProjectName            :=SA_Toolkit
-ConfigurationName      :=linux_exe_debug
+ConfigurationName      :=linux_plugin_debug
 WorkspaceConfiguration := $(ConfigurationName)
 WorkspacePath          :=/home/skei/Code/SA_Toolkit/build/codelite
 ProjectPath            :=/home/skei/Code/SA_Toolkit/build/codelite
@@ -28,8 +28,8 @@ OutputSwitch           :=-o
 LibraryPathSwitch      :=-L
 PreprocessorSwitch     :=-D
 SourceSwitch           :=-c 
-OutputFile             :=./build-$(ConfigurationName)/bin/$(ProjectName)
-Preprocessors          :=$(PreprocessorSwitch)SAT_EXE $(PreprocessorSwitch)SAT_DEBUG 
+OutputFile             :=./build-$(ConfigurationName)/lib/$(ProjectName).so
+Preprocessors          :=$(PreprocessorSwitch)SAT_PLUGIN $(PreprocessorSwitch)SAT_DEBUG 
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
 PreprocessOnlySwitch   :=-E
@@ -50,7 +50,7 @@ LibPath                := $(LibraryPathSwitch).
 AR       := /usr/bin/ar rcu
 CXX      := /usr/bin/g++
 CC       := /usr/bin/gcc
-CXXFLAGS := -std=c++14 -Wl,--as-needed -faligned-new -g -O0 -Wall $(Preprocessors)
+CXXFLAGS := -std=c++14 -Wl,--as-needed -faligned-new -g -O0 -Wall -static -fPIC $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
 AS       := /usr/bin/as
@@ -76,11 +76,17 @@ $(OutputFile): ./build-$(ConfigurationName)//.d $(Objects)
 	@mkdir -p "./build-$(ConfigurationName)/"
 	@echo "" > $(IntermediateDirectory)/.d
 	@echo $(Objects0)  > $(ObjectsFileList)
-	$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)
+	$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)
+	@echo rebuilt > $(IntermediateDirectory)/SA_Toolkit.relink
+
+PostBuild:
+	@echo Executing Post Build commands ...
+	cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug.so
+	@echo Done
 
 MakeIntermediateDirs:
 	@mkdir -p "./build-$(ConfigurationName)/"
-	@mkdir -p ""./build-$(ConfigurationName)/bin""
+	@mkdir -p ""./build-$(ConfigurationName)/lib""
 
 ./build-$(ConfigurationName)//.d:
 	@mkdir -p "./build-$(ConfigurationName)/"

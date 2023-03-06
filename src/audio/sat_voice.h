@@ -37,8 +37,8 @@ public:
 
   __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   VOICE               voice       = {};
-
   SAT_VoiceContext*   context     = nullptr;
+  uint32_t            index       = 0;
   SAT_Note            note        = {};
   uint32_t            state       = SAT_VOICE_OFF;
   uint32_t            event_mode  = SAT_PLUGIN_EVENT_MODE_BLOCK;
@@ -65,6 +65,7 @@ public:
   void init(uint32_t AIndex, SAT_VoiceContext* AContext) {
     //parameters = AParameters;
     context = AContext;
+    index = AIndex;
     voice.init(AIndex,context);
   }
 

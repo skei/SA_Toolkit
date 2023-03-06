@@ -1,9 +1,8 @@
 
 #include "base/sat.h"
-
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
-#include "audio/sat_modulation_matrix.h"
+//#include "audio/sat_modulation_matrix.h"
 #include "audio/sat_voice_manager.h"
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
@@ -14,6 +13,7 @@
 //
 //----------------------------------------------------------------------
 
+#define PLUGIN_NAME   "myPlugin"
 #define EDITOR_WIDTH  (50 + 200                   + 10 + 200 + 10 + 200 + 50)
 #define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20))                       + 50)
 
@@ -27,13 +27,13 @@ const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/myPlugin/0",
-  .name         = "myPlugin",
-  .vendor       = "me",
+  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
+  .name         = PLUGIN_NAME,
+  .vendor       = SAT_VENDOR,
   .url          = "",
   .manual_url   = "",
   .support_url  = "",
-  .version      = "0",
+  .version      = SAT_VERSION,
   .description  = "...",
   //.features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
@@ -47,7 +47,7 @@ const clap_plugin_descriptor_t myDescriptor = {
 
 #define NUM_VOICES 32
 
-class myVoice /*final*/ {
+class myVoice {
 
 //------------------------------
 private:
@@ -56,9 +56,9 @@ private:
   uint32_t          MIndex    = 0;
   SAT_VoiceContext* MContext  = nullptr;
 
-  float srate = 0.0;
-  float ph    = 0.0;
-  float phadd = 0.0;
+  float             srate     = 0.0;
+  float             ph        = 0.0;
+  float             phadd     = 0.0;
 
 //------------------------------
 public:
@@ -152,8 +152,7 @@ private:
 
   SAT_PanelWidget* MRootPanel = nullptr;
   SAT_VoiceManager<myVoice,NUM_VOICES>  MVoiceManager = {};
-
-  SAT_ModulationMatrix MModMatrix = {};
+  //SAT_ModulationMatrix MModMatrix = {};
 
 //------------------------------
 public:
@@ -484,7 +483,7 @@ public:
   //SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
   void SAT_Register(SAT_Registry* ARegistry) {
-    SAT_PRINT;
+    //SAT_PRINT;
     uint32_t index = ARegistry->getNumDescriptors();
     SAT_Log("SAT_Register -> id %s index %i\n",myDescriptor.id,index);
     ARegistry->registerDescriptor(&myDescriptor);
