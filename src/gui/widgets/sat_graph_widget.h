@@ -164,6 +164,8 @@ private:
 //  SAT_Rect      orig_rect       = SAT_Rect(0,0);
 
   double MCurrentScale = 1.0;
+  
+  double MModuleNameSize = 10.0;
 
 
 //------------------------------
@@ -478,6 +480,7 @@ public: // selection
   //----------
 
   void selectModules(double x1, double y1, double x2, double y2) {
+    double S = getWindowScale();
     x1 -= getRect().x;
     y1 -= getRect().y;
     x2 -= getRect().x;
@@ -497,9 +500,9 @@ public: // selection
     while (node) {
       SAT_GraphModule* module = (SAT_GraphModule*)node;
       if ( ( module->xpos                <= x2)
-        && ((module->xpos+MODULE_WIDTH)  >= x1)
+        && ((module->xpos+(MODULE_WIDTH*S))  >= x1)
         && ( module->ypos                <= y2)
-        && ((module->ypos+MODULE_HEIGHT) >= y1)) {
+        && ((module->ypos+(MODULE_HEIGHT*S)) >= y1)) {
         module->selected = true;
       }
       node = node->next();
@@ -641,7 +644,7 @@ public: // draw
     // name
 
     if (AModule->selected) color = MSelectedModuleNameColor; else color = MModuleNameColor;
-    MPainter->setTextSize(12.0 * S);
+    MPainter->setTextSize(MModuleNameSize * S);
     MPainter->setTextColor(color);
     MPainter->drawTextBox(module_body_rect, AModule->name, SAT_TEXT_ALIGN_CENTER);
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="SA_Toolkit" Database="" Version="10000">
+  <Project Name="SA_Toolkit" Path="SA_Toolkit.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="&lt;New...&gt;" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_exe_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_exe_release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_exe_debug" Selected="yes">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_exe_debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_plugin_debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_plugin_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_plugin_release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="qwe" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

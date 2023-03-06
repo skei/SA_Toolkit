@@ -32,7 +32,7 @@ public:
     setFillBackground(false);
     setDrawBorder(false);
     // open() ?
-    MLogoImage = nsvgParseFromFile("/DISKS/sda2/skei.audio/logo/export/SVG/SA_black sircle.svg", "px", 96);
+    MLogoImage = nsvgParseFromFile("/home/skei/Code/SA_Toolkit/data/img/SA_black circle.svg", "px", 96);
     //SAT_Assert(MLogoImage);
   }
 

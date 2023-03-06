@@ -1,6 +1,3 @@
-#define SAT_EXE
-
-
 
 
 #include "test/test1.cpp"

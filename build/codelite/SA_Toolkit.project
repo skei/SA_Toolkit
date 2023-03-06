@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="SA_Toolkit" Version="11000" InternalType="Console">
+  <VirtualDirectory Name="build">
+    <File Name="../build.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="test">
+    <File Name="../test/test1.cpp" ExcludeProjConfig="linux_exe_debug;"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="data">
+    <VirtualDirectory Name="fonts">
+      <VirtualDirectory Name="Manjari">
+        <File Name="../../data/fonts/Manjari/Manjari-Thin.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="Roboto">
+        <File Name="../../data/fonts/Roboto/Roboto-BoldItalic.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-Bold.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-Medium.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-Regular.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-Black.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-LightItalic.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-Light.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-MediumItalic.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-BlackItalic.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-Thin.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-ThinItalic.h"/>
+        <File Name="../../data/fonts/Roboto/Roboto-Italic.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <VirtualDirectory Name="src">
+    <VirtualDirectory Name="audio">
+      <File Name="../../src/audio/sat_voice_manager.h"/>
+      <File Name="../../src/audio/sat_voice_context.h"/>
+      <File Name="../../src/audio/sat_modulation_matrix.h"/>
+      <File Name="../../src/audio/sat_audio_math.h"/>
+      <File Name="../../src/audio/sat_voice.h"/>
+      <File Name="../../src/audio/sat_audio_utils.h"/>
+      <File Name="../../src/audio/sat_audio_io.h"/>
+      <File Name="../../src/audio/sat_audio_dsp.h"/>
+      <File Name="../../src/audio/sat_audio_file.h"/>
+      <VirtualDirectory Name="dsp">
+        <File Name="../../src/audio/dsp/sat_dsp_processor.h"/>
+        <File Name="../../src/audio/dsp/sat_dsp_waveform.h"/>
+        <File Name="../../src/audio/dsp/sat_dsp_phasor.h"/>
+        <File Name="../../src/audio/dsp/sat_dsp_filter.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="io">
+        <File Name="../../src/audio/io/sat_io_jack.h"/>
+        <File Name="../../src/audio/io/sat_io_alsa.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="processor">
+        <File Name="../../src/audio/processor/sat_audio_processor.h"/>
+        <File Name="../../src/audio/processor/sat_voice_processor.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="plugin">
+      <File Name="../../src/plugin/sat_note_port.h"/>
+      <File Name="../../src/plugin/sat_plugin.h"/>
+      <File Name="../../src/plugin/sat_entry.h"/>
+      <File Name="../../src/plugin/sat_host_implementation.h"/>
+      <File Name="../../src/plugin/sat_editor_listener.h"/>
+      <File Name="../../src/plugin/sat_parameter.h"/>
+      <File Name="../../src/plugin/sat_hosted_plugin.h"/>
+      <File Name="../../src/plugin/sat_note.h"/>
+      <File Name="../../src/plugin/sat_registry.h"/>
+      <File Name="../../src/plugin/sat_audio_port.h"/>
+      <File Name="../../src/plugin/sat_editor.h"/>
+      <File Name="../../src/plugin/sat_host.h"/>
+      <File Name="../../src/plugin/sat_process_context.h"/>
+      <VirtualDirectory Name="ladspa">
+        <File Name="../../src/plugin/ladspa/sat_ladspa.h"/>
+        <File Name="../../src/plugin/ladspa/sat_ladspa_hosted_plugin.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="vst2">
+        <File Name="../../src/plugin/vst2/sat_vst2_entry.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="clap">
+        <File Name="../../src/plugin/clap/sat_clap_host_implementation.h"/>
+        <File Name="../../src/plugin/clap/sat_clap.h"/>
+        <File Name="../../src/plugin/clap/sat_clap_hosted_plugin.h"/>
+        <File Name="../../src/plugin/clap/sat_clap_factory.h"/>
+        <File Name="../../src/plugin/clap/sat_clap_utils.h"/>
+        <File Name="../../src/plugin/clap/sat_clap_entry.h"/>
+        <File Name="../../src/plugin/clap/sat_clap_plugin.h"/>
+        <File Name="../../src/plugin/clap/sat_clap_host.h"/>
+        <VirtualDirectory Name="factory">
+          <File Name="../../src/plugin/clap/factory/sat_clap_plugin_factory.h"/>
+          <File Name="../../src/plugin/clap/factory/sat_clap_invalidation_factory.h"/>
+          <File Name="../../src/plugin/clap/factory/sat_clap_preset_discovery_factory.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="exe">
+        <File Name="../../src/plugin/exe/sat_exe_entry.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="vst3">
+        <File Name="../../src/plugin/vst3/sat_vst3_entry.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="base">
+      <File Name="../../src/base/sat_utils.h"/>
+      <File Name="../../src/base/sat_global.h"/>
+      <File Name="../../src/base/sat_linux.h"/>
+      <File Name="../../src/base/sat_config.h"/>
+      <File Name="../../src/base/sat.h"/>
+      <File Name="../../src/base/sat_test.h"/>
+      <File Name="../../src/base/sat_debug.h"/>
+      <File Name="../../src/base/sat_types.h"/>
+      <File Name="../../src/base/sat_const.h"/>
+      <File Name="../../src/base/sat_attributes.h"/>
+      <File Name="../../src/base/sat_win32.h"/>
+      <VirtualDirectory Name="types">
+        <File Name="../../src/base/types/sat_tree.h"/>
+        <File Name="../../src/base/types/sat_point.h"/>
+        <File Name="../../src/base/types/sat_buffer.h"/>
+        <File Name="../../src/base/types/sat_list.h"/>
+        <File Name="../../src/base/types/sat_complex.h"/>
+        <File Name="../../src/base/types/sat_rgba.h"/>
+        <File Name="../../src/base/types/sat_queue.h"/>
+        <File Name="../../src/base/types/sat_vector.h"/>
+        <File Name="../../src/base/types/sat_dictionary.h"/>
+        <File Name="../../src/base/types/sat_color.h"/>
+        <File Name="../../src/base/types/sat_stack.h"/>
+        <File Name="../../src/base/types/sat_string.h"/>
+        <File Name="../../src/base/types/sat_matrix.h"/>
+        <File Name="../../src/base/types/sat_array.h"/>
+        <File Name="../../src/base/types/sat_quaternion.h"/>
+        <File Name="../../src/base/types/sat_rect.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="system">
+        <File Name="../../src/base/system/sat_timer.h"/>
+        <File Name="../../src/base/system/sat_thread.h"/>
+        <File Name="../../src/base/system/sat_time.h"/>
+        <File Name="../../src/base/system/sat_file.h"/>
+        <File Name="../../src/base/system/sat_paths.h"/>
+        <VirtualDirectory Name="linux">
+          <File Name="../../src/base/system/linux/sat_linux_timer.h"/>
+          <File Name="../../src/base/system/linux/sat_linux_paths.h"/>
+          <File Name="../../src/base/system/linux/sat_linux_time.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="utils">
+        <File Name="../../src/base/utils/sat_tcc.h"/>
+        <File Name="../../src/base/utils/sat_integer_math.h"/>
+        <File Name="../../src/base/utils/sat_easing.h"/>
+        <File Name="../../src/base/utils/sat_arguments.h"/>
+        <File Name="../../src/base/utils/sat_sort.h"/>
+        <File Name="../../src/base/utils/sat_windowing.h"/>
+        <File Name="../../src/base/utils/sat_dmc.h"/>
+        <File Name="../../src/base/utils/sat_strutils.h"/>
+        <File Name="../../src/base/utils/sat_fast_math.h"/>
+        <File Name="../../src/base/utils/sat_rgba.h"/>
+        <File Name="../../src/base/utils/sat_isaac.h"/>
+        <File Name="../../src/base/utils/sat_neural.h"/>
+        <File Name="../../src/base/utils/sat_vm.h"/>
+        <File Name="../../src/base/utils/sat_log_file.h"/>
+        <File Name="../../src/base/utils/sat_random.h"/>
+        <File Name="../../src/base/utils/sat_inifile.h"/>
+        <File Name="../../src/base/utils/sat_tcc2.h"/>
+        <File Name="../../src/base/utils/sat_parser.h"/>
+        <File Name="../../src/base/utils/sat_convert.h"/>
+        <File Name="../../src/base/utils/sat_interpolation.h"/>
+        <File Name="../../src/base/utils/sat_pattern.h"/>
+        <File Name="../../src/base/utils/sat_vm_compiler.h"/>
+        <File Name="../../src/base/utils/sat_math.h"/>
+        <File Name="../../src/base/utils/sat_lua.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gui">
+      <File Name="../../src/gui/sat_widgets.h"/>
+      <File Name="../../src/gui/sat_window_listener.h"/>
+      <File Name="../../src/gui/sat_painter.h"/>
+      <File Name="../../src/gui/sat_paint_context.h"/>
+      <File Name="../../src/gui/sat_opengl.h"/>
+      <File Name="../../src/gui/sat_widget_listener.h"/>
+      <File Name="../../src/gui/sat_window.h"/>
+      <File Name="../../src/gui/sat_widget.h"/>
+      <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_selector_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_grid_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_button_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_menu_item_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_slider_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_image_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_drag_value_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_voices_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_text_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_menu_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_circular_waveform_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_pages_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_button_row_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_panel_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_popup_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_graph_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_value_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_logo_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_waveform_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_knob_widget.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="nanovg">
+        <File Name="../../src/gui/nanovg/sat_nanovg.h"/>
+        <File Name="../../src/gui/nanovg/sat_nanovg_utils.h"/>
+        <File Name="../../src/gui/nanovg/sat_nanovg_painter.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="win32">
+        <File Name="../../src/gui/win32/sat_win32_opengl.h"/>
+        <File Name="../../src/gui/win32/sat_win32_painter.h"/>
+        <File Name="../../src/gui/win32/sat_win32_utils.h"/>
+        <File Name="../../src/gui/win32/sat_win32.h"/>
+        <File Name="../../src/gui/win32/sat_win32_window.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="x11">
+        <File Name="../../src/gui/x11/sat_x11_window.h"/>
+        <File Name="../../src/gui/x11/sat_x11.h"/>
+        <File Name="../../src/gui/x11/sat_x11_utils.h"/>
+        <File Name="../../src/gui/x11/sat_x11_painter.h"/>
+        <File Name="../../src/gui/x11/sat_x11_opengl.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="extern">
+      <VirtualDirectory Name="nanosvg">
+        <File Name="../../src/extern/nanosvg/nanosvgrast.h"/>
+        <File Name="../../src/extern/nanosvg/nanosvg.h"/>
+        <VirtualDirectory Name="example">
+          <File Name="../../src/extern/nanosvg/example/example2.c" ExcludeProjConfig="linux_exe_debug;"/>
+          <File Name="../../src/extern/nanosvg/example/example1.c" ExcludeProjConfig="linux_exe_debug;"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="nanovg">
+        <File Name="../../src/extern/nanovg/nanovg.h"/>
+        <File Name="../../src/extern/nanovg/fontstash.h"/>
+        <File Name="../../src/extern/nanovg/nanovg_gl.h"/>
+        <File Name="../../src/extern/nanovg/nanovg (copy).c" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+        <File Name="../../src/extern/nanovg/nanovg.c" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+        <File Name="../../src/extern/nanovg/nanovg_gl_utils.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="sogl">
+        <File Name="../../src/extern/sogl/simple-opengl-loader.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="stb">
+        <File Name="../../src/extern/stb/stb_image_write.h"/>
+        <File Name="../../src/extern/stb/stb_truetype.h"/>
+        <File Name="../../src/extern/stb/stb_image.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="clap">
+        <File Name="../../src/extern/clap/events.h"/>
+        <File Name="../../src/extern/clap/id.h"/>
+        <File Name="../../src/extern/clap/plugin.h"/>
+        <File Name="../../src/extern/clap/audio-buffer.h"/>
+        <File Name="../../src/extern/clap/stream.h"/>
+        <File Name="../../src/extern/clap/process.h"/>
+        <File Name="../../src/extern/clap/version.h"/>
+        <File Name="../../src/extern/clap/plugin-features.h"/>
+        <File Name="../../src/extern/clap/entry.h"/>
+        <File Name="../../src/extern/clap/host.h"/>
+        <File Name="../../src/extern/clap/fixedpoint.h"/>
+        <File Name="../../src/extern/clap/color.h"/>
+        <File Name="../../src/extern/clap/string-sizes.h"/>
+        <File Name="../../src/extern/clap/clap.h"/>
+        <VirtualDirectory Name="factory">
+          <File Name="../../src/extern/clap/factory/plugin-factory.h"/>
+          <VirtualDirectory Name="draft">
+            <File Name="../../src/extern/clap/factory/draft/preset-discovery.h"/>
+            <File Name="../../src/extern/clap/factory/draft/plugin-invalidation.h"/>
+          </VirtualDirectory>
+        </VirtualDirectory>
+        <VirtualDirectory Name="ext">
+          <File Name="../../src/extern/clap/ext/note-name.h"/>
+          <File Name="../../src/extern/clap/ext/voice-info.h"/>
+          <File Name="../../src/extern/clap/ext/thread-pool.h"/>
+          <File Name="../../src/extern/clap/ext/tail.h"/>
+          <File Name="../../src/extern/clap/ext/note-ports.h"/>
+          <File Name="../../src/extern/clap/ext/audio-ports-config.h"/>
+          <File Name="../../src/extern/clap/ext/thread-check.h"/>
+          <File Name="../../src/extern/clap/ext/render.h"/>
+          <File Name="../../src/extern/clap/ext/log.h"/>
+          <File Name="../../src/extern/clap/ext/event-registry.h"/>
+          <File Name="../../src/extern/clap/ext/gui.h"/>
+          <File Name="../../src/extern/clap/ext/params.h"/>
+          <File Name="../../src/extern/clap/ext/audio-ports.h"/>
+          <File Name="../../src/extern/clap/ext/state.h"/>
+          <File Name="../../src/extern/clap/ext/latency.h"/>
+          <File Name="../../src/extern/clap/ext/posix-fd-support.h"/>
+          <File Name="../../src/extern/clap/ext/timer-support.h"/>
+          <VirtualDirectory Name="draft">
+            <File Name="../../src/extern/clap/ext/draft/remote-controls.h"/>
+            <File Name="../../src/extern/clap/ext/draft/ambisonic.h"/>
+            <File Name="../../src/extern/clap/ext/draft/resource-directory.h"/>
+            <File Name="../../src/extern/clap/ext/draft/check-for-update.h"/>
+            <File Name="../../src/extern/clap/ext/draft/preset-load.h"/>
+            <File Name="../../src/extern/clap/ext/draft/context-menu.h"/>
+            <File Name="../../src/extern/clap/ext/draft/surround.h"/>
+            <File Name="../../src/extern/clap/ext/draft/audio-ports-activation.h"/>
+            <File Name="../../src/extern/clap/ext/draft/state-context.h"/>
+            <File Name="../../src/extern/clap/ext/draft/triggers.h"/>
+            <File Name="../../src/extern/clap/ext/draft/transport-control.h"/>
+            <File Name="../../src/extern/clap/ext/draft/midi-mappings.h"/>
+            <File Name="../../src/extern/clap/ext/draft/param-indication.h"/>
+            <File Name="../../src/extern/clap/ext/draft/tuning.h"/>
+            <File Name="../../src/extern/clap/ext/draft/cv.h"/>
+            <File Name="../../src/extern/clap/ext/draft/track-info.h"/>
+          </VirtualDirectory>
+        </VirtualDirectory>
+        <VirtualDirectory Name="private">
+          <File Name="../../src/extern/clap/private/std.h"/>
+          <File Name="../../src/extern/clap/private/macros.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="rigtorp">
+        <File Name="../../src/extern/rigtorp/SPSCQueue.h"/>
+        <File Name="../../src/extern/rigtorp/MPMCQueue.h"/>
+        <VirtualDirectory Name="mpmc">
+          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueExample.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueTest.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="spsc">
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExample.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueTest.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExampleHugepages.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueBenchmark.cpp" ExcludeProjConfig="linux_exe_debug;Debug;"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gfx">
+      <File Name="../../src/gfx/sat_bitmap.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+        <IncludePath Value="../../src"/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+        <Library Value="pthread"/>
+        <Library Value="rt"/>
+        <Library Value="dl"/>
+        <Library Value="X11"/>
+        <Library Value="X11-xcb"/>
+        <Library Value="xcb"/>
+        <Library Value="xcb-util"/>
+        <Library Value="xcb-image"/>
+        <Library Value="xcb-cursor"/>
+        <Library Value="xcb-keysyms"/>
+        <Library Value="xkbcommon"/>
+        <Library Value="GL"/>
+        <Library Value="GLX"/>
+        <Library Value="GLU"/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="linux_exe_debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="SAT_EXE"/>
+        <Preprocessor Value="SAT_DEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="linux_exe_release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+        <Preprocessor Value="SAT_EXE"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="linux_plugin_debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="SAT_PLUGIN"/>
+        <Preprocessor Value="SAT_DEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="linux_plugin_release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+        <Preprocessor Value="SAT_PLUGIN"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

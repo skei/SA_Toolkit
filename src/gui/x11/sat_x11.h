@@ -82,8 +82,8 @@ const char* SAT_XCB_WM_CURSORS[SAT_CURSOR_COUNT] = {
   "fleur",                // SAT_CURSOR_MOVE
   "watch",                // SAT_CURSOR_WAIT
   "clock",                // SAT_CURSOR_ARROW_WAIT    !!!
-  "hand2",                // SAT_CURSOR_HAND
-  "hand1",                // SAT_CURSOR_FINGER
+  "hand1",                // SAT_CURSOR_HAND
+  "hand2",                // SAT_CURSOR_FINGER
   "crosshair",            // SAT_CURSOR_CROSS
   "cross",                // SAT_CURSOR_CROSS2
   "pencil",               // SAT_CURSOR_PENCIL
