@@ -338,7 +338,7 @@ public: // window
   */
 
   void on_window_open() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     prepareWidgets();
   }
 
@@ -351,34 +351,29 @@ public: // window
   */
 
   void on_window_close() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
   //----------
 
   void on_window_move(int32_t AXpos, int32_t AYpos) override {
-    //SAT_Print("%i,%i\n",AXpos,AYpos);
+    SAT_Print("%i,%i\n",AXpos,AYpos);
   }
 
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-
     MWidth = AWidth;
     MHeight = AHeight;
-
     MScale = recalcScale(AWidth,AHeight);
-
-//    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
-//      double xscale = AWidth / MInitialWidth;
-//      double yscale = AHeight / MInitialHeight;
-//      if (xscale < yscale) MScale = xscale;
-//      else MScale =  yscale;
-//    }
-//    else MScale = 1.0;
-
-//    SAT_Print("%i,%i scale %.3f\n",AWidth,AHeight,MScale);
-
+    //if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
+    //  double xscale = AWidth / MInitialWidth;
+    //  double yscale = AHeight / MInitialHeight;
+    //  if (xscale < yscale) MScale = xscale;
+    //  else MScale =  yscale;
+    //}
+    //else MScale = 1.0;
+    SAT_Print("%i,%i (scale %.3f)\n",AWidth,AHeight,MScale);
     if (MRootWidget) {
       //MRootWidget->realignChildWidgets();
       if (MAutoScaleWidgets) {
@@ -393,7 +388,7 @@ public: // window
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    //SAT_Print("%i,%i,%i,%i\n",AXpos,AYpos,AWidth,AHeight);
+    SAT_Print("%i,%i,%i,%i\n",AXpos,AYpos,AWidth,AHeight);
     MPaintContext.painter       = MWindowPainter;
     MPaintContext.update_rect.x = AXpos;
     MPaintContext.update_rect.y = AYpos;
@@ -402,18 +397,13 @@ public: // window
     MPaintContext.window_width  = MWindowWidth;
     MPaintContext.window_height = MWindowHeight;
     MPaintContext.window_scale  = MScale;
-
     MOpenGL->makeCurrent();
-
     bool resized = checkBufferSize();
     //bool resized = resizeBuffer(MWindowWidth,MWindowHeight);
-
     MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
     MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-
     if (resized) paintDirtyWidgets(&MPaintContext,MRootWidget);
     else paintDirtyWidgets(&MPaintContext);
-
     MWindowPainter->endFrame();
     //SAT_Print("copybuffer %i,%i,%i,%i (window %i,%i)\n",AXpos,AYpos,AWidth,AHeight,MWindowWidth,MWindowHeight);
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
@@ -547,6 +537,7 @@ public: // window
   //----------
 
   void on_window_client_message(uint32_t AData) override {
+    SAT_Print("data %i\n",AData);
   }
 
   //----------

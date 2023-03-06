@@ -15,10 +15,6 @@
 //----------------------------------------------------------------------
 
 
-//TODO
-
-  //#define SAT_LOG_FILE_ENABLE
-
 // append to existing log file, or create new
 
   #define SAT_LOG_FILE_APPEND
@@ -42,11 +38,11 @@
 
 // print thread id (in SAT_Print)
 
-  //#define SAT_DEBUG_PRINT_THREAD
+  #define SAT_DEBUG_PRINT_THREAD
 
 // print time (in SAT_Print)
 
-  //#define SAT_DEBUG_PRINT_TIME
+  #define SAT_DEBUG_PRINT_TIME
 
 
 //----------------------------------------------------------------------

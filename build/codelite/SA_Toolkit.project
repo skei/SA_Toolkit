@@ -4,7 +4,8 @@
     <File Name="../build.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="test">
-    <File Name="../test/test1.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+    <File Name="../test/test1_synth_gui.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
+    <File Name="../test/test2_standalone.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
   </VirtualDirectory>
   <VirtualDirectory Name="data">
     <VirtualDirectory Name="fonts">

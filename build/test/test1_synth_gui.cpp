@@ -174,6 +174,7 @@ public:
 //------------------------------
 
   bool init() final {
+    SAT_Print("Hello world!\n");
     registerDefaultExtensions();
     registerExtension(CLAP_EXT_THREAD_POOL,&MThreadPoolExt);
     registerExtension(CLAP_EXT_VOICE_INFO,&MVoiceInfoExt);
@@ -478,6 +479,7 @@ public:
 //----------------------------------------------------------------------
 
 #ifndef SAT_NO_ENTRY
+
   #include "plugin/sat_entry.h"
 
   //SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);

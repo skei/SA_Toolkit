@@ -47,12 +47,12 @@
 //----------------------------------------------------------------------
 
 #define SAT_CHAR_BIT                            8
-#define SAT_CHAR_MAX                            0x7f                /* 127 */
-#define SAT_SHORT_MAX                           0x7fff              /* 32767 */
-#define SAT_INT32_MAX                           0x7fffffff          /* 2147483647 */
-#define SAT_UINT32_MAX                          0xffffffff          /* 8589934591U */
-#define SAT_INT64_MAX                           0x7fffffffffffffff  /* 9223372036854775807LL */
-#define SAT_UINT64_MAX                          0x7fffffffffffffff  /* 18446744073709551615ULL */
+#define SAT_CHAR_MAX                            0x7f                      // 127
+#define SAT_SHORT_MAX                           0x7fff                    // 32767
+#define SAT_INT32_MAX                           0x7fffffff                // 2147483647
+#define SAT_UINT32_MAX                          0xffffffff                // 8589934591U
+#define SAT_INT64_MAX                           0x7fffffffffffffff        // 9223372036854775807LL
+#define SAT_UINT64_MAX                          0x7fffffffffffffff        // 18446744073709551615ULL
 #define SAT_FLOAT_MAX                           3.40282347e+38F
 #define SAT_FLOAT_MIN                           1.17549435E-38F
 #define SAT_FLOAT_EPSILON                       1.19209290E-7F
@@ -63,16 +63,16 @@
 #define SAT_DOUBLE_DENORM                       4.9406564584124654E-324
 
 #ifdef SAT_32BIT
-#define SAT_INT_MAX                             SAT_INT32_MAX   // 2147483647L
-#define SAT_UINT_MAX                            SAT_UINT32_MAX  // 8589934591UL
+#define SAT_INT_MAX                             SAT_INT32_MAX             // 2147483647L
+#define SAT_UINT_MAX                            SAT_UINT32_MAX            // 8589934591UL
 #endif
 
 #ifdef SAT_64BIT
-#define SAT_INT_MAX                             SAT_INT64_MAX   // 9223372036854775807L
-#define SAT_UINT_MAX                            SAT_UINT64_MAX  // 18446744073709551615UL
+#define SAT_INT_MAX                             SAT_INT64_MAX             // 9223372036854775807L
+#define SAT_UINT_MAX                            SAT_UINT64_MAX            // 18446744073709551615UL
 #endif
 
-//#define SAT_RANDMAX                             RAND_MAX  // 2147483647
+//#define SAT_RANDMAX                             RAND_MAX                  // 2147483647
 #define SAT_RANDMAX                             0x7fffffff
 #define SAT_INVRANDMAX                          (1.0 / (double)SAT_RANDMAX)
 
@@ -212,6 +212,55 @@
 #define SAT_TEXT_ALIGN_RIGHT                    0x02
 #define SAT_TEXT_ALIGN_TOP                      0x04
 #define SAT_TEXT_ALIGN_BOTTOM                   0x08
+
+/*
+  The format of the string for foreground color is:
+  "\033[" + "<0 or 1, meaning normal or bold>;" + "<color code> + "m"
+  and for background:
+  "\033[" + "<color code>" + "m"
+  These codes can be output together in order to change fore- and back-ground colors simultaneously.
+  printf "\033[91mThis is red text\033[0m"  
+  printf "\033[91m\033[107mThis is red text on a white background\033[0m"  
+  (#ifdef around, or #undef if not needed/wanted/supported?)
+*/
+
+#define SAT_TERM_BG_DEFAULT                     "\033[49m"
+#define SAT_TERM_BG_BLACK                       "\033[40m"
+#define SAT_TERM_BG_DARK_RED                    "\033[41m"
+#define SAT_TERM_BG_DARK_GREEN                  "\033[42m"
+#define SAT_TERM_BG_DARK_YELLOW                 "\033[43m"
+#define SAT_TERM_BG_DARK_BLUE                   "\033[44m"
+#define SAT_TERM_BG_DARK_MAGENTA                "\033[45m"
+#define SAT_TERM_BG_DARK_CYAN                   "\033[46m"
+#define SAT_TERM_BG_LIGHT_GRAY                  "\033[47m"
+#define SAT_TERM_BG_DARK_GRAY                   "\033[100m"
+#define SAT_TERM_BG_RED                         "\033[101m"
+#define SAT_TERM_BG_GREEN                       "\033[102m"
+#define SAT_TERM_BG_YELLOW                      "\033[103m"
+#define SAT_TERM_BG_BLUE                        "\033[104m"
+#define SAT_TERM_BG_MAGENTA                     "\033[105m"
+#define SAT_TERM_BG_CYAN                        "\033[106m"
+#define SAT_TERM_BG_WHITE                       "\033[107m"
+
+#define SAT_TERM_FG_DEFAULT                     "\033[39m"
+#define SAT_TERM_FG_BLACK                       "\033[30m"
+#define SAT_TERM_FG_DARK_RED                    "\033[31m"
+#define SAT_TERM_FG_DARK_GREEN                  "\033[32m"
+#define SAT_TERM_FG_DARK_YELLOW                 "\033[33m"
+#define SAT_TERM_FG_DARK_BLUE                   "\033[34m"
+#define SAT_TERM_FG_DARK_MAGENTA                "\033[35m"
+#define SAT_TERM_FG_DARK_CYAN                   "\033[36m"
+#define SAT_TERM_FG_LIGHT_GRAY                  "\033[37m"
+#define SAT_TERM_FG_DARK_GRAY                   "\033[90m"
+#define SAT_TERM_FG_RED                         "\033[91m"
+#define SAT_TERM_FG_GREEN                       "\033[92m"
+#define SAT_TERM_FG_YELLOW                      "\033[93m"
+#define SAT_TERM_FG_BLUE                        "\033[94m"
+#define SAT_TERM_FG_MAGENTA                     "\033[95m"
+#define SAT_TERM_FG_CYAN                        "\033[96m"
+#define SAT_TERM_FG_WHITE                       "\033[97m"
+
+#define SAT_TERM_RESET                          "\033[0m"
 
 #define SAT_VOICE_OFF                           0
 #define SAT_VOICE_WAITING                       1
