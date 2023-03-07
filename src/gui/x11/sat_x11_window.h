@@ -4,9 +4,7 @@
 
 #include "base/sat.h"
 #include "base/system/sat_timer.h"
-#include "gui/sat_opengl.h"
 #include "gui/x11/sat_x11.h"
-//#include "gui/x11/sat_x11_opengl.h"
 #include "gui/x11/sat_x11_utils.h"
 
 //----------------------------------------------------------------------
@@ -799,14 +797,14 @@ private:
     switch (AEvent->response_type & ~0x80) {
 
       case XCB_MAP_NOTIFY: {
-        SAT_Print("XCB_MAP_NOTIFY\n");
+        //SAT_Print("XCB_MAP_NOTIFY\n");
         MIsMapped = true;
         on_window_open();
         break;
       }
 
       case XCB_UNMAP_NOTIFY: {
-        SAT_Print("XCB_UNMAP_NOTIFY\n");
+        //SAT_Print("XCB_UNMAP_NOTIFY\n");
         MIsMapped = false;
         on_window_close();
         break;
@@ -860,7 +858,6 @@ private:
         uint16_t y = expose->y;
         uint16_t w = expose->width;
         uint16_t h = expose->height;
-        //SAT_Print("XCB_EXPOSE x %i y %i w %i h %i\n",x,y,w,h);
         on_window_paint(x,y,w,h);
         xcb_flush(MConnection);
         MIsExposed = true;

@@ -88,6 +88,7 @@ public:
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, SAT_WindowListener* AListener)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+    //SAT_PRINT;
 
     MWidth = AWidth;
     MHeight = AHeight;
@@ -176,6 +177,7 @@ private: // buffer
   void createBuffer(uint32_t AWidth, uint32_t AHeight) {
     uint32_t width = SAT_NextPowerOfTwo(AWidth);
     uint32_t height = SAT_NextPowerOfTwo(AHeight);
+    //SAT_Print("%i,%i -> %i,%i\n",AWidth,AHeight,width,height);
     MBufferWidth = width;
     MBufferHeight = height;
     MRenderBuffer = MWindowPainter->createRenderBuffer(width,height);
@@ -185,6 +187,7 @@ private: // buffer
   //----------
 
   void deleteBuffer() {
+    //SAT_Print("\n");
     if (MRenderBuffer) {
       MWindowPainter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = nullptr;
@@ -194,6 +197,7 @@ private: // buffer
   //----------
 
   bool resizeBuffer(uint32_t AWidth, uint32_t AHeight, bool ACopyBuffer=true) {
+    //SAT_Print("%i,%i\n",AWidth,AHeight);
     if (!MRenderBuffer) {
       createBuffer(AWidth,AHeight);
       return true;
@@ -201,13 +205,17 @@ private: // buffer
     else {
       uint32_t new_width  = SAT_NextPowerOfTwo(AWidth);
       uint32_t new_height = SAT_NextPowerOfTwo(AHeight);
+      //SAT_Print("new size: %i,%i\n",new_width,new_height);
       if ((new_width != MBufferWidth) || (new_height != MBufferHeight)) {
+        
         void* new_buffer = MWindowPainter->createRenderBuffer(new_width,new_height);
-        if (ACopyBuffer) {
-          copyBuffer(new_buffer,0,0,new_width,new_height,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-        }
+        if (!new_buffer) SAT_GLOBAL.DEBUG.print_callstack();
+        SAT_Assert(new_buffer);
+        
+        if (ACopyBuffer) copyBuffer(new_buffer,0,0,new_width,new_height,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
         MWindowPainter->deleteRenderBuffer(MRenderBuffer);
         MRenderBuffer = new_buffer;
+        
         MBufferWidth  = new_width;
         MBufferHeight = new_height;
         return true;
@@ -338,7 +346,7 @@ public: // window
   */
 
   void on_window_open() override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     prepareWidgets();
   }
 
@@ -351,18 +359,19 @@ public: // window
   */
 
   void on_window_close() override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
   }
 
   //----------
 
   void on_window_move(int32_t AXpos, int32_t AYpos) override {
-    SAT_Print("%i,%i\n",AXpos,AYpos);
+    //SAT_Print("%i,%i\n",AXpos,AYpos);
   }
 
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
+    //SAT_Print("%i,%i\n",AWidth,AHeight);
     MWidth = AWidth;
     MHeight = AHeight;
     MScale = recalcScale(AWidth,AHeight);
@@ -373,12 +382,10 @@ public: // window
     //  else MScale =  yscale;
     //}
     //else MScale = 1.0;
-    SAT_Print("%i,%i (scale %.3f)\n",AWidth,AHeight,MScale);
+    //SAT_Print("%i,%i (scale %.3f)\n",AWidth,AHeight,MScale);
     if (MRootWidget) {
       //MRootWidget->realignChildWidgets();
-      if (MAutoScaleWidgets) {
-        MRootWidget->scaleWidget(MScale);
-      }
+      if (MAutoScaleWidgets) MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(AWidth,AHeight);
       MRootWidget->realignChildWidgets();
       MPendingDirtyWidgets.write(MRootWidget);
@@ -388,7 +395,7 @@ public: // window
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    SAT_Print("%i,%i,%i,%i\n",AXpos,AYpos,AWidth,AHeight);
+    //SAT_Print("%i,%i,%i,%i\n",AXpos,AYpos,AWidth,AHeight);
     MPaintContext.painter       = MWindowPainter;
     MPaintContext.update_rect.x = AXpos;
     MPaintContext.update_rect.y = AYpos;
@@ -557,7 +564,7 @@ public: // widget listener
   //----------
 
   void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    //SAT_PRINT;
+    SAT_PRINT;
     if (!ASender) ASender = MRootWidget;
     MPendingDirtyWidgets.write(ASender);
     //invalidateWidget(ASender);

@@ -38,12 +38,19 @@
 
 // print thread id (in SAT_Print)
 
-  #define SAT_DEBUG_PRINT_THREAD
+  //#define SAT_DEBUG_PRINT_THREAD
 
 // print time (in SAT_Print)
 
-  #define SAT_DEBUG_PRINT_TIME
+  //#define SAT_DEBUG_PRINT_TIME
 
+// crash handler
+
+  #define SAT_DEBUG_CRASH_HANDLER
+
+// call stack
+
+  #define SAT_DEBUG_CALL_STACK
 
 //----------------------------------------------------------------------
 //

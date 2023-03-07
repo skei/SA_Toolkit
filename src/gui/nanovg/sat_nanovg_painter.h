@@ -959,6 +959,7 @@ public: // render buffer
     //SAT_Print("is_current %i\n",MIsCurrent);
     //if (MIsCurrent) {
       NVGLUframebuffer* fb = nvgluCreateFramebuffer(MContext,AWidth,AHeight,flags);
+      //glFlush();
       //SAT_Print("fb %p\n",fb);
       return fb;
     //}

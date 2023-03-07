@@ -161,7 +161,7 @@ public:
     disableVSync(MDisplay,MDrawable);
     //resetCurrent();
     //makeCurrent(0);
-    MIsCurrent = true;
+//    MIsCurrent = true;
   }
 
   //----------
@@ -190,11 +190,13 @@ public:
   //----------
 
   void beginPaint() {
+    SAT_PRINT;
     makeCurrent();
   }
 
 
   void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) { //, uint32_t AMode) {
+    SAT_PRINT;
     //makeCurrent(AMode);
     makeCurrent();
     //glViewport(0,0,AWidth,AHeight);
@@ -206,6 +208,7 @@ public:
 
   //void endPaint(uint32_t AMode) {
   void endPaint() {
+    SAT_PRINT;
     //swapBuffers(AMode);
     swapBuffers();
     //resetClip();
@@ -241,11 +244,12 @@ public:
 
   //bool makeCurrent(uint32_t AMode) {
   bool makeCurrent() {
-    //SAT_PRINT;
+    //SAT_Print("MIsCurrent %i -> 1\n",MIsCurrent);
+    //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
     //MPrevContext = glXGetCurrentContext();
     bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
     if (!res) {
-      SAT_Print("Error: makeCurrent returned false\n");
+      //SAT_Print("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = true;
@@ -263,11 +267,12 @@ public:
 
   //bool resetCurrent(uint32_t AMode) {
   bool resetCurrent() {
-    //SAT_PRINT;
+    //SAT_Print("MIsCurrent %i -> 0\n",MIsCurrent);
+    //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
     bool res = glXMakeContextCurrent(MDisplay,0,0,0);
     //bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MPrevContext); // error
     if (!res) {
-      SAT_Print("Error: makeCurrent returned false\n");
+      //SAT_Print("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = false;

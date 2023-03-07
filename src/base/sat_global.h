@@ -23,7 +23,7 @@ public:
   SAT_Debug     DEBUG         = {};
   SAT_LogFile   LOG           = {};
   SAT_Registry  REGISTRY      = {};
-
+  
 //------------------------------
 public:
 //------------------------------
@@ -63,7 +63,7 @@ public:
       isInitialized = false;
     }
   }
-
+  
 };
 
 //----------------------------------------------------------------------
@@ -80,10 +80,13 @@ SAT_Global SAT_GLOBAL = {};
 // log
 //------------------------------
 
+// always log..
+
 #define SAT_Log SAT_GLOBAL.LOG.print
 
-//----------
-
+//------------------------------
+// log
+//------------------------------
 
 #ifdef SAT_DEBUG
 
@@ -144,13 +147,26 @@ SAT_Global SAT_GLOBAL = {};
 
   #endif // memtrace
 
-#else // debug
+  //------------------------------
+  // crash handler
+  //------------------------------
 
-  // print
+  #ifdef SAT_DEBUG_CRASH_HANDLER
+  
+    void sat_crash_handler_callback(int sig) {
+      SAT_GLOBAL.DEBUG.crashHandler(sig);
+    }
+
+  #endif // crash handler
+
+//------------------------------
+#else // ! debug
+//------------------------------
+
   void SAT_NoPrint(const char*,...) {}
-  #define SAT_Print    SAT_NoPrint
-  #define SAT_DPrint   SAT_NoPrint
-  #define SAT_PRINT {}
+  #define SAT_Print   SAT_NoPrint
+  #define SAT_DPrint  SAT_NoPrint
+  #define SAT_PRINT   {}
 
 #endif // debug
 
