@@ -177,7 +177,7 @@ private: // buffer
   void createBuffer(uint32_t AWidth, uint32_t AHeight) {
     uint32_t width = SAT_NextPowerOfTwo(AWidth);
     uint32_t height = SAT_NextPowerOfTwo(AHeight);
-    //SAT_Print("%i,%i -> %i,%i\n",AWidth,AHeight,width,height);
+//    SAT_Print("create buffer %i,%i -> %i,%i\n",AWidth,AHeight,width,height);
     MBufferWidth = width;
     MBufferHeight = height;
     MRenderBuffer = MWindowPainter->createRenderBuffer(width,height);
@@ -187,8 +187,8 @@ private: // buffer
   //----------
 
   void deleteBuffer() {
-    //SAT_Print("\n");
     if (MRenderBuffer) {
+//      SAT_Print("delete buffer\n");
       MWindowPainter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = nullptr;
     }
@@ -205,15 +205,18 @@ private: // buffer
     else {
       uint32_t new_width  = SAT_NextPowerOfTwo(AWidth);
       uint32_t new_height = SAT_NextPowerOfTwo(AHeight);
-      //SAT_Print("new size: %i,%i\n",new_width,new_height);
       if ((new_width != MBufferWidth) || (new_height != MBufferHeight)) {
-        
+
+//        SAT_Print("create new buffer (size %i,%i) %i,%i -> %i,%i\n",MBufferWidth,MBufferHeight,AWidth,AHeight,new_width,new_height);
         void* new_buffer = MWindowPainter->createRenderBuffer(new_width,new_height);
-        if (!new_buffer) SAT_GLOBAL.DEBUG.print_callstack();
+        //if (!new_buffer) SAT_GLOBAL.DEBUG.print_callstack();
         SAT_Assert(new_buffer);
         
         if (ACopyBuffer) copyBuffer(new_buffer,0,0,new_width,new_height,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
+
+//        SAT_Print("delete old buffer\n");
         MWindowPainter->deleteRenderBuffer(MRenderBuffer);
+
         MRenderBuffer = new_buffer;
         
         MBufferWidth  = new_width;
@@ -564,7 +567,7 @@ public: // widget listener
   //----------
 
   void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    SAT_PRINT;
+    //SAT_PRINT;
     if (!ASender) ASender = MRootWidget;
     MPendingDirtyWidgets.write(ASender);
     //invalidateWidget(ASender);

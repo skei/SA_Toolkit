@@ -11,6 +11,18 @@
 
 //----------------------------------------------------------------------
 
+#ifndef SAT_Debug
+  #undef SAT_DEBUG_ASSERT
+  #undef SAT_DEBUG_CALL_STACK
+  #undef SAT_DEBUG_CRASH_HANDLER
+  #undef SAT_DEBUG_MEMTRACE
+  #undef SAT_DEBUG_PRINT_SOCKET
+  #undef SAT_DEBUG_PRINT_THREAD
+  #undef SAT_DEBUG_PRINT_TIME
+#endif
+
+//----------------------------------------------------------------------
+
 #include <stdarg.h>   // va_
 #include <sys/unistd.h>
 //#include <unistd.h>
@@ -441,7 +453,7 @@ public: // call stack
       return:         number of addresses translated.
     */
 
-    int MIP_CallStackSymbols(void** addresses, sat_callstack_symbol_t* out_syms, int num_addresses, char* memory, int mem_size) {
+    int translate_addresses(void** addresses, sat_callstack_symbol_t* out_syms, int num_addresses, char* memory, int mem_size) {
       int num_translated = 0;
       sat_callstack_stringbuffer_t outbuf = { memory, memory + mem_size };
       memset(out_syms,0x0,(size_t)num_addresses*sizeof(sat_callstack_symbol_t));
@@ -501,16 +513,16 @@ public: // call stack
     */
     
     void print_callstack(void** AAddresses=nullptr, int ANumAddresses=0, int skip_last=0, int skip_first=0) {
-      sat_callstack_symbol_t  symbols[256];
-      char                    symbols_buffer[1024];
-      int                     num_addresses;
+      sat_callstack_symbol_t symbols[256];
+      char symbols_buffer[1024];
+      int num_addresses;
       if (AAddresses && (ANumAddresses>0)) {
-        num_addresses = MIP_CallStackSymbols(AAddresses,symbols,ANumAddresses,symbols_buffer,1024);
+        num_addresses = translate_addresses(AAddresses,symbols,ANumAddresses,symbols_buffer,1024);
       }
       else {
         void* adr[256];
         int num = generate_callstack(0,adr,256);
-        num_addresses = MIP_CallStackSymbols(adr,symbols,num,symbols_buffer,1024);
+        num_addresses = translate_addresses(adr,symbols,num,symbols_buffer,1024);
       }
       //MIP_DPrint("\n----------------------------------------------------------------------\n");
       print("\ncallstack:\n");

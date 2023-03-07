@@ -134,7 +134,8 @@ public:
         modulationoffset.scale(S);
         mrect.shrink(modulationoffset);
 
-        double v1,v2;
+        double v1 = 0;
+        double v2 = 0;
         if (modulation < value) {
           v1 = modulation;
           v2 = value;

@@ -205,7 +205,7 @@ public:
     const clap_plugin_t*  clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
-    MVoiceManager.setProcessThreaded(true);
+    MVoiceManager.setProcessThreaded(false);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
