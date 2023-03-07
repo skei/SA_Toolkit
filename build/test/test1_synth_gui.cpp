@@ -114,22 +114,32 @@ public:
     return SAT_VOICE_PLAYING;
   }
 
+  //----------
+
   uint32_t noteOff(uint32_t AKey, double AVelocity) {
     //SAT_Print("\n");
     return SAT_VOICE_FINISHED;
   }
 
+  //----------
+
   void noteChoke(uint32_t AKey, double AVelocity) {
     //SAT_Print("\n");
   }
+
+  //----------
 
   void noteExpression(uint32_t AExpression, double AValue) {
     //SAT_Print("\n");
   }
 
+  //----------
+
   void parameter(uint32_t AIndex, double AValue) {
     //SAT_Print("\n");
   }
+
+  //----------
 
   void modulation(uint32_t AIndex, double AValue) {
     //SAT_Print("\n");
@@ -165,6 +175,8 @@ public:
     //SAT_Print("sizeof(myPlugin) : %i\n",sizeof(myPlugin));
   }
 
+  //----------
+
   virtual ~myPlugin() {
     //SAT_Print("yepp, we are being deleted..\n");
   }
@@ -187,21 +199,16 @@ public:
     par = appendParameter( new SAT_Parameter("Param3",1.5) );
     par->setFlag(CLAP_PARAM_IS_MODULATABLE);
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT);
-
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
-
     SAT_Host* host = getHost();
     const clap_plugin_t*  clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
-
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
-
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
-
     return SAT_Plugin::init();
   }
 
@@ -387,44 +394,62 @@ public:
     return true;
   }
 
+  //----------
+
   bool handleNoteOff(const clap_event_note_t* event) final {
     MVoiceManager.handleNoteOff(event);
     return true;
   }
+
+  //----------
 
   bool handleNoteChoke(const clap_event_note_t* event) final {
     MVoiceManager.handleNoteChoke(event);
     return true;
   }
 
+  //----------
+
   bool handleNoteExpression(const clap_event_note_expression_t* event) final {
     MVoiceManager.handleNoteExpression(event);
     return true;
   }
+
+  //----------
 
   bool handleParamValue(const clap_event_param_value_t* event) final {
     MVoiceManager.handleParamValue(event);
     return true;
   }
 
+  //----------
+
   bool handleParamMod(const clap_event_param_mod_t* event) final {
     MVoiceManager.handleParamMod(event);
     return true;
   }
 
+  //----------
+
   bool handleTransport(const clap_event_transport_t* event) final {
     return false;
   }
+
+  //----------
 
   bool handleMidi(const clap_event_midi_t* event) final {
     MVoiceManager.handleMidi(event);
     return true;
   }
 
+  //----------
+
   bool handleMidiSysex(const clap_event_midi_sysex_t* event) final {
     MVoiceManager.handleMidiSysex(event);
     return true;
   }
+
+  //----------
 
   bool handleMidi2(const clap_event_midi2_t* event) final {
     MVoiceManager.handleMidi2(event);
@@ -484,12 +509,16 @@ public:
 
   //SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
+  //----------
+
   void SAT_Register(SAT_Registry* ARegistry) {
     //SAT_PRINT;
     uint32_t index = ARegistry->getNumDescriptors();
     SAT_Log("SAT_Register -> id %s index %i\n",myDescriptor.id,index);
     ARegistry->registerDescriptor(&myDescriptor);
   }
+
+  //----------
 
   const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
     SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);

@@ -65,39 +65,28 @@ public:
 public:
 //------------------------------
 
+  uint32_t  getMaxVoices()                  { return COUNT; }
+  uint32_t  getNumPlayingVoices()           { return MNumPlayingVoices; }
+  uint32_t  getNumReleasedVoices()          { return MNumReleasedVoices; }
+  uint32_t  getVoiceState(uint32_t AIndex)  { return MVoices[AIndex].state; }
+  uint32_t  getEventMode()                  { return MEventMode; }
+  bool      isProcessingThreaded()          { return MProcessThreaded; }
+
+//------------------------------
+public:
+//------------------------------
+
   void setProcessThreaded(bool AThreaded=true) {
     MProcessThreaded = AThreaded;
   }
+  
+  //----------
 
   void setEventMode(uint32_t AMode) {
     MEventMode = AMode;
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].event_mode = AMode;
     }
-  }
-
-  uint32_t getMaxVoices() {
-    return COUNT;
-  }
-
-  uint32_t getNumPlayingVoices() {
-    return MNumPlayingVoices;
-  }
-
-  uint32_t getNumReleasedVoices() {
-    return MNumReleasedVoices;
-  }
-
-  uint32_t getVoiceState(uint32_t AIndex) {
-    return MVoices[AIndex].state;
-  }
-
-  bool isProcessingThreaded() {
-    return MProcessThreaded;
-  }
-
-  uint32_t getEventMode() {
-    return MEventMode;
   }
 
 //------------------------------
@@ -125,7 +114,7 @@ public:
     MVoiceContext.sample_rate       = sample_rate;
 
     // !!
-//    MVoiceContext.parameters        = AParameters; // already in SAT_ProcessContext?
+    //MVoiceContext.parameters        = AParameters; // already in SAT_ProcessContext?
     //
 
     for (uint32_t i=0; i<COUNT; i++) {

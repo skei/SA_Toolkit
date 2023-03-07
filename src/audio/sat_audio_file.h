@@ -7,6 +7,8 @@
 #ifdef SAT_WIN32
 //----------------------------------------------------------------------
 
+  //TODO.. can we use sndfile in windows?
+
   struct SF_INFO {
     int64_t	frames;
     int32_t samplerate;
@@ -30,17 +32,7 @@
 #else
 //----------------------------------------------------------------------
 
-//#ifdef SAT_LINUX
-
-#include <sndfile.h>
-
-//----------
-
-//SFM_READ    0x10
-//SFM_WIITE   0x20
-//SFM_RDWR    0x30
-
-
+  #include <sndfile.h>
 
 //----------------------------------------------------------------------
 //
@@ -75,7 +67,11 @@ public:
   ~SAT_AudioFile() {
   }
 
-  SF_INFO* getInfo() { return &MInfo; }
+  //----------
+
+  SF_INFO* getInfo() {
+    return &MInfo;
+  }
 
 //------------------------------
 public:

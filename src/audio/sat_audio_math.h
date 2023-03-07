@@ -25,24 +25,34 @@ double SAT_VolumeToDb(double volume) {
 //  else return 0;
 //}
 
+//----------
+
 //double dbtoa(double db) {
 //  return pow(2, db/6);
 //}
 
+//----------
+
 //double atodb(double a) {
 //  return 20*log10(a);
 //}
+
+//----------
 
 //  converts linear value to decibel
 //    float dc_signal = 1.f;
 //    float amp_half = 0.5f;
 //    dc_signal *= amp_half;                  // half the amplitude
 //    float amp_db = KLin2DB(amp_half);      // amp_db = -6dbFS
+
 //#define SAT_Lin2DB(lin) ( LOG2DB*SAT_Logf( (lin) ) )
+
+//----------
 
 //converts decibel value to linear
 //  float amp_db = 20.f;         // 20 decibels
 //  signal *= KDB2Lin(amp_db);  // *= ~10.079
+
 //#define SAT_Db2Lin(dB) ( SAT_Expf( DB2LOG*(dB) ) )
 
 //----------------------------------------------------------------------
@@ -60,6 +70,8 @@ float SAT_KillDenormal(float n) {
   return n;
 }
 
+//----------
+
 // denormalization killing with dc as presented by Laurent de Soras in
 // http://ldesoras.free.fr/doc/articles/denormal-en.pdf
 
@@ -73,7 +85,7 @@ float SAT_KillDenormal2(float val) {
 
 //// http://www.kvraudio.com/forum/viewtopic.php?p=4817458#p4817458
 //// sat_const.h: SAT_DENORM = 1.4012984e-45;
-//
+
 //const double _denorm = 1.0e-18;//1.0e-56;
 //float SAT_KillDenormal(float v) {
 //  v += _denorm;
@@ -81,23 +93,21 @@ float SAT_KillDenormal2(float val) {
 //  return v;
 //}
 
+//----------
+
 //function SAT_KillDenormal(value : Single) : Single;
 //begin
 //  if (abs(value) < 1.0e-20) then Result := 0.0
 //  else Result := value;
 //end;
 
-//----------
-
 //----------------------------------------------------------------------
 // hz
 //----------------------------------------------------------------------
 
 double SAT_NoteToHz(double ANote) {
-
   return 440.0 * pow(2.0,(ANote - 69) * SAT_INV12);
   //return 440.0 * SAT_PowF2(2.0,(ANote - 69) * SAT_INV12F);
-
 }
 
 //----------

@@ -9,6 +9,8 @@
 // interface
 //----------------------------------------------------------------------
 
+/*
+
 //------------------------------
 // mono
 //------------------------------
@@ -69,6 +71,8 @@ void SAT_AddMonoToStereoBuffer(float** ADst, float* ASrc, uint32_t ALength);
 //void SAT_AddMonoToStereoBuffer(float** ADst, float** ASrc);
 //void SAT_CopyMonoToStereoBuffer(float** ADst, float* ASrc);
 //void SAT_AddMonoToStereoBuffer(float** ADst, float* ASrc);
+
+*/
 
 //----------------------------------------------------------------------
 // implementation
