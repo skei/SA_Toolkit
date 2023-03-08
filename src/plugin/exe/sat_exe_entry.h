@@ -7,7 +7,7 @@
 
 //----------------------------------------------------------------------
 //
-//
+// exe window
 //
 //----------------------------------------------------------------------
 
@@ -32,49 +32,20 @@ public:
     setTitle("SA_Toolkit :: SAT_ExeWindow");
   }
   
-  //----------
-
-  //virtual ~SAT_ExeWindow() {
-  //}
-
 //------------------------------
 public:
 //------------------------------
-
-  //void on_window_open() final {
-  //  //SAT_PRINT;
-  //}
-
-  //----------
-
-  //void on_window_close() final {
-  //  //SAT_PRINT;
-  //}
-
-  //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) final {
     //SAT_PRINT;
     MGui->set_size(MPlugin,AWidth,AHeight);
   }
 
-  //----------
-
-  //void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
-  //  SAT_PRINT;
-  //}
-
-  //----------
-
-  //void on_window_client_message(uint32_t AData) final {
-  //  //SAT_Print("%i\n",AData);
-  //}
-
 };
 
 //----------------------------------------------------------------------
 //
-//
+// exe host
 //
 //----------------------------------------------------------------------
 
@@ -132,7 +103,7 @@ void open_editor(const clap_plugin_t* plugin) {
 
 //----------------------------------------------------------------------
 //
-// handle plugin
+// plugin
 //
 //----------------------------------------------------------------------
 

@@ -11,7 +11,7 @@
 
 //----------------------------------------------------------------------
 
-#ifndef SAT_Debug
+#ifndef SAT_DEBUG
   #undef SAT_DEBUG_ASSERT
   #undef SAT_DEBUG_CALL_STACK
   #undef SAT_DEBUG_CRASH_HANDLER
@@ -33,19 +33,26 @@
 //
 //----------------------------------------------------------------------
 
-//#ifdef SAT_DEBUG_ASSERT
+#ifdef SAT_DEBUG_ASSERT
 
-  #define SAT_Assert(x) {                       \
-    if (!(x)) {                                 \
-      SAT_Log("SAT_Assert(%s) failed!\n",#x);   \
-      SAT_Print("SAT_Assert(%s) failed!\n",#x); \
-      exit(1);                                  \
-    }                                           \
+  #define SAT_Assert(x) {                                                                 \
+    if (!(x)) {                                                                           \
+      SAT_Log("SAT_Assert( %s ) failed!\n",#x);   \
+      SAT_Print("SAT_Assert( " SAT_TERM_FG_DARK_RED "%s" SAT_TERM_RESET " ) failed!\n",#x); \
+      /*SAT_Print("SAT_Assert(%s) failed!\n",#x);*/                                       \
+      exit(1);                                                                            \
+    }                                                                                     \
   }
   
-//#endif
+#else
 
-//----------
+  #define SAT_Assert(x) {}
+  
+#endif
+
+//------------------------------
+//
+//------------------------------
 
 #ifdef SAT_DEBUG_CALL_STACK
 
@@ -68,7 +75,9 @@
   
 #endif
 
-//----------
+//------------------------------
+//
+//------------------------------
 
 #ifdef SAT_DEBUG_CRASH_HANDLER
 
@@ -79,7 +88,9 @@
   
 #endif
 
-//----------
+//------------------------------
+//
+//------------------------------
 
 #ifdef SAT_DEBUG_MEMTRACE
 
@@ -96,7 +107,9 @@
 #endif
 
 
-//----------
+//------------------------------
+//
+//------------------------------
 
 #ifdef SAT_DEBUG_PRINT_SOCKET
 
@@ -115,7 +128,9 @@
   
 #endif
 
-//----------
+//------------------------------
+//
+//------------------------------
 
 #ifdef SAT_DEBUG_PRINT_THREAD
 
@@ -131,7 +146,9 @@
   
 #endif
 
-//----------
+//------------------------------
+//
+//------------------------------
 
 #ifdef SAT_DEBUG_PRINT_TIME
 
@@ -162,8 +179,8 @@ private:
     uint32_t MMaxNoteEndFromProcessToHost = 0;
   //#endif
 
-  #ifdef SAT_DEBUG_CALL_STACK
-  #endif
+  //#ifdef SAT_DEBUG_CALL_STACK
+  //#endif
   
   #ifdef SAT_DEBUG_CRASH_HANDLER
     const char* MSignalNames[32] = {
@@ -295,13 +312,13 @@ public: // print
       strcat(MPrefixBuffer,strip_path(file));
       strcat(MPrefixBuffer,SAT_TERM_RESET );
       strcat(MPrefixBuffer,":");
-      strcat(MPrefixBuffer,SAT_TERM_FG_DARK_CYAN );
+      strcat(MPrefixBuffer,SAT_TERM_FG_DARK_MAGENTA );
       strcat(MPrefixBuffer,func);
       strcat(MPrefixBuffer,SAT_TERM_RESET );
       strcat(MPrefixBuffer,":");
       char line_str[16] = {0};
       //itoa(line,line_str,10);
-      sprintf(line_str, SAT_TERM_FG_DARK_MAGENTA "%i", line);
+      sprintf(line_str, SAT_TERM_FG_DARK_CYAN "%i", line);
       strcat(MPrefixBuffer,line_str);
       strcat(MPrefixBuffer,SAT_TERM_RESET );
       strcat(MPrefixBuffer,"]");
@@ -459,7 +476,7 @@ public: // call stack
       memset(out_syms,0x0,(size_t)num_addresses*sizeof(sat_callstack_symbol_t));
       char** syms = backtrace_symbols(addresses,num_addresses);
       size_t tmp_buf_len = 1024 * 32;
-      char*  tmp_buffer  = (char*)malloc(tmp_buf_len);
+      char*  tmp_buffer  = (char*)::malloc(tmp_buf_len);
       FILE* addr2line = run_addr2line(addresses,num_addresses,tmp_buffer,tmp_buf_len);
       for (int i=0; i<num_addresses; ++i) {
         char* symbol = syms[i];
@@ -493,8 +510,8 @@ public: // call stack
         }
         ++num_translated;
       }
-      free(syms);
-      free(tmp_buffer);
+      ::free(syms);
+      ::free(tmp_buffer);
       fclose(addr2line);
       return num_translated;
     }
@@ -655,7 +672,7 @@ public: // memtrace
       }
       // not found
       if (!found) {
-        print("Error! allocation %p not found (%s/%i)\n",ptr,strip_path(file),line);
+//        print("Error! allocation %p not found (%s/%i)\n",ptr,strip_path(file),line);
       }
       // delete memory
       ::free(ptr);

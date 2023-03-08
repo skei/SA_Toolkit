@@ -110,6 +110,7 @@ public:
 
   virtual ~SAT_Plugin() {
     SAT_Log("~SAT_Plugin()\n");
+    //SAT_PRINT;
     #ifndef SAT_NO_AUTODELETE
       deleteParameters();
       deleteAudioInputPorts();
@@ -173,9 +174,15 @@ public: // plugin
   void destroy() override {
     SAT_Log("SAT_Plugin.destroy\n");
     MIsInitialized = false;
+    
+    // i don't think this works?
+    
     #ifdef SAT_DELETE_PLUGIN_IN_DESTROY
+      //SAT_Print("delete this\n");
       delete this;
+      //SAT_Print("deleted\n");
     #endif
+    
   }
 
   //----------
@@ -1396,11 +1403,15 @@ public: // extensions
     registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
     registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                 &MStateExt);
-  //registerExtension(CLAP_EXT_THREAD_POOL,           &MThreadPoolExt);
-  //registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
   }
 
-//------------------------------
+  void registerDefaultSynthExtensions() {
+    registerDefaultExtensions();
+    registerExtension(CLAP_EXT_THREAD_POOL, &MThreadPoolExt);
+    registerExtension(CLAP_EXT_VOICE_INFO, &MVoiceInfoExt);
+  }
+
+    //------------------------------
 public: // editor
 //------------------------------
 

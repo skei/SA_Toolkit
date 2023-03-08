@@ -13,7 +13,12 @@
 //
 //----------------------------------------------------------------------
 
-#define PLUGIN_NAME   "myPlugin"
+#ifdef SAT_DEBUG
+  #define PLUGIN_NAME "myPlugin (debug)"
+#else
+  #define PLUGIN_NAME "myPlugin"
+#endif
+
 #define EDITOR_WIDTH  (50 + 200                   + 10 + 200 + 10 + 200 + 50)
 #define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20))                       + 50)
 
@@ -179,6 +184,7 @@ public:
 
   virtual ~myPlugin() {
     //SAT_Print("yepp, we are being deleted..\n");
+    //SAT_PRINT;
   }
 
 //------------------------------
@@ -186,29 +192,43 @@ public:
 //------------------------------
 
   bool init() final {
+    
+    SAT_PRINT;
     SAT_Print("Hello world!\n");
-    registerDefaultExtensions();
-    registerExtension(CLAP_EXT_THREAD_POOL,&MThreadPoolExt);
-    registerExtension(CLAP_EXT_VOICE_INFO,&MVoiceInfoExt);
+    SAT_DPrint( SAT_TERM_FG_DARK_GREEN "hello world2\n" SAT_TERM_RESET);
+   
+    //registerDefaultExtensions();
+    //registerExtension(CLAP_EXT_THREAD_POOL,&MThreadPoolExt);
+    //registerExtension(CLAP_EXT_VOICE_INFO,&MVoiceInfoExt);
+    registerDefaultSynthExtensions();
+    
     appendClapNoteInputPort();
     //appendStereoInputPort();
     appendStereoOutputPort();
+    
     SAT_Parameter* par;
     par = appendParameter( new SAT_Parameter("Param1",0.0) );
     par = appendParameter( new SAT_Parameter("Param2",0.5) );
     par = appendParameter( new SAT_Parameter("Param3",1.5) );
     par->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT);
+    
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
+    
     SAT_Host* host = getHost();
+    
     const clap_plugin_t*  clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
+    
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(false);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
+    
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
+    
     return SAT_Plugin::init();
   }
 

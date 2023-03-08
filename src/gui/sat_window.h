@@ -34,6 +34,36 @@ typedef SAT_LockFreeQueue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS> SAT_DirtyWid
 //
 //----------------------------------------------------------------------
 
+//class SAT_OpenGLWindow
+//: public SAT_ImplementedWindow {
+//};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+//class SAT_BufferedWindow
+//: public SAT_OpenGLWindow {
+//};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+//class SAT_WidgetWindow
+//: public SAT_BufferedWindow {
+//};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
 class SAT_Window
 : public SAT_ImplementedWindow
 , public SAT_WidgetListener
@@ -43,8 +73,9 @@ class SAT_Window
 private:
 //------------------------------
 
-  SAT_WindowListener*   MListener             = nullptr; // editor
+  // window
 
+  SAT_WindowListener*   MListener             = nullptr; // editor
   SAT_Widget*           MRootWidget           = nullptr;
   uint32_t              MWidth                = 0;
   uint32_t              MHeight               = 0;
@@ -53,16 +84,21 @@ private:
   double                MScale                = 1.0;
   bool                  MAutoScaleWidgets     = true;
 
+  // opengl
+
   SAT_OpenGL*           MOpenGL               = nullptr;
   SAT_Painter*          MWindowPainter        = nullptr;
   SAT_PaintContext      MPaintContext         = {};
+
+  // buffer
 
   void*                 MRenderBuffer         = nullptr;
   uint32_t              MBufferWidth          = 0;
   uint32_t              MBufferHeight         = 0;
   
-  SAT_Timer*            MTimer                = nullptr;
+  // widgets
 
+  SAT_Timer*            MTimer                = nullptr;
   SAT_DirtyWidgetsQueue MPendingDirtyWidgets  = {};
   SAT_DirtyWidgetsQueue MPaintDirtyWidgets    = {};
 
@@ -70,6 +106,7 @@ private:
   SAT_Widget*           MCapturedWidget       = nullptr;
   SAT_Widget*           MModalWidget          = nullptr;
   SAT_Widget*           MMouseLockedWidget    = nullptr;
+
   int32_t               MCurrentCursor        = SAT_CURSOR_DEFAULT;
   int32_t               MMouseClickedX        = 0;
   int32_t               MMouseClickedY        = 0;
@@ -78,7 +115,7 @@ private:
   int32_t               MMousePreviousY       = 0;
   int32_t               MMouseDragX           = 0;
   int32_t               MMouseDragY           = 0;
-
+  
 
 //------------------------------
 public:
@@ -117,7 +154,7 @@ public:
 
     uint32_t width2 = SAT_NextPowerOfTwo(AWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(AHeight);
-    SAT_Print("creating FBO. %i,%i pow2: %i,%i\n",AWidth,AHeight, width2,height2);
+    //SAT_Print("creating FBO. %i,%i pow2: %i,%i\n",AWidth,AHeight, width2,height2);
     MRenderBuffer = MWindowPainter->createRenderBuffer(width2,height2);
     SAT_Assert(MRenderBuffer);
     MBufferWidth = width2;
@@ -409,11 +446,11 @@ public: // window
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
     
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
-      SAT_Print("creating new FBO. window: %i,%i pow2: %i,%i\n",MWindowWidth,MWindowHeight, width2,height2);
+      //SAT_Print("creating new FBO. window: %i,%i pow2: %i,%i\n",MWindowWidth,MWindowHeight, width2,height2);
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
       copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-      SAT_Print("deleting previous FBO\n");
+      //SAT_Print("deleting previous FBO\n");
       MWindowPainter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = buffer;
       MBufferWidth  = width2;

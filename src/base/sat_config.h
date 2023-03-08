@@ -15,11 +15,15 @@
 //----------------------------------------------------------------------
 
 
-// append to existing log file, or create new
+/*
+  append to existing log file, or create new
+*/
 
   #define SAT_LOG_FILE_APPEND
 
-// additional precision (for math approximations)
+/*
+  additional precision (for math approximations)
+*/
 
   //#define SAT_MATH_EXTRA_PRECISION
 
@@ -27,28 +31,48 @@
 // debug
 //--------------------
 
-// trace memcalls (malloc/new vs free/delete)
+/*
+  trace memcalls (malloc/new vs free/delete)
+*/
+
+  #define SAT_DEBUG_ASSERT
+
+/*
+  trace memcalls (malloc/new vs free/delete)
+*/
 
   //#define SAT_DEBUG_MEMTRACE
 
-// SAT_Print outputs through socket.
-// output to console: nc -U -l -k /tmp/sat.socket
+/*
+  SAT_Print outputs through socket.
+  output to console: nc -U -l -k /tmp/sat.socket
+  automatically defined if compiling as plugin
+  automatically undefined if compiling as exe
+*/
 
   //#define SAT_DEBUG_PRINT_SOCKET
 
-// print thread id (in SAT_Print)
+/*
+  print thread id (in SAT_Print)
+*/
 
-  //#define SAT_DEBUG_PRINT_THREAD
+  #define SAT_DEBUG_PRINT_THREAD
 
-// print time (in SAT_Print)
+/*
+  print time (in SAT_Print)
+*/
 
-  //#define SAT_DEBUG_PRINT_TIME
+  #define SAT_DEBUG_PRINT_TIME
 
-// crash handler
+/*
+  crash handler
+*/
 
   #define SAT_DEBUG_CRASH_HANDLER
 
-// call stack
+/*
+  call stack
+*/
 
   #define SAT_DEBUG_CALL_STACK
 
@@ -59,20 +83,28 @@
 //----------------------------------------------------------------------
 
 
-// delete plugin ('delete this') in SAT_Plugin.destroy()
-// otherwise, override destroy() and do it manually
+/*
+  delete plugin ('delete this') in SAT_Plugin.destroy()
+  otherwise, override destroy() and do it manually
+*/
 
   #define SAT_DELETE_PLUGIN_IN_DESTROY
 
-// parameter changes not meant for a specific voice, will be sent to ALL voices
+/*
+  parameter changes not meant for a specific voice, will be sent to ALL voices
+*/
 
   #define SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
-// modulation not meant for a specific voice, will be sent to ALL voices
+/*
+  modulation not meant for a specific voice, will be sent to ALL voices
+*/
 
   #define SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
 
-// convert regular MIDI to note events
+/*
+  convert regular MIDI to note events
+*/
 
   #define SAT_VOICE_MANAGER_CONVERT_MIDI
 
@@ -84,11 +116,15 @@
 //----------------------------------------------------------------------
 
 
-// removes all traces of gui/editor in the plugin
+/*
+  removes all traces of gui/editor in the plugin
+*/
 
   //#define SAT_NO_GUI
 
-// waits for notify event before returning when opening windows..
+/*
+  waits for notify event before returning when opening windows..
+*/
 
   #define SAT_X11_WAIT_FOR_MAPNOTIFY
 

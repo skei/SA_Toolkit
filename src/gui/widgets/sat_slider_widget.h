@@ -92,7 +92,8 @@ public:
       double value = getValue();
 
       if (isBipolar()) {
-        double v1,v2;
+        double v1 = 0.0;
+        double v2 = 0.0;
         double bpc = getBipolarCenter();
         if (value < bpc) {
           v1 = value;
