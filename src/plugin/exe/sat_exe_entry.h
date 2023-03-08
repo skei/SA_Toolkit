@@ -14,44 +14,61 @@
 class SAT_ExeWindow
 : public SAT_ImplementedWindow {
 
+//------------------------------
 private:
+//------------------------------
 
   const clap_plugin_t*      MPlugin = nullptr;
   const clap_plugin_gui_t*  MGui    = nullptr;
 
+//------------------------------
 public:
+//------------------------------
 
   SAT_ExeWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, const clap_plugin_t* APlugin, const clap_plugin_gui_t* AGui)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     MPlugin = APlugin;
     MGui = AGui;
+    setTitle("SA_Toolkit :: SAT_ExeWindow");
   }
+  
+  //----------
 
-  virtual ~SAT_ExeWindow() {
-  }
+  //virtual ~SAT_ExeWindow() {
+  //}
 
+//------------------------------
 public:
+//------------------------------
 
-  void on_window_open() final {
-    //SAT_PRINT;
-  }
+  //void on_window_open() final {
+  //  //SAT_PRINT;
+  //}
 
-  void on_window_close() final {
-    //SAT_PRINT;
-  }
+  //----------
+
+  //void on_window_close() final {
+  //  //SAT_PRINT;
+  //}
+
+  //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) final {
     //SAT_PRINT;
     MGui->set_size(MPlugin,AWidth,AHeight);
   }
 
+  //----------
+
   //void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
   //  SAT_PRINT;
   //}
 
-  void on_window_client_message(uint32_t AData) final {
-    //SAT_Print("%i\n",AData);
-  }
+  //----------
+
+  //void on_window_client_message(uint32_t AData) final {
+  //  //SAT_Print("%i\n",AData);
+  //}
 
 };
 
@@ -88,24 +105,6 @@ public:
 // editor
 //
 //----------------------------------------------------------------------
-
-/*
-  Showing the GUI works as follow:
-    1.  clap_plugin_gui->is_api_supported(), check what can work
-    2.  clap_plugin_gui->create(), allocates gui resources
-    3.  if the plugin window is floating
-    4.     -> clap_plugin_gui->set_transient()
-    5.     -> clap_plugin_gui->suggest_title()
-    6.  else
-    7.     -> clap_plugin_gui->set_scale()
-    8.     -> clap_plugin_gui->can_resize()
-    9.     -> if resizable and has known size from previous session, clap_plugin_gui->set_size()
-    10.    -> else clap_plugin_gui->get_size(), gets initial size
-    11.    -> clap_plugin_gui->set_parent()
-    12. clap_plugin_gui->show()
-    13. clap_plugin_gui->hide()/show() ...
-    14. clap_plugin_gui->destroy() when done with the gui
-*/
 
 void open_editor(const clap_plugin_t* plugin) {
   const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);

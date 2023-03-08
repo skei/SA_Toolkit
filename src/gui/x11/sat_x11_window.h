@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "base/system/sat_timer.h"
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
 
@@ -13,8 +12,7 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_X11Window
-: public SAT_TimerListener {
+class SAT_X11Window {
 
 //------------------------------
 private:
@@ -36,11 +34,8 @@ private:
   bool                        MIsMapped                     = false;
   bool                        MIsExposed                    = false;
   xcb_key_symbols_t*          MKeySyms                      = nullptr;
-  SAT_Timer*                  MTimer                        = nullptr;
-
   xcb_atom_t                  MWMProtocolsAtom              = XCB_NONE;
   xcb_atom_t                  MWMDeleteWindowAtom           = XCB_NONE;
-
   xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
   xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
   xcb_cursor_t                MWindowCursor                 = XCB_NONE;
@@ -192,7 +187,6 @@ public:
     }
 
     //setTitle(MWindowTitle);
-    MTimer = new SAT_Timer(this);
 
   }
 
@@ -201,14 +195,6 @@ public:
   virtual ~SAT_X11Window() {
     //SAT_PRINT;
     if (MIsMapped) hide();
-    if (MTimer) {
-      if (MTimer->isRunning()) {
-        //LOG.print("XCB Stopping gui timer (destructor)\n");
-        //SAT_Print("stopping timer\n");
-        MTimer->stop();
-      }
-      delete MTimer;
-    }
     // keyboard
     xcb_key_symbols_free(MKeySyms);
     // mouse
@@ -251,7 +237,6 @@ public:
   virtual void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_client_message(uint32_t AData) {}
-  //virtual void on_window_timer() {}
 
 //------------------------------
 public:
@@ -300,18 +285,13 @@ public:
     #ifdef SAT_X11_WAIT_FOR_MAPNOTIFY
       waitForMapNotify();
     #endif
-    startEventThread();
-    //SAT_Print("starting timer\n");
-    MTimer->start(SAT_WINDOW_TIMER_MS,false);
+    if (MIsEmbedded) startEventThread();
   }
 
   //----------
 
   virtual void hide() {
-    //SAT_PRINT;
-    //SAT_Print("stopping timer\n");
-    MTimer->stop();
-    stopEventThread();
+    if (MIsEmbedded) stopEventThread();
     xcb_unmap_window(MConnection,MWindow);
     xcb_flush(MConnection);
     MIsMapped = false;
@@ -444,7 +424,7 @@ private:
 
   void startEventThread() {
     MIsEventThreadActive = true;
-    pthread_create(&MEventThread,nullptr,xcb_event_thread_proc,this);
+    pthread_create(&MEventThread,nullptr,xcb_event_thread_callback,this);
   }
 
   //----------
@@ -843,14 +823,16 @@ private:
         break;
       }
 
-      // https://cairographics.org/cookbook/xcbsurface.c/
-      // Avoid extra redraws by checking if this is the last expose event in the sequence
-      //
-      //while(expose->count != 0) {
-      //  xcb_generic_event_t* e2 = xcb_wait_for_event(MConnection);
-      //  xcb_expose_event_t* ex2 = (xcb_expose_event_t *)e2;
-      //  RECT.combine( KODE_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
-      //}
+      /*
+        https://cairographics.org/cookbook/xcbsurface.c/
+        Avoid extra redraws by checking if this is the last expose event in the sequence
+
+        while(expose->count != 0) {
+          xcb_generic_event_t* e2 = xcb_wait_for_event(MConnection);
+          xcb_expose_event_t* ex2 = (xcb_expose_event_t *)e2;
+          RECT.combine( KODE_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
+        }
+      */
 
       case XCB_EXPOSE: {
         xcb_expose_event_t* expose = (xcb_expose_event_t *)AEvent;
@@ -967,14 +949,6 @@ private:
         //  //default:
         //  //  break;
         //  /*
-        //  case SAT_THREAD_ID_TIMER:
-        //    on_window_timer();
-        //    break;
-        //  case SAT_THREAD_ID_IDLE:
-        //    if (MMapped && MExposed) {
-        //      on_window_idle();
-        //    }
-        //    break;
         //  default:
         //    on_window_clientMessage(data,nullptr);
         //    break;
@@ -1007,7 +981,7 @@ private:
   //----------
 
   static
-  void* xcb_event_thread_proc(void* AWindow) {
+  void* xcb_event_thread_callback(void* AWindow) {
     //LOG.print("XCB Started event thread\n");
     //sat_xcb_event_thread_pid = getpid();
     SAT_X11Window* window = (SAT_X11Window*)AWindow;
@@ -1030,16 +1004,16 @@ private:
           //}
 
           // double-check (in case we have closed the window before processing
-          // all events in queue
-          //SAT_PRINT;
-
+          // all events in queue??
           if (window->MIsEventThreadActive) {
+            
             if (!window->processEvent(event)) {
               //SAT_Print("window->processEvent returned false\n");
               //window->xcb_event_thread_stop_callback(window);
               //LOG.print("XCB Returning from event thread\n");
               return nullptr;
             }
+            
           } // active
 
         } // event
@@ -1051,17 +1025,6 @@ private:
     //LOG.print("XCB Returning from event thread\n");
     return nullptr;
   }
-
-//
-
-//------------------------------
-public:
-//------------------------------
-
-//  void do_timer_callback(SAT_Timer* ATimer) final {
-//    SAT_PRINT;
-//    on_window_timer();
-//  }
 
 };
 

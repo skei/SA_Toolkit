@@ -2,12 +2,8 @@
 #define sat_window_included
 //----------------------------------------------------------------------
 
-// mouse events
-// resizing
-// buffer
-// painting
-
 #include "base/sat.h"
+#include "base/system/sat_timer.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 #include "gui/sat_widget_listener.h"
@@ -40,20 +36,33 @@ typedef SAT_LockFreeQueue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS> SAT_DirtyWid
 
 class SAT_Window
 : public SAT_ImplementedWindow
-, public SAT_WidgetListener {
+, public SAT_WidgetListener
+, public SAT_TimerListener {
 
 //------------------------------
 private:
 //------------------------------
 
+  SAT_WindowListener*   MListener             = nullptr; // editor
+
+  SAT_Widget*           MRootWidget           = nullptr;
+  uint32_t              MWidth                = 0;
+  uint32_t              MHeight               = 0;
+  double                MInitialWidth         = 0.0;
+  double                MInitialHeight        = 0.0;
+  double                MScale                = 1.0;
+  bool                  MAutoScaleWidgets     = true;
+
   SAT_OpenGL*           MOpenGL               = nullptr;
   SAT_Painter*          MWindowPainter        = nullptr;
-  void*                 MRenderBuffer         = nullptr;
-  uint32_t              MBufferWidth          = 0; // pow 2
-  uint32_t              MBufferHeight         = 0; // pow 2
-  SAT_Widget*           MRootWidget           = nullptr;
   SAT_PaintContext      MPaintContext         = {};
-  SAT_WindowListener*   MListener             = nullptr; // editor
+
+  void*                 MRenderBuffer         = nullptr;
+  uint32_t              MBufferWidth          = 0;
+  uint32_t              MBufferHeight         = 0;
+  
+  SAT_Timer*            MTimer                = nullptr;
+
   SAT_DirtyWidgetsQueue MPendingDirtyWidgets  = {};
   SAT_DirtyWidgetsQueue MPaintDirtyWidgets    = {};
 
@@ -61,9 +70,7 @@ private:
   SAT_Widget*           MCapturedWidget       = nullptr;
   SAT_Widget*           MModalWidget          = nullptr;
   SAT_Widget*           MMouseLockedWidget    = nullptr;
-
   int32_t               MCurrentCursor        = SAT_CURSOR_DEFAULT;
-
   int32_t               MMouseClickedX        = 0;
   int32_t               MMouseClickedY        = 0;
   uint32_t              MMouseClickedB        = 0;
@@ -72,15 +79,6 @@ private:
   int32_t               MMouseDragX           = 0;
   int32_t               MMouseDragY           = 0;
 
-  double                MInitialWidth         = 0.0;
-  double                MInitialHeight        = 0.0;
-  double                MScale                = 1.0;
-  //double MYScale        = 1.0;
-
-  uint32_t MWidth = 0;
-  uint32_t MHeight = 0;
-
-  bool MAutoScaleWidgets = true;
 
 //------------------------------
 public:
@@ -88,38 +86,63 @@ public:
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, SAT_WindowListener* AListener)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
-    //SAT_PRINT;
 
     MWidth = AWidth;
     MHeight = AHeight;
-
-    MListener = AListener;
     MInitialWidth = AWidth;
-    MInitialHeight = AHeight;
+    MInitialHeight= AHeight;
+    MListener = AListener;
+    
+    // linux
 
     #ifdef SAT_LINUX
       Display* display = getX11Display();
       xcb_window_t window = getX11Window();
       MOpenGL = new SAT_OpenGL(display,window);
     #endif
+    
+    // win32
 
     #ifdef SAT_WIN32
     #endif
+    
+    //opengl
 
     MOpenGL->makeCurrent();
-      MWindowPainter = new SAT_Painter(MOpenGL);
-      SAT_Assert(MWindowPainter);
-      createBuffer(AWidth,AHeight);
+    MWindowPainter = new SAT_Painter(MOpenGL);
+    SAT_Assert(MWindowPainter);
+      
+    // buffer  
+      
+
+    uint32_t width2 = SAT_NextPowerOfTwo(AWidth);
+    uint32_t height2 = SAT_NextPowerOfTwo(AHeight);
+    SAT_Print("creating FBO. %i,%i pow2: %i,%i\n",AWidth,AHeight, width2,height2);
+    MRenderBuffer = MWindowPainter->createRenderBuffer(width2,height2);
+    SAT_Assert(MRenderBuffer);
+    MBufferWidth = width2;
+    MBufferHeight = height2;
+    
+    //
+      
     MOpenGL->resetCurrent();
+    
+    MTimer = new SAT_Timer(this);
+    //SAT_Assert(MTimer);
 
   }
 
   //----------
 
   virtual ~SAT_Window() {
-    //SAT_PRINT;
-    deleteBuffer();
+    
+    if (MTimer) {
+      if (MTimer->isRunning()) { MTimer->stop(); }
+      delete MTimer;
+    }
+    
     if (MRootWidget) MRootWidget->cleanup(MWindowPainter);
+    MWindowPainter->deleteRenderBuffer(MRenderBuffer);
     delete MWindowPainter;
     delete MOpenGL;
   }
@@ -128,30 +151,25 @@ public:
 public:
 //------------------------------
 
-  SAT_Widget* getRootWidget() {
-    return MRootWidget;
+  SAT_Widget*       getRootWidget()   { return MRootWidget; }
+  SAT_PaintContext* getPaintContext() { return &MPaintContext; }
+  double            getScale()        { return MScale; }
+  uint32_t          getWidth()        { return MWidth; }
+  uint32_t          getHeight()       { return MHeight; }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
+    MInitialWidth = AWidth;
+    MInitialHeight = AHeight;
+    MScale = recalcScale(MWindowWidth,MWindowHeight);
   }
 
   //----------
 
-  SAT_PaintContext* getPaintContext() {
-    return &MPaintContext;
-  }
-
-  //----------
-
-  double getScale() {
-    return MScale;
-  }
-
-  //----------
-
-  uint32_t getWidth()   { return MWidth; }
-  uint32_t getHeight()  { return MHeight; }
-
-  //----------
-
-  double recalcScale(int32_t AWidth, int32_t AHeight) {
+  virtual double recalcScale(int32_t AWidth, int32_t AHeight) {
     double scale = 1.0;
     if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
       double xscale = AWidth / MInitialWidth;
@@ -164,144 +182,7 @@ public:
 
   //----------
 
-  void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
-    MInitialWidth = AWidth;
-    MInitialHeight = AHeight;
-    MScale = recalcScale(MWindowWidth,MWindowHeight);
-  }
-
-//------------------------------
-private: // buffer
-//------------------------------
-
-  void createBuffer(uint32_t AWidth, uint32_t AHeight) {
-    uint32_t width = SAT_NextPowerOfTwo(AWidth);
-    uint32_t height = SAT_NextPowerOfTwo(AHeight);
-//    SAT_Print("create buffer %i,%i -> %i,%i\n",AWidth,AHeight,width,height);
-    MBufferWidth = width;
-    MBufferHeight = height;
-    MRenderBuffer = MWindowPainter->createRenderBuffer(width,height);
-    SAT_Assert(MRenderBuffer);
-  }
-
-  //----------
-
-  void deleteBuffer() {
-    if (MRenderBuffer) {
-//      SAT_Print("delete buffer\n");
-      MWindowPainter->deleteRenderBuffer(MRenderBuffer);
-      MRenderBuffer = nullptr;
-    }
-  }
-
-  //----------
-
-  bool resizeBuffer(uint32_t AWidth, uint32_t AHeight, bool ACopyBuffer=true) {
-    //SAT_Print("%i,%i\n",AWidth,AHeight);
-    if (!MRenderBuffer) {
-      createBuffer(AWidth,AHeight);
-      return true;
-    }
-    else {
-      uint32_t new_width  = SAT_NextPowerOfTwo(AWidth);
-      uint32_t new_height = SAT_NextPowerOfTwo(AHeight);
-      if ((new_width != MBufferWidth) || (new_height != MBufferHeight)) {
-
-//        SAT_Print("create new buffer (size %i,%i) %i,%i -> %i,%i\n",MBufferWidth,MBufferHeight,AWidth,AHeight,new_width,new_height);
-        void* new_buffer = MWindowPainter->createRenderBuffer(new_width,new_height);
-        //if (!new_buffer) SAT_GLOBAL.DEBUG.print_callstack();
-        SAT_Assert(new_buffer);
-        
-        if (ACopyBuffer) copyBuffer(new_buffer,0,0,new_width,new_height,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-
-//        SAT_Print("delete old buffer\n");
-        MWindowPainter->deleteRenderBuffer(MRenderBuffer);
-
-        MRenderBuffer = new_buffer;
-        
-        MBufferWidth  = new_width;
-        MBufferHeight = new_height;
-        return true;
-      }
-      return false;
-    }
-  }
-
-  //----------
-
-  void copyBuffer(void* ADst, uint32_t ADstXpos, uint32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, uint32_t ASrcXpos, uint32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
-    MWindowPainter->selectRenderBuffer(ADst,ADstWidth,ADstHeight);
-    MWindowPainter->beginFrame(ADstWidth,ADstHeight);
-    int32_t image = MWindowPainter->getImageFromRenderBuffer(ASrc);
-    MWindowPainter->setFillImage(image, ASrcXpos,ASrcYpos, 1,1, 1.0, 0.0);
-    MWindowPainter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
-    MWindowPainter->endFrame();
-  }
-
-  //----------
-
-  /*
-    called at the start of SAT_Window.on_window_paint(),
-    to see if we need to paint any dirty widgets..
-
-  */
-
-  bool checkBufferSize() {
-    bool resized = resizeBuffer(MWindowWidth,MWindowHeight);
-    if (resized) {
-      //MPendingDirtyWidgets.write(MRootWidget);
-    }
-    return resized;
-  }
-
-  //
-
-  uint32_t flushDirtyWidgets(SAT_Rect* ARect) {
-    uint32_t count = 0;
-    ARect->set(0);
-    SAT_Widget* widget = nullptr;
-    while (MPendingDirtyWidgets.read(&widget)) {
-      //widget->on_widget_paint(&MPaintContext);
-      ARect->combine(widget->getRect());
-      MPaintDirtyWidgets.write(widget);
-      count += 1;
-    }
-    return count;
-  }
-
-  //
-
-  uint32_t paintDirtyWidgets(SAT_PaintContext* AContext, SAT_Widget* ARoot=nullptr) {
-     int32_t paint_count = MPaintContext.counter;
-    uint32_t count = 0;
-    SAT_Widget* widget = nullptr;
-    if (ARoot) {
-      // we will draw everything, so just empty queue
-      while (MPaintDirtyWidgets.read(&widget)) {  }
-      ARoot->on_widget_paint(&MPaintContext);
-      count = 1;
-    }
-    else {
-      while (MPaintDirtyWidgets.read(&widget)) {
-        if (widget->getLastPainted() != paint_count) {
-          //SAT_Print("draw\n");
-          widget->on_widget_paint(&MPaintContext);
-          widget->setLastPainted(paint_count);
-          count += 1;
-        }
-        //else {
-        //  SAT_Print("skip draw\n");
-        //}
-      }
-    }
-    return count;
-  }
-
-//------------------------------
-public: // widgets
-//------------------------------
-
-  void setRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
+  virtual void setRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     MRootWidget = AWidget;
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);
@@ -310,7 +191,9 @@ public: // widgets
     AWidget->setSize(width,height);
   }
 
-  //----------
+//------------------------------
+private:
+//------------------------------
 
   // called from
   // - SAT_Window.on_window_open()
@@ -337,6 +220,125 @@ public: // widgets
     invalidate(R.x,R.y,R.w,R.h);
   }
 
+  //----------
+
+  /*
+    called from:
+    - do_timer_listener_callback()
+  */
+
+  virtual uint32_t flushDirtyWidgets(SAT_Rect* ARect) {
+    uint32_t count = 0;
+    ARect->set(0);
+    SAT_Widget* widget = nullptr;
+    while (MPendingDirtyWidgets.read(&widget)) {
+      //widget->on_widget_paint(&MPaintContext);
+      ARect->combine(widget->getRect());
+      MPaintDirtyWidgets.write(widget);
+      count += 1;
+    }
+    return count;
+  }
+
+  //----------
+  
+  /*
+    called from
+    - on_window_paint()
+  */
+
+  virtual uint32_t paintDirtyWidgets(SAT_PaintContext* AContext, SAT_Widget* ARoot=nullptr) {
+     int32_t paint_count = MPaintContext.counter;
+    uint32_t count = 0;
+    SAT_Widget* widget = nullptr;
+    if (ARoot) {
+      while (MPaintDirtyWidgets.read(&widget)) {
+        // we will draw everything anyway, so just empty queue
+        //widget->setLastPainted(paint_count);
+      }
+      ARoot->on_widget_paint(&MPaintContext);
+      count = 1;
+    }
+    else {
+      while (MPaintDirtyWidgets.read(&widget)) {
+        if (widget->getLastPainted() != paint_count) {
+          //SAT_Print("draw\n");
+          widget->on_widget_paint(&MPaintContext);
+          widget->setLastPainted(paint_count);
+          count += 1;
+        }
+        //else {
+        //  SAT_Print("skip draw\n");
+        //}
+      }
+    }
+    return count;
+  }
+
+  //----------
+
+  virtual void updateHoverWidget(int32_t AXpos, int32_t AYpos, SAT_Widget* ARoot=nullptr) {
+    SAT_Widget* hover = nullptr;
+
+    if (ARoot) {
+      hover = ARoot->findChildWidget(AXpos,AYpos,true);
+    }
+    else {
+      if (MRootWidget) hover = MRootWidget->findChildWidget(AXpos,AYpos,true);
+    }
+
+    if (hover != MHoverWidget) {
+      if (MHoverWidget) {
+        //MHoverWidget->setHovering(false);
+        MHoverWidget->on_widget_mouse_leave(hover,AXpos,AYpos,0);
+      }
+      if (hover) {
+        //hover->setHovering(true);
+        hover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
+      }
+    }
+
+    MHoverWidget = hover;
+  }
+
+  //----------
+
+  // when releasing mouse cursor after dragging, and entering window
+  // (when we don't know the 'from' widget)
+
+  //virtual void updateHoverWidgetFrom(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
+  //  if (MHoverWidget != AFrom) {
+  //    if (AFrom) AFrom->on_widget_leave(MHoverWidget,AXpos,AYpos,ATime);
+  //    if (MHoverWidget) MHoverWidget->on_widget_enter(AFrom,AXpos,AYpos,ATime);
+  //  }
+  //}
+
+  //----------
+
+  virtual void copyBuffer(void* ADst, uint32_t ADstXpos, uint32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, uint32_t ASrcXpos, uint32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
+    MWindowPainter->selectRenderBuffer(ADst,ADstWidth,ADstHeight);
+    MWindowPainter->beginFrame(ADstWidth,ADstHeight);
+    int32_t image = MWindowPainter->getImageFromRenderBuffer(ASrc);
+    MWindowPainter->setFillImage(image, ASrcXpos,ASrcYpos, 1,1, 1.0, 0.0);
+    MWindowPainter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
+    MWindowPainter->endFrame();
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void show() override {
+    SAT_ImplementedWindow::show();
+    MTimer->start(SAT_WINDOW_TIMER_MS,false);
+  }
+
+  //----------
+
+  void hide() override {
+    MTimer->stop();
+    SAT_ImplementedWindow::hide();
+  }
 
 //------------------------------
 public: // window
@@ -378,16 +380,7 @@ public: // window
     MWidth = AWidth;
     MHeight = AHeight;
     MScale = recalcScale(AWidth,AHeight);
-    //if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
-    //  double xscale = AWidth / MInitialWidth;
-    //  double yscale = AHeight / MInitialHeight;
-    //  if (xscale < yscale) MScale = xscale;
-    //  else MScale =  yscale;
-    //}
-    //else MScale = 1.0;
-    //SAT_Print("%i,%i (scale %.3f)\n",AWidth,AHeight,MScale);
     if (MRootWidget) {
-      //MRootWidget->realignChildWidgets();
       if (MAutoScaleWidgets) MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(AWidth,AHeight);
       MRootWidget->realignChildWidgets();
@@ -407,15 +400,40 @@ public: // window
     MPaintContext.window_width  = MWindowWidth;
     MPaintContext.window_height = MWindowHeight;
     MPaintContext.window_scale  = MScale;
+
     MOpenGL->makeCurrent();
-    bool resized = checkBufferSize();
-    //bool resized = resizeBuffer(MWindowWidth,MWindowHeight);
-    MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-    MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-    if (resized) paintDirtyWidgets(&MPaintContext,MRootWidget);
-    else paintDirtyWidgets(&MPaintContext);
-    MWindowPainter->endFrame();
-    //SAT_Print("copybuffer %i,%i,%i,%i (window %i,%i)\n",AXpos,AYpos,AWidth,AHeight,MWindowWidth,MWindowHeight);
+    
+    //uint32_t width2  = SAT_NextPowerOfTwo(MWindowWidth);
+    //uint32_t height2 = SAT_NextPowerOfTwo(MWindowHeight);
+    uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
+    uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
+    
+    if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
+      SAT_Print("creating new FBO. window: %i,%i pow2: %i,%i\n",MWindowWidth,MWindowHeight, width2,height2);
+      void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
+      SAT_Assert(buffer);
+      copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
+      SAT_Print("deleting previous FBO\n");
+      MWindowPainter->deleteRenderBuffer(MRenderBuffer);
+      MRenderBuffer = buffer;
+      MBufferWidth  = width2;
+      MBufferHeight = height2;
+      
+      MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+      MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
+      paintDirtyWidgets(&MPaintContext,MRootWidget);      
+      MWindowPainter->endFrame();
+      
+    }
+    else {
+      
+      MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+      MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
+      paintDirtyWidgets(&MPaintContext);
+      MWindowPainter->endFrame();
+      
+    }
+    
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
@@ -645,45 +663,6 @@ public: // timer listener
     }
   }
 
-//------------------------------
-private:
-//------------------------------
-
-  void updateHoverWidget(int32_t AXpos, int32_t AYpos, SAT_Widget* ARoot=nullptr) {
-    SAT_Widget* hover = nullptr;
-
-    if (ARoot) {
-      hover = ARoot->findChildWidget(AXpos,AYpos,true);
-    }
-    else {
-      if (MRootWidget) hover = MRootWidget->findChildWidget(AXpos,AYpos,true);
-    }
-
-    if (hover != MHoverWidget) {
-      if (MHoverWidget) {
-        //MHoverWidget->setHovering(false);
-        MHoverWidget->on_widget_mouse_leave(hover,AXpos,AYpos,0);
-      }
-      if (hover) {
-        //hover->setHovering(true);
-        hover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
-      }
-    }
-
-    MHoverWidget = hover;
-  }
-
-  //----------
-
-  // when releasing mouse cursor after dragging, and entering window
-  // (when we don't know the 'from' widget)
-
-  //void updateHoverWidgetFrom(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
-  //  if (MHoverWidget != AFrom) {
-  //    if (AFrom) AFrom->on_widget_leave(MHoverWidget,AXpos,AYpos,ATime);
-  //    if (MHoverWidget) MHoverWidget->on_widget_enter(AFrom,AXpos,AYpos,ATime);
-  //  }
-  //}
 };
 
 //----------------------------------------------------------------------

@@ -469,7 +469,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug.so</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug.clap</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -512,7 +512,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName).so</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName).clap</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
