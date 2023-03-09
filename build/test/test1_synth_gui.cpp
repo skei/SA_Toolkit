@@ -70,8 +70,8 @@ public:
 //------------------------------
 
   void init(uint32_t AIndex, SAT_VoiceContext* AContext) {
-    MIndex    = AIndex;
-    MContext  = AContext;
+    MIndex = AIndex;
+    MContext = AContext;
     srate = AContext->sample_rate;
   }
 
@@ -182,10 +182,10 @@ public:
 
   //----------
 
-  virtual ~myPlugin() {
-    //SAT_Print("yepp, we are being deleted..\n");
-    //SAT_PRINT;
-  }
+  //virtual ~myPlugin() {
+  //  //SAT_Print("yepp, we are being deleted..\n");
+  //  //SAT_PRINT;
+  //}
 
 //------------------------------
 public:
@@ -193,37 +193,32 @@ public:
 
   bool init() final {
     
-    SAT_PRINT;
-    SAT_Print("Hello world!\n");
-    SAT_DPrint( SAT_TERM_FG_DARK_GREEN "hello world2\n" SAT_TERM_RESET);
+    //SAT_PRINT;
+    //SAT_Print("Hello world!\n");
+    //SAT_DPrint( SAT_TERM_FG_RED "hello" SAT_TERM_FG_YELLOW " world2\n" SAT_TERM_RESET);
+    //SAT_DPrint( "\e[0;97m reset" SAT_TERM_RESET" \e[1;97m bold" SAT_TERM_RESET "\e[2;97m faint" SAT_TERM_RESET "\e[3;97m italics" SAT_TERM_RESET "\e[4;97m underline\n" SAT_TERM_RESET);
    
-    //registerDefaultExtensions();
-    //registerExtension(CLAP_EXT_THREAD_POOL,&MThreadPoolExt);
-    //registerExtension(CLAP_EXT_VOICE_INFO,&MVoiceInfoExt);
     registerDefaultSynthExtensions();
-    
     appendClapNoteInputPort();
-    //appendStereoInputPort();
     appendStereoOutputPort();
     
     SAT_Parameter* par;
-    par = appendParameter( new SAT_Parameter("Param1",0.0) );
-    par = appendParameter( new SAT_Parameter("Param2",0.5) );
-    par = appendParameter( new SAT_Parameter("Param3",1.5) );
+    par = appendParameter( new SAT_Parameter("Param1",0.1) );
+    par = appendParameter( new SAT_Parameter("Param2",0.4) );
+    par = appendParameter( new SAT_Parameter("Param3",0.7) );
     par->setFlag(CLAP_PARAM_IS_MODULATABLE);
     
-    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT);
+    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT, 2.0);
     
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     
     SAT_Host* host = getHost();
-    
     const clap_plugin_t*  clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     
     MVoiceManager.init(clapplugin,claphost);
-    MVoiceManager.setProcessThreaded(false);
+    MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     
     //setProcessThreaded(false);
@@ -289,24 +284,23 @@ public:
     SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(260,70,150,150));
     menu->setRightClickClose(true);
 
-      SAT_MenuItemWidget* i1 = new SAT_MenuItemWidget(SAT_Rect(5,5,140,15),"Item 1");
-      menu->appendChildWidget(i1);
-      i1->setDrawBorder(false);
+    SAT_MenuItemWidget* i1 = new SAT_MenuItemWidget(SAT_Rect(5,5,140,15),"Item 1");
+    menu->appendChildWidget(i1);
+    i1->setDrawBorder(false);
 
-      SAT_MenuItemWidget* i2 = new SAT_MenuItemWidget(SAT_Rect(5,20,140,15),"Item 2");
-      menu->appendChildWidget(i2);
-      i2->setDrawBorder(false);
+    SAT_MenuItemWidget* i2 = new SAT_MenuItemWidget(SAT_Rect(5,20,140,15),"Item 2");
+    menu->appendChildWidget(i2);
+    i2->setDrawBorder(false);
 
-      SAT_MenuItemWidget* i3 = new SAT_MenuItemWidget(SAT_Rect(5,35,140,15),"Item 3");
-      menu->appendChildWidget(i3);
-      i3->setDrawBorder(false);
-
+    SAT_MenuItemWidget* i3 = new SAT_MenuItemWidget(SAT_Rect(5,35,140,15),"Item 3");
+    menu->appendChildWidget(i3);
+    i3->setDrawBorder(false);
 
     // widgets
 
     SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
     MRootPanel->appendChildWidget(logo);
-    logo->setLogoColor(SAT_DarkMagenta);
+    logo->setLogoColor(SAT_LightGray);
 
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
     MRootPanel->appendChildWidget(text);

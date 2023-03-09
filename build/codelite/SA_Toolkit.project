@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="SA_Toolkit" Version="11000" InternalType="Console">
+  <Plugins>
+    <Plugin Name="CppCheck"/>
+  </Plugins>
   <VirtualDirectory Name="midi">
     <File Name="../../src/midi/sat_midi_file.h"/>
     <File Name="../../src/midi/sat_midi.h"/>

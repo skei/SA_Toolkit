@@ -69,8 +69,16 @@ public:
     - (loading state)
   */
 
-  void updateEditorParameterValue(uint32_t AIndex, sat_param_t AValue, bool ARedraw) {
-    //SAT_Print("%i = %.3f %s\n",AIndex,AValue,ARedraw?" (redraw)":"");
+  //void updateEditorParameterValue(uint32_t AIndex, sat_param_t AValue, bool ARedraw) {
+  //  //SAT_Print("%i = %.3f %s\n",AIndex,AValue,ARedraw?" (redraw)":"");
+  //}
+  
+  void updateParameterValue(SAT_Parameter* AParam, uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
+    SAT_Widget* widget = (SAT_Widget*)AParam->getConnection();
+    if (widget) {
+      widget->setValue(AValue);
+    }
   }
 
   //----------
@@ -92,6 +100,8 @@ public:
       }
     }
   }
+  
+  //----------
 
   void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
@@ -259,6 +269,7 @@ public: // clap
     //SAT_Print("\n");
     MParent = window;
     if (!MWindow) {
+      
       MWindow = createWindow(MWidth,MHeight,window->x11);
     }
     else {

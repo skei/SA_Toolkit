@@ -38,7 +38,7 @@
   #define SAT_Assert(x) {                                                                 \
     if (!(x)) {                                                                           \
       SAT_Log("SAT_Assert( %s ) failed!\n",#x);   \
-      SAT_Print("SAT_Assert( " SAT_TERM_FG_DARK_RED "%s" SAT_TERM_RESET " ) failed!\n",#x); \
+      SAT_Print("SAT_Assert( " SAT_TERM_FG_RED "%s" SAT_TERM_RESET " ) failed!\n",#x); \
       /*SAT_Print("SAT_Assert(%s) failed!\n",#x);*/                                       \
       exit(1);                                                                            \
     }                                                                                     \
@@ -293,7 +293,7 @@ public: // print
 
       #ifdef SAT_DEBUG_PRINT_TIME
         double time = time_elapsed();
-        sprintf(buffer, SAT_TERM_FG_DARK_RED "%.6f" SAT_TERM_RESET ":",time);
+        sprintf(buffer, SAT_TERM_FG_RED "%.6f" SAT_TERM_RESET ":",time);
         strcat(MPrefixBuffer,buffer);
       #endif
 
@@ -304,21 +304,21 @@ public: // print
         #ifdef SAT_WIN32
           uint32_t thread_id = GetCurrentThreadId();
         #endif
-        sprintf(buffer, SAT_TERM_FG_DARK_YELLOW "%08x" SAT_TERM_RESET ":",thread_id);
+        sprintf(buffer, SAT_TERM_FG_YELLOW "%08x" SAT_TERM_RESET ":",thread_id);
         strcat(MPrefixBuffer,buffer);
       #endif
 
-      strcat(MPrefixBuffer,SAT_TERM_FG_DARK_GREEN );
+      strcat(MPrefixBuffer,SAT_TERM_FG_GREEN );
       strcat(MPrefixBuffer,strip_path(file));
       strcat(MPrefixBuffer,SAT_TERM_RESET );
       strcat(MPrefixBuffer,":");
-      strcat(MPrefixBuffer,SAT_TERM_FG_DARK_MAGENTA );
+      strcat(MPrefixBuffer,SAT_TERM_FG_MAGENTA );
       strcat(MPrefixBuffer,func);
       strcat(MPrefixBuffer,SAT_TERM_RESET );
       strcat(MPrefixBuffer,":");
       char line_str[16] = {0};
       //itoa(line,line_str,10);
-      sprintf(line_str, SAT_TERM_FG_DARK_CYAN "%i", line);
+      sprintf(line_str, SAT_TERM_FG_CYAN "%i", line);
       strcat(MPrefixBuffer,line_str);
       strcat(MPrefixBuffer,SAT_TERM_RESET );
       strcat(MPrefixBuffer,"]");

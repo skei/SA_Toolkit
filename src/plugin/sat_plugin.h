@@ -20,15 +20,9 @@
 
 #include "audio/sat_audio_utils.h"
 
+//#define EDITOR_SCALE 2.5
+
 //----------------------------------------------------------------------
-
-/*
-  note to self:
-  are we absolutely sure that the queue handles non-atomic items?
-  double/triple-check, and plan fall-back option if not 100% sure..
-*/
-
-// 16 bytes
 
 struct SAT_QueueItem {
   uint32_t    type;
@@ -43,7 +37,6 @@ typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;
 typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;
-//typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>     SAT_NoteEndFromAudioToHostQueue;
 
 #define SAT_PLUGIN_DEFAULT_CONSTRUCTOR(PLUGIN)                                  \
   PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
@@ -72,8 +65,9 @@ private:
   SAT_AudioPortArray                MAudioOutputPorts                             = {};
   SAT_NotePortArray                 MNoteInputPorts                               = {};
   SAT_NotePortArray                 MNoteOutputPorts                              = {};
-  uint32_t                          MInitialEditorWidth                           = 640;
-  uint32_t                          MInitialEditorHeight                          = 480;
+  uint32_t                          MInitialEditorWidth                           = 512;
+  uint32_t                          MInitialEditorHeight                          = 512;
+  double                            MInitialEditorScale                           = 1.0;
 
   SAT_ProcessContext                MProcessContext                               = {};
   bool                              MIsInitialized                                = false;
@@ -82,14 +76,10 @@ private:
   clap_id                           MSelectedAudioPortsConfig                     = 0;
   clap_plugin_render_mode           MRenderMode                                   = CLAP_RENDER_REALTIME;
 
-  // alignment..
   SAT_ParamFromHostToGuiQueue       MParamFromHostToGuiQueue                      = {};   // when the host changes a parameter, we need to redraw it
   SAT_ModFromHostToGuiQueue         MModFromHostToGuiQueue                        = {};   // --"-- modulation
   SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
   SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
-  //SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHostQueue                  = {};   // tell host note has ended)
-
-//  SAT_AudioProcessor*               MAudioProcessor                               = nullptr;
 
   bool                              MProcessThreaded                              = false; // not used here?
   uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
@@ -129,14 +119,11 @@ public: // plugin
   SAT_Host*           getHost()           { return MHost; }
   SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
 
-  void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight) {
+  void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0) {
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
+    MInitialEditorScale = AScale;
   }
-
-  //void setAudioProcessor(SAT_AudioProcessor* AProcessor) {
-  //  MAudioProcessor = AProcessor;
-  //}
 
   void setProcessThreaded(bool AThreaded=true) {
     MProcessThreaded = AThreaded;
@@ -145,7 +132,6 @@ public: // plugin
   void setEventMode(uint32_t AMode) {
     MEventMode = AMode;
   }
-
 
 //------------------------------
 public: // plugin
@@ -174,13 +160,8 @@ public: // plugin
   void destroy() override {
     SAT_Log("SAT_Plugin.destroy\n");
     MIsInitialized = false;
-    
-    // i don't think this works?
-    
     #ifdef SAT_DELETE_PLUGIN_IN_DESTROY
-      //SAT_Print("delete this\n");
       delete this;
-      //SAT_Print("deleted\n");
     #endif
     
   }
@@ -256,7 +237,6 @@ public: // plugin
 
   clap_process_status process(const clap_process_t* process) override {
     MProcessContext.process = process;
-    //flushParamLoad();
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
     preProcessEvents(process->in_events,process->out_events);
@@ -278,7 +258,6 @@ public: // plugin
     }
     postProcessEvents(process->in_events,process->out_events);
     flushParamFromGuiToHost(process->out_events);
-    //flushNoteEndFromAudioToHost(process->out_events);
     MProcessContext.counter += 1;
     return CLAP_PROCESS_CONTINUE;
   }
@@ -560,7 +539,9 @@ public: // gui
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
-    MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight);
+    uint32_t w = (double)MInitialEditorWidth * MInitialEditorScale;
+    uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
+    MEditor = createEditor(this,w,h);//MInitialEditorWidth,MInitialEditorHeight);
     if (!MEditor) {
       // create default editor..
     }
@@ -666,6 +647,7 @@ public: // gui
       win->setInitialSize(MInitialEditorWidth,MInitialEditorHeight);
       initEditorWindow(MEditor,win);
 
+      initEditorParameterValues();
 
     }
     return result;
@@ -1457,26 +1439,6 @@ public: // editor listener
     queueParamFromGuiToAudio(AIndex,AValue);
   }
 
-  //----------
-
-  //SAT_Parameter* do_editor_listener_get_parameter(uint32_t AIndex) final {
-  //  return MParameters[AIndex];
-  //}
-
-  //----------
-
-  //sat_param_t do_editor_listener_get_parameter_value(uint32_t AIndex) final {
-  //  //return MParameterValues[AIndex];
-  //  return MParameters[AIndex]->getValue();
-  //}
-
-  //----------
-
-  //sat_param_t do_editor_listener_get_modulation_value(uint32_t AIndex) final {
-  //  //return MModulationValues[AIndex];
-  //  return MParameters[AIndex]->getModulation();;
-  //}
-
 //------------------------------
 public: // queues
 //------------------------------
@@ -1706,88 +1668,14 @@ public: // queues
     }
   }
 
-  //----------
-
-  // note_end -> host
-  // (synth note ends)
-
-  //-----
-
-  /*
-    called from:
-    - SAT_Plugin.handleNoteOffEvent (process)
-  */
-
-  //void queueNoteEndFromAudioToHost(SAT_Note ANote) {
-  //  //SAT_Print("\n");
-  //  SAT_QueueItem item;
-  //  item.type         = CLAP_EVENT_NOTE_END;
-  //  item.index        = 0;
-  //  item.note.port    = ANote.port;
-  //  item.note.channel = ANote.channel;
-  //  item.note.key     = ANote.key;
-  //  item.note.noteid  = ANote.noteid;
-  //  if (!MNoteEndFromAudioToHostQueue.write(item)) {
-  //    SAT_Log("queueNoteEndFromAudioToHost: couldn't write to queue\n");
-  //  }
-  //}
-
-  //----------
-
-  /*
-    called from:
-    - todo: end of SAT_Plugin.process
-  */
-
-  //void flushNoteEndFromAudioToHost(const clap_output_events_t* out_events) {
-  //  //SAT_Print("\n");
-  //  SAT_QueueItem item;
-  //  while (MNoteEndFromAudioToHostQueue.read(&item)) {
-  //    //SAT_Print("(unhandled) type %i\n",item.type);
-  //    clap_event_note_t event;
-  //    event.header.size     = sizeof(clap_event_note_t);
-  //    event.header.time     = 0;
-  //    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-  //    event.header.type     = CLAP_EVENT_NOTE_END;
-  //    event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-  //    event.note_id         = item.note.noteid;
-  //    event.port_index      = item.note.port;
-  //    event.channel         = item.note.channel;
-  //    event.key             = item.note.key;
-  //    event.velocity        = item.value;
-  //    const clap_event_header_t* header = (const clap_event_header_t*)&event;
-  //    out_events->try_push(out_events,header);
-  //  }
-  //}
-
 //------------------------------
 public: // parameters
 //------------------------------
-
-  // "i'm going to send you 'num' parameters through the paramload queue,
-  // and let you know (by calling endParameterLoad) when i'm done,
-  // so you can start picking them out from the queue.."
-  //
-  // called from setDefaultParameterValues()
-  // preset/state load?
-
-  //----------
-
-  // start of num parameters
-  //virtual void beginParameterLoad(uint32_t num) {
-  //}
-
- // doesn't mean events are received, just sent..
-  //virtual void endParameterLoad(uint32_t num) {
-  //}
-
-  //----------
 
   SAT_Parameter* appendParameter(SAT_Parameter* AParameter) {
     uint32_t index = MParameters.size();
     AParameter->setIndex(index);
     MParameters.append(AParameter);
-    //MParameterValues[index] = AParameter->getDefaultValue();
     return AParameter;
   }
 
@@ -1839,7 +1727,6 @@ public: // parameters
   //----------
 
   sat_param_t getParameterValue(uint32_t AIndex) {
-    //return MParameterValues[AIndex];
     return MParameters[AIndex]->getValue();
   }
 
@@ -1859,58 +1746,34 @@ public: // parameters
 
   void setDefaultParameterValues() {
     uint32_t num = MParameters.size();
-//    beginParameterLoad(num);
     for (uint32_t i=0; i<num; i++) {
       double value = MParameters[i]->getDefaultValue();
-      //MParameterValues[i] = value;
       MParameters[i]->setValue(value);
-      //queueParamFromGuiToProcess(i,value);
-//      queueParamLoad(i,value);
     }
-//    endParameterLoad(num);
   }
-
+  
   //----------
 
-  /*
-    init, state/preset load..
-    'touch' all parameters
-    queue them up for sending to the audio process
-    -
-    called from:
-    - (todo: state load ?)
-  */
-
-  //void updateParameterValues() {
-  //  for (uint32_t i=0; i<MParameters.size(); i++) {
-  //    double value = MParameterValues[i];
-  //    queueParamFromHostToProcess(i,value);
-  //  }
-  //}
-
-  //----------
-
-//  void updateEditorParameterValues() {
-//    for (uint32_t i=0; i<MParameters.size(); i++) {
-//      //double v = MParameterValues[i];
-//      double v = MParameters[i]->getValue();
-//      MEditor->updateEditorParameterValue(i,v,false);
-//    }
-//  }
+  void initEditorParameterValues() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      SAT_Parameter* param = MParameters[i];
+      double value = MParameters[i]->getValue();//getDefaultValue();
+      MEditor->updateParameterValue(param,i,value);
+    }
+  }
 
 //------------------------------
 public: // modulation
 //------------------------------
 
   sat_param_t getModulationValue(uint32_t AIndex) {
-    //return MModulationValues[AIndex];
     return MParameters[AIndex]->getModulation();
   }
 
   //----------
 
   void setModulationValue(uint32_t AIndex, sat_param_t AValue) {
-    //MModulationValues[AIndex] = AValue;
     MParameters[AIndex]->setModulation(AValue);
   }
 

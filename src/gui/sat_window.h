@@ -198,6 +198,14 @@ public:
 public:
 //------------------------------
 
+  virtual void initScale(double AScale) {
+    MInitialWidth *= AScale;
+    MInitialHeight *= AScale;
+    MRootWidget->initScaleWidget(AScale,true);
+  }
+  
+  //----------
+
   virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
@@ -238,6 +246,8 @@ private:
 
   virtual void prepareWidgets() {
     if (MRootWidget) {
+//      SAT_PRINT;
+//      MRootWidget->initScaleWidget(0.5, true);
       MRootWidget->prepare(this,true);
       //SAT_Rect R = MRootWidget->getRect();
       MPendingDirtyWidgets.write(MRootWidget);

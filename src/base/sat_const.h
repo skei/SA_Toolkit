@@ -2,13 +2,6 @@
 #define sat_const_included
 //----------------------------------------------------------------------
 
-
-
-// 4           4  5         5
-// 123456789abcdef0123456789a
-// abcdefghijklmnopqrstuvwxyz
-// 5f = _
-
 #define SAT_MAGIC                               'SAT_'    // 0x5341545f  // 'SAT_'
 #define SAT_MAGIC_USER                          'sat_'    // 0x7361745f  // 'sat_'
 #define SAT_MAGIC_PLUGIN                        'SATP'    // 0x53415450  // 'SATP'
@@ -37,7 +30,7 @@
 #define SAT_INV32                               (1.0 / 32.0)
 #define SAT_INV127                              (1.0 / 127.0)
 #define SAT_INV255                              (1.0 / 255.0)
-#define SAT_INV256                              ( 1.0 / 256.0)
+#define SAT_INV256                              (1.0 / 256.0)
 #define SAT_INV8192                             (1.0 / 8192.0)
 
 #define SAT_SQRT2                               sqrt(2.0)
@@ -214,99 +207,48 @@
 #define SAT_TEXT_ALIGN_BOTTOM                   0x08
 
 /*
-  The format of the string for foreground color is:
-  "\033[" + "<0 or 1, meaning normal or bold>;" + "<color code> + "m"
-  and for background:
-  "\033[" + "<color code>" + "m"
-  These codes can be output together in order to change fore- and back-ground colors simultaneously.
-  printf "\033[91mThis is red text\033[0m"  
-  printf "\033[91m\033[107mThis is red text on a white background\033[0m"  
-  (#ifdef around, or #undef if not needed/wanted/supported?)
+  https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
+  0 Reset/Normal, 1 Bold, 2 Faint, 3 Italics, 4 Underlined
+  "\e[1;97m" (bold white)
 */
 
-//#define SAT_TERM_BG_DEFAULT                     "\033[49m"
-//#define SAT_TERM_BG_BLACK                       "\033[40m"
-//#define SAT_TERM_BG_DARK_RED                    "\033[41m"
-//#define SAT_TERM_BG_DARK_GREEN                  "\033[42m"
-//#define SAT_TERM_BG_DARK_YELLOW                 "\033[43m"
-//#define SAT_TERM_BG_DARK_BLUE                   "\033[44m"
-//#define SAT_TERM_BG_DARK_MAGENTA                "\033[45m"
-//#define SAT_TERM_BG_DARK_CYAN                   "\033[46m"
-//#define SAT_TERM_BG_LIGHT_GRAY                  "\033[47m"
-//#define SAT_TERM_BG_DARK_GRAY                   "\033[100m"
-//#define SAT_TERM_BG_RED                         "\033[101m"
-//#define SAT_TERM_BG_GREEN                       "\033[102m"
-//#define SAT_TERM_BG_YELLOW                      "\033[103m"
-//#define SAT_TERM_BG_BLUE                        "\033[104m"
-//#define SAT_TERM_BG_MAGENTA                     "\033[105m"
-//#define SAT_TERM_BG_CYAN                        "\033[106m"
-//#define SAT_TERM_BG_WHITE                       "\033[107m"
-//
-//#define SAT_TERM_FG_DEFAULT                     "\033[39m"
-//#define SAT_TERM_FG_BLACK                       "\033[30m"
-//#define SAT_TERM_FG_DARK_RED                    "\033[31m"
-//#define SAT_TERM_FG_DARK_GREEN                  "\033[32m"
-//#define SAT_TERM_FG_DARK_YELLOW                 "\033[33m"
-//#define SAT_TERM_FG_DARK_BLUE                   "\033[34m"
-//#define SAT_TERM_FG_DARK_MAGENTA                "\033[35m"
-//#define SAT_TERM_FG_DARK_CYAN                   "\033[36m"
-//#define SAT_TERM_FG_LIGHT_GRAY                  "\033[37m"
-//#define SAT_TERM_FG_DARK_GRAY                   "\033[90m"
-//#define SAT_TERM_FG_RED                         "\033[91m"
-//#define SAT_TERM_FG_GREEN                       "\033[92m"
-//#define SAT_TERM_FG_YELLOW                      "\033[93m"
-//#define SAT_TERM_FG_BLUE                        "\033[94m"
-//#define SAT_TERM_FG_MAGENTA                     "\033[95m"
-//#define SAT_TERM_FG_CYAN                        "\033[96m"
-//#define SAT_TERM_FG_WHITE                       "\033[97m"
-//
-//#define SAT_TERM_RESET                          "\033[0m"
+#define SAT_TERM_BG_BLACK                       "\e[40m"
+#define SAT_TERM_BG_RED                         "\e[41m"
+#define SAT_TERM_BG_GREEN                       "\e[42m"
+#define SAT_TERM_BG_YELLOW                      "\e[43m"
+#define SAT_TERM_BG_BLUE                        "\e[44m"
+#define SAT_TERM_BG_MAGENTA                     "\e[45m"
+#define SAT_TERM_BG_CYAN                        "\e[46m"
+#define SAT_TERM_BG_LIGHT_GREY                  "\e[47m"
 
-// https://www.oreilly.com/library/view/linux-shell-scripting/9781785881985/b0ddd805-aa79-441d-b5a7-380c66c7712d.xhtml
-// text: reset = 0, black = 30, red = 31, green = 32, yellow = 33, blue = 34, magenta = 35, cyan = 36, white = 37
-// back: reset = 0, black = 40, red = 41, green = 42, yellow = 43, blue = 44, magenta = 45, cyan = 46, white = 47
+#define SAT_TERM_BG_GREY                        "\e[100m"
+#define SAT_TERM_BG_LIGHT_RED                   "\e[101m"
+#define SAT_TERM_BG_LIGHT_GREEN                 "\e[102m"
+#define SAT_TERM_BG_LIGHT_YELLOW                "\e[103m"
+#define SAT_TERM_BG_LIGHT_BLUE                  "\e[104m"
+#define SAT_TERM_BG_LIGHT_MAGENTA               "\e[105m"
+#define SAT_TERM_BG_LIGHT_CYAN                  "\e[106m"
+#define SAT_TERM_BG_WHITE                       "\e[107m"
 
-// https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
+#define SAT_TERM_FG_BLACK                       "\e[30m"
+#define SAT_TERM_FG_RED                         "\e[31m"
+#define SAT_TERM_FG_GREEN                       "\e[32m"
+#define SAT_TERM_FG_YELLOW                      "\e[33m"
+#define SAT_TERM_FG_BLUE                        "\e[34m"
+#define SAT_TERM_FG_MAGENTA                     "\e[35m"
+#define SAT_TERM_FG_CYAN                        "\e[36m"
+#define SAT_TERM_FG_LIGHT_GREY                  "\e[37m"
 
-#define SAT_TERM_BG_DARK_BLACK                  "\e[0,40m"
-#define SAT_TERM_BG_DARK_RED                    "\e[0,41m"
-#define SAT_TERM_BG_DARK_GREEN                  "\e[0,42m"
-#define SAT_TERM_BG_DARK_YELLOW                 "\e[0,43m"
-#define SAT_TERM_BG_DARK_BLUE                   "\e[0,44m"
-#define SAT_TERM_BG_DARK_MAGENTA                "\e[0,45m"
-#define SAT_TERM_BG_DARK_CYAN                   "\e[0,46m"
-#define SAT_TERM_BG_DARK_WHITE                  "\e[0,47m"
-
-#define SAT_TERM_BG_BLACK                       "\e[1;100m"
-#define SAT_TERM_BG_RED                         "\e[1;101m"
-#define SAT_TERM_BG_GREEN                       "\e[1;102m"
-#define SAT_TERM_BG_YELLOW                      "\e[1;103m"
-#define SAT_TERM_BG_BLUE                        "\e[1;104m"
-#define SAT_TERM_BG_MAGENTA                     "\e[1;105m"
-#define SAT_TERM_BG_CYAN                        "\e[1;106m"
-#define SAT_TERM_BG_WHITE                       "\e[1;107m"
-
-#define SAT_TERM_FG_DARK_BLACK                  "\e[0;30m"
-#define SAT_TERM_FG_DARK_RED                    "\e[0;31m"
-#define SAT_TERM_FG_DARK_GREEN                  "\e[0;32m"
-#define SAT_TERM_FG_DARK_YELLOW                 "\e[0;33m"
-#define SAT_TERM_FG_DARK_BLUE                   "\e[0;34m"
-#define SAT_TERM_FG_DARK_MAGENTA                "\e[0;35m"
-#define SAT_TERM_FG_DARK_CYAN                   "\e[0;36m"
-#define SAT_TERM_FG_DARK_WHITE                  "\e[0;37m"
-
-#define SAT_TERM_FG_BLACK                       "\e[1;90m"
-#define SAT_TERM_FG_RED                         "\e[1;91m"
-#define SAT_TERM_FG_GREEN                       "\e[1;92m"
-#define SAT_TERM_FG_YELLOW                      "\e[1;93m"
-#define SAT_TERM_FG_BLUE                        "\e[1;94m"
-#define SAT_TERM_FG_MAGENTA                     "\e[1;95m"
-#define SAT_TERM_FG_CYAN                        "\e[1;96m"
-#define SAT_TERM_FG_WHITE                       "\e[1;97m"
+#define SAT_TERM_FG_GREY                        "\e[90m"
+#define SAT_TERM_FG_LIGHT_RED                   "\e[91m"
+#define SAT_TERM_FG_LIGHT_GREEN                 "\e[92m"
+#define SAT_TERM_FG_LIGHT_YELLOW                "\e[93m"
+#define SAT_TERM_FG_LIGHT_BLUE                  "\e[94m"
+#define SAT_TERM_FG_LIGHT_MAGENTA               "\e[95m"
+#define SAT_TERM_FG_LIGHT_CYAN                  "\e[96m"
+#define SAT_TERM_FG_WHITE                       "\e[97m"
 
 #define SAT_TERM_RESET                          "\e[0m"
-
-
 
 #define SAT_VOICE_OFF                           0
 #define SAT_VOICE_WAITING                       1

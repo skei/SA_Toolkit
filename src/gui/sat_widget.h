@@ -241,6 +241,19 @@ public:
 
   //----------
 
+  virtual void initScaleWidget(double AScale, bool ARecursive=true) {
+    MRect.scale(AScale);
+    MInitialRect.scale(AScale);
+    MBasisRect.scale(AScale);
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildren.size(); i++) {
+        MChildren[i]->initScaleWidget(AScale,ARecursive);
+      }
+    }
+  }
+
+  //----------
+
   virtual void realignChildWidgets(bool ARecursive=true) {
     SAT_Rect parent_rect = getRect();
     double S = getWindowScale();
