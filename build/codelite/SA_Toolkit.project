@@ -112,12 +112,25 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <VirtualDirectory Name="debug">
+        <File Name="../../src/base/debug/sat_debug_test.h"/>
+        <File Name="../../src/base/debug/sat_debug_print_window.h"/>
+        <File Name="../../src/base/debug/sat_debug_print_time.h"/>
+        <File Name="../../src/base/debug/sat_debug_print_thread.h"/>
+        <File Name="../../src/base/debug/sat_debug_print_socket.h"/>
+        <File Name="../../src/base/debug/sat_debug_print_log.h"/>
+        <File Name="../../src/base/debug/sat_debug_print.h"/>
+        <File Name="../../src/base/debug/sat_debug_observer.h"/>
+        <File Name="../../src/base/debug/sat_debug_memtrace.h"/>
+        <File Name="../../src/base/debug/sat_debug_crash_handler.h"/>
+        <File Name="../../src/base/debug/sat_debug_call_stack.h"/>
+        <File Name="../../src/base/debug/sat_debug_assert.h"/>
+      </VirtualDirectory>
       <File Name="../../src/base/sat_utils.h"/>
       <File Name="../../src/base/sat_global.h"/>
       <File Name="../../src/base/sat_linux.h"/>
       <File Name="../../src/base/sat_config.h"/>
       <File Name="../../src/base/sat.h"/>
-      <File Name="../../src/base/sat_test.h"/>
       <File Name="../../src/base/sat_debug.h"/>
       <File Name="../../src/base/sat_types.h"/>
       <File Name="../../src/base/sat_const.h"/>

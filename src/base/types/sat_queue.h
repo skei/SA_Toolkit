@@ -17,7 +17,7 @@
 
 //----------------------------------------------------------------------
 //
-// lock free queue
+// lock free (spsc)
 //
 //----------------------------------------------------------------------
 
@@ -104,7 +104,76 @@ public:
 
 //----------------------------------------------------------------------
 //
-// atomic queue
+// lock free (spsc, buffer)
+//
+//----------------------------------------------------------------------
+
+/*
+  http://linux-audio.4202.n7.nabble.com/Realtime-inter-thread-communication-td99157.html
+  thread-safe, lock/wait-free queue
+  single producer, single consumer..
+  todo: MReadPos/MWritePos volatile?
+  can something be optimized by the compiler?
+  reordering of instructions?
+*/
+
+
+// write single, read buffer (all)
+
+template<class _T, int SIZE>
+class SAT_LockFreeQueueBuffer {
+
+//------------------------------
+private:
+//------------------------------
+
+  _T                MData[SIZE];
+  /*volatile*/ int  MWritePos;  // volatile?
+  /*volatile*/ int  MReadPos;
+
+//------------------------------
+  public:
+//------------------------------
+
+  SAT_LockFreeQueueBuffer() {
+    memset(MData,0,SIZE*(sizeof(_T)));
+    MWritePos = 0;
+    MReadPos = 0;
+  }
+
+  void write(_T AData) {
+    MData[MWritePos] = AData;
+    MWritePos = (MWritePos + 1) % SIZE; // & SIZE if ^2
+  }
+
+  int read(_T* ABuffer) {
+    int count = 0;
+    int writepos = MWritePos;
+    if (MReadPos > writepos) {
+      memcpy(
+        (char*)&ABuffer[count],
+        (char*)&MData[MReadPos],
+        (SIZE - MReadPos) * sizeof(_T)
+      );
+      count = SIZE - MReadPos;
+      MReadPos = 0;
+    }
+    memcpy(
+      (char*)&ABuffer[count],
+      (char*)&MData[MReadPos],
+      (writepos - MReadPos) * sizeof(_T)
+    );
+    count += writepos - MReadPos;
+    MReadPos = writepos;
+    return count;
+  }
+
+};
+
+
+//----------------------------------------------------------------------
+//
+// atomic queue (spsc
 //
 //----------------------------------------------------------------------
 
@@ -268,7 +337,7 @@ public:
 
 //----------------------------------------------------------------------
 //
-// mpmc queue
+// atomic (mpmc)
 //
 //----------------------------------------------------------------------
 
@@ -325,67 +394,6 @@ public:
 
 #if 0
 
-/*
-  http://linux-audio.4202.n7.nabble.com/Realtime-inter-thread-communication-td99157.html
-  thread-safe, lock/wait-free queue
-  single producer, single consumer..
-  todo: MReadPos/MWritePos volatile?
-  can something be optimized by the compiler?
-  reordering of instructions?
-*/
-
-
-// write single, read buffer (all)
-
-template<class _T, int SIZE>
-class SAT_SPSCQueue {
-
-//------------------------------
-private:
-//------------------------------
-
-  _T                MData[SIZE];
-  /*volatile*/ int  MWritePos;  // volatile?
-  /*volatile*/ int  MReadPos;
-
-//------------------------------
-  public:
-//------------------------------
-
-  SAT_SPSCBufferQueue() {
-    memset(MData,0,SIZE*(sizeof(_T)));
-    MWritePos = 0;
-    MReadPos = 0;
-  }
-
-  void write(_T AData) {
-    MData[MWritePos] = AData;
-    MWritePos = (MWritePos + 1) % SIZE; // & SIZE if ^2
-  }
-
-  int read(_T* ABuffer) {
-    int count = 0;
-    int writepos = MWritePos;
-    if (MReadPos > writepos) {
-      memcpy(
-        (char*)&ABuffer[count],
-        (char*)&MData[MReadPos],
-        (SIZE - MReadPos) * sizeof(_T)
-      );
-      count = SIZE - MReadPos;
-      MReadPos = 0;
-    }
-    memcpy(
-      (char*)&ABuffer[count],
-      (char*)&MData[MReadPos],
-      (writepos - MReadPos) * sizeof(_T)
-    );
-    count += writepos - MReadPos;
-    MReadPos = writepos;
-    return count;
-  }
-
-};
 
 #endif // 0
 

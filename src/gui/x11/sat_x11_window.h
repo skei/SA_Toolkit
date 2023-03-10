@@ -118,6 +118,7 @@ public:
       XCB_EVENT_MASK_POINTER_MOTION     |
       XCB_EVENT_MASK_EXPOSURE           |
       //XCB_EVENT_MASK_RESIZE_REDIRECT  |
+      //XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY|
       XCB_EVENT_MASK_STRUCTURE_NOTIFY;
     uint32_t window_mask =
       XCB_CW_BACK_PIXMAP    |
@@ -381,12 +382,9 @@ public:
   //----------
 
   uint32_t eventLoop() {
-
     xcb_generic_event_t* event = getEvent(true);
-
     while (event) {
     //do {
-
       bool result = processEvent(event);
       if (result == false) {
         //SAT_Print("processEvent returned false, returning..\n");
@@ -394,7 +392,6 @@ public:
         //break;
         return 1;
       }
-
       //uint32_t e = event->response_type & ~0x80;
       //if (e == XCB_CLIENT_MESSAGE) {
       //  xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
@@ -409,12 +406,9 @@ public:
       //    }
       //  //}
       //}
-
       event = getEvent(true);
-
     //}
     } while (event);
-
     return 0;
   }
 

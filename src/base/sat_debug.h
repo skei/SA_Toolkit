@@ -2,6 +2,8 @@
 #define sat_debug_included
 //----------------------------------------------------------------------
 
+// todo: SAT_DEBUG_PRINT_LOG
+
 /*
   crash handler:
   compile with: -g -rdynamic
@@ -35,13 +37,13 @@
 
 #ifdef SAT_DEBUG_ASSERT
 
-  #define SAT_Assert(x) {                                                                 \
-    if (!(x)) {                                                                           \
-      SAT_Log("SAT_Assert( %s ) failed!\n",#x);   \
-      SAT_Print("SAT_Assert( " SAT_TERM_FG_RED "%s" SAT_TERM_RESET " ) failed!\n",#x); \
-      /*SAT_Print("SAT_Assert(%s) failed!\n",#x);*/                                       \
-      exit(1);                                                                            \
-    }                                                                                     \
+  #define SAT_Assert(x) {                                                               \
+    if (!(x)) {                                                                         \
+      SAT_Log("SAT_Assert( %s ) failed!\n",#x);                                         \
+      SAT_Print("SAT_Assert( " SAT_TERM_FG_RED "%s" SAT_TERM_RESET " ) failed!\n",#x);  \
+      /*SAT_Print("SAT_Assert(%s) failed!\n",#x);*/                                     \
+      exit(1);                                                                          \
+    }                                                                                   \
   }
   
 #else

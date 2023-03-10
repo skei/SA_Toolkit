@@ -67,8 +67,16 @@ public:
 };
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+
 
 SAT_Global SAT_GLOBAL = {};
+
+
 
 //----------------------------------------------------------------------
 //
@@ -136,11 +144,13 @@ SAT_Global SAT_GLOBAL = {};
     void operator delete[] (void* ptr) {
       return SAT_GLOBAL.DEBUG.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1);
     }
+    
+    // more variations?
 
-    #define malloc(s)       SAT_GLOBAL.DEBUG.malloc(s, __FILE__, __LINE__)
-    #define calloc(n, s)    SAT_GLOBAL.DEBUG.calloc(n, s, __FILE__, __LINE__)
-    #define realloc(p, s)   SAT_GLOBAL.DEBUG.realloc(p, s, __FILE__, __LINE__)
-    #define free(p)         SAT_GLOBAL.DEBUG.free(p, __FILE__, __LINE__)
+    #define malloc(s)       SAT_GLOBAL.DEBUG.malloc(  s,    __FILE__, __LINE__ )
+    #define calloc(n, s)    SAT_GLOBAL.DEBUG.calloc(  n, s, __FILE__, __LINE__ )
+    #define realloc(p, s)   SAT_GLOBAL.DEBUG.realloc( p, s, __FILE__, __LINE__ )
+    #define free(p)         SAT_GLOBAL.DEBUG.free(    p,    __FILE__, __LINE__ )
 
     #define new             new(__FILE__, __LINE__)
     #define delete          if (sat_memtrace_prefix(__FILE__, __LINE__)) delete

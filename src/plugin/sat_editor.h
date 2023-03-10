@@ -28,7 +28,7 @@ private:
   bool                  MIsOpen           = false;
   SAT_EditorListener*   MListener         = nullptr;
   SAT_Window*           MWindow           = nullptr;
-  bool                  MPreparedWidgets  = false;
+  //bool                  MPreparedWidgets  = false;
 
 //------------------------------
 public:
@@ -66,7 +66,7 @@ public:
   /*
     called from SAT_Plugin.updateEditorParameterValues()
     - before editor is opened
-    - (loading state)
+    - todo: SAT_Plugin.state_load ???
   */
 
   //void updateEditorParameterValue(uint32_t AIndex, sat_param_t AValue, bool ARedraw) {
@@ -122,7 +122,9 @@ public:
   */
 
   virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
+    //SAT_Print("creating plugin window\n");
     SAT_Window* window = new SAT_Window(AWidth,AHeight,AParent,this);
+    //SAT_Print("plugin window created\n");
     return window;
   }
 
@@ -296,16 +298,16 @@ public: // clap
   //----------
 
   /*
-    when our window is embedded, we don't get on_window_open events
+    when our window is embedded, we don't get on_window_open events ??
   */
 
   bool show() {
     //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
-      if (!MPreparedWidgets) {
-        MWindow->on_window_open();
-        MPreparedWidgets = true;
-      }
+      //if (!MPreparedWidgets) {
+      //  MWindow->on_window_open();
+      //  MPreparedWidgets = true;
+      //}
       MWindow->show();
       MIsOpen = true;
     }

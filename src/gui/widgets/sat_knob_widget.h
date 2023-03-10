@@ -4,6 +4,7 @@
 
 #include "base/sat.h"
 #include "gui/widgets/sat_drag_value_widget.h"
+#include "plugin/sat_parameter.h"
 
 //----------------------------------------------------------------------
 //

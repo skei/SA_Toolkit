@@ -84,7 +84,11 @@ void open_editor(const clap_plugin_t* plugin) {
     gui->create(plugin,CLAP_WINDOW_API_X11,false);
     gui->set_scale(plugin,1.0);
     gui->get_size(plugin,&width,&height);
+    
+    //SAT_Print("creating host window\n");
     SAT_ExeWindow* window = new SAT_ExeWindow(width,height,0,plugin,gui);
+    //SAT_Print("host window created\n");
+
     xcb_window_t x11window = window->getX11Window();
     const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
     gui->set_parent(plugin,&clapwindow);

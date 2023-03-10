@@ -96,11 +96,13 @@ private:
   uint32_t              MBufferWidth          = 0;
   uint32_t              MBufferHeight         = 0;
   
-  // widgets
-
+  // painting
+  
   SAT_Timer*            MTimer                = nullptr;
   SAT_DirtyWidgetsQueue MPendingDirtyWidgets  = {};
   SAT_DirtyWidgetsQueue MPaintDirtyWidgets    = {};
+ 
+  // widget handling
 
   SAT_Widget*           MHoverWidget          = nullptr;
   SAT_Widget*           MCapturedWidget       = nullptr;
@@ -115,7 +117,7 @@ private:
   int32_t               MMousePreviousY       = 0;
   int32_t               MMouseDragX           = 0;
   int32_t               MMouseDragY           = 0;
-  
+
 
 //------------------------------
 public:
@@ -130,22 +132,21 @@ public:
     MInitialHeight= AHeight;
     MListener = AListener;
     
-    // linux
-
+    // opengl
+    
     #ifdef SAT_LINUX
       Display* display = getX11Display();
       xcb_window_t window = getX11Window();
       MOpenGL = new SAT_OpenGL(display,window);
     #endif
     
-    // win32
-
     #ifdef SAT_WIN32
     #endif
     
-    //opengl
-
     MOpenGL->makeCurrent();
+
+    // painter
+
     MWindowPainter = new SAT_Painter(MOpenGL);
     SAT_Assert(MWindowPainter);
       
@@ -232,12 +233,13 @@ public:
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);
     uint32_t width = MWindowWidth;
-    uint32_t height = MWindowWidth;
+    uint32_t height = MWindowHeight;
     AWidget->setSize(width,height);
   }
 
 //------------------------------
-private:
+//private:
+public:
 //------------------------------
 
   // called from
@@ -246,8 +248,7 @@ private:
 
   virtual void prepareWidgets() {
     if (MRootWidget) {
-//      SAT_PRINT;
-//      MRootWidget->initScaleWidget(0.5, true);
+      //MRootWidget->initScaleWidget(0.5, true);
       MRootWidget->prepare(this,true);
       //SAT_Rect R = MRootWidget->getRect();
       MPendingDirtyWidgets.write(MRootWidget);
@@ -377,7 +378,7 @@ private:
     //MWindowPainter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
     MWindowPainter->setFillImage(image, ADstXpos,ADstYpos, 1,1, 1.0, 0.0);
     
-    SAT_Print("%i,%i , %i,%i\n",ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
+    //SAT_Print("%i,%i , %i,%i\n",ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
     MWindowPainter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
     
     MWindowPainter->endFrame();
@@ -388,6 +389,9 @@ public:
 //------------------------------
 
   void show() override {
+    //#ifdef SAT_EXE
+    //  if (MRootWidget) MRootWidget->redraw();
+    //#endif
     SAT_ImplementedWindow::show();
     MTimer->start(SAT_WINDOW_TIMER_MS,false);
   }
