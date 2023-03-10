@@ -30,20 +30,23 @@ private:
 
   clap_param_info_t MInfo                           = {0};
   int32_t           MIndex                          = -1;
-  void*             MWidget                         = nullptr;
   void*             MConnection                     = nullptr;
+  
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
   uint32_t          MNumDigits                      = 2;
+  
   sat_param_t       MValue                          = 0.0;
   sat_param_t       MModulation                     = 0.0;
+  
+  sat_param_t       MSmoothValue                    = 0.0;
+  sat_param_t       MSmoothFactor                   = 1.0;
+
   int32_t           MLastPainted                    = -1;
   int32_t           MLastUpdated                    = 0;
   int32_t           MLastModulated                  = 0;
   double            MLastUpdatedValue               = 0.0;
   double            MLastModulatedValue             = 0.0;
 
-  sat_param_t       MSmoothValue                    = 0.0;
-  sat_param_t       MSmoothFactor                   = 1.0;
 
 //------------------------------
 public:
@@ -92,7 +95,6 @@ public:
   sat_param_t           getDefaultValue()       { return MInfo.default_value; }
   int32_t               getIndex()              { return MIndex; }
   clap_param_info_t*    getParamInfo()          { return &MInfo; }
-  void*                 getWidget()             { return MWidget; }
   void*                 getConnection()         { return MConnection; }
 
   sat_param_t           getValue()              { return MValue; }
@@ -101,52 +103,54 @@ public:
   int32_t               getLastPainted()        { return MLastPainted; }
   int32_t               getLastUpdated()        { return MLastUpdated; }
   int32_t               getLastModulated()      { return MLastModulated; }
-  double                getLastUpdatedValue()   { return MLastUpdated; }
-  double                getLastModulatedValue() { return MLastModulated; }
+  sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
+  sat_param_t           getLastModulatedValue() { return MLastModulated; }
 
 
 //------------------------------
 public:
 //------------------------------
 
-  void setId(clap_id AId)                     { MInfo.id = AId; }
-  void setFlags(clap_param_info_flags AFlags) { MInfo.flags = AFlags; }
-  void setCookie(void* ACookie)               { MInfo.cookie = ACookie; }
-  void setName(char* AName)                   { strcpy(MInfo.name,AName); }
-  void setModule(char* AModule)               { strcpy(MInfo.module,AModule); }
-  void setMinValue(sat_param_t AValue)        { MInfo.min_value = AValue; }
-  void setMaxValue(sat_param_t AValue)        { MInfo.max_value = AValue; }
-  void setDefaultValue(sat_param_t AValue)    { MInfo.default_value = AValue; }
-  void setWidget(void* AWidget)               { MWidget = AWidget; }
-  void setFlag(clap_param_info_flags AFlag)   { MInfo.flags |= AFlag; }
-  void clearFlag(clap_param_info_flags AFlag) { MInfo.flags &= ~AFlag; }
-  void setIndex(int32_t AIndex)               { MIndex = AIndex; MInfo.id = AIndex; }
-  void connect(void* AWidget)                 { MConnection = AWidget; }
+  void setId(clap_id AId)                         { MInfo.id = AId; }
+  void setFlags(clap_param_info_flags AFlags)     { MInfo.flags = AFlags; }
+  void setCookie(void* ACookie)                   { MInfo.cookie = ACookie; }
+  void setName(char* AName)                       { strcpy(MInfo.name,AName); }
+  void setModule(char* AModule)                   { strcpy(MInfo.module,AModule); }
+  void setMinValue(sat_param_t AValue)            { MInfo.min_value = AValue; }
+  void setMaxValue(sat_param_t AValue)            { MInfo.max_value = AValue; }
+  void setDefaultValue(sat_param_t AValue)        { MInfo.default_value = AValue; }
+  void setFlag(clap_param_info_flags AFlag)       { MInfo.flags |= AFlag; }
+  void clearFlag(clap_param_info_flags AFlag)     { MInfo.flags &= ~AFlag; }
+  void setIndex(int32_t AIndex)                   { MIndex = AIndex; MInfo.id = AIndex; }
+  void connect(void* AWidget)                     { MConnection = AWidget; }
 
-  void setValue(double AValue)                { MValue = AValue; }
-  void setModulation(double AValue)           { MModulation = AValue; }
+  void setValue(double AValue)                    { MValue = AValue; }
+  void setModulation(double AValue)               { MModulation = AValue; }
 
-  void setLastPainted(uint32_t ALast)         { MLastPainted = ALast; }
-  void setLastUpdated(uint32_t ALast)         { MLastUpdated = ALast; }
-  void setLastModulated(uint32_t ALast)       { MLastModulated = ALast; }
-  void setLastUpdatedValue(double AValue)     { MLastUpdatedValue = AValue; }
-  void setLastModulatedValue(double AValue)   { MLastModulatedValue = AValue; }
+  void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
+  void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
+  void setLastModulated(uint32_t ALast)           { MLastModulated = ALast; }
+  void setLastUpdatedValue(sat_param_t AValue)    { MLastUpdatedValue = AValue; }
+  void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
 
-  void setSmoothValue(double AValue)          { MSmoothValue = AValue; }
-  void setSmoothFactor(double AFactor)        { MSmoothFactor = AFactor; }
+  void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
+  void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
 
 //------------------------------
 public:
 //------------------------------
 
   virtual sat_param_t normalizeValue(sat_param_t AValue) {
-    return AValue;
+    double range = MInfo.max_value - MInfo.min_value;
+    if (range <= 0.0) return AValue;
+    return (AValue - MInfo.min_value) / range;
   }
 
   //----------
 
   virtual sat_param_t denormalizeValue(sat_param_t AValue) {
-    return AValue;
+    double range = MInfo.max_value - MInfo.min_value;
+    return MInfo.min_value + (AValue * range);
   }
 
   //----------
@@ -172,19 +176,25 @@ public:
 
   //----------
 
-  virtual void updateSmoothing() {
-    sat_param_t target = MValue + MModulation;
-    MSmoothValue += (target - MSmoothValue) * MSmoothFactor;
-  }
+  //virtual void updateSmoothing() {
+  //  sat_param_t target = MValue + MModulation;
+  //  MSmoothValue += (target - MSmoothValue) * MSmoothFactor;
+  //}
 
   //----------
 
   // http://www.kvraudio.com/forum/viewtopic.php?p=6515525#p6515525
 
-  virtual void updateSmoothing(uint32_t ASteps) {
-    if (ASteps==0) updateSmoothing();
-    sat_param_t target = MValue + MModulation;
-    MSmoothValue += (target - MSmoothValue) * (1 - pow(1.0 - MSmoothFactor, ASteps));
+  virtual void updateSmoothing(uint32_t ASteps=0) {
+    if (ASteps == 0) {
+      //updateSmoothing();
+      sat_param_t target = MValue + MModulation;
+      MSmoothValue += (target - MSmoothValue) * MSmoothFactor;
+    }
+    else {
+      sat_param_t target = MValue + MModulation;
+      MSmoothValue += (target - MSmoothValue) * (1.0 - pow(1.0 - MSmoothFactor, ASteps));
+    }
   }
 
   //----------

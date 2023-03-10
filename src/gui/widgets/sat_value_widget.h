@@ -56,8 +56,8 @@ public:
 
   virtual SAT_Color getDisabledColor()  { return MDisabledColor; }
   virtual double    getDisabledAlpha()  { return MDisabledAlpha; }
-  virtual bool      getDrawModulation()  { return MDrawModulation; }
-  virtual bool      getDrawValue()       { return MDrawValue; }
+  virtual bool      getDrawModulation() { return MDrawModulation; }
+  virtual bool      getDrawValue()      { return MDrawValue; }
   virtual bool      isInteracting()     { return MIsInteracting; }
 
   virtual void      setIsInteracting(bool AState=true) { MIsInteracting = AState; }
@@ -84,7 +84,6 @@ public:
       mrect.shrink(valueoffset);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
-
       sprintf(MValueText,"%.2f",getValue());
       painter->setTextColor(MValueColor);
       painter->setTextSize(MValueSize*S);

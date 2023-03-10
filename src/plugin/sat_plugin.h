@@ -156,10 +156,16 @@ public: // plugin
   // Free the plugin and its resources.
   // It is required to deactivate the plugin prior to this call.
   // [main-thread & !active]
+  
+  /*
+    https://isocpp.org/wiki/faq/freestore-mgmt#delete-this  
+    "As long as you’re careful, it’s okay (not evil) for an object to commit suicide (delete this)"
+  */
 
   void destroy() override {
     SAT_Log("SAT_Plugin.destroy\n");
     MIsInitialized = false;
+    
     #ifdef SAT_DELETE_PLUGIN_IN_DESTROY
       delete this;
     #endif
@@ -1032,6 +1038,15 @@ public: // resource directory
 public: // state
 //------------------------------
 
+/*
+  the host might work in 'chunks', so check return values to see if it actually saved
+  everything you gave it.. spin a loop to be sure everything is written..
+  same thing with reading..
+  (maybe the host loads/saves 4k/64k chunks from disk or whatever)
+*/
+
+//------------------------------
+
   // Saves the plugin state into stream.
   // Returns true if the state was correctly saved.
   // [main-thread]
@@ -1753,6 +1768,11 @@ public: // parameters
   }
   
   //----------
+  
+  /*
+    called from:
+    - SAT_Plugin.gui_set_parent()
+  */
 
   void initEditorParameterValues() {
     uint32_t num = MParameters.size();

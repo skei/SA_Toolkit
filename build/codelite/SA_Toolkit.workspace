@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Workspace Name="SA_Toolkit" Database="" Version="10000">
+<CodeLite_Workspace Name="SA_Toolkit" Database="" Version="10000" SWTLW="Yes">
+  <WorkspaceParserMacros/>
+  <WorkspaceParserPaths>
+    <Include Path="../../src"/>
+  </WorkspaceParserPaths>
   <Project Name="SA_Toolkit" Path="SA_Toolkit.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="&lt;New...&gt;" Selected="no">
@@ -10,11 +14,11 @@
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exe_release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="linux_exe_debug" Selected="no">
+    <WorkspaceConfiguration Name="linux_exe_debug" Selected="yes">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exe_debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="yes">
+    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="no">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_plugin_debug"/>
     </WorkspaceConfiguration>

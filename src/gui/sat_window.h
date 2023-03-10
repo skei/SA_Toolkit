@@ -272,15 +272,21 @@ private:
   /*
     called from:
     - do_timer_listener_callback()
+    
+    ARect = 
   */
 
   virtual uint32_t flushDirtyWidgets(SAT_Rect* ARect) {
     uint32_t count = 0;
+    
     ARect->set(0);
+   
     SAT_Widget* widget = nullptr;
     while (MPendingDirtyWidgets.read(&widget)) {
+      SAT_Rect R = widget->getRect();
+      if (count == 0) ARect->set(R.x,R.y,R.w,R.h);
+      else ARect->combine(widget->getRect());
       //widget->on_widget_paint(&MPaintContext);
-      ARect->combine(widget->getRect());
       MPaintDirtyWidgets.write(widget);
       count += 1;
     }
@@ -295,7 +301,7 @@ private:
   */
 
   virtual uint32_t paintDirtyWidgets(SAT_PaintContext* AContext, SAT_Widget* ARoot=nullptr) {
-     int32_t paint_count = MPaintContext.counter;
+    int32_t paint_count = MPaintContext.counter;
     uint32_t count = 0;
     SAT_Widget* widget = nullptr;
     if (ARoot) {
@@ -363,11 +369,17 @@ private:
   //----------
 
   virtual void copyBuffer(void* ADst, uint32_t ADstXpos, uint32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, uint32_t ASrcXpos, uint32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
+    
     MWindowPainter->selectRenderBuffer(ADst,ADstWidth,ADstHeight);
     MWindowPainter->beginFrame(ADstWidth,ADstHeight);
     int32_t image = MWindowPainter->getImageFromRenderBuffer(ASrc);
-    MWindowPainter->setFillImage(image, ASrcXpos,ASrcYpos, 1,1, 1.0, 0.0);
+    //MWindowPainter->setFillImage(image, ASrcXpos,ASrcYpos, 1,1, 1.0, 0.0);
+    //MWindowPainter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
+    MWindowPainter->setFillImage(image, ADstXpos,ADstYpos, 1,1, 1.0, 0.0);
+    
+    SAT_Print("%i,%i , %i,%i\n",ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
     MWindowPainter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
+    
     MWindowPainter->endFrame();
   }
 
@@ -482,6 +494,8 @@ public: // window
     }
     
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
+    //copyBuffer(nullptr,AXpos,AYpos,AWidth,AHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
+    
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
     MPaintContext.counter += 1;
@@ -703,6 +717,7 @@ public: // timer listener
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
     if (num > 0) { // && (rect.isNotEmpty()) {
+      //SAT_Print("invalidating %.1f,%.1f,%.1f,%.1f\n",rect.x,rect.y,rect.w,rect.h);
       invalidate(rect.x,rect.y,rect.w,rect.h);
       //#ifdef SAT_DEBUG
       //SAT_GLOBAL.DEBUG.reportNumDirtyWidgets(num);

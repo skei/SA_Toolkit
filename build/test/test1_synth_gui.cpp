@@ -19,8 +19,8 @@
   #define PLUGIN_NAME "myPlugin"
 #endif
 
-#define EDITOR_WIDTH  (50 + 200                   + 10 + 200 + 10 + 200 + 50)
-#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20))                       + 50)
+#define EDITOR_WIDTH  (50 + 200 + 10 + 200 + 10 + 200 + 50)
+#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20)) + 50)
 
 const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
@@ -40,8 +40,11 @@ const clap_plugin_descriptor_t myDescriptor = {
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "...",
-  //.features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
+  .features     = (const char* []) {
+    //CLAP_PLUGIN_FEATURE_AUDIO_EFFECT    
+    CLAP_PLUGIN_FEATURE_INSTRUMENT,
+    nullptr
+  }
 };
 
 //----------------------------------------------------------------------
@@ -211,7 +214,7 @@ public:
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT, 2.0);
     
     //setProcessThreaded(false);
-    //setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
+    //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     
     SAT_Host* host = getHost();
     const clap_plugin_t*  clapplugin = getPlugin();
@@ -220,9 +223,6 @@ public:
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
-    
-    //setProcessThreaded(false);
-    //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     
     return SAT_Plugin::init();
   }
@@ -306,17 +306,17 @@ public:
     MRootPanel->appendChildWidget(text);
     text->setTextSize(12);
 
-    SAT_ValueWidget* value = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
-    MRootPanel->appendChildWidget(value);
-    value->setTextSize(12);
+    SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
+    MRootPanel->appendChildWidget(val);
+    val->setTextSize(12);
 
-    SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
-    MRootPanel->appendChildWidget(dragvalue);
-    dragvalue->setTextSize(12);
-    dragvalue->setSnap(true);
-    dragvalue->setSnapPos(0.5);
-    dragvalue->setAutoHideCursor(false);
-    dragvalue->setAutoLockCursor(true);
+    SAT_DragValueWidget* dragval = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
+    MRootPanel->appendChildWidget(dragval);
+    dragval->setTextSize(12);
+    dragval->setSnap(true);
+    dragval->setSnapPos(0.5);
+    dragval->setAutoHideCursor(false);
+    dragval->setAutoLockCursor(true);
 
     SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,360,200,20),"Param 3", 0.0);
     MRootPanel->appendChildWidget(slider);
@@ -356,6 +356,7 @@ public:
     knob->setBipolarCenter(0.5);
     knob->setSnap(true);
     knob->setSnapPos(0.5);
+    knob->setValue(0.25);
 
     // column 3
 
@@ -378,9 +379,9 @@ public:
 
     MRootPanel->appendChildWidget(menu);
 
-    AEditor->connect(value,     getParameter(0));
-    AEditor->connect(dragvalue, getParameter(1));
-    AEditor->connect(slider,    getParameter(2));
+    AEditor->connect(val,     getParameter(0));
+    AEditor->connect(dragval, getParameter(1));
+    AEditor->connect(slider,  getParameter(2));
 
     return true;
   }
@@ -478,14 +479,14 @@ public:
 
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
-    //float** inputs = process->audio_inputs[0].data32; // instrument, n o input..
     float** outputs = process->audio_outputs[0].data32;
 
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
 
-    sat_param_t scale = getParameterValue(2);
+    sat_param_t scale = getParameterValue(2) + getModulationValue(2);
+    scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);
 
   }
@@ -537,11 +538,12 @@ public:
   const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
     SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);
     if (AIndex == 0) {
-      myPlugin* plugin = new myPlugin(ADescriptor,AHost);
+      myPlugin* plugin = new myPlugin(ADescriptor,AHost); // deleted in SAT_Plugin.destroy
       return plugin->getPlugin();
     }
     return nullptr;
   }
 
-#endif
+#endif // SAT_NO_ENTRY
 
+//----------------------------------------------------------------------

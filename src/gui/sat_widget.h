@@ -118,10 +118,8 @@ public:
   virtual bool        isDisabled()                                    { return MIsDisabled; }
   virtual double      getWindowScale()                                { return MWindowScale; }
   virtual int32_t     getLastPainted()                                { return MLastPainted; }
-
-  //virtual SAT_Rect getInitialRect() { return MInitialRect; }
-  virtual SAT_Rect    getBasisRect() { return MBasisRect; }
-
+  //virtual SAT_Rect    getInitialRect()                                { return MInitialRect; }
+  virtual SAT_Rect    getBasisRect()                                  { return MBasisRect; }
   virtual uint32_t    getNumChildWidgets()                            { return MChildren.size(); }
   virtual SAT_Widget* getChildWidget(uint32_t AIndex)                 { return MChildren[AIndex]; }
 
