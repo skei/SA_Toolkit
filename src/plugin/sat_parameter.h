@@ -32,9 +32,6 @@ private:
   int32_t           MIndex                          = -1;
   void*             MConnection                     = nullptr;
   
-  char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
-  uint32_t          MNumDigits                      = 2;
-  
   sat_param_t       MValue                          = 0.0;
   sat_param_t       MModulation                     = 0.0;
   
@@ -47,6 +44,9 @@ private:
   double            MLastUpdatedValue               = 0.0;
   double            MLastModulatedValue             = 0.0;
 
+  uint32_t          MNumDigits                      = 2;
+//char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
+  
 
 //------------------------------
 public:
@@ -182,18 +182,24 @@ public:
   //}
 
   //----------
+  
+  // smoothing should be done in modulationmatrix (moduationmanager?)
+  // and include internal modulation, not expressions, ..
 
   // http://www.kvraudio.com/forum/viewtopic.php?p=6515525#p6515525
 
-  virtual void updateSmoothing(uint32_t ASteps=0) {
-    if (ASteps == 0) {
-      //updateSmoothing();
-      sat_param_t target = MValue + MModulation;
-      MSmoothValue += (target - MSmoothValue) * MSmoothFactor;
-    }
+  virtual void updateSmoothing(double ATolerance=0.001, uint32_t ASteps=1) {
+    double target = MValue + MModulation;
+    double diff = (target - MSmoothValue);
+    if ( abs(diff) < ATolerance ) MSmoothValue = target;
     else {
-      sat_param_t target = MValue + MModulation;
-      MSmoothValue += (target - MSmoothValue) * (1.0 - pow(1.0 - MSmoothFactor, ASteps));
+      if (ASteps == 1) {
+        //updateSmoothing();
+        MSmoothValue += diff * MSmoothFactor;
+      }
+      else {
+        MSmoothValue += diff * (1.0 - pow( (1.0 - MSmoothFactor), ASteps) );
+      }
     }
   }
 

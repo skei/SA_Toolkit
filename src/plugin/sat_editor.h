@@ -271,7 +271,6 @@ public: // clap
     //SAT_Print("\n");
     MParent = window;
     if (!MWindow) {
-      
       MWindow = createWindow(MWidth,MHeight,window->x11);
     }
     else {

@@ -2,7 +2,9 @@
 #define sat_modulation_matrix_included
 //----------------------------------------------------------------------
 
+// hard-coded modulation matrix, x rows, source -> dest
 // dst = ((amount * scale) + offset
+// then use dst as amount in calculations
 
 #include "base/sat.h"
 

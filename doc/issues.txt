@@ -1,0 +1,37 @@
+
+----------------------------------------------------------------------
+
+* random cpu spikes in bitwig (synth)
+
+  3-4 seconds interval
+  performance meter in bitwig says they last around 30 ms
+  (no spikes with internal devices)
+  investigate
+  
+* parameter/modulation smoothing
+
+  a value in a synth might use a combination of:
+  parameter + modulation + note expressions + (internal modulatio)
+  (and smoothed individually per voice)
+  so we need to find a way to smooth the _combination_ of these
+
+* culling & clipping
+
+  no drawing outside parent boundaries
+  set clipping to parent rect before drawing child widgets
+  each widget could additionally clip itself (if needed)
+  or a flag/bool for handling it automatically
+  
+----------------------------------------------------------------------
+
+* generid editor
+
+* investigate text/font alignment & accuracy
+
+* window aspect ratio during resizing
+  
+* cached widgets (buffer, dirty_flag to update)
+
+* layout/alignment
+
+* scrollable container

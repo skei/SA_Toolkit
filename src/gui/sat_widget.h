@@ -170,7 +170,6 @@ public:
     }
   }
 
-
   //----------
 
   virtual void connect(void* AParameter, uint32_t AIndex=0) {
@@ -392,6 +391,9 @@ public: // widget
   }
 
   virtual void on_widget_notify(uint32_t AReason=SAT_WIDGET_NOTIFY_NONE) {
+  }
+
+  virtual void on_widget_timer() {
   }
 
 //------------------------------

@@ -20,8 +20,6 @@
 
 #include "audio/sat_audio_utils.h"
 
-//#define EDITOR_SCALE 2.5
-
 //----------------------------------------------------------------------
 
 struct SAT_QueueItem {
@@ -119,18 +117,15 @@ public: // plugin
   SAT_Host*           getHost()           { return MHost; }
   SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
 
+  //----------
+
+  void setProcessThreaded(bool AThreaded=true)  { MProcessThreaded = AThreaded; }
+  void setEventMode(uint32_t AMode)             { MEventMode = AMode; }
+
   void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0) {
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
     MInitialEditorScale = AScale;
-  }
-
-  void setProcessThreaded(bool AThreaded=true) {
-    MProcessThreaded = AThreaded;
-  }
-
-  void setEventMode(uint32_t AMode) {
-    MEventMode = AMode;
   }
 
 //------------------------------
@@ -245,7 +240,7 @@ public: // plugin
     MProcessContext.process = process;
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
-    preProcessEvents(process->in_events,process->out_events);
+    //preProcessEvents(process->in_events,process->out_events);
     switch (MEventMode) {
       case SAT_PLUGIN_EVENT_MODE_BLOCK: {
         processEvents(process->in_events,process->out_events);
@@ -293,8 +288,21 @@ public: // plugin
   }
 
 //------------------------------
+public: // host
+//------------------------------
+
+  // host.get_extension()
+  // host.request_restart()
+  // host.request_process()
+  // host.request_callback()
+
+//------------------------------
 public: // ambisonic (draft)
 //------------------------------
+
+  // host.ambisonic_changed()
+  
+  //----------
 
   // Returns true on success
   // config_id: the configuration id, see clap_plugin_audio_ports_config.
@@ -309,6 +317,11 @@ public: // ambisonic (draft)
 //------------------------------
 public: // audio ports
 //------------------------------
+
+  // host.audio_ports_is_rescan_flag_supported()
+  // host.audio_ports_rescan()
+  
+  //----------
 
   // number of ports, for either input or output
   // [main-thread]
@@ -366,6 +379,10 @@ public: // audio ports activation (draft)
 //------------------------------
 public: // audio ports config
 //------------------------------
+
+  // host.audio_ports_config_rescan()
+  
+  //----------
 
   // gets the number of available configurations
   // [main-thread]
@@ -433,6 +450,10 @@ public: // audio ports config
 public: // check for updates
 //------------------------------
 
+  // host.check_for_update_on_new_version()
+  
+  //----------
+
   // [main-thread]
 
   void check_for_updates_check(bool include_preview) override {
@@ -442,6 +463,13 @@ public: // check for updates
 //------------------------------
 public: // context menu
 //------------------------------
+
+  // host.context_menu_populate()
+  // host.context_menu_perform()
+  // host.context_menu_can_popup()
+  // host.context_menu_popup()
+  
+  //----------
 
   // Insert plugin's menu items into the menu builder.
   // If target is null, assume global context.
@@ -478,6 +506,10 @@ public: // context menu
 public: // cv
 //------------------------------
 
+  // host.cv_changed()
+
+  //----------
+  
   // Returns true on success.
   // [main-thread]
 
@@ -487,8 +519,22 @@ public: // cv
   }
 
 //------------------------------
+public: // event registry
+//------------------------------
+
+  // host.event_registry_query()
+
+//------------------------------
 public: // gui
 //------------------------------
+
+  // host.gui_resize_hints_changed()
+  // host.gui_request_resize()
+  // host.gui_request_show()
+  // host.gui_request_hide()
+  // host.gui_closed()
+
+  //----------
 
   // Returns true if the requested gui api is supported
   // [main-thread]
@@ -549,7 +595,7 @@ public: // gui
     uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
     MEditor = createEditor(this,w,h);//MInitialEditorWidth,MInitialEditorHeight);
     if (!MEditor) {
-      // create default editor..
+      //createGenericEditor(this,w,h);
     }
     return (MEditor);
   }
@@ -575,6 +621,7 @@ public: // gui
   // [main-thread]
 
   bool gui_set_scale(double scale) override {
+    //SAT_Print("%f\n",scale);
     return MEditor->set_scale(scale);
   }
 
@@ -652,9 +699,7 @@ public: // gui
       SAT_Window* win = MEditor->getWindow();
       win->setInitialSize(MInitialEditorWidth,MInitialEditorHeight);
       initEditorWindow(MEditor,win);
-
       initEditorParameterValues();
-
     }
     return result;
   }
@@ -700,6 +745,10 @@ public: // gui
 public: // latency
 //------------------------------
 
+  // host.latency_changed()
+  
+  //----------
+
   // Returns the plugin latency.
   // [main-thread]
 
@@ -709,9 +758,19 @@ public: // latency
   }
 
 //------------------------------
+public: // log
+//------------------------------
+
+  // host.log_log()
+
+//------------------------------
 public: // midi mappings
 //------------------------------
 
+  // host.midi_mappings_changed()
+
+  //----------
+  
   // [main-thread]
 
   uint32_t midi_mappings_count() override {
@@ -734,6 +793,10 @@ public: // midi mappings
 //------------------------------
 public: // note name
 //------------------------------
+
+  // host.note_name_changed()
+  
+  //----------
 
   // Return the number of note names
   // [main-thread]
@@ -761,6 +824,11 @@ public: // note name
 public: // note ports
 //------------------------------
 
+  // host.note_ports_supported_dialects()
+  // host.note_ports_rescan()
+
+  //
+  
   // number of ports, for either input or output
   // [main-thread]
 
@@ -817,6 +885,12 @@ public: // param indication
 public: // params
 //------------------------------
 
+  // host.params_rescan()
+  // host.params_clear()
+  // host.params_request_flush()
+
+  //----------
+  
   // Returns the number of parameters.
   // [main-thread]
 
@@ -892,12 +966,17 @@ public: // params
     processEvents(in,out);
     //flushParamFromGuiToHost();
     //flushNoteEndFromProcessToHost();
-
   }
 
 //------------------------------
 public: // posix fd support
 //------------------------------
+
+  // host.posix_fd_support_register_fd()
+  // host.posix_fd_support_modify_fd()
+  // host.posix_fd_support_unregister_fd()
+
+  //----------
 
   // This callback is "level-triggered".
   // It means that a writable fd will continuously produce "on_fd()" events;
@@ -912,6 +991,11 @@ public: // posix fd support
 //------------------------------
 public: // preset load
 //------------------------------
+
+  // host.preset_load_on_error()
+  // host.preset_load_loaded()
+
+  //----------
 
   // Loads a preset in the plugin native preset file format from a URI. eg:
   // - "file:///home/abique/.u-he/Diva/Presets/Diva/HS Bass Nine.h2p", load_key: null
@@ -928,6 +1012,11 @@ public: // preset load
 public: // remote controls
 //------------------------------
 
+  // host.remote_controls_changed()
+  // host.remote_controls_suggest_page()
+
+  //----------
+  
   // Returns the number of pages.
   // [main-thread]
 
@@ -990,6 +1079,11 @@ public: // render
 public: // resource directory
 //------------------------------
 
+  // host.resource_directory_request_directory()
+  // host.resource_directory_release_directory()
+
+  //----------
+  
   // Sets the directory in which the plugin can save its resources.
   // The directory remains valid until it is overriden or the plugin is destroyed.
   // If path is null or blank, it clears the directory location.
@@ -1038,14 +1132,18 @@ public: // resource directory
 public: // state
 //------------------------------
 
-/*
-  the host might work in 'chunks', so check return values to see if it actually saved
-  everything you gave it.. spin a loop to be sure everything is written..
-  same thing with reading..
-  (maybe the host loads/saves 4k/64k chunks from disk or whatever)
-*/
+  /*
+    the host might work in 'chunks', so check return values to see if it actually saved
+    everything you gave it.. spin a loop to be sure everything is written..
+    same thing with reading..
+    (maybe the host loads/saves 4k/64k chunks from disk or whatever)
+  */
 
-//------------------------------
+  //----------
+
+  // host.state_mark_dirty()
+  
+  //----------
 
   // Saves the plugin state into stream.
   // Returns true if the state was correctly saved.
@@ -1192,6 +1290,11 @@ public: // state context (draft)
 public: // surround
 //------------------------------
 
+  // host.surround_changed()
+  // host.surround_get_preferred_channel_map()
+
+  //----------
+  
   // Stores into the channel_map array, the surround identifer of each channels.
   // Returns the number of elements stored in channel_map.
   // config_id: the configuration id, see clap_plugin_audio_ports_config.
@@ -1216,6 +1319,10 @@ public: // surround
 public: // tail
 //------------------------------
 
+  // host.tail_changed()
+  
+  //----------
+
   // Returns tail length in samples.
   // Any value greater or equal to INT32_MAX implies infinite tail.
   // [main-thread,audio-thread]
@@ -1226,8 +1333,19 @@ public: // tail
   }
 
 //------------------------------
+public: // thread check
+//------------------------------
+
+  // host.thread_check_is_main_thread()
+  // host.thread_check_is_audio_thread()
+
+//------------------------------
 public: // thread pool
 //------------------------------
+
+  // host.thread_pool_request_exec()
+  
+  //----------
 
   // Called by the thread pool
 
@@ -1239,6 +1357,11 @@ public: // thread pool
 public: // timer support
 //------------------------------
 
+  // host.timer_support_register_timer()
+  // host.timer_support_unregister_timer()
+  
+  //----------
+
   // [main-thread]
 
   void timer_support_on_timer(clap_id timer_id) override {
@@ -1249,31 +1372,42 @@ public: // timer support
 public: // track info
 //------------------------------
 
+  // host.track_info_get()
+  
+  //----------
+
   // Called when the info changes.
   // [main-thread]
 
   void track_info_changed() override {
     //SAT_Print("\n");
-    clap_track_info_t info;
-    if (MHost->ext.track_info) {
-      //char flags_text[256] = {0};
-      MHost->ext.track_info->get(MHost->getHost(),&info);
-      //SAT_Print("track_info:\n");
-      //SAT_Print("  name: %s color %.2f,.2f,.2f\n",info.name,info.color.red,info.color.green,info.color.blue);
-      //SAT_Print("  channels: %i port: %s\n",info.audio_channel_count,info.audio_port_type);
-      //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME)      {}//SAT_Print("  CLAP_TRACK_INFO_HAS_TRACK_NAME");
-      //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR)     {}//SAT_Print("  CLAP_TRACK_INFO_HAS_TRACK_COLOR");
-      //if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL)   {}//SAT_Print("  CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL");
-      //if (info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK) {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK");
-      //if (info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)          {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_BUS");
-      //if (info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)       {}//SAT_Print("  CLAP_TRACK_INFO_IS_FOR_MASTER");
-    }
   }
+
+//------------------------------
+public: // transport control
+//------------------------------
+
+  // host.transport_control_request_start()
+  // host.transport_control_request_stop()
+  // host.transport_control_request_continue()
+  // host.transport_control_request_pause()
+  // host.transport_control_request_toggle_play()
+  // host.transport_control_request_jump(clap_beattime position)
+  // host.transport_control_request_loop_region(clap_beattime start, clap_beattime duration)
+  // host.transport_control_request_toggle_loop()
+  // host.transport_control_request_enable_loop(bool is_enabled)
+  // host.transport_control_request_record(bool is_recording)
+  // host.transport_control_request_toggle_record()
 
 //------------------------------
 public: // triggers
 //------------------------------
 
+  // host.triggers_rescan()
+  // host.triggers_clear()
+
+  //----------
+  
   // Returns the number of triggers.
   // [main-thread]
 
@@ -1307,6 +1441,13 @@ public: // triggers
 public: // tuning
 //------------------------------
 
+  // host.tuning_get_relative()
+  // host.tuning_should_play()
+  // host.tuning_get_tuning_count()
+  // host.tuning_get_info()
+  
+  //----------
+
   // Called when a tuning is added or removed from the pool.
   // [main-thread]
 
@@ -1317,6 +1458,10 @@ public: // tuning
 //------------------------------
 public: // voice info
 //------------------------------
+
+  // host.voice_info_changed()
+  
+  //----------
 
   // gets the voice info, returns true on success
   // [main-thread && active]
@@ -1358,6 +1503,24 @@ public: // extensions
 
   //----------
 
+  void registerDefaultExtensions() {
+    registerExtension(CLAP_EXT_AUDIO_PORTS,           &MAudioPortsExt);
+    registerExtension(CLAP_EXT_GUI,                   &MGuiExt);
+    registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
+    registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
+    registerExtension(CLAP_EXT_STATE,                 &MStateExt);
+  }
+
+  //----------
+
+  void registerDefaultSynthExtensions() {
+    registerDefaultExtensions();
+    registerExtension(CLAP_EXT_THREAD_POOL, &MThreadPoolExt);
+    registerExtension(CLAP_EXT_VOICE_INFO, &MVoiceInfoExt);
+  }
+
+  //----------
+
   void registerAllExtensions() {
     registerExtension(CLAP_EXT_AMBISONIC,             &MAmbisonicExt);
     registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,&MAudioPortsActivationExt);
@@ -1390,25 +1553,7 @@ public: // extensions
     registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
   }
 
-  //----------
-
-  //TODO: check descriptor for _INSTRUMENT flag?
-
-  void registerDefaultExtensions() {
-    registerExtension(CLAP_EXT_AUDIO_PORTS,           &MAudioPortsExt);
-    registerExtension(CLAP_EXT_GUI,                   &MGuiExt);
-    registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
-    registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
-    registerExtension(CLAP_EXT_STATE,                 &MStateExt);
-  }
-
-  void registerDefaultSynthExtensions() {
-    registerDefaultExtensions();
-    registerExtension(CLAP_EXT_THREAD_POOL, &MThreadPoolExt);
-    registerExtension(CLAP_EXT_VOICE_INFO, &MVoiceInfoExt);
-  }
-
-    //------------------------------
+//------------------------------
 public: // editor
 //------------------------------
 
@@ -1984,8 +2129,8 @@ public: // note output ports
 public: // events
 //------------------------------
 
-  virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  }
+  //virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  //}
 
   //----------
 
@@ -1999,8 +2144,8 @@ public: // events
     them individually for each voice during audio processing..
   */
 
-  virtual void prepareEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  }
+  //virtual void prepareEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  //}
 
   //----------
 

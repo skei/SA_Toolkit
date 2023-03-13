@@ -31,18 +31,19 @@ class SAT_NanoVGPainter {
 private:
 //------------------------------
 
-  NVGcontext* MContext        = nullptr;
-  SAT_OpenGL* MOpenGL         = nullptr;
-  int         MDefaultFont    = -1;
-  int         MHeaderFont     = -1;
-  float       MTextBounds[4]  = {0};
+  NVGcontext* MContext              = nullptr;
+  SAT_OpenGL* MOpenGL               = nullptr;
+  int         MDefaultFont          = -1;
+  int         MHeaderFont           = -1;
+  float       MTextBounds[4]        = {0};
+  void*       MCurrentRenderBuffer  = nullptr;
 
   //NVGpaint    MImagePaint     = {0};
   //NVGpaint    MGradientPaint  = {0};
   //int32_t     MFrameWidth       = 0;
   //int32_t     MFrameHeight      = 0;
   //double      MFramePixelRatio  = 0.0;
-
+  
 //------------------------------
 protected:
 //------------------------------
@@ -122,6 +123,12 @@ public:
 
   int getHeaderFont() {
     return MHeaderFont;
+  }
+  
+  //----------
+  
+  void* getRenderBuffer() {
+    return MCurrentRenderBuffer;
   }
 
 //------------------------------
@@ -956,19 +963,9 @@ public: // render buffer
 
   void* createRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
     int flags = 0;
-    //SAT_Print("is_current %i\n",MIsCurrent);
-    //if (MIsCurrent) {
-      NVGLUframebuffer* fb = nvgluCreateFramebuffer(MContext,AWidth,AHeight,flags);
-      //SAT_Print("fb %p\n",fb);
-      return fb;
-    //}
-    //else {
-    //  makeCurrent(0);
-    //  NVGLUframebuffer* fb = nvgluCreateFramebuffer(MContext,AWidth,AHeight,flags);
-    //  resetCurrent(0);
-    //  SAT_Print("fb %p\n",fb);
-    //  return fb;
-    //}
+    NVGLUframebuffer* fb = nvgluCreateFramebuffer(MContext,AWidth,AHeight,flags);
+    //SAT_Print("fb %p\n",fb);
+    return fb;
   }
 
   //----------
@@ -990,6 +987,7 @@ public: // render buffer
   //----------
 
   void selectRenderBuffer(void* buffer) {
+    MCurrentRenderBuffer = buffer;
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     nvgluBindFramebuffer(fb);
   }
@@ -997,6 +995,7 @@ public: // render buffer
   //----------
 
   void selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) {
+    MCurrentRenderBuffer = buffer;
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     nvgluBindFramebuffer(fb);
     MOpenGL->setViewport(0,0,width,height);
@@ -1005,6 +1004,7 @@ public: // render buffer
   //----------
 
   void selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) {
+    MCurrentRenderBuffer = buffer;
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     nvgluBindFramebuffer(fb);
     MOpenGL->setViewport(xpos,ypos,width,height);

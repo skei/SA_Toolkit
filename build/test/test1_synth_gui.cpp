@@ -205,11 +205,10 @@ public:
     appendClapNoteInputPort();
     appendStereoOutputPort();
     
-    SAT_Parameter* par;
-    par = appendParameter( new SAT_Parameter("Param1",0.1) );
-    par = appendParameter( new SAT_Parameter("Param2",0.4) );
-    par = appendParameter( new SAT_Parameter("Param3",0.7) );
-    par->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    /*SAT_Parameter* par1 =*/ appendParameter( new SAT_Parameter("Param1",0.1) );
+    /*SAT_Parameter* par2 =*/ appendParameter( new SAT_Parameter("Param2",0.4) );
+    SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",0.7) );
+    par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
     
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT, 2.0);
     
@@ -222,7 +221,7 @@ public:
     
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(true);
-    MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
+    MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
     
     return SAT_Plugin::init();
   }
@@ -392,9 +391,9 @@ public:
 
 // TODO
 
-  void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
-    MVoiceManager.preProcessEvents(in_events,out_events);
-  }
+  //void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
+  //  MVoiceManager.preProcessEvents(in_events,out_events);
+  //}
 
   //----------
 
@@ -478,13 +477,18 @@ public:
   void processAudio(SAT_ProcessContext* AContext) final {
 
     const clap_process_t* process = AContext->process;
+    SAT_Assert(process);
+
     uint32_t length = process->frames_count;
+    SAT_Assert(length > 0);
+    
     float** outputs = process->audio_outputs[0].data32;
+    SAT_Assert(outputs);
 
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
-
+    
     sat_param_t scale = getParameterValue(2) + getModulationValue(2);
     scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);

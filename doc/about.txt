@@ -1,0 +1,18 @@
+
+author:
+  Tor-Helge Skei
+  tor.helge.skei@gmail.com
+  https://github.com/skei
+
+----------------------------------------------------------------------
+
+history:
+  axonlib
+  holos
+  zenith (pas)
+  sphaera (pas)
+  s3/skeilib
+  kode
+  mip
+  sa_toolkit
+

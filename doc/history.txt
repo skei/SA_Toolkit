@@ -4,11 +4,11 @@
   - plugin: clap 1.1.7
 
 * 0.4.1
-  - base: improved logging
+  - base: improved logging & debugging
   - clap: improved extensions handling
   - exe: creates plugin via clap_entry
   - gui: improved opengl handling
   - gui: buffered painting
   - gui: basic svg support (via nanosvg)
   - plugin: better param/mod redrawing
-
+  - general: lots of small tweaks and fixes

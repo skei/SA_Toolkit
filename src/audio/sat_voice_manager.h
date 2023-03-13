@@ -28,25 +28,26 @@ class SAT_VoiceManager {
 private:
 //------------------------------
 
+  __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   SAT_Voice<VOICE>              MVoices[COUNT]          = {};
-  SAT_VoiceContext              MVoiceContext           = {};
 
   __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
-  float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE]  = {0};
+  float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE] = {0};
 
-  uint32_t                      MNumPlayingVoices       = 0;
-  uint32_t                      MNumReleasedVoices      = 0;
-
+  SAT_VoiceContext              MVoiceContext           = {};
   SAT_NoteQueue                 MNoteEndQueue           = {};
 
   const clap_plugin_t*          MClapPlugin             = nullptr;
   const clap_host_t*            MClapHost               = nullptr;
   const clap_host_thread_pool*  MThreadPool             = nullptr;
 
+  uint32_t                      MActiveVoices[COUNT]    = {};
+  uint32_t                      MNumActiveVoices        = 0;
+  uint32_t                      MNumPlayingVoices       = 0; // set up in processAudio (read by gui)
+  uint32_t                      MNumReleasedVoices      = 0; // --"--
+
   bool                          MProcessThreaded        = false;
   uint32_t                      MEventMode              = SAT_PLUGIN_EVENT_MODE_BLOCK;
-  uint32_t                      MNumActiveVoices        = 0;
-  uint32_t                      MActiveVoices[COUNT]    = {};
 
 //------------------------------
 public:
@@ -386,15 +387,15 @@ public:
 public:
 //------------------------------
 
-  void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  }
+  //void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  //}
 
   //----------
 
   void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
     for (uint32_t i=0; i<COUNT; i++) {
       if (MVoices[i].state == SAT_VOICE_WAITING) {
-        // still waiting, not started? something might be wrong..
+        // still waiting, not started? something is wrong..
         MVoices[i].state = SAT_VOICE_OFF;
         queueNoteEnd(MVoices[i].note);      // ???
         //SAT_Print("voice %i -> OFF\n",i);
@@ -425,7 +426,6 @@ public:
     MVoiceContext.process_context = AProcessContext;
     uint32_t blocksize = AProcessContext->voice_length;
     float** output = AProcessContext->voice_buffer;
-
     SAT_ClearStereoBuffer(output,blocksize);
 
     // set up active voices
@@ -434,13 +434,16 @@ public:
     uint32_t num_released = 0;
     for (uint32_t i=0; i<COUNT; i++) {
       if ((MVoices[i].state != SAT_VOICE_OFF) && (MVoices[i].state != SAT_VOICE_FINISHED)) {
-        MActiveVoices[MNumActiveVoices++] = i;
+        MActiveVoices[MNumActiveVoices] = i;
+        MNumActiveVoices += 1;
         if (MVoices[i].state == SAT_VOICE_PLAYING) num_playing += 1;
         if (MVoices[i].state == SAT_VOICE_RELEASED) num_released += 1;
       }
     }
     MNumPlayingVoices = num_playing;
     MNumReleasedVoices = num_released;
+    
+    //SAT_Print("active %i playing %i release %i\n",MNumActiveVoices,MNumPlayingVoices,MNumReleasedVoices);
 
     // process active voices
     if (MNumActiveVoices > 0) {
@@ -463,12 +466,9 @@ public:
       for (uint32_t i=0; i<MNumActiveVoices; i++) {
         uint32_t voice = MActiveVoices[i];
         float* buffer = MVoiceBuffer;
-
         //buffer += (voice * SAT_PLUGIN_MAX_BLOCK_SIZE);
-
         uint32_t index = MVoices[voice].index;
         buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
-
         SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
       }
 

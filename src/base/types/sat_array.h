@@ -127,12 +127,12 @@ private:
 public:
 //------------------------------
 
-  int32_t findItem(_T& AItem) {
-    for (uint32_t i=0; i<MSize; i++) {
-      if (MBuffer[i] == AItem) return i;
-    }
-    return -1;
-  }
+  //int32_t findItem(_T& AItem) {
+  //  for (uint32_t i=0; i<MSize; i++) {
+  //    if (MBuffer[i] == AItem) return i;
+  //  }
+  //  return -1;
+  //}
 
   void clear(bool AErase=false) {
     clearBuffer(AErase);
@@ -188,6 +188,13 @@ public:
     MSize -= ANum;
   }
 
+  //----------
+  
+  void remove(const _T& AItem) {
+    int32_t index = find(AItem);
+    if (index >= 0) remove(index);
+  }
+  
   //----------
 
   void removeHead(void) {

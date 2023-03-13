@@ -323,7 +323,7 @@ public: // print
       sprintf(line_str, SAT_TERM_FG_CYAN "%i", line);
       strcat(MPrefixBuffer,line_str);
       strcat(MPrefixBuffer,SAT_TERM_RESET );
-      strcat(MPrefixBuffer,"]");
+      strcat(MPrefixBuffer,"] ");
     }
 
     //----------
@@ -343,7 +343,7 @@ public: // print
       #ifdef SAT_DEBUG_PRINT_SOCKET
         print_socket();//MPrefixBuffer,MPrintBuffer);
       #else
-        printf("%s %s",MPrefixBuffer,MPrintBuffer);
+        printf("%s%s",MPrefixBuffer,MPrintBuffer);
       #endif
 
       //flush_stdout
@@ -744,10 +744,10 @@ public: // socket
 
     void print_socket() {
       #ifdef SAT_LINUX
-        dprintf(MSocketHandle,"%s %s",MPrefixBuffer,MPrintBuffer);
+        dprintf(MSocketHandle,"%s%s",MPrefixBuffer,MPrintBuffer);
       #else
         //TODO (print socket in windows)
-        printf("%s %s",MPrefixBuffer, MPrintBuffer);
+        printf("%s%s",MPrefixBuffer, MPrintBuffer);
       #endif
     }
 

@@ -37,8 +37,10 @@ public:
 
   __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   VOICE               voice       = {};
+  
   SAT_VoiceContext*   context     = nullptr;
   uint32_t            index       = 0;
+
   SAT_Note            note        = {};
   uint32_t            state       = SAT_VOICE_OFF;
   uint32_t            event_mode  = SAT_PLUGIN_EVENT_MODE_BLOCK;
@@ -74,7 +76,7 @@ public:
   void process() {
     switch (event_mode) {
       case SAT_PLUGIN_EVENT_MODE_BLOCK: {
-        handleAllEvents();
+        handleBlockEvents();
         break;
       }
       case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
@@ -136,12 +138,10 @@ private:
 
   //----------
 
-  void handleAllEvents() {
+  void handleBlockEvents() {
     SAT_VoiceEvent event;
     while (events.read(&event)) handleEvent(event);
-
     uint32_t length = context->process_context->voice_length;
-
     state = voice.process(state,0,length);
   }
 
@@ -149,14 +149,17 @@ private:
 
   void handleInterleavedEvents() {
     uint32_t current_time = 0;
-
     uint32_t remaining = context->process_context->voice_length;
-
     SAT_VoiceEvent event = {};
     while (remaining > 0) {
+      
       if (events.read(&event)) {
         //SAT_Print("event\n");
         int32_t length = event.time - current_time;
+        
+        //SAT_Assert(length >= 0);
+        //SAT_Assert((current_time + length) <= context->process_context->voice_length);
+        
         if (length > 0) {
           state = voice.process(state,current_time,length);
           remaining -= length;
@@ -172,15 +175,15 @@ private:
         current_time += length;
       } // !event
     } // remaining > 0
-    //SAT_Assert( events.read(&event) == false );
+    
+    SAT_Assert( events.read(&event) == false );
+
   }
 
   //----------
 
   void handleQuantizedEvents() {
-
     uint32_t buffer_length = context->process_context->voice_length;
-
     uint32_t        current_time  = 0;
     uint32_t        remaining     = buffer_length;
     uint32_t        next_event    = 0;

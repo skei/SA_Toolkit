@@ -77,6 +77,7 @@ private:
 
   SAT_WindowListener*   MListener             = nullptr; // editor
   SAT_Widget*           MRootWidget           = nullptr;
+  SAT_WidgetArray       MTimerWidgets         = {};
   uint32_t              MWidth                = 0;
   uint32_t              MHeight               = 0;
   double                MInitialWidth         = 0.0;
@@ -235,6 +236,14 @@ public:
     uint32_t width = MWindowWidth;
     uint32_t height = MWindowHeight;
     AWidget->setSize(width,height);
+  }
+
+  virtual void registerTimerWidget(SAT_Widget* AWidget) {
+    MTimerWidgets.append(AWidget);
+  }
+
+  virtual void unregisterTimerWidget(SAT_Widget* AWidget) {
+    MTimerWidgets.remove(AWidget);
   }
 
 //------------------------------
@@ -718,6 +727,11 @@ public: // timer listener
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
     if (MListener) MListener->do_window_listener_timer(this);
     //on_window_timer();
+    
+    for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
+      MTimerWidgets[i]->on_widget_timer();
+    }
+    
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
     if (num > 0) { // && (rect.isNotEmpty()) {

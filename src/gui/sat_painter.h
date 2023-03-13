@@ -134,16 +134,19 @@ public: // paint
   virtual void drawTextBox(SAT_Rect ARect, const char* AText, uint32_t AAlignment) {
     double bounds[4] = {0};
     getTextBounds(AText,bounds);
-    double x = ARect.x - bounds[0];
-    double y = ARect.y - bounds[1];
+    double x = ARect.x   - bounds[0];
+    double y = ARect.y   - bounds[1];
     double w = bounds[2] - bounds[0];
     double h = bounds[3] - bounds[1];
+    
     if      (AAlignment & SAT_TEXT_ALIGN_LEFT)        { }
     else if (AAlignment & SAT_TEXT_ALIGN_RIGHT)       { x = ARect.w - w + x; }
     else /*if (AAlignment & SAT_TEXT_ALIGN_CENTER)*/  { x += ((ARect.w - w) * 0.5); }
+    
     if      (AAlignment & SAT_TEXT_ALIGN_TOP)         { }
     else if (AAlignment & SAT_TEXT_ALIGN_BOTTOM)      { y = ARect.h - h + y; }
     else /*if (AAlignment & SAT_TEXT_ALIGN_CENTER)*/  { y += ((ARect.h - h) * 0.5); }
+    
     drawText(x,y,AText);
   }
 
