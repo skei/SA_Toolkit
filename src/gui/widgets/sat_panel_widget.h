@@ -20,11 +20,15 @@ private:
 
   bool      MFillBackground   = true;
   SAT_Color MBackgroundColor  = SAT_DarkGray;
-
+  
+  bool      MFillGradient     = false;
+  SAT_Color MGradientColor1   = SAT_LightGray;
+  SAT_Color MGradientColor2   = SAT_DarkGray;
+  
   bool      MDrawBorder       = true;
   SAT_Color MBorderColor      = SAT_LightGray;
   double    MBorderWidth      = 1.0;
-
+  
 //------------------------------
 public:
 //------------------------------
@@ -58,13 +62,20 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
-
       //mrect.overlap(AContext->update_rect);
-
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
-      painter->setFillColor(MBackgroundColor);
-      painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+      
+      if (MFillGradient) {
+        // down
+        painter->setFillGradient(mrect.x,mrect.y,mrect.x,mrect.y2(),MGradientColor1,MGradientColor2);
+        painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+      }
+      else {
+        painter->setFillColor(MBackgroundColor);
+        painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+      }
+      
     }
   }
 

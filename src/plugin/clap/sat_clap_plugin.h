@@ -54,7 +54,7 @@ public:
   virtual const void*         get_extension(const char *id) { return nullptr; }
   virtual void                on_main_thread() {}
 
-  virtual bool                ambisonic_get_info(clap_id config_id, bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) { return false; }
+  virtual bool                ambisonic_get_info(bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) { return false; }
   virtual bool                audio_ports_activation_can_activate_while_processing() { return false; }
   virtual bool                audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active) { return false; }
   virtual uint32_t            audio_ports_config_count() { return 0; }
@@ -63,9 +63,13 @@ public:
   virtual uint32_t            audio_ports_count(bool is_input) { return 0; }
   virtual bool                audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) { return false; }
   virtual void                check_for_updates_check(bool include_preview) { }
+  virtual bool                configurable_audio_ports_is_port_configurable(bool is_input, uint32_t port_index) { return false; }
+  virtual bool                configurable_audio_ports_request_configuration(const struct clap_audio_port_configuration_request *requests,uint32_t request_count) { return false; }
   virtual bool                context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) { return false; }
   virtual bool                context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
   virtual bool                cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) { return false; }
+  virtual bool                extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) { return false; }
+  virtual bool                extensible_audio_ports_remove_port(bool is_input, uint32_t index) { return false; }
   virtual bool                gui_is_api_supported(const char *api, bool is_floating) { return false; }
   virtual bool                gui_get_preferred_api(const char **api, bool *is_floating) { return false; }
   virtual bool                gui_create(const char *api, bool is_floating) { return false; }
@@ -97,7 +101,7 @@ public:
   virtual bool                params_text_to_value(clap_id param_id, const char *display, double *value) { return false; }
   virtual void                params_flush(const clap_input_events_t *in, const clap_output_events_t *out) { }
   virtual void                posix_fd_support_on_fd(int fd, clap_posix_fd_flags_t flags) { }
-  virtual bool                preset_load_from_uri(const char *uri, const char *load_key) { return false; }
+  virtual bool                preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) { return false; }
   virtual uint32_t            remote_controls_count() { return 0; }
   virtual bool                remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) { return false; }
   virtual bool                render_has_hard_realtime_requirement() { return false; }
@@ -110,7 +114,7 @@ public:
   virtual bool                state_load(const clap_istream_t *stream) { return false; }
   virtual bool                state_context_save(const clap_ostream_t *stream, uint32_t context_type) { return false; }
   virtual bool                state_context_load(const clap_istream_t *stream, uint32_t context_type) { return false; }
-  virtual uint32_t            surround_get_channel_map(clap_id config_id, bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) { return 0; }
+  virtual uint32_t            surround_get_channel_map(bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) { return 0; }
   virtual void                surround_changed() { }
   virtual uint32_t            tail_get() { return 0; }
   virtual void                thread_pool_exec(uint32_t task_index) { }
@@ -211,11 +215,19 @@ protected:
 private: // draft: ambisonic
 //------------------------------
 
+  //static
+  //bool clap_plugin_ambisonic_get_info_callback(const clap_plugin_t *plugin, clap_id config_id, bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) {
+  //  SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //  return plug->ambisonic_get_info(config_id,is_input,port_index,info);
+  //}
+
   static
-  bool clap_plugin_ambisonic_get_info_callback(const clap_plugin_t *plugin, clap_id config_id, bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) {
+  bool clap_plugin_ambisonic_get_info_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, clap_ambisonic_info_t *info) {
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->ambisonic_get_info(config_id,is_input,port_index,info);
+    return plug->ambisonic_get_info(is_input,port_index,info);
   }
+  
+  
 
 protected:
 
@@ -318,6 +330,29 @@ protected:
   };
 
 //------------------------------
+private: // draft: configurable audio ports
+//------------------------------
+
+  static
+  bool clap_plugin_configurable_audio_ports_is_port_configurable_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->configurable_audio_ports_is_port_configurable(is_input,port_index);
+  }
+   
+  static
+  bool clap_plugin_configurable_audio_ports_request_configuration_callback(const clap_plugin_t *plugin, const struct clap_audio_port_configuration_request *requests,uint32_t request_count) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->configurable_audio_ports_request_configuration(requests,request_count);
+  }
+
+protected:
+
+  const clap_plugin_configurable_audio_ports_t MConfigurableAudioPortsExt = {
+    .is_port_configurable   = clap_plugin_configurable_audio_ports_is_port_configurable_callback,
+    .request_configuration  = clap_plugin_configurable_audio_ports_request_configuration_callback
+  };
+
+//------------------------------
 private: // draft context-menu
 //------------------------------
 
@@ -354,6 +389,30 @@ protected:
 
   const clap_plugin_cv_t MCVExt = {
     .get_channel_type = clap_plugin_cv_get_channel_type_callback
+  };
+
+//------------------------------
+private: // draft: extensible audio ports
+//------------------------------
+
+   static
+   bool clap_plugin_extensible_audio_ports_add_port_callback(const clap_plugin_t *plugin, bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->extensible_audio_ports_add_port(is_input,channel_count,port_type,port_details);
+   }
+   
+   static
+   bool clap_plugin_extensible_audio_ports_remove_port_callback(const clap_plugin_t *plugin, bool is_input, uint32_t index) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->extensible_audio_ports_remove_port(is_input,index);
+   }
+   
+
+protected:
+
+  const clap_plugin_extensible_audio_ports_t MExtensibleAudioPortsExt = {
+    .add_port     = clap_plugin_extensible_audio_ports_add_port_callback,
+    .remove_port  = clap_plugin_extensible_audio_ports_remove_port_callback
   };
 
 //------------------------------
@@ -652,23 +711,17 @@ protected:
 private: // draft: preset load
 //------------------------------
 
-//  static
-//  bool clap_plugin_preset_load_from_file_callback(const clap_plugin_t *plugin, const char *path) {
-//    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-//    return plug->preset_load_from_file(path);
-//  }
-
   static
-  bool clap_plugin_preset_load_from_uri_callback(const clap_plugin_t *plugin, const char *uri, const char *load_key) {
+  bool clap_plugin_preset_load_from_location_callback(const clap_plugin_t *plugin, uint32_t location_kind, const char *location, const char *load_key) {
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->preset_load_from_uri(uri,load_key);
+    return plug->preset_load_from_location(location_kind,location,load_key);
   }
 
 protected:
 
   const clap_plugin_preset_load_t MPresetLoadExt = {
     //.from_file = clap_plugin_preset_load_from_file_callback
-    .from_uri = clap_plugin_preset_load_from_uri_callback
+    .from_location = clap_plugin_preset_load_from_location_callback
   };
 
 //------------------------------
@@ -805,9 +858,9 @@ private: // draft: surround
 //------------------------------
 
   static
-  uint32_t clap_plugin_surround_get_channel_map_callback(const clap_plugin_t *plugin, clap_id config_id, bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) {
+  uint32_t clap_plugin_surround_get_channel_map_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) {
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->surround_get_channel_map(config_id,is_input,port_index,channel_map,channel_map_capacity);
+    return plug->surround_get_channel_map(is_input,port_index,channel_map,channel_map_capacity);
   }
 
   static

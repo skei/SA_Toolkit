@@ -3,7 +3,6 @@
   <VirtualDirectory Name="doc">
     <File Name="../../doc/about.txt"/>
     <File Name="../../doc/issues.txt"/>
-    <File Name="../../doc/todo.txt"/>
     <File Name="../../doc/history.txt"/>
     <File Name="../../doc/compiling.txt"/>
   </VirtualDirectory>
@@ -252,6 +251,72 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="extern">
+      <VirtualDirectory Name="clap">
+        <VirtualDirectory Name="private">
+          <File Name="../../src/extern/clap/private/std.h"/>
+          <File Name="../../src/extern/clap/private/macros.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="factory">
+          <File Name="../../src/extern/clap/factory/plugin-factory.h"/>
+          <VirtualDirectory Name="draft">
+            <File Name="../../src/extern/clap/factory/draft/preset-discovery.h"/>
+            <File Name="../../src/extern/clap/factory/draft/plugin-invalidation.h"/>
+          </VirtualDirectory>
+        </VirtualDirectory>
+        <VirtualDirectory Name="ext">
+          <File Name="../../src/extern/clap/ext/voice-info.h"/>
+          <File Name="../../src/extern/clap/ext/timer-support.h"/>
+          <File Name="../../src/extern/clap/ext/thread-pool.h"/>
+          <File Name="../../src/extern/clap/ext/thread-check.h"/>
+          <File Name="../../src/extern/clap/ext/tail.h"/>
+          <File Name="../../src/extern/clap/ext/state.h"/>
+          <File Name="../../src/extern/clap/ext/render.h"/>
+          <File Name="../../src/extern/clap/ext/posix-fd-support.h"/>
+          <File Name="../../src/extern/clap/ext/params.h"/>
+          <File Name="../../src/extern/clap/ext/note-ports.h"/>
+          <File Name="../../src/extern/clap/ext/note-name.h"/>
+          <File Name="../../src/extern/clap/ext/log.h"/>
+          <File Name="../../src/extern/clap/ext/latency.h"/>
+          <File Name="../../src/extern/clap/ext/gui.h"/>
+          <File Name="../../src/extern/clap/ext/event-registry.h"/>
+          <File Name="../../src/extern/clap/ext/audio-ports-config.h"/>
+          <File Name="../../src/extern/clap/ext/audio-ports.h"/>
+          <VirtualDirectory Name="draft">
+            <File Name="../../src/extern/clap/ext/draft/tuning.h"/>
+            <File Name="../../src/extern/clap/ext/draft/triggers.h"/>
+            <File Name="../../src/extern/clap/ext/draft/transport-control.h"/>
+            <File Name="../../src/extern/clap/ext/draft/track-info.h"/>
+            <File Name="../../src/extern/clap/ext/draft/surround.h"/>
+            <File Name="../../src/extern/clap/ext/draft/state-context.h"/>
+            <File Name="../../src/extern/clap/ext/draft/resource-directory.h"/>
+            <File Name="../../src/extern/clap/ext/draft/remote-controls.h"/>
+            <File Name="../../src/extern/clap/ext/draft/preset-load.h"/>
+            <File Name="../../src/extern/clap/ext/draft/param-indication.h"/>
+            <File Name="../../src/extern/clap/ext/draft/midi-mappings.h"/>
+            <File Name="../../src/extern/clap/ext/draft/extensible-audio-ports.h"/>
+            <File Name="../../src/extern/clap/ext/draft/cv.h"/>
+            <File Name="../../src/extern/clap/ext/draft/context-menu.h"/>
+            <File Name="../../src/extern/clap/ext/draft/configurable-audio-ports.h"/>
+            <File Name="../../src/extern/clap/ext/draft/check-for-update.h"/>
+            <File Name="../../src/extern/clap/ext/draft/audio-ports-activation.h"/>
+            <File Name="../../src/extern/clap/ext/draft/ambisonic.h"/>
+          </VirtualDirectory>
+        </VirtualDirectory>
+        <File Name="../../src/extern/clap/version.h"/>
+        <File Name="../../src/extern/clap/string-sizes.h"/>
+        <File Name="../../src/extern/clap/stream.h"/>
+        <File Name="../../src/extern/clap/process.h"/>
+        <File Name="../../src/extern/clap/plugin-features.h"/>
+        <File Name="../../src/extern/clap/plugin.h"/>
+        <File Name="../../src/extern/clap/id.h"/>
+        <File Name="../../src/extern/clap/host.h"/>
+        <File Name="../../src/extern/clap/fixedpoint.h"/>
+        <File Name="../../src/extern/clap/events.h"/>
+        <File Name="../../src/extern/clap/entry.h"/>
+        <File Name="../../src/extern/clap/color.h"/>
+        <File Name="../../src/extern/clap/clap.h"/>
+        <File Name="../../src/extern/clap/audio-buffer.h"/>
+      </VirtualDirectory>
       <VirtualDirectory Name="nanosvg">
         <File Name="../../src/extern/nanosvg/nanosvgrast.h"/>
         <File Name="../../src/extern/nanosvg/nanosvg.h"/>
@@ -261,10 +326,11 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="nanovg">
+        <File Name="../../src/extern/nanovg/nanovg (patched).c" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+        <File Name="../../src/extern/nanovg/nanovg (original).c" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
         <File Name="../../src/extern/nanovg/nanovg.h"/>
         <File Name="../../src/extern/nanovg/fontstash.h"/>
         <File Name="../../src/extern/nanovg/nanovg_gl.h"/>
-        <File Name="../../src/extern/nanovg/nanovg (copy).c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
         <File Name="../../src/extern/nanovg/nanovg.c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
         <File Name="../../src/extern/nanovg/nanovg_gl_utils.h"/>
       </VirtualDirectory>
@@ -275,70 +341,6 @@
         <File Name="../../src/extern/stb/stb_image_write.h"/>
         <File Name="../../src/extern/stb/stb_truetype.h"/>
         <File Name="../../src/extern/stb/stb_image.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="clap">
-        <File Name="../../src/extern/clap/events.h"/>
-        <File Name="../../src/extern/clap/id.h"/>
-        <File Name="../../src/extern/clap/plugin.h"/>
-        <File Name="../../src/extern/clap/audio-buffer.h"/>
-        <File Name="../../src/extern/clap/stream.h"/>
-        <File Name="../../src/extern/clap/process.h"/>
-        <File Name="../../src/extern/clap/version.h"/>
-        <File Name="../../src/extern/clap/plugin-features.h"/>
-        <File Name="../../src/extern/clap/entry.h"/>
-        <File Name="../../src/extern/clap/host.h"/>
-        <File Name="../../src/extern/clap/fixedpoint.h"/>
-        <File Name="../../src/extern/clap/color.h"/>
-        <File Name="../../src/extern/clap/string-sizes.h"/>
-        <File Name="../../src/extern/clap/clap.h"/>
-        <VirtualDirectory Name="factory">
-          <File Name="../../src/extern/clap/factory/plugin-factory.h"/>
-          <VirtualDirectory Name="draft">
-            <File Name="../../src/extern/clap/factory/draft/preset-discovery.h"/>
-            <File Name="../../src/extern/clap/factory/draft/plugin-invalidation.h"/>
-          </VirtualDirectory>
-        </VirtualDirectory>
-        <VirtualDirectory Name="ext">
-          <File Name="../../src/extern/clap/ext/note-name.h"/>
-          <File Name="../../src/extern/clap/ext/voice-info.h"/>
-          <File Name="../../src/extern/clap/ext/thread-pool.h"/>
-          <File Name="../../src/extern/clap/ext/tail.h"/>
-          <File Name="../../src/extern/clap/ext/note-ports.h"/>
-          <File Name="../../src/extern/clap/ext/audio-ports-config.h"/>
-          <File Name="../../src/extern/clap/ext/thread-check.h"/>
-          <File Name="../../src/extern/clap/ext/render.h"/>
-          <File Name="../../src/extern/clap/ext/log.h"/>
-          <File Name="../../src/extern/clap/ext/event-registry.h"/>
-          <File Name="../../src/extern/clap/ext/gui.h"/>
-          <File Name="../../src/extern/clap/ext/params.h"/>
-          <File Name="../../src/extern/clap/ext/audio-ports.h"/>
-          <File Name="../../src/extern/clap/ext/state.h"/>
-          <File Name="../../src/extern/clap/ext/latency.h"/>
-          <File Name="../../src/extern/clap/ext/posix-fd-support.h"/>
-          <File Name="../../src/extern/clap/ext/timer-support.h"/>
-          <VirtualDirectory Name="draft">
-            <File Name="../../src/extern/clap/ext/draft/remote-controls.h"/>
-            <File Name="../../src/extern/clap/ext/draft/ambisonic.h"/>
-            <File Name="../../src/extern/clap/ext/draft/resource-directory.h"/>
-            <File Name="../../src/extern/clap/ext/draft/check-for-update.h"/>
-            <File Name="../../src/extern/clap/ext/draft/preset-load.h"/>
-            <File Name="../../src/extern/clap/ext/draft/context-menu.h"/>
-            <File Name="../../src/extern/clap/ext/draft/surround.h"/>
-            <File Name="../../src/extern/clap/ext/draft/audio-ports-activation.h"/>
-            <File Name="../../src/extern/clap/ext/draft/state-context.h"/>
-            <File Name="../../src/extern/clap/ext/draft/triggers.h"/>
-            <File Name="../../src/extern/clap/ext/draft/transport-control.h"/>
-            <File Name="../../src/extern/clap/ext/draft/midi-mappings.h"/>
-            <File Name="../../src/extern/clap/ext/draft/param-indication.h"/>
-            <File Name="../../src/extern/clap/ext/draft/tuning.h"/>
-            <File Name="../../src/extern/clap/ext/draft/cv.h"/>
-            <File Name="../../src/extern/clap/ext/draft/track-info.h"/>
-          </VirtualDirectory>
-        </VirtualDirectory>
-        <VirtualDirectory Name="private">
-          <File Name="../../src/extern/clap/private/std.h"/>
-          <File Name="../../src/extern/clap/private/macros.h"/>
-        </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="rigtorp">
         <File Name="../../src/extern/rigtorp/SPSCQueue.h"/>

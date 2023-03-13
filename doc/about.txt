@@ -6,13 +6,4 @@ author:
 
 ----------------------------------------------------------------------
 
-history:
-  axonlib
-  holos
-  zenith (pas)
-  sphaera (pas)
-  s3/skeilib
-  kode
-  mip
-  sa_toolkit
-
+[TODO]

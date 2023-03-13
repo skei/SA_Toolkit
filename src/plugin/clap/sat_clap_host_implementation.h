@@ -120,8 +120,8 @@ public: // extensions
   virtual bool      posix_fd_support_register_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
   virtual bool      posix_fd_support_modify_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
   virtual bool      posix_fd_support_unregister_fd(int fd) { return false; }
-  virtual void      preset_load_on_error(const char *uri, int32_t os_error, const char *msg) {}
-  virtual void      preset_load_loaded(const char *uri, const char *load_key) {}
+  virtual void      preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {}
+  virtual void      preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) {}
   virtual void      remote_controls_changed() {}
   virtual void      remote_controls_suggest_page(clap_id page_id) {}
   virtual bool      resource_directory_request_directory(bool is_shared) { return false; }
@@ -531,15 +531,15 @@ private: // preset load
 //------------------------------
 
   static
-  void clap_host_preset_load_on_error_callback(const clap_host_t *host, const char *uri, int32_t os_error, const char *msg) {
+  void clap_host_preset_load_on_error_callback(const clap_host_t *host, uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {
     SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->preset_load_on_error(uri,os_error,msg);
+    _host->preset_load_on_error(location_kind,location,load_key,os_error,msg);
   }
 
   static
-  void clap_host_preset_load_loaded_callback(const clap_host_t *host, const char *uri, const char *load_key) {
+  void clap_host_preset_load_loaded_callback(const clap_host_t *host, uint32_t location_kind, const char *location, const char *load_key) {
     SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->preset_load_loaded(uri,load_key);
+    _host->preset_load_loaded(location_kind,location,load_key);
   }
 
 protected:
@@ -621,17 +621,17 @@ private: // surround
     _host->surround_changed();
   }
 
-  static
-  void clap_host_surround_get_preferred_channel_map_callback(const clap_host_t *host, uint8_t *channel_map, uint32_t channel_map_capacity, uint32_t *channel_count) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->surround_get_preferred_channel_map(channel_map,channel_map_capacity,channel_count);
-  }
+  //static
+  //void clap_host_surround_get_preferred_channel_map_callback(const clap_host_t *host, uint8_t *channel_map, uint32_t channel_map_capacity, uint32_t *channel_count) {
+  //  SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+  //  _host->surround_get_preferred_channel_map(channel_map,channel_map_capacity,channel_count);
+  //}
 
 protected:
 
   clap_host_surround_t MSurroundExt = {
-    .changed                    = clap_host_surround_changed_callback,
-    .get_preferred_channel_map  = clap_host_surround_get_preferred_channel_map_callback
+    .changed                    = clap_host_surround_changed_callback//,
+    //.get_preferred_channel_map  = clap_host_surround_get_preferred_channel_map_callback
   };
 
 //------------------------------

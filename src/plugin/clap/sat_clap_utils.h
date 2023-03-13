@@ -68,31 +68,31 @@
 
     if (AHost->ext.surround) {
       SAT_Log("  host supports ext '%s' (draft)\n", CLAP_EXT_SURROUND);
-      uint8_t channel_map[256] = {0};
-      uint32_t count = 0;
-      AHost->ext.surround->get_preferred_channel_map(host,channel_map, 256, &count);
-      for (uint32_t i=0; i<count; i++) {
-        switch (channel_map[i]) {
-          case CLAP_SURROUND_FL:  SAT_Log("CLAP_SURROUND_FL\n");  break;
-          case CLAP_SURROUND_FR:  SAT_Log("CLAP_SURROUND_FR\n");  break;
-          case CLAP_SURROUND_FC:  SAT_Log("CLAP_SURROUND_FC\n");  break;
-          case CLAP_SURROUND_LFE: SAT_Log("CLAP_SURROUND_LFE\n"); break;
-          case CLAP_SURROUND_BL:  SAT_Log("CLAP_SURROUND_BL\n");  break;
-          case CLAP_SURROUND_BR:  SAT_Log("CLAP_SURROUND_BR\n");  break;
-          case CLAP_SURROUND_FLC: SAT_Log("CLAP_SURROUND_FLC\n"); break;
-          case CLAP_SURROUND_FRC: SAT_Log("CLAP_SURROUND_FRC\n"); break;
-          case CLAP_SURROUND_BC:  SAT_Log("CLAP_SURROUND_BC\n");  break;
-          case CLAP_SURROUND_SL:  SAT_Log("CLAP_SURROUND_SL\n");  break;
-          case CLAP_SURROUND_SR:  SAT_Log("CLAP_SURROUND_SR\n");  break;
-          case CLAP_SURROUND_TC:  SAT_Log("CLAP_SURROUND_TC\n");  break;
-          case CLAP_SURROUND_TFL: SAT_Log("CLAP_SURROUND_TFL\n"); break;
-          case CLAP_SURROUND_TFC: SAT_Log("CLAP_SURROUND_TFC\n"); break;
-          case CLAP_SURROUND_TFR: SAT_Log("CLAP_SURROUND_TFR\n"); break;
-          case CLAP_SURROUND_TBL: SAT_Log("CLAP_SURROUND_TBL\n"); break;
-          case CLAP_SURROUND_TBC: SAT_Log("CLAP_SURROUND_TBC\n"); break;
-          case CLAP_SURROUND_TBR: SAT_Log("CLAP_SURROUND_TBR\n"); break;
-        }
-      }
+      //uint8_t channel_map[256] = {0};
+      //uint32_t count = 0;
+      //AHost->ext.surround->get_preferred_channel_map(host,channel_map, 256, &count);
+      //for (uint32_t i=0; i<count; i++) {
+      //  switch (channel_map[i]) {
+      //    case CLAP_SURROUND_FL:  SAT_Log("CLAP_SURROUND_FL\n");  break;
+      //    case CLAP_SURROUND_FR:  SAT_Log("CLAP_SURROUND_FR\n");  break;
+      //    case CLAP_SURROUND_FC:  SAT_Log("CLAP_SURROUND_FC\n");  break;
+      //    case CLAP_SURROUND_LFE: SAT_Log("CLAP_SURROUND_LFE\n"); break;
+      //    case CLAP_SURROUND_BL:  SAT_Log("CLAP_SURROUND_BL\n");  break;
+      //    case CLAP_SURROUND_BR:  SAT_Log("CLAP_SURROUND_BR\n");  break;
+      //    case CLAP_SURROUND_FLC: SAT_Log("CLAP_SURROUND_FLC\n"); break;
+      //    case CLAP_SURROUND_FRC: SAT_Log("CLAP_SURROUND_FRC\n"); break;
+      //    case CLAP_SURROUND_BC:  SAT_Log("CLAP_SURROUND_BC\n");  break;
+      //    case CLAP_SURROUND_SL:  SAT_Log("CLAP_SURROUND_SL\n");  break;
+      //    case CLAP_SURROUND_SR:  SAT_Log("CLAP_SURROUND_SR\n");  break;
+      //    case CLAP_SURROUND_TC:  SAT_Log("CLAP_SURROUND_TC\n");  break;
+      //    case CLAP_SURROUND_TFL: SAT_Log("CLAP_SURROUND_TFL\n"); break;
+      //    case CLAP_SURROUND_TFC: SAT_Log("CLAP_SURROUND_TFC\n"); break;
+      //    case CLAP_SURROUND_TFR: SAT_Log("CLAP_SURROUND_TFR\n"); break;
+      //    case CLAP_SURROUND_TBL: SAT_Log("CLAP_SURROUND_TBL\n"); break;
+      //    case CLAP_SURROUND_TBC: SAT_Log("CLAP_SURROUND_TBC\n"); break;
+      //    case CLAP_SURROUND_TBR: SAT_Log("CLAP_SURROUND_TBR\n"); break;
+      //  }
+      //}
     }
 
     if (AHost->ext.tail) {

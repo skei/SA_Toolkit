@@ -1,7 +1,6 @@
-[previously: MIP]
 
 * 0.4.0 (7.feb.2023)
-  - plugin: clap 1.1.7
+  - clap: clap 1.1.7
 
 * 0.4.1
   - base: improved logging & debugging
@@ -9,6 +8,6 @@
   - exe: creates plugin via clap_entry
   - gui: improved opengl handling
   - gui: buffered painting
-  - gui: basic svg support (via nanosvg)
-  - plugin: better param/mod redrawing
+  - gui: svg support (via nanosvg)
+  - plugin: better param/mod updating
   - general: lots of small tweaks and fixes

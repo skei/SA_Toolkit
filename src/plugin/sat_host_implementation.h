@@ -410,7 +410,7 @@ public: // preset load (draft)
   // value, eg: 0 on unix and Windows.
   // [main-thread]
 
-  void preset_load_on_error(const char *uri, int32_t os_error, const char *msg) override {
+  void preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) override {
   }
 
   //----------
@@ -421,7 +421,7 @@ public: // preset load (draft)
   // must be null.
   // [main-thread]
 
-  void preset_load_loaded(const char *uri, const char *load_key) override {
+  void preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) override {
   }
 
 //------------------------------

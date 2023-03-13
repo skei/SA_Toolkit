@@ -309,7 +309,7 @@ public: // ambisonic (draft)
   // If config_id is CLAP_INVALID_ID, then this function queries the current port info.
   // [main-thread]
 
-  bool ambisonic_get_info(clap_id config_id, bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) override {
+  bool ambisonic_get_info(bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) override {
     //SAT_Print("config_id %i is_input %i port_index %i \n",config_id,is_input,port_index);
     return false;
   }
@@ -461,6 +461,20 @@ public: // check for updates
   }
 
 //------------------------------
+public: // configurable audio ports
+//------------------------------
+
+  bool configurable_audio_ports_is_port_configurable(bool is_input, uint32_t port_index) override {
+    return false;
+  }
+  
+  //----------
+  
+  bool configurable_audio_ports_request_configuration(const struct clap_audio_port_configuration_request *requests,uint32_t request_count) override {
+    return false;
+  }
+
+//------------------------------
 public: // context menu
 //------------------------------
 
@@ -523,6 +537,20 @@ public: // event registry
 //------------------------------
 
   // host.event_registry_query()
+
+//------------------------------
+public: // extensible audio ports
+//------------------------------
+
+  bool extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) override {
+    return false;
+  }
+  
+  //----------
+  
+  bool extensible_audio_ports_remove_port(bool is_input, uint32_t index) override {
+    return false;
+  }
 
 //------------------------------
 public: // gui
@@ -1003,7 +1031,7 @@ public: // preset load
   // The preset discovery provider defines the uri and load_key to be passed to this function.
   // [main-thread]
 
-  bool preset_load_from_uri(const char *uri, const char *load_key) override {
+  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
     //SAT_Print("uri %s load:key %s\n",uri,load_key);
     return false;
   }
@@ -1301,7 +1329,7 @@ public: // surround
   // If config_id is CLAP_INVALID_ID, then this function queries the current port info.
   // [main-thread]
 
-  uint32_t surround_get_channel_map(clap_id config_id, bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) override {
+  uint32_t surround_get_channel_map(bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) override {
     //SAT_Print("\n");
     return 0;
   }
@@ -1504,53 +1532,55 @@ public: // extensions
   //----------
 
   void registerDefaultExtensions() {
-    registerExtension(CLAP_EXT_AUDIO_PORTS,           &MAudioPortsExt);
-    registerExtension(CLAP_EXT_GUI,                   &MGuiExt);
-    registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
-    registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
-    registerExtension(CLAP_EXT_STATE,                 &MStateExt);
+    registerExtension(CLAP_EXT_AUDIO_PORTS,               &MAudioPortsExt);
+    registerExtension(CLAP_EXT_GUI,                       &MGuiExt);
+    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
+    registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
+    registerExtension(CLAP_EXT_STATE,                     &MStateExt);
   }
 
   //----------
 
   void registerDefaultSynthExtensions() {
     registerDefaultExtensions();
-    registerExtension(CLAP_EXT_THREAD_POOL, &MThreadPoolExt);
-    registerExtension(CLAP_EXT_VOICE_INFO, &MVoiceInfoExt);
+    registerExtension(CLAP_EXT_THREAD_POOL,               &MThreadPoolExt);
+    registerExtension(CLAP_EXT_VOICE_INFO,                &MVoiceInfoExt);
   }
 
   //----------
 
   void registerAllExtensions() {
-    registerExtension(CLAP_EXT_AMBISONIC,             &MAmbisonicExt);
-    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,&MAudioPortsActivationExt);
-    registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,    &MAudioPortsConfigExt);
-    registerExtension(CLAP_EXT_AUDIO_PORTS,           &MAudioPortsExt);
-    registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,      &MCheckForUpdateExt);
-    registerExtension(CLAP_EXT_CONTEXT_MENU,          &MContextMenuExt);
-    registerExtension(CLAP_EXT_CV,                    &MCVExt);
-    registerExtension(CLAP_EXT_GUI,                   &MGuiExt);
-    registerExtension(CLAP_EXT_LATENCY,               &MLatencyExt);
-    registerExtension(CLAP_EXT_MIDI_MAPPINGS,         &MMidiMappingsExt);
-    registerExtension(CLAP_EXT_NOTE_NAME,             &MNoteNameExt);
-    registerExtension(CLAP_EXT_NOTE_PORTS,            &MNotePortsExt);
-    registerExtension(CLAP_EXT_PARAM_INDICATION,      &MParamIndicationExt);
-    registerExtension(CLAP_EXT_PARAMS,                &MParamsExt);
-    registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,      &MPosixFdSupportExt);
-    registerExtension(CLAP_EXT_PRESET_LOAD,           &MPresetLoadExt);
-    registerExtension(CLAP_EXT_REMOTE_CONTROLS,       &MRemoteControlsExt);
-    registerExtension(CLAP_EXT_RENDER,                &MRenderExt);
-    registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,    &MResourceDirectoryExt);
-    registerExtension(CLAP_EXT_STATE,                 &MStateExt);
-    registerExtension(CLAP_EXT_STATE_CONTEXT,         &MStateContextExt);
-    registerExtension(CLAP_EXT_SURROUND,              &MSurroundExt);
-    registerExtension(CLAP_EXT_TAIL,                  &MTailExt);
-    registerExtension(CLAP_EXT_THREAD_POOL,           &MThreadPoolExt);
-    registerExtension(CLAP_EXT_TIMER_SUPPORT,         &MTimerSupportExt);
-    registerExtension(CLAP_EXT_TRACK_INFO,            &MTrackInfoExt);
-    registerExtension(CLAP_EXT_TRIGGERS,              &MTriggersExt);
-    registerExtension(CLAP_EXT_TUNING,                &MTuningExt);
-    registerExtension(CLAP_EXT_VOICE_INFO,            &MVoiceInfoExt);
+    registerExtension(CLAP_EXT_AMBISONIC,                 &MAmbisonicExt);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MAudioPortsActivationExt);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,        &MAudioPortsConfigExt);
+    registerExtension(CLAP_EXT_AUDIO_PORTS,               &MAudioPortsExt);
+    registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,          &MCheckForUpdateExt);
+    registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MConfigurableAudioPortsExt);
+    registerExtension(CLAP_EXT_CONTEXT_MENU,              &MContextMenuExt);
+    registerExtension(CLAP_EXT_CV,                        &MCVExt);
+    registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtensibleAudioPortsExt);
+    registerExtension(CLAP_EXT_GUI,                       &MGuiExt);
+    registerExtension(CLAP_EXT_LATENCY,                   &MLatencyExt);
+    registerExtension(CLAP_EXT_MIDI_MAPPINGS,             &MMidiMappingsExt);
+    registerExtension(CLAP_EXT_NOTE_NAME,                 &MNoteNameExt);
+    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
+    registerExtension(CLAP_EXT_PARAM_INDICATION,          &MParamIndicationExt);
+    registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
+    registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,          &MPosixFdSupportExt);
+    registerExtension(CLAP_EXT_PRESET_LOAD,               &MPresetLoadExt);
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MRemoteControlsExt);
+    registerExtension(CLAP_EXT_RENDER,                    &MRenderExt);
+    registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,        &MResourceDirectoryExt);
+    registerExtension(CLAP_EXT_STATE,                     &MStateExt);
+    registerExtension(CLAP_EXT_STATE_CONTEXT,             &MStateContextExt);
+    registerExtension(CLAP_EXT_SURROUND,                  &MSurroundExt);
+    registerExtension(CLAP_EXT_TAIL,                      &MTailExt);
+    registerExtension(CLAP_EXT_THREAD_POOL,               &MThreadPoolExt);
+    registerExtension(CLAP_EXT_TIMER_SUPPORT,             &MTimerSupportExt);
+    registerExtension(CLAP_EXT_TRACK_INFO,                &MTrackInfoExt);
+    registerExtension(CLAP_EXT_TRIGGERS,                  &MTriggersExt);
+    registerExtension(CLAP_EXT_TUNING,                    &MTuningExt);
+    registerExtension(CLAP_EXT_VOICE_INFO,                &MVoiceInfoExt);
   }
 
 //------------------------------

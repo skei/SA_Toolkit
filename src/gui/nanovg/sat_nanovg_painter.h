@@ -38,12 +38,6 @@ private:
   float       MTextBounds[4]        = {0};
   void*       MCurrentRenderBuffer  = nullptr;
 
-  //NVGpaint    MImagePaint     = {0};
-  //NVGpaint    MGradientPaint  = {0};
-  //int32_t     MFrameWidth       = 0;
-  //int32_t     MFrameHeight      = 0;
-  //double      MFramePixelRatio  = 0.0;
-  
 //------------------------------
 protected:
 //------------------------------
@@ -70,23 +64,17 @@ public:
 
   SAT_NanoVGPainter(SAT_OpenGL* AOpenGL) {
     MOpenGL = AOpenGL;
-
     //MOpenGL->makeCurrent();
-
     #if SAT_OPENGL_MAJOR >= 3
       MContext = nvgCreateGL3(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
     #else
       MContext = nvgCreateGL2(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
     #endif
-
     MDefaultFont = nvgCreateFontMem(MContext,"Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size,0);
     MHeaderFont = nvgCreateFontMem(MContext,"Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size,0);
-
     nvgFontFaceId(MContext,MDefaultFont);
     nvgFontSize(MContext,MTextSize);
-
     //MOpenGL->resetCurrent();
-
   }
 
   //----------
@@ -101,7 +89,6 @@ public:
     #else
       nvgDeleteGL2(MContext);
     #endif
-    //nvgDeleteImage(MIconImage);
     // delete fonts?
   }
 
@@ -134,40 +121,6 @@ public:
 //------------------------------
 public:
 //------------------------------
-
-  // gl
-
-  //void flush(void) {
-  //  //nvgFlush(MContext);
-  //}
-
-  //----------
-
-  //bool makeCurrent(uint32_t AMode) {
-  //  return false;
-  //}
-
-  //----------
-
-  //bool resetCurrent(uint32_t AMode) {
-  //  return false;
-  //}
-
-  //----------
-
-  //void swapBuffers(uint32_t AMode) {
-  //}
-
-  //----------
-
-  //void setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
-  //}
-
-//------------------------------
-public:
-//------------------------------
-
-//
 
   //void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AMode) {
   //  #ifdef SAT_USE_GLX
@@ -205,9 +158,6 @@ public:
   //----------
 
   void beginFrame(int32_t AWidth, int32_t AHeight, double APixelRatio=1.0) {
-    //MFrameWidth       = AWidth;
-    //MFrameHeight      = AHeight;
-    //MFramePixelRatio  = APixelRatio;
     nvgBeginFrame(MContext,AWidth,AHeight,APixelRatio);
   }
 
@@ -216,22 +166,6 @@ public:
   void endFrame() {
     nvgEndFrame(MContext);
   }
-
-  //----------
-
-  //void beginTempFrame(int32_t AWidth, int32_t AHeight, double APixelRatio) {
-  //  //nvgEndFrame(MContext);
-  //  glViewport(0,0,AWidth,AHeight);
-  //  nvgBeginFrame(MContext,AWidth,AHeight,APixelRatio);
-  //}
-
-  //----------
-
-  //void endTempFrame() {
-  //  nvgEndFrame(MContext);
-  //  glViewport(0,0,MFrameWidth,MFrameHeight);
-  //  nvgBeginFrame(MContext,MFrameWidth,MFrameHeight,MFramePixelRatio);
-  //}
 
 //------------------------------
 public: // state
@@ -273,13 +207,10 @@ public: // clip
 
   //----------
 
-  // test/hack..
-  // extend clipping rectangle, so we 'catch' antialiased edges..
   // is pixel coordinate 0,0 center, or upper left of pixel?
 
   void setClip(SAT_Rect ARect) {
     //SAT_Print("%.2f,%.2f - %.2f,%.2f\n",ARect.x,ARect.y,ARect.w,ARect.h);
-    //nvgScissor(MContext,ARect.x - 0.5,ARect.y - 0.5,ARect.w + 1,ARect.h + 1);
     nvgScissor(MContext,ARect.x,ARect.y,ARect.w,ARect.h);
   }
 
@@ -487,9 +418,6 @@ public: // draw
 
   void drawArc(double cx, double cy, double r, double a1, double a2) {
     nvgBeginPath(MContext);
-    ////a2 += a1;
-    //a2 = a1 - a2;
-    // 0 = clockwise, 1 = counter-clockwise
     nvgArc(MContext,cx,cy,r,a1,a2,2);
     nvgStroke(MContext);
   }
@@ -666,26 +594,12 @@ public: // text
 public: // font
 //------------------------------
 
-  //int createFont(const char* name, const char* filename) {
-  //  return nvgCreateFont(MContext,name,filename);
-  //}
-
   int32_t loadFont(const char* AName, const char* AFilename) {
     int font = nvgCreateFont(MContext,AName,AFilename);
     return font;
   }
 
   //----------
-
-  int createFontAtIndex(const char* name, const char* filename, const int fontIndex) {
-    return nvgCreateFontAtIndex(MContext,name,filename,fontIndex);
-  }
-
-  //----------
-
-  //int createFontMem(const char* name, unsigned char* data, int ndata, int freeData) {
-  //  return nvgCreateFontMem(MContext,name,data,ndata,freeData);
-  //}
 
   int32_t loadFont(const char* AName, void* ABuffer, uint32_t ASize) {
     int font = nvgCreateFontMem(MContext,AName,(unsigned char*)ABuffer,ASize,0);
@@ -694,7 +608,13 @@ public: // font
 
   //----------
 
-  int createFontMemAtIndex(const char* name, unsigned char* data, int ndata, int freeData, const int fontIndex) {
+  int loadFontAtIndex(const char* name, const char* filename, const int fontIndex) {
+    return nvgCreateFontAtIndex(MContext,name,filename,fontIndex);
+  }
+
+  //----------
+
+  int loadFontMemAtIndex(const char* name, unsigned char* data, int ndata, int freeData, const int fontIndex) {
     return nvgCreateFontMemAtIndex(MContext,name,data,ndata,freeData,fontIndex);
   }
 
@@ -875,26 +795,17 @@ public: // image
     int iw,ih;
     nvgImageSize(MContext,AImage,&iw,&ih);
     // sprite location on texture
-    double sx = 0;     // 0;
-    double sy = 0;     // 0;
-    //double sw = iw;    // 256;
-    //double sh = ih;    // 256;
+    double sx = 0;
+    double sy = 0;
     // position and size of the sprite rectangle on screen
-    double dx = xofs;  // 0;
-    double dy = yofs;  // 0;
-    //double dw = iw;    // 256;
-    //double dh = ih;    // 256;
-    // Aspect ration of pixel in x an y dimensions. This allows us to scale
-    // the sprite to fill the whole rectangle.
-    double ax = xscale;//dw / sw;
-    double ay = yscale;//dh / sh;
-
+    double dx = xofs;
+    double dy = yofs;
+    // Aspect ration of pixel in x an y dimensions.
+    // This allows us to scale the sprite to fill the whole rectangle.
+    double ax = xscale;
+    double ay = yscale;
     NVGpaint paint = nvgImagePattern(
       MContext,
-      //xofs,//dx - (sx * ax),
-      //yofs,//dy - (sy * ay),
-      //(double)iw * xscale,//(double)iw * ax,
-      //(double)ih * yscale,//(double)ih * ay,
       dx - (sx * ax),
       dy - (sy * ay),
       (double)iw * ax,
@@ -903,11 +814,7 @@ public: // image
       AImage,
       AAlpha
     );
-
-    //nvgBeginPath(MContext);
-    //nvgRect(MContext, dx,dy, dw,dh);
     nvgFillPaint(MContext,paint);
-    //nvgFill(MContext);
   }
 
 //------------------------------
@@ -955,7 +862,6 @@ public: // render buffer
       NVG_IMAGE_FLIPY             Flips (inverses) image in Y direction when rendered.
       NVG_IMAGE_PREMULTIPLIED     Image data has premultiplied alpha.
       NVG_IMAGE_NEAREST           Image interpolation is Nearest instead Linear
-
     // additional flags on top of NVGimageFlags.
     NVGimageFlagsGL
       NVG_IMAGE_NODELETE          Do not delete GL texture handle.

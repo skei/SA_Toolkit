@@ -2,7 +2,6 @@
 #include "base/sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
-//#include "audio/sat_modulation_matrix.h"
 #include "audio/sat_voice_manager.h"
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
@@ -168,9 +167,8 @@ class myPlugin
 private:
 //------------------------------
 
-  SAT_PanelWidget* MRootPanel = nullptr;
   SAT_VoiceManager<myVoice,NUM_VOICES>  MVoiceManager = {};
-  //SAT_ModulationMatrix MModMatrix = {};
+  SAT_PanelWidget* MRootPanel = nullptr;
 
 //------------------------------
 public:
@@ -255,7 +253,6 @@ public:
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
     return true;
   }
-
 
 //------------------------------
 public:
