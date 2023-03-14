@@ -5,7 +5,6 @@
 /*
 */
 
-
 //----------------------------------------------------------------------
 
 #include "plugin/sat_note.h"
@@ -137,22 +136,22 @@ public:
 
   //----------
 
-  bool isGlobal(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
-    if ((noteid  == -1) && (port == -1) && (channel == -1) && (key == -1)) return true;
-    return false;
-  }
+  //bool isGlobal(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
+  //  if ((noteid  == -1) && (port == -1) && (channel == -1) && (key == -1)) return true;
+  //  return false;
+  //}
 
   //----------
 
-  bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
-    if ( ((noteid  == -1) || (MVoices[index].note.noteid  == noteid))
-      && ((port    == -1) || (MVoices[index].note.port    == port))
-      && ((channel == -1) || (MVoices[index].note.channel == channel))
-      && ((key     == -1) || (MVoices[index].note.key     == key)) ) {
-      return true;
-    }
-    return false;
-  }
+  //bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
+  //  if ( ((noteid  == -1) || (MVoices[index].note.noteid  == noteid))
+  //    && ((port    == -1) || (MVoices[index].note.port    == port))
+  //    && ((channel == -1) || (MVoices[index].note.channel == channel))
+  //    && ((key     == -1) || (MVoices[index].note.key     == key)) ) {
+  //    return true;
+  //  }
+  //  return false;
+  //}
 
   //----------
 

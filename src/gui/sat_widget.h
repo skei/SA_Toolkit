@@ -37,6 +37,7 @@ private:
   SAT_Rect            MRect                               = {};
   SAT_Rect            MInitialRect                        = {};
   SAT_Rect            MBasisRect                          = {};
+  uint32_t            MAlignment                          = SAT_WIDGET_ALIGN_PARENT;
   uint32_t            MCursor                             = SAT_CURSOR_DEFAULT;
   char                MHint[256]                          = "";
 
@@ -72,6 +73,7 @@ public:
   virtual void        setListener(SAT_WidgetListener* AListener)      { MListener = AListener; }
   virtual void        setIndex(uint32_t AIndex)                       { MIndex = AIndex; }
   virtual void        setRect(SAT_Rect ARect)                         { MRect = ARect; }
+  virtual void        setAlignment(uint32_t AAlignment)               { MAlignment = AAlignment; }
   virtual void        setValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] = AValue; }
   virtual void        addValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] += AValue; }
   virtual void        setModulation(double AValue, uint32_t AIndex=0) { MModulations[AIndex] = AValue; }
@@ -120,6 +122,7 @@ public:
   virtual int32_t     getLastPainted()                                { return MLastPainted; }
   //virtual SAT_Rect    getInitialRect()                                { return MInitialRect; }
   virtual SAT_Rect    getBasisRect()                                  { return MBasisRect; }
+  virtual uint32_t    getAlignment()                                  { return MAlignment; }
   virtual uint32_t    getNumChildWidgets()                            { return MChildren.size(); }
   virtual SAT_Widget* getChildWidget(uint32_t AIndex)                 { return MChildren[AIndex]; }
 
@@ -258,9 +261,26 @@ public:
     for (uint32_t i=0; i<MChildren.size(); i++) {
       SAT_Widget* child = MChildren[i];
       SAT_Rect child_basisrect = child->getBasisRect();
-      child_basisrect.scale( S );
-      child->MRect.x = parent_rect.x + child_basisrect.x;
-      child->MRect.y = parent_rect.y + child_basisrect.y;
+      child_basisrect.scale(S);
+      uint32_t alignment = child->getAlignment();
+      switch (alignment) {
+        
+        case SAT_WIDGET_ALIGN_NONE: {
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_PARENT: {
+          child->MRect.x = parent_rect.x + child_basisrect.x;
+          child->MRect.y = parent_rect.y + child_basisrect.y;
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_FILL_PARENT: {
+          child->MRect = parent_rect;
+          break;
+        }
+        
+      }
       //SAT_Print("%.3f, %.3f\n",child->MRect.x,child->MRect.y);
       if (ARecursive) {
         child->realignChildWidgets(ARecursive);

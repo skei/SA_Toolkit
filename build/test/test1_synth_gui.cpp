@@ -20,6 +20,7 @@
 
 #define EDITOR_WIDTH  (50 + 200 + 10 + 200 + 10 + 200 + 50)
 #define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20)) + 50)
+#define EDITOR_SCALE  1.5
 
 const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
@@ -86,10 +87,9 @@ public:
   //----------
 
   uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
-    //float* buffer = MContext->buffer;
     float* buffer = MContext->voice_buffer;
-    buffer += AOffset;
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
+    buffer += AOffset;
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
         ph = SAT_Fract(ph);
@@ -208,7 +208,7 @@ public:
     SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",0.7) );
     par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
     
-    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT, 2.0);
+    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
@@ -297,6 +297,7 @@ public:
     SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
     MRootPanel->appendChildWidget(logo);
     logo->setLogoColor(SAT_LightGray);
+    //logo->setAlignment(SAT_WIDGET_ALIGN_FILL_PARENT);
 
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
     MRootPanel->appendChildWidget(text);

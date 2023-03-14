@@ -261,6 +261,10 @@
 #define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK  4096
 #define SAT_VOICE_MANAGER_STEAL_VOICES          true
 
+#define SAT_WIDGET_ALIGN_NONE                   0
+#define SAT_WIDGET_ALIGN_PARENT                 1
+#define SAT_WIDGET_ALIGN_FILL_PARENT            2
+
 #define SAT_WIDGET_MAX_VALUES                   16
 
 #define SAT_WIDGET_NOTIFY_NONE                  0

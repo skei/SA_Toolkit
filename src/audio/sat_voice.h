@@ -155,7 +155,13 @@ private:
       
       if (events.read(&event)) {
         //SAT_Print("event\n");
+        
         int32_t length = event.time - current_time;
+        
+        //if (length < 0) {
+        //  SAT_Print("length < 0\n");
+        //  length = 0;
+        //}
         
         //SAT_Assert(length >= 0);
         //SAT_Assert((current_time + length) <= context->process_context->voice_length);
@@ -165,14 +171,18 @@ private:
           remaining -= length;
           current_time += length;
         }
+        
         handleEvent(event);
+        
       } // event
       else {
+        
         // no more events
         int32_t length = remaining;
         state = voice.process(state,current_time,length);
         remaining -= length;
         current_time += length;
+        
       } // !event
     } // remaining > 0
     

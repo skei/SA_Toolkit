@@ -75,7 +75,11 @@ public:
       painter->setLineCap(NVG_ROUND);       // NVG_BUTT (default), NVG_ROUND, NVG_SQUARE
       //painter->setLineJoin(NVG_MITER);    // NVG_MITER (default), NVG_ROUND, NVG_BEVEL
 
-      double scale  = (mrect.w / MLogoImage->width);
+      double wscale  = (mrect.w / MLogoImage->width);
+      double hscale  = (mrect.h / MLogoImage->height);
+      
+      double scale = wscale;
+      if (hscale < wscale) scale = hscale;
 
       for (NSVGshape* shape = MLogoImage->shapes; shape != NULL; shape = shape->next) {
         for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
