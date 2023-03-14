@@ -310,6 +310,8 @@ public:
     SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
     MRootPanel->appendChildWidget(val);
     val->setTextSize(12);
+    val->setRoundedCorners(true);
+    val->setCornerSize(5);
 
     SAT_DragValueWidget* dragval = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
     MRootPanel->appendChildWidget(dragval);
@@ -331,6 +333,7 @@ public:
     //slider->setModulation(0.25);
     slider->setDrawModulation(true);
     slider->setModulationColor( SAT_Color(1,1,1,0.25) );
+    slider->setDragDirection(SAT_DIRECTION_RIGHT);
 
     SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(50,390,95,20));
     MRootPanel->appendChildWidget(button1);
@@ -380,14 +383,15 @@ public:
     ppp->setFillGradient(true);
     ppp->setGradientColors(SAT_Grey,SAT_DarkerGrey);
     ppp->setDrawBorder(true);
-    ppp->setBorderColor(SAT_White);
+    ppp->setBorderColor(SAT_LightGrey);
     ppp->setBorderWidth(0.5);
     ppp->setRoundedCorners(true);
-    ppp->setCornerSize(5);
+    ppp->setCornerSize(4);
     ppp->setDrawDropShadow(true);
-    ppp->setDropShadowFeather(8);
-    ppp->setDropShadowColors( SAT_Color(0,0,0,1), SAT_Color(0,0,0,0) );
-    ppp->setDropShadowOffset(1,1);
+    ppp->setDropShadowFeather(10);
+    //ppp->setDropShadowColors( SAT_Color(0,0,0,0.75), SAT_Color(0,0,0,0) );
+    ppp->setDropShadowColors( SAT_DarkestGrey, SAT_DarkGrey );
+    //ppp->setDropShadowOffset(1,1);
 
     //
 

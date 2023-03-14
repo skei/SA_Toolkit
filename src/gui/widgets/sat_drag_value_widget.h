@@ -47,7 +47,15 @@ public:
 
   SAT_DragValueWidget(SAT_Rect ARect, const char* AText, double AValue)
   : SAT_ValueWidget(ARect,AText,AValue) {
-    setCursor(SAT_CURSOR_ARROW_UP_DOWN);
+    
+    //setCursor(SAT_CURSOR_ARROW_UP_DOWN);
+    switch (MDragDirection) {
+      case SAT_DIRECTION_UP:    setCursor(SAT_CURSOR_ARROW_UP_DOWN);     break;
+      case SAT_DIRECTION_DOWN:  setCursor(SAT_CURSOR_ARROW_UP_DOWN);     break;
+      case SAT_DIRECTION_LEFT:  setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);  break;
+      case SAT_DIRECTION_RIGHT: setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);  break;
+    }
+    
   }
 
   //----------
@@ -59,7 +67,16 @@ public:
 public:
 //------------------------------
 
-  virtual void setDragDirection(uint32_t ADir)    { MDragDirection = ADir; }
+  virtual void setDragDirection(uint32_t ADir) {
+    MDragDirection = ADir;
+    switch (MDragDirection) {
+      case SAT_DIRECTION_UP:    setCursor(SAT_CURSOR_ARROW_UP_DOWN);     break;
+      case SAT_DIRECTION_DOWN:  setCursor(SAT_CURSOR_ARROW_UP_DOWN);     break;
+      case SAT_DIRECTION_LEFT:  setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);  break;
+      case SAT_DIRECTION_RIGHT: setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);  break;
+    }
+  }
+  
   virtual void setDragSensitivity(double ASens)   { MDragSensitivity = ASens; }
   virtual void setShiftSensitivity(double ASens)  { MShiftSensitivity = ASens; }
   virtual void setAutoHideCursor(bool AAuto)      { MAutoHideCursor = AAuto; }
@@ -139,8 +156,26 @@ public:
       double sens = MDragSensitivity;
       if (AState & SAT_STATE_CTRL) sens *= MShiftSensitivity;
 
-      double ydiff = MPreviousYpos - AYpos;
-      value += (ydiff * sens);
+      double diff = 0;
+      switch (MDragDirection) {
+        case SAT_DIRECTION_UP:
+          diff = MPreviousYpos - AYpos;
+          value += (diff * sens);
+          break;
+        case SAT_DIRECTION_DOWN:
+          diff = MPreviousYpos - AYpos;
+          value -= (diff * sens);
+          break;
+        case SAT_DIRECTION_LEFT:
+          diff = MPreviousXpos - AXpos;
+          value += (diff * sens);
+          break;
+        case SAT_DIRECTION_RIGHT:
+          diff = MPreviousXpos - AXpos;
+          value -= (diff * sens);
+          break;
+      }
+      
 
       MDragValue = SAT_Clamp(value,0,1);
 
