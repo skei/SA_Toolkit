@@ -26,8 +26,8 @@ protected:
 
 
   bool      MDrawArc                  = true;
-  SAT_Color MArcBackColor             = SAT_DarkGray;
-  SAT_Color MArcValueColor            = SAT_LightGray;
+  SAT_Color MArcBackColor             = SAT_DarkGrey;
+  SAT_Color MArcValueColor            = SAT_LightGrey;
   SAT_Color MInteractiveArcValueColor = SAT_White;
   double    MArcThickness             = 8.0;
 
@@ -115,7 +115,7 @@ public:
 
       // draw background arc
 
-      SAT_Color color = SAT_DarkerGray;//SAT_Black;//MArcBackColor;
+      SAT_Color color = SAT_DarkerGrey;//SAT_Black;//MArcBackColor;
       //if (isDisabled()) color.blend(getDisabledColor(),getDisabledAlpha());
       painter->setDrawColor(color);
       painter->setLineWidth(thickness);

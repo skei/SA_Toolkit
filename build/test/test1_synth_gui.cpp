@@ -296,13 +296,17 @@ public:
 
     SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
     MRootPanel->appendChildWidget(logo);
-    logo->setLogoColor(SAT_LightGray);
+    logo->setLogoColor(SAT_LightGrey);
     //logo->setAlignment(SAT_WIDGET_ALIGN_FILL_PARENT);
 
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
     MRootPanel->appendChildWidget(text);
     text->setTextSize(12);
-
+    text->setFillGradient(true);
+    text->setGradientColors(SAT_Grey,SAT_DarkerGrey);
+    text->setRoundedCorners(true);
+    text->setCornerSize(10);
+    
     SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
     MRootPanel->appendChildWidget(val);
     val->setTextSize(12);
@@ -368,6 +372,22 @@ public:
       module->numOutputs = 2;
       graph->addModule(module,i*10,i*10,"module");
     }
+    
+    SAT_PanelWidget* ppp = new SAT_PanelWidget(SAT_Rect(470,290,200,100));
+    MRootPanel->appendChildWidget(ppp);
+    
+    ppp->setFillBackground(true);
+    ppp->setFillGradient(true);
+    ppp->setGradientColors(SAT_Grey,SAT_DarkerGrey);
+    ppp->setDrawBorder(true);
+    ppp->setBorderColor(SAT_White);
+    ppp->setBorderWidth(0.5);
+    ppp->setRoundedCorners(true);
+    ppp->setCornerSize(5);
+    ppp->setDrawDropShadow(true);
+    ppp->setDropShadowFeather(8);
+    ppp->setDropShadowColors( SAT_Color(0,0,0,1), SAT_Color(0,0,0,0) );
+    ppp->setDropShadowOffset(1,1);
 
     //
 

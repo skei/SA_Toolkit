@@ -13,10 +13,10 @@ private:
 //------------------------------
 
   SAT_Color MHoverTextColor       = SAT_White;
-  SAT_Color MHoverBackgroundColor = SAT_DarkerGray;
+  SAT_Color MHoverBackgroundColor = SAT_DarkerGrey;
 
   SAT_Color MTextColor            = SAT_White;
-  SAT_Color MBackgroundColor      = SAT_DarkGray;
+  SAT_Color MBackgroundColor      = SAT_DarkGrey;
 
 //------------------------------
 public:
@@ -25,7 +25,7 @@ public:
   SAT_MenuItemWidget(SAT_Rect ARect, const char* AText)
   : SAT_TextWidget(ARect,AText) {
     setCursor(SAT_CURSOR_FINGER);
-    setBorderColor(SAT_DarkerGray);
+    setBorderColor(SAT_DarkerGrey);
     setFillBackground(true);
     setTextColor(MTextColor);
     setBackgroundColor(MBackgroundColor);

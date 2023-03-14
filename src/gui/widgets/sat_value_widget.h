@@ -25,7 +25,7 @@ private:
   SAT_Rect  MValueOffset    = {};
   char      MValueText[256] = {0};
 
-  SAT_Color MDisabledColor  = SAT_Gray;
+  SAT_Color MDisabledColor  = SAT_Grey;
   double    MDisabledAlpha  = 0.5;
 
   bool      MDrawModulation = true;

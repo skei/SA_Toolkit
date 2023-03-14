@@ -335,7 +335,7 @@ public: // set
 
   //----------
 
-  void setStrokePaint(sat_nanovg_paint_t paint) {
+  void setDrawPaint(sat_nanovg_paint_t paint) {
     nvgStrokePaint(MContext,paint);
   }
 
