@@ -12,7 +12,7 @@
   
 * 'delete this'
 
-  is the 'dehete this' in SAT_Plugin.destroy() correct/working?
+  is the 'delete this' in SAT_Plugin.destroy() correct/working?
   printouts in destructors indicates it works..
   but memtrace, and also memcheck (codelite plugin) reports
   memory leaks..

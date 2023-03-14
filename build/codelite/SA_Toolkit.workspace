@@ -6,10 +6,6 @@
   </WorkspaceParserPaths>
   <Project Name="SA_Toolkit" Path="SA_Toolkit.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="&lt;New...&gt;" Selected="no">
-      <Environment/>
-      <Project Name="SA_Toolkit" ConfigName="Debug"/>
-    </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="linux_exe_release" Selected="no">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exe_release"/>

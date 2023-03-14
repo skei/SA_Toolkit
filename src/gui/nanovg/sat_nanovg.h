@@ -31,7 +31,10 @@
 
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wmisleading-indentation"
-    #include "extern/nanovg/nanovg.c"
+  
+    //#include "extern/nanovg/nanovg.c"
+    #include "extern/nanovg/nanovg_patched.c"
+    
   #pragma GCC diagnostic pop
 
 //----------

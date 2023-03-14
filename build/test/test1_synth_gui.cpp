@@ -76,6 +76,7 @@ public:
     MIndex = AIndex;
     MContext = AContext;
     srate = AContext->sample_rate;
+    
   }
 
   //----------
@@ -184,7 +185,7 @@ public:
   //----------
 
   //virtual ~myPlugin() {
-  //  //SAT_Print("yepp, we are being deleted..\n");
+  //  SAT_Print("yepp, we are being deleted.. ptr: %p\n",this);
   //  //SAT_PRINT;
   //}
 

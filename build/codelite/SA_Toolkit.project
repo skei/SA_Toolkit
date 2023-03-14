@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="SA_Toolkit" Version="11000" InternalType="Console">
+  <Plugins>
+    <Plugin Name="CppCheck"/>
+  </Plugins>
   <VirtualDirectory Name="doc">
     <File Name="../../doc/about.txt"/>
     <File Name="../../doc/issues.txt"/>
     <File Name="../../doc/history.txt"/>
     <File Name="../../doc/compiling.txt"/>
   </VirtualDirectory>
-  <Plugins>
-    <Plugin Name="CppCheck"/>
-  </Plugins>
   <VirtualDirectory Name="build">
+    <VirtualDirectory Name="test">
+      <File Name="../test/test2_standalone.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+      <File Name="../test/test1_synth_gui.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+    </VirtualDirectory>
     <File Name="../build.cpp"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="test">
-    <File Name="../test/test1_synth_gui.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
-    <File Name="../test/test2_standalone.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
   </VirtualDirectory>
   <VirtualDirectory Name="data">
     <VirtualDirectory Name="fonts">
@@ -326,8 +326,7 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="nanovg">
-        <File Name="../../src/extern/nanovg/nanovg (patched).c" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
-        <File Name="../../src/extern/nanovg/nanovg (original).c" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+        <File Name="../../src/extern/nanovg/nanovg_patched.c" ExcludeProjConfig="linux_plugin_release;linux_exe_debug;linux_plugin_debug;linux_exe_release;"/>
         <File Name="../../src/extern/nanovg/nanovg.h"/>
         <File Name="../../src/extern/nanovg/fontstash.h"/>
         <File Name="../../src/extern/nanovg/nanovg_gl.h"/>
