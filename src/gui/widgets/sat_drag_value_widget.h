@@ -28,7 +28,7 @@ private:
   double    MDragValue        = 0.0;
 
   uint32_t  MDragDirection    = SAT_DIRECTION_UP;
-  double    MDragSensitivity  = 0.004;
+  double    MDragSensitivity  = 0.0010;
   double    MShiftSensitivity = 0.05;
   bool      MAutoHideCursor   = true;
   bool      MAutoLockCursor   = true;

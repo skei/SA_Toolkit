@@ -36,12 +36,12 @@ private:
   double    MBLCorner           = 0.0;
   
   bool      MDrawDropShadow     = false;
-  double    MDropShadowFeather  = 6.0;
+  double    MDropShadowFeather  = 10.0;
   double    MDropShadowCorner   = 0.0;
   double    MDropShadowXOffset  = 0.0;
   double    MDropShadowYOffset  = 0.0;
-  SAT_Color MDropShadowIColor   = SAT_Color(0,0,0,1);
-  SAT_Color MDropShadowOColor   = SAT_Color(1,0,0,0);
+  SAT_Color MDropShadowIColor   = SAT_DarkestGrey;//SAT_Color(0,0,0,1);
+  SAT_Color MDropShadowOColor   = SAT_DarkGrey;//SAT_Color(1,0,0,0);
 
 //------------------------------
 public:

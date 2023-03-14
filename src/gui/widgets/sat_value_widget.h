@@ -104,6 +104,7 @@ public:
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_PRINT;
+    drawDropShadow(AContext);
     fillBackground(AContext);
     drawText(AContext);
     drawValue(AContext);

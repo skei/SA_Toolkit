@@ -41,6 +41,7 @@ public:
 //------------------------------
 
   void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
+    //SAT_PRINT;
     SAT_PanelWidget::prepare(AWindow,ARecursive);
     MWindow = (SAT_Window*)AWindow;
   }

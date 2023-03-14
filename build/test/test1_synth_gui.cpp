@@ -316,11 +316,22 @@ public:
 
     SAT_DragValueWidget* dragval = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
     MRootPanel->appendChildWidget(dragval);
-    dragval->setTextSize(12);
+    dragval->setTextSize(7);
+    dragval->setValueSize(7);
     dragval->setSnap(true);
     dragval->setSnapPos(0.5);
     dragval->setAutoHideCursor(false);
     dragval->setAutoLockCursor(true);
+    
+    dragval->setDrawBorder(true);
+    dragval->setValueSize(9);
+    dragval->setValueColor(SAT_Black);
+    dragval->setValueOffset(SAT_Rect(0,0,8,0));
+    dragval->setBorderWidth(0.5);
+    dragval->setBorderColor(SAT_LightGrey);
+    dragval->setDrawDropShadow(true);
+    dragval->setDropShadowFeather(6);
+    dragval->setDropShadowOffset(1,1);
 
     SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,360,200,20),"Param 3", 0.0);
     MRootPanel->appendChildWidget(slider);

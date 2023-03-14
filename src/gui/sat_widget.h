@@ -320,25 +320,27 @@ public:
   //----------
 
   virtual void paintChildWidgets(SAT_PaintContext* AContext, bool ARecursive=true) {
-//    SAT_Rect updaterect = AContext->update_rect;
 //    SAT_Painter* painter = AContext->painter;
 //    SAT_Rect mrect = getRect();
     uint32_t num = MChildren.size();
     if (num > 0) {
 //      SAT_Rect cliprect = mrect;
-//      cliprect.overlap(updaterect);
+//      painter->setClipRect(cliprect);
+      //painter->pushClip(cliprect);
       for (uint32_t i=0; i<num; i++) {
         SAT_Widget* widget = MChildren[i];
         if (widget->isVisible()) {
-//          SAT_Rect widgetrect = widget->getRect();
-//          widgetrect.overlap(cliprect);
-//          if (widgetrect.isNotEmpty()) {
-//            painter->pushOverlapClip(widgetrect);
+          SAT_Rect widgetrect = widget->getRect();
+          //widgetrect.overlap(cliprect);
+          if (widgetrect.isNotEmpty()) {
+            //painter->pushOverlapClip(widgetrect);
+//            painter->pushClip(widgetrect);
             widget->on_widget_paint(AContext);
 //            painter->popClip();
-//          } // intersect
+          } // intersect
         } // visible
       } // for
+      //painter->popClip();
     } // num > 0
   }
 

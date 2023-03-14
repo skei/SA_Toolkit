@@ -501,7 +501,11 @@ public: // window
       
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
+      
+      MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
+      
       paintDirtyWidgets(&MPaintContext);
+      
       MWindowPainter->endFrame();
       
     }

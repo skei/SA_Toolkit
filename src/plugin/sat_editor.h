@@ -28,7 +28,7 @@ private:
   bool                  MIsOpen           = false;
   SAT_EditorListener*   MListener         = nullptr;
   SAT_Window*           MWindow           = nullptr;
-  //bool                  MPreparedWidgets  = false;
+  bool                  MPreparedWidgets  = false;
 
 //------------------------------
 public:
@@ -296,17 +296,16 @@ public: // clap
 
   //----------
 
-  /*
-    when our window is embedded, we don't get on_window_open events ??
-  */
-
   bool show() {
     //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
-      //if (!MPreparedWidgets) {
-      //  MWindow->on_window_open();
-      //  MPreparedWidgets = true;
-      //}
+      
+      // when our window is embedded, we don't get on_window_open events ??
+      if (!MPreparedWidgets) {
+        MWindow->on_window_open();
+        MPreparedWidgets = true;
+      }
+      
       MWindow->show();
       MIsOpen = true;
     }

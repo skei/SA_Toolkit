@@ -725,7 +725,9 @@ public:
     fillBackground(AContext);
     MPainter = AContext->painter;
     MPaintRect = AContext->update_rect;
-//    painter->pushClip(getRect());
+    
+    painter->pushClip(getRect());
+
     drawModules();
     drawWires();
     if (MDraggingWire) {
@@ -742,7 +744,9 @@ public:
       painter->drawRect(MDragSelectX1,MDragSelectY1,w,h);
     }
     drawBorder(AContext);
-//    painter->popClip();
+    
+    painter->popClip();
+
   }
 
   //----------
