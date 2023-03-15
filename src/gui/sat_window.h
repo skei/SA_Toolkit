@@ -549,12 +549,13 @@ public: // window
     }
 
     else if (!MCapturedWidget) {
+      
       MMouseClickedX = AXpos;
       MMouseClickedY = AYpos;
       MMouseClickedB = AButton;
       MMouseDragX = AXpos;
       MMouseDragY = AYpos;
-
+      
       if (MModalWidget) {
         if (!MModalWidget->getRect().contains(AXpos,AYpos)) {
           MModalWidget->on_widget_notify(SAT_WIDGET_NOTIFY_CLOSE);
@@ -564,16 +565,31 @@ public: // window
       if (MHoverWidget) {
         //SAT_Print("click\n");
         
-        if ((ATime - MPrevButtonTime) < SAT_WINDOW_DBLCLICK_MS) {
-          //TODO: check if within same widget, and with same button..
-          MCapturedWidget = MHoverWidget;
-          MHoverWidget->on_widget_mouse_dblclick(AXpos,AYpos,AButton,AState,ATime);
+        uint32_t num_popup = MHoverWidget->getNumPopupMenuItems();
+        if ((AButton == SAT_BUTTON_RIGHT) && (num_popup > 0)) {
+          for (uint32_t i=0; i<num_popup; i++) {
+            const char* item = MHoverWidget->getPopupMenuItem(i);
+            if (item) {
+              SAT_Print("%i. %s\n",i,item);
+            }
+          }
         }
         else {
-          //MMouseLockedWidget = MHoverWidget;
-          MCapturedWidget = MHoverWidget;
-          MHoverWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
-        }
+        
+          if ((ATime - MPrevButtonTime) < SAT_WINDOW_DBLCLICK_MS) {
+            //TODO: check if within same widget, and with same button..
+            SAT_Print("dblclick\n");
+            MCapturedWidget = MHoverWidget;
+            MHoverWidget->on_widget_mouse_dblclick(AXpos,AYpos,AButton,AState,ATime);
+          }
+          else {
+            //MMouseLockedWidget = MHoverWidget;
+            MCapturedWidget = MHoverWidget;
+            MHoverWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+          }
+          
+        } // right
+          
       } // hover
 
     } // !captured

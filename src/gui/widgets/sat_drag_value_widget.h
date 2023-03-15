@@ -119,6 +119,23 @@ private:
 public:
 //------------------------------
 
+  uint32_t getNumPopupMenuItems() override {
+    return 3;
+  }
+  
+  const char* getPopupMenuItem(uint32_t AIndex) override {
+    switch (AIndex) {
+      case 0: return "Item1"; break;
+      case 1: return "Item2"; break;
+      case 2: return "Item3"; break;
+    }
+    return nullptr;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   /*
     we should set the MDragValue to the value needed for snapValue
     to result in the current value..

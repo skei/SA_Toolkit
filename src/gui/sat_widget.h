@@ -125,6 +125,10 @@ public:
   virtual uint32_t    getAlignment()                                  { return MAlignment; }
   virtual uint32_t    getNumChildWidgets()                            { return MChildren.size(); }
   virtual SAT_Widget* getChildWidget(uint32_t AIndex)                 { return MChildren[AIndex]; }
+  
+  virtual uint32_t    getNumPopupMenuItems()                          { return 0; }
+  virtual const char* getPopupMenuItem(uint32_t AIndex)               { return ""; }
+  virtual void        activatePopupMenuItem(uint32_t AIndex)          { }
 
 //------------------------------
 public:
