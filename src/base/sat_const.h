@@ -290,6 +290,8 @@
 #define SAT_WINDOW_THREAD_KILL                  666
 #define SAT_WINDOW_TIMER_MS                     20
 
+#define SAT_WINDOW_DBLCLICK_MS                  200
+
 //----------------------------------------------------------------------
 
 const char  SAT_NULL_STRING[] = "";

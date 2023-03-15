@@ -28,8 +28,8 @@ private:
   double    MDragValue        = 0.0;
 
   uint32_t  MDragDirection    = SAT_DIRECTION_UP;
-  double    MDragSensitivity  = 0.0010;
-  double    MShiftSensitivity = 0.05;
+  double    MDragSensitivity  = 0.001;
+  double    MShiftSensitivity = 0.1;
   bool      MAutoHideCursor   = true;
   bool      MAutoLockCursor   = true;
   bool      MSnap             = false;
@@ -40,6 +40,8 @@ private:
 
   bool      MBipolar          = false;
   double    MBipolarCenter    = 0.5;
+  
+  bool      MWaitingFroDrag   = false;
 
 //------------------------------
 public:
@@ -131,8 +133,11 @@ public:
       //if (MSnap) MDragValue = snapValue(MDragValue);
       MPreviousXpos = AXpos;
       MPreviousYpos = AYpos;
-      if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);;
-      if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+      
+      MWaitingFroDrag = true;
+      //if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);
+      //if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+      
     }
   }
 
@@ -141,6 +146,7 @@ public:
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
+      MWaitingFroDrag = false;
       if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_SHOW);
       if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
     }
@@ -149,13 +155,17 @@ public:
   //----------
 
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
+    
+    if (MWaitingFroDrag) {
+      MWaitingFroDrag = false;
+      if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);
+      if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+    }
+    
     if (MIsDragging) {
-
       double value = MDragValue;
-
       double sens = MDragSensitivity;
       if (AState & SAT_STATE_CTRL) sens *= MShiftSensitivity;
-
       double diff = 0;
       switch (MDragDirection) {
         case SAT_DIRECTION_UP:
@@ -175,16 +185,11 @@ public:
           value -= (diff * sens);
           break;
       }
-      
-
       MDragValue = SAT_Clamp(value,0,1);
-
       if (MSnap && !(AState & SAT_STATE_SHIFT)) {
         value = snapValue(value);
       }
-
       value = SAT_Clamp(value,0,1);
-
       setValue(value);
       do_widget_update(this,0);
       do_widget_redraw(this,0);

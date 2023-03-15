@@ -297,7 +297,7 @@ public:
 
     SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
     MRootPanel->appendChildWidget(logo);
-    logo->setLogoColor(SAT_LightGrey);
+    logo->setLogoColor(SAT_DarkRed);
     //logo->setAlignment(SAT_WIDGET_ALIGN_FILL_PARENT);
 
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
@@ -322,6 +322,8 @@ public:
     dragval->setSnapPos(0.5);
     dragval->setAutoHideCursor(false);
     dragval->setAutoLockCursor(true);
+    dragval->setRoundedCorners(true);
+    dragval->setCornerSize(2);
     
     dragval->setDrawBorder(true);
     dragval->setValueSize(9);
@@ -374,6 +376,24 @@ public:
     knob->setSnapPos(0.5);
     knob->setValue(0.25);
 
+    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,320,140,20),"MenuItem");
+    MRootPanel->appendChildWidget(menuitem);
+    
+    SAT_PanelWidget* pp2 = new SAT_PanelWidget(SAT_Rect(320,350,140,50));
+    MRootPanel->appendChildWidget(pp2);
+    pp2->setDrawBorder(true);
+    pp2->setBorderColor(SAT_DarkestGrey);
+    pp2->setBorderWidth(0.5);
+    pp2->setRoundedCorners(true);
+    pp2->setCornerSize(5);
+    pp2->setFillBackground(false);
+    pp2->setDrawDropShadow(true);
+    pp2->setDropShadowFeather(5);
+    pp2->setDropShadowOffset(3,3);
+    pp2->setDropShadowColors( SAT_Grey, SAT_DarkerGrey );
+    //pp2->setDropShadowOffset(1,1);
+    pp2->setDropShadowInner(true);
+
     // column 3
 
     SAT_GraphWidget* graph = new SAT_GraphWidget(SAT_Rect(470,50,200,230));
@@ -390,7 +410,6 @@ public:
     
     SAT_PanelWidget* ppp = new SAT_PanelWidget(SAT_Rect(470,290,200,100));
     MRootPanel->appendChildWidget(ppp);
-    
     ppp->setFillBackground(true);
     ppp->setFillGradient(true);
     ppp->setGradientColors(SAT_Grey,SAT_DarkerGrey);
@@ -403,12 +422,9 @@ public:
     ppp->setDropShadowFeather(10);
     //ppp->setDropShadowColors( SAT_Color(0,0,0,0.75), SAT_Color(0,0,0,0) );
     ppp->setDropShadowColors( SAT_DarkestGrey, SAT_DarkGrey );
-    //ppp->setDropShadowOffset(1,1);
-
+    ppp->setDropShadowOffset(1,1);
+    
     //
-
-    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,320,140,20),"MenuItem");
-    MRootPanel->appendChildWidget(menuitem);
 
     MRootPanel->appendChildWidget(menu);
 

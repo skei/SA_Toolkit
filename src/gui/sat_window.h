@@ -1,6 +1,10 @@
 #ifndef sat_window_included
 #define sat_window_included
 //----------------------------------------------------------------------
+/*
+  - state machine for mouse handling?
+*/
+//----------------------------------------------------------------------
 
 #include "base/sat.h"
 #include "base/system/sat_timer.h"
@@ -118,6 +122,10 @@ private:
   int32_t               MMousePreviousY       = 0;
   int32_t               MMouseDragX           = 0;
   int32_t               MMouseDragY           = 0;
+  
+  uint32_t              MPrevButton           = SAT_BUTTON_NONE;
+  uint32_t              MPrevButtonTime       = 0;
+  
 
 
 //------------------------------
@@ -531,7 +539,7 @@ public: // window
   //----------
 
   void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-
+    
     if (MHoverWidget == nullptr) {
       //SAT_Print("hover = null\n");
       if (MModalWidget) {
@@ -555,12 +563,24 @@ public: // window
 
       if (MHoverWidget) {
         //SAT_Print("click\n");
-        //MMouseLockedWidget = MHoverWidget;
-        MCapturedWidget = MHoverWidget;
-        MHoverWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+        
+        if ((ATime - MPrevButtonTime) < SAT_WINDOW_DBLCLICK_MS) {
+          //TODO: check if within same widget, and with same button..
+          MCapturedWidget = MHoverWidget;
+          MHoverWidget->on_widget_mouse_dblclick(AXpos,AYpos,AButton,AState,ATime);
+        }
+        else {
+          //MMouseLockedWidget = MHoverWidget;
+          MCapturedWidget = MHoverWidget;
+          MHoverWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+        }
       } // hover
 
     } // !captured
+    
+    MPrevButton = AButton;
+    MPrevButtonTime = ATime;
+    
   }
 
   //----------
@@ -731,11 +751,9 @@ public: // timer listener
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
     if (MListener) MListener->do_window_listener_timer(this);
     //on_window_timer();
-    
     for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
       MTimerWidgets[i]->on_widget_timer();
     }
-    
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
     if (num > 0) { // && (rect.isNotEmpty()) {

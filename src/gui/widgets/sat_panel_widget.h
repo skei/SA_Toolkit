@@ -42,6 +42,7 @@ private:
   double    MDropShadowYOffset  = 0.0;
   SAT_Color MDropShadowIColor   = SAT_DarkestGrey;//SAT_Color(0,0,0,1);
   SAT_Color MDropShadowOColor   = SAT_DarkGrey;//SAT_Color(1,0,0,0);
+  bool      MDropShadowInner    = false;
 
 //------------------------------
 public:
@@ -70,6 +71,12 @@ public:
 
   virtual void setRoundedCorners(bool ARounded=true) {
     MRoundedCorners = ARounded;
+    if (!ARounded) {
+      MTLCorner = 0;
+      MTRCorner = 0;
+      MBRCorner = 0;
+      MBLCorner = 0;
+    }
   }
   
   virtual void setCornerSize(double c)  {
@@ -102,6 +109,10 @@ public:
     MDropShadowOColor = AOColor;
   }
 
+  virtual void setDropShadowInner(bool AInner=true) {
+    MDropShadowInner = AInner;
+  }
+
 //------------------------------
 public:
 //------------------------------
@@ -118,13 +129,37 @@ public:
       if (mrect.h <= 0.0) return;
       
       SAT_Rect sr = mrect;
+      
       sr.shrink(MDropShadowFeather * (S*0.5));
+      
       //sat_nanovg_paint_t shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,MDropShadowIColor,MDropShadowOColor);
+      
+      if (MDropShadowInner) {
+        //sr.x -=  MDropShadowXOffset * S;
+        //sr.y -=  MDropShadowYOffset * S;
+        //sr.w +=  MDropShadowXOffset * S * 2;
+        //sr.h +=  MDropShadowYOffset * S * 2;
+        sr.w += (MDropShadowFeather*S*0.5);
+        sr.h += (MDropShadowFeather*S*0.5);
+      }
+      
       sat_nanovg_paint_t shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,MDropShadowIColor,MDropShadowOColor);
       //painter->setFillPaint(shadow);
       //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
       painter->setFillPaint(shadow);
-      painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+      
+      //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+      
+      if (MRoundedCorners) {
+        painter->fillRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
+      }
+      else {
+        painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+      }
+      
+      
+      
+      
     }
   }
 
@@ -184,7 +219,7 @@ public:
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       
-      if (MDrawDropShadow) {
+      if (MDrawDropShadow && !MDropShadowInner) {
         mrect.shrink(MDropShadowFeather * (S*0.5));
         mrect.x -= (MDropShadowXOffset*S);
         mrect.y -= (MDropShadowYOffset*S);

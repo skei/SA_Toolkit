@@ -256,8 +256,8 @@ public:
           y = ycell * MSelectedY;
           float xn = xcell * MSelectedXcount;
           float yn = ycell * MSelectedYcount;
-          float ww = xn - 1;
-          float hh = yn - 1;
+          float ww = xn - S;
+          float hh = yn - S;
           x  += mrect.x;
           y  += mrect.y;
           painter->setDrawColor(SAT_White);
