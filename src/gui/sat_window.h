@@ -456,7 +456,6 @@ public: // window
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-    //SAT_Print("%i,%i\n",AWidth,AHeight);
     MWidth = AWidth;
     MHeight = AHeight;
     MScale = recalcScale(AWidth,AHeight);
@@ -471,7 +470,6 @@ public: // window
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    //SAT_Print("%i,%i,%i,%i\n",AXpos,AYpos,AWidth,AHeight);
     MPaintContext.painter       = MWindowPainter;
     MPaintContext.update_rect.x = AXpos;
     MPaintContext.update_rect.y = AYpos;
@@ -480,47 +478,30 @@ public: // window
     MPaintContext.window_width  = MWindowWidth;
     MPaintContext.window_height = MWindowHeight;
     MPaintContext.window_scale  = MScale;
-
     MOpenGL->makeCurrent();
-    
-    //uint32_t width2  = SAT_NextPowerOfTwo(MWindowWidth);
-    //uint32_t height2 = SAT_NextPowerOfTwo(MWindowHeight);
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
-    
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
-      //SAT_Print("creating new FBO. window: %i,%i pow2: %i,%i\n",MWindowWidth,MWindowHeight, width2,height2);
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
       copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-      //SAT_Print("deleting previous FBO\n");
       MWindowPainter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
       MBufferHeight = height2;
-      
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       paintDirtyWidgets(&MPaintContext,MRootWidget);      
       MWindowPainter->endFrame();
-      
     }
     else {
-      
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-      
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
-      
       paintDirtyWidgets(&MPaintContext);
-      
       MWindowPainter->endFrame();
-      
     }
-    
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
-    //copyBuffer(nullptr,AXpos,AYpos,AWidth,AHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
-    
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
     MPaintContext.counter += 1;
@@ -528,27 +509,37 @@ public: // window
 
   //----------
 
-  void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) override {
-  }
+  //void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) override {
+  //}
 
   //----------
 
-  void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) override {
-  }
+  //void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) override {
+  //}
 
   //----------
 
   void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     
+    
     if (MHoverWidget == nullptr) {
-      //SAT_Print("hover = null\n");
+
+      // if hover = null (outside of window/modal-widget), and we click,
+      // we send close notification
+
       if (MModalWidget) {
         //SAT_Print("modal != null\n");
         MModalWidget->on_widget_notify(SAT_WIDGET_NOTIFY_CLOSE);
       }
     }
+    
+    // hover widget is not null.. we are hovering!..
+    // captured = null means no widget is currently clicked/dragged
 
     else if (!MCapturedWidget) {
+      // (we're only here if hover widget != null)
+      
+      // remember things
       
       MMouseClickedX = AXpos;
       MMouseClickedY = AYpos;
@@ -556,33 +547,47 @@ public: // window
       MMouseDragX = AXpos;
       MMouseDragY = AYpos;
       
+      // if we click _outside_ modal widget, we send close notification
+      
       if (MModalWidget) {
         if (!MModalWidget->getRect().contains(AXpos,AYpos)) {
           MModalWidget->on_widget_notify(SAT_WIDGET_NOTIFY_CLOSE);
         }
       } // modal
 
+      // we clock on a widget..
+      
       if (MHoverWidget) {
         //SAT_Print("click\n");
+        
+        // right click brings up context/popup menu
         
         uint32_t num_popup = MHoverWidget->getNumPopupMenuItems();
         if ((AButton == SAT_BUTTON_RIGHT) && (num_popup > 0)) {
           for (uint32_t i=0; i<num_popup; i++) {
             const char* item = MHoverWidget->getPopupMenuItem(i);
             if (item) {
-              SAT_Print("%i. %s\n",i,item);
+              //TODO
+              //SAT_Print("%i. %s\n",i,item);
             }
           }
         }
         else {
-        
+          
           if ((ATime - MPrevButtonTime) < SAT_WINDOW_DBLCLICK_MS) {
-            //TODO: check if within same widget, and with same button..
+
+            // less than x ms since last click means double_click
+            // todo: check if same button, and over same widget..
+        
             SAT_Print("dblclick\n");
             MCapturedWidget = MHoverWidget;
             MHoverWidget->on_widget_mouse_dblclick(AXpos,AYpos,AButton,AState,ATime);
           }
           else {
+            
+            // or else.. normal mouse click
+            // we capture the widget, so it will receive related mouse release events
+            
             //MMouseLockedWidget = MHoverWidget;
             MCapturedWidget = MHoverWidget;
             MHoverWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
@@ -594,6 +599,8 @@ public: // window
 
     } // !captured
     
+    // remember things (mainly for double clicking)
+    
     MPrevButton = AButton;
     MPrevButtonTime = ATime;
     
@@ -602,8 +609,9 @@ public: // window
   //----------
 
   void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    //if (MMouseClicked) {
-    //}
+    
+    // if we captured a widget, notify it we released the button, and find new hovering widget
+    
     if (MCapturedWidget) {
       if (MMouseClickedB == AButton) {
         //AT_Print("release\n");
@@ -618,32 +626,41 @@ public: // window
   //----------
 
   void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+    
+    // if mouse is locked, we do the 'regular mouse things' with 'adjusted' (dragging) coords
+    // and then reset the cursor back to where it was..
+    
     if (MMouseLockedWidget) { // todo: also if mouse_clicked?
       if ((AXpos == MMouseClickedX) && (AYpos == MMouseClickedY)) {
         MMousePreviousX = AXpos;
         MMousePreviousY = AYpos;
         return;
       }
-      int32_t deltax = AXpos - MMouseClickedX;
-      int32_t deltay = AYpos - MMouseClickedY;
-      MMouseDragX += deltax;
-      MMouseDragY += deltay;
-      //setCursorPos(MMouseClickedX,MMouseClickedY);
       if (MCapturedWidget) {
+        int32_t deltax = AXpos - MMouseClickedX;
+        int32_t deltay = AYpos - MMouseClickedY;
+        MMouseDragX += deltax;
+        MMouseDragY += deltay;
         MCapturedWidget->on_widget_mouse_move(MMouseDragX,MMouseDragY,AState,ATime);
       }
       setCursorPos(MMouseClickedX,MMouseClickedY);
     }
     else {
+      
+      // if modal widget, we check only from that and downwards..
 
       if (MModalWidget) {
         updateHoverWidget(AXpos,AYpos,MModalWidget); // only from modal widget and downwards?
         MModalWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
       }
+      
+      // if captured widget, we call it directly
 
       else if (MCapturedWidget) {
         MCapturedWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
       }
+      
+      // or we have to find what widget we are hovering over..
 
       else {
         updateHoverWidget(AXpos,AYpos);
@@ -658,29 +675,21 @@ public: // window
     MMousePreviousY = AYpos;
   }
 
-  /*
-  void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
-    if (MMouseEventRecipient) {
-      MMouseEventRecipient->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
-    }
-  }
-  */
+  //----------
+
+  //void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  //}
 
   //----------
 
-  void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-  }
+  //void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  //}
 
   //----------
 
-  void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-  }
-
-  //----------
-
-  void on_window_client_message(uint32_t AData) override {
-    SAT_Print("data %i\n",AData);
-  }
+  //void on_window_client_message(uint32_t AData) override {
+  //  SAT_Print("data %i\n",AData);
+  //}
 
   //----------
 
@@ -702,7 +711,6 @@ public: // widget listener
     //SAT_PRINT;
     if (!ASender) ASender = MRootWidget;
     MPendingDirtyWidgets.write(ASender);
-    //invalidateWidget(ASender);
     if (MListener) MListener->do_window_listener_redraw_widget(ASender,AMode,AIndex);
   }
 
@@ -773,7 +781,6 @@ public: // timer listener
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
     if (num > 0) { // && (rect.isNotEmpty()) {
-      //SAT_Print("invalidating %.1f,%.1f,%.1f,%.1f\n",rect.x,rect.y,rect.w,rect.h);
       invalidate(rect.x,rect.y,rect.w,rect.h);
       //#ifdef SAT_DEBUG
       //SAT_GLOBAL.DEBUG.reportNumDirtyWidgets(num);

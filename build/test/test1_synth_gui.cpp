@@ -361,14 +361,14 @@ public:
     SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(260,50,200,20),"Select",menu);
     MRootPanel->appendChildWidget(selector);
 
-    SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(260,80,200,200),16,16);
+    SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(260,80,200,100),16,8);
     MRootPanel->appendChildWidget(grid);
 
-    SAT_ButtonRowWidget* buttonrow = new SAT_ButtonRowWidget(SAT_Rect(260,290,200,20),5,buttontext,SAT_BUTTON_ROW_MULTI);
+    SAT_ButtonRowWidget* buttonrow = new SAT_ButtonRowWidget(SAT_Rect(260,190,200,20),5,buttontext,SAT_BUTTON_ROW_MULTI);
     MRootPanel->appendChildWidget(buttonrow);
     buttonrow->setValueIsBits(true,8);
 
-    SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(260,320,50,50),"%",0.0);
+    SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(260,220,50,50),"%",0.0);
     MRootPanel->appendChildWidget(knob);
     knob->setBipolar(true);
     knob->setBipolarCenter(0.5);
@@ -376,10 +376,10 @@ public:
     knob->setSnapPos(0.5);
     knob->setValue(0.25);
 
-    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,320,140,20),"MenuItem");
+    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,220,140,20),"MenuItem");
     MRootPanel->appendChildWidget(menuitem);
     
-    SAT_PanelWidget* pp2 = new SAT_PanelWidget(SAT_Rect(320,350,140,50));
+    SAT_PanelWidget* pp2 = new SAT_PanelWidget(SAT_Rect(320,250,140,50));
     MRootPanel->appendChildWidget(pp2);
     pp2->setDrawBorder(true);
     pp2->setBorderColor(SAT_DarkestGrey);
@@ -423,6 +423,11 @@ public:
     //ppp->setDropShadowColors( SAT_Color(0,0,0,0.75), SAT_Color(0,0,0,0) );
     ppp->setDropShadowColors( SAT_DarkestGrey, SAT_DarkGrey );
     ppp->setDropShadowOffset(1,1);
+    
+    SAT_ScrollBarWidget* scrollbar = new SAT_ScrollBarWidget(SAT_Rect(260,310,200,20));
+    MRootPanel->appendChildWidget(scrollbar);
+    scrollbar->setThumbSize(0.3);
+    scrollbar->setValue(0.3);
     
     //
 
