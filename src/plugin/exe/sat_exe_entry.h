@@ -91,11 +91,12 @@ void open_editor(const clap_plugin_t* plugin) {
 
     xcb_window_t x11window = window->getX11Window();
     const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
+    
     gui->set_parent(plugin,&clapwindow);
     gui->show(plugin);
     gui->set_size(plugin,width,height);
-    window->show();
 
+    window->show();
     window->eventLoop();
 
     gui->hide(plugin);

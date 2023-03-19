@@ -57,6 +57,10 @@ public:
 public:
 //------------------------------
 
+  bool isOpen() {
+    return MIsOpen;
+  }
+
   SAT_Window* getWindow() {
     return MWindow;
   }
@@ -195,6 +199,7 @@ public: // clap
   void destroy() {
     //SAT_Print("\n");
     //if (MWindow) MWindow->on_window_close();
+    MIsOpen = false;
   }
 
   //----------
@@ -299,16 +304,14 @@ public: // clap
   bool show() {
     //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
-      
       // when our window is embedded, we don't get on_window_open events ??
       if (!MPreparedWidgets) {
         MWindow->on_window_open();
         MPreparedWidgets = true;
       }
-      
       MWindow->show();
-      MIsOpen = true;
     }
+    MIsOpen = true;
     return true;
   }
 
@@ -316,10 +319,8 @@ public: // clap
 
   bool hide() {
     //SAT_Print("\n");
-    if (MWindow && MIsOpen) {
-      MWindow->hide();
-      MIsOpen = false;
-    }
+    if (MWindow && MIsOpen) MWindow->hide();
+    MIsOpen = false;
     return true;
   }
 

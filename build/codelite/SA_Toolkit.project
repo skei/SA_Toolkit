@@ -209,6 +209,7 @@
       <File Name="../../src/gui/sat_window.h"/>
       <File Name="../../src/gui/sat_widget.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_plugin_header_widget.h"/>
         <File Name="../../src/gui/widgets/sat_scroll_bar_widget.h"/>
         <File Name="../../src/gui/widgets/sat_selector_widget.h"/>
         <File Name="../../src/gui/widgets/sat_grid_widget.h"/>

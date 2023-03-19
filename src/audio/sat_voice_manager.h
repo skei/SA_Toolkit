@@ -536,8 +536,10 @@ private:
   //----------
 
   void flushNoteEnds(const clap_output_events_t* out_events) {
+    uint32_t count = 0;
     SAT_Note note = {0};
     while (MNoteEndQueue.read(&note)) {
+      count += 1;
       clap_event_note_t note_event;
       note_event.header.flags     = 0;
       note_event.header.size      = sizeof(clap_event_note_t);
@@ -551,6 +553,7 @@ private:
       note_event.velocity         = 0.0;
       out_events->try_push(out_events,&note_event.header);
     }
+    //if (count > 0) { SAT_Print("flushNoteEnds: %i events\n",count); }
   }
 
 };

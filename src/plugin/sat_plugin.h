@@ -89,7 +89,6 @@ public:
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor) {
     //SAT_PRINT;
-    SAT_Log("SAT_Plugin()\n");
     MHost = new SAT_Host(AHost);
     SAT_LogClapHostInfo(MHost);
   }
@@ -635,6 +634,7 @@ public: // gui
 
   void gui_destroy() override {
     //SAT_Print("\n");
+    MEditor->destroy();
     delete MEditor;
   }
 
@@ -990,7 +990,7 @@ public: // params
   // [active ? audio-thread : main-thread]
 
   void params_flush(const clap_input_events_t  *in, const clap_output_events_t *out) override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     processEvents(in,out);
     //flushParamFromGuiToHost();
     //flushNoteEndFromProcessToHost();
@@ -1534,7 +1534,7 @@ public: // extensions
   void registerDefaultExtensions() {
     registerExtension(CLAP_EXT_AUDIO_PORTS,               &MAudioPortsExt);
     registerExtension(CLAP_EXT_GUI,                       &MGuiExt);
-    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
+    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt); // -> SynthExtensions?
     registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                     &MStateExt);
   }
@@ -1607,7 +1607,7 @@ public: // editor listener
 
   // window -> editor -> this
 
-  void do_editor_listener_timer() override{
+  void do_editor_listener_timer() final {
     //SAT_PRINT;
     flushModFromHostToGui();
     flushParamFromHostToGui();
@@ -1652,7 +1652,8 @@ public: // queues
     item.index  = AIndex;
     item.value  = AValue;
     if (!MParamFromHostToGuiQueue.write(item)) {
-      SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
+      //SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
+      SAT_Print("queueParamFromHostToGui: couldn't write to queue\n");
     }
 
   }
@@ -1666,12 +1667,15 @@ public: // queues
   */
 
   void flushParamFromHostToGui() {
+    uint32_t count = 0;
     //SAT_Print("\n");
     SAT_QueueItem item;
     while (MParamFromHostToGuiQueue.read(&item)) {
+      count += 1;
       SAT_Parameter* parameter = MParameters[item.index];
       MEditor->updateParameterFromHost(parameter,item.value);
     }
+    //if (count > 0) { SAT_Print("flushParamFromHostToGui: %i events\n",count); }
   }
 
   //----------
@@ -1693,7 +1697,8 @@ public: // queues
     item.index  = AIndex;
     item.value  = AValue;
     if (!MModFromHostToGuiQueue.write(item)) {
-      SAT_Log("queueModFromHostToGui: couldn't write to queue\n");
+      //SAT_Log("queueModFromHostToGui: couldn't write to queue\n");
+      SAT_Print("queueModFromHostToGui: couldn't write to queue\n");
     }
   }
 
@@ -1709,10 +1714,13 @@ public: // queues
   void flushModFromHostToGui() {
     //SAT_Print("\n");
     SAT_QueueItem item;
+    uint32_t count = 0;
     while (MModFromHostToGuiQueue.read(&item)) {
+      count += 1;
       SAT_Parameter* parameter = MParameters[item.index];
       MEditor->updateModulationFromHost(parameter,item.value);
     }
+    //if (count > 0) { SAT_Print("flushModFromHostToGui: %i events\n",count); }
   }
 
   //----------
@@ -1734,7 +1742,8 @@ public: // queues
     item.index  = AIndex;
     item.value  = AValue;
     if (!MParamFromGuiToAudioQueue.write(item)) {
-      SAT_Log("queueParamFromGuiToAudio: couldn't write to queue\n");
+      //SAT_Log("queueParamFromGuiToAudio: couldn't write to queue\n");
+      SAT_Print("queueParamFromGuiToAudio: couldn't write to queue\n");
     }
   }
 
@@ -1747,9 +1756,11 @@ public: // queues
   */
 
   void flushParamFromGuiToAudio() {
+    uint32_t count = 0;
     //SAT_Print("\n");
     SAT_QueueItem item;
     while (MParamFromGuiToAudioQueue.read(&item)) {
+      count += 1;
       //SAT_PRINT;
       clap_event_param_value_t event;
       event.header.size     = sizeof(clap_event_param_value_t);
@@ -1758,7 +1769,7 @@ public: // queues
       event.header.type     = CLAP_EVENT_PARAM_VALUE;
       event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
       event.param_id        = item.index;
-      event.cookie          = nullptr;
+      event.cookie          = nullptr; // set?
       event.note_id         = -1;
       event.port_index      = -1;
       event.channel         = -1;
@@ -1766,6 +1777,7 @@ public: // queues
       event.value           = item.value;
       handleParamValue(&event); // handleParamValueEvent ?
     }
+    //if (count > 0) { SAT_Print("flushParamFromGuiToAudio: %i events\n",count); }
   }
 
   //----------
@@ -1787,7 +1799,8 @@ public: // queues
     item.index  = AIndex;
     item.value  = AValue;
     if (!MParamFromGuiToHostQueue.write(item)) {
-      SAT_Log("queueParamFromGuiToHost: couldn't write to queue\n");
+      //SAT_Log("queueParamFromGuiToHost: couldn't write to queue\n");
+      SAT_Print("queueParamFromGuiToHost: couldn't write to queue\n");
     }
   }
 
@@ -1800,9 +1813,11 @@ public: // queues
   */
 
   void flushParamFromGuiToHost(const clap_output_events_t *out_events) {
+    uint32_t count = 0;
     //SAT_Print("\n");
     SAT_QueueItem item;
     while (MParamFromGuiToHostQueue.read(&item)) {
+      count += 1;
       //SAT_Print("%i = %.3f\n",item.index,item.value);
       SAT_Parameter* parameter = getParameter(item.index);
 
@@ -1855,7 +1870,10 @@ public: // queues
         out_events->try_push(out_events,header);
       }
 
-    }
+    } // while
+
+    //if (count > 0) { SAT_Print("flushParamFromGuiToHost: %i events\n",count); }
+
   }
 
 //------------------------------
@@ -2293,7 +2311,9 @@ private: // handle events
     MParameters[index]->setValue(value);
     MParameters[index]->setLastUpdated(process_count);
     MParameters[index]->setLastUpdatedValue(value);
-    queueParamFromHostToGui(index,value);
+    if (MEditor && MEditor->isOpen()) {
+      queueParamFromHostToGui(index,value);
+    }
     handleParamValue(event);
   }
 
@@ -2311,7 +2331,9 @@ private: // handle events
     MParameters[index]->setModulation(value);
     MParameters[index]->setLastModulated(process_count);
     MParameters[index]->setLastModulatedValue(value);
-    queueModFromHostToGui(index,value);
+    if (MEditor && MEditor->isOpen()) {
+      queueModFromHostToGui(index,value);
+    }
     handleParamMod(event);
   }
 

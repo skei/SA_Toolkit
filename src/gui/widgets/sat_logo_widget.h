@@ -21,7 +21,7 @@ private:
   bool        MDrawLogo   = true;
   NSVGimage*  MLogoImage  = nullptr;
   SAT_Color   MLogoColor  = SAT_White;
-  double      MLogoWidth  = 8;
+  double      MLogoWidth  = 1;
 
 //------------------------------
 public:

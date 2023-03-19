@@ -11,15 +11,18 @@ class SAT_ScrollBarWidget
 private:
 //------------------------------
 
-  bool      MDrawThumb        = true;
-  double    MThumbSize        = 0.2;
-  double    MEdgeWidth        = 5.0;
-
-  SAT_Color MThumbFillColor   = SAT_DarkerGrey;
-  SAT_Color MThumbBorderColor = SAT_LightGrey;
-  SAT_Color MThumbHoverColor  = SAT_LightGrey;
+  bool      MDrawThumb      = true;
+  double    MThumbSize      = 0.3;
+  double    MEdgeSize       = 2.0; // pixels on each side
+  double    MHoverDistance  = 4.0;
+  SAT_Color MThumbColor     = SAT_LightGrey;
+  SAT_Color MHoverColor     = SAT_Grey;
+  SAT_Color MDragColor      = SAT_DarkestGrey;
+  int32_t   MHoverState     = 0;
+  int32_t   MDragState      = 0;
   
-  uint32_t MHoverState = 0; // 1=left, 2=right, 3=middle
+  double    MPrevX          = 0;
+  double    MPrevY          = 0;
 
 //------------------------------
 public:
@@ -27,9 +30,9 @@ public:
 
   SAT_ScrollBarWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
-    //setDrawText(false);
-    //setDrawValue(false);
   }
+  
+  //----------
 
   virtual ~SAT_ScrollBarWidget() {
   }
@@ -38,67 +41,86 @@ public:
 public:
 //------------------------------
 
-  virtual void setThumbSize(double ASize)             { MThumbSize = ASize; }
-  virtual void setThumbFillColor(SAT_Color AColor)    { MThumbFillColor = AColor; }
-  virtual void setThumbBorderColor(SAT_Color AColor)  { MThumbBorderColor = AColor; }
+  virtual void setDrawThumb(bool ADraw=true) { MDrawThumb = ADraw; }
   
 //------------------------------
 public:
 //------------------------------
 
-  double distanceToLeftEdge(double AXpos, double AYpos) {
+  void update_hover(double AXpos, double AYpos) {
+    double S = getWindowScale();
     SAT_Rect mrect = getRect();
-    double available  = mrect.w * (1.0 - MThumbSize);
-    double left = mrect.x + (available * getValue());
-    return AXpos - left;
+    double hd = MHoverDistance * S;
+    double value = getValue();
+    double thumb = MThumbSize * mrect.w;
+    double range = mrect.w - thumb;
+    double x1 = mrect.x + (value * range);
+    double x2 = x1 + (thumb);
+    double dist_x1 = abs(x1 - AXpos);
+    double dist_x2 = abs(x2 - AXpos);
+    MHoverState = 0;
+    if (AXpos < x1) {
+      if (dist_x1 < hd) MHoverState = 1;
+      else MHoverState = -1;
+    }
+    else if (AXpos >= x2) {
+      if (dist_x2 < hd) MHoverState = 2;
+      else MHoverState = -2;
+    }
+    else {
+      // use smallest dist?
+      if (dist_x1 < hd) MHoverState = 1;
+      else if (dist_x2 < hd) MHoverState = 2;
+      else MHoverState = 3;
+    }
   }
-
-  //----------
-
-  double distanceToRightEdge(double AXpos, double AYpos) {
-    SAT_Rect mrect = getRect();
-    double available  = mrect.w * (1.0 - MThumbSize);
-    double right = mrect.x + (available * getValue()) + (mrect.w * MThumbSize);
-    //return right - AXpos;
-    return AXpos - right;
-  }
-
+  
   //----------
 
   virtual void drawThumb(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawThumb) {
-      //double S = getWindowScale();
+      double S = getWindowScale();
+      //double hd = MHoverDistance * S;
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
-      double S = getWindowScale();
       
-      double available  = mrect.w * (1.0 - MThumbSize);
-      double x = mrect.x + (available * getValue());
-      double y = mrect.y;
-      double w = mrect.w * MThumbSize;
-      double h = mrect.h;
+      double value = getValue();
+      double thumb = MThumbSize * mrect.w;
+      double range = mrect.w - thumb;
+      double x1 = mrect.x + (value * range);
+      double x2 = x1 + (thumb);
       
-      if (MHoverState == 3) { painter->setFillColor(MThumbHoverColor); }
-      else { painter->setFillColor(MThumbFillColor); }
-      painter->fillRect(x,y,w,h);
-
-      if (MHoverState == 1) {
-        w = (MEdgeWidth * S);
-        painter->setFillColor(MThumbHoverColor);
-        painter->fillRect(x,y,w,h);
+      // thumb
+      
+      if (MDragState == 3) painter->setFillColor(MDragColor);
+      else if (MHoverState == 3) painter->setFillColor(MHoverColor);
+      else painter->setFillColor(MThumbColor);
+      
+      // left/right edges
+      
+      painter->fillRect(x1,mrect.y,(x2-x1),mrect.h);
+      double es = MEdgeSize * S;
+      
+      if (MDragState == 1) {
+        painter->setFillColor(MDragColor);
+        painter->fillRect((x1-es),mrect.y,(es*2),mrect.h);
+      }
+      else if (MHoverState == 1) {
+        painter->setFillColor(MHoverColor);
+        painter->fillRect((x1-es),mrect.y,(es*2),mrect.h);
+      }
+      else if (MDragState == 2) {
+        painter->setFillColor(MDragColor);
+        painter->fillRect((x2-es),mrect.y,(es*2),mrect.h);
       }
       else if (MHoverState == 2) {
-        //x = mrect.x2() - (MEdgeWidth * S);
-        x = (x + w) - (MEdgeWidth * S);
-        w = (MEdgeWidth * S);
-        painter->setFillColor(MThumbHoverColor);
-        painter->fillRect(x,y,w,h);
+        painter->setFillColor(MHoverColor);
+        painter->fillRect((x2-es),mrect.y,(es*2),mrect.h);
       }
-      
       
     }
   }
@@ -108,6 +130,12 @@ public:
 //------------------------------
 
   void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (AButton == SAT_BUTTON_LEFT) {
+      MPrevX = AXpos;
+      MPrevY = AYpos;
+      MDragState = MHoverState;
+      redraw();
+    }
   }
   
   //----------
@@ -118,34 +146,54 @@ public:
   //----------
   
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    MDragState = 0;
+    redraw();
   }
 
   //----------
   
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
-    uint32_t prev_state = MHoverState;
-    MHoverState = 0;
-    double l = distanceToLeftEdge(AXpos,AYpos);
-    double r = distanceToRightEdge(AXpos,AYpos);
-    double al = abs(l);
-    double ar = abs(r);
-    if (l < 0) {
-      if (al < MEdgeWidth) MHoverState = 1;
-    }
-    else if (r > 0) {
-      if (ar < MEdgeWidth) MHoverState = 2;
-    }
-    else {
-      if (al < ar) {
-        if (al < MEdgeWidth) MHoverState = 1;
-        else MHoverState = 3;
+    
+    double xdiff = AXpos - MPrevX;
+    MPrevX = AXpos;
+    double ydiff = AYpos - MPrevY;
+    MPrevY = AYpos;
+    
+    SAT_Rect mrect = getRect();
+    switch (MDragState) {
+      case 0: {
+        int32_t prev_state = MHoverState;
+        update_hover(AXpos,AYpos);
+        if (MHoverState != prev_state) redraw();
+        break;
       }
-      else {
-        if (ar < MEdgeWidth) MHoverState = 2;
-        else MHoverState = 3;
+      case 1: {
+        break;
+      }
+      case 2: {
+        //MThumbSize += (xdiff / mrect.w);
+        //MThumbSize = SAT_Clamp(MThumbSize,0,1);
+        //redraw();
+        break;
+      }
+      case 3: {
+        // y
+        MThumbSize -= (ydiff / mrect.w);
+        MThumbSize = SAT_Clamp(MThumbSize,0,1);
+        // x
+        double range = mrect.w * (1.0 - MThumbSize);
+        double v = getValue();
+        v += (xdiff / range);
+        v = SAT_Clamp(v,0,1);
+        setValue(v);
+        redraw();
+        //double v = (AXpos - mrect.x) / (mrect.w * (1.0 - MThumbSize));
+        //SAT_Print("%f\n",v);
+        //setValue(v);
+        //redraw();
+        break;
       }
     }
-    if (MHoverState != prev_state) redraw();
   }
   
   //----------
@@ -160,7 +208,6 @@ public:
       MHoverState = 0;
       redraw();
     }
-    SAT_PanelWidget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATime);
   }
   
   //----------

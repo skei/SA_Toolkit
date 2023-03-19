@@ -246,9 +246,13 @@ public:
     AWidget->setSize(width,height);
   }
 
+  //----------
+
   virtual void registerTimerWidget(SAT_Widget* AWidget) {
     MTimerWidgets.append(AWidget);
   }
+
+  //----------
 
   virtual void unregisterTimerWidget(SAT_Widget* AWidget) {
     MTimerWidgets.remove(AWidget);
@@ -308,6 +312,7 @@ public:
       MPaintDirtyWidgets.write(widget);
       count += 1;
     }
+    //if (count > 0) { SAT_Print("flushDirtyWidgets: %i events\n",count); }
     return count;
   }
 
@@ -343,6 +348,7 @@ public:
         //}
       }
     }
+    //if (count > 0) { SAT_Print("paintDirtyWidgets: %i events\n",count); }
     return count;
   }
 
@@ -774,10 +780,9 @@ public: // timer listener
 
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
     if (MListener) MListener->do_window_listener_timer(this);
-    //on_window_timer();
-    for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
-      MTimerWidgets[i]->on_widget_timer();
-    }
+    //for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
+    //  MTimerWidgets[i]->on_widget_timer();
+    //}
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
     if (num > 0) { // && (rect.isNotEmpty()) {

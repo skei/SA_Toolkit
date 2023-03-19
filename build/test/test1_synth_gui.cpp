@@ -76,7 +76,6 @@ public:
     MIndex = AIndex;
     MContext = AContext;
     srate = AContext->sample_rate;
-    
   }
 
   //----------
@@ -219,8 +218,8 @@ public:
     const clap_host_t* claphost = host->getHost();
     
     MVoiceManager.init(clapplugin,claphost);
-    MVoiceManager.setProcessThreaded(true);
-    MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
+    MVoiceManager.setProcessThreaded(false);
+    MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     
     return SAT_Plugin::init();
   }
@@ -275,6 +274,7 @@ public:
     MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,EDITOR_WIDTH,EDITOR_HEIGHT) );
     AWindow->setRootWidget(MRootPanel);
     MRootPanel->setFillBackground(true);
+    MRootPanel->setDrawBorder(false);
 
     // menu
 
@@ -294,13 +294,16 @@ public:
     i3->setDrawBorder(false);
 
     // widgets
+    
+    SAT_PluginHeaderWidget* plugin_header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,EDITOR_WIDTH,40),"toolkit");
+    MRootPanel->appendChildWidget(plugin_header);
 
-    SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
-    MRootPanel->appendChildWidget(logo);
-    logo->setLogoColor(SAT_DarkRed);
-    //logo->setAlignment(SAT_WIDGET_ALIGN_FILL_PARENT);
+//    SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
+//    MRootPanel->appendChildWidget(logo);
+//    logo->setLogoColor(SAT_DarkRed);
+//    //logo->setAlignment(SAT_WIDGET_ALIGN_FILL_PARENT);
 
-    SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,270,200,20),"Hello world!");
+    SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,50,200,20),"Hello world!");
     MRootPanel->appendChildWidget(text);
     text->setTextSize(12);
     text->setFillGradient(true);
@@ -308,13 +311,13 @@ public:
     text->setRoundedCorners(true);
     text->setCornerSize(10);
     
-    SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(50,300,200,20),"Param 1", 0.0);
+    SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(50,80,200,20),"Param 1", 0.0);
     MRootPanel->appendChildWidget(val);
     val->setTextSize(12);
     val->setRoundedCorners(true);
     val->setCornerSize(5);
 
-    SAT_DragValueWidget* dragval = new SAT_DragValueWidget(SAT_Rect(50,330,200,20),"Param 2", 0.0);
+    SAT_DragValueWidget* dragval = new SAT_DragValueWidget(SAT_Rect(50,110,200,20),"Param 2", 0.0);
     MRootPanel->appendChildWidget(dragval);
     dragval->setTextSize(7);
     dragval->setValueSize(7);
@@ -335,7 +338,7 @@ public:
     dragval->setDropShadowFeather(6);
     dragval->setDropShadowOffset(1,1);
 
-    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,360,200,20),"Param 3", 0.0);
+    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,140,200,20),"Param 3", 0.0);
     MRootPanel->appendChildWidget(slider);
     slider->setTextSize(12);
     slider->setBipolar(true);
@@ -349,10 +352,10 @@ public:
     slider->setModulationColor( SAT_Color(1,1,1,0.25) );
     slider->setDragDirection(SAT_DIRECTION_RIGHT);
 
-    SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(50,390,95,20));
+    SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(50,170,95,20));
     MRootPanel->appendChildWidget(button1);
 
-    SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(155,390,95,20));
+    SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(155,170,95,20));
     MRootPanel->appendChildWidget(button2);
     button2->setIsToggle(true);
 
@@ -426,11 +429,13 @@ public:
     
     SAT_ScrollBarWidget* scrollbar = new SAT_ScrollBarWidget(SAT_Rect(260,310,200,20));
     MRootPanel->appendChildWidget(scrollbar);
-    scrollbar->setThumbSize(0.3);
     scrollbar->setValue(0.3);
+    //scrollbar->setThumbSize(0.3);
     
     //
-
+    
+    // menus etc have to be appended last, because they need to be drawn on
+    // top of other widgets (when visible)..
     MRootPanel->appendChildWidget(menu);
 
     AEditor->connect(val,     getParameter(0));
@@ -539,7 +544,9 @@ public:
     
     float** outputs = process->audio_outputs[0].data32;
     SAT_Assert(outputs);
-
+    
+    //SAT_ClearStereoBuffer(outputs,length);
+    
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
