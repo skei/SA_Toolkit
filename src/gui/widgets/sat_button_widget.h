@@ -22,6 +22,12 @@ private:
 
   char        MOnText[256]  = "ON";
   char        MOffText[256] = "OFF";
+  
+  SAT_Color   MOnTextColor  = SAT_Black;
+  SAT_Color   MOffTextColor = SAT_LightGrey;
+
+  SAT_Color   MOnBackgroundColor  = SAT_LightGrey;
+  SAT_Color   MOffBackgroundColor = SAT_DarkerGrey;
 
 
 //------------------------------
@@ -71,6 +77,8 @@ public:
       do_widget_redraw(this,0);
     }
   }
+  
+  //----------
 
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
@@ -88,6 +96,18 @@ public:
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_PRINT;
+    
+    if (getValue() > 0.5) {
+      setBackgroundColor(MOnBackgroundColor);
+      setTextColor(MOnTextColor);
+      SAT_TextWidget::setText(MOnText);
+    }
+    else {
+      setBackgroundColor(MOffBackgroundColor);
+      setTextColor(MOffTextColor);
+      SAT_TextWidget::setText(MOffText);
+    }
+    
     fillBackground(AContext);
     if (getValue() > 0.5) SAT_TextWidget::setText(MOnText);
     else SAT_TextWidget::setText(MOffText);

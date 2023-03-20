@@ -35,7 +35,7 @@ protected:
   double    MModArcThickness          = 4.0;
   //SAT_Color MModArcColor              = SAT_COLOR_LIGHT_RED;
 
-  bool      MDrawMarker               = true;
+  bool      MDrawMarker               = false;
   double    MMarkerValue              = 0.75;
   SAT_Color MMarkerColor              = SAT_White;
   double    MMarkerThickness          = 0.01;

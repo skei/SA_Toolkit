@@ -11,6 +11,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="build">
     <VirtualDirectory Name="test">
+      <File Name="../test/test4_minimal2.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+      <File Name="../test/test3_minimal.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
       <File Name="../test/test2_standalone.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
       <File Name="../test/test1_synth_gui.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
     </VirtualDirectory>
@@ -209,6 +211,7 @@
       <File Name="../../src/gui/sat_window.h"/>
       <File Name="../../src/gui/sat_widget.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_tabs_widget.h"/>
         <File Name="../../src/gui/widgets/sat_plugin_header_widget.h"/>
         <File Name="../../src/gui/widgets/sat_scroll_bar_widget.h"/>
         <File Name="../../src/gui/widgets/sat_selector_widget.h"/>

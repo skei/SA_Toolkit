@@ -79,7 +79,7 @@
 #define SAT_AUDIO_FILE_WRITE                    0x20
 #define SAT_AUDIO_FILE_RDWR                     0x30
 
-#define SAT_AUDIO_QUANTIZED_SIZE                32
+//#define SAT_AUDIO_QUANTIZED_SIZE                32
 
 #define SAT_BUTTON_NONE                         0
 #define SAT_BUTTON_LEFT                         1
@@ -148,8 +148,8 @@
 #define SAT_KEY_DELETE                          46
 #define SAT_KEY_BACKSPACE                       8
 
-#define SAT_MAX_NAME_LENGTH                     256
-#define SAT_MAX_PATH_LENGTH                     512
+//#define SAT_MAX_NAME_LENGTH                     256
+//#define SAT_MAX_PATH_LENGTH                     512
 
 #define SAT_MIDI_NOTE_OFF                       0x80
 #define SAT_MIDI_NOTE_ON                        0x90
@@ -160,9 +160,9 @@
 #define SAT_MIDI_PITCHBEND                      0xE0
 #define SAT_MIDI_SYS                            0xF0
 
-#define SAT_MODMATRIX_MAX_SRC_COUNT             64
-#define SAT_MODMATRIX_MAX_DST_COUNT             64
-#define SAT_MODMATRIX_MAX_MOD_COUNT             64
+//#define SAT_MODMATRIX_MAX_SRC_COUNT             64
+//#define SAT_MODMATRIX_MAX_DST_COUNT             64
+//#define SAT_MODMATRIX_MAX_MOD_COUNT             64
 
 #define SAT_MODMATRIX_MODE_OFF                  0
 #define SAT_MODMATRIX_MODE_GLOBAL               1
@@ -177,20 +177,20 @@
 //#define SAT_MODMATRIX_UPDATE_EVENT              2
 //#define SAT_MODMATRIX_UPDATE_BLOCK              3
 
-#define SAT_OPENGL_MAJOR                        3
-#define SAT_OPENGL_MINOR                        2
+//#define SAT_OPENGL_MAJOR                        3
+//#define SAT_OPENGL_MINOR                        2
 
-#define SAT_PAINTER_CLIP_RECT_SIZE              256
+//#define SAT_PAINTER_CLIP_RECT_SIZE              256
 
 #define SAT_PLUGIN_EVENT_MODE_BLOCK             0
 #define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
 #define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
 
-#define SAT_PLUGIN_MAX_BLOCK_SIZE               4096
-#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK     32
-#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK      1024
-#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK   1024
-#define SAT_PLUGIN_MAX_PARAMETERS               1024
+//#define SAT_PLUGIN_MAX_BLOCK_SIZE               4096
+//#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK     32
+//#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK      1024
+//#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK   1024
+//#define SAT_PLUGIN_MAX_PARAMETERS               1024
 
 #define SAT_STATE_NONE                          0x00
 #define SAT_STATE_SHIFT                         0x01
@@ -256,16 +256,16 @@
 #define SAT_VOICE_RELEASED                      3
 #define SAT_VOICE_FINISHED                      4
 
-#define SAT_VOICE_MAX_EVENTS_PER_BLOCK          4096
+//#define SAT_VOICE_MAX_EVENTS_PER_BLOCK          4096
 
-#define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK  4096
-#define SAT_VOICE_MANAGER_STEAL_VOICES          true
+//#define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK  4096
+//#define SAT_VOICE_MANAGER_STEAL_VOICES          true
 
 #define SAT_WIDGET_ALIGN_NONE                   0
 #define SAT_WIDGET_ALIGN_PARENT                 1
 #define SAT_WIDGET_ALIGN_FILL_PARENT            2
 
-#define SAT_WIDGET_MAX_VALUES                   16
+//#define SAT_WIDGET_MAX_VALUES                   16
 
 #define SAT_WIDGET_NOTIFY_NONE                  0
 #define SAT_WIDGET_NOTIFY_CLOSE                 1
@@ -286,11 +286,11 @@
 
 #define SAT_WIDGET_UPDATE_VALUE                 0
 
-#define SAT_WINDOW_MAX_DIRTY_WIDGETS            1024
+//#define SAT_WINDOW_MAX_DIRTY_WIDGETS            1024
 #define SAT_WINDOW_THREAD_KILL                  666
-#define SAT_WINDOW_TIMER_MS                     20
+//#define SAT_WINDOW_TIMER_MS                     20
 
-#define SAT_WINDOW_DBLCLICK_MS                  200
+//#define SAT_WINDOW_DBLCLICK_MS                  200
 
 //----------------------------------------------------------------------
 

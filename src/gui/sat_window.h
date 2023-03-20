@@ -188,7 +188,11 @@ public:
       delete MTimer;
     }
     
-    if (MRootWidget) MRootWidget->cleanup(MWindowPainter);
+    if (MRootWidget) {
+      MRootWidget->cleanup(MWindowPainter);
+      delete MRootWidget;
+    }
+    
     MWindowPainter->deleteRenderBuffer(MRenderBuffer);
     delete MWindowPainter;
     delete MOpenGL;
@@ -236,8 +240,15 @@ public:
   }
 
   //----------
+  
+  /*
+    it will be automatically deleted in SAT_Window destructor, so to keep things
+    similar everywhere, we name it appendRootWidget (instead of set..),
+    even if it's only one..
+  */
 
-  virtual void setRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
+  //virtual void setRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
+  virtual void appendRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     MRootWidget = AWidget;
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);

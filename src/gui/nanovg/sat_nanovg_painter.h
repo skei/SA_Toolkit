@@ -286,6 +286,11 @@ public: // set
 
   //----------
 
+  // align:
+  // 1=left, 2=center, 4=right
+  // 8=top, 16=middle, 32=bottom
+  // 64=baseline
+
   void setTextAlign(int align) {
     nvgTextAlign(MContext,align);
   }
@@ -304,6 +309,8 @@ public: // set
   }
 
   //----------
+  
+  // 1=ccw, 2=cw
 
   void setPathWinding(int dir) {
     nvgPathWinding(MContext,dir);
@@ -352,8 +359,8 @@ public: // set
   }
 
   //----------
-
-  // NVG_BUTT (default), NVG_ROUND, NVG_SQUARE
+  
+  // 0=NVG_BUTT (default), 1=NVG_ROUND, 2=NVG_SQUARE
 
   void setLineCap(int cap) {
     nvgLineCap(MContext,cap);
@@ -361,7 +368,7 @@ public: // set
 
   //----------
 
-  // NVG_MITER (default), NVG_ROUND, NVG_BEVEL
+  // 4=NVG_MITER (default), 1=NVG_ROUND, 3=NVG_BEVEL
 
   void setLineJoin(int join) {
     nvgLineJoin(MContext,join);
@@ -685,6 +692,8 @@ public: // font
 public: // image
 //------------------------------
 
+  // load & parse image from disk
+
   int32_t loadImage(const char* AFilename) {
     int flags = 0;
     //flags |= NVG_IMAGE_GENERATE_MIPMAPS;  // Generate mipmaps during creation of the image.
@@ -703,6 +712,8 @@ public: // image
 
   //----------
 
+  // load & parse image from memory
+
   int32_t loadImage(void* ABuffer, uint32_t ASize) {
     int flags = 0;
     int image = nvgCreateImageMem(MContext,flags,(unsigned char*)ABuffer,ASize);
@@ -710,7 +721,9 @@ public: // image
   }
 
   //----------
-
+  
+  // load image (rgba) from memory
+  
   int32_t loadImage(int32_t AWidth, int32_t AHeight, void* ABuffer) {
     int flags = 0;
     //flags |= NVG_IMAGE_GENERATE_MIPMAPS;  // Generate mipmaps during creation of the image.
@@ -884,6 +897,9 @@ public: // render buffer
 
   //----------
 
+  // get image from fbo/renderbuffer
+  // (use as fillImage)
+  
   int32_t getImageFromRenderBuffer(void* buffer) {
     SAT_Assert(buffer);
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
@@ -892,6 +908,8 @@ public: // render buffer
 
   //----------
 
+  // set fbo/renderbuffer as target for painting
+
   void selectRenderBuffer(void* buffer) {
     MCurrentRenderBuffer = buffer;
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
@@ -899,6 +917,9 @@ public: // render buffer
   }
 
   //----------
+  
+  // set fbo/renderbuffer as target for painting
+  // and sets opengl viewport (0,0,w,h)
 
   void selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) {
     MCurrentRenderBuffer = buffer;
@@ -908,6 +929,9 @@ public: // render buffer
   }
 
   //----------
+
+  // set fbo/renderbuffer as target for painting
+  // and sets opengl viewport (x,y,w,h)
 
   void selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) {
     MCurrentRenderBuffer = buffer;

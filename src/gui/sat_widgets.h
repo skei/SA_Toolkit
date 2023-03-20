@@ -22,6 +22,7 @@
 #include "gui/widgets/sat_selector_widget.h"
 #include "gui/widgets/sat_slider_widget.h"
 #include "gui/widgets/sat_scroll_bar_widget.h"
+#include "gui/widgets/sat_tabs_widget.h"
 #include "gui/widgets/sat_text_widget.h"
 #include "gui/widgets/sat_value_widget.h"
 #include "gui/widgets/sat_voices_widget.h"

@@ -3,13 +3,31 @@
 //----------------------------------------------------------------------
 
 
-#define SAT_VERSION "0.4.1"
-#define SAT_VENDOR  "skei.audio"
-#define SAT_URL     "https://github.com/skei/SA_Toolkit"
+#define SAT_VERSION                             "0.4.1"
+#define SAT_VENDOR                              "skei.audio"
+#define SAT_URL                                 "https://github.com/skei/SA_Toolkit"
 
-
-
-
+#define SAT_AUDIO_QUANTIZED_SIZE                32
+#define SAT_MAX_NAME_LENGTH                     256
+#define SAT_MAX_PATH_LENGTH                     512
+#define SAT_MODMATRIX_MAX_SRC_COUNT             64
+#define SAT_MODMATRIX_MAX_DST_COUNT             64
+#define SAT_MODMATRIX_MAX_MOD_COUNT             64
+#define SAT_OPENGL_MAJOR                        3
+#define SAT_OPENGL_MINOR                        2
+#define SAT_PAINTER_CLIP_RECT_SIZE              256
+#define SAT_PLUGIN_MAX_BLOCK_SIZE               4096
+#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK     32
+#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK      1024
+#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK   1024
+#define SAT_PLUGIN_MAX_PARAMETERS               1024
+#define SAT_VOICE_MAX_EVENTS_PER_BLOCK          4096
+#define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK  4096
+#define SAT_VOICE_MANAGER_STEAL_VOICES          true
+#define SAT_WIDGET_MAX_VALUES                   16
+#define SAT_WINDOW_MAX_DIRTY_WIDGETS            1024
+#define SAT_WINDOW_TIMER_MS                     20
+#define SAT_WINDOW_DBLCLICK_MS                  200
 
 //----------------------------------------------------------------------
 //

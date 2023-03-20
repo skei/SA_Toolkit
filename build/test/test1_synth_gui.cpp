@@ -226,11 +226,11 @@ public:
 
   //----------
 
-  void destroy() final {
-    // root widget is not automatically deleted
-    if (MRootPanel) delete MRootPanel;
-    SAT_Plugin::destroy();
-  }
+  //void destroy() final {
+  //  // root widget is not automatically deleted
+  //  if (MRootPanel) delete MRootPanel;
+  //  SAT_Plugin::destroy();
+  //}
 
   //----------
 
@@ -272,7 +272,7 @@ public:
     // root
 
     MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,EDITOR_WIDTH,EDITOR_HEIGHT) );
-    AWindow->setRootWidget(MRootPanel);
+    AWindow->appendRootWidget(MRootPanel);
     MRootPanel->setFillBackground(true);
     MRootPanel->setDrawBorder(false);
 
