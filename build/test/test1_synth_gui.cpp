@@ -1,4 +1,9 @@
 
+#define SAT_PLUGIN_CLAP
+#define SAT_PLUGIN_EXE
+#define SAT_PLUGIN_VST3
+
+
 #include "base/sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"

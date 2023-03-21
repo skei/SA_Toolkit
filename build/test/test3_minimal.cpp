@@ -30,7 +30,7 @@ public:
     registerDefaultExtensions();    
     appendStereoInputPort();
     appendStereoOutputPort();
-    setInitialEditorSize(300,120,1.0);
+    setInitialEditorSize(300,120,3.0);
     SAT_Parameter* param = new SAT_Parameter("Param1", 0.3);
     param->setFlag(CLAP_PARAM_IS_MODULATABLE);
     appendParameter( param );

@@ -39,6 +39,10 @@ public:
     return &MPlugin;
   }
 
+  const clap_plugin_descriptor_t* getDescriptor() {
+    return MPlugin.desc;
+  }
+
 //------------------------------
 public:
 //------------------------------

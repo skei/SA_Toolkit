@@ -25,7 +25,7 @@ private:
   SAT_Rect  MSliderBarOffset    = SAT_Rect(0,0,0,0);
 
   bool      MDrawModulation     = true;
-  SAT_Color MModulationColor    = SAT_LightBlue1;
+  SAT_Color MModulationColor    = SAT_Color(1,1,1,0.25);
   SAT_Rect  MModulationOffset   = SAT_Rect(0,0,0,0);
 
   bool      MDrawSliderEdge     = true;

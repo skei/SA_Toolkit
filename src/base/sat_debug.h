@@ -465,7 +465,7 @@ public: // call stack
     /*
       Translate addresses from, for example, callstack to symbol-names.
       addresses:      list of pointers to translate.
-      out_syms:       list of mip_callstack_symbol_t to fill with translated data, need to fit as many strings as there are ptrs in addresses.
+      out_syms:       list of sat_callstack_symbol_t to fill with translated data, need to fit as many strings as there are ptrs in addresses.
       num_addresses:  number of addresses in addresses
       memory:         memory used to allocate strings stored in out_syms.
       mem_size:       size of addresses.
@@ -543,9 +543,9 @@ public: // call stack
         int num = generate_callstack(0,adr,256);
         num_addresses = translate_addresses(adr,symbols,num,symbols_buffer,1024);
       }
-      //MIP_DPrint("\n----------------------------------------------------------------------\n");
+      //SAT_DPrint("\n----------------------------------------------------------------------\n");
       print("\ncallstack:\n");
-      //MIP_DPrint("----------------------------------------------------------------------\n");
+      //SAT_DPrint("----------------------------------------------------------------------\n");
 
       /*
         the last two entries are
@@ -571,14 +571,14 @@ public: // crash handler
   #ifdef SAT_DEBUG_CRASH_HANDLER
 
     void initCrashHandler(int sig) {
-      //signal(SIGSEGV,mip_crash_handler_callback);
+      //signal(SIGSEGV,sat_crash_handler_callback);
       signal(sig,sat_crash_handler_callback);
     }
 
     //----------
 
     bool initCrashHandlers() {
-      //for (int i=0; i<32; i++) MIP_InitSignalHandler(i);
+      //for (int i=0; i<32; i++) SAT_InitSignalHandler(i);
       initCrashHandler(SIGILL);
       initCrashHandler(SIGABRT);
       initCrashHandler(SIGFPE);
