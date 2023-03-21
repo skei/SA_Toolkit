@@ -455,6 +455,7 @@ private: // ext: gui
 
   static
   bool clap_plugin_gui_get_size_callback(const clap_plugin_t *plugin, uint32_t *width, uint32_t *height) {
+    SAT_Print("&width %p &height %p\n",width,height);
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
     return plug->gui_get_size(width,height);
   }

@@ -8,6 +8,7 @@
 #include "plugin/clap/sat_clap.h"
 #include "plugin/vst3/sat_vst3.h"
 #include "plugin/vst3/sat_vst3_host_implementation.h"
+//#include "plugin/vst3/sat_vst3_host.h"
 #include "plugin/vst3/sat_vst3_plugin.h"
 #include "plugin/vst3/sat_vst3_utils.h"
 
@@ -172,36 +173,48 @@ public:
   //----------
 
   tresult PLUGIN_API createInstance(FIDString cid, FIDString _iid, void** obj) override {
+    
     int32_t index = findPluginIndex(cid);
     if (index < 0) return kNotImplemented;
+    
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
-    //SAT_Vst3Host* vst3_host = new SAT_Vst3Host();
+
     SAT_Vst3HostImplementation* vst3_host = new SAT_Vst3HostImplementation();
-    //SAT_Print("vst3_host: %p\n",vst3_host);
-    //SAT_Print("vst3_host->getHost(): %p\n",vst3_host->getHost());
+    
+    //SAT_Vst3Host* vst3_host = new SAT_Vst3Host();
+    
     const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,vst3_host->getHost());
-    //const clap_host_t* claphost = vst3_host->getHost();
     SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
+    
+SAT_PRINT;
+
     plugin->init();
-    SAT_Vst3Plugin* vst3plugin = new SAT_Vst3Plugin(vst3_host,plugin);
 
-//    Plugin* plug = (Plugin*)plugin;
-//    uint32_t num_par = plug->getParameterCount();
-//    for (uint32_t i=0; i<num_par; i++) {
-//      //clap_param_info_t info;
-//      //MPlugin->params_get_info(id,&info);
-//      Parameter* param = plug->getParameter(i);
-//      double value = param->getDefaultValue();
-//      //value = param->normalize(value);
-//      param->setValue(value);
-//    }
+SAT_PRINT;
+    
+    SAT_Vst3Plugin* vst3plugin = new SAT_Vst3Plugin(plugin);
 
-//    ParameterArray* pa = pl->getParameters();
-//    vst3plugin->setParameters(pa);
-//    plugin->setListener(vst3_instance);
-//    plugin->on_plugin_open();
-//    plugin->setDefaultParameterValues();
-//    plugin->updateAllParameters();
+    /*
+    Plugin* plug = (Plugin*)plugin;
+    uint32_t num_par = plug->getParameterCount();
+    for (uint32_t i=0; i<num_par; i++) {
+      //clap_param_info_t info;
+      //MPlugin->params_get_info(id,&info);
+      Parameter* param = plug->getParameter(i);
+      double value = param->getDefaultValue();
+      //value = param->normalize(value);
+      param->setValue(value);
+    }
+    */
+
+    /*
+    ParameterArray* pa = pl->getParameters();
+    vst3plugin->setParameters(pa);
+    plugin->setListener(vst3_instance);
+    plugin->on_plugin_open();
+    plugin->setDefaultParameterValues();
+    plugin->updateAllParameters();
+    */
 
     *obj = (Vst::IComponent*)vst3plugin;
     return kResultOk;

@@ -53,7 +53,8 @@ private:
 
   SAT_ClapPlugin*                 MPlugin             = nullptr;
   const clap_plugin_descriptor_t* MDescriptor         = nullptr;
-  SAT_Vst3HostImplementation*     MHost               = nullptr;
+  //SAT_Vst3HostImplementation*     MHost               = nullptr;
+  //SAT_Vst3Host*                   MHost               = nullptr;
   uint32_t                        MRefCount           = 1;
   IComponentHandler*              MComponentHandler   = nullptr;
   IComponentHandler2*             MComponentHandler2  = nullptr;
@@ -89,8 +90,9 @@ private:
 public:
 //------------------------------
 
-  SAT_Vst3Plugin(SAT_Vst3HostImplementation* AHost, SAT_Plugin* APlugin) {
-    MHost       = AHost;
+  //SAT_Vst3Plugin(SAT_Vst3Host* AHost, SAT_Plugin* APlugin) {
+  SAT_Vst3Plugin(SAT_ClapPlugin* APlugin) {
+    //MHost       = AHost;
     MPlugin     = APlugin;
     MDescriptor = MPlugin->getDescriptor();
     MRefCount   = 1;
@@ -2416,17 +2418,15 @@ public:
   */
 
   tresult PLUGIN_API getSize(ViewRect* size) override {
+    SAT_PRINT;
     uint32_t width = 0;
     uint32_t height = 0;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
     const clap_plugin_t* plugin = MPlugin->getPlugin();
-
     //SAT_Editor* editor = MPlugin->getEditor();
     //SAT_PRINT;
-
     gui->get_size(plugin,&width,&height);
-
-    //SAT_PRINT;
+    SAT_Print("width %i height %i\n",width,height);
 
     size->left    = 0;
     size->top     = 0;

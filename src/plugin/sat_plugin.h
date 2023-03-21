@@ -660,7 +660,14 @@ public: // gui
   // [main-thread]
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
-    return MEditor->get_size(width,height);
+    if (MEditor) {
+      return MEditor->get_size(width,height);
+    }
+    else {
+      *width = MInitialEditorWidth;
+      *height = MInitialEditorHeight;
+      return true;
+    }
   }
 
   //----------

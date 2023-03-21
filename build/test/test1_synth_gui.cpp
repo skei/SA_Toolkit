@@ -1,6 +1,6 @@
 
 #define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_EXE
+//#define SAT_PLUGIN_EXE
 #define SAT_PLUGIN_VST3
 
 

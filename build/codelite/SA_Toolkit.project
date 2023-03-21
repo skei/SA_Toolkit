@@ -112,6 +112,7 @@
         <File Name="../../src/plugin/exe/sat_exe_entry.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="vst3">
+        <File Name="../../src/plugin/vst3/sat_vst3_host.h"/>
         <File Name="../../src/plugin/vst3/sat_vst3_host_implementation.h"/>
         <File Name="../../src/plugin/vst3/sat_vst3_utils.h"/>
         <File Name="../../src/plugin/vst3/sat_vst3.h"/>
