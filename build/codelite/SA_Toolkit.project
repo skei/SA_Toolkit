@@ -112,7 +112,6 @@
         <File Name="../../src/plugin/exe/sat_exe_entry.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="vst3">
-        <File Name="../../src/plugin/vst3/sat_vst3_host.h"/>
         <File Name="../../src/plugin/vst3/sat_vst3_host_implementation.h"/>
         <File Name="../../src/plugin/vst3/sat_vst3_utils.h"/>
         <File Name="../../src/plugin/vst3/sat_vst3.h"/>
@@ -259,7 +258,21 @@
     </VirtualDirectory>
     <VirtualDirectory Name="extern">
       <VirtualDirectory Name="vst3">
-        <VirtualDirectory Name="travesty"/>
+        <VirtualDirectory Name="travesty">
+          <File Name="../../src/extern/vst3/travesty/view.h"/>
+          <File Name="../../src/extern/vst3/travesty/unit.h"/>
+          <File Name="../../src/extern/vst3/travesty/message.h"/>
+          <File Name="../../src/extern/vst3/travesty/host.h"/>
+          <File Name="../../src/extern/vst3/travesty/factory.h"/>
+          <File Name="../../src/extern/vst3/travesty/events.h"/>
+          <File Name="../../src/extern/vst3/travesty/edit_controller.h"/>
+          <File Name="../../src/extern/vst3/travesty/component.h"/>
+          <File Name="../../src/extern/vst3/travesty/bstream.h"/>
+          <File Name="../../src/extern/vst3/travesty/base.h"/>
+          <File Name="../../src/extern/vst3/travesty/audio_processor.h"/>
+          <File Name="../../src/extern/vst3/travesty/align_push.h"/>
+          <File Name="../../src/extern/vst3/travesty/align_pop.h"/>
+        </VirtualDirectory>
         <VirtualDirectory Name="vst3sdk">
           <VirtualDirectory Name="vst">
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/vst/vsttypes.h"/>
@@ -325,10 +338,20 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="vst2">
-        <VirtualDirectory Name="vst2sdk"/>
-        <VirtualDirectory Name="xaymar"/>
-        <VirtualDirectory Name="vestige"/>
-        <VirtualDirectory Name="fst"/>
+        <VirtualDirectory Name="vst2sdk">
+          <File Name="../../src/extern/vst2/vst2sdk/vstfxstore.h"/>
+          <File Name="../../src/extern/vst2/vst2sdk/aeffectx.h"/>
+          <File Name="../../src/extern/vst2/vst2sdk/aeffect.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="xaymar">
+          <File Name="../../src/extern/vst2/xaymar/vst.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="vestige">
+          <File Name="../../src/extern/vst2/vestige/vestige.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="fst">
+          <File Name="../../src/extern/vst2/fst/fst.h"/>
+        </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="clap">
         <VirtualDirectory Name="private">

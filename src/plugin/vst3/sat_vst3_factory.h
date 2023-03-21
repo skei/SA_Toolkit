@@ -8,7 +8,6 @@
 #include "plugin/clap/sat_clap.h"
 #include "plugin/vst3/sat_vst3.h"
 #include "plugin/vst3/sat_vst3_host_implementation.h"
-//#include "plugin/vst3/sat_vst3_host.h"
 #include "plugin/vst3/sat_vst3_plugin.h"
 #include "plugin/vst3/sat_vst3_utils.h"
 
@@ -29,10 +28,10 @@ class SAT_Vst3Factory
 private:
 //------------------------------
 
-  uint32_t      MRefCount     = 1;
-  FUnknown*     MHostContext  = nullptr;
-  char          MPluginId[16] = {0};
-  char          MEditorId[16] = {0};
+  uint32_t    MRefCount       = 1;
+  FUnknown*   MHostContext    = nullptr;
+  char        MPluginId[16]   = {0};
+  char        MEditorId[16]   = {0};
 
 //------------------------------
 public:
@@ -53,12 +52,6 @@ public:
 private:
 //------------------------------
 
-
-  //#define SAT_MAGIC_M_PL   0x4d5f504c    // M_PL   // plugin
-  //#define SAT_MAGIC_M_ED   0x4d5f4544    // M_ED   // editor
-
-  //----------
-
   const char* getLongId(const clap_plugin_descriptor_t* descriptor) {
     uint32_t* id = (uint32_t*)MPluginId;
     id[0] = SAT_MAGIC_PLUGIN;
@@ -76,8 +69,6 @@ private:
       const clap_plugin_descriptor_t* desc = SAT_GLOBAL.REGISTRY.getDescriptor(i);
       const char* id = getLongId(desc);
       if (VST3_iidEqual(cid,id)) { return i; }
-      
-      
     }
     return -1;
   }
@@ -88,7 +79,7 @@ private:
     const char* const* feature = descriptor->features;
     uint32_t index = 0;
     while (feature[index]) {
-      if (strcmp(feature[index], "instrument") == 0) return true;
+      if (strcmp(feature[index], CLAP_PLUGIN_FEATURE_INSTRUMENT) == 0) return true;
       index++;
     }
     return false;
@@ -96,12 +87,8 @@ private:
 
 
 //------------------------------
-public:
+public: // FUnknown
 //------------------------------
-
-  //--------------------
-  // FUnknown
-  //--------------------
 
   uint32 PLUGIN_API addRef() override {
     SAT_Print("SAT_Vst3Factory.addRef\n");
@@ -113,8 +100,11 @@ public:
 
   uint32 PLUGIN_API release() override {
     SAT_Print("SAT_Vst3Factory.release\n");
-    const uint32_t r = --MRefCount;
-    if (r == 0) delete this;
+    uint32_t r = --MRefCount;
+    if (r == 0) {
+      SAT_Print("deleting\n");
+      delete this;
+    }
     return r;
   }
 
@@ -136,15 +126,15 @@ public:
     return kNoInterface;
   }
 
-  //--------------------
-  // IPluginFactory
-  //--------------------
+//------------------------------
+public: // IPluginFactory
+//------------------------------
 
   tresult PLUGIN_API getFactoryInfo(PFactoryInfo* info) override {
     SAT_Print("SAT_Vst3Factory.getFactoryInfo\n");
     strcpy(info->vendor,"<factory author>");
-    strcpy(info->url,"<factory url>");
-    strcpy(info->email,"<factory email>");
+    strcpy(info->url,   "<factory url>"   );
+    strcpy(info->email, "<factory email>" );
     info->flags = PFactoryInfo::kNoFlags;
     return kResultOk;
   }
@@ -173,25 +163,13 @@ public:
   //----------
 
   tresult PLUGIN_API createInstance(FIDString cid, FIDString _iid, void** obj) override {
-    
     int32_t index = findPluginIndex(cid);
     if (index < 0) return kNotImplemented;
-    
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
-
     SAT_Vst3HostImplementation* vst3_host = new SAT_Vst3HostImplementation();
-    
-    //SAT_Vst3Host* vst3_host = new SAT_Vst3Host();
-    
     const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,vst3_host->getHost());
     SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
-    
-SAT_PRINT;
-
     plugin->init();
-
-SAT_PRINT;
-    
     SAT_Vst3Plugin* vst3plugin = new SAT_Vst3Plugin(plugin);
 
     /*
@@ -218,13 +196,12 @@ SAT_PRINT;
 
     *obj = (Vst::IComponent*)vst3plugin;
     return kResultOk;
-
     //return kNotImplemented;
   }
 
-  //--------------------
-  // IPluginFactory2
-  //--------------------
+//------------------------------
+public: // IPluginFactory2
+//------------------------------
 
   tresult PLUGIN_API getClassInfo2(int32 index, PClassInfo2* info) override {
     SAT_Print("Vst3Entry.getClassInfo2\n");

@@ -8,7 +8,6 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-//#include "plugin/sat_plugin.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/vst3/sat_vst3.h"
 #include "plugin/vst3/sat_vst3_utils.h"
@@ -53,8 +52,6 @@ private:
 
   SAT_ClapPlugin*                 MPlugin             = nullptr;
   const clap_plugin_descriptor_t* MDescriptor         = nullptr;
-  //SAT_Vst3HostImplementation*     MHost               = nullptr;
-  //SAT_Vst3Host*                   MHost               = nullptr;
   uint32_t                        MRefCount           = 1;
   IComponentHandler*              MComponentHandler   = nullptr;
   IComponentHandler2*             MComponentHandler2  = nullptr;
@@ -75,24 +72,20 @@ private:
   int64_t                         MSteadyTime         = 0;
   clap_process_t                  MClapProcess        = {};
   clap_event_transport_t          MTransport          = {};
-  clap_audio_buffer_t             MAudioInputs;//  = {0};
-  clap_audio_buffer_t             MAudioOutputs;// = {0};
-  uint32_t                        MNumEvents                                                        = 0;
+  clap_audio_buffer_t             MAudioInputs        = {};
+  clap_audio_buffer_t             MAudioOutputs       = {};
+  uint32_t                        MNumEvents          = 0;
   char                            MEvents[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK * SAT_PLUGIN_VST3_MAX_EVENT_SIZE]  = {0};
-  uint32_t                        MLastNoteId                                                       = 0;
-  SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS]                                   = {};
-
+  uint32_t                        MLastNoteId         = 0;
+  SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS] = {};
   SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_VST3_MAX_GUI_EVENTS> MHostParamQueue = {}; // gui -> host
-  //double  MQueuedHostParamValues[SAT_PLUGIN_VST3_MAX_GUI_EVENTS] = {0};
   double  MQueuedHostParamValues[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK] = {0};
 
 //------------------------------
 public:
 //------------------------------
 
-  //SAT_Vst3Plugin(SAT_Vst3Host* AHost, SAT_Plugin* APlugin) {
   SAT_Vst3Plugin(SAT_ClapPlugin* APlugin) {
-    //MHost       = AHost;
     MPlugin     = APlugin;
     MDescriptor = MPlugin->getDescriptor();
     MRefCount   = 1;
@@ -148,7 +141,6 @@ private: // out_events
 //------------------------------
 
   bool vst3_output_events_try_push(const clap_event_header_t *event) {
-    //SAT_Print("TODO\n");
     if (event->space_id == CLAP_CORE_EVENT_SPACE_ID) {
       switch (event->type) {
         case CLAP_EVENT_NOTE_ON:
@@ -693,12 +685,8 @@ private:
   //}
 
 //------------------------------
-public:
+public: // FUnknown
 //------------------------------
-
-  //--------------------
-  // FUnknown
-  //--------------------
 
   /*
     Adds a reference and return the new reference count.
@@ -719,8 +707,9 @@ public:
   */
 
   uint32 PLUGIN_API release() override {
-    const uint32 r = --MRefCount; // const uint32 ?
+    uint32_t r = --MRefCount;
     if (r == 0) {
+      SAT_Print("deleting\n");
       delete this;
     };
     return r;
@@ -791,9 +780,9 @@ public:
     return kNoInterface;
   }
 
-  //--------------------
-  // IPluginBase
-  //--------------------
+//------------------------------
+public: // IPluginBase
+//------------------------------
 
   /*
     file:///WORK/code/_backup/vst3/VST3SDK/index.html
@@ -865,9 +854,9 @@ public:
     return kResultOk;
   }
 
-  //--------------------
-  // IComponent
-  //--------------------
+//------------------------------
+public: // IComponent
+//------------------------------
 
   /*
     Called before initializing the component to get information about the
@@ -1187,9 +1176,9 @@ public:
     return kResultOk;
   }
 
-  //--------------------
-  // IAudioProcessor
-  //--------------------
+//------------------------------
+public: // IAudioProcessor
+//------------------------------
 
   /*
     Try to set (from host) a predefined arrangement for inputs and outputs.
@@ -1279,7 +1268,8 @@ public:
   */
 
   uint32 PLUGIN_API getLatencySamples() override {
-    return 0;
+    return MPlugin->tail_get();
+    //return 0;
   }
 
   //----------
@@ -1572,9 +1562,9 @@ public:
     return kNoTail;
   }
 
-  //--------------------
-  // IMidiMapping
-  //--------------------
+//------------------------------
+public: // IMidiMapping
+//------------------------------
 
   /*
     busIndex              index of Input Event Bus
@@ -1616,9 +1606,9 @@ public:
     return kResultFalse;
   }
 
-  //--------------------
-  // INoteExpressionController
-  //--------------------
+//------------------------------
+public: // INoteExpressionController
+//------------------------------
 
   // Returns number of supported note change types for event bus index and channel.
 
@@ -1688,9 +1678,9 @@ public:
     return kResultOk;
   }
 
-  //--------------------
-  // IKeyswitchController
-  //--------------------
+//------------------------------
+public: // IKeyswitchController
+//------------------------------
 
   // file:///WORK/code/VST3_SDK/doc/vstinterfaces/keyswitch.html
 
@@ -1731,9 +1721,9 @@ public:
     return kResultFalse;
   }
 
-  //--------------------
-  // IConnectionPoint
-  //--------------------
+//------------------------------
+public: // IConnectionPoint
+//------------------------------
 
   // file:///WORK/code/VST3_SDK/doc/vstinterfaces/index.html#vst3Communication
 
@@ -1790,9 +1780,9 @@ public:
     return kResultFalse;
   }
 
-  //--------------------
-  // IUnitInfo
-  //--------------------
+//------------------------------
+public: // IUnitInfo
+//------------------------------
 
   // file:///WORK/code/VST3_SDK/doc/vstinterfaces/vst3Units.html
 
@@ -1960,11 +1950,11 @@ public:
     return kResultFalse;
   }
 
-  //--------------------
-  // IEditController
-  //--------------------
+//------------------------------
+public: // IEditController
+//------------------------------
 
-    // file:///WORK/code/VST3_SDK/doc/vstinterfaces/vst3Automation.html
+  // file:///WORK/code/VST3_SDK/doc/vstinterfaces/vst3Automation.html
 
   //----------
 
@@ -2246,9 +2236,9 @@ public:
     return nullptr;
   }
 
-  //--------------------
-  // IEditController2
-  //--------------------
+//------------------------------
+public: // IEditController2
+//------------------------------
 
   tresult PLUGIN_API setKnobMode(KnobMode mode) override {
     return kResultFalse;
@@ -2266,9 +2256,9 @@ public:
     return kResultFalse;
   }
 
-  //--------------------
-  // IPlugView
-  //--------------------
+//------------------------------
+public: // IPlugView
+//------------------------------
 
   const char* getEditorId(const clap_plugin_descriptor_t* descriptor) {
     uint32_t* id = (uint32_t*)MEditorId;
@@ -2418,16 +2408,12 @@ public:
   */
 
   tresult PLUGIN_API getSize(ViewRect* size) override {
-    SAT_PRINT;
     uint32_t width = 0;
     uint32_t height = 0;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
     const clap_plugin_t* plugin = MPlugin->getPlugin();
     //SAT_Editor* editor = MPlugin->getEditor();
-    //SAT_PRINT;
     gui->get_size(plugin,&width,&height);
-    SAT_Print("width %i height %i\n",width,height);
-
     size->left    = 0;
     size->top     = 0;
     size->right   = width;//MDescriptor->getEditorWidth();
@@ -2501,9 +2487,9 @@ public:
     return kResultOk;//False;
   }
 
-  //--------------------
-  // ITimerHandler
-  //--------------------
+//------------------------------
+public: // ITimerHandler
+//------------------------------
 
   // tid = same as setComponentHandler..
 
