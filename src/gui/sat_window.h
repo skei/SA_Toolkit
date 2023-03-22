@@ -150,6 +150,8 @@ public:
     #endif
     
     #ifdef SAT_WIN32
+      HWND window = getWin32Window();
+      MOpenGL = new SAT_OpenGL(window);
     #endif
     
     MOpenGL->makeCurrent();
@@ -427,7 +429,9 @@ public:
     //  if (MRootWidget) MRootWidget->redraw();
     //#endif
     SAT_ImplementedWindow::show();
-    MTimer->start(SAT_WINDOW_TIMER_MS,false);
+    HWND hwnd = getWin32Window();
+    
+    MTimer->start(SAT_WINDOW_TIMER_MS,hwnd,false);
   }
 
   //----------

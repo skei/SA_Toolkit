@@ -139,6 +139,7 @@
 #define SAT_FILE_APPEND_BINARY                  (char*)"ab"
 #define SAT_FILE_APPEND_TEXT                    (char*)"a"
 
+#define SAT_KEY_NONE                            0
 #define SAT_KEY_ENTER                           13
 #define SAT_KEY_ESC                             27
 #define SAT_KEY_HOME                            36
@@ -212,43 +213,89 @@
   "\e[1;97m" (bold white)
 */
 
-#define SAT_TERM_BG_BLACK                       "\e[40m"
-#define SAT_TERM_BG_RED                         "\e[41m"
-#define SAT_TERM_BG_GREEN                       "\e[42m"
-#define SAT_TERM_BG_YELLOW                      "\e[43m"
-#define SAT_TERM_BG_BLUE                        "\e[44m"
-#define SAT_TERM_BG_MAGENTA                     "\e[45m"
-#define SAT_TERM_BG_CYAN                        "\e[46m"
-#define SAT_TERM_BG_LIGHT_GREY                  "\e[47m"
+#ifdef SAT_LINUX
 
-#define SAT_TERM_BG_GREY                        "\e[100m"
-#define SAT_TERM_BG_LIGHT_RED                   "\e[101m"
-#define SAT_TERM_BG_LIGHT_GREEN                 "\e[102m"
-#define SAT_TERM_BG_LIGHT_YELLOW                "\e[103m"
-#define SAT_TERM_BG_LIGHT_BLUE                  "\e[104m"
-#define SAT_TERM_BG_LIGHT_MAGENTA               "\e[105m"
-#define SAT_TERM_BG_LIGHT_CYAN                  "\e[106m"
-#define SAT_TERM_BG_WHITE                       "\e[107m"
+  #define SAT_TERM_BG_BLACK                     "\e[40m"
+  #define SAT_TERM_BG_RED                       "\e[41m"
+  #define SAT_TERM_BG_GREEN                     "\e[42m"
+  #define SAT_TERM_BG_YELLOW                    "\e[43m"
+  #define SAT_TERM_BG_BLUE                      "\e[44m"
+  #define SAT_TERM_BG_MAGENTA                   "\e[45m"
+  #define SAT_TERM_BG_CYAN                      "\e[46m"
+  #define SAT_TERM_BG_LIGHT_GREY                "\e[47m"
 
-#define SAT_TERM_FG_BLACK                       "\e[30m"
-#define SAT_TERM_FG_RED                         "\e[31m"
-#define SAT_TERM_FG_GREEN                       "\e[32m"
-#define SAT_TERM_FG_YELLOW                      "\e[33m"
-#define SAT_TERM_FG_BLUE                        "\e[34m"
-#define SAT_TERM_FG_MAGENTA                     "\e[35m"
-#define SAT_TERM_FG_CYAN                        "\e[36m"
-#define SAT_TERM_FG_LIGHT_GREY                  "\e[37m"
+  #define SAT_TERM_BG_GREY                      "\e[100m"
+  #define SAT_TERM_BG_LIGHT_RED                 "\e[101m"
+  #define SAT_TERM_BG_LIGHT_GREEN               "\e[102m"
+  #define SAT_TERM_BG_LIGHT_YELLOW              "\e[103m"
+  #define SAT_TERM_BG_LIGHT_BLUE                "\e[104m"
+  #define SAT_TERM_BG_LIGHT_MAGENTA             "\e[105m"
+  #define SAT_TERM_BG_LIGHT_CYAN                "\e[106m"
+  #define SAT_TERM_BG_WHITE                     "\e[107m"
 
-#define SAT_TERM_FG_GREY                        "\e[90m"
-#define SAT_TERM_FG_LIGHT_RED                   "\e[91m"
-#define SAT_TERM_FG_LIGHT_GREEN                 "\e[92m"
-#define SAT_TERM_FG_LIGHT_YELLOW                "\e[93m"
-#define SAT_TERM_FG_LIGHT_BLUE                  "\e[94m"
-#define SAT_TERM_FG_LIGHT_MAGENTA               "\e[95m"
-#define SAT_TERM_FG_LIGHT_CYAN                  "\e[96m"
-#define SAT_TERM_FG_WHITE                       "\e[97m"
+  #define SAT_TERM_FG_BLACK                     "\e[30m"
+  #define SAT_TERM_FG_RED                       "\e[31m"
+  #define SAT_TERM_FG_GREEN                     "\e[32m"
+  #define SAT_TERM_FG_YELLOW                    "\e[33m"
+  #define SAT_TERM_FG_BLUE                      "\e[34m"
+  #define SAT_TERM_FG_MAGENTA                   "\e[35m"
+  #define SAT_TERM_FG_CYAN                      "\e[36m"
+  #define SAT_TERM_FG_LIGHT_GREY                "\e[37m"
 
-#define SAT_TERM_RESET                          "\e[0m"
+  #define SAT_TERM_FG_GREY                      "\e[90m"
+  #define SAT_TERM_FG_LIGHT_RED                 "\e[91m"
+  #define SAT_TERM_FG_LIGHT_GREEN               "\e[92m"
+  #define SAT_TERM_FG_LIGHT_YELLOW              "\e[93m"
+  #define SAT_TERM_FG_LIGHT_BLUE                "\e[94m"
+  #define SAT_TERM_FG_LIGHT_MAGENTA             "\e[95m"
+  #define SAT_TERM_FG_LIGHT_CYAN                "\e[96m"
+  #define SAT_TERM_FG_WHITE                     "\e[97m"
+
+  #define SAT_TERM_RESET                        "\e[0m"
+  
+#else // WIN32
+
+  #define SAT_TERM_BG_BLACK                     ""
+  #define SAT_TERM_BG_RED                       ""
+  #define SAT_TERM_BG_GREEN                     ""
+  #define SAT_TERM_BG_YELLOW                    ""
+  #define SAT_TERM_BG_BLUE                      ""
+  #define SAT_TERM_BG_MAGENTA                   ""
+  #define SAT_TERM_BG_CYAN                      ""
+  #define SAT_TERM_BG_LIGHT_GREY                ""
+
+  #define SAT_TERM_BG_GREY                      ""
+  #define SAT_TERM_BG_LIGHT_RED                 ""
+  #define SAT_TERM_BG_LIGHT_GREEN               ""
+  #define SAT_TERM_BG_LIGHT_YELLOW              ""
+  #define SAT_TERM_BG_LIGHT_BLUE                ""
+  #define SAT_TERM_BG_LIGHT_MAGENTA             ""
+  #define SAT_TERM_BG_LIGHT_CYAN                ""
+  #define SAT_TERM_BG_WHITE                     ""
+
+  #define SAT_TERM_FG_BLACK                     ""
+  #define SAT_TERM_FG_RED                       ""
+  #define SAT_TERM_FG_GREEN                     ""
+  #define SAT_TERM_FG_YELLOW                    ""
+  #define SAT_TERM_FG_BLUE                      ""
+  #define SAT_TERM_FG_MAGENTA                   ""
+  #define SAT_TERM_FG_CYAN                      ""
+  #define SAT_TERM_FG_LIGHT_GREY                ""
+
+  #define SAT_TERM_FG_GREY                      ""
+  #define SAT_TERM_FG_LIGHT_RED                 ""
+  #define SAT_TERM_FG_LIGHT_GREEN               ""
+  #define SAT_TERM_FG_LIGHT_YELLOW              ""
+  #define SAT_TERM_FG_LIGHT_BLUE                ""
+  #define SAT_TERM_FG_LIGHT_MAGENTA             ""
+  #define SAT_TERM_FG_LIGHT_CYAN                ""
+  #define SAT_TERM_FG_WHITE                     ""
+
+  #define SAT_TERM_RESET                        ""
+
+#endif
+
+  
 
 #define SAT_VOICE_OFF                           0
 #define SAT_VOICE_WAITING                       1

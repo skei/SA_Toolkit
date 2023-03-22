@@ -176,6 +176,7 @@
 //--------------------
 
 #ifdef SAT_EXE
+  #define SAT_PLUGIN_EXE
   //#define  SAT_DEBUG_MEMTRACE
   #undef SAT_DEBUG_PRINT_SOCKET
 #endif
@@ -183,8 +184,15 @@
 //----------
 
 #ifdef SAT_PLUGIN
+  #undef SAT_PLUGIN_EXE
   //#undef  SAT_DEBUG_MEMTRACE
   #define SAT_DEBUG_PRINT_SOCKET
+#endif
+
+//----------
+
+#ifdef SAT_WIN32
+  #undef SAT_DEBUG_PRINT_SOCKET
 #endif
 
 //--------------------

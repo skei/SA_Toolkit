@@ -142,6 +142,7 @@ public:
       SAT_Assert(window);
       MDrawable = glXCreateWindow(MDisplay,MFBConfig,window,nullptr);
       //MDrawableIsWindow = true;
+      
       disableVSync(MDisplay,MDrawable);
 
     //}
@@ -159,6 +160,7 @@ public:
     //}
 
     disableVSync(MDisplay,MDrawable);
+    
     //resetCurrent();
     //makeCurrent(0);
 //    MIsCurrent = true;

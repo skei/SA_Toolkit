@@ -469,7 +469,7 @@
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
-  <Settings Type="Dynamic Library">
+  <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -722,7 +722,7 @@
         <Preprocessor Value="SAT_EXE"/>
         <Preprocessor Value="SAT_DEBUG"/>
       </Compiler>
-      <Linker Options="" Required="yes">
+      <Linker Options=";-static-libstdc++;-static-libgcc" Required="yes">
         <LibraryPath Value="/lib/x86_64-linux-gnu"/>
         <Library Value="gdi32"/>
         <Library Value="msimg32"/>

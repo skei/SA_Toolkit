@@ -45,12 +45,18 @@ public:
     virtual ~SAT_OpenGL() {
     }
 
-    #endif
+  #endif
 
+  #ifdef SAT_WIN32
 
+    SAT_OpenGL(HWND window)
+    : SAT_Win32OpenGL(window) {
+    }
 
+    virtual ~SAT_OpenGL() {
+    }
 
-  //----------
+  #endif
 
 };
 
