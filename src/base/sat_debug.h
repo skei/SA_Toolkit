@@ -57,6 +57,7 @@
 //------------------------------
 
 #ifdef SAT_DEBUG_CALL_STACK
+#ifdef SAT_LINUX
 
   #include <stdio.h>
   #include <sys/unistd.h>
@@ -75,6 +76,7 @@
     const char* end_ptr;
   };
   
+#endif // LINUX
 #endif
 
 //------------------------------
@@ -82,12 +84,14 @@
 //------------------------------
 
 #ifdef SAT_DEBUG_CRASH_HANDLER
+#ifdef SAT_LINUX
 
   #include <signal.h>
   
   //bool SAT_InitCrashHandlers();
   void sat_crash_handler_callback(int sig);
   
+#endif
 #endif
 
 //------------------------------
@@ -412,6 +416,7 @@ public: // call stack
 //------------------------------
 
   #ifdef SAT_DEBUG_CALL_STACK
+  #ifdef SAT_LINUX
 
     const char* callstack_alloc_string( sat_callstack_stringbuffer_t* buf, const char* str, size_t str_len ) {
       char* res;
@@ -520,7 +525,7 @@ public: // call stack
 
     //----------
 
-    //#define MIP_DumpCallStackSkip(s) {
+    //#define SAT_DumpCallStackSkip(s) {
     //  void* adr[256];
     //  int num = generate_callstack(0,adr,256);
     //  print_callstack(adr,num,2,s);
@@ -550,7 +555,7 @@ public: // call stack
       /*
         the last two entries are
         - __libc_start_main
-        - mip_debug()
+        - sat_debug()
       */
       num_addresses -= skip_last;
 
@@ -559,9 +564,10 @@ public: // call stack
         print("      %s\n", symbols[i].file);
         print("      line %i offset %i\n", symbols[i].line, symbols[i].ofs);
       }
-      //MIP_DPrint("----------------------------------------------------------------------\n\n");
+      //SAT_DPrint("----------------------------------------------------------------------\n\n");
     }
 
+  #endif // linux
   #endif // call stack
   
 //------------------------------
@@ -571,34 +577,38 @@ public: // crash handler
   #ifdef SAT_DEBUG_CRASH_HANDLER
 
     void initCrashHandler(int sig) {
-      //signal(SIGSEGV,sat_crash_handler_callback);
-      signal(sig,sat_crash_handler_callback);
+      #ifdef SAT_LINUX
+        //signal(SIGSEGV,sat_crash_handler_callback);
+        signal(sig,sat_crash_handler_callback);
+      #endif
     }
 
     //----------
 
     bool initCrashHandlers() {
-      //for (int i=0; i<32; i++) SAT_InitSignalHandler(i);
-      initCrashHandler(SIGILL);
-      initCrashHandler(SIGABRT);
-      initCrashHandler(SIGFPE);
-      initCrashHandler(SIGSEGV);
+      #ifdef SAT_LINUX
+        //for (int i=0; i<32; i++) SAT_InitSignalHandler(i);
+        initCrashHandler(SIGILL);
+        initCrashHandler(SIGABRT);
+        initCrashHandler(SIGFPE);
+        initCrashHandler(SIGSEGV);
+      #endif
       return true;
     }
     //----------
     
     void crashHandler(int sig) {
-      print("\n");
-      print("CRASH!\n");
-      print("%i : %s\n",sig,MSignalNames[sig]);
-      //SAT_GLOBAL_WATCHES.printWatches("watched:");
-
-      //SAT_DumpCallStack;
-      //SAT_DumpCallStackSkip(0); // 2
-      print_callstack();
-
-      print("\n");
-      exit(1); //_exit(1);
+      #ifdef SAT_LINUX
+        print("\n");
+        print("CRASH!\n");
+        print("%i : %s\n",sig,MSignalNames[sig]);
+        //SAT_GLOBAL_WATCHES.printWatches("watched:");
+        //SAT_DumpCallStack;
+        //SAT_DumpCallStackSkip(0); // 2
+        print_callstack();
+        print("\n");
+        exit(1); //_exit(1);
+      #endif
     }  
 
   #endif // crash handler

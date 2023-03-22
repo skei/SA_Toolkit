@@ -143,42 +143,49 @@ private: // out_events
   bool vst3_output_events_try_push(const clap_event_header_t *event) {
     if (event->space_id == CLAP_CORE_EVENT_SPACE_ID) {
       switch (event->type) {
+        
         case CLAP_EVENT_NOTE_ON:
           SAT_Print("TODO: send NOTE_ON to host\n");
           return true;
+          
         case CLAP_EVENT_NOTE_OFF:
           SAT_Print("TODO: send NOTE_OFF to host\n");
           return true;
+          
         case CLAP_EVENT_NOTE_CHOKE:
           SAT_Print("TODO: send NOTE_CHOKE to host\n");
           return true;
-        case CLAP_EVENT_NOTE_END:
+          
+        case CLAP_EVENT_NOTE_END: {
           SAT_Print("TODO: send NOTE_END to host\n");
           return true;
+        }
+          
         case CLAP_EVENT_NOTE_EXPRESSION:
           SAT_Print("TODO: send NOTE_EXPRESSION to host\n");
           return true;
-        case CLAP_EVENT_PARAM_GESTURE_BEGIN:
+          
+        case CLAP_EVENT_PARAM_GESTURE_BEGIN: {
           SAT_Print("TODO: send PARAM_GESTURE_BEGIN to host\n");
           return true;
-        case CLAP_EVENT_PARAM_GESTURE_END:
+        }
+          
+        case CLAP_EVENT_PARAM_GESTURE_END: {
           SAT_Print("TODO: send PARAM_GESTURE_END to host\n");
           return true;
+        }
 
         case CLAP_EVENT_PARAM_VALUE: {
           SAT_Print("queueing PARAM_VALUE (to host)\n");
           clap_event_param_value_t* param_value = (clap_event_param_value_t*)event;
           uint32_t index = param_value->param_id;
           double value = param_value->value;
-
           clap_param_info_t info;
-
-          SAT_Print("\n");
-          SAT_Print("index %i\n",index);
-          SAT_Print("&info %p\n",&info);
-          SAT_Print("MPlugin %p\n",MPlugin);
-          SAT_Print("\n");
-
+          //SAT_Print("\n");
+          //SAT_Print("index %i\n",index);
+          //SAT_Print("&info %p\n",&info);
+          //SAT_Print("MPlugin %p\n",MPlugin);
+          //SAT_Print("\n");
           MPlugin->params_get_info(index,&info); // crash? (win32)
           double range = info.max_value - info.min_value;
           if (range > 0) {
@@ -192,18 +199,23 @@ private: // out_events
         case CLAP_EVENT_PARAM_MOD:
           SAT_Print("TODO: send PARAM_MOD to host\n");
           return true;
+          
         case CLAP_EVENT_TRANSPORT:
           SAT_Print("TODO: send TRANSPORT to host\n");
           return true;
+          
         case CLAP_EVENT_MIDI:
           SAT_Print("TODO: send MIDI to host\n");
           return true;
+          
         case CLAP_EVENT_MIDI_SYSEX:
           SAT_Print("TODO: send MIDI_SYSEX to host\n");
           return true;
+          
         case CLAP_EVENT_MIDI2:
           SAT_Print("TODO: send MIDI2 to host\n");
           return true;
+          
       } // switch
     } // clap_space
     return false;
@@ -240,7 +252,6 @@ private:
       while (MHostParamQueue.read(&index)) {
         double value = MQueuedHostParamValues[index];
         //SAT_Print("flush! %i = %.3f\n",index,value);
-
         //if (MComponentHandler2) MComponentHandler2->startGroupEdit();
         MComponentHandler->beginEdit(index);          // click
         MComponentHandler->performEdit(index,value);  // drag
@@ -262,10 +273,8 @@ private:
           if (paramQueue) {
             uint32_t id = paramQueue->getParameterId();
             if (id < MPlugin->params_count()) {
-
               clap_param_info_t info;
               MPlugin->params_get_info(id,&info);
-
               int32_t pointcount = paramQueue->getPointCount();
               for (int32_t j=0; j<pointcount; j++) {
                 int32_t offset = 0;
@@ -410,14 +419,14 @@ private:
                 note_expression_event->value          = 20.0 * log( 4.0 * event.noteExpressionValue.value );
                 break;
               case kPanTypeID:
-                  // Panning (L-R), plain range [0 = left, 0.5 = center, 1 = right]
+                // Panning (L-R), plain range [0 = left, 0.5 = center, 1 = right]
                 note_expression_event->expression_id  = CLAP_NOTE_EXPRESSION_PAN;
                 note_expression_event->value          = (event.noteExpressionValue.value - 0.5) - 2.0;
                 break;
               case kTuningTypeID:
-                  // Tuning, plain range [0 = -120.0 (ten octaves down), 0.5 none, 1 = +120.0 (ten octaves up)]
-                  // plain = 240 * (norm - 0.5) and norm = plain / 240 + 0.5
-                  // oneOctave is 12.0 / 240.0; oneHalfTune = 1.0 / 240.0;
+                // Tuning, plain range [0 = -120.0 (ten octaves down), 0.5 none, 1 = +120.0 (ten octaves up)]
+                // plain = 240 * (norm - 0.5) and norm = plain / 240 + 0.5
+                // oneOctave is 12.0 / 240.0; oneHalfTune = 1.0 / 240.0;
                 note_expression_event->expression_id  = CLAP_NOTE_EXPRESSION_TUNING;
                 note_expression_event->value          = (event.noteExpressionValue.value - 0.5) * 240.0;
                 break;
@@ -484,64 +493,6 @@ private:
     double range = info.max_value - info.min_value;
     return info.min_value + (value * range);
   }
-
-//------------------------------
-public: // editor listener
-//------------------------------
-
-  //#ifndef SAT_NO_GUI
-  //
-  ///*
-  //  we run our gui in its own thread, but need to communicate with the
-  //  host on its gui thread.. so, when we tweak a parameter, we queue the
-  //  parameter (index), and send all updated ones to the host during onTimer
-  //  (see bottom)
-  //  the host should communicate the parameter change (audio thread) during
-  //  next process()
-  //*/
-  //
-  //// AValue is 0..1 (widget-value)
-  //// TODO: convert via parameter if necessary..
-  //
-  //void on_updateParameterFromEditor(uint32_t AIndex, float AValue) override {
-  //  //MEditorParameterValues[AIndex] = AValue;
-  //  //SAT_Parameter* parameter = MDescriptor->parameters[AIndex];
-  //  //float value = parameter->from01(AValue);
-  //  float value = AValue;
-  //  MPlugin->setParameterValue(AIndex,value);
-  //  MVst2Host->updateParameter(AIndex,value);
-  //}
-  //
-  ////----------
-  //
-  //void on_resizeFromEditor(uint32_t AWidth, uint32_t AHeight) override {
-  //}
-  //
-  //#endif
-
-//------------------------------
-public:
-//------------------------------
-
-  //void notifyHostUpdateParameter(uint32_t AIndex, float AValue) override {
-  //  if (MComponentHandler) {
-  //    //if (MComponentHandler2) MComponentHandler2->startGroupEdit();
-  //    MComponentHandler->beginEdit(AIndex);          // click
-  //    MComponentHandler->performEdit(AIndex,AValue);  // drag
-  //    MComponentHandler->endEdit(AIndex);            // release
-  //    //if (MComponentHandler2) MComponentHandler2->finishGroupEdit();
-  //  }
-  //}
-
-  //----------
-
-  //void notifyHostResizeWindow(uint32_t AWidth, uint32_t AHeight) override {
-  //}
-
-  //----------
-
-  //void notifyHostMidiOutput(uint32_t AOffset, uint8_t AMsg1, uint8_t AMsg2, uint8_t AMsg3) override {
-  //}
 
 //------------------------------
 public: // editor listener
@@ -624,65 +575,6 @@ private:
       }
     }
   }
-
-  //----------
-
-  /*
-    enum RestartFlags {
-      kReloadComponent            // The Component should be reloaded
-      kIoChanged                  // Input and/or Output Bus configuration has changed
-      kParamValuesChanged         // Multiple parameter values have changed (as result of a program change for example)
-      kLatencyChanged             // Latency has changed (IAudioProcessor.getLatencySamples)
-      kParamTitlesChanged         // Parameter titles or default values or flags have changed
-      kMidiCCAssignmentChanged    // MIDI Controller Assignments have changed
-      kNoteExpressionChanged      // Note Expression has changed (info, count...)
-      kIoTitlesChanged            // Input and/or Output bus titles have changed
-      kPrefetchableSupportChanged // Prefetch support has changed (\see IPrefetchableSupport)
-      kRoutingInfoChanged         // RoutingInfo has changed (\see IComponent)
-    };
-    MComponentHandler->restartComponent(int32 flags)
-  */
-
-  /*
-    https://github.com/soundradix/JUCE/commit/2e9e66cbc8c65e889be5232ffae83c0ca78f9c7e
-    performEdit ((Vst::ParamID) index, (double) newValue);
-    // call setParamNormalized too, as without it value will reset at endEdit in Cubase.
-    // setParamNormalized does not replace performEdit as it does not record automation.
-    setParamNormalized ((Vst::ParamID) index, (double) newValue);
-
-    https://sdk.steinberg.net/viewtopic.php?t=693
-    "Remember that everything in the edit controller domain must happen on the
-    main thread also calls to the IComponentHandler instance of the host. So
-    don't call beginEdit, endEdit or performEdit on a secondary thread."
-
-    NB: Cubase has problems if performEdit is called without setParamNormalized
-    EditController::setParamNormalized(AIndex,AValue);
-
-    MComponentHandler->performEdit(AIndex,AValue); // drag
-
-  */
-
-  /*
-    called from
-      SAT_Vst3Instance.onTimer
-  */
-
-  //void notifyHostAboutUpdatedParameters() {
-  //  uint32_t index;
-  //  while (MUpdatedHostParameters.read(&index)) {
-  //    float value = MHostValues[index];
-  //
-  //    SAT_Trace("%i %.2f\n",index,value);
-  //
-  //    if (MComponentHandler) {
-  //      //if (MComponentHandler2) MComponentHandler2->startGroupEdit();
-  //      MComponentHandler->beginEdit(index);          // click
-  //      MComponentHandler->performEdit(index,value);  // drag
-  //      MComponentHandler->endEdit(index);            // release
-  //      //if (MComponentHandler2) MComponentHandler2->finishGroupEdit();
-  //    }
-  //  }
-  //}
 
 //------------------------------
 public: // FUnknown
@@ -797,17 +689,13 @@ public: // IPluginBase
     method rather than in the class' constructor!
     If the method does NOT return kResultOk, the object is released
     immediately. In this case terminate is not called!
-  */
 
-  /*
     class IHostApplication: public FUnknown {
       // Gets host application name.
       virtual tresult PLUGIN_API getName (String128 name) = 0;
       // Creates host object (e.g. Vst::IMessage).
       virtual tresult PLUGIN_API createInstance (TUID cid, TUID _iid, void** obj) = 0;
-  */
 
-  /*
     3.6.12
     Allow a Plug-in to ask the host if a given Plug-in interface is
     supported/used by the host. It is implemented by the hostContext given
@@ -821,9 +709,7 @@ public: // IPluginBase
       }
       // ...
     }
-  */
 
-  /*
     IHostApplication: passed as 'context' in to IPluginBase::initialize()
   */
 

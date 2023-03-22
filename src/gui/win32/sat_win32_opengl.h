@@ -9,13 +9,13 @@
 #define SOGL_MAJOR_VERSION SAT_OPENGL_MAJOR
 #define SOGL_MINOR_VERSION SAT_OPENGL_MINOR
 
-#ifdef SAT_LINUX
-  #define SOGL_IMPLEMENTATION_X11
-#endif
-
-#ifdef SAT_WIN32
+//#ifdef SAT_LINUX
+//  #define SOGL_IMPLEMENTATION_X11
+//#endif
+//
+//#ifdef SAT_WIN32
   #define SOGL_IMPLEMENTATION_WIN32
-#endif
+//#endif
 
 #include "extern/sogl/simple-opengl-loader.h"
 
@@ -47,7 +47,7 @@ private:
 public:
 //------------------------------
 
-  SAT_Win32OpenGL() {
+  SAT_Win32OpenGL( /* dc, hwnd, ... */ ) {
   }
 
   //----------
@@ -87,7 +87,7 @@ public:
   //TODO: save prev context?
 
   bool makeCurrent() {
-    bool res;
+    bool res = false; // TODO
     if (!res) {
       return false;
     }
@@ -105,7 +105,7 @@ public:
   //TODO: restore prev context?
 
   bool resetCurrent() {
-    bool res;
+    bool res = false; // TODO
     if (!res) {
       return false;
     }
@@ -126,7 +126,7 @@ public:
 
   //----------
 
-  void disableVSync(Display* ADisplay, GLXDrawable ADrawable) {
+  void disableVSync() {
   }
 
 //------------------------------

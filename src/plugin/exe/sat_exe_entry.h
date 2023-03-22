@@ -88,9 +88,17 @@ void open_editor(const clap_plugin_t* plugin) {
     //SAT_Print("creating host window\n");
     SAT_ExeWindow* window = new SAT_ExeWindow(width,height,0,plugin,gui);
     //SAT_Print("host window created\n");
-
-    xcb_window_t x11window = window->getX11Window();
-    const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
+    
+    #ifdef SAT_LINUX
+      xcb_window_t x11window = window->getX11Window();
+      const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
+    #endif
+    
+    #ifdef SAT_WIN32
+      HWND win32window = window->getWin32Window();
+      const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_WIN32, .win32 = win32window };
+    #endif
+    
     
     gui->set_parent(plugin,&clapwindow);
     gui->show(plugin);

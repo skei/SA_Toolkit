@@ -31,13 +31,13 @@
 #define SOGL_MAJOR_VERSION SAT_OPENGL_MAJOR
 #define SOGL_MINOR_VERSION SAT_OPENGL_MINOR
 
-#ifdef SAT_LINUX
+//#ifdef SAT_LINUX
   #define SOGL_IMPLEMENTATION_X11
-#endif
-
-#ifdef SAT_WIN32
-  #define SOGL_IMPLEMENTATION_WIN32
-#endif
+//#endif
+//
+//#ifdef SAT_WIN32
+//  #define SOGL_IMPLEMENTATION_WIN32
+//#endif
 
 #include "extern/sogl/simple-opengl-loader.h"
 

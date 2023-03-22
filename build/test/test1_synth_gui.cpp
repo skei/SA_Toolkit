@@ -1,7 +1,7 @@
 
-#define SAT_PLUGIN_CLAP
+//#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_EXE
-#define SAT_PLUGIN_VST3
+//#define SAT_PLUGIN_VST3
 
 
 #include "base/sat.h"

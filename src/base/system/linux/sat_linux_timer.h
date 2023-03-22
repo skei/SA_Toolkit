@@ -120,7 +120,6 @@ public:
 
   //----------
 
-
   void start(float ms, bool oneshot=false) {
     if (!MRunning) {
       float s = ms * 0.001f;

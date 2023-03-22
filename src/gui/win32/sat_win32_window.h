@@ -19,6 +19,8 @@ private:
 
   bool                        MIsEmbedded           = false;
   bool                        MIsCursorHidden       = false;
+  
+  HWND                        MWindow = nullptr;
 
 //------------------------------
 protected:
@@ -54,14 +56,14 @@ public:
   //----------
 
   virtual ~SAT_Win32Window() {
-    if (MIsMapped) hide();
+    //if (MIsMapped) hide();
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  //HWND  getWin32Window()  { return MWindow;}
+  HWND  getWin32Window()  { return MWindow;}
 
 //------------------------------
 public:
@@ -146,13 +148,13 @@ private:
 //------------------------------
 
   void startEventThread() {
-    MIsEventThreadActive = true;
+    //MIsEventThreadActive = true;
   }
 
   //----------
 
   void stopEventThread() {
-    MIsEventThreadActive = false;
+    //MIsEventThreadActive = false;
   }
 
   //----------

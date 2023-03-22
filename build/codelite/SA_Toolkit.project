@@ -11,10 +11,10 @@
   </VirtualDirectory>
   <VirtualDirectory Name="build">
     <VirtualDirectory Name="test">
-      <File Name="../test/test4_minimal2.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
-      <File Name="../test/test3_minimal.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
-      <File Name="../test/test2_standalone.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
-      <File Name="../test/test1_synth_gui.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+      <File Name="../test/test4_minimal2.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+      <File Name="../test/test3_minimal.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+      <File Name="../test/test2_standalone.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;linux_exe_release;linux_plugin_debug;win32_plugin_release;linux_plugin_release;"/>
+      <File Name="../test/test1_synth_gui.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;linux_exe_release;linux_plugin_debug;win32_plugin_release;linux_plugin_release;"/>
     </VirtualDirectory>
     <File Name="../build.cpp"/>
   </VirtualDirectory>
@@ -164,6 +164,11 @@
         <File Name="../../src/base/types/sat_rect.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="system">
+        <VirtualDirectory Name="win32">
+          <File Name="../../src/base/system/win32/sat_win32_timer.h"/>
+          <File Name="../../src/base/system/win32/sat_win32_time.h"/>
+          <File Name="../../src/base/system/win32/sat_win32_paths.h"/>
+        </VirtualDirectory>
         <File Name="../../src/base/system/sat_timer.h"/>
         <File Name="../../src/base/system/sat_thread.h"/>
         <File Name="../../src/base/system/sat_time.h"/>
@@ -308,7 +313,7 @@
           </VirtualDirectory>
           <VirtualDirectory Name="base">
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/ustring.h"/>
-            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/ustring.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/ustring.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/ucolorspec.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/smartpointer.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/pluginbasefwd.h"/>
@@ -324,16 +329,16 @@
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/fvariant.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/futils.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/funknown.h"/>
-            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/funknown.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/funknown.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/ftypes.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/fstrdefs.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/fplatform.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/falignpush.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/falignpop.h"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/doc.h"/>
-            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/coreiids.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/coreiids.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
             <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/conststringtable.h"/>
-            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/conststringtable.cpp" ExcludeProjConfig="linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+            <File Name="../../src/extern/vst3/vst3sdk/pluginterfaces/base/conststringtable.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
           </VirtualDirectory>
         </VirtualDirectory>
       </VirtualDirectory>
@@ -423,16 +428,16 @@
         <File Name="../../src/extern/nanosvg/nanosvgrast.h"/>
         <File Name="../../src/extern/nanosvg/nanosvg.h"/>
         <VirtualDirectory Name="example">
-          <File Name="../../src/extern/nanosvg/example/example2.c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
-          <File Name="../../src/extern/nanosvg/example/example1.c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/nanosvg/example/example2.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
+          <File Name="../../src/extern/nanosvg/example/example1.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="nanovg">
-        <File Name="../../src/extern/nanovg/nanovg_patched.c" ExcludeProjConfig="linux_plugin_release;linux_exe_debug;linux_plugin_debug;linux_exe_release;"/>
+        <File Name="../../src/extern/nanovg/nanovg_patched.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_release;linux_plugin_debug;linux_exe_debug;win32_plugin_release;linux_plugin_release;"/>
         <File Name="../../src/extern/nanovg/nanovg.h"/>
         <File Name="../../src/extern/nanovg/fontstash.h"/>
         <File Name="../../src/extern/nanovg/nanovg_gl.h"/>
-        <File Name="../../src/extern/nanovg/nanovg.c" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+        <File Name="../../src/extern/nanovg/nanovg.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;Debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
         <File Name="../../src/extern/nanovg/nanovg_gl_utils.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="sogl">
@@ -447,14 +452,14 @@
         <File Name="../../src/extern/rigtorp/SPSCQueue.h"/>
         <File Name="../../src/extern/rigtorp/MPMCQueue.h"/>
         <VirtualDirectory Name="mpmc">
-          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueExample.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
-          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueTest.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueExample.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;Debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
+          <File Name="../../src/extern/rigtorp/mpmc/MPMCQueueTest.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;Debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
         </VirtualDirectory>
         <VirtualDirectory Name="spsc">
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExample.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueTest.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExampleHugepages.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
-          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueBenchmark.cpp" ExcludeProjConfig="linux_plugin_release;linux_exe_release;linux_plugin_debug;Debug;linux_exe_debug;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExample.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;Debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueTest.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;Debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueExampleHugepages.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;Debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
+          <File Name="../../src/extern/rigtorp/spsc/SPSCQueueBenchmark.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;linux_exe_debug;Debug;linux_plugin_debug;linux_exe_release;win32_plugin_release;linux_plugin_release;"/>
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
@@ -473,6 +478,16 @@
       </Compiler>
       <Linker Options="">
         <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="linux_exe_debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;-Wl,-Bsymbolic;-Wl,--export-all-symbols" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="SAT_EXE"/>
+        <Preprocessor Value="SAT_DEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes">
         <Library Value="pthread"/>
         <Library Value="rt"/>
         <Library Value="dl"/>
@@ -488,15 +503,6 @@
         <Library Value="GLX"/>
         <Library Value="GLU"/>
       </Linker>
-      <ResourceCompiler Options=""/>
-    </GlobalSettings>
-    <Configuration Name="linux_exe_debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall;-Wl,-Bsymbolic;-Wl,--export-all-symbols" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
-        <IncludePath Value="."/>
-        <Preprocessor Value="SAT_EXE"/>
-        <Preprocessor Value="SAT_DEBUG"/>
-      </Compiler>
-      <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
@@ -510,7 +516,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName) ../../bin/$(ProjectName)_debug</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName) ../../bin/$(ProjectName)_debug_linux</Command>
+        <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -539,7 +546,22 @@
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_EXE"/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <Library Value="pthread"/>
+        <Library Value="rt"/>
+        <Library Value="dl"/>
+        <Library Value="X11"/>
+        <Library Value="X11-xcb"/>
+        <Library Value="xcb"/>
+        <Library Value="xcb-util"/>
+        <Library Value="xcb-image"/>
+        <Library Value="xcb-cursor"/>
+        <Library Value="xcb-keysyms"/>
+        <Library Value="xkbcommon"/>
+        <Library Value="GL"/>
+        <Library Value="GLX"/>
+        <Library Value="GLU"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
@@ -553,7 +575,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName) ../../bin/$(ProjectName)</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName) ../../bin/$(ProjectName)_linux</Command>
+        <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -582,7 +605,22 @@
         <Preprocessor Value="SAT_PLUGIN"/>
         <Preprocessor Value="SAT_DEBUG"/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <Library Value="pthread"/>
+        <Library Value="rt"/>
+        <Library Value="dl"/>
+        <Library Value="X11"/>
+        <Library Value="X11-xcb"/>
+        <Library Value="xcb"/>
+        <Library Value="xcb-util"/>
+        <Library Value="xcb-image"/>
+        <Library Value="xcb-cursor"/>
+        <Library Value="xcb-keysyms"/>
+        <Library Value="xkbcommon"/>
+        <Library Value="GL"/>
+        <Library Value="GLX"/>
+        <Library Value="GLU"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
@@ -596,7 +634,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug.clap</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug_linux.clap</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -625,7 +663,22 @@
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_PLUGIN"/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <Library Value="pthread"/>
+        <Library Value="rt"/>
+        <Library Value="dl"/>
+        <Library Value="X11"/>
+        <Library Value="X11-xcb"/>
+        <Library Value="xcb"/>
+        <Library Value="xcb-util"/>
+        <Library Value="xcb-image"/>
+        <Library Value="xcb-cursor"/>
+        <Library Value="xcb-keysyms"/>
+        <Library Value="xkbcommon"/>
+        <Library Value="GL"/>
+        <Library Value="GLX"/>
+        <Library Value="GLU"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
@@ -639,7 +692,197 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName).clap</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_linux.clap</Command>
+        <Command Enabled="yes"/>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="win32_exe_debug" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;-Wl,-Bsymbolic;-Wl,--export-all-symbols;-static-libstdc++;-static-libgcc" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="SAT_EXE"/>
+        <Preprocessor Value="SAT_DEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes">
+        <LibraryPath Value="/lib/x86_64-linux-gnu"/>
+        <Library Value="gdi32"/>
+        <Library Value="msimg32"/>
+        <Library Value="opengl32"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName).exe ../../bin/$(ProjectName)_debug_win32.exe</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="win32_exe_release" CompilerType="Cross GCC ( x86_64-linux-gnu )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+        <Preprocessor Value="SAT_EXE"/>
+      </Compiler>
+      <Linker Options="" Required="yes">
+        <Library Value="gdi32"/>
+        <Library Value="msimg32"/>
+        <Library Value="opengl32"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(ProjectName).exe ../../bin/$(ProjectName)_win32.exe</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="win32_plugin_debug" CompilerType="Cross GCC ( x86_64-linux-gnu )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall;-static;-fPIC;-Wl,-Bsymbolic;-Wl,--export-all-symbols;-static-libstdc++;-static-libgcc" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="SAT_PLUGIN"/>
+        <Preprocessor Value="SAT_DEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes">
+        <Library Value="gdi32"/>
+        <Library Value="msimg32"/>
+        <Library Value="opengl32"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).dll ../../bin/$(ProjectName)_debug_win32.clap</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="win32_plugin_release" CompilerType="Cross GCC ( x86_64-linux-gnu )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall;-static;-fPIC;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <Preprocessor Value="NDEBUG"/>
+        <Preprocessor Value="SAT_PLUGIN"/>
+      </Compiler>
+      <Linker Options="" Required="yes">
+        <Library Value="gdi32"/>
+        <Library Value="msimg32"/>
+        <Library Value="opengl32"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Make Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).dll ../../bin/$(ProjectName)_win32.clap</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
