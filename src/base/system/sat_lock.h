@@ -1,17 +1,17 @@
-#ifndef sat_thread_included
-#define sat_thread_included
+#ifndef sat_lock_included
+#define sat_lock_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "base/mip.h"
 
 //----------
 
 #ifdef SAT_LINUX
-  #include "base/system/linux/sat_linux_thread.h"
+  #include "base/system/linux/sat_linux_lock.h"
 #endif
 
 #ifdef SAT_WIN32
-  #include "base/system/win32/sat_win32_thread.h"
+  #include "base/system/win32/sat_win32_lock.h"
 #endif
 
 //----------------------------------------------------------------------

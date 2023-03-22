@@ -1,7 +1,7 @@
 
-//#define SAT_PLUGIN_CLAP
+#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_EXE
-//#define SAT_PLUGIN_VST3
+#define SAT_PLUGIN_VST3
 
 
 #include "base/sat.h"
@@ -10,6 +10,8 @@
 #include "audio/sat_voice_manager.h"
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
+
+#include "gfx/sat_bitmap.h"
 
 //----------------------------------------------------------------------
 //

@@ -542,9 +542,9 @@ uint32_t SAT_RGBA_Grey(uint32_t c) {
 */
 
 uint32_t SAT_RGBA_RgbToHsl(uint32_t color) {
-  float r = (float)((color & 0xff0000) >> 16) * SAT_INV255F;
-  float g = (float)((color & 0xff00  ) >> 8 ) * SAT_INV255F;
-  float b = (float)((color & 0xff    )      ) * SAT_INV255F;
+  float r = (float)((color & 0xff0000) >> 16) * SAT_INV255;
+  float g = (float)((color & 0xff00  ) >> 8 ) * SAT_INV255;
+  float b = (float)((color & 0xff    )      ) * SAT_INV255;
   // r,b and b are assumed to be in the range 0...1
   //float l =  r * 0.299 + g * 0.587 + b * 0.114;
   float u = - r * 0.1471376975169300226 - g * 0.2888623024830699774 + b * 0.436;
@@ -567,12 +567,12 @@ uint32_t SAT_RGBA_RgbToHsl(uint32_t color) {
 */
 
 uint32_t SAT_RGBA_HslToRgb(uint32_t color) {
-  float h = (float)((color & 0xff )) * SAT_INV255F;  // 0..1
+  float h = (float)((color & 0xff )) * SAT_INV255;  // 0..1
   h *= SAT_PI2;                                               // 0..PI2
   h -= SAT_PI;                                                // -PI..PI
-  float s = (float)((color & 0xff00 ) >> 8 ) * SAT_INV255F;  // 0..1
+  float s = (float)((color & 0xff00 ) >> 8 ) * SAT_INV255;  // 0..1
   s = s / SAT_SQRT2;                                          // 0..1/sqrt(2)
-  float l = (float)((color & 0xff0000 ) >> 16 ) * SAT_INV255F;
+  float l = (float)((color & 0xff0000 ) >> 16 ) * SAT_INV255;
   float u = cosf( h ) * s;
   float v = sinf( h ) * s;
   float r = l + 1.139837398373983740  * v;
@@ -589,9 +589,9 @@ uint32_t SAT_RGBA_RgbToHsv(uint32_t color) {
   uint32_t r_ = (color & 0x00ff0000) >> 16;
   uint32_t g_ = (color & 0x0000ff00) >> 8;
   uint32_t b_ = (color & 0x000000ff);
-  float r = (float)r_ * SAT_INV255F;
-  float g = (float)g_ * SAT_INV255F;
-  float b = (float)b_ * SAT_INV255F;
+  float r = (float)r_ * SAT_INV255;
+  float g = (float)g_ * SAT_INV255;
+  float b = (float)b_ * SAT_INV255;
   //local c=r+g+b
   uint32_t c = r + g + b;
   //if c<1e-4 then return 0,2/3,0
@@ -618,10 +618,10 @@ uint32_t SAT_RGBA_HsvToRgb(uint32_t color) {
   uint32_t h_ = (color & 0x00ff0000) >> 16;
   uint32_t s_ = (color & 0x0000ff00) >> 8;
   uint32_t v_ = (color & 0x000000ff);
-  float h = (float)h_ * SAT_INV255F;
+  float h = (float)h_ * SAT_INV255;
   h *= SAT_PI2;//360.0f;
-  float s = (float)s_ * SAT_INV255F;
-  float v = (float)v_ * SAT_INV255F;
+  float s = (float)s_ * SAT_INV255;
+  float v = (float)v_ * SAT_INV255;
   float r = v * (1 + s * (cosf(h) - 1));
   float g = v * (1 + s * (cosf(h - 2.09439) - 1));
   float b = v * (1 + s * (cosf(h + 2.09439) - 1));

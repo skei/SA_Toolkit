@@ -18,7 +18,6 @@ typedef float   sat_sample_t;
 #include "types/sat_quaternion.h"
 #include "types/sat_queue.h"
 #include "types/sat_rect.h"
-#include "types/sat_rgba.h"
 #include "types/sat_stack.h"
 #include "types/sat_string.h"
 #include "types/sat_tree.h"

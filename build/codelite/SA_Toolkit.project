@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="SA_Toolkit" Version="11000" InternalType="Console">
+  <VirtualDirectory Name="tools">
+    <File Name="../../tools/dump_ttl.sh"/>
+    <File Name="../../tools/dump_ttl.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+    <File Name="../../tools/bin2h.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="doc">
+    <File Name="../../doc/makedocs.sh"/>
+    <File Name="../../doc/doxygen.cfg"/>
     <File Name="../../doc/about.txt"/>
     <File Name="../../doc/issues.txt"/>
     <File Name="../../doc/history.txt"/>
@@ -121,6 +128,7 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="../../src/base/sat_test.h"/>
       <VirtualDirectory Name="debug">
         <File Name="../../src/base/debug/sat_debug_test.h"/>
         <File Name="../../src/base/debug/sat_debug_print_window.h"/>
@@ -151,7 +159,6 @@
         <File Name="../../src/base/types/sat_buffer.h"/>
         <File Name="../../src/base/types/sat_list.h"/>
         <File Name="../../src/base/types/sat_complex.h"/>
-        <File Name="../../src/base/types/sat_rgba.h"/>
         <File Name="../../src/base/types/sat_queue.h"/>
         <File Name="../../src/base/types/sat_vector.h"/>
         <File Name="../../src/base/types/sat_dictionary.h"/>
@@ -164,7 +171,19 @@
         <File Name="../../src/base/types/sat_rect.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="system">
+        <File Name="../../src/base/system/sat_simd.h"/>
+        <File Name="../../src/base/system/sat_shm.h"/>
+        <File Name="../../src/base/system/sat_memory.h"/>
+        <File Name="../../src/base/system/sat_lock.h"/>
+        <File Name="../../src/base/system/sat_dialogs.h"/>
+        <File Name="../../src/base/system/sat_cpu.h"/>
+        <File Name="../../src/base/system/sat_atomic.h"/>
         <VirtualDirectory Name="win32">
+          <File Name="../../src/base/system/win32/sat_win32_thread.h"/>
+          <File Name="../../src/base/system/win32/sat_win32_shm.h"/>
+          <File Name="../../src/base/system/win32/sat_win32_lock.h"/>
+          <File Name="../../src/base/system/win32/sat_win32_library.h"/>
+          <File Name="../../src/base/system/win32/sat_win32_dialogs.h"/>
           <File Name="../../src/base/system/win32/sat_win32_timer.h"/>
           <File Name="../../src/base/system/win32/sat_win32_time.h"/>
           <File Name="../../src/base/system/win32/sat_win32_paths.h"/>
@@ -175,12 +194,18 @@
         <File Name="../../src/base/system/sat_file.h"/>
         <File Name="../../src/base/system/sat_paths.h"/>
         <VirtualDirectory Name="linux">
+          <File Name="../../src/base/system/linux/sat_linux_thread.h"/>
+          <File Name="../../src/base/system/linux/sat_linux_shm.h"/>
+          <File Name="../../src/base/system/linux/sat_linux_lock.h"/>
+          <File Name="../../src/base/system/linux/sat_linux_library.h"/>
+          <File Name="../../src/base/system/linux/sat_linux_dialogs.h"/>
           <File Name="../../src/base/system/linux/sat_linux_timer.h"/>
           <File Name="../../src/base/system/linux/sat_linux_paths.h"/>
           <File Name="../../src/base/system/linux/sat_linux_time.h"/>
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="utils">
+        <File Name="../../src/base/utils/sat_json.h"/>
         <File Name="../../src/base/utils/sat_tcc.h"/>
         <File Name="../../src/base/utils/sat_integer_math.h"/>
         <File Name="../../src/base/utils/sat_easing.h"/>
@@ -262,6 +287,15 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="extern">
+      <VirtualDirectory Name="xjson">
+        <File Name="../../src/extern/xjson/xjson.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="utest">
+        <File Name="../../src/extern/utest/utest.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="canvas_ity">
+        <File Name="../../src/extern/canvas_ity/canvas_ity.hpp"/>
+      </VirtualDirectory>
       <VirtualDirectory Name="vst3">
         <VirtualDirectory Name="travesty">
           <File Name="../../src/extern/vst3/travesty/view.h"/>
