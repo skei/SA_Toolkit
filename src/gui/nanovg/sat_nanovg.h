@@ -10,6 +10,7 @@
   //#include "gui/x11/sat_x11.h"
   #include "gui/x11/sat_x11_opengl.h"
 #endif
+
 #ifdef SAT_WIN32
   //#include "gui/win32/sat_win32.h"
   #include "gui/win32/sat_win32_opengl.h"

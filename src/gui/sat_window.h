@@ -429,9 +429,13 @@ public:
     //  if (MRootWidget) MRootWidget->redraw();
     //#endif
     SAT_ImplementedWindow::show();
-    HWND hwnd = getWin32Window();
     
-    MTimer->start(SAT_WINDOW_TIMER_MS,hwnd,false);
+    #ifdef SAT_WIN32
+      HWND hwnd = getWin32Window();
+      MTimer->start(SAT_WINDOW_TIMER_MS,hwnd,false);
+    #else
+      MTimer->start(SAT_WINDOW_TIMER_MS,false);
+    #endif
   }
 
   //----------

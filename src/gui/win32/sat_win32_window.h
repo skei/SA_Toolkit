@@ -107,11 +107,6 @@ const char* sat_win32_cursors[] = {
 //
 //----------------------------------------------------------------------
 
-//class SAT_Win32Window
-//: public SAT_BaseWindow
-//, public SAT_PaintSource
-//, public SAT_PaintTarget {
-
 class SAT_Win32Window {
 
   friend LRESULT CALLBACK sat_win32_eventproc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -120,15 +115,17 @@ class SAT_Win32Window {
 private:
 //------------------------------
 
-//  HWND        MWindow           = nullptr;
+  bool        MIsEmbedded       = false;
+  bool        MIsCursorHidden   = false;
+  
+  HWND        MWindow           = nullptr;
+
   HDC         MWinPaintDC       = nullptr;
   PAINTSTRUCT MWinPaintStruct   = {};
   HDC         MScreenDC         = nullptr;
   HDC         MWindowDC         = nullptr;
 
   intptr_t    MParent           = 0;
-//  int32_t     MAdjustedWidth    = 0;
-//  int32_t     MAdjustedHeight   = 0;
 
   uint32_t    MScreenWidth      = 0;
   uint32_t    MScreenHeight     = 0;
@@ -139,53 +136,22 @@ private:
   int32_t     MCurrentCursor    = -1;
 
   HCURSOR     MWinCursor        = nullptr;
-//  HCURSOR     MDefaultCursor    = nullptr;
+//HCURSOR     MDefaultCursor    = nullptr;
   HCURSOR     MUserCursors[128] = {0};
 
-//  //double      MInitialWidth     = 0.0;
-//  //double      MInitialHeight    = 0.0;
-//  //double      MWidthScale       = 1.0;
-//  //double      MHeightScale      = 1.0;
-
 //------------------------------
 protected:
 //------------------------------
 
-//  bool        MEmbedded         = false;
-//  int32_t     MWindowXpos       = 0;
-//  int32_t     MWindowYpos       = 0;
-//  int32_t     MWindowWidth      = 0;
-//  int32_t     MWindowHeight     = 0;
-//  //bool        MFillBackground   = false;
-//  //uint32_t    MBackgroundColor  = 0x808080;
-
-//------------------------------
-private:
-//------------------------------
-
-  bool                        MIsEmbedded           = false;
-  bool                        MIsCursorHidden       = false;
-  
-  HWND                        MWindow               = nullptr;
-
-//------------------------------
-protected:
-//------------------------------
-
-   int32_t                    MWindowXpos           = 0;
-   int32_t                    MWindowYpos           = 0;
-  uint32_t                    MWindowWidth          = 0;
-  uint32_t                    MWindowHeight         = 0;
-  const char*                 MWindowTitle          = "SAT_Win32Window";
+   int32_t    MWindowXpos       = 0;
+   int32_t    MWindowYpos       = 0;
+  uint32_t    MWindowWidth      = 0;
+  uint32_t    MWindowHeight     = 0;
+  const char* MWindowTitle      = "SAT_Win32Window";
 
 //------------------------------
 public:
 //------------------------------
-
-//  SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-//  : SAT_BaseWindow(AWidth,AHeight,AParent) {
-
-//  }
 
   SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
     MWindowXpos   = 0;
@@ -197,14 +163,8 @@ public:
     MScreenWidth  = GetSystemMetrics(SM_CXSCREEN);
     MScreenHeight = GetSystemMetrics(SM_CYSCREEN);
     MScreenDepth  = GetDeviceCaps(MScreenDC,BITSPIXEL) * GetDeviceCaps(MScreenDC,PLANES);
-    if (AParent) {
-      MIsEmbedded = true;
-      createEmbeddedWindow(AWidth,AHeight,AParent);
-    }
-    else {
-      MIsEmbedded = false;
-      createStandaloneWindow(AWidth,AHeight);
-    }
+    if (AParent) createEmbeddedWindow(AWidth,AHeight,AParent);
+    else createStandaloneWindow(AWidth,AHeight);
     SetWindowLongPtr(MWindow,GWLP_USERDATA,(LONG_PTR)this);
     setTitle(MWindowTitle);
     memset(MUserCursors,0,sizeof(MUserCursors));
@@ -896,7 +856,7 @@ private: // remap
   //----------
 
   LRESULT eventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-
+    
     // NULL for mouse events?
     //if (hWnd != MWinHandle) {
     //  //SAT_Print("wrong window\n");
@@ -1250,6 +1210,7 @@ private: // remap
       //-----
 
       case WM_TIMER: {
+        SAT_PRINT;
         //if (wParam == SAT_GUI_IDLE_TIMER_ID)
 //        on_window_timer();
         break;
@@ -1375,6 +1336,8 @@ public:
 // global window class
 //------------------------------
 
+// TODO: move to SAT_GLOBAL !
+
 SAT_Win32WindowClass SAT_GLOBAL_WIN32_WINDOW_CLASS = {};
 
 //----------
@@ -1387,62 +1350,3 @@ char* SAT_Win32ClassName() {
 //----------------------------------------------------------------------
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-//------------------------------
-public: // paint source, target
-//------------------------------
-
-  bool    srcIsWindow()   override { return true; }
-  int32_t srcGetWidth()   override { return MWindowWidth; }
-  int32_t srcGetHeight()  override { return MWindowHeight; }
-  int32_t srcGetDepth()   override { return MScreenDepth; }
-  HWND    srcGetHWND()    override { return MWindow; }
-  HDC     srcGetHDC()     override { return MWindowDC; }
-
-  bool    tgtIsWindow()   override { return true; }
-  int32_t tgtGetWidth()   override { return MWindowWidth; }
-  int32_t tgtGetHeight()  override { return MWindowHeight; }
-  int32_t tgtGetDepth()   override { return MScreenDepth; }
-  HWND    tgtGetHWND()    override { return MWindow; }
-  HDC     tgtGetHDC()     override { return MWindowDC; }
-//HDC     tgtGetHDC()     override { return MWinPaintDC; }
-
-//------------------------------
-private: // painting
-//------------------------------
-
-  void flush(void) {
-    GdiFlush();
-  }
-
-};
-
-#endif // 0
