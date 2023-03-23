@@ -148,7 +148,7 @@ public: // IPluginFactory
   }
 
   //----------
-
+  
   tresult PLUGIN_API getClassInfo(int32 index, PClassInfo* info) override {
     SAT_Print("SAT_Vst3Factory.getClassInfo\n");
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
@@ -156,9 +156,19 @@ public: // IPluginFactory
     memcpy(info->cid,long_id,16);
     info->cardinality = PClassInfo::kManyInstances;
     strncpy(info->category,kVstAudioEffectClass,PClassInfo::kCategorySize);
+    
+  // ugly, ugly..
+  
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wstringop-truncation"
+    
     strncpy(info->name,descriptor->name,PClassInfo::kNameSize);
+
+  #pragma GCC diagnostic pop
+
     return kResultOk;
   }
+
 
   //----------
 

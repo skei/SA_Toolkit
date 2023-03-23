@@ -46,7 +46,7 @@
   append to existing log file, or create new
 */
 
-  #define SAT_LOG_FILE_APPEND
+  //#define SAT_LOG_FILE_APPEND
 
 /*
   additional precision (for math approximations)

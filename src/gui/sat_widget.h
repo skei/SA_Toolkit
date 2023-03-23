@@ -47,6 +47,9 @@ private:
   double              MWindowScale                        = 1.0;
 
   int32_t             MLastPainted                        = -1;
+  
+  uint32_t            MAlignment                          = SAT_EDGE_NONE;
+  uint32_t            MAnchors                            = SAT_EDGE_NONE;
 
 //------------------------------
 public:
@@ -73,7 +76,6 @@ public:
   virtual void        setListener(SAT_WidgetListener* AListener)      { MListener = AListener; }
   virtual void        setIndex(uint32_t AIndex)                       { MIndex = AIndex; }
   virtual void        setRect(SAT_Rect ARect)                         { MRect = ARect; }
-//  virtual void        setAlignment(uint32_t AAlignment)               { MAlignment = AAlignment; }
   virtual void        setValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] = AValue; }
   virtual void        addValue(double AValue, uint32_t AIndex=0)      { MValues[AIndex] += AValue; }
   virtual void        setModulation(double AValue, uint32_t AIndex=0) { MModulations[AIndex] = AValue; }
@@ -81,6 +83,9 @@ public:
   virtual void        setHint(const char* AHint)                      { strcpy(MHint,AHint); }
   virtual void        setAutoCursor(bool AState=true)                 { MAutoCursor = AState; }
   virtual void        setAutoHint(bool AState=true)                   { MAutoHint = AState; }
+  
+  virtual void        setAlignment(uint32_t AAlignment)               { MAlignment = AAlignment; }
+  virtual void        setAnchors(uint32_t AAnchors)                   { MAnchors = AAnchors; }
 
   virtual void setActive(bool AState=true, bool ARecursive=true) {
     MIsActive = AState;
@@ -122,13 +127,15 @@ public:
   virtual int32_t     getLastPainted()                                { return MLastPainted; }
   //virtual SAT_Rect    getInitialRect()                                { return MInitialRect; }
   virtual SAT_Rect    getBasisRect()                                  { return MBasisRect; }
-//  virtual uint32_t    getAlignment()                                  { return MAlignment; }
   virtual uint32_t    getNumChildWidgets()                            { return MChildren.size(); }
   virtual SAT_Widget* getChildWidget(uint32_t AIndex)                 { return MChildren[AIndex]; }
   
   virtual uint32_t    getNumPopupMenuItems()                          { return 0; }
   virtual const char* getPopupMenuItem(uint32_t AIndex)               { return ""; }
   virtual void        activatePopupMenuItem(uint32_t AIndex)          { }
+
+  virtual uint32_t    getAlignment()                                  { return MAlignment; }
+  virtual uint32_t    getAnchors()                                    { return MAnchors; }
 
 //------------------------------
 public:
@@ -230,6 +237,11 @@ public:
   }
 
   //----------
+  
+  // called from:
+  // - SAT_Window.on_window_resize()
+  //
+  // SAT_GraphWidget overrides this (and call back)
 
   virtual void scaleWidget(double AScale, bool ARecursive=true) {
     MWindowScale = AScale;
@@ -244,19 +256,10 @@ public:
   }
 
   //----------
-
-  virtual void initScaleWidget(double AScale, bool ARecursive=true) {
-    MRect.scale(AScale);
-    MInitialRect.scale(AScale);
-    MBasisRect.scale(AScale);
-    if (ARecursive) {
-      for (uint32_t i=0; i<MChildren.size(); i++) {
-        MChildren[i]->initScaleWidget(AScale,ARecursive);
-      }
-    }
-  }
-
-  //----------
+  
+  // called from:
+  //   SAT_Window.on_window_resize()
+  //   SAT_PopupWidget.open()
 
   virtual void realignChildWidgets(bool ARecursive=true) {
     SAT_Rect parent_rect = getRect();
@@ -266,24 +269,38 @@ public:
       SAT_Widget* child = MChildren[i];
       SAT_Rect child_basisrect = child->getBasisRect();
       child_basisrect.scale(S);
-//      uint32_t alignment = child->getAlignment();
-//      switch (alignment) {
-//        case SAT_WIDGET_ALIGN_NONE: {
-//          child->MRect.x = child_basisrect.x;
-//          child->MRect.y = child_basisrect.y;
-//          break;
-//        }
-//        case SAT_WIDGET_ALIGN_PARENT: {
+      //uint32_t alignment = child->getAlignment();
+      //switch (alignment) {
+      //  case SAT_WIDGET_ALIGN_NONE: {
+      //    child->MRect.x = child_basisrect.x;
+      //    child->MRect.y = child_basisrect.y;
+      //    break;
+      //  }
+      //  case SAT_WIDGET_ALIGN_PARENT: {
           child->MRect.x = parent_rect.x + child_basisrect.x;
           child->MRect.y = parent_rect.y + child_basisrect.y;
-//          break;
-//        }
-//        case SAT_WIDGET_ALIGN_FILL_PARENT: {
-//          child->MRect = parent_rect;
-//          break;
-//        }
-//      }
+      //    break;
+      //  }
+      //  case SAT_WIDGET_ALIGN_FILL_PARENT: {
+      //    child->MRect = parent_rect;
+      //    break;
+      //  }
+      //}
       //SAT_Print("%.3f, %.3f\n",child->MRect.x,child->MRect.y);
+      
+      uint32_t child_alignment = child->getAlignment();
+      uint32_t child_anchors   = child->getAnchors();
+      
+      if (child_alignment & SAT_EDGE_LEFT)    child->MRect.x = parent_rect.x;
+      if (child_alignment & SAT_EDGE_RIGHT)   child->MRect.x = parent_rect.x2() - child->MRect.w;
+      if (child_alignment & SAT_EDGE_TOP)     child->MRect.y = parent_rect.y;
+      if (child_alignment & SAT_EDGE_BOTTOM)  child->MRect.y = parent_rect.y2() - child->MRect.h;
+      
+      if (child_anchors & SAT_EDGE_LEFT)      child->MRect.setX1( parent_rect.x );
+      if (child_anchors & SAT_EDGE_RIGHT)     child->MRect.setX2( parent_rect.x2() );
+      if (child_anchors & SAT_EDGE_TOP)       child->MRect.setY1( parent_rect.y );
+      if (child_anchors & SAT_EDGE_BOTTOM)    child->MRect.setY2( parent_rect.y2() );
+      
       if (ARecursive) {
         child->realignChildWidgets(ARecursive);
       }

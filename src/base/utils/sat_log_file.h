@@ -22,7 +22,8 @@ private:
 //------------------------------
 
   SAT_File    MFile                             = {};
-  const char* MLogfileName                      = "sat_log.txt";
+//  const char* MLogfileName                      = "sat_log.txt";
+  char        MLogfileName[SAT_MAX_PATH_LENGTH] = {0};
   bool        MEnabled                          = false;
   char        MDesktopPath[SAT_MAX_PATH_LENGTH] = {0};
   char        MFilename[SAT_MAX_PATH_LENGTH*2]  = {0};
@@ -45,20 +46,25 @@ public:
 public:
 //------------------------------
 
-  void initialize(const char* AName="sat_log.txt") {
+  void initialize() {
     MEnabled = false;
     //MLogfileName = AName;
     SAT_File file = {};
     SAT_GetDesktopPath(MDesktopPath);
     strcat(MDesktopPath,"skei.audio");
     if (file.direxists(MDesktopPath)) {
-
+      
+      SAT_CurrentTime time = {0};
+      SAT_GetLocalTime(&time);
+      sprintf(MLogfileName,"%02i-%s-%04i_%02i-%02i-%02i",time.day, SAT_MONTH_NAMES[time.month], time.year, time.hour, time.minutes, time.seconds);
+      
       #ifdef SAT_LINUX
         sprintf(MFilename,"%s/%s",MDesktopPath,MLogfileName);
-        //snprintf(MFilename,SAT_MAX_STRING_LENGTH,"%s/%s",MDesktopPath,MLogfileName);
       #else
         sprintf(MFilename,"%s\\%s",MDesktopPath,MLogfileName);
       #endif
+
+      printf("logfile: %s path: %s\n",MLogfileName,MFilename);
 
       #ifdef SAT_LOG_FILE_APPEND
         MFile.open(MFilename,SAT_FILE_APPEND_TEXT);
@@ -84,7 +90,7 @@ public:
 
   //----------
 
-  void cleanup(const char* AName="sat_log.txt") {
+  void cleanup() {
     if (MEnabled) {
       print("\n\n");
       MFile.close();

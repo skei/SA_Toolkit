@@ -90,6 +90,12 @@
 #define SAT_BUTTON_BACKWARD                     8
 #define SAT_BUTTON_FORWARD                      9
 
+#define SAT_CORNER_NONE                         0
+#define SAT_CORNER_UPPER_LEFT                   0x01
+#define SAT_CORNER_UPPER_RIGHT                  0x02
+#define SAT_CORNER_LOWER_RIGHT                  0x04
+#define SAT_CORNER_LOWER_LEFT                   0x08
+
 #define SAT_CURSOR_LOCK                        -4
 #define SAT_CURSOR_UNLOCK                      -3
 #define SAT_CURSOR_SHOW                        -2
@@ -131,6 +137,12 @@
 #define SAT_DIRECTION_RIGHT                     2
 #define SAT_DIRECTION_UP                        3
 #define SAT_DIRECTION_DOWN                      4
+
+#define SAT_EDGE_NONE                           0
+#define SAT_EDGE_LEFT                           0x01
+#define SAT_EDGE_RIGHT                          0x02
+#define SAT_EDGE_TOP                            0x04
+#define SAT_EDGE_BOTTOM                         0x08
 
 #define SAT_FILE_READ_BINARY                    (char*)"rb"
 #define SAT_FILE_READ_TEXT                      (char*)"r"
@@ -200,7 +212,13 @@
 #define SAT_STATE_ALT                           0x08
 #define SAT_STATE_ALTGR                         0x10
 
-#define SAT_TEXT_ALIGN_NONE                     0
+#define SAT_SYMBOL_NONE                         0
+#define SAT_SYMBOL_RECT                         1
+#define SAT_SYMBOL_TRI_DOWN                     2
+#define SAT_SYMBOL_CIRCLE                       3
+#define SAT_SYMBOL_FILLED_RECT                  10
+
+//#define SAT_TEXT_ALIGN_NONE                     0
 #define SAT_TEXT_ALIGN_CENTER                   0
 #define SAT_TEXT_ALIGN_LEFT                     0x01
 #define SAT_TEXT_ALIGN_RIGHT                    0x02
@@ -347,6 +365,7 @@ const char  SAT_CSYMBOLS[]    = "________________________________"
                                 "________________0123456789______"
                                 "_ABCDEFGHIJKLMNOPQRSTUVWXYZ_____"
                                 "_abcdefghijklmnopqrstuvwxyz_____";
+const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" };
 
 //----------------------------------------------------------------------
 #endif

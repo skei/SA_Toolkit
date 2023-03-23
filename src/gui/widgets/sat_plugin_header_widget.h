@@ -33,6 +33,9 @@ public:
     setBackgroundColor(SAT_DarkestGrey);
     setDrawBorder(false);
     
+    setAlignment(SAT_EDGE_TOP);
+    setAnchors(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    
   }
   
   //----------

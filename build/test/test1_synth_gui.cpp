@@ -318,6 +318,9 @@ public:
     text->setRoundedCorners(true);
     text->setCornerSize(10);
     
+    //text->setAlignment(SAT_EDGE_BOTTOM);
+    //text->setAnchors(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    
     SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(50,80,200,20),"Param 1", 0.0);
     MRootPanel->appendChildWidget(val);
     val->setTextSize(12);
@@ -385,6 +388,19 @@ public:
     knob->setSnap(true);
     knob->setSnapPos(0.5);
     knob->setValue(0.25);
+    
+    
+    SAT_SymbolWidget* symbol1 = new SAT_SymbolWidget(SAT_Rect(260,280,10,10),SAT_SYMBOL_RECT);
+    MRootPanel->appendChildWidget(symbol1);
+
+    SAT_SymbolWidget* symbol2 = new SAT_SymbolWidget(SAT_Rect(275,280,10,10),SAT_SYMBOL_TRI_DOWN);
+    MRootPanel->appendChildWidget(symbol2);
+
+    SAT_SymbolWidget* symbol3 = new SAT_SymbolWidget(SAT_Rect(290,280,10,10),SAT_SYMBOL_CIRCLE);
+    MRootPanel->appendChildWidget(symbol3);
+
+    SAT_SymbolWidget* symbol4 = new SAT_SymbolWidget(SAT_Rect(305,280,10,10),SAT_SYMBOL_FILLED_RECT);
+    MRootPanel->appendChildWidget(symbol4);
 
     SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(320,220,140,20),"MenuItem");
     MRootPanel->appendChildWidget(menuitem);
@@ -433,6 +449,8 @@ public:
     //ppp->setDropShadowColors( SAT_Color(0,0,0,0.75), SAT_Color(0,0,0,0) );
     ppp->setDropShadowColors( SAT_DarkestGrey, SAT_DarkGrey );
     ppp->setDropShadowOffset(1,1);
+    
+    ppp->setAnchors(SAT_EDGE_BOTTOM | SAT_EDGE_RIGHT);
     
     SAT_ScrollBarWidget* scrollbar = new SAT_ScrollBarWidget(SAT_Rect(260,310,200,20));
     MRootPanel->appendChildWidget(scrollbar);

@@ -214,14 +214,6 @@ public:
 public:
 //------------------------------
 
-  virtual void initScale(double AScale) {
-    MInitialWidth *= AScale;
-    MInitialHeight *= AScale;
-    MRootWidget->initScaleWidget(AScale,true);
-  }
-  
-  //----------
-
   virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
@@ -282,11 +274,9 @@ public:
 
   virtual void prepareWidgets() {
     if (MRootWidget) {
-      //MRootWidget->initScaleWidget(0.5, true);
       MRootWidget->prepare(this,true);
-      //SAT_Rect R = MRootWidget->getRect();
       MPendingDirtyWidgets.write(MRootWidget);
-      invalidateWidget(MRootWidget);
+      invalidateWidget(MRootWidget);  // initial painting..
     }
   }
 
@@ -487,6 +477,7 @@ public: // window
     if (MRootWidget) {
       if (MAutoScaleWidgets) MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(AWidth,AHeight);
+      SAT_Print("realigning\n");
       MRootWidget->realignChildWidgets();
       MPendingDirtyWidgets.write(MRootWidget);
     }

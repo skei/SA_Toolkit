@@ -60,6 +60,7 @@ public:
     basisrect.x = rect.x / S;
     basisrect.y = rect.y / S;
     setBasisRect(basisrect);
+    SAT_Print("realigning\n");
     realignChildWidgets();
     do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
     setActive(true);
