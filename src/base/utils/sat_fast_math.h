@@ -120,11 +120,11 @@ float SAT_ExpF(const float v) {
     double d;
     struct {
       // ???
-      #ifdef SAT_LITTLE_ENDIAN
+      //#ifdef SAT_LITTLE_ENDIAN
       int i,j;
-      #else
-      int j,i;
-      #endif
+      //#else
+      //int j,i;
+      //#endif
     } s;
   } u;
   u.s.i = (int)(1512775*(double)v) + 1072632447;

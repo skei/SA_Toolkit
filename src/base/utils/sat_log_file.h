@@ -65,12 +65,7 @@ public:
       #endif
 
       printf("logfile: %s path: %s\n",MLogfileName,MFilename);
-
-      #ifdef SAT_LOG_FILE_APPEND
-        MFile.open(MFilename,SAT_FILE_APPEND_TEXT);
-      #else
-        MFile.open(MFilename,SAT_FILE_WRITE_TEXT);
-      #endif
+      MFile.open(MFilename,SAT_FILE_WRITE_TEXT);
 
       if (!MFile.isOpen()) {
         printf("Log: couldn't open logfile '%s'\n",MFilename);

@@ -49,7 +49,8 @@ private:
   int32_t             MLastPainted                        = -1;
   
   uint32_t            MAlignment                          = SAT_EDGE_NONE;
-  uint32_t            MAnchors                            = SAT_EDGE_NONE;
+  uint32_t            MStretching                         = SAT_EDGE_NONE;
+  SAT_Rect            MInnerBorder                        = SAT_Rect(0,0,0,0);
 
 //------------------------------
 public:
@@ -85,7 +86,14 @@ public:
   virtual void        setAutoHint(bool AState=true)                   { MAutoHint = AState; }
   
   virtual void        setAlignment(uint32_t AAlignment)               { MAlignment = AAlignment; }
-  virtual void        setAnchors(uint32_t AAnchors)                   { MAnchors = AAnchors; }
+  virtual void        setStretching(uint32_t AStretch)                { MStretching = AStretch; }
+  virtual void        setInnerBorder(SAT_Rect ABorder)                { MInnerBorder = ABorder; }
+
+//virtual void        setInitialRect(SAT_Rect ARect)                  { MInitialRect = ARect; }
+  virtual void        setBasisRect(SAT_Rect ARect)                    { MBasisRect = ARect; }
+
+  virtual void        setDisabled(bool AState=true)                   { MIsDisabled = AState; }
+  virtual void        setLastPainted(int32_t ACount)                  { MLastPainted = ACount; }
 
   virtual void setActive(bool AState=true, bool ARecursive=true) {
     MIsActive = AState;
@@ -105,13 +113,9 @@ public:
     }
   }
 
-  virtual void        setDisabled(bool AState=true)                   { MIsDisabled = AState; }
-  virtual void        setLastPainted(int32_t ACount)                  { MLastPainted = ACount; }
-
-  //virtual void setInitialRect(SAT_Rect ARect) { MInitialRect = ARect; }
-  virtual void setBasisRect(SAT_Rect ARect) { MBasisRect = ARect; }
-
+//------------------------------
 public:
+//------------------------------
 
   virtual uint32_t    getIndex()                                      { return MIndex; }
   virtual SAT_Rect    getRect()                                       { return MRect; }
@@ -135,7 +139,8 @@ public:
   virtual void        activatePopupMenuItem(uint32_t AIndex)          { }
 
   virtual uint32_t    getAlignment()                                  { return MAlignment; }
-  virtual uint32_t    getAnchors()                                    { return MAnchors; }
+  virtual uint32_t    getStretching()                                 { return MStretching; }
+  virtual SAT_Rect    getInnerBorder()                                { return MInnerBorder; }
 
 //------------------------------
 public:
@@ -262,44 +267,71 @@ public:
   //   SAT_PopupWidget.open()
 
   virtual void realignChildWidgets(bool ARecursive=true) {
-    SAT_Rect parent_rect = getRect();
     double S = getWindowScale();
-    //SAT_Print("S %.3f\n",S);
+
+    SAT_Rect parent_rect = getRect();
+    SAT_Rect ib = MInnerBorder;
+    ib.scale(S);
+    parent_rect.shrink(ib);
+
+    SAT_Rect client_rect = parent_rect;
+    
     for (uint32_t i=0; i<MChildren.size(); i++) {
+
       SAT_Widget* child = MChildren[i];
       SAT_Rect child_basisrect = child->getBasisRect();
       child_basisrect.scale(S);
-      //uint32_t alignment = child->getAlignment();
-      //switch (alignment) {
-      //  case SAT_WIDGET_ALIGN_NONE: {
-      //    child->MRect.x = child_basisrect.x;
-      //    child->MRect.y = child_basisrect.y;
-      //    break;
-      //  }
-      //  case SAT_WIDGET_ALIGN_PARENT: {
-          child->MRect.x = parent_rect.x + child_basisrect.x;
-          child->MRect.y = parent_rect.y + child_basisrect.y;
-      //    break;
-      //  }
-      //  case SAT_WIDGET_ALIGN_FILL_PARENT: {
-      //    child->MRect = parent_rect;
-      //    break;
-      //  }
-      //}
-      //SAT_Print("%.3f, %.3f\n",child->MRect.x,child->MRect.y);
+
+      // assume aligned relative to parent
+      // (client or parent?)
       
+      child->MRect.x = parent_rect.x + child_basisrect.x;
+      child->MRect.y = parent_rect.y + child_basisrect.y;
+      
+      // alignment
+
       uint32_t child_alignment = child->getAlignment();
-      uint32_t child_anchors   = child->getAnchors();
       
-      if (child_alignment & SAT_EDGE_LEFT)    child->MRect.x = parent_rect.x;
-      if (child_alignment & SAT_EDGE_RIGHT)   child->MRect.x = parent_rect.x2() - child->MRect.w;
-      if (child_alignment & SAT_EDGE_TOP)     child->MRect.y = parent_rect.y;
-      if (child_alignment & SAT_EDGE_BOTTOM)  child->MRect.y = parent_rect.y2() - child->MRect.h;
+      if (child_alignment & SAT_EDGE_LEFT) {
+        //child->MRect.x = parent_rect.x;
+        child->MRect.x = client_rect.x;
+        client_rect.x += child->MRect.w;
+        client_rect.w -= child->MRect.w;
+      }
+      if (child_alignment & SAT_EDGE_RIGHT) {
+        //child->MRect.x = parent_rect.x2() - child->MRect.w;
+        child->MRect.x = client_rect.x2() - child->MRect.w;
+        //client_rect.x += child->MRect.w;
+        client_rect.w -= child->MRect.w;
+      }
+      if (child_alignment & SAT_EDGE_TOP) {
+        //child->MRect.y = parent_rect.y;
+        child->MRect.y = client_rect.y;
+        client_rect.y += child->MRect.h;
+        client_rect.h -= child->MRect.h;
+      }
+      if (child_alignment & SAT_EDGE_BOTTOM) {
+        //child->MRect.y = parent_rect.y2() - child->MRect.h;
+        child->MRect.y = client_rect.y2() - child->MRect.h;
+        //client_rect.y += child->MRect.h;
+        client_rect.h -= child->MRect.h;
+      }
       
-      if (child_anchors & SAT_EDGE_LEFT)      child->MRect.setX1( parent_rect.x );
-      if (child_anchors & SAT_EDGE_RIGHT)     child->MRect.setX2( parent_rect.x2() );
-      if (child_anchors & SAT_EDGE_TOP)       child->MRect.setY1( parent_rect.y );
-      if (child_anchors & SAT_EDGE_BOTTOM)    child->MRect.setY2( parent_rect.y2() );
+      // anchors
+      
+      uint32_t child_stretching   = child->getStretching();
+
+      //if (child_anchors & SAT_EDGE_LEFT)      child->MRect.setX1( parent_rect.x );
+      //if (child_anchors & SAT_EDGE_RIGHT)     child->MRect.setX2( parent_rect.x2() );
+      //if (child_anchors & SAT_EDGE_TOP)       child->MRect.setY1( parent_rect.y );
+      //if (child_anchors & SAT_EDGE_BOTTOM)    child->MRect.setY2( parent_rect.y2() );
+      
+      if (child_stretching & SAT_EDGE_LEFT)      child->MRect.setX1( client_rect.x );
+      if (child_stretching & SAT_EDGE_RIGHT)     child->MRect.setX2( client_rect.x2() );
+      if (child_stretching & SAT_EDGE_TOP)       child->MRect.setY1( client_rect.y );
+      if (child_stretching & SAT_EDGE_BOTTOM)    child->MRect.setY2( client_rect.y2() );
+      
+      // recursive
       
       if (ARecursive) {
         child->realignChildWidgets(ARecursive);

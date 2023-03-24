@@ -18,32 +18,35 @@ class SAT_PanelWidget
 private:
 //------------------------------
 
-  bool      MFillBackground     = true;
-  SAT_Color MBackgroundColor    = SAT_DarkGrey;
+  bool      MFillBackground       = true;
+  SAT_Color MBackgroundColor      = SAT_DarkGrey;
   
-  bool      MFillGradient       =false;
-  SAT_Color MGradientColor1     = SAT_LightGrey;
-  SAT_Color MGradientColor2     = SAT_DarkGrey;
+  bool      MFillGradient         = false;
+  SAT_Color MGradientColor1       = SAT_LightGrey;
+  SAT_Color MGradientColor2       = SAT_DarkGrey;
   
-  bool      MDrawBorder         = true;
-  SAT_Color MBorderColor        = SAT_LightGrey;
-  double    MBorderWidth        = 1.0;
+  bool      MDrawBorder           = true;
+  SAT_Color MBorderColor          = SAT_LightGrey;
+  double    MBorderWidth          = 1.0;
   
-  bool      MRoundedCorners     = false;
-  double    MTLCorner           = 0.0;
-  double    MTRCorner           = 0.0;
-  double    MBRCorner           = 0.0;
-  double    MBLCorner           = 0.0;
+  bool      MRoundedCorners       = false;
+  double    MTLCorner             = 0.0;
+  double    MTRCorner             = 0.0;
+  double    MBRCorner             = 0.0;
+  double    MBLCorner             = 0.0;
   
-  bool      MDrawDropShadow     = false;
-  double    MDropShadowFeather  = 10.0;
-  double    MDropShadowCorner   = 0.0;
-  double    MDropShadowXOffset  = 0.0;
-  double    MDropShadowYOffset  = 0.0;
-  SAT_Color MDropShadowIColor   = SAT_DarkestGrey;//SAT_Color(0,0,0,1);
-  SAT_Color MDropShadowOColor   = SAT_DarkGrey;//SAT_Color(1,0,0,0);
-  bool      MDropShadowInner    = false;
+  bool      MDrawDropShadow       = false;
+  double    MDropShadowFeather    = 10.0;
+  double    MDropShadowCorner     = 0.0;
+  double    MDropShadowXOffset    = 0.0;
+  double    MDropShadowYOffset    = 0.0;
+  SAT_Color MDropShadowIColor     = SAT_DarkestGrey;//SAT_Color(0,0,0,1);
+  SAT_Color MDropShadowOColor     = SAT_DarkGrey;//SAT_Color(1,0,0,0);
+  bool      MDropShadowInner      = false;
 
+  double    MDropShadowXOffsetTMP = 0.0;
+  double    MDropShadowYOffsetTMP = 0.0;
+  
 //------------------------------
 public:
 //------------------------------
@@ -249,6 +252,38 @@ public:
     fillBackground(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
+  }
+  
+  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (AButton == SAT_BUTTON_LEFT) {
+      if (MDrawDropShadow && !MDropShadowInner) {
+        MDropShadowXOffsetTMP = MDropShadowXOffset;
+        MDropShadowYOffsetTMP = MDropShadowYOffset;
+        MDropShadowXOffset = 0;
+        MDropShadowYOffset = 0;
+        //SAT_Color temp  = MGradientColor1;
+        //MGradientColor1 = MGradientColor2;
+        //MGradientColor2 = temp;
+        do_widget_update(this,0);
+        do_widget_redraw(this,0);
+      }
+    }
+  }
+  
+  //----------
+
+  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (AButton == SAT_BUTTON_LEFT) {
+      if (MDrawDropShadow && !MDropShadowInner) {
+        MDropShadowXOffset = MDropShadowXOffsetTMP;
+        MDropShadowYOffset = MDropShadowYOffsetTMP;
+        //SAT_Color temp  = MGradientColor1;
+        //MGradientColor1 = MGradientColor2;
+        //MGradientColor2 = temp;
+        do_widget_update(this,0);
+        do_widget_redraw(this,0);
+      }
+    }
   }
 
 };

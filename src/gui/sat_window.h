@@ -477,7 +477,7 @@ public: // window
     if (MRootWidget) {
       if (MAutoScaleWidgets) MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(AWidth,AHeight);
-      SAT_Print("realigning\n");
+      //SAT_Print("realigning\n");
       MRootWidget->realignChildWidgets();
       MPendingDirtyWidgets.write(MRootWidget);
     }

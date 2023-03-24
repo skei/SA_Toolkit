@@ -7,6 +7,7 @@
 #define SAT_VENDOR                              "skei.audio"
 #define SAT_URL                                 "https://github.com/skei/SA_Toolkit"
 
+
 #define SAT_AUDIO_QUANTIZED_SIZE                32
 #define SAT_MAX_NAME_LENGTH                     256
 #define SAT_MAX_PATH_LENGTH                     512
@@ -33,7 +34,8 @@
 #define SAT_WIDGET_MAX_VALUES                   16
 #define SAT_WINDOW_MAX_DIRTY_WIDGETS            1024
 #define SAT_WINDOW_TIMER_MS                     20
-#define SAT_WINDOW_DBLCLICK_MS                  200
+#define SAT_WINDOW_DBLCLICK_MS                  250
+
 
 //----------------------------------------------------------------------
 //
@@ -41,67 +43,88 @@
 //
 //----------------------------------------------------------------------
 
+  //#define SAT_NO_AUTODELETE
+  //#define SAT_NO_BITMAP_PNG
+  //#define SAT_NO_BITMAP_PNG_FILE
+  //#define SAT_NO_DMC_COMPRESS
+  //#define SAT_NO_ENTRY
 
-/*
-  append to existing log file, or create new
-*/
+  //----------
 
-  //#define SAT_LOG_FILE_APPEND
-
-/*
-  additional precision (for math approximations)
-*/
+  /*
+    additional precision (for math approximations)
+  */
 
   //#define SAT_MATH_EXTRA_PRECISION
+  
+  //----------
+
+  //#define SAT_NO_STDLIB
+  //#define SAT_UNIT_TESTING
 
 //--------------------
 // debug
 //--------------------
 
-/*
-  trace memcalls (malloc/new vs free/delete)
-*/
+
+  /*
+    trace memcalls (malloc/new vs free/delete)
+  */
 
   #define SAT_DEBUG_ASSERT
+  
+  //----------
 
-/*
-  trace memcalls (malloc/new vs free/delete)
-*/
+  /*
+    call stack
+  */
 
-  //#define SAT_DEBUG_MEMTRACE
+  #define SAT_DEBUG_CALL_STACK
 
-/*
-  SAT_Print outputs through socket.
-  output to console: nc -U -l -k /tmp/sat.socket
-  automatically defined if compiling as plugin
-  automatically undefined if compiling as exe
-*/
+  //----------
 
-  //#define SAT_DEBUG_PRINT_SOCKET
-
-/*
-  print thread id (in SAT_Print)
-*/
-
-  //#define SAT_DEBUG_PRINT_THREAD
-
-/*
-  print time (in SAT_Print)
-*/
-
-  //#define SAT_DEBUG_PRINT_TIME
-
-/*
-  crash handler
-*/
+  /*
+    crash handler
+  */
 
   #define SAT_DEBUG_CRASH_HANDLER
 
-/*
-  call stack
-*/
+  //----------
 
-  #define SAT_DEBUG_CALL_STACK
+  /*
+    trace memcalls (malloc/new vs free/delete)
+  */
+
+  //#define SAT_DEBUG_MEMTRACE
+
+  //----------
+
+  /*
+    SAT_Print outputs through socket.
+    output to console: nc -U -l -k /tmp/sat.socket
+    automatically defined if compiling as plugin
+    automatically undefined if compiling as exe
+  */
+
+  //#define SAT_DEBUG_PRINT_SOCKET
+
+  //----------
+
+  /*
+    print thread id (in SAT_Print)
+  */
+
+  //#define SAT_DEBUG_PRINT_THREAD
+
+  //----------
+
+  /*
+    print time (in SAT_Print)
+  */
+
+  //#define SAT_DEBUG_PRINT_TIME
+
+
 
 //----------------------------------------------------------------------
 //
@@ -110,28 +133,34 @@
 //----------------------------------------------------------------------
 
 
-/*
-  delete plugin ('delete this') in SAT_Plugin.destroy()
-  otherwise, override destroy() and do it manually
-*/
+  /*
+    delete plugin ('delete this') in SAT_Plugin.destroy()
+    otherwise, override destroy() and do it manually
+  */
 
   #define SAT_DELETE_PLUGIN_IN_DESTROY
 
-/*
-  parameter changes not meant for a specific voice, will be sent to ALL voices
-*/
+  //----------
+
+  /*
+    parameter changes not meant for a specific voice, will be sent to ALL voices
+  */
 
   #define SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
-/*
-  modulation not meant for a specific voice, will be sent to ALL voices
-*/
+  //----------
+
+  /*
+    modulation not meant for a specific voice, will be sent to ALL voices
+  */
 
   #define SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
 
-/*
-  convert regular MIDI to note events
-*/
+  //----------
+
+  /*
+    convert regular MIDI to note events
+  */
 
   #define SAT_VOICE_MANAGER_CONVERT_MIDI
 
@@ -143,20 +172,28 @@
 //----------------------------------------------------------------------
 
 
-/*
-  removes all traces of gui/editor in the plugin
-*/
+  /*
+    removes all traces of gui/editor in the plugin
+  */
 
   //#define SAT_NO_GUI
 
-/*
-  waits for notify event before returning when opening windows..
-*/
+  //----------
+  
+  //#define SAT_MOUSE_DOUBLECLICK
+  //#define SAT_WIN32_INVALIDATE_WHEN_RESIZING  
+  
+  //----------
+
+  /*
+    waits for notify event before returning when opening windows..
+  */
 
   #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
+  //----------
 
-
+  //#define SAT_USE_CAIRO  
 
 
 //----------------------------------------------------------------------

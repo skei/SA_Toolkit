@@ -1,8 +1,8 @@
 
 #define SAT_PLUGIN_CLAP
-//#define SAT_PLUGIN_EXE
 #define SAT_PLUGIN_VST3
 
+//
 
 #include "base/sat.h"
 #include "audio/sat_audio_math.h"
@@ -212,7 +212,7 @@ public:
     
     /*SAT_Parameter* par1 =*/ appendParameter( new SAT_Parameter("Param1",0.1) );
     /*SAT_Parameter* par2 =*/ appendParameter( new SAT_Parameter("Param2",0.4) );
-    SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",0.7) );
+      SAT_Parameter* par3 =   appendParameter( new SAT_Parameter("Param3",0.7) );
     par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
     
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
@@ -282,10 +282,12 @@ public:
     AWindow->appendRootWidget(MRootPanel);
     MRootPanel->setFillBackground(true);
     MRootPanel->setDrawBorder(false);
+    MRootPanel->setInnerBorder(SAT_Rect(5,5,5,5));
 
     // menu
 
-    SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(260,70,150,150));
+    //SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(260,70,150,150));
+    SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(0,0,150,150));
     menu->setRightClickClose(true);
 
     SAT_MenuItemWidget* i1 = new SAT_MenuItemWidget(SAT_Rect(5,5,140,15),"Item 1");
@@ -305,11 +307,6 @@ public:
     SAT_PluginHeaderWidget* plugin_header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,EDITOR_WIDTH,40),"toolkit");
     MRootPanel->appendChildWidget(plugin_header);
 
-//    SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(50,50,200,200));
-//    MRootPanel->appendChildWidget(logo);
-//    logo->setLogoColor(SAT_DarkRed);
-//    //logo->setAlignment(SAT_WIDGET_ALIGN_FILL_PARENT);
-
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,50,200,20),"Hello world!");
     MRootPanel->appendChildWidget(text);
     text->setTextSize(12);
@@ -318,8 +315,8 @@ public:
     text->setRoundedCorners(true);
     text->setCornerSize(10);
     
-    //text->setAlignment(SAT_EDGE_BOTTOM);
-    //text->setAnchors(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    text->setAlignment(/*SAT_EDGE_LEFT |*/ SAT_EDGE_BOTTOM);
+    text->setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
     
     SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(50,80,200,20),"Param 1", 0.0);
     MRootPanel->appendChildWidget(val);
@@ -364,10 +361,13 @@ public:
 
     SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(50,170,95,20));
     MRootPanel->appendChildWidget(button1);
-
+    
     SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(155,170,95,20));
     MRootPanel->appendChildWidget(button2);
     button2->setIsToggle(true);
+
+    //button1->setAlignment(SAT_EDGE_LEFT);
+    //button2->setAnchors(SAT_EDGE_BOTTOM);
 
     // column 2
 
@@ -388,7 +388,6 @@ public:
     knob->setSnap(true);
     knob->setSnapPos(0.5);
     knob->setValue(0.25);
-    
     
     SAT_SymbolWidget* symbol1 = new SAT_SymbolWidget(SAT_Rect(260,280,10,10),SAT_SYMBOL_RECT);
     MRootPanel->appendChildWidget(symbol1);
@@ -425,11 +424,17 @@ public:
     SAT_GraphWidget* graph = new SAT_GraphWidget(SAT_Rect(470,50,200,230));
     MRootPanel->appendChildWidget(graph);
     graph->setFillBackground(true);
+    
+    //graph->setAlignment(SAT_EDGE_LEFT);
+    graph->setStretching(SAT_EDGE_RIGHT);
+
+    
 
     for (uint32_t i=0; i<5; i++) {
       SAT_GraphModule* module = new SAT_GraphModule();
       module->numInputs = 2;
       module->inputs[0] = SAT_PIN_SIGNAL;
+      module->outputs[0] = SAT_PIN_SIGNAL;
       module->numOutputs = 2;
       graph->addModule(module,i*10,i*10,"module");
     }
@@ -450,7 +455,8 @@ public:
     ppp->setDropShadowColors( SAT_DarkestGrey, SAT_DarkGrey );
     ppp->setDropShadowOffset(1,1);
     
-    ppp->setAnchors(SAT_EDGE_BOTTOM | SAT_EDGE_RIGHT);
+    ppp->setAlignment(SAT_EDGE_RIGHT );
+    ppp->setStretching(/* SAT_EDGE_RIGHT | */ SAT_EDGE_BOTTOM );
     
     SAT_ScrollBarWidget* scrollbar = new SAT_ScrollBarWidget(SAT_Rect(260,310,200,20));
     MRootPanel->appendChildWidget(scrollbar);
@@ -461,6 +467,7 @@ public:
     
     // menus etc have to be appended last, because they need to be drawn on
     // top of other widgets (when visible)..
+    
     MRootPanel->appendChildWidget(menu);
 
     AEditor->connect(val,     getParameter(0));
@@ -473,14 +480,6 @@ public:
 //------------------------------
 public:
 //------------------------------
-
-// TODO
-
-  //void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
-  //  MVoiceManager.preProcessEvents(in_events,out_events);
-  //}
-
-  //----------
 
   void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
     MVoiceManager.postProcessEvents(in_events,out_events);
@@ -559,49 +558,51 @@ public:
 public:
 //------------------------------
 
+  // block
+
   void processAudio(SAT_ProcessContext* AContext) final {
-
     const clap_process_t* process = AContext->process;
-    SAT_Assert(process);
-
     uint32_t length = process->frames_count;
-    SAT_Assert(length > 0);
-    
     float** outputs = process->audio_outputs[0].data32;
-    SAT_Assert(outputs);
-    
-    //SAT_ClearStereoBuffer(outputs,length);
-    
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
-    
     sat_param_t scale = getParameterValue(2) + getModulationValue(2);
     scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);
-
   }
 
   //----------
 
   // interleaved
 
-//  void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
-//    const clap_process_t* process = AContext->process;
-//    //uint32_t length = process->frames_count;
-//    float* inputs[2];
-//    float* outputs[2];
-//    inputs[0]  = process->audio_inputs[0].data32[0] + offset;
-//    inputs[1]  = process->audio_inputs[0].data32[1] + offset;
-//    outputs[0] = process->audio_outputs[0].data32[0] + offset;
-//    outputs[1] = process->audio_outputs[0].data32[1] + offset;
-//    SAT_CopyStereoBuffer(outputs,inputs,length);
-//    sat_param_t scale = getParameterValue(2) + getModulationValue(2);
-//    scale = SAT_Clamp(scale,0,1);
-//    SAT_ScaleStereoBuffer(outputs,scale,length);
-//  }
+  /*
+  void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
+    const clap_process_t* process = AContext->process;
+    //uint32_t length = process->frames_count;
+    float* inputs[2];
+    float* outputs[2];
+    inputs[0]  = process->audio_inputs[0].data32[0] + offset;
+    inputs[1]  = process->audio_inputs[0].data32[1] + offset;
+    outputs[0] = process->audio_outputs[0].data32[0] + offset;
+    outputs[1] = process->audio_outputs[0].data32[1] + offset;
+    SAT_CopyStereoBuffer(outputs,inputs,length);
+    sat_param_t scale = getParameterValue(2) + getModulationValue(2);
+    scale = SAT_Clamp(scale,0,1);
+    SAT_ScaleStereoBuffer(outputs,scale,length);
+  }
+  */
 
-};
+  //----------
+
+  // quantized
+
+  /*
+  void processAudio(SAT_ProcessContext* AContext, uint32_t offset) final {
+  }
+  */
+
+  };
 
 //----------------------------------------------------------------------
 //
@@ -613,18 +614,16 @@ public:
 
   #include "plugin/sat_entry.h"
 
-  //SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
-
   //----------
 
+  /*
+  
   void SAT_Register(SAT_Registry* ARegistry) {
     //SAT_PRINT;
     uint32_t index = ARegistry->getNumDescriptors();
     SAT_Log("SAT_Register -> id %s index %i\n",myDescriptor.id,index);
     ARegistry->registerDescriptor(&myDescriptor);
   }
-
-  //----------
 
   const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
     SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);
@@ -634,6 +633,10 @@ public:
     }
     return nullptr;
   }
+  
+  */
+
+  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
 #endif // SAT_NO_ENTRY
 

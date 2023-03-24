@@ -34,7 +34,7 @@ public:
     setDrawBorder(false);
     
     setAlignment(SAT_EDGE_TOP);
-    setAnchors(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
     
   }
   
