@@ -722,7 +722,7 @@ public: // widget listener
   }
 
   //----------
-
+  
   void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     //SAT_PRINT;
     if (!ASender) ASender = MRootWidget;
@@ -783,6 +783,11 @@ public: // widget listener
 
   void do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) override {
   }
+  
+  //----------
+
+  //void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+  //}
 
 //------------------------------
 public: // timer listener

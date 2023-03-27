@@ -216,6 +216,15 @@ public:
     if (MListener) MListener->do_widget_redraw(nullptr,0,0);
   }
 
+  //----------
+
+  virtual void notify(uint32_t AReason, int32_t AValue) {
+    //SAT_PRINT;
+    if (MListener) MListener->do_widget_notify(this,AReason,AValue);
+  }
+
+  //----------
+
 //------------------------------
 public:
 //------------------------------
@@ -270,9 +279,9 @@ public:
     double S = getWindowScale();
 
     SAT_Rect parent_rect = getRect();
-    SAT_Rect ib = MInnerBorder;
-    ib.scale(S);
-    parent_rect.shrink(ib);
+//    SAT_Rect ib = MInnerBorder;
+//    ib.scale(S);
+//    parent_rect.shrink(ib);
 
     SAT_Rect client_rect = parent_rect;
     
@@ -458,8 +467,23 @@ public: // widget listener
   }
 
   void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-    if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+  //switch(AReason) {
+  //  case SAT_WIDGET_NOTIFY_CLOSE:
+  //    redraw();
+  //    break;
+  //  case SAT_WIDGET_NOTIFY_MOVED:
+  //    redraw();
+  //    break;
+  //  case SAT_WIDGET_NOTIFY_RESIZED:
+  //    redraw();
+  //    break;
+  //  default:
+        if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+  //    break;
+  //}
   }
+  
+  
 
 };
 

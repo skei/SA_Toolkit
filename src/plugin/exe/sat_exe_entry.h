@@ -121,6 +121,10 @@ void open_editor(const clap_plugin_t* plugin) {
 //----------------------------------------------------------------------
 
 void handle_plugin(const clap_plugin_t* plugin) {
+  
+  SAT_Plugin* satplugin = (SAT_Plugin*)plugin->plugin_data;
+  satplugin->setPluginFormat("EXE");
+  
   plugin->init(plugin);
   plugin->activate(plugin,44100,128,128);
   plugin->start_processing(plugin);

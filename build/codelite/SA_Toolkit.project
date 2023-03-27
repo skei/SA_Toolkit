@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="SA_Toolkit" Version="11000" InternalType="Console">
+  <Plugins>
+    <Plugin Name="CppCheck"/>
+  </Plugins>
   <VirtualDirectory Name="tools">
     <File Name="../../tools/dump_ttl.sh"/>
     <File Name="../../tools/dump_ttl.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
     <File Name="../../tools/bin2h.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
   </VirtualDirectory>
-  <Plugins>
-    <Plugin Name="CppCheck"/>
-  </Plugins>
   <VirtualDirectory Name="doc">
     <File Name="../../doc/makedocs.sh"/>
     <File Name="../../doc/doxygen.cfg"/>
@@ -242,6 +242,7 @@
       <File Name="../../src/gui/sat_window.h"/>
       <File Name="../../src/gui/sat_widget.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_movable_widget.h"/>
         <File Name="../../src/gui/widgets/sat_symbol_widget.h"/>
         <File Name="../../src/gui/widgets/sat_tabs_widget.h"/>
         <File Name="../../src/gui/widgets/sat_plugin_header_widget.h"/>

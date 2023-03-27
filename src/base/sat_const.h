@@ -143,6 +143,7 @@
 #define SAT_EDGE_RIGHT                          0x02
 #define SAT_EDGE_TOP                            0x04
 #define SAT_EDGE_BOTTOM                         0x08
+#define SAT_EDGE_ALL                            0x0f
 
 #define SAT_FILE_READ_BINARY                    (char*)"rb"
 #define SAT_FILE_READ_TEXT                      (char*)"r"
@@ -335,6 +336,8 @@
 #define SAT_WIDGET_NOTIFY_NONE                  0
 #define SAT_WIDGET_NOTIFY_CLOSE                 1
 #define SAT_WIDGET_NOTIFY_SELECT                2
+#define SAT_WIDGET_NOTIFY_MOVED                 3
+#define SAT_WIDGET_NOTIFY_RESIZED               4
 
 #define SAT_WIDGET_REDRAW_FULL                  0
 #define SAT_WIDGET_REDRAW_VALUE                 1

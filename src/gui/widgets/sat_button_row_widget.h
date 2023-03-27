@@ -34,9 +34,9 @@ protected:
   uint32_t    MNumBits                = 8;//8;
 
   bool        MDrawRoundedBottom      = true;
-  float       MRounded                = 8;
+  float       MRounded                = 5;
 
-  bool MAllowZeroBits = true;
+  bool        MAllowZeroBits          = true;
 
 //------------------------------
 public:
@@ -50,6 +50,8 @@ public:
     //MName = "SAT_ButtonRowWidget";
     //setHint("buttonrow");
     setCursor(SAT_CURSOR_FINGER);
+    setRoundedCorners(true);
+    
     MMode                 = AMode;
     MSelected             = 0;
     MDrawSelectedCells    = false;
@@ -198,7 +200,7 @@ public:
   //----------
 
   void selectButton(int32_t index) {
-    //SAT_Print("index %i\n",index);
+
     MSelected = index;
 
     if (MMode == SAT_BUTTON_ROW_SINGLE) {
@@ -214,7 +216,9 @@ public:
       }
 
       //MValues[0] = MSelected;
-      setValue(MSelected);
+      
+      //setValue(MSelected);
+      SAT_GridWidget::setValue(MSelected);
 
       //      float v = (float)MSelected / ((float)MNumColumns - 1.0f);
       //      SAT_Widget::setValue(v);
@@ -230,7 +234,9 @@ public:
       //MValues[0] = getButtonBits();
 
       uint32_t bits = getButtonBits();
-      setValue( bits );
+      
+      //setValue( bits );
+      SAT_GridWidget::setValue( bits );
 
     }
   }
@@ -252,7 +258,6 @@ public:
 //------------------------------
 
   void on_clickCell(int32_t AX, int32_t AY, int32_t AB) override {
-    //SAT_Print("AX %i\n",AX);
     if (AB == SAT_BUTTON_LEFT) {
       selectButton(AX);
       //setValue();
@@ -280,57 +285,39 @@ public:
       c2 = MActiveCellColor;
     }
 
-//TODO
-//    if (MIndicatorValue >= 0.0) {
-//      int32_t ind = SAT_Trunc(MIndicatorValue) - 1;
-//      if (AX == ind) {
-//        c1.blend(MIndicatorColor,0.3);
-//      }
-//    }
-
     // background
-
-    painter->setFillColor(c1);
-    painter->fillRect(ARect.x,ARect.y,ARect.w,ARect.h);
-
-    /*
-    double b = ARect.h * 0.3;
-    painter->beginPath();
-    if (AX == 0) {
-      painter->roundedRectVarying(ARect.x,ARect.y,ARect.w,ARect.h, b,0,0,b);
-    }
-    else if (AX == (MNumColumns-1)) {
-      painter->roundedRectVarying(ARect.x,ARect.y,ARect.w,ARect.h, 0,b,b,0);
-    }
-    else {
-      painter->rect(ARect.x,ARect.y,ARect.w,ARect.h);
-    }
-    SAT_PaintSource paint = painter->linearGradient(ARect.x,ARect.y,ARect.x,ARect.y2(), c1, c2);
-    painter->fillPaint(paint);
-    painter->fill();
-    */
-
-    // border
-
-    painter->setDrawColor( SAT_Color(0.25) );
-    painter->setLineWidth( 1.0 * S );
-    painter->drawRect(ARect.x,ARect.y,ARect.w,ARect.h);
-
-    /*
-    painter->beginPath();
-    if (AX == 0) {
-      painter->roundedRectVarying(ARect.x,ARect.y,ARect.w,ARect.h, b,0,0,b);
-    }
-    else if (AX == (MNumColumns-1)) {
-      painter->roundedRectVarying(ARect.x,ARect.y,ARect.w,ARect.h, 0,b,b,0);
+    
+    if (MRoundedCorners) {
+      
+      double ul = 0;
+      double ur = 0;
+      double ll = 0;
+      double lr = 0;
+      
+      //SAT_Print("AX %i MNumColumns %i\n",AX,MNumColumns);
+      
+      if (AX == 0) {
+        ul = MTLCorner * S;
+        ll = MBLCorner * S;
+      }
+      if (AX == (MNumColumns-1))  {
+        ur = MTRCorner * S;
+        lr = MBRCorner * S;
+      }
+      
+      painter->setFillColor(c1);
+      painter->fillRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
+      painter->setDrawColor( SAT_Color(0.25) );
+      painter->setLineWidth( 1.0 * S );
+      painter->drawRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
     }
     else {
-      painter->rect(ARect.x,ARect.y,ARect.w,ARect.h);
+      painter->setFillColor(c1);
+      painter->fillRect(ARect.x,ARect.y,ARect.w,ARect.h);
+      painter->setDrawColor( SAT_Color(0.25) );
+      painter->setLineWidth( 1.0 * S );
+      painter->drawRect(ARect.x,ARect.y,ARect.w,ARect.h);
     }
-    painter->strokeColor( SAT_Color(0.25); // SAT_COLOR_DARK_GRAY
-    painter->strokeWidth(1);
-    painter->stroke();
-    */
 
     // text
 

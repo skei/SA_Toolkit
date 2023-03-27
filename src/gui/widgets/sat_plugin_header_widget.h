@@ -12,18 +12,45 @@ class SAT_PluginHeaderWidget
 private:
 //------------------------------
 
-  SAT_LogoWidget* MLogo = nullptr;
-  const char*     MName = "";
+  SAT_LogoWidget* MLogo             = nullptr;
+
+  char            MName[SAT_MAX_NAME_LENGTH]    = {0};
+  SAT_Color       MNameColor                    = SAT_White;
+  double          MNameSize                     = 29.0;
+  SAT_Rect        MNameOffset                   = SAT_Rect(40,8,0,0);
+  uint32_t        MNameAlignment                = SAT_TEXT_ALIGN_LEFT;
+
+  char            MFormat[SAT_MAX_NAME_LENGTH] = {0};
+  SAT_Color       MFormatColor                 = SAT_Grey;
+  double          MFormatSize                  = 7.0;
+  SAT_Rect        MFormatOffset                = SAT_Rect(0,5,5,0);
+  uint32_t        MFormatAlignment             = SAT_TEXT_ALIGN_RIGHT | SAT_TEXT_ALIGN_TOP;
+
+  char            MClapVer[SAT_MAX_NAME_LENGTH] = {0};
+  SAT_Color       MClapVerColor                 = SAT_Grey;
+  double          MClapVerSize                  = 7.0;
+  SAT_Rect        MClapVerOffset                = SAT_Rect(0,14,5,0);
+  uint32_t        MClapVerAlignment             = SAT_TEXT_ALIGN_RIGHT | SAT_TEXT_ALIGN_TOP;
+
+  char            MSatVer[SAT_MAX_NAME_LENGTH]  = {0};
+  SAT_Color       MSatVerColor                  = SAT_Grey;
+  double          MSatVerSize                   = 7.0;
+  SAT_Rect        MSatVerOffset                 = SAT_Rect(0,23,5,0);
+  uint32_t        MSatVerAlignment              = SAT_TEXT_ALIGN_RIGHT | SAT_TEXT_ALIGN_TOP;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_PluginHeaderWidget(SAT_Rect ARect, const char* AName)
+  SAT_PluginHeaderWidget(SAT_Rect ARect, const char* AName, const char* AFormat)
   : SAT_PanelWidget(ARect) {
     
-    MName = AName;
-
+    strcpy(MName,AName);
+    //sprintf(MFormat,"Format: %s",AFormat);
+    strcpy(MFormat,AFormat);
+    sprintf(MClapVer,"CLAP %i.%i.%i",CLAP_VERSION_MAJOR,CLAP_VERSION_MINOR,CLAP_VERSION_REVISION);
+    sprintf(MSatVer,"SAT %s",SAT_VERSION);
+    
     MLogo = new SAT_LogoWidget(SAT_Rect(5,5,30,30));
     appendChildWidget(MLogo);
     MLogo->setLogoColor(SAT_White);
@@ -59,17 +86,57 @@ public:
     int header_font = painter->getHeaderFont();
     int default_font = painter->getDefaultFont();
     
-    painter->selectFont(header_font);
-    painter->setTextColor(SAT_White);
-    painter->setTextSize( 29 * S );
+    // plugin name
     
-    SAT_Rect title_rect = mrect;
-    title_rect.x += (40.0 * S);
-    title_rect.y += (3.0  * S);
-    painter->drawTextBox(title_rect,MName,SAT_TEXT_ALIGN_LEFT);
+    painter->selectFont(header_font);
+    painter->setTextColor(MNameColor);
+    painter->setTextSize( MNameSize * S );
+    
+    SAT_Rect nofs = MNameOffset;
+    nofs.scale(S);
+    SAT_Rect nrect = mrect;
+    nrect.shrink(nofs);
+    painter->drawTextBox(nrect,MName,MNameAlignment);
+    
+    // format
     
     painter->selectFont(default_font);
+    painter->setTextColor(MFormatColor);
+    painter->setTextSize( MFormatSize * S );
 
+    SAT_Rect fofs = MFormatOffset;
+    fofs.scale(S);
+    SAT_Rect frect = mrect;
+    frect.shrink(fofs);
+    painter->drawTextBox(frect,MFormat,MFormatAlignment);
+    
+    // clap version
+    
+    //painter->selectFont(default_font);
+    painter->setTextColor(MClapVerColor);
+    painter->setTextSize( MClapVerSize * S );
+
+    SAT_Rect cvofs = MClapVerOffset;
+    cvofs.scale(S);
+    SAT_Rect cvrect = mrect;
+    cvrect.shrink(cvofs);
+    painter->drawTextBox(cvrect,MClapVer,MClapVerAlignment);
+    
+    // SAT version
+
+    //painter->selectFont(default_font);
+    painter->setTextColor(MSatVerColor);
+    painter->setTextSize( MSatVerSize * S );
+
+    SAT_Rect svofs = MSatVerOffset;
+    svofs.scale(S);
+    SAT_Rect svrect = mrect;
+    svrect.shrink(svofs);
+    painter->drawTextBox(svrect,MSatVer,MSatVerAlignment);
+    
+    //
+
+    //painter->selectFont(default_font);
     paintChildWidgets(AContext);
     drawBorder(AContext);
 

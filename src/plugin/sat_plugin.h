@@ -55,6 +55,8 @@ class SAT_Plugin
 private:
 //------------------------------
 
+  const char*                       MPluginFormat                                 = "CLAP";
+
   SAT_Host*                         MHost                                         = nullptr;
   SAT_Editor*                       MEditor                                       = nullptr;
   SAT_Dictionary<const void*>       MExtensions                                   = {};
@@ -116,7 +118,11 @@ public: // plugin
   SAT_Host*           getHost()           { return MHost; }
   SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
 
+  const char*         getPluginFormat()   { return MPluginFormat; }
+
   //----------
+
+  void setPluginFormat(const char* AFormat)     { MPluginFormat = AFormat; }
 
   void setProcessThreaded(bool AThreaded=true)  { MProcessThreaded = AThreaded; }
   void setEventMode(uint32_t AMode)             { MEventMode = AMode; }
@@ -1541,7 +1547,7 @@ public: // extensions
   void registerDefaultExtensions() {
     registerExtension(CLAP_EXT_AUDIO_PORTS,               &MAudioPortsExt);
     registerExtension(CLAP_EXT_GUI,                       &MGuiExt);
-    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt); // -> SynthExtensions?
+    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
     registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                     &MStateExt);
   }
@@ -1614,7 +1620,7 @@ public: // editor listener
 
   // window -> editor -> this
 
-  void do_editor_listener_timer() final {
+  void do_editor_listener_timer() override {
     //SAT_PRINT;
     flushModFromHostToGui();
     flushParamFromHostToGui();
@@ -1629,7 +1635,7 @@ public: // editor listener
     host queue is flushed at the end of process()
   */
 
-  void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) final {
+  void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) override {
     //SAT_PRINT;
     setParameterValue(AIndex,AValue);
     queueParamFromGuiToHost(AIndex,AValue);

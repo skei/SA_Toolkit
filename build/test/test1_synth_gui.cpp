@@ -11,8 +11,6 @@
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
 
-#include "gfx/sat_bitmap.h"
-
 //----------------------------------------------------------------------
 //
 //
@@ -25,8 +23,8 @@
   #define PLUGIN_NAME "myPlugin"
 #endif
 
-#define EDITOR_WIDTH  (50 + 200 + 10 + 200 + 10 + 200 + 50)
-#define EDITOR_HEIGHT (50 + 200 + (5 * (10 + 20)) + 50)
+#define EDITOR_WIDTH  720 // (50 + 200 + 10 + 200 + 10 + 200 + 50)
+#define EDITOR_HEIGHT 450 // (50 + 200 + (5 * (10 + 20)) + 50)
 #define EDITOR_SCALE  1.5
 
 const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
@@ -175,8 +173,10 @@ private:
 //------------------------------
 
   SAT_VoiceManager<myVoice,NUM_VOICES>  MVoiceManager = {};
-  SAT_PanelWidget* MRootPanel = nullptr;
-
+  SAT_PanelWidget*    MRootPanel      = nullptr;
+  SAT_VoicesWidget*   MVoicesWidget   = nullptr;
+  SAT_WaveformWidget* MWaveformWidget = nullptr;
+  
 //------------------------------
 public:
 //------------------------------
@@ -304,7 +304,8 @@ public:
 
     // widgets
     
-    SAT_PluginHeaderWidget* plugin_header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,EDITOR_WIDTH,40),"toolkit");
+    const char* format = getPluginFormat();
+    SAT_PluginHeaderWidget* plugin_header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,EDITOR_WIDTH,40),"toolkit",format);
     MRootPanel->appendChildWidget(plugin_header);
 
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(50,50,200,20),"Hello world!");
@@ -368,6 +369,28 @@ public:
 
     //button1->setAlignment(SAT_EDGE_LEFT);
     //button2->setAnchors(SAT_EDGE_BOTTOM);
+    
+    SAT_TabsWidget* tabs = new SAT_TabsWidget(SAT_Rect(50,200,200,100),3);
+    MRootPanel->appendChildWidget(tabs);
+    
+      SAT_PanelWidget* page1 = new SAT_PanelWidget(SAT_Rect(0,0,200,80));
+      SAT_PanelWidget* page2 = new SAT_PanelWidget(SAT_Rect(0,0,200,80));
+      SAT_PanelWidget* page3 = new SAT_PanelWidget(SAT_Rect(0,0,200,80));
+      page1->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
+      page2->setBackgroundColor(SAT_Color(0.35,0.40,0.35));
+      page3->setBackgroundColor(SAT_Color(0.35,0.35,0.40));
+      tabs->appendPage("page1",page1);
+      tabs->appendPage("page2",page2);
+      tabs->appendPage("page3",page3);
+      tabs->selectPage(0);
+    
+    MVoicesWidget = new SAT_VoicesWidget(SAT_Rect(50,310,200,10),NUM_VOICES);
+    MRootPanel->appendChildWidget(MVoicesWidget);
+    
+    MWaveformWidget = new SAT_WaveformWidget(SAT_Rect(50,330,200,30));
+    MRootPanel->appendChildWidget(MWaveformWidget);
+    MWaveformWidget->setNumGrid(4);
+    MWaveformWidget->setNumSubGrid(2);
 
     // column 2
 
@@ -380,6 +403,9 @@ public:
     SAT_ButtonRowWidget* buttonrow = new SAT_ButtonRowWidget(SAT_Rect(260,190,200,20),5,buttontext,SAT_BUTTON_ROW_MULTI);
     MRootPanel->appendChildWidget(buttonrow);
     buttonrow->setValueIsBits(true,8);
+    buttonrow->setRoundedCorners(true);
+    buttonrow->setCornerSizes(8,8,8,8);
+    
 
     SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(260,220,50,50),"%",0.0);
     MRootPanel->appendChildWidget(knob);
@@ -428,8 +454,6 @@ public:
     //graph->setAlignment(SAT_EDGE_LEFT);
     graph->setStretching(SAT_EDGE_RIGHT);
 
-    
-
     for (uint32_t i=0; i<5; i++) {
       SAT_GraphModule* module = new SAT_GraphModule();
       module->numInputs = 2;
@@ -470,11 +494,45 @@ public:
     
     MRootPanel->appendChildWidget(menu);
 
+    SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(260,340,100,50));
+    MRootPanel->appendChildWidget(movable);
+    //movable->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
+    movable->setFillBackground(true);
+    movable->setBackgroundColor(SAT_Green2);
+    //movable->setFillGradient(true);
+    //movable->setGradientColors(SAT_Grey,SAT_DarkerGrey);
+    movable->setDrawBorder(true);
+    movable->setBorderColor(SAT_LightGrey);
+    movable->setBorderWidth(1);
+    movable->setRoundedCorners(true);
+    movable->setCornerSize(6);
+    //movable->setDrawDropShadow(true);
+    //movable->setDropShadowFeather(10);
+    //movable->setDropShadowOffset(1,1);
+    
     AEditor->connect(val,     getParameter(0));
     AEditor->connect(dragval, getParameter(1));
     AEditor->connect(slider,  getParameter(2));
 
     return true;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void do_editor_listener_timer() override {
+   
+    SAT_Plugin::do_editor_listener_timer();
+    
+    //#ifndef SAT_EXE
+    //for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
+    //  uint32_t state = MVoiceManager.getVoiceState(voice);
+    //  MVoicesWidget->setVoiceState(voice,state);
+    //}
+    //MVoicesWidget->redraw();
+    //#endif
+    
   }
 
 //------------------------------
@@ -567,8 +625,10 @@ public:
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
+    
     sat_param_t scale = getParameterValue(2) + getModulationValue(2);
     scale = SAT_Clamp(scale,0,1);
+    
     SAT_ScaleStereoBuffer(outputs,scale,length);
   }
 
@@ -614,7 +674,7 @@ public:
 
   #include "plugin/sat_entry.h"
 
-  //----------
+  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
   /*
   
@@ -635,8 +695,6 @@ public:
   }
   
   */
-
-  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
 #endif // SAT_NO_ENTRY
 

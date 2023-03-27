@@ -15,7 +15,7 @@ class SAT_PanelWidget
 : public SAT_Widget {
 
 //------------------------------
-private:
+protected:
 //------------------------------
 
   bool      MFillBackground       = true;
@@ -40,8 +40,8 @@ private:
   double    MDropShadowCorner     = 0.0;
   double    MDropShadowXOffset    = 0.0;
   double    MDropShadowYOffset    = 0.0;
-  SAT_Color MDropShadowIColor     = SAT_DarkestGrey;//SAT_Color(0,0,0,1);
-  SAT_Color MDropShadowOColor     = SAT_DarkGrey;//SAT_Color(1,0,0,0);
+  SAT_Color MDropShadowIColor     = SAT_DarkestGrey;
+  SAT_Color MDropShadowOColor     = SAT_DarkGrey;
   bool      MDropShadowInner      = false;
 
   double    MDropShadowXOffsetTMP = 0.0;
@@ -283,6 +283,31 @@ public:
         do_widget_update(this,0);
         do_widget_redraw(this,0);
       }
+    }
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+    switch(AReason) {
+      case SAT_WIDGET_NOTIFY_CLOSE:
+        realignChildWidgets(true);
+        redraw();
+        break;
+      case SAT_WIDGET_NOTIFY_MOVED:
+        SAT_PRINT;
+        realignChildWidgets(true);
+        redraw();
+        break;
+      case SAT_WIDGET_NOTIFY_RESIZED:
+        realignChildWidgets(true);
+        redraw();
+        break;
+      default:
+        SAT_Widget::do_widget_notify(ASender,AReason,AValue);
+        break;
     }
   }
 

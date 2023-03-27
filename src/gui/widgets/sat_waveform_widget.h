@@ -28,7 +28,7 @@ protected:
 
   bool      MDrawZeroLine   = true;
   double    MZeroLineWidth  = 0.5;
-  SAT_Color MZeroLineColor  = SAT_Color(0);//SAT_COLOR_BLACK;
+  SAT_Color MZeroLineColor  = SAT_Color(0.2);//SAT_COLOR_BLACK;
 
   //
 
@@ -44,7 +44,7 @@ protected:
   double    MGridSize     = 1.0;
   double    MSubGridSize  = 0.8;
 
-  SAT_Color MGridColor    = SAT_Color(0);//SAT_COLOR_BLACK;
+  SAT_Color MGridColor    = SAT_Color(0.3);//SAT_COLOR_BLACK;
   SAT_Color MSubGridColor = SAT_Color(0.35);//SAT_COLOR_DARK_GRAY;
 
   bool      MMarkerActive[NUM_MARKERS]  = {false};

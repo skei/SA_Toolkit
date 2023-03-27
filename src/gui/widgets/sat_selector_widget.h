@@ -57,7 +57,7 @@ public: // widget
   }
 
 //------------------------------
-public: // menu lisyener
+public: // menu listener
 //------------------------------
 
   void do_menu_select(int32_t AIndex) override {
