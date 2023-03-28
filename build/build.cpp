@@ -17,3 +17,14 @@
 //----------------------------------------------------------------------
 
 #include "../../SA_Plugins/sa_gain.h"
+//#include "../../SA_Plugins/sa_ports.h"
+
+//----------
+
+//#include "../../SA_Plugins/sa_botage.h"
+//#include "../../SA_Plugins/sa_bulum.h"
+//#include "../../SA_Plugins/sa_cred.h"
+//#include "../../SA_Plugins/sa_lad.h"
+//#include "../../SA_Plugins/sa_mael.h"
+//#include "../../SA_Plugins/sa_nity.h"
+//#include "../../SA_Plugins/sa_tyr.h"
