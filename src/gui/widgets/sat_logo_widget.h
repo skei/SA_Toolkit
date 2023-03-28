@@ -5,6 +5,8 @@
 #include "base/sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 
+#include "../data/img/logo_svg.h"
+
 //----------------------------------------------------------------------
 //
 //
@@ -22,6 +24,7 @@ private:
   NSVGimage*  MLogoImage  = nullptr;
   SAT_Color   MLogoColor  = SAT_White;
   double      MLogoWidth  = 1;
+  char*       MBuffer     = nullptr;
 
 //------------------------------
 public:
@@ -31,8 +34,10 @@ public:
   : SAT_PanelWidget(ARect) {
     setFillBackground(false);
     setDrawBorder(false);
-    // open() ?
-    MLogoImage = nsvgParseFromFile("/home/skei/Code/SA_Toolkit/data/img/SA_black circle.svg", "px", 96);
+    MBuffer = (char*)malloc(logo_svg_size + 1);
+    memcpy(MBuffer,logo_svg,logo_svg_size);
+    MBuffer[logo_svg_size] = 0;
+    MLogoImage = nsvgParse(MBuffer, "px", 96);
     //SAT_Assert(MLogoImage);
   }
 

@@ -17,6 +17,9 @@
     <File Name="../../doc/compiling.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="build">
+    <VirtualDirectory Name="SA_Plugins">
+      <File Name="../../../SA_Plugins/sa_gain.h"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="test">
       <File Name="../test/test4_minimal2.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
       <File Name="../test/test3_minimal.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
@@ -26,6 +29,9 @@
     <File Name="../build.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="data">
+    <VirtualDirectory Name="img">
+      <File Name="../../data/img/logo_svg.h"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="fonts">
       <VirtualDirectory Name="Manjari">
         <File Name="../../data/fonts/Manjari/Manjari-Thin.h"/>
@@ -942,4 +948,12 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="linux_exe_debug"/>
+  <Dependencies Name="linux_exe_release"/>
+  <Dependencies Name="linux_plugin_debug"/>
+  <Dependencies Name="linux_plugin_release"/>
+  <Dependencies Name="win32_exe_debug"/>
+  <Dependencies Name="win32_exe_release"/>
+  <Dependencies Name="win32_plugin_debug"/>
+  <Dependencies Name="win32_plugin_release"/>
 </CodeLite_Project>
