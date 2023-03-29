@@ -18,6 +18,33 @@
   </VirtualDirectory>
   <VirtualDirectory Name="build">
     <VirtualDirectory Name="SA_Plugins">
+      <VirtualDirectory Name="ports">
+        <File Name="../../../SA_Plugins/ports/transient_killer.h"/>
+        <File Name="../../../SA_Plugins/ports/tilteq.h"/>
+        <File Name="../../../SA_Plugins/ports/sonic_maximizer.h"/>
+        <File Name="../../../SA_Plugins/ports/small_room_reverb.h"/>
+        <File Name="../../../SA_Plugins/ports/saturation.h"/>
+        <File Name="../../../SA_Plugins/ports/phaser.h"/>
+        <File Name="../../../SA_Plugins/ports/limiter.h"/>
+        <File Name="../../../SA_Plugins/ports/large_room_reverb.h"/>
+        <File Name="../../../SA_Plugins/ports/iirfilter.h"/>
+        <File Name="../../../SA_Plugins/ports/hrtf.h"/>
+        <File Name="../../../SA_Plugins/ports/hall_reverb.h"/>
+        <File Name="../../../SA_Plugins/ports/freeverb.h"/>
+        <File Name="../../../SA_Plugins/ports/exciter2.h"/>
+        <File Name="../../../SA_Plugins/ports/exciter.h"/>
+        <File Name="../../../SA_Plugins/ports/event_horizon.h"/>
+        <File Name="../../../SA_Plugins/ports/compciter.h"/>
+      </VirtualDirectory>
+      <File Name="../../../SA_Plugins/sa_tyr.h"/>
+      <File Name="../../../SA_Plugins/sa_transpose.h"/>
+      <File Name="../../../SA_Plugins/sa_pitch.h"/>
+      <File Name="../../../SA_Plugins/sa_nity.h"/>
+      <File Name="../../../SA_Plugins/sa_mael.h"/>
+      <File Name="../../../SA_Plugins/sa_lad.h"/>
+      <File Name="../../../SA_Plugins/sa_cred.h"/>
+      <File Name="../../../SA_Plugins/sa_bulum.h"/>
+      <File Name="../../../SA_Plugins/sa_botage.h"/>
       <File Name="../../../SA_Plugins/sa_gain.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="test">
@@ -248,6 +275,7 @@
       <File Name="../../src/gui/sat_window.h"/>
       <File Name="../../src/gui/sat_widget.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_plugin_footer_widget.h"/>
         <File Name="../../src/gui/widgets/sat_movable_widget.h"/>
         <File Name="../../src/gui/widgets/sat_symbol_widget.h"/>
         <File Name="../../src/gui/widgets/sat_tabs_widget.h"/>

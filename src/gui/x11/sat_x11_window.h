@@ -235,8 +235,8 @@ public:
   virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_client_message(uint32_t AData) {}
 
 //------------------------------
@@ -471,20 +471,20 @@ private:
 public: // mouse
 //------------------------------
 
-  void setCursor(int32_t ACursor) {
+  void setMouseCursor(int32_t ACursor) {
     setWMCursor(ACursor);
   }
 
   //----------
 
-  void setCursorPos(int32_t AXpos, int32_t AYpos) {
+  void setMouseCursorPos(int32_t AXpos, int32_t AYpos) {
     xcb_warp_pointer(MConnection,XCB_NONE,MWindow,0,0,0,0,AXpos,AYpos);
     xcb_flush(MConnection);
   }
 
   //----------
 
-  void hideCursor(void) {
+  void hideMouseCursor(void) {
     if (!MIsCursorHidden) {
       setXcbCursor(MHiddenCursor);
       MIsCursorHidden = true;
@@ -493,7 +493,7 @@ public: // mouse
 
   //----------
 
-  void showCursor(void) {
+  void showMouseCursor(void) {
     if (MIsCursorHidden) {
       setXcbCursor(MWindowCursor);
       MIsCursorHidden = false;
@@ -509,7 +509,7 @@ public: // mouse
     client.
   */
 
-  void grabCursor(void) {
+  void grabMouseCursor(void) {
     int32_t event_mask =
       XCB_EVENT_MASK_BUTTON_PRESS   |
       XCB_EVENT_MASK_BUTTON_RELEASE |
@@ -533,7 +533,7 @@ public: // mouse
 
   //----------
 
-  void releaseCursor(void) {
+  void releaseMouseCursor(void) {
     xcb_ungrab_pointer(MConnection,XCB_CURRENT_TIME);
     xcb_flush(MConnection);
   }
@@ -913,7 +913,7 @@ private:
         int32_t   x = enter_notify->event_x;
         int32_t   y = enter_notify->event_y;
         uint32_t ts = enter_notify->time;
-        on_window_enter(x,y,ts);
+        on_window_mouse_enter(x,y,ts);
         break;
       }
 
@@ -925,7 +925,7 @@ private:
         int32_t   x = leave_notify->event_x;
         int32_t   y = leave_notify->event_y;
         uint32_t ts = leave_notify->time;
-        on_window_leave(x,y,ts);
+        on_window_mouse_leave(x,y,ts);
         break;
       }
 

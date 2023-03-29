@@ -87,6 +87,9 @@ typedef uint32_t sat_test_uint32_t;
 #if defined(_MSC_VER) || defined(__MINGW64__) || defined(__MINGW32__)
 
 #if defined(__MINGW64__) || defined(__MINGW32__)
+
+
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
@@ -131,6 +134,9 @@ SAT_TEST_C_FUNC __declspec(dllimport) int __stdcall QueryPerformanceFrequency(
 #pragma GCC diagnostic pop
 #endif
 #endif
+
+
+
 
 #elif defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) ||    \
     defined(__NetBSD__) || defined(__DragonFly__) || defined(__sun__) ||       \

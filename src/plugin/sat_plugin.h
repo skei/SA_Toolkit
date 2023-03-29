@@ -1546,7 +1546,9 @@ public: // extensions
 
   void registerDefaultExtensions() {
     registerExtension(CLAP_EXT_AUDIO_PORTS,               &MAudioPortsExt);
-    registerExtension(CLAP_EXT_GUI,                       &MGuiExt);
+    #ifndef SAT_NO_GUI
+      registerExtension(CLAP_EXT_GUI,                     &MGuiExt);
+    #endif
     registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
     registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                     &MStateExt);
@@ -1572,7 +1574,9 @@ public: // extensions
     registerExtension(CLAP_EXT_CONTEXT_MENU,              &MContextMenuExt);
     registerExtension(CLAP_EXT_CV,                        &MCVExt);
     registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtensibleAudioPortsExt);
-    registerExtension(CLAP_EXT_GUI,                       &MGuiExt);
+    #ifndef SAT_NO_GUI
+      registerExtension(CLAP_EXT_GUI,                     &MGuiExt);
+    #endif
     registerExtension(CLAP_EXT_LATENCY,                   &MLatencyExt);
     registerExtension(CLAP_EXT_MIDI_MAPPINGS,             &MMidiMappingsExt);
     registerExtension(CLAP_EXT_NOTE_NAME,                 &MNoteNameExt);
@@ -1637,9 +1641,13 @@ public: // editor listener
 
   void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) override {
     //SAT_PRINT;
-    setParameterValue(AIndex,AValue);
-    queueParamFromGuiToHost(AIndex,AValue);
-    queueParamFromGuiToAudio(AIndex,AValue);
+    
+    //double value = AValue;
+    double value = MParameters[AIndex]->denormalizeValue(AValue);
+    
+    setParameterValue(AIndex,value);
+    queueParamFromGuiToHost(AIndex,value);
+    queueParamFromGuiToAudio(AIndex,value);
   }
 
 //------------------------------
@@ -1984,11 +1992,24 @@ public: // parameters
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
       SAT_Parameter* param = MParameters[i];
-      double value = MParameters[i]->getValue();//getDefaultValue();
+      //double value = MParameters[i]->getValue();//getDefaultValue();
+      double value = MParameters[i]->getNormalizedValue();//getDefaultValue();
       MEditor->updateParameterValue(param,i,value);
     }
   }
 
+  void setAllParameterFlags(clap_param_info_flags AFlag) {
+    for (uint32_t i=0; i<MParameters.size(); i++) {
+      MParameters[i]->setFlag(AFlag);
+    }
+  }
+  
+  void clearAllParameterFlags(clap_param_info_flags AFlag) {
+    for (uint32_t i=0; i<MParameters.size(); i++) {
+      MParameters[i]->clearFlag(AFlag);
+    }
+  }
+  
 //------------------------------
 public: // modulation
 //------------------------------

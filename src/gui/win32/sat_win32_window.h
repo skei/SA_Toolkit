@@ -3,23 +3,6 @@
 //----------------------------------------------------------------------
 
 /*
-  from: ??
-  1. Set a flag when you see the WM_ENTERSIZEMOVE.
-  2. Change your WM_SIZE handler to check the flag and do nothing if set.
-  3. Change your WM_PAINT handler to check the flag and do a simple, fast
-     fill of the window in a solid color if it's set.
-  4. Clear the flag when you see WM_EXITSIZEMOVE, and then trigger your
-     layout code and invalidate your window so that everything gets
-     updated based on the final size.
-  If your slow window is a child rather than your application's top-level
-  window, you'll have to signal the child window when the top-level
-  window gets the WM_ENTERSIZEMOVE and WM_EXITSIZEMOVE in order to
-  implement steps 1 and 4.
-*/
-
-//-----
-
-/*
   not working in wine: (?)
     window class styles:
     - CS_HREDRAW
@@ -36,14 +19,28 @@
   - WM_GETMINMAXINFO
 */
 
+//-----
+
+/*
+  from: ??
+  1. Set a flag when you see the WM_ENTERSIZEMOVE.
+  2. Change your WM_SIZE handler to check the flag and do nothing if set.
+  3. Change your WM_PAINT handler to check the flag and do a simple, fast
+     fill of the window in a solid color if it's set.
+  4. Clear the flag when you see WM_EXITSIZEMOVE, and then trigger your
+     layout code and invalidate your window so that everything gets
+     updated based on the final size.
+  If your slow window is a child rather than your application's top-level
+  window, you'll have to signal the child window when the top-level
+  window gets the WM_ENTERSIZEMOVE and WM_EXITSIZEMOVE in order to
+  implement steps 1 and 4.
+*/
+
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
 #include "base/utils/sat_strutils.h"
-//#include "gui/base/sat_base_window.h"
 #include "gui/win32/sat_win32.h"
-//#include "gui/sat_paint_source.h"
-//#include "gui/sat_paint_target.h"
 
 //----------------------------------------------------------------------
 
@@ -136,7 +133,6 @@ private:
   int32_t     MCurrentCursor    = -1;
 
   HCURSOR     MWinCursor        = nullptr;
-//HCURSOR     MDefaultCursor    = nullptr;
   HCURSOR     MUserCursors[128] = {0};
 
 //------------------------------
@@ -168,7 +164,7 @@ public:
     SetWindowLongPtr(MWindow,GWLP_USERDATA,(LONG_PTR)this);
     setTitle(MWindowTitle);
     memset(MUserCursors,0,sizeof(MUserCursors));
-    setCursor(SAT_CURSOR_DEFAULT);
+    setMouseCursor(SAT_CURSOR_DEFAULT);
   }
 
   //----------
@@ -290,8 +286,8 @@ public:
   virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_client_message(uint32_t AData) {}
 
 //------------------------------
@@ -467,8 +463,8 @@ public:
 
   virtual uint32_t eventLoop() {
     MSG msg;
+    //while (GetMessage(&msg, MWindow,0,0)) {
     while (GetMessage(&msg, NULL, 0, 0)) {
-    //while (GetMessage(&msg, MWinHandle,0,0)) {
       //uint32_t time = msg.time;
       TranslateMessage(&msg);
       DispatchMessage(&msg);
@@ -530,12 +526,14 @@ private:
 
   virtual void startEventThread() {
     //MIsEventThreadActive = true;
+    SAT_PRINT;
   }
 
   //----------
 
   virtual void stopEventThread() {
     //MIsEventThreadActive = false;
+    SAT_PRINT;
   }
 
   //----------
@@ -672,7 +670,10 @@ private:
 public: // mouse
 //------------------------------
 
-  virtual void setCursor(int32_t ACursor) {
+  virtual void setMouseCursor(int32_t ACursor) {
+    
+    //SAT_Print("cursor: %i\n",ACursor);
+    
     if (ACursor != MCurrentCursor) {
       MCurrentCursor = ACursor;
       if (ACursor>=128) MWinCursor = MUserCursors[ACursor-128];
@@ -686,7 +687,7 @@ public: // mouse
   // Moves the cursor to the specified screen coordinates
   // will fire a WM_MOUSEMOVE event..
 
-  virtual void setCursorPos(int32_t AXpos, int32_t AYpos) {
+  virtual void setMouseCursorPos(int32_t AXpos, int32_t AYpos) {
     POINT pos;
     pos.x = AXpos;
     pos.y = AYpos;
@@ -698,7 +699,7 @@ public: // mouse
 
   //----------
 
-  virtual void hideCursor(void) {
+  virtual void hideMouseCursor(void) {
     if (!MIsCursorHidden) {
       MIsCursorHidden = true;
       ShowCursor(false);
@@ -707,7 +708,7 @@ public: // mouse
 
   //----------
 
-  virtual void showCursor(void) {
+  virtual void showMouseCursor(void) {
     if (MIsCursorHidden) {
       MIsCursorHidden = false;
       ShowCursor(true);
@@ -716,13 +717,13 @@ public: // mouse
 
   //----------
 
-  virtual void grabCursor(void) {
+  virtual void grabMouseCursor(void) {
     SetCapture(MWindow);
   }
 
   //----------
 
-  virtual void releaseCursor(void) {
+  virtual void releaseMouseCursor(void) {
     ReleaseCapture();
   }
 
@@ -1082,7 +1083,7 @@ private: // remap
       case WM_MOUSEMOVE: {
         int32_t x = short(LOWORD(lParam));
         int32_t y = short(HIWORD(lParam));
-        on_window_mouse_move(remapMouseKey(wParam),x,y,0);
+        on_window_mouse_move(x,y,remapMouseKey(wParam),0);
         MMouseXpos = x;
         MMouseYpos = y;
         break;
@@ -1106,7 +1107,7 @@ private: // remap
         int32_t x = short(LOWORD(lParam));
         int32_t y = short(HIWORD(lParam));
       //if (MWindowListener) MWindowListener->on_mouseDown(this,x,y,b,remapKey(wParam));
-        on_window_mouse_click(b,remapMouseKey(wParam),x,y,time);
+        on_window_mouse_click(x,y,b,remapMouseKey(wParam),time);
         //        if (MFlags & s3_wf_capture) grabCursor();
         break;
       }
@@ -1128,7 +1129,7 @@ private: // remap
         int32_t x = short(LOWORD(lParam));
         int32_t y = short(HIWORD(lParam));
         //if (MWindowListener) MWindowListener->on_mouseUp(this,x,y,b,remapKey(wParam));
-        on_window_mouse_release(b,remapMouseKey(wParam),x,y,time);
+        on_window_mouse_release(x,y,b,remapMouseKey(wParam),time);
         //        if (MFlags&s3_wf_capture) releaseCursor();
         break;
       }
@@ -1179,8 +1180,8 @@ private: // remap
         int32_t d = GET_WHEEL_DELTA_WPARAM(wParam);
         //if (d>0) { if (MWindowListener) MWindowListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelUp,  smb_none); }
         //if (d<0) { if (MWindowListener) MWindowListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelDown,smb_none); }
-        if (d > 0) { on_window_mouse_click(SAT_BUTTON_SCROLL_UP,   SAT_KEY_NONE, MMouseXpos,MMouseYpos,time); }
-        if (d < 0) { on_window_mouse_click(SAT_BUTTON_SCROLL_DOWN, SAT_KEY_NONE, MMouseXpos,MMouseYpos,time); }
+        if (d > 0) { on_window_mouse_click(MMouseXpos,MMouseYpos, SAT_BUTTON_SCROLL_UP,   SAT_KEY_NONE, time); }
+        if (d < 0) { on_window_mouse_click(MMouseXpos,MMouseYpos, SAT_BUTTON_SCROLL_DOWN, SAT_KEY_NONE, time); }
         break;
       }
 

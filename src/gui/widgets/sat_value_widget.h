@@ -84,7 +84,11 @@ public:
       mrect.shrink(valueoffset);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
-      sprintf(MValueText,"%.2f",getValue());
+      
+      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      if (param) sprintf(MValueText,"%s",param->getValueText());
+      else sprintf(MValueText,"%.2f",getValue());
+      
       painter->setTextColor(MValueColor);
       painter->setTextSize(MValueSize*S);
       painter->drawTextBox(mrect,MValueText,MValueAlignment);

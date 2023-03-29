@@ -14,7 +14,7 @@ typedef SAT_Array<SAT_Parameter*> SAT_ParameterArray;
 class SAT_Parameter {
 
 //------------------------------
-private:
+protected:
 //------------------------------
 
   /*
@@ -45,7 +45,7 @@ private:
   double            MLastModulatedValue             = 0.0;
 
   uint32_t          MNumDigits                      = 2;
-//char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
+  char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
   
 
 //------------------------------
@@ -85,56 +85,55 @@ public:
 public:
 //------------------------------
 
-  clap_id               getId()                 { return MInfo.id; }
-  clap_param_info_flags getFlags()              { return MInfo.flags; }
-  void *                getCookie()             { return MInfo.cookie; }
-  char*                 getName()               { return MInfo.name; }
-  char*                 getModule()             { return MInfo.module; }
-  sat_param_t           getMinValue()           { return MInfo.min_value; }
-  sat_param_t           getMaxValue()           { return MInfo.max_value; }
-  sat_param_t           getDefaultValue()       { return MInfo.default_value; }
-  int32_t               getIndex()              { return MIndex; }
-  clap_param_info_t*    getParamInfo()          { return &MInfo; }
-  void*                 getConnection()         { return MConnection; }
+  virtual clap_id               getId()                 { return MInfo.id; }
+  virtual clap_param_info_flags getFlags()              { return MInfo.flags; }
+  virtual void *                getCookie()             { return MInfo.cookie; }
+  virtual char*                 getName()               { return MInfo.name; }
+  virtual char*                 getModule()             { return MInfo.module; }
+  virtual sat_param_t           getMinValue()           { return MInfo.min_value; }
+  virtual sat_param_t           getMaxValue()           { return MInfo.max_value; }
+  virtual sat_param_t           getDefaultValue()       { return MInfo.default_value; }
+  virtual int32_t               getIndex()              { return MIndex; }
+  virtual clap_param_info_t*    getParamInfo()          { return &MInfo; }
+  virtual void*                 getConnection()         { return MConnection; }
 
-  sat_param_t           getValue()              { return MValue; }
-  sat_param_t           getModulation()         { return MModulation; }
+  virtual sat_param_t           getValue()              { return MValue; }
+  virtual sat_param_t           getModulation()         { return MModulation; }
 
-  int32_t               getLastPainted()        { return MLastPainted; }
-  int32_t               getLastUpdated()        { return MLastUpdated; }
-  int32_t               getLastModulated()      { return MLastModulated; }
-  sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
-  sat_param_t           getLastModulatedValue() { return MLastModulated; }
-
+  virtual int32_t               getLastPainted()        { return MLastPainted; }
+  virtual int32_t               getLastUpdated()        { return MLastUpdated; }
+  virtual int32_t               getLastModulated()      { return MLastModulated; }
+  virtual sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
+  virtual sat_param_t           getLastModulatedValue() { return MLastModulated; }
 
 //------------------------------
 public:
 //------------------------------
 
-  void setId(clap_id AId)                         { MInfo.id = AId; }
-  void setFlags(clap_param_info_flags AFlags)     { MInfo.flags = AFlags; }
-  void setCookie(void* ACookie)                   { MInfo.cookie = ACookie; }
-  void setName(char* AName)                       { strcpy(MInfo.name,AName); }
-  void setModule(char* AModule)                   { strcpy(MInfo.module,AModule); }
-  void setMinValue(sat_param_t AValue)            { MInfo.min_value = AValue; }
-  void setMaxValue(sat_param_t AValue)            { MInfo.max_value = AValue; }
-  void setDefaultValue(sat_param_t AValue)        { MInfo.default_value = AValue; }
-  void setFlag(clap_param_info_flags AFlag)       { MInfo.flags |= AFlag; }
-  void clearFlag(clap_param_info_flags AFlag)     { MInfo.flags &= ~AFlag; }
-  void setIndex(int32_t AIndex)                   { MIndex = AIndex; MInfo.id = AIndex; }
-  void connect(void* AWidget)                     { MConnection = AWidget; }
+  virtual void setId(clap_id AId)                         { MInfo.id = AId; }
+  virtual void setFlags(clap_param_info_flags AFlags)     { MInfo.flags = AFlags; }
+  virtual void setCookie(void* ACookie)                   { MInfo.cookie = ACookie; }
+  virtual void setName(char* AName)                       { strcpy(MInfo.name,AName); }
+  virtual void setModule(char* AModule)                   { strcpy(MInfo.module,AModule); }
+  virtual void setMinValue(sat_param_t AValue)            { MInfo.min_value = AValue; }
+  virtual void setMaxValue(sat_param_t AValue)            { MInfo.max_value = AValue; }
+  virtual void setDefaultValue(sat_param_t AValue)        { MInfo.default_value = AValue; }
+  virtual void setFlag(clap_param_info_flags AFlag)       { MInfo.flags |= AFlag; }
+  virtual void clearFlag(clap_param_info_flags AFlag)     { MInfo.flags &= ~AFlag; }
+  virtual void setIndex(int32_t AIndex)                   { MIndex = AIndex; MInfo.id = AIndex; }
+  virtual void connect(void* AWidget)                     { MConnection = AWidget; }
 
-  void setValue(double AValue)                    { MValue = AValue; }
-  void setModulation(double AValue)               { MModulation = AValue; }
+  virtual void setValue(double AValue)                    { MValue = AValue; }
+  virtual void setModulation(double AValue)               { MModulation = AValue; }
 
-  void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
-  void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
-  void setLastModulated(uint32_t ALast)           { MLastModulated = ALast; }
-  void setLastUpdatedValue(sat_param_t AValue)    { MLastUpdatedValue = AValue; }
-  void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
+  virtual void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
+  virtual void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
+  virtual void setLastModulated(uint32_t ALast)           { MLastModulated = ALast; }
+  virtual void setLastUpdatedValue(sat_param_t AValue)    { MLastUpdatedValue = AValue; }
+  virtual void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
 
-  void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
-  void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
+  virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
+  virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
 
 //------------------------------
 public:
@@ -153,6 +152,18 @@ public:
     return MInfo.min_value + (AValue * range);
   }
 
+  //----------
+  
+  virtual double getNormalizedValue() {
+    return normalizeValue(MValue);
+  }
+  
+  virtual double getNormalizedModulation() {
+    double range = MInfo.max_value - MInfo.min_value;
+    if (range <= 0.0) return MModulation;
+    return MModulation / range;
+  }
+  
   //----------
 
   virtual bool valueToText(sat_param_t AValue, char* ABuffer, uint32_t ABufferSize) {
@@ -174,6 +185,14 @@ public:
     return true;
   }
 
+  //----------
+  
+  virtual const char* getValueText() {
+    valueToText(MValue,MValueText,SAT_MAX_NAME_LENGTH);
+    //SAT_Print("%f -> %s\n",MValue,MValueText);
+    return MValueText;
+  }
+  
   //----------
 
   //virtual void updateSmoothing() {
@@ -210,6 +229,150 @@ public:
   }
 
 };
+
+//----------------------------------------------------------------------
+//
+// int
+//
+//----------------------------------------------------------------------
+
+class SAT_IntParameter
+: public SAT_Parameter {
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_IntParameter(const char* AName, double AValue=0.0, double AMin=0.0, double AMax=1.0)
+  : SAT_Parameter(AName,AValue,AMin,AMax) {
+    setFlag(CLAP_PARAM_IS_STEPPED);
+  }
+
+  //----------
+
+  virtual ~SAT_IntParameter() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  sat_param_t getValue() override {
+    return (int)MValue;
+  }
+
+  void setValue(double AValue) override {
+    MValue = (int)AValue;
+  }
+
+  //----------
+
+  bool valueToText(double value, char *display, uint32_t size) override {
+    sprintf(display,"%i",(int)value);
+    return true;
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// text
+//
+//----------------------------------------------------------------------
+
+class SAT_TextParameter
+: public SAT_IntParameter {
+
+//------------------------------
+private:
+//------------------------------
+
+  const char** MText = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_TextParameter(const char* AName, double AValue=0.0, double AMin=0.0, double AMax=1.0, const char** AText=nullptr)
+  : SAT_IntParameter(AName,AValue,AMin,AMax) {
+    MText = AText;
+  }
+
+  //----------
+
+  virtual ~SAT_TextParameter() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool valueToText(double value, char *display, uint32_t size) override {
+    uint32_t index = (int)value;
+    if (index <= MInfo.max_value) {
+      strcpy(display,MText[index]);
+    }
+    else {
+      strcpy(display,"error");
+    }
+    return true;
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// scale
+//
+//----------------------------------------------------------------------
+
+class SAT_ScaleParameter
+: public SAT_Parameter {
+
+//------------------------------
+private:
+//------------------------------
+
+
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_ScaleParameter(const char* AName="", double AValue=0.0, double AMin=0.0, double AMax=1.0)
+  : SAT_Parameter(AName,AValue,AMin,AMax) {
+  }
+
+  //----------
+
+  virtual ~SAT_ScaleParameter() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool valueToText(double value, char *display, uint32_t size) override {
+//    uint32_t index = (int)value;
+//    if (index <= MParamInfo.max_value) {
+//      strcpy(display,MText[index]);
+//    }
+//    else {
+//      strcpy(display,"error");
+//    }
+    return true;
+  }
+
+};
+
+//----------------------------------------------------------------------
+
+
+/*
+  db
+  hz, freq
+  pow
+*/
 
 //----------------------------------------------------------------------
 #endif

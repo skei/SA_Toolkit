@@ -20,9 +20,10 @@ private:
 //------------------------------
 
   bool      MDrawSliderBar      = true;
-  SAT_Color MSliderBarColor     = SAT_LightBlue1;
+  SAT_Color MSliderBarColor     = SAT_Grey;
   uint32_t  MSliderBarDirection = SAT_DIRECTION_LEFT;
   SAT_Rect  MSliderBarOffset    = SAT_Rect(0,0,0,0);
+
 
   bool      MDrawModulation     = true;
   SAT_Color MModulationColor    = SAT_Color(1,1,1,0.25);
@@ -30,7 +31,7 @@ private:
 
   bool      MDrawSliderEdge     = true;
   double    MSliderEdgeWidth    = 2;
-  SAT_Color MSliderEdgeColor    = SAT_White;
+  SAT_Color MSliderEdgeColor    = SAT_LighterGrey;
 
 //------------------------------
 public:
@@ -89,8 +90,13 @@ public:
       // bar
 
       painter->setFillColor(MSliderBarColor);
-      double value = getValue();
-
+      
+      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      
+      double value = 0.0;
+      if (param) value = param->getNormalizedValue();
+      else value = getValue();
+      
       if (isBipolar()) {
         double v1 = 0.0;
         double v2 = 0.0;
@@ -125,8 +131,10 @@ public:
 
       // modulation
 
-      double modulation = value + getModulation();
-      modulation = SAT_Clamp(modulation,0,1);
+      double modulation = 0.0;//value + getModulation();
+      if (param) modulation = param->getNormalizedModulation();
+      else modulation = getModulation();
+      modulation = SAT_Clamp(modulation + value,0,1);
 
       if (MDrawModulation) {
         //double S = getWindowScale();

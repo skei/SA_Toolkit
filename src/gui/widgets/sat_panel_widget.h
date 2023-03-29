@@ -26,7 +26,7 @@ protected:
   SAT_Color MGradientColor2       = SAT_DarkGrey;
   
   bool      MDrawBorder           = true;
-  SAT_Color MBorderColor          = SAT_LightGrey;
+  SAT_Color MBorderColor          = SAT_DarkerGrey;
   double    MBorderWidth          = 1.0;
   
   bool      MRoundedCorners       = false;
@@ -297,7 +297,7 @@ public:
         redraw();
         break;
       case SAT_WIDGET_NOTIFY_MOVED:
-        SAT_PRINT;
+        //SAT_PRINT;
         realignChildWidgets(true);
         redraw();
         break;

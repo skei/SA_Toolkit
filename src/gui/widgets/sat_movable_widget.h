@@ -47,13 +47,11 @@ public:
       SAT_Rect mrect = getRect();
       MXClick = AXpos;
       MYClick = AYpos;
-      
       //SAT_Rect border = getInnerBorder(); // parent!
       //border.scale(S);
-      
       MXClickOffset = AXpos - mrect.x;
       MYClickOffset = AYpos - mrect.y;
-      SAT_Print("offset %.1f,%.1f\n",MXClickOffset,MYClickOffset);
+      //SAT_Print("offset %.1f,%.1f\n",MXClickOffset,MYClickOffset);
     }
   }
   
@@ -62,7 +60,7 @@ public:
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (MIsMoving && (AButton == SAT_BUTTON_LEFT)) {
       MIsMoving = false;
-      SAT_PRINT;
+      //SAT_PRINT;
     }
   }
 

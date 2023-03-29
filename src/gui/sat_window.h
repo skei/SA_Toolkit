@@ -379,6 +379,7 @@ public:
     }
 
     MHoverWidget = hover;
+    //SAT_Print("hover: %p\n",MHoverWidget);
   }
 
   //----------
@@ -659,7 +660,7 @@ public: // window
         MMouseDragY += deltay;
         MCapturedWidget->on_widget_mouse_move(MMouseDragX,MMouseDragY,AState,ATime);
       }
-      setCursorPos(MMouseClickedX,MMouseClickedY);
+      setMouseCursorPos(MMouseClickedX,MMouseClickedY);
     }
     else {
       
@@ -749,6 +750,7 @@ public: // widget listener
   //----------
 
   void do_widget_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
+    
     //if (MListener) MListener->do_window_listener_set_cursor(ASender,ACursor);
     switch (ACursor) {
       case SAT_CURSOR_LOCK:
@@ -758,15 +760,15 @@ public: // widget listener
         MMouseLockedWidget = nullptr;
         break;
       case SAT_CURSOR_SHOW:
-        showCursor();
-        setCursor(MCurrentCursor);
+        showMouseCursor();
+        setMouseCursor(MCurrentCursor);
         break;
       case SAT_CURSOR_HIDE:
-        hideCursor();
+        hideMouseCursor();
         break;
       default:
         if (ACursor != MCurrentCursor) {
-          setCursor(ACursor);
+          setMouseCursor(ACursor);
           MCurrentCursor = ACursor;
         }
         break;
@@ -794,6 +796,7 @@ public: // timer listener
 //------------------------------
 
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
+    
     if (MListener) MListener->do_window_listener_timer(this);
     //for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
     //  MTimerWidgets[i]->on_widget_timer();

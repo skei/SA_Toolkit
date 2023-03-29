@@ -1,8 +1,8 @@
-#ifndef sat_win32_included
-#define sat_win32_included
+//#ifndef sat_win32_included
+//#define sat_win32_included
 //----------------------------------------------------------------------
 
-
+// see base/sat_win32.h
 
 //----------------------------------------------------------------------
-#endif
+//#endif

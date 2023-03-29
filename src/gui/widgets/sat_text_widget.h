@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
+#include "plugin/sat_parameter.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 //----------------------------------------------------------------------
@@ -69,7 +70,16 @@ public:
       if (mrect.h <= 0.0) return;
       painter->setTextColor(MTextColor);
       painter->setTextSize(MTextSize*S);
-      painter->drawTextBox(mrect,MText,MTextAlignment);
+      
+
+      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      if (param) {
+        painter->drawTextBox(mrect,param->getName(),MTextAlignment);
+      }
+      else {
+        painter->drawTextBox(mrect,MText,MTextAlignment);
+      }
+      
     }
   }
 

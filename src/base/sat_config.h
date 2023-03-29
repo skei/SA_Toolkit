@@ -43,10 +43,37 @@
 //
 //----------------------------------------------------------------------
 
+  /*
+  */
+  
   //#define SAT_NO_AUTODELETE
+
+  //----------
+
+  /*
+  */
+  
   //#define SAT_NO_BITMAP_PNG
+
+  //----------
+
+  /*
+  */
+  
   //#define SAT_NO_BITMAP_PNG_FILE
+
+  //----------
+
+  /*
+  */
+  
   //#define SAT_NO_DMC_COMPRESS
+
+  //----------
+
+  /*
+  */
+  
   //#define SAT_NO_ENTRY
 
   //----------
@@ -59,7 +86,16 @@
   
   //----------
 
+  /*
+  */
+  
   //#define SAT_NO_STDLIB
+
+  //----------
+
+  /*
+  */
+  
   //#define SAT_UNIT_TESTING
 
 //--------------------
@@ -180,7 +216,16 @@
 
   //----------
   
+  /*
+  */
+  
   //#define SAT_MOUSE_DOUBLECLICK
+  
+  //----------
+
+  /*
+  */
+  
   //#define SAT_WIN32_INVALIDATE_WHEN_RESIZING  
   
   //----------
@@ -193,6 +238,9 @@
 
   //----------
 
+  /*
+  */
+  
   //#define SAT_USE_CAIRO  
 
 

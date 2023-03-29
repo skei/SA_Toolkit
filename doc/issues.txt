@@ -10,6 +10,10 @@
   (no spikes with internal devices)
   investigate
   
+  when i select "inside bitwig" or what it's called, so that the plugins
+  are called within bitwig, and not as a separate process, there's no
+  spikes.. something related to context switching? thread priorities?
+  
 * 'delete this'
 
   is the 'delete this' in SAT_Plugin.destroy() correct/working?
@@ -42,18 +46,9 @@
   gui
 ----------------------------------------------------------------------
 
-* gui: culling & clipping
-
-  no drawing outside parent boundaries
-  set clipping to parent rect before drawing child widgets
-  each widget could additionally clip itself (if needed)
-  or a flag/bool for handling it automatically
-
 * gui: investigate text/font alignment & accuracy
 * gui: window aspect ratio during resizing
 * gui: cached widgets (buffer, dirty_flag to update)
-* gui: layout/alignment
-* gui: scrollable container
 
 ----------------------------------------------------------------------
 

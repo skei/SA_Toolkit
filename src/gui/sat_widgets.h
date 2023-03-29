@@ -20,6 +20,7 @@
 #include "gui/widgets/sat_panel_widget.h"
 #include "gui/widgets/sat_popup_widget.h"
 #include "gui/widgets/sat_plugin_header_widget.h"
+#include "gui/widgets/sat_plugin_footer_widget.h"
 #include "gui/widgets/sat_selector_widget.h"
 #include "gui/widgets/sat_slider_widget.h"
 #include "gui/widgets/sat_scroll_bar_widget.h"

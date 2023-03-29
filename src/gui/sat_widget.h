@@ -277,8 +277,8 @@ public:
 
   virtual void realignChildWidgets(bool ARecursive=true) {
     double S = getWindowScale();
-
     SAT_Rect parent_rect = getRect();
+
 //    SAT_Rect ib = MInnerBorder;
 //    ib.scale(S);
 //    parent_rect.shrink(ib);
