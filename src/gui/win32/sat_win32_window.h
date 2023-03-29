@@ -394,6 +394,7 @@ public:
   */
 
   virtual void reparent(intptr_t AParent) {
+    
     LONG_PTR style   = GetWindowLongPtr(MWindow,GWL_STYLE);
     LONG_PTR exstyle = GetWindowLongPtr(MWindow,GWL_EXSTYLE);
     if (AParent) {
@@ -1177,11 +1178,13 @@ private: // remap
       //-----
 
       case WM_MOUSEWHEEL: {
-        int32_t d = GET_WHEEL_DELTA_WPARAM(wParam);
-        //if (d>0) { if (MWindowListener) MWindowListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelUp,  smb_none); }
-        //if (d<0) { if (MWindowListener) MWindowListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelDown,smb_none); }
-        if (d > 0) { on_window_mouse_click(MMouseXpos,MMouseYpos, SAT_BUTTON_SCROLL_UP,   SAT_KEY_NONE, time); }
-        if (d < 0) { on_window_mouse_click(MMouseXpos,MMouseYpos, SAT_BUTTON_SCROLL_DOWN, SAT_KEY_NONE, time); }
+        
+//        int32_t d = GET_WHEEL_DELTA_WPARAM(wParam);
+//        //if (d>0) { if (MWindowListener) MWindowListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelUp,  smb_none); }
+//        //if (d<0) { if (MWindowListener) MWindowListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelDown,smb_none); }
+//        if (d > 0) { on_window_mouse_click(MMouseXpos,MMouseYpos, SAT_BUTTON_SCROLL_UP,   SAT_KEY_NONE, time); }
+//        if (d < 0) { on_window_mouse_click(MMouseXpos,MMouseYpos, SAT_BUTTON_SCROLL_DOWN, SAT_KEY_NONE, time); }
+        
         break;
       }
 

@@ -618,16 +618,19 @@ public: // gui
   bool gui_create(const char *api, bool is_floating) override {
     //SAT_Print("api %s is_floating %i\n",api,is_floating);
     if (is_floating == true) return false;
+
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
     #endif
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
+
     uint32_t w = (double)MInitialEditorWidth * MInitialEditorScale;
     uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
     MEditor = createEditor(this,w,h);//MInitialEditorWidth,MInitialEditorHeight);
     if (!MEditor) {
+      //SAT_Print("todo: createGenericEditor\n");
       //createGenericEditor(this,w,h);
     }
     return (MEditor);
@@ -666,6 +669,7 @@ public: // gui
   // [main-thread]
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
+    //SAT_Print("\n");
     if (MEditor) {
       return MEditor->get_size(width,height);
     }
@@ -683,6 +687,7 @@ public: // gui
   // [main-thread]
 
   bool gui_can_resize() override {
+    //SAT_Print("\n");
     return MEditor->can_resize();
   }
 
@@ -700,6 +705,7 @@ public: // gui
   //} clap_gui_resize_hints_t;
 
   bool gui_get_resize_hints(clap_gui_resize_hints_t *hints) override {
+    //SAT_Print("\n");
     return MEditor->get_resize_hints(hints);
   }
 
@@ -712,6 +718,7 @@ public: // gui
   // [main-thread]
 
   bool gui_adjust_size(uint32_t *width, uint32_t *height) override {
+    //SAT_Print("\n");
     return MEditor->adjust_size(width,height);
   }
 
@@ -721,6 +728,7 @@ public: // gui
   // [main-thread]
 
   bool gui_set_size(uint32_t width, uint32_t height) override {
+    //SAT_Print("\n");
     return MEditor->set_size(width,height);
   }
 
@@ -735,6 +743,7 @@ public: // gui
   */
 
   bool gui_set_parent(const clap_window_t *window) override {
+    //SAT_Print("\n");
     bool result = MEditor->set_parent(window);
     if (result) {
       SAT_Window* win = MEditor->getWindow();
@@ -751,6 +760,7 @@ public: // gui
   // [main-thread & floating]
 
   bool gui_set_transient(const clap_window_t *window) override {
+    //SAT_Print("\n");
     return MEditor->set_transient(window);
   }
 
@@ -760,6 +770,7 @@ public: // gui
   // [main-thread & floating]
 
   void gui_suggest_title(const char *title) override {
+    //SAT_Print("\n");
     return MEditor->suggest_title(title);
   }
 
@@ -769,6 +780,7 @@ public: // gui
   // [main-thread]
 
   bool gui_show() override {
+    //SAT_Print("\n");
     return MEditor->show();
   }
 
@@ -779,6 +791,7 @@ public: // gui
   // [main-thread]
 
   bool gui_hide() override {
+    //SAT_Print("\n");
     return MEditor->hide();
   }
 
@@ -1607,6 +1620,7 @@ public: // editor
   // called from SAT_Plugin.gui_create()
 
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) {
+    //SAT_PRINT;
     return new SAT_Editor(AListener,AWidth,AHeight);
   }
 

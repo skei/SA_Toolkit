@@ -43,7 +43,6 @@ public:
     SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,50,200,20),"Gain",0.5);
     panel->appendChildWidget(slider);
     AEditor->connect( slider, getParameter(0) );
-    SAT_PRINT;
     return true;
   }
 

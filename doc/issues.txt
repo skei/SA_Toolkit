@@ -46,6 +46,8 @@
   gui
 ----------------------------------------------------------------------
 
+* win32: scroll-wheel breaks mouse responsitivity
+
 * gui: investigate text/font alignment & accuracy
 * gui: window aspect ratio during resizing
 * gui: cached widgets (buffer, dirty_flag to update)

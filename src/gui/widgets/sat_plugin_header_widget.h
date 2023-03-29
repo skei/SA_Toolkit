@@ -48,6 +48,14 @@ public:
     strcpy(MName,AName);
     //sprintf(MFormat,"Format: %s",AFormat);
     strcpy(MFormat,AFormat);
+    
+    #ifdef SAT_LINUX
+      strcat(MFormat," (Linux)");
+    #endif
+    #ifdef SAT_WIN32
+      strcat(MFormat," (Win32)");
+    #endif
+    
     sprintf(MClapVer,"CLAP %i.%i.%i",CLAP_VERSION_MAJOR,CLAP_VERSION_MINOR,CLAP_VERSION_REVISION);
     sprintf(MSatVer,"SAT %s",SAT_VERSION);
     

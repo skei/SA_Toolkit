@@ -538,7 +538,6 @@ public: // window
 
   void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     
-    
     if (MHoverWidget == nullptr) {
 
       // if hover = null (outside of window/modal-widget), and we click,

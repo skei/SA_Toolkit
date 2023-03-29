@@ -81,7 +81,15 @@ void open_editor(const clap_plugin_t* plugin) {
   const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);
   if (gui) {
     uint32_t width,height;
-    gui->create(plugin,CLAP_WINDOW_API_X11,false);
+    
+    #ifdef SAT_LINUX
+      gui->create(plugin,CLAP_WINDOW_API_X11,false);
+    #endif
+    
+    #ifdef SAT_WIN32
+      gui->create(plugin,CLAP_WINDOW_API_WIN32,false);
+    #endif
+
     gui->set_scale(plugin,1.0);
     gui->get_size(plugin,&width,&height);
     

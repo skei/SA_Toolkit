@@ -35,6 +35,7 @@ public:
 //------------------------------
 
   SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) {
+    //SAT_PRINT;
     MListener = AListener;
     MWidth    = AWidth;
     MHeight   = AHeight;
@@ -206,7 +207,8 @@ public: // clap
 
   bool set_scale(double scale) {
     //SAT_Print("scale %f\n",scale);
-    MScale = scale;
+    MScale = scale;     // win32: crashes.. huh?
+    //SAT_Print("...\n"); // win32; not printed..
     return true;
   }
 
