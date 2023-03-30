@@ -258,17 +258,17 @@ public:
 //------------------------------
 
   sat_param_t getValue() override {
-    return (int)MValue;
+    return SAT_Trunc(MValue+0.5);
   }
 
   void setValue(double AValue) override {
-    MValue = (int)AValue;
+    MValue = SAT_Trunc(AValue+0.5);
   }
 
   //----------
 
   bool valueToText(double value, char *display, uint32_t size) override {
-    sprintf(display,"%i",(int)value);
+    sprintf(display,"%.f",SAT_Trunc(value+0.5));
     return true;
   }
 
@@ -308,7 +308,7 @@ public:
 //------------------------------
 
   bool valueToText(double value, char *display, uint32_t size) override {
-    uint32_t index = (int)value;
+    uint32_t index = SAT_Trunc(value+0.5);
     if (index <= MInfo.max_value) {
       strcpy(display,MText[index]);
     }
@@ -321,54 +321,10 @@ public:
 };
 
 //----------------------------------------------------------------------
-//
-// scale
-//
-//----------------------------------------------------------------------
-
-class SAT_ScaleParameter
-: public SAT_Parameter {
-
-//------------------------------
-private:
-//------------------------------
-
-
-
-//------------------------------
-public:
-//------------------------------
-
-  SAT_ScaleParameter(const char* AName="", double AValue=0.0, double AMin=0.0, double AMax=1.0)
-  : SAT_Parameter(AName,AValue,AMin,AMax) {
-  }
-
-  //----------
-
-  virtual ~SAT_ScaleParameter() {
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  bool valueToText(double value, char *display, uint32_t size) override {
-//    uint32_t index = (int)value;
-//    if (index <= MParamInfo.max_value) {
-//      strcpy(display,MText[index]);
-//    }
-//    else {
-//      strcpy(display,"error");
-//    }
-    return true;
-  }
-
-};
-
-//----------------------------------------------------------------------
 
 
 /*
+  scale
   db
   hz, freq
   pow

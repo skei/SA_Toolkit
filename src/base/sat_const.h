@@ -272,6 +272,12 @@
 
   #define SAT_TERM_RESET                        "\e[0m"
   
+  #define SAT_TERM_NORMAL                       "\e[0;97m"
+  #define SAT_TERM_BOLD                         "\e[1;97m"
+  #define SAT_TERM_FAINT                        "\e[2;97m"
+  #define SAT_TERM_ITALICS                      "\e[3;97m"
+  #define SAT_TERM_UNDERLINE                    "\e[4;97m"
+  
 #else // WIN32
 
   #define SAT_TERM_BG_BLACK                     ""
@@ -312,9 +318,13 @@
 
   #define SAT_TERM_RESET                        ""
 
-#endif
+  #define SAT_TERM_NORMAL                       ""
+  #define SAT_TERM_BOLD                         ""
+  #define SAT_TERM_FAINT                        ""
+  #define SAT_TERM_ITALICS                      ""
+  #define SAT_TERM_UNDERLINE                    ""
 
-  
+#endif
 
 #define SAT_VOICE_OFF                           0
 #define SAT_VOICE_WAITING                       1

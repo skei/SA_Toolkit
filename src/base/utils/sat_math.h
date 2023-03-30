@@ -353,6 +353,10 @@ float SAT_Trunc(const float v) {
   return (float)(int)v;
 }
 
+double SAT_Trunc(const double v) {
+  return (double)(int)v;
+}
+
 //----------
 
 float SAT_Wrap(float v, float lo, float hi) {

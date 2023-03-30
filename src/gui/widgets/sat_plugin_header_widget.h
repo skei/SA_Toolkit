@@ -26,17 +26,18 @@ private:
   SAT_Rect        MFormatOffset                = SAT_Rect(0,5,5,0);
   uint32_t        MFormatAlignment             = SAT_TEXT_ALIGN_RIGHT | SAT_TEXT_ALIGN_TOP;
 
-  char            MClapVer[SAT_MAX_NAME_LENGTH] = {0};
-  SAT_Color       MClapVerColor                 = SAT_Grey;
-  double          MClapVerSize                  = 7.0;
-  SAT_Rect        MClapVerOffset                = SAT_Rect(0,14,5,0);
-  uint32_t        MClapVerAlignment             = SAT_TEXT_ALIGN_RIGHT | SAT_TEXT_ALIGN_TOP;
-
   char            MSatVer[SAT_MAX_NAME_LENGTH]  = {0};
   SAT_Color       MSatVerColor                  = SAT_Grey;
   double          MSatVerSize                   = 7.0;
-  SAT_Rect        MSatVerOffset                 = SAT_Rect(0,23,5,0);
+  SAT_Rect        MSatVerOffset                 = SAT_Rect(0,14,5,0);
   uint32_t        MSatVerAlignment              = SAT_TEXT_ALIGN_RIGHT | SAT_TEXT_ALIGN_TOP;
+
+  char            MClapVer[SAT_MAX_NAME_LENGTH] = {0};
+  SAT_Color       MClapVerColor                 = SAT_Grey;
+  double          MClapVerSize                  = 7.0;
+  SAT_Rect        MClapVerOffset                = SAT_Rect(0,23,5,0);
+  uint32_t        MClapVerAlignment             = SAT_TEXT_ALIGN_RIGHT | SAT_TEXT_ALIGN_TOP;
+
 
 //------------------------------
 public:
@@ -118,18 +119,6 @@ public:
     frect.shrink(fofs);
     painter->drawTextBox(frect,MFormat,MFormatAlignment);
     
-    // clap version
-    
-    //painter->selectFont(default_font);
-    painter->setTextColor(MClapVerColor);
-    painter->setTextSize( MClapVerSize * S );
-
-    SAT_Rect cvofs = MClapVerOffset;
-    cvofs.scale(S);
-    SAT_Rect cvrect = mrect;
-    cvrect.shrink(cvofs);
-    painter->drawTextBox(cvrect,MClapVer,MClapVerAlignment);
-    
     // SAT version
 
     //painter->selectFont(default_font);
@@ -141,6 +130,18 @@ public:
     SAT_Rect svrect = mrect;
     svrect.shrink(svofs);
     painter->drawTextBox(svrect,MSatVer,MSatVerAlignment);
+    
+    // clap version
+    
+    //painter->selectFont(default_font);
+    painter->setTextColor(MClapVerColor);
+    painter->setTextSize( MClapVerSize * S );
+
+    SAT_Rect cvofs = MClapVerOffset;
+    cvofs.scale(S);
+    SAT_Rect cvrect = mrect;
+    cvrect.shrink(cvofs);
+    painter->drawTextBox(cvrect,MClapVer,MClapVerAlignment);
     
     //
 

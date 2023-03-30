@@ -29,6 +29,8 @@
   plugin
 ----------------------------------------------------------------------
 
+* vst3: doesn't remember editor size when reopening
+
 * plugin: parameter smoothing
 
   a value in a synth might use a combination of:
@@ -47,6 +49,7 @@
 ----------------------------------------------------------------------
 
 * win32: scroll-wheel breaks mouse responsitivity
+* movable widgets stops drawing (automating) if x/y is < 0
 
 * gui: investigate text/font alignment & accuracy
 * gui: window aspect ratio during resizing

@@ -59,22 +59,9 @@
 #ifdef SAT_DEBUG_CALL_STACK
 #ifdef SAT_LINUX
 
-  #include <stdio.h>
-  #include <sys/unistd.h>
-  #include <cxxabi.h>
-  #include <execinfo.h>
-  
-  struct sat_callstack_symbol_t {
-    const char*  func;    // name of function containing address of function.
-    const char*  file;    // file where symbol is defined, might not work on all platforms.
-    unsigned int line;    // line in file where symbol is defined, might not work on all platforms.
-    unsigned int ofs;     // offset from start of function where call was made.
-  };
-
-  struct sat_callstack_stringbuffer_t {
-    char*       out_ptr;
-    const char* end_ptr;
-  };
+  #include <execinfo.h>  // for backtrace
+  #include <dlfcn.h>     // for dladdr
+  #include <cxxabi.h>    // for __cxa_demangle
   
 #endif // LINUX
 #endif
@@ -417,154 +404,41 @@ public: // call stack
 
   #ifdef SAT_DEBUG_CALL_STACK
   #ifdef SAT_LINUX
+  
+    // https://gist.github.com/fmela/591333/c64f4eb86037bb237862a8283df70cdfc25f01d3  
 
-    const char* callstack_alloc_string( sat_callstack_stringbuffer_t* buf, const char* str, size_t str_len ) {
-      char* res;
-      if ((size_t)(buf->end_ptr-buf->out_ptr)<(str_len+1)) return "out of memory";
-      res = buf->out_ptr;
-      buf->out_ptr += str_len + 1;
-      memcpy(res,str,str_len);
-      res[str_len] = '\0';
-      return res;
-    }
-
-    //----------
-
-    FILE* run_addr2line( void** addresses, int num_addresses, char* tmp_buffer, size_t tmp_buf_len ) {
-      const char addr2line_run_string[] = "addr2line -e /proc/%u/exe";
-      size_t start = (size_t)snprintf(tmp_buffer,tmp_buf_len,addr2line_run_string,getpid());
-      for (int i=0; i<num_addresses; ++i) {
-        start += (size_t)snprintf(tmp_buffer+start,tmp_buf_len-start," %p",addresses[i]);
-      }
-      return popen(tmp_buffer,"r");
-    }
-
-    //----------
-
-    char* demangle_symbol( char* symbol, char* buffer, size_t buffer_size ) {
-      int status;
-      char* demangled_symbol = abi::__cxa_demangle( symbol, buffer, &buffer_size, &status );
-      return status != 0 ? symbol : demangled_symbol;
-    }
-
-    //----------
-
-    /*
-      Generate a callstack from the current location in the code.
-      skip_frames:    number of frames to skip in output to addresses.
-      addresses:      is a pointer to a buffer where to store addresses in callstack.
-      num_addresses:  size of addresses.
-      return:         number of addresses in callstack.
-    */
-
-    int generate_callstack(int skip_frames, void** addresses, int num_addresses) {
-      ++skip_frames;
-      void* trace[256];
-      int fetched = backtrace(trace,num_addresses+skip_frames)-skip_frames;
-      memcpy(addresses,trace+skip_frames,(size_t)fetched*sizeof(void*));
-      return fetched;
-    }
-
-    //----------
-
-    /*
-      Translate addresses from, for example, callstack to symbol-names.
-      addresses:      list of pointers to translate.
-      out_syms:       list of sat_callstack_symbol_t to fill with translated data, need to fit as many strings as there are ptrs in addresses.
-      num_addresses:  number of addresses in addresses
-      memory:         memory used to allocate strings stored in out_syms.
-      mem_size:       size of addresses.
-      return:         number of addresses translated.
-    */
-
-    int translate_addresses(void** addresses, sat_callstack_symbol_t* out_syms, int num_addresses, char* memory, int mem_size) {
-      int num_translated = 0;
-      sat_callstack_stringbuffer_t outbuf = { memory, memory + mem_size };
-      memset(out_syms,0x0,(size_t)num_addresses*sizeof(sat_callstack_symbol_t));
-      char** syms = backtrace_symbols(addresses,num_addresses);
-      size_t tmp_buf_len = 1024 * 32;
-      char*  tmp_buffer  = (char*)::malloc(tmp_buf_len);
-      FILE* addr2line = run_addr2line(addresses,num_addresses,tmp_buffer,tmp_buf_len);
-      for (int i=0; i<num_addresses; ++i) {
-        char* symbol = syms[i];
-        unsigned int offset = 0;
-        // find function name and offset
-        char* name_start = strchr(symbol,'(');
-        char* offset_start = name_start ? strchr(name_start,'+') : 0x0;
-        if (name_start && offset_start) {
-          // zero terminate all strings
-          ++name_start;
-          *offset_start = '\0';
-          ++offset_start;
+    void print_callstack(int skip = 1) {
+      print("\nCallstack:\n");
+      void *callstack[128];
+      const int nMaxFrames = sizeof(callstack) / sizeof(callstack[0]);
+      int nFrames = backtrace(callstack, nMaxFrames);
+      char **symbols = backtrace_symbols(callstack, nFrames);
+      for (int i = skip; i < nFrames; i++) {
+        Dl_info info;
+        if (dladdr(callstack[i], &info)) {
+          char *demangled = nullptr;
+          int status;
+          demangled = abi::__cxa_demangle(info.dli_sname, NULL, 0, &status);
+          //snprintf(buf, sizeof(buf), "%-3d %*0p %s + %zd\n",
+          //  i, 2 + sizeof(void*) * 2, callstack[i],
+          //  status == 0 ? demangled : info.dli_sname,
+          //  (char *)callstack[i] - (char *)info.dli_saddr);
+          const char* txt = status == 0 ? demangled : info.dli_sname;
+          print("%i: %s\n",i,txt);
+          free(demangled);
         }
-        if (name_start && offset_start ) {
-          offset = (unsigned int)strtoll(offset_start,0x0,16);
-          symbol = demangle_symbol(name_start,tmp_buffer,tmp_buf_len);
+        else {
+          //snprintf(buf, sizeof(buf), "%-3d %*0p\n",
+          //  i, 2 + sizeof(void*) * 2, callstack[i]);
+          print("%i: %s\n",i,callstack[i]);
         }
-        out_syms[i].func  = callstack_alloc_string(&outbuf,symbol,strlen(symbol));
-        out_syms[i].ofs   = offset;
-        out_syms[i].file  = "failed to lookup file";
-        out_syms[i].line  = 0;
-        if( addr2line != 0x0 ) {
-          if ( fgets(tmp_buffer,(int)tmp_buf_len, addr2line) != 0x0) {
-            char* line_start = strchr(tmp_buffer,':');
-            *line_start = '\0';
-            if (tmp_buffer[0] != '?' && tmp_buffer[1] != '?') {
-              out_syms[i].file = callstack_alloc_string(&outbuf,tmp_buffer,strlen(tmp_buffer));
-            }
-            out_syms[i].line = (unsigned int)strtoll(line_start+1,0x0,10);
-          }
-        }
-        ++num_translated;
+        //snprintf(buf, sizeof(buf), "%s\n", symbols[i]);
+        //SAT_Print("%s\n", symbols[i]);
       }
-      ::free(syms);
-      ::free(tmp_buffer);
-      fclose(addr2line);
-      return num_translated;
-    }
-
-    //----------
-
-    //#define SAT_DumpCallStackSkip(s) {
-    //  void* adr[256];
-    //  int num = generate_callstack(0,adr,256);
-    //  print_callstack(adr,num,2,s);
-    //}
-
-    /*
-      two first entries (0,1) = crash handler itself (and glib?), #2 = positiof of crash..
-      You can't call exit() safely from a signal handler. Use _exit() or _Exit()
-    */
-    
-    void print_callstack(void** AAddresses=nullptr, int ANumAddresses=0, int skip_last=0, int skip_first=0) {
-      sat_callstack_symbol_t symbols[256];
-      char symbols_buffer[1024];
-      int num_addresses;
-      if (AAddresses && (ANumAddresses>0)) {
-        num_addresses = translate_addresses(AAddresses,symbols,ANumAddresses,symbols_buffer,1024);
+      free(symbols);
+      if (nFrames == nMaxFrames) {
+        print("[truncated]\n");
       }
-      else {
-        void* adr[256];
-        int num = generate_callstack(0,adr,256);
-        num_addresses = translate_addresses(adr,symbols,num,symbols_buffer,1024);
-      }
-      //SAT_DPrint("\n----------------------------------------------------------------------\n");
-      print("\ncallstack:\n");
-      //SAT_DPrint("----------------------------------------------------------------------\n");
-
-      /*
-        the last two entries are
-        - __libc_start_main
-        - sat_debug()
-      */
-      num_addresses -= skip_last;
-
-      for (int i=skip_first; i<num_addresses; i++) {
-        print("%3i : %s\n", i-skip_first, symbols[i].func);
-        print("      %s\n", symbols[i].file);
-        print("      line %i offset %i\n", symbols[i].line, symbols[i].ofs);
-      }
-      //SAT_DPrint("----------------------------------------------------------------------\n\n");
     }
 
   #endif // linux

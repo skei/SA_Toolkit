@@ -1,22 +1,38 @@
 
+
+
+
+
 //----------------------------------------------------------------------
 //
 // test
 //
 //----------------------------------------------------------------------
 
-//#include "test/test1_synth_gui.h"
+
+
+
+
+#include "test/test1_synth_gui.h"
 //#include "test/test2_standalone.h"
-#include "test/test3_minimal.h"
+//#include "test/test3_minimal.h"
 //#include "test/test4_minimal2.h"
 //#include "test/test5_reaper_ext.h"
 //#include "test/test6_ara.h"
+
+
+
+
 
 //----------------------------------------------------------------------
 //
 // ports
 //
 //----------------------------------------------------------------------
+
+
+
+
 
 //#include "../../SA_Plugins/sa_ports.h"
 
@@ -39,11 +55,19 @@
 //#include "../../SA_Plugins/ports/tilteq.h"
 //#include "../../SA_Plugins/ports/transient_killer.h"
 
+
+
+
+
 //----------------------------------------------------------------------
 //
 // SA_Plugins
 //
 //----------------------------------------------------------------------
+
+
+
+
 
 //#include "../../SA_Plugins/sa_gain.h"
 //#include "../../SA_Plugins/sa_pitch.h"

@@ -797,9 +797,9 @@ public: // timer listener
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
     
     if (MListener) MListener->do_window_listener_timer(this);
-    //for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
-    //  MTimerWidgets[i]->on_widget_timer();
-    //}
+    for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
+      MTimerWidgets[i]->on_widget_timer();
+    }
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
     if (num > 0) { // && (rect.isNotEmpty()) {
