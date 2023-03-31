@@ -82,7 +82,7 @@ HINSTANCE SAT_GLOBAL_WIN32_INSTANCE = 0;
     switch(reason) {
 
       case DLL_PROCESS_ATTACH:
-        SAT_Print("SAT_GLOBAL_WIN32_INSTANCE = hModule;\n");
+        //SAT_Print("SAT_GLOBAL_WIN32_INSTANCE = hModule;\n");
         SAT_GLOBAL_WIN32_INSTANCE = hModule;
         //SAT_RegisterWindowClass(&s3_global_WinInstance);
         break;

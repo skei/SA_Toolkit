@@ -150,7 +150,7 @@
     print thread id (in SAT_Print)
   */
 
-  //#define SAT_DEBUG_PRINT_THREAD
+  #define SAT_DEBUG_PRINT_THREAD
 
   //----------
 
@@ -158,7 +158,7 @@
     print time (in SAT_Print)
   */
 
-  //#define SAT_DEBUG_PRINT_TIME
+  #define SAT_DEBUG_PRINT_TIME
 
 
 

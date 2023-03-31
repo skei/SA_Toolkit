@@ -33,7 +33,7 @@ private:
   bool                MIsActive                           = true;
   bool                MIsVisible                          = true;
   bool                MIsDisabled                         = false;
-
+  
   SAT_Rect            MRect                               = {};
   SAT_Rect            MInitialRect                        = {};
   SAT_Rect            MBasisRect                          = {};
@@ -57,9 +57,15 @@ public:
 //------------------------------
 
   SAT_Widget(SAT_Rect ARect) {
-    MRect = ARect;
     MInitialRect = ARect;
-    MBasisRect = ARect;
+
+    MRect = ARect;
+    MRect.x = abs(MRect.x);
+    MRect.y = abs(MRect.y);
+    MRect.w = abs(MRect.w);
+    MRect.h = abs(MRect.h);
+    
+    MBasisRect = MRect;
   }
 
   //----------
@@ -129,7 +135,9 @@ public:
   virtual bool        isDisabled()                                    { return MIsDisabled; }
   virtual double      getWindowScale()                                { return MWindowScale; }
   virtual int32_t     getLastPainted()                                { return MLastPainted; }
-  //virtual SAT_Rect    getInitialRect()                                { return MInitialRect; }
+  
+  virtual SAT_Rect    getInitialRect()                                { return MInitialRect; }
+  
   virtual SAT_Rect    getBasisRect()                                  { return MBasisRect; }
   virtual uint32_t    getNumChildWidgets()                            { return MChildren.size(); }
   virtual SAT_Widget* getChildWidget(uint32_t AIndex)                 { return MChildren[AIndex]; }
@@ -279,9 +287,9 @@ public:
     double S = getWindowScale();
     SAT_Rect parent_rect = getRect();
 
-//    SAT_Rect ib = MInnerBorder;
-//    ib.scale(S);
-//    parent_rect.shrink(ib);
+    //    SAT_Rect ib = MInnerBorder;
+    //    ib.scale(S);
+    //    parent_rect.shrink(ib);
 
     SAT_Rect client_rect = parent_rect;
     
@@ -297,6 +305,14 @@ public:
       child->MRect.x = parent_rect.x + child_basisrect.x;
       child->MRect.y = parent_rect.y + child_basisrect.y;
       
+      // negative = percent
+      
+      SAT_Rect child_initialrect = child->getInitialRect();
+      if (child_initialrect.x < 0) child->MRect.x = parent_rect.w * (fabs(child_initialrect.x) * 0.01);
+      if (child_initialrect.y < 0) child->MRect.y = parent_rect.h * (fabs(child_initialrect.y) * 0.01);
+      if (child_initialrect.w < 0) child->MRect.w = parent_rect.w * (fabs(child_initialrect.w) * 0.01);
+      if (child_initialrect.h < 0) child->MRect.h = parent_rect.h * (fabs(child_initialrect.h) * 0.01);
+
       // alignment
 
       uint32_t child_alignment = child->getAlignment();
@@ -326,15 +342,9 @@ public:
         client_rect.h -= child->MRect.h;
       }
       
-      // anchors
-      
-      uint32_t child_stretching   = child->getStretching();
+      // stretching
 
-      //if (child_anchors & SAT_EDGE_LEFT)      child->MRect.setX1( parent_rect.x );
-      //if (child_anchors & SAT_EDGE_RIGHT)     child->MRect.setX2( parent_rect.x2() );
-      //if (child_anchors & SAT_EDGE_TOP)       child->MRect.setY1( parent_rect.y );
-      //if (child_anchors & SAT_EDGE_BOTTOM)    child->MRect.setY2( parent_rect.y2() );
-      
+      uint32_t child_stretching   = child->getStretching();
       if (child_stretching & SAT_EDGE_LEFT)      child->MRect.setX1( client_rect.x );
       if (child_stretching & SAT_EDGE_RIGHT)     child->MRect.setX2( client_rect.x2() );
       if (child_stretching & SAT_EDGE_TOP)       child->MRect.setY1( client_rect.y );

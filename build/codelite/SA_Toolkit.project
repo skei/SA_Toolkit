@@ -9,10 +9,10 @@
     <File Name="../../tools/bin2h.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
   </VirtualDirectory>
   <VirtualDirectory Name="doc">
+    <File Name="../../doc/notes.txt"/>
     <File Name="../../doc/makedocs.sh"/>
     <File Name="../../doc/doxygen.cfg"/>
     <File Name="../../doc/about.txt"/>
-    <File Name="../../doc/issues.txt"/>
     <File Name="../../doc/history.txt"/>
     <File Name="../../doc/compiling.txt"/>
   </VirtualDirectory>
@@ -48,6 +48,8 @@
       <File Name="../../../SA_Plugins/sa_gain.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="test">
+      <File Name="../test/test1_synth_widgets.h"/>
+      <File Name="../test/test1_synth.h"/>
       <File Name="../test/test4_minimal2.h"/>
       <File Name="../test/test3_minimal.h"/>
       <File Name="../test/test2_standalone.h"/>
@@ -278,6 +280,7 @@
       <File Name="../../src/gui/sat_window.h"/>
       <File Name="../../src/gui/sat_widget.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_curve_widget.h"/>
         <File Name="../../src/gui/widgets/sat_plugin_footer_widget.h"/>
         <File Name="../../src/gui/widgets/sat_movable_widget.h"/>
         <File Name="../../src/gui/widgets/sat_symbol_widget.h"/>
@@ -825,7 +828,7 @@
         <Library Value="opengl32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -860,19 +863,20 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="win32_exe_release" CompilerType="Cross GCC ( x86_64-linux-gnu )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="win32_exe_release" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_EXE"/>
       </Compiler>
-      <Linker Options="" Required="yes">
+      <Linker Options="-static-libstdc++;-static-libgcc" Required="yes">
+        <LibraryPath Value="/lib/x86_64-linux-gnu"/>
         <Library Value="gdi32"/>
         <Library Value="msimg32"/>
         <Library Value="opengl32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -907,19 +911,20 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="win32_plugin_debug" CompilerType="Cross GCC ( x86_64-linux-gnu )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="win32_plugin_debug" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;-static;-fPIC;-Wl,-Bsymbolic;-Wl,--export-all-symbols;-static-libstdc++;-static-libgcc" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="SAT_PLUGIN"/>
         <Preprocessor Value="SAT_DEBUG"/>
       </Compiler>
-      <Linker Options="" Required="yes">
+      <Linker Options="-static-libstdc++;-static-libgcc" Required="yes">
+        <LibraryPath Value="/lib/x86_64-linux-gnu"/>
         <Library Value="gdi32"/>
         <Library Value="msimg32"/>
         <Library Value="opengl32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName).dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -954,19 +959,20 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="win32_plugin_release" CompilerType="Cross GCC ( x86_64-linux-gnu )" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="win32_plugin_release" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;-static;-fPIC;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_PLUGIN"/>
       </Compiler>
-      <Linker Options="" Required="yes">
+      <Linker Options="-static-libstdc++;-static-libgcc" Required="yes">
+        <LibraryPath Value="/lib/x86_64-linux-gnu"/>
         <Library Value="gdi32"/>
         <Library Value="msimg32"/>
         <Library Value="opengl32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName).dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Make Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

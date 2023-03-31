@@ -1,7 +1,10 @@
+[todo]
+not up to date, i think..
+
+
 
 
 some random, useless notes about compiling:
-
 
 ----- linux -----
 

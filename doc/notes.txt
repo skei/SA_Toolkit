@@ -3,6 +3,10 @@
   base
 ----------------------------------------------------------------------
 
+--------------------
+  bugs
+--------------------
+
 * random cpu spikes in bitwig (synth)
 
   3-4 seconds interval
@@ -14,12 +18,16 @@
   are called within bitwig, and not as a separate process, there's no
   spikes.. something related to context switching? thread priorities?
   
+--------------------
+  todo
+--------------------
+
 * 'delete this'
 
   is the 'delete this' in SAT_Plugin.destroy() correct/working?
   printouts in destructors indicates it works..
-  but memtrace, and also memcheck (codelite plugin) reports
-  memory leaks..
+  but memtrace, and also memcheck (codelite plugin, valgrind?)
+  says there's memory leaks..
   
 * SAT_LockFreeQueue
 
@@ -29,7 +37,15 @@
   plugin
 ----------------------------------------------------------------------
 
+--------------------
+  bugs
+--------------------
+
 * vst3: doesn't remember editor size when reopening
+
+--------------------
+  todo
+--------------------
 
 * plugin: parameter smoothing
 
@@ -38,18 +54,28 @@
   (and smoothed individually per voice)
   so we need to find a way to smooth the _combination_ of these
 
-* plugin: generic editor
-* plugin: SAT_InstrumentPlugin
 * plugin: presets
 * plugin: update state (runtime)
 * plugin: editor state
+* plugin: generic editor
+* plugin: SAT_InstrumentPlugin, SAT_AudioEffectPlugin, JesusonicPlugin (for porting)..
 
 ----------------------------------------------------------------------
   gui
 ----------------------------------------------------------------------
 
-* win32: scroll-wheel breaks mouse responsitivity
+--------------------
+  bugs
+--------------------
+
+* win32: scroll-wheel breaks mouse responsitivity (can't reproduce in exe?)
+* win32: resizing doesn't update screen properly (exe only?)
 * movable widgets stops drawing (automating) if x/y is < 0
+* reaper: clicking 'ui' button crashes reaper (timer? animation?)
+
+--------------------
+  todo
+--------------------
 
 * gui: investigate text/font alignment & accuracy
 * gui: window aspect ratio during resizing

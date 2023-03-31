@@ -1,13 +1,49 @@
 
 * 0.4.0 (7.feb.2023)
-  - clap: clap 1.1.7
+  - clap: upgraded to v1.1.7
 
 * 0.4.1
   - base: improved logging & debugging
+  - clap: upgraded to v1.1.8
   - clap: improved extensions handling
+  - clap: initial/preliminary ara/reaper extensions
   - exe: creates plugin via clap_entry
   - gui: improved opengl handling
-  - gui: buffered painting
   - gui: svg support (via nanosvg)
-  - plugin: better param/mod updating
-  - general: lots of small tweaks and fixes
+  - gui: widget-system rewritten from scatch, more flexible, dynamic and performant
+  - plugin: better painting & resizing
+  - vst2: initial support is back
+  - win32: initial support is back
+  - general: countless bugfixes, tweaks and fixes
+
+----------
+todo
+----------
+
+0.4.2
+  - gui
+
+0.4.3
+  - vst3
+
+0.4.4
+  - win32
+
+0.4.5
+  - vst2
+
+0.4.6
+  - ladspa
+
+0.5.0
+  - SA_Plugins
+
+0.6.0
+  - SA_DSP
+
+0.7.0
+  - SA_CodeGen
+
+0.8.0
+  - SA_JIT
+
