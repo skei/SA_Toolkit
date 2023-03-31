@@ -24,6 +24,7 @@ public:
 
   SAT_MenuItemWidget(SAT_Rect ARect, const char* AText)
   : SAT_TextWidget(ARect,AText) {
+    setName("SAT_MenuItemWidget");
     setCursor(SAT_CURSOR_FINGER);
     setBorderColor(SAT_DarkerGrey);
     setFillBackground(true);

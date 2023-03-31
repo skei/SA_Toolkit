@@ -18,6 +18,7 @@ public:
 
   SAT_PluginFooterWidget(SAT_Rect ARect)
   : SAT_TextWidget(ARect,"...") {
+    setName("SAT_PluginFooterWidget");
     
     setFillBackground(true);
     setBackgroundColor(SAT_DarkestGrey);

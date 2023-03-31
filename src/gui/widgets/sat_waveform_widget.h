@@ -66,6 +66,7 @@ public:
 
   SAT_WaveformWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_WaveformWidget");
   }
 
   //----------

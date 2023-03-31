@@ -44,6 +44,7 @@ public:
 
   SAT_ButtonRowWidget(SAT_Rect ARect, int32_t ANum, const char** ATxt=nullptr, int32_t AMode=SAT_BUTTON_ROW_SINGLE)
   : SAT_GridWidget(ARect,ANum,1) {
+    setName("SAT_ButtonRowWidget");
 
 //    setNumParameters(1);
 

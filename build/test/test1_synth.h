@@ -74,7 +74,7 @@ private:
   float             srate     = 0.0;
   float             ph        = 0.0;
   float             phadd     = 0.0;
-
+  
 //------------------------------
 public:
 //------------------------------
@@ -179,6 +179,8 @@ private:
   SAT_VoicesWidget*   MVoicesWidget   = nullptr;
   SAT_WaveformWidget* MWaveformWidget = nullptr;
   
+  double MTestValue = 0.0;
+
 //------------------------------
 public:
 //------------------------------

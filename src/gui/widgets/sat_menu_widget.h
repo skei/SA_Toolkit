@@ -40,6 +40,7 @@ public:
 
   SAT_MenuWidget(SAT_Rect ARect)
   : SAT_PopupWidget(ARect) {
+    setName("SAT_MenuWidget");
   }
 
   //----------

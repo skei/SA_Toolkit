@@ -32,6 +32,7 @@ public:
 
   SAT_LogoWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_LogoWidget");
     setFillBackground(false);
     setDrawBorder(false);
     MBuffer = (char*)malloc(logo_svg_size + 1);

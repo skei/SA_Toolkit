@@ -22,6 +22,8 @@ class SAT_Widget
 private:
 //------------------------------
 
+  const char*         MName                               = "";
+
   SAT_WidgetListener* MListener                           = nullptr;
   SAT_WidgetArray     MChildren                           = {};
   uint32_t            MIndex                              = 0;
@@ -57,6 +59,7 @@ public:
 //------------------------------
 
   SAT_Widget(SAT_Rect ARect) {
+    setName("SAT_Widget");
     MInitialRect = ARect;
 
     MRect = ARect;
@@ -79,6 +82,8 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  virtual void setName(const char* AName) { MName = AName; }
 
   virtual void        setListener(SAT_WidgetListener* AListener)      { MListener = AListener; }
   virtual void        setIndex(uint32_t AIndex)                       { MIndex = AIndex; }
@@ -122,6 +127,8 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  virtual const char* getName() { return MName; }
 
   virtual uint32_t    getIndex()                                      { return MIndex; }
   virtual SAT_Rect    getRect()                                       { return MRect; }
@@ -213,7 +220,7 @@ public:
   //----------
 
   virtual void redraw() {
-    //SAT_PRINT;
+    //SAT_Print("%s\n",getName());
     if (MListener) MListener->do_widget_redraw(this,0,0);
   }
 
@@ -228,6 +235,7 @@ public:
 
   virtual void notify(uint32_t AReason, int32_t AValue) {
     //SAT_PRINT;
+    //if (MListener) MListener->do_widget_notify(this,AReason,AValue);
     if (MListener) MListener->do_widget_notify(this,AReason,AValue);
   }
 
@@ -449,7 +457,26 @@ public: // widget
   virtual void on_widget_notify(uint32_t AReason=SAT_WIDGET_NOTIFY_NONE) {
   }
 
-  virtual void on_widget_timer() {
+  virtual void on_widget_timer(double ADelta) {
+  }
+
+  virtual void on_widget_tween(uint32_t AId, uint32_t ACount, double* AData) {
+    switch (AId) {
+      case 666: {
+      //SAT_Print("id %i count %i data[0] %.2f data[1] %.2f data[2] %.2f data[3] %.2f\n",AId,ACount,AData[0],AData[1],AData[2],AData[3]);
+        double S = getWindowScale();
+        SAT_Rect R = { AData[0], AData[1], AData[2], AData[3] };
+        setBasisRect(R);
+        SAT_Rect R2 = R;
+        R2.scale(S);
+        setRect(R2);
+        //R.scale(1.0 / S);
+        
+        //do_widget_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
+        notify(SAT_WIDGET_NOTIFY_MOVED,0);
+        break;
+      }
+    }
   }
 
 //------------------------------
@@ -476,22 +503,46 @@ public: // widget listener
     if (MListener) MListener->do_widget_set_hint(ASender,AHint);
   }
 
+//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+//  //switch(AReason) {
+//  //  case SAT_WIDGET_NOTIFY_CLOSE:
+//  //    redraw();
+//  //    break;
+//  //  case SAT_WIDGET_NOTIFY_MOVED:
+//  //    redraw();
+//  //    break;
+//  //  case SAT_WIDGET_NOTIFY_RESIZED:
+//  //    redraw();
+//  //    break;
+//  //  default:
+//        if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+//  //    break;
+//  //}
+//  }
+
   void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-  //switch(AReason) {
-  //  case SAT_WIDGET_NOTIFY_CLOSE:
-  //    redraw();
-  //    break;
-  //  case SAT_WIDGET_NOTIFY_MOVED:
-  //    redraw();
-  //    break;
-  //  case SAT_WIDGET_NOTIFY_RESIZED:
-  //    redraw();
-  //    break;
-  //  default:
+    switch(AReason) {
+      case SAT_WIDGET_NOTIFY_CLOSE:
+        realignChildWidgets(true);
+        redraw();
+        break;
+      case SAT_WIDGET_NOTIFY_MOVED:
+        //SAT_Print("%s\n",getName());
+        realignChildWidgets(true);
+        redraw();
+        break;
+      case SAT_WIDGET_NOTIFY_RESIZED:
+        realignChildWidgets(true);
+        redraw();
+        break;
+      default:
+        //SAT_PRINT;
+        //SAT_Widget::do_widget_notify(ASender,AReason,AValue);
         if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
-  //    break;
-  //}
+        break;
+    }
   }
+
   
   
 

@@ -36,6 +36,7 @@ public:
 
   SAT_ButtonWidget(SAT_Rect ARect)
   : SAT_TextWidget(ARect,"") {
+    setName("SAT_ButtonWidget");
     setCursor(SAT_CURSOR_FINGER);
   }
 

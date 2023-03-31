@@ -66,7 +66,12 @@ double SAT_GetTimeMS(void) {
   return t * 1000.0;
 }
 
-//----------
+double SAT_GetTime(void) {
+  struct timeval time;
+  gettimeofday(&time,NULL);
+  double t = (double)time.tv_sec + (double)time.tv_usec * .000001;
+  return t;
+}
 
 // usleep is deprecated
 

@@ -30,6 +30,7 @@ public:
 
   SAT_ScrollBarWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_ScrollBarWidget");
   }
   
   //----------

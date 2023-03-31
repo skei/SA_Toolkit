@@ -69,6 +69,7 @@ public:
 
   SAT_GridWidget(SAT_Rect ARect, uint32_t AColumns, uint32_t ARows)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_GridWidget");
     setCursor(SAT_CURSOR_FINGER);
     setNumCells(AColumns,ARows);
     //setDrawBorder(true);

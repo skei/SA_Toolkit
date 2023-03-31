@@ -33,6 +33,7 @@ public:
 
   SAT_SymbolWidget(SAT_Rect ARect, uint32_t ASymbol=SAT_SYMBOL_NONE)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_SymbolWidget");
     MSymbol = ASymbol;
     setFillBackground(false);
     setDrawBorder(false);

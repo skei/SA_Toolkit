@@ -7,7 +7,9 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
+#include "base/system/sat_time.h"
 #include "base/system/sat_timer.h"
+#include "base/utils/sat_tweening.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 #include "gui/sat_widget_listener.h"
@@ -74,7 +76,8 @@ class SAT_Window
 , public SAT_TimerListener {
 
 //------------------------------
-private:
+//private:
+protected:
 //------------------------------
 
   // window
@@ -106,6 +109,9 @@ private:
   SAT_Timer*            MTimer                = nullptr;
   SAT_DirtyWidgetsQueue MPendingDirtyWidgets  = {};
   SAT_DirtyWidgetsQueue MPaintDirtyWidgets    = {};
+  
+  double                MPrevTime             = 0.0;
+  SAT_Tweening          MTweens               = {};
  
   // widget handling
 
@@ -209,6 +215,8 @@ public:
   double            getScale()        { return MScale; }
   uint32_t          getWidth()        { return MWidth; }
   uint32_t          getHeight()       { return MHeight; }
+  
+  SAT_Tweening*     getTweens()       { return &MTweens; }
 
 //------------------------------
 public:
@@ -420,6 +428,8 @@ public:
     //  if (MRootWidget) MRootWidget->redraw();
     //#endif
     SAT_ImplementedWindow::show();
+    
+    MPrevTime = SAT_GetTime();
     
     #ifdef SAT_WIN32
       HWND hwnd = getWin32Window();
@@ -724,7 +734,7 @@ public: // widget listener
   //----------
   
   void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    //SAT_PRINT;
+    //SAT_Print("%s\n",ASender->getName());
     if (!ASender) ASender = MRootWidget;
     MPendingDirtyWidgets.write(ASender);
     if (MListener) MListener->do_window_listener_redraw_widget(ASender,AMode,AIndex);
@@ -787,8 +797,9 @@ public: // widget listener
   
   //----------
 
-  //void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-  //}
+  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+    SAT_PRINT;
+  }
 
 //------------------------------
 public: // timer listener
@@ -796,10 +807,17 @@ public: // timer listener
 
   void do_timer_listener_callback(SAT_Timer* ATimer) override {
     
+    double now = SAT_GetTime();
+    double elapsed = now - MPrevTime;
+    MPrevTime = now;
+    
     if (MListener) MListener->do_window_listener_timer(this);
     for (uint32_t i=0; i<MTimerWidgets.size(); i++) {
-      MTimerWidgets[i]->on_widget_timer();
+      MTimerWidgets[i]->on_widget_timer(elapsed);
     }
+    
+    MTweens.process(elapsed,MScale);
+    
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
     if (num > 0) { // && (rect.isNotEmpty()) {

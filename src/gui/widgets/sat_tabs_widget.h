@@ -33,6 +33,7 @@ public:
 
   SAT_TabsWidget(SAT_Rect ARect, uint32_t ANum=MAX_PAGES)
   : SAT_Widget(ARect) {
+    setName("SAT_TabsWidget");
     //Layout.spacing = 5;
     
     MHeader = new SAT_ButtonRowWidget(SAT_Rect(20),ANum);

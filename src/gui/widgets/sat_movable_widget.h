@@ -30,6 +30,7 @@ public:
 
   SAT_MovableWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_MovableWidget");
   }
 
   //----------

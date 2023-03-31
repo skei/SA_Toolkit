@@ -14,11 +14,11 @@ private:
 
   SAT_LogoWidget* MLogo             = nullptr;
 
-  char            MName[SAT_MAX_NAME_LENGTH]    = {0};
-  SAT_Color       MNameColor                    = SAT_White;
-  double          MNameSize                     = 29.0;
-  SAT_Rect        MNameOffset                   = SAT_Rect(40,8,0,0);
-  uint32_t        MNameAlignment                = SAT_TEXT_ALIGN_LEFT;
+  char            MPluginName[SAT_MAX_NAME_LENGTH]    = {0};
+  SAT_Color       MPluginNameColor                    = SAT_White;
+  double          MPluginNameSize                     = 29.0;
+  SAT_Rect        MPluginNameOffset                   = SAT_Rect(40,8,0,0);
+  uint32_t        MPluginNameAlignment                = SAT_TEXT_ALIGN_LEFT;
 
   char            MFormat[SAT_MAX_NAME_LENGTH] = {0};
   SAT_Color       MFormatColor                 = SAT_Grey;
@@ -45,8 +45,9 @@ public:
 
   SAT_PluginHeaderWidget(SAT_Rect ARect, const char* AName, const char* AFormat)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_PluginHeaderWidget");
     
-    strcpy(MName,AName);
+    strcpy(MPluginName,AName);
     //sprintf(MFormat,"Format: %s",AFormat);
     strcpy(MFormat,AFormat);
     
@@ -98,14 +99,14 @@ public:
     // plugin name
     
     painter->selectFont(header_font);
-    painter->setTextColor(MNameColor);
-    painter->setTextSize( MNameSize * S );
+    painter->setTextColor(MPluginNameColor);
+    painter->setTextSize( MPluginNameSize * S );
     
-    SAT_Rect nofs = MNameOffset;
+    SAT_Rect nofs = MPluginNameOffset;
     nofs.scale(S);
     SAT_Rect nrect = mrect;
     nrect.shrink(nofs);
-    painter->drawTextBox(nrect,MName,MNameAlignment);
+    painter->drawTextBox(nrect,MPluginName,MPluginNameAlignment);
     
     // format
     

@@ -25,6 +25,7 @@ public:
 
   SAT_CurveWidget(SAT_Rect ARect, bool ADecay=true)
   : SAT_DragValueWidget(ARect,"",0.5) {
+    setName("SAT_CurveWidget");
     MDecay = ADecay;
     setText("curve");
     setBackgroundColor(SAT_DarkGrey);

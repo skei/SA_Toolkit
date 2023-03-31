@@ -27,6 +27,7 @@ public:
 
   SAT_PagesWidget(SAT_Rect ARect)
   : SAT_Widget(ARect) {
+    setName("SAT_PagesWidget");
   }
 
   //----------

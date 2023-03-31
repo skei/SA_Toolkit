@@ -46,6 +46,7 @@ public:
 
   SAT_KnobWidget(SAT_Rect ARect, const char* AText="%", double AValue=0.0)
   : SAT_DragValueWidget(ARect,AText,AValue) {
+    setName("SAT_KnobWidget");
 
     setFillBackground(true);
     setDrawBorder(false);

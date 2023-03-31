@@ -14,11 +14,11 @@
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exe_debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="no">
+    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="yes">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_plugin_debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="linux_plugin_release" Selected="yes">
+    <WorkspaceConfiguration Name="linux_plugin_release" Selected="no">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_plugin_release"/>
     </WorkspaceConfiguration>

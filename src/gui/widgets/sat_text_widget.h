@@ -32,6 +32,7 @@ public:
 
   SAT_TextWidget(SAT_Rect ARect, const char* AText)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_TextWidget");
     strcpy(MText,AText);
     setFillBackground(true);
   }

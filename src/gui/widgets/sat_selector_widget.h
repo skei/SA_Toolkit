@@ -29,6 +29,7 @@ public:
 
   SAT_SelectorWidget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu)
   : SAT_TextWidget(ARect,AText) {
+    setName("SAT_SelectorWidget");
     setCursor(SAT_CURSOR_FINGER);
     MMenu = AMenu;
     MMenu->setMenuListener(this);

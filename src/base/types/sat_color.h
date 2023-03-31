@@ -95,6 +95,15 @@ public:
 
   //----------
 
+  void sub(SAT_Color color) {
+    r -= color.r;
+    g -= color.g;
+    b -= color.b;
+    a -= color.a;
+  }
+
+  //----------
+
   void mul(SAT_Color color) {
     r *= color.r;
     g *= color.g;

@@ -218,6 +218,7 @@ public:
 
   SAT_GraphWidget(SAT_Rect ARect=SAT_Rect())
   : SAT_PanelWidget(ARect) {
+    setName("SAT_GraphWidget");
     //setWidgetName("SAT_GraphWidget");
     //setHint("graph");
     clearSelection();

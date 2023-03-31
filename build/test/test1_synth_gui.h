@@ -159,10 +159,11 @@
 
 // middle colume
 
-    SAT_Widget* middle_column = new SAT_Widget(SAT_Rect(10,10,200,200));
+    SAT_PanelWidget* middle_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
     MRootPanel->appendChildWidget(middle_column);
     middle_column->setAlignment(SAT_EDGE_LEFT);
     middle_column->setStretching(SAT_EDGE_TOP | SAT_EDGE_BOTTOM);
+    middle_column->setName("middle_column");
     
     //
 
@@ -228,6 +229,14 @@
     //MWaveformWidget->setAlignment(SAT_EDGE_BOTTOM);
     //MWaveformWidget->setStretching(SAT_EDGE_RIGHT);
     
+// tween test
+
+    SAT_Tweening* tweens = AWindow->getTweens();
+    //tweens->appendTween(MWaveformWidget,0,1000,5.0);
+    double startpos[4] = { 100, 185,   0,  0 };
+    double endpos[4]   = {  10, 285, 180, 60 };
+    tweens->appendTween(666,MWaveformWidget,38,4,startpos,endpos,2.0);
+
 // right column
 
     SAT_Widget* right_column = new SAT_Widget(SAT_Rect(10,10,200,200));
@@ -237,7 +246,7 @@
     
     //
 
-    SAT_GraphWidget* graph = new SAT_GraphWidget(SAT_Rect(10,10,300,250));
+    SAT_GraphWidget* graph = new SAT_GraphWidget(SAT_Rect(10,10,300,245));
     right_column->appendChildWidget(graph);
     graph->setFillBackground(true);
     //graph->setAlignment(SAT_EDGE_BOTTOM);
@@ -260,21 +269,21 @@
     
 //
     
-    SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(270,245,120,50));
-    MRootPanel->appendChildWidget(movable);
-    //movable->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
-    movable->setFillBackground(true);
-    movable->setBackgroundColor(SAT_Green2);
-    //movable->setFillGradient(true);
-    //movable->setGradientColors(SAT_Grey,SAT_DarkerGrey);
-    movable->setDrawBorder(true);
-    movable->setBorderColor(SAT_LightGrey);
-    movable->setBorderWidth(1);
-    movable->setRoundedCorners(true);
-    movable->setCornerSize(6);
-    //movable->setDrawDropShadow(true);
-    //movable->setDropShadowFeather(10);
-    //movable->setDropShadowOffset(1,1);
+//    SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(420,235,120,50));
+//    MRootPanel->appendChildWidget(movable);
+//    //movable->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
+//    movable->setFillBackground(true);
+//    movable->setBackgroundColor(SAT_Green2);
+//    //movable->setFillGradient(true);
+//    //movable->setGradientColors(SAT_Grey,SAT_DarkerGrey);
+//    movable->setDrawBorder(true);
+//    movable->setBorderColor(SAT_LightGrey);
+//    movable->setBorderWidth(1);
+//    movable->setRoundedCorners(true);
+//    movable->setCornerSize(6);
+//    //movable->setDrawDropShadow(true);
+//    //movable->setDropShadowFeather(10);
+//    //movable->setDropShadowOffset(1,1);
     
     test1_synth_widget* animated = new test1_synth_widget(SAT_Rect(410,305,300,115));
     //myWidget* animated = new myWidget(SAT_Rect(-50,340,140,80));

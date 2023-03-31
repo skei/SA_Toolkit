@@ -37,6 +37,7 @@ public:
 
   SAT_ImageWidget(SAT_Rect ARect, void* ABuffer, uint32_t ASize)
   : SAT_PanelWidget(ARect) {
+    setName("SAT_ImageWidget");
     setFillBackground(false);
     MBuffer = ABuffer;
     MBufferSize = ASize;

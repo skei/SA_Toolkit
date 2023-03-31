@@ -41,6 +41,7 @@ public:
 
   SAT_ValueWidget(SAT_Rect ARect, const char* AText, double AValue)
   : SAT_TextWidget(ARect,AText) {
+    setName("SAT_ValueWidget");
     setValue(AValue);
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
     setTextOffset(SAT_Rect(5,0,0,0));
