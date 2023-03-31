@@ -28,14 +28,20 @@
     SAT_MenuItemWidget* i1 = new SAT_MenuItemWidget(SAT_Rect(5,5,140,15),"Item 1");
     menu->appendChildWidget(i1);
     i1->setDrawBorder(false);
+    //i1->setAlignment(SAT_EDGE_TOP);
+    i1->setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
 
     SAT_MenuItemWidget* i2 = new SAT_MenuItemWidget(SAT_Rect(5,20,140,15),"Item 2");
     menu->appendChildWidget(i2);
     i2->setDrawBorder(false);
+    //i2->setAlignment(SAT_EDGE_TOP);
+    i2->setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
 
     SAT_MenuItemWidget* i3 = new SAT_MenuItemWidget(SAT_Rect(5,35,140,15),"Item 3");
     menu->appendChildWidget(i3);
     i3->setDrawBorder(false);
+    //i3->setAlignment(SAT_EDGE_TOP);
+    i3->setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
 
     // header
     
@@ -50,10 +56,13 @@
     
 // left column
 
-    SAT_Widget* left_column = new SAT_Widget(SAT_Rect(10,10,200,200));
+    SAT_PanelWidget* left_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
     MRootPanel->appendChildWidget(left_column);
     left_column->setAlignment(SAT_EDGE_LEFT);
     left_column->setStretching(SAT_EDGE_TOP | SAT_EDGE_BOTTOM);
+    left_column->setDrawBorder(false);
+    left_column->setFillBackground(true);
+    left_column->setBackgroundColor(0.4);
     
     //
 
@@ -164,6 +173,12 @@
     middle_column->setAlignment(SAT_EDGE_LEFT);
     middle_column->setStretching(SAT_EDGE_TOP | SAT_EDGE_BOTTOM);
     middle_column->setName("middle_column");
+    middle_column->setDrawBorder(true);
+    middle_column->setBorderColor(0.5);
+    middle_column->setFillBackground(true);
+    middle_column->setBackgroundColor(0.375);
+    middle_column->setRoundedCorners(true);
+    middle_column->setCornerSize(5);
     
     //
 
@@ -229,20 +244,24 @@
     //MWaveformWidget->setAlignment(SAT_EDGE_BOTTOM);
     //MWaveformWidget->setStretching(SAT_EDGE_RIGHT);
     
-// tween test
-
-    SAT_Tweening* tweens = AWindow->getTweens();
-    //tweens->appendTween(MWaveformWidget,0,1000,5.0);
-    double startpos[4] = { 100, 185,   0,  0 };
-    double endpos[4]   = {  10, 285, 180, 60 };
-    tweens->appendTween(666,MWaveformWidget,38,4,startpos,endpos,2.0);
+//    // tween test
+//
+//    SAT_Tweening* tweens = AWindow->getTweens();
+//    //tweens->appendTween(MWaveformWidget,0,1000,5.0);
+//    double startpos[4] = { 100, 185,   0,  0 };
+//    double endpos[4]   = {  10, 285, 180, 60 };
+//    tweens->appendTween(666,MWaveformWidget,38,4,startpos,endpos,2.0);
 
 // right column
 
-    SAT_Widget* right_column = new SAT_Widget(SAT_Rect(10,10,200,200));
+    SAT_PanelWidget* right_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
     MRootPanel->appendChildWidget(right_column);
     right_column->setAlignment(SAT_EDGE_LEFT);
     right_column->setStretching(SAT_EDGE_TOP | SAT_EDGE_RIGHT | SAT_EDGE_BOTTOM);
+    right_column->setDrawBorder(false);
+    right_column->setFillBackground(true);
+    right_column->setBackgroundColor(0.4);
+    
     
     //
 

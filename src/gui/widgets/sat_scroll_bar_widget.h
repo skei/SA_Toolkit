@@ -135,7 +135,7 @@ public:
       MPrevX = AXpos;
       MPrevY = AYpos;
       MDragState = MHoverState;
-      redraw();
+      parentRedraw();
     }
   }
   
@@ -148,7 +148,7 @@ public:
   
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MDragState = 0;
-    redraw();
+    parentRedraw();
   }
 
   //----------
@@ -165,7 +165,7 @@ public:
       case 0: {
         int32_t prev_state = MHoverState;
         update_hover(AXpos,AYpos);
-        if (MHoverState != prev_state) redraw();
+        if (MHoverState != prev_state) parentRedraw();
         break;
       }
       case 1: {
@@ -187,7 +187,7 @@ public:
         v += (xdiff / range);
         v = SAT_Clamp(v,0,1);
         setValue(v);
-        redraw();
+        parentRedraw();
         //double v = (AXpos - mrect.x) / (mrect.w * (1.0 - MThumbSize));
         //SAT_Print("%f\n",v);
         //setValue(v);
@@ -207,7 +207,7 @@ public:
   void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
     if (MHoverState != 0) {
       MHoverState = 0;
-      redraw();
+      parentRedraw();
     }
   }
   

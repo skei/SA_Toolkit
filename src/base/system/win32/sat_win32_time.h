@@ -16,6 +16,12 @@ double SAT_GetTimeMS(void) {
 
 //----------
 
+double SAT_GetTime(void) {
+  return 0.0;
+}
+
+//----------
+
 struct SAT_CurrentTime {
   int32_t year;
   int32_t month;

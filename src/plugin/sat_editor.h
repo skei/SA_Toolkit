@@ -101,7 +101,7 @@ public:
       if (widget) {
         widget->setValue(AValue);
         //widget->update();
-        widget->redraw();
+        widget->parentRedraw();
       }
     }
   }
@@ -114,7 +114,7 @@ public:
       if (widget) {
         widget->setModulation(AValue);
         //widget->update();
-        widget->redraw();
+        widget->parentRedraw();
       }
     }
   }

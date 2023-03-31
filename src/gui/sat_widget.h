@@ -212,28 +212,28 @@ public:
 
   //----------
 
-  virtual void update() {
+  virtual void parentUpdate() {
     //SAT_PRINT;
     if (MListener) MListener->do_widget_update(this,0,0);
   }
 
   //----------
 
-  virtual void redraw() {
+  virtual void parentRedraw() {
     //SAT_Print("%s\n",getName());
     if (MListener) MListener->do_widget_redraw(this,0,0);
   }
 
   //----------
 
-  virtual void redrawAll() {
+  virtual void parentRedrawAll() {
     //SAT_PRINT;
     if (MListener) MListener->do_widget_redraw(nullptr,0,0);
   }
 
   //----------
 
-  virtual void notify(uint32_t AReason, int32_t AValue) {
+  virtual void parentNotify(uint32_t AReason, int32_t AValue) {
     //SAT_PRINT;
     //if (MListener) MListener->do_widget_notify(this,AReason,AValue);
     if (MListener) MListener->do_widget_notify(this,AReason,AValue);
@@ -398,6 +398,7 @@ public:
   //----------
 
   virtual void paintChildWidgets(SAT_PaintContext* AContext, bool ARecursive=true) {
+    SAT_Painter* painter= AContext->painter;
     uint32_t num = MChildren.size();
     if (num > 0) {
       for (uint32_t i=0; i<num; i++) {
@@ -405,7 +406,11 @@ public:
         if (widget->isVisible()) {
           SAT_Rect widgetrect = widget->getRect();
           if (widgetrect.isNotEmpty()) {
+            
+            painter->pushClip(getRect());
             widget->on_widget_paint(AContext);
+            painter->popClip();
+            
           } // intersect
         } // visible
       } // for
@@ -473,7 +478,7 @@ public: // widget
         //R.scale(1.0 / S);
         
         //do_widget_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
-        notify(SAT_WIDGET_NOTIFY_MOVED,0);
+        parentNotify(SAT_WIDGET_NOTIFY_MOVED,0);
         break;
       }
     }
@@ -524,16 +529,16 @@ public: // widget listener
     switch(AReason) {
       case SAT_WIDGET_NOTIFY_CLOSE:
         realignChildWidgets(true);
-        redraw();
+        parentRedraw();
         break;
       case SAT_WIDGET_NOTIFY_MOVED:
         //SAT_Print("%s\n",getName());
         realignChildWidgets(true);
-        redraw();
+        parentRedraw();
         break;
       case SAT_WIDGET_NOTIFY_RESIZED:
         realignChildWidgets(true);
-        redraw();
+        parentRedraw();
         break;
       default:
         //SAT_PRINT;

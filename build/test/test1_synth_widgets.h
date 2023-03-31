@@ -88,7 +88,7 @@ public:
     if (x4 <  0)  { x4 = 0; x4_add = -x4_add; }
     if (y4 <  0)  { y4 = 0; y4_add = -y4_add; }
     
-    redraw();
+    parentRedraw();
   };
 
   //----------

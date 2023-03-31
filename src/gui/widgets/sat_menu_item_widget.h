@@ -46,7 +46,7 @@ public:
     //if (isVisible()) {
       setTextColor(MHoverTextColor);
       setBackgroundColor(MHoverBackgroundColor);
-      redraw();
+      parentRedraw();
     //}
   }
 
@@ -61,7 +61,7 @@ public:
     if (isVisible()) {
       setTextColor(MTextColor);
       setBackgroundColor(MBackgroundColor);
-      redraw();
+      parentRedraw();
     }
   }
 

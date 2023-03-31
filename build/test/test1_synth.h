@@ -274,7 +274,23 @@ public:
 public:
 //------------------------------
 
-    #include "test1_synth_gui.h"
+  #include "test1_synth_gui.h"
+  
+  //----------
+    
+  bool gui_show() override {
+    bool result = SAT_Plugin::gui_show();
+    if (result) {
+      SAT_Window* window = getEditor()->getWindow();
+      SAT_Tweening* tweens = window->getTweens();
+      double start[4] = { 100, 185,   0,  0 };
+      double end[4]   = {  10, 285, 180, 60 };
+      tweens->appendTween(666,MWaveformWidget,38,4,start,end,2.0);
+    }
+    return result;
+  }
+
+    
 
 //------------------------------
 public:
@@ -289,7 +305,7 @@ public:
       uint32_t state = MVoiceManager.getVoiceState(voice);
       MVoicesWidget->setVoiceState(voice,state);
     }
-    MVoicesWidget->redraw();
+    MVoicesWidget->parentRedraw();
     #endif
     
   }
