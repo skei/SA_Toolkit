@@ -86,7 +86,7 @@ public:
       setBasisRect(mrect);
       //SAT_Print("realigning\n");
       //realignChildWidgets();      
-      parentNotify(SAT_WIDGET_NOTIFY_MOVED,0);
+      parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
     }
   }
 

@@ -28,8 +28,8 @@
     SAT_MenuItemWidget* i1 = new SAT_MenuItemWidget(SAT_Rect(5,5,140,15),"Item 1");
     menu->appendChildWidget(i1);
     i1->setDrawBorder(false);
-    //i1->setAlignment(SAT_EDGE_TOP);
-    i1->setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    //i1->setAlignment(SAT_WIDGET_ALIGN_TOP);
+    i1->setStretching(SAT_WIDGET_STRETCH_HORIZ);
 
     SAT_MenuItemWidget* i2 = new SAT_MenuItemWidget(SAT_Rect(5,20,140,15),"Item 2");
     menu->appendChildWidget(i2);
@@ -166,6 +166,18 @@
     SAT_SymbolWidget* symbol4 = new SAT_SymbolWidget(SAT_Rect(55,340,10,10),SAT_SYMBOL_FILLED_RECT);
     left_column->appendChildWidget(symbol4);
 
+    SAT_ScrollBarWidget0* scrollbar0 = new SAT_ScrollBarWidget0(SAT_Rect(10,355,180,20));
+    left_column->appendChildWidget(scrollbar0);
+    
+    SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(10,380,180,30));
+    left_column->appendChildWidget(keyboard);
+
+    SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(10,415,180,30));
+    left_column->appendChildWidget(sliderbank);
+
+    SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(10,450,180,30),16);
+    left_column->appendChildWidget(valuegraph);
+
 // middle colume
 
     SAT_PanelWidget* middle_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
@@ -279,6 +291,29 @@
         graph->addModule(module,i*10,i*10,"module");
       }
       
+    SAT_TimelineWidget* timeline = new SAT_TimelineWidget(SAT_Rect(10,390,300,90));
+    right_column->appendChildWidget(timeline);
+    timeline->setDrawBorder(true);
+    timeline->setBorderColor(SAT_LightGrey);
+    timeline->setBorderWidth(0.5);
+    
+      SAT_TimelineTrack* track1 = new SAT_TimelineTrack("Track 1");
+      timeline->addTrack(track1);
+    
+        SAT_TimelineSegment* segment1 = new SAT_TimelineSegment("Clip1",0,10);
+        track1->addSegment(segment1);
+
+        SAT_TimelineSegment* segment2 = new SAT_TimelineSegment("C2",11,15);
+        track1->addSegment(segment2);
+
+      SAT_TimelineTrack* track2 = new SAT_TimelineTrack("Track 1");
+      timeline->addTrack(track2);
+    
+
+      
+    
+    
+      
 //
     
     // menus etc have to be appended last, because they need to be drawn on
@@ -287,22 +322,6 @@
     MRootPanel->appendChildWidget(menu);
     
 //
-    
-//    SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(420,235,120,50));
-//    MRootPanel->appendChildWidget(movable);
-//    //movable->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
-//    movable->setFillBackground(true);
-//    movable->setBackgroundColor(SAT_Green2);
-//    //movable->setFillGradient(true);
-//    //movable->setGradientColors(SAT_Grey,SAT_DarkerGrey);
-//    movable->setDrawBorder(true);
-//    movable->setBorderColor(SAT_LightGrey);
-//    movable->setBorderWidth(1);
-//    movable->setRoundedCorners(true);
-//    movable->setCornerSize(6);
-//    //movable->setDrawDropShadow(true);
-//    //movable->setDropShadowFeather(10);
-//    //movable->setDropShadowOffset(1,1);
     
     test1_synth_widget* animated = new test1_synth_widget(SAT_Rect(410,305,300,115));
     //myWidget* animated = new myWidget(SAT_Rect(-50,340,140,80));

@@ -287,31 +287,6 @@ public:
     }
   }
   
-//------------------------------
-public:
-//------------------------------
-
-//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-//    switch(AReason) {
-//      case SAT_WIDGET_NOTIFY_CLOSE:
-//        realignChildWidgets(true);
-//        redraw();
-//        break;
-//      case SAT_WIDGET_NOTIFY_MOVED:
-//        //SAT_PRINT;
-//        realignChildWidgets(true);
-//        redraw();
-//        break;
-//      case SAT_WIDGET_NOTIFY_RESIZED:
-//        realignChildWidgets(true);
-//        redraw();
-//        break;
-//      default:
-//        SAT_Widget::do_widget_notify(ASender,AReason,AValue);
-//        break;
-//    }
-//  }
-
 };
 
 //----------------------------------------------------------------------

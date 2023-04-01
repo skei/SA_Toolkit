@@ -6,6 +6,7 @@
 // including pause
 
 #include "base/utils/sat_easing.h"
+#include "gui/sat_widget.h"
 
 #define MAX_TWEEN_NODES 32
 

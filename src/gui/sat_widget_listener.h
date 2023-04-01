@@ -12,6 +12,7 @@ public:
   virtual void do_widget_set_cursor(SAT_Widget* ASender, int32_t ACursor) {}
   virtual void do_widget_set_hint(SAT_Widget* ASender, const char* AHint) {}
   virtual void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) {}
+  virtual void do_widget_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) {}
 };
 
 //----------------------------------------------------------------------

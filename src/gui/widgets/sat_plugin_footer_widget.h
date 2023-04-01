@@ -27,8 +27,8 @@ public:
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
     setTextOffset(SAT_Rect(5,0,5,0));
 
-    setAlignment(SAT_EDGE_BOTTOM);
-    setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    setAlignment(SAT_WIDGET_ALIGN_BOTTOM);
+    setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
     
   }
   

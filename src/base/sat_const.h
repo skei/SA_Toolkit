@@ -135,13 +135,19 @@
 #define SAT_DIRECTION_RIGHT                     2
 #define SAT_DIRECTION_UP                        3
 #define SAT_DIRECTION_DOWN                      4
+#define SAT_DIRECTION_TOP                       3
+#define SAT_DIRECTION_BOTTOM                    4
+#define SAT_DIRECTION_HORIZ                     5
+#define SAT_DIRECTION_VERT                      6
 
-#define SAT_EDGE_NONE                           0
-#define SAT_EDGE_LEFT                           0x01
-#define SAT_EDGE_RIGHT                          0x02
-#define SAT_EDGE_TOP                            0x04
-#define SAT_EDGE_BOTTOM                         0x08
-#define SAT_EDGE_ALL                            0x0f
+//#define SAT_EDGE_NONE                           0
+//#define SAT_EDGE_LEFT                           0x01
+//#define SAT_EDGE_RIGHT                          0x02
+//#define SAT_EDGE_TOP                            0x04
+//#define SAT_EDGE_BOTTOM                         0x08
+//#define SAT_EDGE_ALL                            0x0f
+//#define SAT_EDGE_HORIZ                          (SAT_EDGE_LEFT | SAT_EDGE_RIGHT)
+//#define SAT_EDGE_VERT                           (SAT_EDGE_TOP | SAT_EDGE_BOTTOM)
 
 #define SAT_FILE_READ_BINARY                    (char*)"rb"
 #define SAT_FILE_READ_TEXT                      (char*)"r"
@@ -308,14 +314,16 @@
 #define SAT_VOICE_FINISHED                      4
 
 #define SAT_WIDGET_ALIGN_NONE                   0
-#define SAT_WIDGET_ALIGN_PARENT                 1
-#define SAT_WIDGET_ALIGN_FILL_PARENT            2
+#define SAT_WIDGET_ALIGN_LEFT                   1
+#define SAT_WIDGET_ALIGN_RIGHT                  2
+#define SAT_WIDGET_ALIGN_TOP                    3
+#define SAT_WIDGET_ALIGN_BOTTOM                 4
 
 #define SAT_WIDGET_NOTIFY_NONE                  0
 #define SAT_WIDGET_NOTIFY_CLOSE                 1
 #define SAT_WIDGET_NOTIFY_SELECT                2
-#define SAT_WIDGET_NOTIFY_MOVED                 3
-#define SAT_WIDGET_NOTIFY_RESIZED               4
+#define SAT_WIDGET_NOTIFY_REALIGN               3
+//#define SAT_WIDGET_NOTIFY_RESIZED               4
 
 #define SAT_WIDGET_REDRAW_FULL                  0
 #define SAT_WIDGET_REDRAW_VALUE                 1
@@ -325,6 +333,17 @@
 
 #define SAT_WIDGET_STATE_NORMAL                 0
 #define SAT_WIDGET_STATE_MODAL                  1
+
+#define SAT_WIDGET_STRETCH_NONE                 0
+#define SAT_WIDGET_STRETCH_LEFT                 0x01
+#define SAT_WIDGET_STRETCH_RIGHT                0x02
+#define SAT_WIDGET_STRETCH_TOP                  0x04
+#define SAT_WIDGET_STRETCH_BOTTOM               0x08
+#define SAT_WIDGET_STRETCH_ALL                  0x0f
+
+#define SAT_WIDGET_STRETCH_HORIZONTAL           (SAT_WIDGET_STRETCH_LEFT | SAT_WIDGET_STRETCH_RIGHT)
+#define SAT_WIDGET_STRETCH_VERTICAL             (SAT_WIDGET_STRETCH_TOP | SAT_WIDGET_STRETCH_BOTTOM)
+
 
 #define SAT_WIDGET_UPDATE_VALUE                 0
 

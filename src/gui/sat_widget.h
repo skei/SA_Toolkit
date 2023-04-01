@@ -39,6 +39,8 @@ private:
   SAT_Rect            MRect                               = {};
   SAT_Rect            MInitialRect                        = {};
   SAT_Rect            MBasisRect                          = {};
+  SAT_Rect            MContentRect                        = {};
+  
 //  uint32_t            MAlignment                          = SAT_WIDGET_ALIGN_PARENT;
   uint32_t            MCursor                             = SAT_CURSOR_DEFAULT;
   char                MHint[256]                          = "";
@@ -50,8 +52,8 @@ private:
 
   int32_t             MLastPainted                        = -1;
   
-  uint32_t            MAlignment                          = SAT_EDGE_NONE;
-  uint32_t            MStretching                         = SAT_EDGE_NONE;
+  uint32_t            MAlignment                          = SAT_WIDGET_ALIGN_NONE;
+  uint32_t            MStretching                         = SAT_WIDGET_STRETCH_NONE;
   SAT_Rect            MInnerBorder                        = SAT_Rect(0,0,0,0);
 
 //------------------------------
@@ -128,34 +130,38 @@ public:
 public:
 //------------------------------
 
-  virtual const char* getName() { return MName; }
+  virtual const char*       getName() { return MName; }
 
-  virtual uint32_t    getIndex()                                      { return MIndex; }
-  virtual SAT_Rect    getRect()                                       { return MRect; }
-  virtual double      getWidth()                                      { return MRect.w; }
-  virtual double      getHeight()                                     { return MRect.h; }
-  virtual double      getValue(uint32_t AIndex=0)                     { return MValues[AIndex]; }
-  virtual double      getModulation(uint32_t AIndex=0)                { return MModulations[AIndex]; }
-  virtual void*       getConnection(uint32_t AIndex=0)                { return MConnections[AIndex]; }
-  virtual bool        isActive()                                      { return MIsActive; }
-  virtual bool        isVisible()                                     { return MIsVisible; }
-  virtual bool        isDisabled()                                    { return MIsDisabled; }
-  virtual double      getWindowScale()                                { return MWindowScale; }
-  virtual int32_t     getLastPainted()                                { return MLastPainted; }
+  virtual uint32_t          getIndex()                                      { return MIndex; }
+  virtual double            getWidth()                                      { return MRect.w; }
+  virtual double            getHeight()                                     { return MRect.h; }
+  virtual double            getValue(uint32_t AIndex=0)                     { return MValues[AIndex]; }
+  virtual double            getModulation(uint32_t AIndex=0)                { return MModulations[AIndex]; }
+  virtual void*             getConnection(uint32_t AIndex=0)                { return MConnections[AIndex]; }
+  virtual bool              isActive()                                      { return MIsActive; }
+  virtual bool              isVisible()                                     { return MIsVisible; }
+  virtual bool              isDisabled()                                    { return MIsDisabled; }
+  virtual double            getWindowScale()                                { return MWindowScale; }
+  virtual int32_t           getLastPainted()                                { return MLastPainted; }
   
-  virtual SAT_Rect    getInitialRect()                                { return MInitialRect; }
+  virtual SAT_Rect          getRect()                                       { return MRect; }
+  virtual SAT_Rect          getInitialRect()                                { return MInitialRect; }
+  virtual SAT_Rect          getBasisRect()                                  { return MBasisRect; }
+  virtual SAT_Rect          getContentRect()                                { return MContentRect; }
   
-  virtual SAT_Rect    getBasisRect()                                  { return MBasisRect; }
-  virtual uint32_t    getNumChildWidgets()                            { return MChildren.size(); }
-  virtual SAT_Widget* getChildWidget(uint32_t AIndex)                 { return MChildren[AIndex]; }
+  virtual uint32_t          getNumChildWidgets()                            { return MChildren.size(); }
+  virtual SAT_Widget*       getChildWidget(uint32_t AIndex)                 { return MChildren[AIndex]; }
+  virtual SAT_WidgetArray*  getChildWidgets()                               { return &MChildren; }
   
-  virtual uint32_t    getNumPopupMenuItems()                          { return 0; }
-  virtual const char* getPopupMenuItem(uint32_t AIndex)               { return ""; }
-  virtual void        activatePopupMenuItem(uint32_t AIndex)          { }
+  virtual uint32_t          getNumPopupMenuItems()                          { return 0; }
+  virtual const char*       getPopupMenuItem(uint32_t AIndex)               { return ""; }
+  virtual void              activatePopupMenuItem(uint32_t AIndex)          { }
 
-  virtual uint32_t    getAlignment()                                  { return MAlignment; }
-  virtual uint32_t    getStretching()                                 { return MStretching; }
-  virtual SAT_Rect    getInnerBorder()                                { return MInnerBorder; }
+  virtual uint32_t          getAlignment()                                  { return MAlignment; }
+  virtual uint32_t          getStretching()                                 { return MStretching; }
+  virtual SAT_Rect          getInnerBorder()                                { return MInnerBorder; }
+  
+  
 
 //------------------------------
 public:
@@ -287,6 +293,21 @@ public:
 
   //----------
   
+  virtual void scrollChildren(float AOffsetX, float AOffsetY) {
+    uint32_t num = MChildren.size();
+    for (uint32_t i=0; i<num; i++) {
+      SAT_Widget* child = MChildren[i];
+      if (child->MIsVisible) {
+        //child->setChildrenOffset(AOffsetX,AOffsetY);
+        child->MRect.x += AOffsetX;
+        child->MRect.y += AOffsetY;
+        child->scrollChildren(AOffsetX,AOffsetY);
+      }
+    }
+  }  
+  
+  //----------
+  
   // called from:
   //   SAT_Window.on_window_resize()
   //   SAT_PopupWidget.open()
@@ -300,6 +321,8 @@ public:
     //    parent_rect.shrink(ib);
 
     SAT_Rect client_rect = parent_rect;
+    //SAT_Rect content_rect = SAT_Rect(parent_rect.x,parent_rect.y,0,0);
+    MContentRect = SAT_Rect(parent_rect.x,parent_rect.y,0,0);
     
     for (uint32_t i=0; i<MChildren.size(); i++) {
 
@@ -324,46 +347,58 @@ public:
       // alignment
 
       uint32_t child_alignment = child->getAlignment();
-      
-      if (child_alignment & SAT_EDGE_LEFT) {
-        //child->MRect.x = parent_rect.x;
-        child->MRect.x = client_rect.x;
-        client_rect.x += child->MRect.w;
-        client_rect.w -= child->MRect.w;
-      }
-      if (child_alignment & SAT_EDGE_RIGHT) {
-        //child->MRect.x = parent_rect.x2() - child->MRect.w;
-        child->MRect.x = client_rect.x2() - child->MRect.w;
-        //client_rect.x += child->MRect.w;
-        client_rect.w -= child->MRect.w;
-      }
-      if (child_alignment & SAT_EDGE_TOP) {
-        //child->MRect.y = parent_rect.y;
-        child->MRect.y = client_rect.y;
-        client_rect.y += child->MRect.h;
-        client_rect.h -= child->MRect.h;
-      }
-      if (child_alignment & SAT_EDGE_BOTTOM) {
-        //child->MRect.y = parent_rect.y2() - child->MRect.h;
-        child->MRect.y = client_rect.y2() - child->MRect.h;
-        //client_rect.y += child->MRect.h;
-        client_rect.h -= child->MRect.h;
+      switch(child_alignment) {
+        case SAT_WIDGET_ALIGN_LEFT: {
+          //child->MRect.x = parent_rect.x;
+          child->MRect.x = client_rect.x;
+          client_rect.x += child->MRect.w;
+          client_rect.w -= child->MRect.w;
+          break;
+        }
+        case SAT_WIDGET_ALIGN_RIGHT: {
+          //child->MRect.x = parent_rect.x2() - child->MRect.w;
+          child->MRect.x = client_rect.x2() - child->MRect.w;
+          //client_rect.x += child->MRect.w;
+          client_rect.w -= child->MRect.w;
+          break;
+        }
+        case SAT_WIDGET_ALIGN_TOP: {
+          //child->MRect.y = parent_rect.y;
+          child->MRect.y = client_rect.y;
+          client_rect.y += child->MRect.h;
+          client_rect.h -= child->MRect.h;
+          break;
+        }
+        case SAT_WIDGET_ALIGN_BOTTOM: {
+          //child->MRect.y = parent_rect.y2() - child->MRect.h;
+          child->MRect.y = client_rect.y2() - child->MRect.h;
+          //client_rect.y += child->MRect.h;
+          client_rect.h -= child->MRect.h;
+          break;
+        }
       }
       
       // stretching
 
       uint32_t child_stretching   = child->getStretching();
-      if (child_stretching & SAT_EDGE_LEFT)      child->MRect.setX1( client_rect.x );
-      if (child_stretching & SAT_EDGE_RIGHT)     child->MRect.setX2( client_rect.x2() );
-      if (child_stretching & SAT_EDGE_TOP)       child->MRect.setY1( client_rect.y );
-      if (child_stretching & SAT_EDGE_BOTTOM)    child->MRect.setY2( client_rect.y2() );
+      if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( client_rect.x );
+      if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( client_rect.x2() );
+      if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( client_rect.y );
+      if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( client_rect.y2() );
       
       // recursive
+      
+      //content_rect.combine(child->MRect);
+      MContentRect.combine(child->MRect);
       
       if (ARecursive) {
         child->realignChildWidgets(ARecursive);
       }
-    }
+      
+    } // for
+    
+    //MContntRect = content_rect;
+    
   }
 
   //----------
@@ -478,12 +513,12 @@ public: // widget
         //R.scale(1.0 / S);
         
         //do_widget_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
-        parentNotify(SAT_WIDGET_NOTIFY_MOVED,0);
+        parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
         break;
       }
     }
   }
-
+  
 //------------------------------
 public: // widget listener
 //------------------------------
@@ -508,22 +543,7 @@ public: // widget listener
     if (MListener) MListener->do_widget_set_hint(ASender,AHint);
   }
 
-//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-//  //switch(AReason) {
-//  //  case SAT_WIDGET_NOTIFY_CLOSE:
-//  //    redraw();
-//  //    break;
-//  //  case SAT_WIDGET_NOTIFY_MOVED:
-//  //    redraw();
-//  //    break;
-//  //  case SAT_WIDGET_NOTIFY_RESIZED:
-//  //    redraw();
-//  //    break;
-//  //  default:
-//        if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
-//  //    break;
-//  //}
-//  }
+  //----------
 
   void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
     switch(AReason) {
@@ -531,12 +551,8 @@ public: // widget listener
         realignChildWidgets(true);
         parentRedraw();
         break;
-      case SAT_WIDGET_NOTIFY_MOVED:
+      case SAT_WIDGET_NOTIFY_REALIGN:
         //SAT_Print("%s\n",getName());
-        realignChildWidgets(true);
-        parentRedraw();
-        break;
-      case SAT_WIDGET_NOTIFY_RESIZED:
         realignChildWidgets(true);
         parentRedraw();
         break;
@@ -547,9 +563,20 @@ public: // widget listener
         break;
     }
   }
+  
+  //----------
 
-  
-  
+  void do_widget_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {
+    SAT_Rect mrect = getRect();
+    double S = getWindowScale();
+    mrect.w += ADeltaX;
+    mrect.h += ADeltaY;
+    setRect(mrect);
+    mrect.scale(1.0/S);
+    setBasisRect(mrect);
+    //realignChildWidgets(true);
+    //parentRedraw();
+  }
 
 };
 

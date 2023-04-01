@@ -38,8 +38,8 @@ public:
     
     MHeader = new SAT_ButtonRowWidget(SAT_Rect(20),ANum);
     //Layout.alignment = SAT_WIDGET_ALIGN_FILL_TOP;
-    MHeader->setAlignment(SAT_EDGE_TOP);
-    MHeader->setStretching(SAT_EDGE_LEFT|SAT_EDGE_RIGHT);
+    MHeader->setAlignment(SAT_WIDGET_ALIGN_TOP);
+    MHeader->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
     
     //MHeader->setDrawRoundedBottom(false);
     MHeader->setRoundedCorners(true);
@@ -47,7 +47,7 @@ public:
     
     MPages = new SAT_PagesWidget(SAT_Rect());
     //MPages->Layout.alignment = SAT_WIDGET_ALIGN_FILL_CLIENT;
-    MPages->setStretching(SAT_EDGE_ALL);
+    MPages->setStretching(SAT_WIDGET_STRETCH_ALL);
     MNumPages = 0;
     //MHeader->setWidgetWidth(0);
     appendChildWidget(MHeader);
@@ -71,7 +71,7 @@ public:
 
   virtual int32_t appendPage(const char* ATitle, SAT_Widget* AWidget) {
     //AWidget->Layout.alignment = SAT_WIDGET_ALIGN_FILL_CLIENT;
-    AWidget->setStretching(SAT_EDGE_ALL);
+    AWidget->setStretching(SAT_WIDGET_STRETCH_ALL);
     int32_t result = MPages->appendPage(AWidget);
     MHeader->setButtonName(MNumPages,ATitle);
     MNumPages += 1;

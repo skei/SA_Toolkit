@@ -26,7 +26,7 @@
 #endif
 
 #define EDITOR_WIDTH  720
-#define EDITOR_HEIGHT 450
+#define EDITOR_HEIGHT 550
 #define EDITOR_SCALE  1.5
 
 const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
