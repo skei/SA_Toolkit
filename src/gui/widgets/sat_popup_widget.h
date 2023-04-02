@@ -70,7 +70,7 @@ public:
       rect.scale(1.0/S);
       SAT_Tweening* tweens = MWindow->getTweens();
       //tweens->appendTween(MWaveformWidget,0,1000,5.0);
-      double startpos[4] = { rect.x, rect.y, 0,      0      };
+      double startpos[4] = { rect.x+100, rect.y-100, 0,      0      };
       double endpos[4]   = { rect.x, rect.y, rect.w, rect.h };
       tweens->appendTween(666,this,38,4,startpos,endpos,1);
     #endif
