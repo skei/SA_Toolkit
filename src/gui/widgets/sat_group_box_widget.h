@@ -33,20 +33,21 @@ public:
     setName("SAT_GroupBoxWidget");
     //MHint("groupbox");
     //setCursor(SAT_CURSOR_);
+    //setAutoClip(true);
 
     MTitleBar = new SAT_ButtonWidget( SAT_Rect(0,HEADER_HEIGHT) );
     MTitleBar->setAlignment(SAT_WIDGET_ALIGN_TOP);
     MTitleBar->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
-//    MTitleBar->setIsToggle();
-//    MTitleBar->setTexts("Open","Closed");
+    MTitleBar->setIsToggle(true);
+    MTitleBar->setText("Open","Closed");
     MTitleBar->setFillBackground(true);
-    MTitleBar->setFillGradient(true);
+    //MTitleBar->setFillGradient(true);
     MTitleBar->setDrawBorder(true);
-//    MTitleBar->setDrawRoundedCorners(true);
-//    MTitleBar->setCornerRadius(5,5,0,0);
+    //MTitleBar->setDrawRoundedCorners(true);
+    //MTitleBar->setCornerRadius(5,5,0,0);
 
     MContainer = new SAT_PanelWidget( SAT_Rect());
-    //MContainer->setAlignment();;
+    //MContainer->setAlignment();
     MContainer->setStretching(SAT_WIDGET_STRETCH_ALL);
 
     MContainer->setFillBackground(false);
@@ -56,28 +57,34 @@ public:
     SAT_Widget::appendChildWidget( MTitleBar );
     SAT_Widget::appendChildWidget( MContainer );
 
-    MOpenSize = ARect.h;
+    MOpenSize   = ARect.h;
     MClosedSize = MTitleBar->getRect().h;
-    MClosed = AClosed;
+    MClosed     = AClosed;
 
     if (MClosed) {
-//      MTitleBar->setOff();
+      MTitleBar->setValue(0);
       MContainer->setActive(false);
       MContainer->setVisible(false);
       
-      //MRect.h = MClosedSize;
-      SAT_Rect r = getRect();
-      r.h = MClosedSize;
-      setRect(r);
-//      Layout.baseRect = MClosedSize;
+      //SAT_Rect r = getRect();
+      //r.h = MClosedSize;
+      //setRect(r);
+      //setBasisRect(r);
+      setHeight(MClosedSize);
+      setBasisHeight(MClosedSize);
 
     }
     else {
-//      MTitleBar->setOn();
+      MTitleBar->setValue(1);
       MContainer->setActive(true);
       MContainer->setVisible(true);
-//      MRect.h = MOpenSize;
-//      Layout.baseRect = MOpenSize;
+      //SAT_Rect r = getRect();
+      //r.h = MOpenSize;
+      //setRect(r);
+      //setBasisRect(r);
+      setHeight(MOpenSize);
+      setBasisHeight(MOpenSize);
+      
     }
 
   }
@@ -120,23 +127,27 @@ public:
   //----------
 
   void open(void) {
+    //SAT_PRINT;
+    double S = getWindowScale();
     MClosed = false;
     MContainer->setActive(true);
     MContainer->setVisible(true);
-//    MRect.h = MOpenSize;
-//    Layout.baseRect = MOpenSize;
-//    if (MListener) MLstener->do_widget_resized(this/*,MRect.w,MOpenSize*/);
+    setHeight(MOpenSize * S);
+    setBasisHeight(MOpenSize);
+    parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
   }
 
   //----------
 
   void close(void) {
+    //SAT_PRINT;
+    double S = getWindowScale();
     MClosed = true;
     MContainer->setActive(false);
     MContainer->setVisible(false);
-//    MRect.h = MClosedSize;
-//    Layout.baseRect = MClosedSize;
-//    if (MParent) MParent->do_widget_resized(this/*,MRect.w,MClosedSize*/);
+    setHeight(MClosedSize * S);
+    setBasisHeight(MClosedSize);
+    parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
   }
 
   //----------
@@ -161,19 +172,26 @@ public:
   void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0, uint32_t AIndex=0) override {
     if (ASender == MTitleBar) {
       if (MClosable) {
-        if (MTitleBar->getValue() >= 0.5f) {
-          open();
-        }
-        else {
-          close();
-        }
+        if (MTitleBar->getValue() >= 0.5f) open();
+        else close();
       }
     }
     else {
       SAT_Widget::do_widget_update(ASender,AMode,AIndex);
     }
   }
+  
+  //----------
 
+  void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode=0, uint32_t AIndex=0) override {
+    if (ASender == MTitleBar) {
+      // redrawing the button click resulted in redraw bugs..
+      // it will be redrawn as part of the entire groupbox..
+    }
+    else {
+      SAT_Widget::do_widget_redraw(ASender,AMode,AIndex);
+    }
+  }
 
 };
 

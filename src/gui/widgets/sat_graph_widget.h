@@ -727,7 +727,7 @@ public:
     MPainter = AContext->painter;
     MPaintRect = AContext->update_rect;
     
-    painter->pushClip(getRect());
+//    painter->pushClip(getRect());
 
     drawModules();
     drawWires();
@@ -746,7 +746,7 @@ public:
     }
     drawBorder(AContext);
     
-    painter->popClip();
+//    painter->popClip();
 
   }
 

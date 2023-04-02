@@ -27,7 +27,7 @@
 
 #define EDITOR_WIDTH  720
 #define EDITOR_HEIGHT 550
-#define EDITOR_SCALE  1.5
+#define EDITOR_SCALE  1.0
 
 const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
@@ -281,11 +281,13 @@ public:
   bool gui_show() override {
     bool result = SAT_Plugin::gui_show();
     if (result) {
-      SAT_Window* window = getEditor()->getWindow();
-      SAT_Tweening* tweens = window->getTweens();
-      double start[4] = { 100, 185,   0,  0 };
-      double end[4]   = {  10, 285, 180, 60 };
-      tweens->appendTween(666,MWaveformWidget,38,4,start,end,2.0);
+      
+      //SAT_Window* window = getEditor()->getWindow();
+      //SAT_Tweening* tweens = window->getTweens();
+      //double start[4] = { 100, 185,   0,  0 };
+      //double end[4]   = {  10, 285, 180, 60 };
+      //tweens->appendTween(666,MWaveformWidget,38,4,start,end,2.0);
+      
     }
     return result;
   }

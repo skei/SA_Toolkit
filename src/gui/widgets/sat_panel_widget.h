@@ -128,6 +128,9 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
+
+      //if (MDrawBorder) mrect.shrink(MBorderWidth * 0.5);
+
       //mrect.overlap(AContext->update_rect);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
@@ -176,6 +179,9 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
+
+      //if (MDrawBorder) mrect.shrink(MBorderWidth * 0.5);
+
       //mrect.overlap(AContext->update_rect);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
@@ -214,7 +220,10 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
-      mrect.shrink(0.5);
+      
+      //mrect.shrink(0.5);
+
+      //if (MDrawBorder) mrect.shrink(MBorderWidth * 0.5);
       
       //if (MDrawDropShadow) {
       //  mrect.shrink(MDropShadowFeather * S);

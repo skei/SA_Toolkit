@@ -54,18 +54,20 @@ public:
     
     if (showVerticalScrollBar) {
       MVerticalScrollBar = new SAT_ScrollBarWidget( SAT_Rect(10,10) );
-      MVerticalScrollBar->setName("scrollbox/vert.scr");
+      SAT_PanelWidget::appendChildWidget(MVerticalScrollBar);
+      MVerticalScrollBar->setName("scrollbox/v.scr");
       MVerticalScrollBar->setAlignment(SAT_WIDGET_ALIGN_RIGHT);
       MVerticalScrollBar->setStretching(SAT_WIDGET_STRETCH_VERTICAL);
       MVerticalScrollBar->setDirection(SAT_DIRECTION_VERT);
       if (showHorizontalScrollBar) {
 //        MVerticalScrollBar->Layout.extraBorder.h = 10;
       }
-      SAT_PanelWidget::appendChildWidget(MVerticalScrollBar);
     }
+    
     if (showHorizontalScrollBar) {
       MHorizontalScrollBar = new SAT_ScrollBarWidget( SAT_Rect(10,10) );
-      MHorizontalScrollBar->setName("scrollbox/hor.scr");
+      SAT_PanelWidget::appendChildWidget(MHorizontalScrollBar);
+      MHorizontalScrollBar->setName("scrollbox/h.scr");
       MHorizontalScrollBar->setAlignment(SAT_WIDGET_ALIGN_BOTTOM);
       MHorizontalScrollBar->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
       MHorizontalScrollBar->setDirection(SAT_DIRECTION_HORIZ);
@@ -73,19 +75,21 @@ public:
       //if (showVerticalScrollBar) {
       //  MHorizontalScrollBar->Layout.extraBorder.w = 10;
       //}
-      SAT_PanelWidget::appendChildWidget(MHorizontalScrollBar);
     }
+    
     MContent = new SAT_PanelWidget(SAT_Rect());
     MContent->setName("scrollbox/content");
-      //MContent->setAlignment(SAT_WIDGET_ALIGN_LEFT);
-      MContent->setStretching(SAT_WIDGET_STRETCH_ALL);
+    SAT_PanelWidget::appendChildWidget(MContent);
+    //MContent->setAlignment(SAT_WIDGET_ALIGN_LEFT | SAT_WIDGET_ALIGN_TOP);
+    MContent->setStretching(SAT_WIDGET_STRETCH_ALL);
     //MContent->layout.spacing = 5;
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(false);
     MContent->setFillBackground(true);
     //MContent->setFillBackground(true);
     //MContent->setBackgroundColor(SAT_COLOR_DARK_GREEN);
-    SAT_PanelWidget::appendChildWidget(MContent);
+    MContent->setAutoClip(true);
+    
   }
 
   //----------
@@ -125,12 +129,14 @@ public:
 //------------------------------
 
   SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) override {
+    AWidget->setParent(this);
     return MContent->appendChildWidget(AWidget,AListener);
   }
 
   //----------
 
   void realignChildWidgets(bool ARecursive=true) override {
+    //SAT_GLOBAL.DEBUG.print_callstack();
     SAT_PanelWidget::realignChildWidgets(ARecursive);
     SAT_Rect content = MContent->getContentRect();
     float rect_w = MContent->getRect().w;
@@ -175,22 +181,58 @@ public: // child to parent
 
   void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0, uint32_t AIndex=0) override {
     if (ASender == MVerticalScrollBar) {
+      //SAT_Print("vscroll\n");
       float visible = MVerticalScrollBar->getThumbSize();
       float pos     = MVerticalScrollBar->getThumbPos();
       float prev    = MVerticalScrollBar->getPrevThumbPos();
       updateScroll(MVerticalScrollBar,visible,pos,prev,true);
     }
     else if (ASender == MHorizontalScrollBar) {
+      //SAT_Print("hscroll\n");
       float visible = MHorizontalScrollBar->getThumbSize();
       float pos     = MHorizontalScrollBar->getThumbPos();
       float prev    = MHorizontalScrollBar->getPrevThumbPos();
       updateScroll(MHorizontalScrollBar,visible,pos,prev,true);
     }
     else {
+      //SAT_Print("...\n");
       SAT_PanelWidget::do_widget_update(ASender,AMode,AIndex);
     }
   }
-
+  
+  //----------
+  
+  // only pass on event up, if you don't handle them..
+  
+//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+//    
+//    switch(AReason) {
+//
+//      case SAT_WIDGET_NOTIFY_CLOSE:
+//        //SAT_Print("realign\n");
+//        //realignChildWidgets(true);
+//        //parentRedraw();
+//        break;
+//
+//      case SAT_WIDGET_NOTIFY_REALIGN:
+//        //SAT_Print("realign\n");
+//        //realignChildWidgets(true);
+//        //parentRedraw();
+//        break;
+//
+//      default:
+//        //SAT_Print("default\n");
+//        //SAT_PRINT;
+//        //SAT_Widget::do_widget_notify(ASender,AReason,AValue);
+//        //if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+//        //SAT_PanelWidget::do_widget_notify(ASender,AReason,AValue);
+//        break;
+//        
+//    }
+//    
+//    SAT_PanelWidget::do_widget_notify(ASender,AReason,AValue);
+//  }
+  
 };
 
 //----------------------------------------------------------------------

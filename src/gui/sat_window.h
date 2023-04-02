@@ -252,6 +252,7 @@ public:
   //virtual void setRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
   virtual void appendRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     MRootWidget = AWidget;
+    MRootWidget->setParent(nullptr);
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);
     uint32_t width = MWindowWidth;
@@ -311,9 +312,7 @@ public:
 
   virtual uint32_t flushDirtyWidgets(SAT_Rect* ARect) {
     uint32_t count = 0;
-    
     ARect->set(0);
-   
     SAT_Widget* widget = nullptr;
     while (MPendingDirtyWidgets.read(&widget)) {
       SAT_Rect R = widget->getRect();
@@ -329,18 +328,40 @@ public:
 
   //----------
   
+  SAT_Rect calcClipRect(SAT_Widget* AWidget) {
+    SAT_Rect rect = AWidget->getRect();
+    //SAT_Print(">>> %s : %.f,%.f,%.f,%.f\n",AWidget->getName(),rect.x,rect.y,rect.w,rect.h);
+    SAT_Widget* parent = AWidget->getParent();
+    while (parent) {
+      SAT_Rect parentrect = parent->getRect();
+      //SAT_Print("%s : %.f,%.f,%.f,%.f\n",parent->getName(),parentrect.x,parentrect.y,parentrect.w,parentrect.h);
+      rect.overlap(parentrect);
+      SAT_Widget* next = parent->getParent();
+      parent = next;
+    }
+    //SAT_Print("clip %.f,%.f,%.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
+    return rect;
+  }
+  
+  //----------
+  
   /*
     called from
     - on_window_paint()
+    
+    scenario: window is destroyed/deleted while going through this list
+    (for example quickly after initial window creation)..
+    
   */
 
   virtual uint32_t paintDirtyWidgets(SAT_PaintContext* AContext, SAT_Widget* ARoot=nullptr) {
     int32_t paint_count = MPaintContext.counter;
+    SAT_Painter* painter = AContext->painter;
     uint32_t count = 0;
     SAT_Widget* widget = nullptr;
     if (ARoot) {
       while (MPaintDirtyWidgets.read(&widget)) {
-        // we will draw everything anyway, so just empty queue
+        // we will draw everything, so just empty queue
         //widget->setLastPainted(paint_count);
       }
       ARoot->on_widget_paint(&MPaintContext);
@@ -349,17 +370,15 @@ public:
     else {
       while (MPaintDirtyWidgets.read(&widget)) {
         if (widget->getLastPainted() != paint_count) {
-          //SAT_Print("draw\n");
+          SAT_Rect cliprect = calcClipRect(widget);
+          painter->pushClip(cliprect);
           widget->on_widget_paint(&MPaintContext);
+          painter->popClip();
           widget->setLastPainted(paint_count);
           count += 1;
         }
-        //else {
-        //  SAT_Print("skip draw\n");
-        //}
       }
     }
-    //if (count > 0) { SAT_Print("paintDirtyWidgets: %i events\n",count); }
     return count;
   }
 
@@ -516,15 +535,18 @@ public: // window
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
       MBufferHeight = height2;
+      // paint root
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-      paintDirtyWidgets(&MPaintContext,MRootWidget);      
+      MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
+      paintDirtyWidgets(&MPaintContext,MRootWidget);
       MWindowPainter->endFrame();
     }
     else {
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
+      // paint dirty widgets
       paintDirtyWidgets(&MPaintContext);
       MWindowPainter->endFrame();
     }
@@ -798,7 +820,17 @@ public: // widget listener
   //----------
 
   void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-    SAT_PRINT;
+    switch(AReason) {
+      //case SAT_WIDGET_NOTIFY_CLOSE:
+      //  realignChildWidgets(true);
+      //  parentRedraw();
+      //  break;
+//      case SAT_WIDGET_NOTIFY_REALIGN:
+//        //SAT_Print("root realign & repaint\n");
+//        MRootWidget->realignChildWidgets(true);
+//        MRootWidget->parentRedraw();
+//        break;
+    }
   }
 
 //------------------------------

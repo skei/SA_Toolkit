@@ -80,31 +80,29 @@ public:
     
     SAT_PanelWidget* left_panel = new SAT_PanelWidget(SAT_Rect(300));
     root->appendChildWidget(left_panel);
-    left_panel->setAlignment(SAT_WIDGET_ALIGN_LEFT);
-    left_panel->setStretching(SAT_WIDGET_STRETCH_VERTICAL);
-    //left_panel->setBackgroundColor(SAT_Red);
+    left_panel->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
     
       SAT_ScrollBoxWidget* scrollbox = new SAT_ScrollBoxWidget(SAT_Rect(0,0,300,200),true,true);
       left_panel->appendChildWidget(scrollbox);
-      scrollbox->setAlignment(SAT_WIDGET_ALIGN_TOP);
-      scrollbox->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+      scrollbox->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+      
+      SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(0,0,300,200),false);
+      left_panel->appendChildWidget(groupbox);
+      groupbox->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
       SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(SAT_Rect(0,0,300,200));
       left_panel->appendChildWidget(textbox);
-      textbox->setAlignment(SAT_WIDGET_ALIGN_TOP);
-      textbox->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
-      for (uint32_t i=0; i<25; i++) { textbox->appendLine("Hello world!"); }
+      textbox->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+      
+        for (uint32_t i=0; i<25; i++) { textbox->appendLine("Hello world!"); }
 
     SAT_SizerWidget* sizer1 = new SAT_SizerWidget(SAT_Rect(5),SAT_DIRECTION_LEFT,left_panel);
     root->appendChildWidget(sizer1);
-    sizer1->setAlignment(SAT_WIDGET_ALIGN_LEFT);
-    sizer1->setStretching(SAT_WIDGET_STRETCH_VERTICAL);
+    sizer1->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
 
     SAT_PanelWidget* right_panel = new SAT_PanelWidget(SAT_Rect(300));
     root->appendChildWidget(right_panel);
-    //right_panel->setAlignment(SAT_WIDGET_ALIGN_LEFT);
     right_panel->setStretching(SAT_WIDGET_STRETCH_ALL);
-    //right_panel->setBackgroundColor(SAT_Green);
 
     return true;
   }

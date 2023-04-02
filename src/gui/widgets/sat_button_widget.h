@@ -54,7 +54,9 @@ public:
 public:
 //------------------------------
 
-  virtual void setIsToggle(bool AState) { MIsToggle = AState; }
+  virtual void setIsToggle(bool AState) {
+    MIsToggle = AState;
+  }
 
   virtual void setText(const char* AOnText, const char* AOffText) {
     strcpy(MOnText,AOnText);

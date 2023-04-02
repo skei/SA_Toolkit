@@ -318,6 +318,7 @@
 #define SAT_WIDGET_ALIGN_RIGHT                  2
 #define SAT_WIDGET_ALIGN_TOP                    3
 #define SAT_WIDGET_ALIGN_BOTTOM                 4
+#define SAT_WIDGET_ALIGN_PARENT                 5
 
 #define SAT_WIDGET_NOTIFY_NONE                  0
 #define SAT_WIDGET_NOTIFY_CLOSE                 1

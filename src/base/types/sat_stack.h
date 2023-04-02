@@ -77,7 +77,10 @@ public:
 
   T pop() {
     if (MStackTop > 0) return MStack[--MStackTop];
-    else return MNullItem;
+    else {
+      //printf("ouch! trying to pop from empty stack!\n");
+      return MNullItem;
+    }
   }
 
   //----------

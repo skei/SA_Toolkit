@@ -6,6 +6,8 @@
 #include "gui/widgets/sat_panel_widget.h"
 #include "gui/sat_window.h"
 
+#define SAT_POPUP_WIDGET_USE_TWEENING
+
 //----------------------------------------------------------------------
 //
 //
@@ -57,21 +59,22 @@ public:
     if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - 5;
     if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - 5;
     
-//    setPos(rect.x,rect.y);
-//    SAT_Rect basisrect = getBasisRect();
-//    basisrect.x = rect.x / S;
-//    basisrect.y = rect.y / S;
-//    setBasisRect(basisrect);
+    setPos(rect.x,rect.y);
+    SAT_Rect basisrect = getBasisRect();
+    basisrect.x = rect.x / S;
+    basisrect.y = rect.y / S;
+    setBasisRect(basisrect);
 
-    rect.scale(1.0/S);
     
-    SAT_Tweening* tweens = MWindow->getTweens();
-    //tweens->appendTween(MWaveformWidget,0,1000,5.0);
-    double startpos[4] = { rect.x, rect.y, 0,      0      };
-    double endpos[4]   = { rect.x, rect.y, rect.w, rect.h };
-    tweens->appendTween(666,this,38,4,startpos,endpos,1);
+    #ifdef SAT_POPUP_WIDGET_USE_TWEENING
+      rect.scale(1.0/S);
+      SAT_Tweening* tweens = MWindow->getTweens();
+      //tweens->appendTween(MWaveformWidget,0,1000,5.0);
+      double startpos[4] = { rect.x, rect.y, 0,      0      };
+      double endpos[4]   = { rect.x, rect.y, rect.w, rect.h };
+      tweens->appendTween(666,this,38,4,startpos,endpos,1);
+    #endif
     
-    //SAT_Print("realigning\n");
     realignChildWidgets();
     do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
     setActive(true);
@@ -79,6 +82,7 @@ public:
     //setValue(1);
     //update();
     parentRedraw();
+    
     return true;
   }
 

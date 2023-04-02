@@ -76,7 +76,7 @@ public: // clipping
   */
 
   virtual void pushClip(SAT_Rect ARect) {
-    //SAT_Print("pushing %.2f, %.2f, - %.2f, %.2f\n",MClipRect.x,MClipRect.y,MClipRect.w,MClipRect.h);
+    //SAT_Print("pushing %.f,%.f, %.f,%.f setting  %.f,%.f, %.f,%.f\n",MClipRect.x,MClipRect.y,MClipRect.w,MClipRect.h,ARect.x,ARect.y,ARect.w,ARect.h);
     MClipStack.push(MClipRect);
     MClipRect = ARect;
     resetClip();
@@ -101,8 +101,10 @@ public: // clipping
 
   virtual SAT_Rect popClip() {
     //SAT_Assert( !MClipStack.isEmpty() );
-    MClipRect = MClipStack.pop();
-    //SAT_Print("popped %.2f, %.2f, - %.2f, %.2f\n",MClipRect.x,MClipRect.y,MClipRect.w,MClipRect.h);
+    SAT_Rect popped_rect = MClipStack.pop();
+    //MClipRect = MClipStack.pop();
+    //SAT_Print("was %.f, %.f, %.f, %.f popped %.f, %.f, %.f, %.f\n",MClipRect.x,MClipRect.y,MClipRect.w,MClipRect.h,popped_rect.x,popped_rect.y,popped_rect.w,popped_rect.h);
+    MClipRect = popped_rect;
     //resetClip();
     //SAT_Print("setting %.2f, %.2f, - %.2f, %.2f\n",MClipRect.x,MClipRect.y,MClipRect.w,MClipRect.h);
     setClip(MClipRect);
@@ -125,6 +127,12 @@ public: // clipping
 
   virtual SAT_Rect getClipRect() {
     return MClipRect;
+  }
+  
+  //----------
+
+  virtual SAT_RectStack* getClipStack() {
+    return &MClipStack;
   }
 
 //------------------------------

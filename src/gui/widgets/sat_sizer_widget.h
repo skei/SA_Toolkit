@@ -189,7 +189,6 @@ public:
               MTarget->do_widget_resized(this,deltax,deltay);
               parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
               
-              
 //            }
 
           //}

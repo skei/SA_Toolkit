@@ -70,8 +70,10 @@ public:
     setBackgroundColor(SAT_DarkestGrey);
     setDrawBorder(false);
     
-    setAlignment(SAT_WIDGET_ALIGN_TOP);
-    setStretching(SAT_WIDGET_STRETCH_VERTICAL);
+    //setAlignment(SAT_WIDGET_ALIGN_TOP);
+    //setStretching(SAT_WIDGET_STRETCH_VERTICAL);
+    setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+    
     
   }
   

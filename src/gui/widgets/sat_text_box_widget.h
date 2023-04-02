@@ -16,7 +16,7 @@ protected:
 //------------------------------
 
   //float     MTextHeight = 20.0;
-  float     MTextSize   = 15.0;
+  float     MTextSize   = 10.0;
   uint32_t  MNumLines   = 0;
   uint32_t  MMaxLines   = 100;
 

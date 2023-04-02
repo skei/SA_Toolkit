@@ -71,7 +71,8 @@ public:
 
   virtual int32_t appendPage(const char* ATitle, SAT_Widget* AWidget) {
     //AWidget->Layout.alignment = SAT_WIDGET_ALIGN_FILL_CLIENT;
-    AWidget->setStretching(SAT_WIDGET_STRETCH_ALL);
+    //AWidget->setStretching(SAT_WIDGET_STRETCH_ALL);
+    AWidget->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
     int32_t result = MPages->appendPage(AWidget);
     MHeader->setButtonName(MNumPages,ATitle);
     MNumPages += 1;
@@ -101,7 +102,7 @@ public: // child to parent
       MPages->setPage(sel/*,true*/);
       //MPages->on_realign();
 
-//      MPages->realignChildWidgets(true);
+      MPages->realignChildWidgets(true);
       do_widget_redraw(MPages,0);
       
     }

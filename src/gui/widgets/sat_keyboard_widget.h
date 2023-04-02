@@ -44,7 +44,8 @@ class SAT_KeyboardWidget
 private:
 //------------------------------
 
-  bool        MActiveMap[12]    = {1,1,1,1,1,1,1,1,1,1,1,1};
+  //bool        MActiveMap[12]    = {1,1,1,1,1,1,1,1,1,1,1,1};
+  bool        MActiveMap[12]    = {0,0,0,0,0,0,0,0,0,0,0,0};
   int32_t     MNoteRects1[12*4] = {0};
   int32_t     MNoteRects2[12*4] = {0};
 
@@ -52,13 +53,13 @@ private:
 protected:
 //------------------------------
 
-  int32_t     MDist             = 2;
-  float       MRatio            = 0.6;
-  SAT_Color  MBlackColor        = SAT_Color(0.35);
-  SAT_Color  MWhiteColor        = SAT_Color(0.65);
-  SAT_Color  MBlackActiveColor  = SAT_Color(0);
-  SAT_Color  MWhiteActiveColor  = SAT_Color(1);
-  bool        MVertical         = false;
+  double    MDist             = 1.0;
+  float     MRatio            = 0.6;
+  SAT_Color MBlackColor        = SAT_Color(0.3,0.3,0.3);
+  SAT_Color MWhiteColor        = SAT_Color(0.5,0.5,0.5);
+  SAT_Color MBlackActiveColor  = SAT_Color(0.2,0.2,0.2);
+  SAT_Color MWhiteActiveColor  = SAT_Color(0.6,0.6,0.6);
+  bool      MVertical         = false;
 
 //------------------------------
 public:
@@ -88,8 +89,8 @@ public:
 
   //----------
 
-  virtual void setDist(int32_t ADist) {
-    MDist = ADist + 1;
+  virtual void setDist(double ADist) {
+    MDist = ADist + 1.0;
   }
 
   //----------
@@ -119,6 +120,8 @@ public:
 //------------------------------
 
   virtual void recalc_note_rects(void) {
+    double S = getWindowScale();
+    double mdist_s = (MDist * S);
     SAT_Rect mrect = getRect();
     if (MVertical) {
       int32_t size = mrect.h;
@@ -127,7 +130,7 @@ public:
       float   s3 = s1 * 3;
       int32_t y1    = 0;
       int32_t x0    = 0;
-      int32_t x1    = floorf((float)mrect.w * (1-0 - MRatio));
+      int32_t x1    = floorf((float)mrect.w * (1.0 - MRatio));
       int32_t x2    = mrect.w - 1;
       for (int32_t note=0; note<12; note++) {
         int32_t n4    = note * 4;
@@ -138,25 +141,25 @@ public:
         switch(typ) {
           case 0: // C
             MNoteRects1[n4+0] = x0;         MNoteRects1[n4+1] = floorf(y1);
-            MNoteRects1[n4+2] = x1;         MNoteRects1[n4+3] = floorf(y1+s3) - MDist;
+            MNoteRects1[n4+2] = x1;         MNoteRects1[n4+3] = floorf(y1+s3) - mdist_s;//MDist;
             MNoteRects2[n4+0] = x1;         MNoteRects2[n4+1] = floorf(y1);
-            MNoteRects2[n4+2] = x2;         MNoteRects2[n4+3] = floorf(y1+s2) - MDist;
+            MNoteRects2[n4+2] = x2;         MNoteRects2[n4+3] = floorf(y1+s2) - mdist_s;//MDist;
             break;
           case 1: // D
             MNoteRects1[n4+0] = x0;         MNoteRects1[n4+1] = floorf(y1);
-            MNoteRects1[n4+2] = x1;         MNoteRects1[n4+3] = floorf(y1+s3) - MDist;
+            MNoteRects1[n4+2] = x1;         MNoteRects1[n4+3] = floorf(y1+s3) - mdist_s;//MDist;
             MNoteRects2[n4+0] = x1;         MNoteRects2[n4+1] = floorf(y1+s1);
-            MNoteRects2[n4+2] = x2;         MNoteRects2[n4+3] = floorf(y1+s2) - MDist;
+            MNoteRects2[n4+2] = x2;         MNoteRects2[n4+3] = floorf(y1+s2) - mdist_s;//MDist;
             break;
           case 2: // E
             MNoteRects1[n4+0] = x0;         MNoteRects1[n4+1] = floorf(y1);
-            MNoteRects1[n4+2] = x1;         MNoteRects1[n4+3] = floorf(y1+s3) - MDist;
+            MNoteRects1[n4+2] = x1;         MNoteRects1[n4+3] = floorf(y1+s3) - mdist_s;//MDist;
             MNoteRects2[n4+0] = x1;         MNoteRects2[n4+1] = floorf(y1+s1);
-            MNoteRects2[n4+2] = x2;         MNoteRects2[n4+3] = floorf(y1+s3) - MDist;
+            MNoteRects2[n4+2] = x2;         MNoteRects2[n4+3] = floorf(y1+s3) - mdist_s;//MDist;
             break;
           case 3: // black
             MNoteRects1[n4+0] = x1 + MDist; MNoteRects1[n4+1] = floorf(y1);
-            MNoteRects1[n4+2] = x2;         MNoteRects1[n4+3] = floorf(y1+s2) - MDist - 1;
+            MNoteRects1[n4+2] = x2;         MNoteRects1[n4+3] = floorf(y1+s2) - mdist_s - S;//MDist - 1;
             break;
         } // switch
       } // for note
@@ -177,26 +180,26 @@ public:
         int32_t typ   = SAT_KEYBOARD_INTERNAL_NOTE_DATA[(note*2)+1];
         switch(typ) {
           case 0: // C
-            MNoteRects1[n4+0] = floorf(x1);             MNoteRects1[n4+1] = 0;
-            MNoteRects1[n4+2] = floorf(x1+s2) - MDist;  MNoteRects1[n4+3] = y1;
-            MNoteRects2[n4+0] = floorf(x1);             MNoteRects2[n4+1] = y1;
-            MNoteRects2[n4+2] = floorf(x1+s3) - MDist;  MNoteRects2[n4+3] = y2;
+            MNoteRects1[n4+0] = floorf(x1);                         MNoteRects1[n4+1] = 0;
+            MNoteRects1[n4+2] = floorf(x1+s2) - mdist_s;/*MDist;*/  MNoteRects1[n4+3] = y1;
+            MNoteRects2[n4+0] = floorf(x1);                         MNoteRects2[n4+1] = y1;
+            MNoteRects2[n4+2] = floorf(x1+s3) - mdist_s;/*MDist;*/  MNoteRects2[n4+3] = y2;
             break;
           case 1: // D
-            MNoteRects1[n4+0] = floorf(x1+s1);          MNoteRects1[n4+1] = 0;
-            MNoteRects1[n4+2] = floorf(x1+s2) - MDist;  MNoteRects1[n4+3] = y1;
-            MNoteRects2[n4+0] = floorf(x1);             MNoteRects2[n4+1] = y1;
-            MNoteRects2[n4+2] = floorf(x1+s3) - MDist;  MNoteRects2[n4+3] = y2;
+            MNoteRects1[n4+0] = floorf(x1+s1);                      MNoteRects1[n4+1] = 0;
+            MNoteRects1[n4+2] = floorf(x1+s2) - mdist_s;/*MDist;*/  MNoteRects1[n4+3] = y1;
+            MNoteRects2[n4+0] = floorf(x1);                         MNoteRects2[n4+1] = y1;
+            MNoteRects2[n4+2] = floorf(x1+s3) - mdist_s;/*MDist;*/  MNoteRects2[n4+3] = y2;
             break;
           case 2: // E
-            MNoteRects1[n4+0] = floorf(x1+s1);          MNoteRects1[n4+1] = 0;
-            MNoteRects1[n4+2] = floorf(x1+s3) - MDist;  MNoteRects1[n4+3] = y1;
-            MNoteRects2[n4+0] = floorf(x1);             MNoteRects2[n4+1] = y1;
-            MNoteRects2[n4+2] = floorf(x1+s3) - MDist;  MNoteRects2[n4+3] = y2;
+            MNoteRects1[n4+0] = floorf(x1+s1);                      MNoteRects1[n4+1] = 0;
+            MNoteRects1[n4+2] = floorf(x1+s3) - mdist_s;/*MDist;*/  MNoteRects1[n4+3] = y1;
+            MNoteRects2[n4+0] = floorf(x1);                         MNoteRects2[n4+1] = y1;
+            MNoteRects2[n4+2] = floorf(x1+s3) - mdist_s;/*MDist;*/  MNoteRects2[n4+3] = y2;
             break;
           case 3: // black
-            MNoteRects1[n4+0] = floorf(x1);             MNoteRects1[n4+1] = 0;
-            MNoteRects1[n4+2] = floorf(x1+s2) - MDist;  MNoteRects1[n4+3] = y1 - MDist;
+            MNoteRects1[n4+0] = floorf(x1);                         MNoteRects1[n4+1] = 0;
+            MNoteRects1[n4+2] = floorf(x1+s2) - mdist_s;/*MDist;*/  MNoteRects1[n4+3] = y1 - mdist_s;//MDist;
             break;
         } // switch
       } // for note

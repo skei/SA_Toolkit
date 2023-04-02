@@ -95,7 +95,7 @@ public:
     SAT_Painter* painter = AContext->painter;
     double S = getWindowScale();
     
-    painter->pushClip(getRect());
+    //painter->pushClip(getRect());
     
     if (MNumNodes>0) {
       //int32 halfw = (mrect.w/2);
@@ -124,8 +124,8 @@ public:
           }
           if (i==MSelected) {
             painter->setFillColor(MNodeColor);
-            double s3 = S * 3;
-            double s6 = S * 6;
+            double s3 = S * 2;
+            double s6 = S * 3;
             painter->fillRect(x-s3,mrect.y+h1-s3,s6,s6);
           }
           x += w;
@@ -133,9 +133,7 @@ public:
       }
     }
     
-    painter->popClip();
-    
-    
+    //painter->popClip();
     
   }
    

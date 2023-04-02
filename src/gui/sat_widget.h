@@ -24,6 +24,7 @@ private:
 
   const char*         MName                               = "";
 
+  SAT_Widget*         MParent                             = nullptr;
   SAT_WidgetListener* MListener                           = nullptr;
   SAT_WidgetArray     MChildren                           = {};
   uint32_t            MIndex                              = 0;
@@ -47,6 +48,7 @@ private:
 
   bool                MAutoCursor                         = true;
   bool                MAutoHint                           = true;
+  bool                MAutoClip                           = false;
 
   double              MWindowScale                        = 1.0;
 
@@ -54,7 +56,9 @@ private:
   
   uint32_t            MAlignment                          = SAT_WIDGET_ALIGN_NONE;
   uint32_t            MStretching                         = SAT_WIDGET_STRETCH_NONE;
+  
   SAT_Rect            MInnerBorder                        = SAT_Rect(0,0,0,0);
+  SAT_Point           MSpacing                            = SAT_Point(0,0);
 
 //------------------------------
 public:
@@ -97,10 +101,12 @@ public:
   virtual void        setHint(const char* AHint)                      { strcpy(MHint,AHint); }
   virtual void        setAutoCursor(bool AState=true)                 { MAutoCursor = AState; }
   virtual void        setAutoHint(bool AState=true)                   { MAutoHint = AState; }
+  virtual void        setAutoClip(bool AState=true)                   { MAutoClip = AState; }
   
   virtual void        setAlignment(uint32_t AAlignment)               { MAlignment = AAlignment; }
   virtual void        setStretching(uint32_t AStretch)                { MStretching = AStretch; }
   virtual void        setInnerBorder(SAT_Rect ABorder)                { MInnerBorder = ABorder; }
+  virtual void        setSpacing(SAT_Point ASpacing)                  { MSpacing = ASpacing; }
 
 //virtual void        setInitialRect(SAT_Rect ARect)                  { MInitialRect = ARect; }
   virtual void        setBasisRect(SAT_Rect ARect)                    { MBasisRect = ARect; }
@@ -125,6 +131,31 @@ public:
       }
     }
   }
+
+  virtual void setWidth(double AWidth) { MRect.w = AWidth; }
+  virtual void setHeight(double AHeight) { MRect.h = AHeight; }
+
+  virtual void setBasisWidth(double AWidth) { MBasisRect.w = AWidth; }
+  virtual void setBasisHeight(double AHeight) { MBasisRect.h = AHeight; }
+  
+  virtual void setLayout(uint32_t AAlignment, uint32_t AStretch) {
+    setAlignment(AAlignment);
+    setStretching(AStretch);
+  }
+  
+  virtual void setParent(SAT_Widget* AParent) { MParent = AParent; }
+  
+  //virtual void clipParent(SAT_Painter* APainter) {
+  //  //if (widget->autoClip()) painter->pushClip(widget->getRect());
+  //  if (MParent) {
+  //    SAT_Rect parentrect = MParent->getRect();
+  //    APainter->pushClip(parentrect);
+  //  }
+  //}
+
+  //virtual void unclipParent(SAT_Painter* APainter) {
+  //  APainter->popClip();
+  //}
 
 //------------------------------
 public:
@@ -161,6 +192,11 @@ public:
   virtual uint32_t          getStretching()                                 { return MStretching; }
   virtual SAT_Rect          getInnerBorder()                                { return MInnerBorder; }
   
+  virtual bool              autoCursor()                                    { return MAutoCursor; }
+  virtual bool              autoHint()                                      { return MAutoHint; }
+  virtual bool              autoClip()                                      { return MAutoClip; }
+  
+  virtual SAT_Widget* getParent() { return MParent; }
   
 
 //------------------------------
@@ -219,29 +255,24 @@ public:
   //----------
 
   virtual void parentUpdate() {
-    //SAT_PRINT;
     if (MListener) MListener->do_widget_update(this,0,0);
   }
 
   //----------
 
   virtual void parentRedraw() {
-    //SAT_Print("%s\n",getName());
     if (MListener) MListener->do_widget_redraw(this,0,0);
   }
 
   //----------
 
   virtual void parentRedrawAll() {
-    //SAT_PRINT;
     if (MListener) MListener->do_widget_redraw(nullptr,0,0);
   }
 
   //----------
 
   virtual void parentNotify(uint32_t AReason, int32_t AValue) {
-    //SAT_PRINT;
-    //if (MListener) MListener->do_widget_notify(this,AReason,AValue);
     if (MListener) MListener->do_widget_notify(this,AReason,AValue);
   }
 
@@ -253,6 +284,11 @@ public:
 
   virtual SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     uint32_t index = MChildren.size();
+
+//qwe
+    
+    AWidget->setParent(this);
+    
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);
     AWidget->setIndex(index);
@@ -316,14 +352,19 @@ public:
     double S = getWindowScale();
     SAT_Rect parent_rect = getRect();
 
-    //    SAT_Rect ib = MInnerBorder;
-    //    ib.scale(S);
-    //    parent_rect.shrink(ib);
+MContentRect = parent_rect;
+//MContentRect.w = 0;
+//MContentRect.h = 0;
 
     SAT_Rect client_rect = parent_rect;
-    //SAT_Rect content_rect = SAT_Rect(parent_rect.x,parent_rect.y,0,0);
-    MContentRect = SAT_Rect(parent_rect.x,parent_rect.y,0,0);
     
+    SAT_Rect innerborder = MInnerBorder;
+    innerborder.scale(S);
+    client_rect.shrink(innerborder);
+
+    SAT_Point spacing = MSpacing;
+    spacing.scale(S);
+  
     for (uint32_t i=0; i<MChildren.size(); i++) {
 
       SAT_Widget* child = MChildren[i];
@@ -333,16 +374,16 @@ public:
       // assume aligned relative to parent
       // (client or parent?)
       
-      child->MRect.x = parent_rect.x + child_basisrect.x;
-      child->MRect.y = parent_rect.y + child_basisrect.y;
+      child->MRect.x = client_rect.x + child_basisrect.x;
+      child->MRect.y = client_rect.y + child_basisrect.y;
       
       // negative = percent
       
       SAT_Rect child_initialrect = child->getInitialRect();
-      if (child_initialrect.x < 0) child->MRect.x = parent_rect.w * (fabs(child_initialrect.x) * 0.01);
-      if (child_initialrect.y < 0) child->MRect.y = parent_rect.h * (fabs(child_initialrect.y) * 0.01);
-      if (child_initialrect.w < 0) child->MRect.w = parent_rect.w * (fabs(child_initialrect.w) * 0.01);
-      if (child_initialrect.h < 0) child->MRect.h = parent_rect.h * (fabs(child_initialrect.h) * 0.01);
+      if (child_initialrect.x < 0) child->MRect.x = client_rect.w * (fabs(child_initialrect.x) * 0.01);
+      if (child_initialrect.y < 0) child->MRect.y = client_rect.h * (fabs(child_initialrect.y) * 0.01);
+      if (child_initialrect.w < 0) child->MRect.w = client_rect.w * (fabs(child_initialrect.w) * 0.01);
+      if (child_initialrect.h < 0) child->MRect.h = client_rect.h * (fabs(child_initialrect.h) * 0.01);
 
       // alignment
 
@@ -351,29 +392,37 @@ public:
         case SAT_WIDGET_ALIGN_LEFT: {
           //child->MRect.x = parent_rect.x;
           child->MRect.x = client_rect.x;
-          client_rect.x += child->MRect.w;
-          client_rect.w -= child->MRect.w;
+          client_rect.x += (child->MRect.w + spacing.x);
+          client_rect.w -= (child->MRect.w + spacing.x);
           break;
         }
         case SAT_WIDGET_ALIGN_RIGHT: {
           //child->MRect.x = parent_rect.x2() - child->MRect.w;
           child->MRect.x = client_rect.x2() - child->MRect.w;
           //client_rect.x += child->MRect.w;
-          client_rect.w -= child->MRect.w;
+          client_rect.w -= (child->MRect.w + spacing.x);
           break;
         }
         case SAT_WIDGET_ALIGN_TOP: {
           //child->MRect.y = parent_rect.y;
           child->MRect.y = client_rect.y;
-          client_rect.y += child->MRect.h;
-          client_rect.h -= child->MRect.h;
+          client_rect.y += (child->MRect.h + spacing.y);
+          client_rect.h -= (child->MRect.h + spacing.y);
           break;
         }
         case SAT_WIDGET_ALIGN_BOTTOM: {
           //child->MRect.y = parent_rect.y2() - child->MRect.h;
           child->MRect.y = client_rect.y2() - child->MRect.h;
           //client_rect.y += child->MRect.h;
-          client_rect.h -= child->MRect.h;
+          client_rect.h -= (child->MRect.h + spacing.y);
+          break;
+        }
+        case SAT_WIDGET_ALIGN_PARENT: {
+          // undo client aligning
+          child->MRect.x -= client_rect.x;
+          child->MRect.y -= client_rect.y;
+          child->MRect.x += parent_rect.x;
+          child->MRect.y += parent_rect.y;
           break;
         }
       }
@@ -397,7 +446,12 @@ public:
       
     } // for
     
-    //MContntRect = content_rect;
+// PS!
+
+//    // add w if not auto-aligning?
+//    //MContentRect.w += innerborder.w;
+    
+    MContentRect.h += innerborder.h;
     
   }
 
@@ -433,23 +487,42 @@ public:
   //----------
 
   virtual void paintChildWidgets(SAT_PaintContext* AContext, bool ARecursive=true) {
-    SAT_Painter* painter= AContext->painter;
+    //SAT_Print("%s\n",getName());
     uint32_t num = MChildren.size();
+    
+    SAT_Rect mrect = getRect();
+    SAT_Painter* painter= AContext->painter;
+    
+    //SAT_Widget* parent = getParent();
+    //if (parent) {
+    //  SAT_Rect parent_rect = parent->getRect();
+    //  parent_rect.overlap(mrect);
+    //  painter->pushClip(parent_rect);
+    //}
+    
     if (num > 0) {
+      
+      if (MAutoClip) painter->pushOverlapClip(mrect);
+
       for (uint32_t i=0; i<num; i++) {
         SAT_Widget* widget = MChildren[i];
         if (widget->isVisible()) {
           SAT_Rect widgetrect = widget->getRect();
+          widgetrect.overlap(mrect);
           if (widgetrect.isNotEmpty()) {
-            
-            painter->pushClip(getRect());
-            widget->on_widget_paint(AContext);
-            painter->popClip();
-            
-          } // intersect
+            //if ( widgetrect.intersects(mrect) ) {
+              widget->on_widget_paint(AContext);
+            //} // intersects
+          } // not empty
         } // visible
       } // for
+      
+      if (MAutoClip) painter->popClip();
+      
     } // num > 0
+    
+    //painter->popClip();
+    
   }
 
 //------------------------------
@@ -544,26 +617,32 @@ public: // widget listener
   }
 
   //----------
+  
+//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+//    if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+//  }
 
   void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
     switch(AReason) {
       case SAT_WIDGET_NOTIFY_CLOSE:
-        realignChildWidgets(true);
-        parentRedraw();
+    //    SAT_PRINT;
+    //    realignChildWidgets(true);
+    //    parentRedraw();
         break;
       case SAT_WIDGET_NOTIFY_REALIGN:
-        //SAT_Print("%s\n",getName());
+        //SAT_Print("this: %s ASender: %s\n",getName(),ASender->getName());
         realignChildWidgets(true);
         parentRedraw();
         break;
       default:
-        //SAT_PRINT;
-        //SAT_Widget::do_widget_notify(ASender,AReason,AValue);
-        if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+    //    //SAT_PRINT;
+    //    realignChildWidgets(true);
+    //    //parentRedraw();
         break;
     }
+    if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
   }
-  
+
   //----------
 
   void do_widget_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {

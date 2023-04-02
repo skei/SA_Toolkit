@@ -17,7 +17,7 @@
     AWindow->appendRootWidget(MRootPanel);
     MRootPanel->setFillBackground(true);
     MRootPanel->setDrawBorder(false);
-    MRootPanel->setInnerBorder(SAT_Rect(5,5,5,5));
+    //MRootPanel->setInnerBorder(SAT_Rect(5,5,5,5));
 
     // menu
 
@@ -29,19 +29,19 @@
     menu->appendChildWidget(i1);
     i1->setDrawBorder(false);
     //i1->setAlignment(SAT_WIDGET_ALIGN_TOP);
-    i1->setStretching(SAT_WIDGET_STRETCH_HORIZ);
+    i1->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
 
     SAT_MenuItemWidget* i2 = new SAT_MenuItemWidget(SAT_Rect(5,20,140,15),"Item 2");
     menu->appendChildWidget(i2);
     i2->setDrawBorder(false);
     //i2->setAlignment(SAT_EDGE_TOP);
-    i2->setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    i2->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
 
     SAT_MenuItemWidget* i3 = new SAT_MenuItemWidget(SAT_Rect(5,35,140,15),"Item 3");
     menu->appendChildWidget(i3);
     i3->setDrawBorder(false);
     //i3->setAlignment(SAT_EDGE_TOP);
-    i3->setStretching(SAT_EDGE_LEFT | SAT_EDGE_RIGHT);
+    i3->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
 
     // header
     
@@ -53,27 +53,76 @@
     
     SAT_PluginFooterWidget* plugin_footer = new SAT_PluginFooterWidget(SAT_Rect(0,0,EDITOR_WIDTH,20));
     MRootPanel->appendChildWidget(plugin_footer);
+
+
     
 // left column
 
-    SAT_PanelWidget* left_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
+
+
+    //SAT_PanelWidget* left_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
+    SAT_ScrollBoxWidget* left_column = new SAT_ScrollBoxWidget(SAT_Rect(10,10,200,200));
+    
+    SAT_Widget* content = left_column->getContentWidget();
+    content->setInnerBorder(SAT_Rect(6,6,6,6));
+    content->setSpacing(SAT_Point(3,3));
+    
+    
     MRootPanel->appendChildWidget(left_column);
-    left_column->setAlignment(SAT_EDGE_LEFT);
-    left_column->setStretching(SAT_EDGE_TOP | SAT_EDGE_BOTTOM);
+    left_column->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
     left_column->setDrawBorder(false);
     left_column->setFillBackground(true);
     left_column->setBackgroundColor(0.4);
+    //left_column->setInnerBorder(SAT_Rect(10,10,10,10));
+    //left_column->setSpacing(SAT_Point(5,5));
+    
+    SAT_SizerWidget* sizer1 = new SAT_SizerWidget(SAT_Rect(5),SAT_DIRECTION_LEFT,left_column);
+    MRootPanel->appendChildWidget(sizer1);
+    sizer1->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
+
+
     
     //
 
-    SAT_ValueWidget* val = new SAT_ValueWidget(SAT_Rect(10,10,180,20),"Param 1", 0.0);
+
+
+    SAT_ValueWidget* val = new SAT_ValueWidget(20,"Param 1", 0.0);
     left_column->appendChildWidget(val);
+    val->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     val->setTextSize(12);
     val->setRoundedCorners(true);
     val->setCornerSize(5);
+    
+    SAT_GroupBoxWidget* groupbox1 = new SAT_GroupBoxWidget(100,true);
+    left_column->appendChildWidget(groupbox1);
+    groupbox1->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+    
+      SAT_PanelWidget* grpage1 = new SAT_PanelWidget(0);
+      groupbox1->appendChildWidget(grpage1);
+      grpage1->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
+      grpage1->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
 
-    SAT_DragValueWidget* dragval = new SAT_DragValueWidget(SAT_Rect(10,35,180,20),"Param 2", 0.0);
+    SAT_GroupBoxWidget* groupbox2 = new SAT_GroupBoxWidget(100,true);
+    left_column->appendChildWidget(groupbox2);
+    groupbox2->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+    
+      SAT_PanelWidget* grpage2 = new SAT_PanelWidget(0);
+      groupbox2->appendChildWidget(grpage2);
+      grpage2->setBackgroundColor(SAT_Color(0.35,0.40,0.35));
+      grpage2->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
+
+    SAT_GroupBoxWidget* groupbox3 = new SAT_GroupBoxWidget(100,true);
+    left_column->appendChildWidget(groupbox3);
+    groupbox3->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+    
+      SAT_PanelWidget* grpage3 = new SAT_PanelWidget(0);
+      groupbox3->appendChildWidget(grpage3);
+      grpage3->setBackgroundColor(SAT_Color(0.35,0.35,0.40));
+      grpage3->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
+
+    SAT_DragValueWidget* dragval = new SAT_DragValueWidget(20,"Param 2", 0.0);
     left_column->appendChildWidget(dragval);
+    dragval->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     dragval->setTextSize(7);
     dragval->setValueSize(7);
     dragval->setSnap(true);
@@ -82,7 +131,6 @@
     dragval->setAutoLockCursor(true);
     dragval->setRoundedCorners(true);
     dragval->setCornerSize(2);
-    
     dragval->setDrawBorder(true);
     dragval->setValueSize(9);
     dragval->setValueColor(SAT_Black);
@@ -93,8 +141,9 @@
     dragval->setDropShadowFeather(6);
     dragval->setDropShadowOffset(1,1);
 
-    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10,60,180,20),"Param 3", 0.0);
+    SAT_SliderWidget* slider = new SAT_SliderWidget(20,"Param 3", 0.0);
     left_column->appendChildWidget(slider);
+    slider->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     slider->setTextSize(12);
     slider->setBipolar(true);
     slider->setBipolarCenter(0.5);
@@ -107,22 +156,26 @@
     slider->setModulationColor( SAT_Color(1,1,1,0.25) );
     slider->setDragDirection(SAT_DIRECTION_RIGHT);
 
-    SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(10,85,85,20));
+    SAT_ButtonWidget* button1 = new SAT_ButtonWidget(20);
     left_column->appendChildWidget(button1);
+    button1->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     
-    SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(105,85,85,20));
+    
+    SAT_ButtonWidget* button2 = new SAT_ButtonWidget(20);
     left_column->appendChildWidget(button2);
     button2->setIsToggle(true);
+    button2->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
     //button1->setAlignment(SAT_EDGE_LEFT);
     //button2->setAnchors(SAT_EDGE_BOTTOM);
     
-    SAT_TabsWidget* tabs = new SAT_TabsWidget(SAT_Rect(10,110,180,100),3);
+    SAT_TabsWidget* tabs = new SAT_TabsWidget(100,3);
     left_column->appendChildWidget(tabs);
+    tabs->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
-      SAT_PanelWidget* page1 = new SAT_PanelWidget(SAT_Rect(0,0,180,80));
-      SAT_PanelWidget* page2 = new SAT_PanelWidget(SAT_Rect(0,0,180,80));
-      SAT_PanelWidget* page3 = new SAT_PanelWidget(SAT_Rect(0,0,180,80));
+      SAT_PanelWidget* page1 = new SAT_PanelWidget(0);
+      SAT_PanelWidget* page2 = new SAT_PanelWidget(0);
+      SAT_PanelWidget* page3 = new SAT_PanelWidget(0);
       page1->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
       page2->setBackgroundColor(SAT_Color(0.35,0.40,0.35));
       page3->setBackgroundColor(SAT_Color(0.35,0.35,0.40));
@@ -131,59 +184,75 @@
       tabs->appendPage("page3",page3);
       tabs->selectPage(0);
     
-    SAT_ButtonRowWidget* buttonrow = new SAT_ButtonRowWidget(SAT_Rect(10,215,180,20),5,buttontext,SAT_BUTTON_ROW_MULTI);
+    SAT_ButtonRowWidget* buttonrow = new SAT_ButtonRowWidget(20,5,buttontext,SAT_BUTTON_ROW_MULTI);
     left_column->appendChildWidget(buttonrow);
+    buttonrow->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     buttonrow->setValueIsBits(true,8);
     buttonrow->setRoundedCorners(true);
     buttonrow->setCornerSizes(8,8,8,8);
     
-    SAT_ButtonRowWidget* buttonrow2 = new SAT_ButtonRowWidget(SAT_Rect(10,240,180,20),5,buttontext,SAT_BUTTON_ROW_SINGLE);
+    SAT_ButtonRowWidget* buttonrow2 = new SAT_ButtonRowWidget(20,5,buttontext,SAT_BUTTON_ROW_SINGLE);
     left_column->appendChildWidget(buttonrow2);
+    buttonrow2->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     buttonrow2->setValueIsBits(true,8);
     buttonrow2->setRoundedCorners(true);
     buttonrow2->setCornerSizes(4,4,4,4);
     
-    SAT_ScrollBarWidget* scrollbar = new SAT_ScrollBarWidget(SAT_Rect(10,265,180,20));
+    SAT_ScrollBarWidget* scrollbar = new SAT_ScrollBarWidget(20);
     left_column->appendChildWidget(scrollbar);
+    scrollbar->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     scrollbar->setValue(0.3);
     //scrollbar->setThumbSize(0.3);
 
-    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(SAT_Rect(10,290,180,20),"MenuItem");
+    SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget(20,"MenuItem");
     left_column->appendChildWidget(menuitem);
+    menuitem->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
-    SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(10,315,180,20),"Select",menu);
+    SAT_SelectorWidget* selector = new SAT_SelectorWidget(20,"Select",menu);
     left_column->appendChildWidget(selector);
+    selector->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
-    SAT_SymbolWidget* symbol1 = new SAT_SymbolWidget(SAT_Rect(10,340,10,10),SAT_SYMBOL_RECT);
-    left_column->appendChildWidget(symbol1);
-
-    SAT_SymbolWidget* symbol2 = new SAT_SymbolWidget(SAT_Rect(25,340,10,10),SAT_SYMBOL_TRI_DOWN);
-    left_column->appendChildWidget(symbol2);
-
-    SAT_SymbolWidget* symbol3 = new SAT_SymbolWidget(SAT_Rect(40,340,10,10),SAT_SYMBOL_CIRCLE);
-    left_column->appendChildWidget(symbol3);
-
-    SAT_SymbolWidget* symbol4 = new SAT_SymbolWidget(SAT_Rect(55,340,10,10),SAT_SYMBOL_FILLED_RECT);
-    left_column->appendChildWidget(symbol4);
-
-    SAT_ScrollBarWidget0* scrollbar0 = new SAT_ScrollBarWidget0(SAT_Rect(10,355,180,20));
+    SAT_ScrollBarWidget0* scrollbar0 = new SAT_ScrollBarWidget0(20);
     left_column->appendChildWidget(scrollbar0);
+    scrollbar0->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     
-    SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(10,380,180,30));
+    SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(30);
     left_column->appendChildWidget(keyboard);
+    keyboard->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
-    SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(10,415,180,30));
+    SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(30);
     left_column->appendChildWidget(sliderbank);
+    sliderbank->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
-    SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(10,450,180,30),16);
+    SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(30,16);
     left_column->appendChildWidget(valuegraph);
+    valuegraph->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+
+    SAT_SymbolWidget* symbol1 = new SAT_SymbolWidget(10,SAT_SYMBOL_RECT);
+    left_column->appendChildWidget(symbol1);
+    symbol1->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+
+    SAT_SymbolWidget* symbol2 = new SAT_SymbolWidget(SAT_Rect(10),SAT_SYMBOL_TRI_DOWN);
+    left_column->appendChildWidget(symbol2);
+    symbol2->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+
+    SAT_SymbolWidget* symbol3 = new SAT_SymbolWidget(SAT_Rect(10),SAT_SYMBOL_CIRCLE);
+    left_column->appendChildWidget(symbol3);
+    symbol3->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+
+    SAT_SymbolWidget* symbol4 = new SAT_SymbolWidget(SAT_Rect(10),SAT_SYMBOL_FILLED_RECT);
+    left_column->appendChildWidget(symbol4);
+    symbol4->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+
+
 
 // middle colume
 
+
+
     SAT_PanelWidget* middle_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
     MRootPanel->appendChildWidget(middle_column);
-    middle_column->setAlignment(SAT_EDGE_LEFT);
-    middle_column->setStretching(SAT_EDGE_TOP | SAT_EDGE_BOTTOM);
+    middle_column->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
     middle_column->setName("middle_column");
     middle_column->setDrawBorder(true);
     middle_column->setBorderColor(0.5);
@@ -256,6 +325,13 @@
     //MWaveformWidget->setAlignment(SAT_EDGE_BOTTOM);
     //MWaveformWidget->setStretching(SAT_EDGE_RIGHT);
     
+    SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(SAT_Rect(10,400,180,70));
+    middle_column->appendChildWidget(textbox);
+    //textbox->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+     
+      for (uint32_t i=0; i<25; i++) { textbox->appendLine("Hello world!"); }
+    
+    
 //    // tween test
 //
 //    SAT_Tweening* tweens = AWindow->getTweens();
@@ -266,10 +342,13 @@
 
 // right column
 
+
+
     SAT_PanelWidget* right_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
     MRootPanel->appendChildWidget(right_column);
-    right_column->setAlignment(SAT_EDGE_LEFT);
-    right_column->setStretching(SAT_EDGE_TOP | SAT_EDGE_RIGHT | SAT_EDGE_BOTTOM);
+    right_column->setStretching(SAT_WIDGET_STRETCH_ALL);
+    //right_column->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
+    
     right_column->setDrawBorder(false);
     right_column->setFillBackground(true);
     right_column->setBackgroundColor(0.4);
@@ -321,14 +400,12 @@
 
     MRootPanel->appendChildWidget(menu);
     
-//
+// animation
     
-    test1_synth_widget* animated = new test1_synth_widget(SAT_Rect(410,305,300,115));
-    //myWidget* animated = new myWidget(SAT_Rect(-50,340,140,80));
+    test1_synth_widget* animated = new test1_synth_widget(SAT_Rect(415,305,300,115));
     MRootPanel->appendChildWidget(animated);
     AWindow->registerTimerWidget(animated);
-    //animated->setAlignment(SAT_EDGE_TOP );
-    //animated->setStretching(SAT_EDGE_RIGHT);
+    animated->setAlignment(SAT_WIDGET_ALIGN_PARENT );
     
 //
     

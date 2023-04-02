@@ -48,9 +48,9 @@
       <File Name="../../../SA_Plugins/sa_gain.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="test">
+      <File Name="../test/test4_layout.h"/>
       <File Name="../test/test1_synth_widgets.h"/>
       <File Name="../test/test1_synth.h"/>
-      <File Name="../test/test4_minimal2.h"/>
       <File Name="../test/test3_minimal.h"/>
       <File Name="../test/test2_standalone.h"/>
       <File Name="../test/test1_synth_gui.h"/>
