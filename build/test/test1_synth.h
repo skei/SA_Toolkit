@@ -83,6 +83,7 @@ public:
     MIndex = AIndex;
     MContext = AContext;
     srate = AContext->sample_rate;
+    
   }
 
   //----------
@@ -179,7 +180,8 @@ private:
   SAT_VoicesWidget*   MVoicesWidget   = nullptr;
   SAT_WaveformWidget* MWaveformWidget = nullptr;
   
-  double MTestValue = 0.0;
+  double  MTestValue  = 0.0;
+  double  qwe2        = 1.0;
 
 //------------------------------
 public:
@@ -205,8 +207,9 @@ public:
 
   bool init() final {
     
+    SAT_Observe(1,&MTestValue,"MTestValue");
+    SAT_Observe(1,&qwe2,"qwe2");
     //SAT_GLOBAL.DEBUG.print_callstack();
-
     //int* ptr = nullptr;
     //int a = *ptr;
     
@@ -218,26 +221,29 @@ public:
     registerDefaultSynthExtensions();
     appendClapNoteInputPort();
     appendStereoOutputPort();
-    
+
     /*SAT_Parameter* par1 =*/ appendParameter( new SAT_Parameter("Param1",0.1) );
     /*SAT_Parameter* par2 =*/ appendParameter( new SAT_Parameter("Param2",0.4) );
       SAT_Parameter* par3 =   appendParameter( new SAT_Parameter("Param3",0.7) );
     par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
-    
+
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
-    
+
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     
     SAT_Host* host = getHost();
     const clap_plugin_t*  clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
-    
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(false);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     
+    // test crash..
+    //double qwe = *(double*)nullptr;
+    
     return SAT_Plugin::init();
+    
   }
 
   //----------

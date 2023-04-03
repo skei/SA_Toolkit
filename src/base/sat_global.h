@@ -93,26 +93,22 @@ SAT_Global SAT_GLOBAL = {};
 #define SAT_Log SAT_GLOBAL.LOG.print
 
 //------------------------------
-// log
+// 
 //------------------------------
 
 #ifdef SAT_DEBUG
 
   //------------------------------
-  // print
+  // crash handler
   //------------------------------
 
-  #define SAT_Print \
-    SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
-    SAT_GLOBAL.DEBUG.print
+  #ifdef SAT_DEBUG_CRASH_HANDLER
+  
+    void sat_crash_handler_callback(int sig) {
+      SAT_GLOBAL.DEBUG.crashHandler(sig);
+    }
 
-  #define SAT_DPrint \
-    SAT_GLOBAL.DEBUG.clear_prefix(); \
-    SAT_GLOBAL.DEBUG.print
-
-  #define SAT_PRINT \
-    SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
-    SAT_GLOBAL.DEBUG.print("\n")
+  #endif // crash handler
 
   //------------------------------
   // memtrace
@@ -158,16 +154,33 @@ SAT_Global SAT_GLOBAL = {};
   #endif // memtrace
 
   //------------------------------
-  // crash handler
+  // observables
   //------------------------------
 
-  #ifdef SAT_DEBUG_CRASH_HANDLER
-  
-    void sat_crash_handler_callback(int sig) {
-      SAT_GLOBAL.DEBUG.crashHandler(sig);
-    }
+  #define SAT_Observe \
+    SAT_GLOBAL.DEBUG.observe
 
-  #endif // crash handler
+  #define SAT_Unobserve \
+    SAT_GLOBAL.DEBUG.unobserve
+
+  #define SAT_PrintObservers \
+    SAT_GLOBAL.DEBUG.print_observers
+
+  //------------------------------
+  // print
+  //------------------------------
+
+  #define SAT_Print \
+    SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+    SAT_GLOBAL.DEBUG.print
+
+  #define SAT_DPrint \
+    SAT_GLOBAL.DEBUG.clear_prefix(); \
+    SAT_GLOBAL.DEBUG.print
+
+  #define SAT_PRINT \
+    SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+    SAT_GLOBAL.DEBUG.print("\n")
 
 //------------------------------
 #else // ! debug

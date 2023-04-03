@@ -9,8 +9,8 @@
 
 #define TRACK_HEIGHT      20
 #define TRACK_WIDTH       100
-#define PIXELS_PER_SECOND 10
-#define SECONDS_PER_PIXEL (1.0f/(float)PIXELS_PER_SECOND)
+#define PIXELS_PER_SECOND 10.0
+#define SECONDS_PER_PIXEL (1.0 / PIXELS_PER_SECOND)
 #define DRAG_HANDLE_SIZE  4
 
 //----------------------------------------------------------------------
@@ -390,10 +390,10 @@ private:
     double S = getWindowScale();
     //KTrace("%i\n",AXpos);
     if (MZoom <= 0) return -1;
-    float time = (float)( AXpos - (TRACK_WIDTH/S) );
+    float time = (float)( AXpos - (TRACK_WIDTH*S) );
     //KTrace("%.3f\n",time);
     if (time < 0) return -1;
-    time *= (SECONDS_PER_PIXEL*S);
+    time *= (SECONDS_PER_PIXEL/S);
     //KTrace("%.3f\n",time);
     float result = (MStartPos + time) / MZoom;
     return result;
@@ -406,7 +406,7 @@ private:
     if (MZoom <= 0) return 0;
     float diff = (float)( AXpos - APrev );
     //if time < 0 then exit(0);
-    diff *= (SECONDS_PER_PIXEL*S);
+    diff *= (SECONDS_PER_PIXEL/S);
     return diff / MZoom;
   }
 
@@ -415,7 +415,7 @@ private:
   int32_t calcXpos(float ATime) {
     double S = getWindowScale();
     if (ATime >= 0) {
-      float pixel = ((ATime*MZoom) * (PIXELS_PER_SECOND/S));
+      float pixel = ((ATime*MZoom) * (PIXELS_PER_SECOND*S));
       return  (TRACK_WIDTH*S) + SAT_Trunc(pixel);
     }
     return -1;

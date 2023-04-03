@@ -2,6 +2,9 @@
 #define sat_debug_included
 //----------------------------------------------------------------------
 
+#define SAT_DEBUG_OBSERVER
+#define SAT_DEBUG_MAX_OBSERVABLES 64
+
 // todo: SAT_DEBUG_PRINT_LOG
 
 /*
@@ -96,6 +99,23 @@
   };
 
   typedef SAT_Array<SAT_MemTraceNode> SAT_MemTraceNodes;
+
+#endif
+
+
+//------------------------------
+//
+//------------------------------
+
+#ifdef SAT_DEBUG_OBSERVER
+
+  struct SAT_Observable {
+    uint32_t    type;
+    void*       ptr;
+    const char* desc;
+  };
+
+  typedef SAT_Array<SAT_Observable> SAT_Observables;
 
 #endif
 
@@ -215,6 +235,12 @@ private:
   #ifdef SAT_DEBUG_MEMTRACE
     SAT_MemTraceNodes MMemTraceNodes = {};
   #endif
+  
+  #ifdef SAT_DEBUG_OBSERVER
+    //uint32_t        MNumObservables                         = 0;
+    //SAT_Observable  MObservables[SAT_DEBUG_MAX_OBSERVABLES] = {0};
+    SAT_Observables  MObservables = {};
+  #endif
 
   #ifdef SAT_DEBUG_PRINT_SOCKET
     #ifdef SAT_WIN32
@@ -266,7 +292,7 @@ public:
 
   void cleanup() {
     #ifdef SAT_DEBUG_MEMTRACE
-      dump_memtrace();
+      print_memtrace();
       cleanup_memtrace();
     #endif
     #ifdef SAT_DEBUG_PRINT_SOCKET
@@ -424,20 +450,20 @@ public: // call stack
           //  status == 0 ? demangled : info.dli_sname,
           //  (char *)callstack[i] - (char *)info.dli_saddr);
           const char* txt = status == 0 ? demangled : info.dli_sname;
-          print("%i: %s\n",i,txt);
+          print("  %i: %s\n",i,txt);
           free(demangled);
         }
         else {
           //snprintf(buf, sizeof(buf), "%-3d %*0p\n",
           //  i, 2 + sizeof(void*) * 2, callstack[i]);
-          print("%i: %s\n",i,callstack[i]);
+          print("  %i: %s\n",i,callstack[i]);
         }
         //snprintf(buf, sizeof(buf), "%s\n", symbols[i]);
         //SAT_Print("%s\n", symbols[i]);
       }
       free(symbols);
       if (nFrames == nMaxFrames) {
-        print("[truncated]\n");
+        print("  [truncated]\n");
       }
     }
 
@@ -473,13 +499,13 @@ public: // crash handler
     
     void crashHandler(int sig) {
       #ifdef SAT_LINUX
-        print("\n");
-        print("CRASH!\n");
-        print("%i : %s\n",sig,MSignalNames[sig]);
+        print("\nCRASH!\n");
+        print("  %i : %s\n",sig,MSignalNames[sig]);
         //SAT_GLOBAL_WATCHES.printWatches("watched:");
         //SAT_DumpCallStack;
         //SAT_DumpCallStackSkip(0); // 2
         print_callstack();
+        print_observers();
         print("\n");
         exit(1); //_exit(1);
       #endif
@@ -568,7 +594,7 @@ public: // memtrace
 
     // print() doesn't work?
 
-    void dump_memtrace() {
+    void print_memtrace() {
       if (MMemTraceNodes.size() > 0) {
         print("Leaked memory:\n");
         for (uint32_t i=0; i<MMemTraceNodes.size(); i++) {
@@ -577,12 +603,59 @@ public: // memtrace
           uint32_t  flag  = MMemTraceNodes[i].flag;
           void*     ptr   = MMemTraceNodes[i].ptr;
           uint32_t  size  = MMemTraceNodes[i].size;
-          print("> %s, line %i (%s): ptr %p size %i\n",file,line,(flag==1)?"new":"malloc",ptr,size);
+          print("  %i. %s, line %i (%s): ptr %p size %i\n",i,file,line,(flag==1)?"new":"malloc",ptr,size);
         }
       }
     }
 
   #endif // memtrace
+
+//------------------------------
+public: // observer
+//------------------------------
+
+  #ifdef SAT_DEBUG_OBSERVER
+  
+    void observe(uint32_t AType, void* APtr, const char* ADesc) {
+      //MObservables[MNumObservables].type = AType;
+      //MObservables[MNumObservables].ptr  = APtr;
+      //MObservables[MNumObservables].desc = ADesc;
+      SAT_Observable obs;
+      obs.type = AType;
+      obs.ptr  = APtr;
+      obs.desc = ADesc;
+      MObservables.append(obs);
+    }
+    
+    //----------
+  
+    void unobserve(void* APtr) {
+      for (uint32_t i=0; i<MObservables.size(); i++) {
+        if (MObservables[i].ptr == APtr) {
+          MObservables.remove(i);
+          return;
+        }
+      }
+    }
+    
+    //----------
+  
+    void print_observers() {
+      if (MObservables.size() > 0) {
+        print("\nObserved:\n");
+        for (uint32_t i=0; i<MObservables.size(); i++) {
+          switch (MObservables[i].type) {
+            case 1: {
+              print("  %i. %s = %.3f\n",i,MObservables[i].desc,*(double*)MObservables[i].ptr);
+              break;
+            }
+          }
+        }
+        //print("\n");
+      }
+    }
+  
+  #endif
 
 //------------------------------
 public: // socket
