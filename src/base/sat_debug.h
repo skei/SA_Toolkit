@@ -645,10 +645,12 @@ public: // observer
         print("\nObserved:\n");
         for (uint32_t i=0; i<MObservables.size(); i++) {
           switch (MObservables[i].type) {
-            case 1: {
+            
+            case SAT_OBSERVE_DOUBLE: {
               print("  %i. %s = %.3f\n",i,MObservables[i].desc,*(double*)MObservables[i].ptr);
               break;
             }
+            
           }
         }
         //print("\n");

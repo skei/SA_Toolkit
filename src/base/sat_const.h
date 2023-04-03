@@ -183,6 +183,13 @@
 #define SAT_MODMATRIX_MODE_BLOCK                5
 #define SAT_MODMATRIX_MODE_SMOOTH               6
 
+#define SAT_OBSERVE_NONE                        0
+#define SAT_OBSERVE_DOUBLE                      1
+#define SAT_OBSERVE_FLOAT                       2
+#define SAT_OBSERVE_UINT32                      3
+#define SAT_OBSERVE_INT32                       4
+#define SAT_OBSERVE_STRING                      5
+
 #define SAT_PLUGIN_EVENT_MODE_BLOCK             0
 #define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
 #define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2

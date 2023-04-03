@@ -27,7 +27,7 @@
 
 #define EDITOR_WIDTH  720
 #define EDITOR_HEIGHT 550
-#define EDITOR_SCALE  1.0
+#define EDITOR_SCALE  1.5
 
 const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
@@ -207,15 +207,20 @@ public:
 
   bool init() final {
     
-    SAT_Observe(1,&MTestValue,"MTestValue");
-    SAT_Observe(1,&qwe2,"qwe2");
+    SAT_Observe(SAT_OBSERVE_DOUBLE,&MTestValue,"MTestValue");
+    SAT_Observe(SAT_OBSERVE_DOUBLE,&qwe2,"qwe2");
     //SAT_GLOBAL.DEBUG.print_callstack();
     //int* ptr = nullptr;
     //int a = *ptr;
     
     SAT_PRINT;
     SAT_Print("Hello world!\n");
-    SAT_DPrint( SAT_TERM_RESET SAT_TERM_NORMAL "normal " SAT_TERM_RESET SAT_TERM_BOLD "bold " SAT_TERM_RESET SAT_TERM_FAINT "faint " SAT_TERM_RESET SAT_TERM_ITALICS "italics " SAT_TERM_RESET SAT_TERM_UNDERLINE "underline\n" SAT_TERM_RESET );
+    SAT_DPrint( SAT_TERM_RESET
+                SAT_TERM_NORMAL "normal " SAT_TERM_RESET
+                SAT_TERM_BOLD "bold " SAT_TERM_RESET
+                SAT_TERM_FAINT "faint " SAT_TERM_RESET
+                SAT_TERM_ITALICS "italics " SAT_TERM_RESET
+                SAT_TERM_UNDERLINE "underline\n" SAT_TERM_RESET );
     SAT_DPrint( SAT_TERM_FG_RED "hello" SAT_TERM_FG_YELLOW " world2\n" SAT_TERM_RESET);
    
     registerDefaultSynthExtensions();
