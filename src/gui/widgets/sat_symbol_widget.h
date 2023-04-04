@@ -25,7 +25,6 @@ private:
   uint32_t  MSymbol     = SAT_SYMBOL_NONE;
   SAT_Color MColor      = SAT_LightGrey;
   double    MPenWidth   = 1.0;
-  SAT_Rect  MOffset     = SAT_Rect(0,0,0,0);
 
 //------------------------------
 public:
@@ -37,7 +36,6 @@ public:
     MSymbol = ASymbol;
     setFillBackground(false);
     setDrawBorder(false);
-    setCursor(SAT_CURSOR_QUESTION);
   }
 
   virtual ~SAT_SymbolWidget() {
@@ -49,7 +47,7 @@ public:
 
   virtual void setSymbol(uint32_t ASymbol)        { MSymbol = ASymbol; }
   virtual void setColor(SAT_Color AColor)         { MColor = AColor; }
-  virtual void setOffset(SAT_Rect AOffset)        { MOffset = AOffset; }
+  virtual void setPenWidth(double AWidth)         { MPenWidth = AWidth; }
 
 //------------------------------
 public:
@@ -62,13 +60,25 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
-      mrect.shrink(MOffset);
+      mrect.shrink((MPenWidth*0.5)*S);
+
+      //SAT_Rect offset = MOffset;
+      //offset.scale(S);
+      //mrect.shrink(offset);
+      
       switch (MSymbol) {
         
         case SAT_SYMBOL_RECT: {
           painter->setLineWidth(MPenWidth * S);
           painter->setDrawColor(MColor);
           painter->drawRect(mrect.x,mrect.y,mrect.w,mrect.h);
+          break;
+        }
+        
+        case SAT_SYMBOL_FILLED_RECT : {
+          //painter->setLineWidth(MPenWidth * S);
+          painter->setFillColor(MColor);
+          painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
           break;
         }
         
@@ -79,6 +89,16 @@ public:
           painter->setLineWidth(MPenWidth * S);
           painter->setDrawColor(MColor);
           painter->drawCircle(mrect.x + w05, mrect.y + w05, w05 );
+          break;
+        }
+        
+        case SAT_SYMBOL_FILLED_CIRCLE: {
+          double w = mrect.w;
+          if (mrect.h < mrect.w) w = mrect.h;
+          double w05 = w * 0.5;
+          //painter->setLineWidth(MPenWidth * S);
+          painter->setFillColor(MColor);
+          painter->fillCircle(mrect.x + w05, mrect.y + w05, w05 );
           break;
         }
         
@@ -95,12 +115,19 @@ public:
           break;
         }
         
-        case SAT_SYMBOL_FILLED_RECT: {
+        case SAT_SYMBOL_FILLED_TRI_DOWN: {
+          double coords[] = {
+            mrect.x,                    mrect.y,
+            mrect.x2(),                 mrect.y,
+            mrect.x + (mrect.w * 0.5),  mrect.y2(),
+            mrect.x,                    mrect.y
+          };
           //painter->setLineWidth(MPenWidth * S);
           painter->setFillColor(MColor);
-          painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+          painter->fillLineStrip(4,coords);
           break;
         }
+        
       }
       //painter->setTextColor(MTextColor);
       //painter->setTextSize(MTextSize*S);
@@ -115,8 +142,8 @@ public:
   void on_widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
-    //paintChildren(AContext);
     drawSymbol(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

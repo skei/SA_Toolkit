@@ -72,7 +72,7 @@ public:
       //tweens->appendTween(MWaveformWidget,0,1000,5.0);
       double startpos[4] = { rect.x+100, rect.y-100, 0,      0      };
       double endpos[4]   = { rect.x, rect.y, rect.w, rect.h };
-      tweens->appendTween(666,this,38,4,startpos,endpos,1);
+      tweens->appendTween(SAT_WIDGET_TWEEN_RECT/*666*/,this,38,4,startpos,endpos,1);
     #endif
     
     realignChildWidgets();

@@ -146,6 +146,7 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawValueGraph(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

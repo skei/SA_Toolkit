@@ -115,7 +115,7 @@ public:
     if (getValue() > 0.5) SAT_TextWidget::setText(MOnText);
     else SAT_TextWidget::setText(MOffText);
     drawText(AContext);
-    //paintChildren(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

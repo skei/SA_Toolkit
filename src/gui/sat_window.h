@@ -848,7 +848,7 @@ public: // timer listener
       MTimerWidgets[i]->on_widget_timer(elapsed);
     }
     
-    MTweens.process(elapsed,MScale);
+    MTweens.processAllNodes(elapsed,MScale);
     
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);

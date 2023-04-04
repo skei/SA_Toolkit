@@ -275,7 +275,7 @@ public:
     drawText(AContext);
     drawValue(AContext);
     drawModulation(AContext);
-    //paintChildWidgets(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
 
   }

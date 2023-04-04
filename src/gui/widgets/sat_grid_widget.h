@@ -269,7 +269,7 @@ public:
 
     }
 
-    // border
+    paintChildWidgets(AContext);
     drawBorder(AContext);
 
   }

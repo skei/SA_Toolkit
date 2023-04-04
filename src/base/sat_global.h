@@ -169,18 +169,37 @@ SAT_Global SAT_GLOBAL = {};
   //------------------------------
   // print
   //------------------------------
+  
+  #ifdef SAT_DEBUG_PRINT_PRETTY_FUNCTION
 
-  #define SAT_Print \
-    SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
-    SAT_GLOBAL.DEBUG.print
+    #define SAT_Print \
+      SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL.DEBUG.print
 
-  #define SAT_DPrint \
-    SAT_GLOBAL.DEBUG.clear_prefix(); \
-    SAT_GLOBAL.DEBUG.print
+    #define SAT_DPrint \
+      SAT_GLOBAL.DEBUG.clear_prefix(); \
+      SAT_GLOBAL.DEBUG.print
 
-  #define SAT_PRINT \
-    SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
-    SAT_GLOBAL.DEBUG.print("\n")
+    #define SAT_PRINT \
+      SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL.DEBUG.print("\n")
+
+
+  #else
+
+    #define SAT_Print \
+      SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL.DEBUG.print
+
+    #define SAT_DPrint \
+      SAT_GLOBAL.DEBUG.clear_prefix(); \
+      SAT_GLOBAL.DEBUG.print
+
+    #define SAT_PRINT \
+      SAT_GLOBAL.DEBUG.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL.DEBUG.print("\n")
+      
+  #endif
 
 //------------------------------
 #else // ! debug
@@ -190,6 +209,9 @@ SAT_Global SAT_GLOBAL = {};
   #define SAT_Print   SAT_NoPrint
   #define SAT_DPrint  SAT_NoPrint
   #define SAT_PRINT   {}
+  
+  #define SAT_Observe(x,y,z) {}
+  
 
 #endif // debug
 

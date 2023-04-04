@@ -116,8 +116,10 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
+    drawDropShadow(AContext);
     fillBackground(AContext);
     drawLogo(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

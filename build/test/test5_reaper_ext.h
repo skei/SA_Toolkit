@@ -50,7 +50,9 @@ public:
     SAT_Parameter* param = new SAT_Parameter("Param1", 0.3);
     param->setFlag(CLAP_PARAM_IS_MODULATABLE);
     appendParameter( param );
+    
     //-----
+    
     SAT_Host* host = getHost();
     const reaper_plugin_info_t* reaper = (const reaper_plugin_info_t*)host->get_extension("cockos.reaper_extension");
     if (reaper) {
@@ -60,7 +62,9 @@ public:
         SAT_Print("reaper_get_ini_path: %s\n",path);
       }
     }
+    
     //-----
+    
     return SAT_Plugin::init();
   }
   

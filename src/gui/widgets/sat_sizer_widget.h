@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------
 
 class SAT_SizerWidget
-: public SAT_Widget {
+: public SAT_PanelWidget {
 
 //------------------------------
   protected:
@@ -27,7 +27,7 @@ public:
 //------------------------------
 
   SAT_SizerWidget(SAT_Rect ARect,uint32_t AMode=SAT_DIRECTION_NONE,SAT_Widget* ATarget=nullptr)
-  : SAT_Widget(ARect) {
+  : SAT_PanelWidget(ARect) {
     setName("SAT_SizerWidget");
     //setHint("sizer");
     setMode(AMode);
@@ -93,32 +93,12 @@ public:
 public:
 //------------------------------
 
-  //void on_widget_paint(SAT_Painter* APainter, SAT_FRect ARect, uint32_t AMode) final {
-  void on_widget_paint(SAT_PaintContext* AContext) final {
-    //if (MMode == SAT_SIZER_WINDOW) {
-    //  APainter->fillTriangle( MRect.x2(), MRect.y, MRect.x2(), MRect.y2(), MRect.x, MRect.y2(), MFillColor );
-    //}
-    //else {
-    //  APainter->fillRectangle(MRect,MFillColor);
-    //}
-    
-    SAT_Painter* painter = AContext->painter;
-    SAT_Rect mrect = getRect();
-    
-//    painter->beginPath();
-//    if (MMode == SAT_WIDGET_SIZER_WINDOW) {
-//      painter->triangle(MRect.x2(),MRect.y,MRect.x2(),MRect.y2(),MRect.x,MRect.y2());
-//    }
-//    else {
-//      painter->rect(MRect.x,MRect.y,MRect.w,MRect.h);
-//    }
-//    painter->fillColor(MFillColor);
-//    painter->fill();
-    
-    painter->setFillColor(MFillColor);
-    painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
-    
-  }
+//  void on_widget_paint(SAT_PaintContext* AContext) final {
+//    SAT_Painter* painter = AContext->painter;
+//    SAT_Rect mrect = getRect();
+//    painter->setFillColor(MFillColor);
+//    painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+//  }
 
   //----------
 

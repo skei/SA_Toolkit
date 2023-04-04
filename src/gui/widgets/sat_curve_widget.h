@@ -129,6 +129,7 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawCurve(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

@@ -28,7 +28,7 @@ int main() {
   #ifdef SAT_LINUX
     // win32 automatically receive a wm_paint after opening?
     // linux doesn't? investigate..
-    root->redraw();
+    root->parentRedraw();
   #endif
   
   window->show();

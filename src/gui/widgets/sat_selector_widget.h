@@ -33,6 +33,13 @@ public:
     setCursor(SAT_CURSOR_FINGER);
     MMenu = AMenu;
     MMenu->setMenuListener(this);
+    setInnerBorder(SAT_Rect(2,2));
+    
+      SAT_SymbolWidget* symbol = new SAT_SymbolWidget(SAT_Rect(7,6),SAT_SYMBOL_FILLED_TRI_DOWN);
+      appendChildWidget(symbol);
+      symbol->setAlignment(SAT_WIDGET_ALIGN_RIGHT_BOTTOM);
+      symbol->setColor(SAT_DarkerGrey);
+    
   }
 
   //----------

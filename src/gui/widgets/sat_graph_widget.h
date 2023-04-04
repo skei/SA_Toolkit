@@ -727,16 +727,15 @@ public:
     MPainter = AContext->painter;
     MPaintRect = AContext->update_rect;
     
-//    painter->pushClip(getRect());
-
     drawModules();
     drawWires();
+    
     if (MDraggingWire) {
       painter->setDrawColor( SAT_Black );
       painter->setLineWidth(0.5 * S);
       painter->drawLine(MDragWireX1,MDragWireY1,MDragWireX2,MDragWireY2);
-
     }
+    
     if (MDraggingSelect) {
       float w = MDragSelectX2 - MDragSelectX1;
       float h = MDragSelectY2 - MDragSelectY1;
@@ -744,9 +743,9 @@ public:
       painter->setLineWidth(0.5 * S);
       painter->drawRect(MDragSelectX1,MDragSelectY1,w,h);
     }
-    drawBorder(AContext);
     
-//    painter->popClip();
+    paintChildWidgets(AContext);
+    drawBorder(AContext);
 
   }
 

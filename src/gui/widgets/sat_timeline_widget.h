@@ -582,6 +582,7 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawTimeline(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

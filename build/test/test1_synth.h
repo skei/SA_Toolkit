@@ -297,7 +297,7 @@ public:
       //SAT_Tweening* tweens = window->getTweens();
       //double start[4] = { 100, 185,   0,  0 };
       //double end[4]   = {  10, 285, 180, 60 };
-      //tweens->appendTween(666,MWaveformWidget,38,4,start,end,2.0);
+      //tweens->appendTween(SAT_WIDGET_TWEEN_RECT/*666*/,MWaveformWidget,38,4,start,end,2.0);
       
     }
     return result;

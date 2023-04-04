@@ -2,8 +2,6 @@
 #define sat_debug_included
 //----------------------------------------------------------------------
 
-#define SAT_DEBUG_OBSERVER
-#define SAT_DEBUG_MAX_OBSERVABLES 64
 
 // todo: SAT_DEBUG_PRINT_LOG
 
@@ -21,6 +19,7 @@
   #undef SAT_DEBUG_CALL_STACK
   #undef SAT_DEBUG_CRASH_HANDLER
   #undef SAT_DEBUG_MEMTRACE
+  #undef SAT_DEBUG_OBSERVER
   #undef SAT_DEBUG_PRINT_SOCKET
   #undef SAT_DEBUG_PRINT_THREAD
   #undef SAT_DEBUG_PRINT_TIME

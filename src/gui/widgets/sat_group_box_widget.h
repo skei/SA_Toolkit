@@ -6,6 +6,7 @@
 #include "gui/sat_widget.h"
 #include "gui/widgets/sat_button_widget.h"
 #include "gui/widgets/sat_panel_widget.h"
+#include "gui/widgets/sat_symbol_widget.h"
 
 
 class SAT_GroupBoxWidget
@@ -15,12 +16,13 @@ class SAT_GroupBoxWidget
 private:
 //------------------------------
 
-  SAT_ButtonWidget* MTitleBar   = nullptr;
-  SAT_PanelWidget*  MContainer  = nullptr;
-  bool              MClosed     = false;
-  bool              MClosable   = true;
-  float             MOpenSize   = 0.0f;
-  float             MClosedSize = 0.0f;
+  SAT_ButtonWidget* MTitleBar       = nullptr;
+  SAT_SymbolWidget* MTitleBarSymbol = nullptr;
+  SAT_PanelWidget*  MContainer      = nullptr;
+  bool              MClosed         = false;
+  bool              MClosable       = true;
+  float             MOpenSize       = 0.0f;
+  float             MClosedSize     = 0.0f;
 
 //------------------------------
 public:
@@ -43,8 +45,14 @@ public:
     MTitleBar->setFillBackground(true);
     //MTitleBar->setFillGradient(true);
     MTitleBar->setDrawBorder(true);
+    MTitleBar->setInnerBorder(2);
     //MTitleBar->setDrawRoundedCorners(true);
     //MTitleBar->setCornerRadius(5,5,0,0);
+    
+      MTitleBarSymbol = new SAT_SymbolWidget(SAT_Rect(7,6),SAT_SYMBOL_FILLED_TRI_DOWN);
+      MTitleBar->appendChildWidget(MTitleBarSymbol);
+      MTitleBarSymbol->setAlignment(SAT_WIDGET_ALIGN_RIGHT_BOTTOM);
+      MTitleBarSymbol->setColor(0.4);
 
     MContainer = new SAT_PanelWidget( SAT_Rect());
     //MContainer->setAlignment();

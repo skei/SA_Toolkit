@@ -38,7 +38,7 @@ const int32_t SAT_KEYBOARD_INTERNAL_NOTE_DATA[12*2] = {
 //----------------------------------------------------------------------
 
 class SAT_KeyboardWidget
-: public SAT_Widget {
+: public SAT_PanelWidget {
 
 //------------------------------
 private:
@@ -66,7 +66,7 @@ public:
 //------------------------------
 
   SAT_KeyboardWidget(SAT_Rect ARect)
-  : SAT_Widget(ARect) {
+  : SAT_PanelWidget(ARect) {
     setName("SAT_KeyboardWidget");
     //setWidgetHint("keyboard");
     setCursor(SAT_CURSOR_FINGER);
@@ -290,11 +290,16 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
+    drawDropShadow(AContext);
+    fillBackground(AContext);
     recalc_note_rects();
     for (int32_t note=0; note<12; note++) {
       bool active = MActiveMap[note];
       draw_note(AContext->painter,note,active);
     }
+    paintChildWidgets(AContext);
+    drawBorder(AContext);
+    
   }
 
   //----------

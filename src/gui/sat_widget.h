@@ -56,9 +56,9 @@ private:
   
   uint32_t            MAlignment                          = SAT_WIDGET_ALIGN_NONE;
   uint32_t            MStretching                         = SAT_WIDGET_STRETCH_NONE;
-  
-  SAT_Rect            MInnerBorder                        = SAT_Rect(0,0,0,0);
   SAT_Point           MSpacing                            = SAT_Point(0,0);
+  SAT_Rect            MInnerBorder                        = SAT_Rect(0,0,0,0);
+  bool                MOccupyClient                       = true;
 
 //------------------------------
 public:
@@ -114,6 +114,16 @@ public:
   virtual void        setDisabled(bool AState=true)                   { MIsDisabled = AState; }
   virtual void        setLastPainted(int32_t ACount)                  { MLastPainted = ACount; }
 
+  virtual void        setWidth(double AWidth)                         { MRect.w = AWidth; }
+  virtual void        setHeight(double AHeight)                       { MRect.h = AHeight; }
+
+  virtual void        setBasisWidth(double AWidth)                    { MBasisRect.w = AWidth; }
+  virtual void        setBasisHeight(double AHeight)                  { MBasisRect.h = AHeight; }
+
+  virtual void        setOccupyParent(bool AOccupy=true)              { MOccupyClient = AOccupy; }
+  
+  virtual void        setParent(SAT_Widget* AParent)                  { MParent = AParent; }
+
   virtual void setActive(bool AState=true, bool ARecursive=true) {
     MIsActive = AState;
     if (ARecursive) {
@@ -132,18 +142,11 @@ public:
     }
   }
 
-  virtual void setWidth(double AWidth) { MRect.w = AWidth; }
-  virtual void setHeight(double AHeight) { MRect.h = AHeight; }
-
-  virtual void setBasisWidth(double AWidth) { MBasisRect.w = AWidth; }
-  virtual void setBasisHeight(double AHeight) { MBasisRect.h = AHeight; }
   
   virtual void setLayout(uint32_t AAlignment, uint32_t AStretch) {
     setAlignment(AAlignment);
     setStretching(AStretch);
   }
-  
-  virtual void setParent(SAT_Widget* AParent) { MParent = AParent; }
   
   //virtual void clipParent(SAT_Painter* APainter) {
   //  //if (widget->autoClip()) painter->pushClip(widget->getRect());
@@ -389,34 +392,13 @@ MContentRect = parent_rect;
 
       uint32_t child_alignment = child->getAlignment();
       switch(child_alignment) {
-        case SAT_WIDGET_ALIGN_LEFT: {
-          //child->MRect.x = parent_rect.x;
-          child->MRect.x = client_rect.x;
-          client_rect.x += (child->MRect.w + spacing.x);
-          client_rect.w -= (child->MRect.w + spacing.x);
-          break;
-        }
-        case SAT_WIDGET_ALIGN_RIGHT: {
-          //child->MRect.x = parent_rect.x2() - child->MRect.w;
-          child->MRect.x = client_rect.x2() - child->MRect.w;
-          //client_rect.x += child->MRect.w;
-          client_rect.w -= (child->MRect.w + spacing.x);
-          break;
-        }
-        case SAT_WIDGET_ALIGN_TOP: {
-          //child->MRect.y = parent_rect.y;
-          child->MRect.y = client_rect.y;
-          client_rect.y += (child->MRect.h + spacing.y);
-          client_rect.h -= (child->MRect.h + spacing.y);
-          break;
-        }
-        case SAT_WIDGET_ALIGN_BOTTOM: {
-          //child->MRect.y = parent_rect.y2() - child->MRect.h;
-          child->MRect.y = client_rect.y2() - child->MRect.h;
-          //client_rect.y += child->MRect.h;
-          client_rect.h -= (child->MRect.h + spacing.y);
-          break;
-        }
+        
+        //case SAT_WIDGET_ALIGN_NONE: break;
+        //case SAT_WIDGET_ALIGN_CLIENT: break;
+        //case SAT_WIDGET_ALIGN_CENTER: break;
+        //case SAT_WIDGET_ALIGN_HCENTER: break;
+        //case SAT_WIDGET_ALIGN_VCENTER: break;
+        
         case SAT_WIDGET_ALIGN_PARENT: {
           // undo client aligning
           child->MRect.x -= client_rect.x;
@@ -425,6 +407,89 @@ MContentRect = parent_rect;
           child->MRect.y += parent_rect.y;
           break;
         }
+
+        case SAT_WIDGET_ALIGN_LEFT: {
+          child->MRect.x = client_rect.x;
+          if (MOccupyClient) {
+            client_rect.x += (child->MRect.w + spacing.x);
+            client_rect.w -= (child->MRect.w + spacing.x);
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_LEFT_TOP: {
+          child->MRect.x = client_rect.x;
+          child->MRect.y = client_rect.y;
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_LEFT_CENTER: {
+          child->MRect.x = client_rect.x;
+          child->MRect.y = (client_rect.y + child->MRect.h) * 0.5;
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_LEFT_BOTTOM: {
+          child->MRect.x = client_rect.x;
+          child->MRect.y = client_rect.y2() - child->MRect.h;
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_RIGHT: {
+          child->MRect.x = client_rect.x2() - child->MRect.w;
+          client_rect.w -= (child->MRect.w + spacing.x);
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_RIGHT_TOP: {
+          child->MRect.x = client_rect.x2() - child->MRect.w;
+          child->MRect.y = client_rect.y;
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_RIGHT_CENTER: {
+          child->MRect.x = client_rect.x2() - child->MRect.w;
+          child->MRect.y = (client_rect.y + child->MRect.h) * 0.5;
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_RIGHT_BOTTOM: {
+          child->MRect.x = client_rect.x2() - child->MRect.w;
+          child->MRect.y = client_rect.y2() - child->MRect.h;
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_TOP: {
+          child->MRect.y = client_rect.y;
+          if (MOccupyClient) {
+            client_rect.y += (child->MRect.h + spacing.y);
+            client_rect.h -= (child->MRect.h + spacing.y);
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_BOTTOM: {
+          child->MRect.y = client_rect.y2() - child->MRect.h;
+          client_rect.h -= (child->MRect.h + spacing.y);
+          if (MOccupyClient) {
+          }
+          break;
+        }
+        
       }
       
       // stretching
@@ -575,7 +640,7 @@ public: // widget
 
   virtual void on_widget_tween(uint32_t AId, uint32_t ACount, double* AData) {
     switch (AId) {
-      case 666: {
+      case SAT_WIDGET_TWEEN_RECT/*666*/: {
       //SAT_Print("id %i count %i data[0] %.2f data[1] %.2f data[2] %.2f data[3] %.2f\n",AId,ACount,AData[0],AData[1],AData[2],AData[3]);
         double S = getWindowScale();
         SAT_Rect R = { AData[0], AData[1], AData[2], AData[3] };
@@ -584,7 +649,6 @@ public: // widget
         R2.scale(S);
         setRect(R2);
         //R.scale(1.0 / S);
-        
         //do_widget_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
         parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
         break;

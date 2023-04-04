@@ -220,15 +220,15 @@ public: // parent to child
 //  void on_widget_align(bool ARecursive=true) override {}
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-//    drawDropShadow(AContext);
+    drawDropShadow(AContext);
     fillBackground(AContext);
-    //paintChildWidgets(AContext);
     SAT_Painter* painter = AContext->painter;
     recalcThumbRect();
     //draw_background(painter,MRect);
     bool vgrad = false;
     if (MDirection == SAT_DIRECTION_HORIZ) vgrad = true;
     draw_thumb(painter,MThumbRect,vgrad);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

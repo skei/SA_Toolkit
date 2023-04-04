@@ -387,7 +387,7 @@ public:
     drawMarkers(AContext);
     drawGrid(AContext);
     drawWaveform(AContext);
-    //paintChildWidgets(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

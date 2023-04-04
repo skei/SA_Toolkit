@@ -9,6 +9,7 @@
 
 
 #define SAT_AUDIO_QUANTIZED_SIZE                32
+#define SAT_DEBUG_MAX_OBSERVABLES               64
 #define SAT_MAX_NAME_LENGTH                     256
 #define SAT_MAX_PATH_LENGTH                     512
 #define SAT_MODMATRIX_MAX_SRC_COUNT             64
@@ -133,6 +134,22 @@
 
   //#define SAT_DEBUG_MEMTRACE
 
+  //----------
+  
+  /*
+  */
+  
+  #define SAT_DEBUG_OBSERVER
+  
+  //----------
+  
+  /*
+    'init', or
+    'virtual bool test1_synth_plugin::init()'
+  */
+  
+  //#define SAT_DEBUG_PRINT_PRETTY_FUNCTION
+  
   //----------
 
   /*

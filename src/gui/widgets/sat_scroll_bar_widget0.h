@@ -217,7 +217,7 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawThumb(AContext);
-    //paintChildWidgets(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

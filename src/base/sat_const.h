@@ -203,9 +203,17 @@
 
 #define SAT_SYMBOL_NONE                         0
 #define SAT_SYMBOL_RECT                         1
-#define SAT_SYMBOL_TRI_DOWN                     2
+#define SAT_SYMBOL_FILLED_RECT                  2
 #define SAT_SYMBOL_CIRCLE                       3
-#define SAT_SYMBOL_FILLED_RECT                  10
+#define SAT_SYMBOL_FILLED_CIRCLE                4
+#define SAT_SYMBOL_TRI_UP                       5
+#define SAT_SYMBOL_FILLED_TRI_UP                6
+#define SAT_SYMBOL_TRI_DOWN                     7
+#define SAT_SYMBOL_FILLED_TRI_DOWN              8
+#define SAT_SYMBOL_TRI_LEFT                     9
+#define SAT_SYMBOL_FILLED_TRI_LEFT              10
+#define SAT_SYMBOL_TRI_RIGHT                    11
+#define SAT_SYMBOL_FILLED_TRI_RIGHT             12
 
 //#define SAT_TEXT_ALIGN_NONE                     0
 #define SAT_TEXT_ALIGN_CENTER                   0
@@ -321,11 +329,26 @@
 #define SAT_VOICE_FINISHED                      4
 
 #define SAT_WIDGET_ALIGN_NONE                   0
-#define SAT_WIDGET_ALIGN_LEFT                   1
-#define SAT_WIDGET_ALIGN_RIGHT                  2
-#define SAT_WIDGET_ALIGN_TOP                    3
-#define SAT_WIDGET_ALIGN_BOTTOM                 4
-#define SAT_WIDGET_ALIGN_PARENT                 5
+#define SAT_WIDGET_ALIGN_PARENT                 1
+#define SAT_WIDGET_ALIGN_CENTER                 2
+#define SAT_WIDGET_ALIGN_HCENTER                3
+#define SAT_WIDGET_ALIGN_VCENTER                4
+#define SAT_WIDGET_ALIGN_LEFT                   5
+#define SAT_WIDGET_ALIGN_LEFT_TOP               6
+#define SAT_WIDGET_ALIGN_LEFT_CENTER            7
+#define SAT_WIDGET_ALIGN_LEFT_BOTTOM            8
+#define SAT_WIDGET_ALIGN_RIGHT                  9
+#define SAT_WIDGET_ALIGN_RIGHT_TOP              10
+#define SAT_WIDGET_ALIGN_RIGHT_CENTER           11
+#define SAT_WIDGET_ALIGN_RIGHT_BOTTOM           12
+#define SAT_WIDGET_ALIGN_TOP                    13
+#define SAT_WIDGET_ALIGN_TOP_LEFT               14
+#define SAT_WIDGET_ALIGN_TOP_CENTER             15
+#define SAT_WIDGET_ALIGN_TOP_RIGHT              16
+#define SAT_WIDGET_ALIGN_BOTTOM                 17
+#define SAT_WIDGET_ALIGN_BOTTOM_LEFT            18
+#define SAT_WIDGET_ALIGN_BOTTOM_MIDDLE          19
+#define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           20
 
 #define SAT_WIDGET_NOTIFY_NONE                  0
 #define SAT_WIDGET_NOTIFY_CLOSE                 1
@@ -352,6 +375,8 @@
 #define SAT_WIDGET_STRETCH_HORIZONTAL           (SAT_WIDGET_STRETCH_LEFT | SAT_WIDGET_STRETCH_RIGHT)
 #define SAT_WIDGET_STRETCH_VERTICAL             (SAT_WIDGET_STRETCH_TOP | SAT_WIDGET_STRETCH_BOTTOM)
 
+#define SAT_WIDGET_TWEEN_NONE                   0
+#define SAT_WIDGET_TWEEN_RECT                   1
 
 #define SAT_WIDGET_UPDATE_VALUE                 0
 

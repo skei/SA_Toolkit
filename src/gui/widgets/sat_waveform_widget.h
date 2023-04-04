@@ -140,9 +140,10 @@ public: // parent to child
 //  void on_widget_align(bool ARecursive=true) override {}
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
+    drawDropShadow(AContext);
     fillBackground(AContext);
     drawWaveform(AContext);
-    //paintChildWidgets(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

@@ -231,18 +231,22 @@
     SAT_SymbolWidget* symbol1 = new SAT_SymbolWidget(10,SAT_SYMBOL_RECT);
     left_column->appendChildWidget(symbol1);
     symbol1->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+    symbol1->setCursor(SAT_CURSOR_PENCIL);
 
     SAT_SymbolWidget* symbol2 = new SAT_SymbolWidget(SAT_Rect(10),SAT_SYMBOL_TRI_DOWN);
     left_column->appendChildWidget(symbol2);
     symbol2->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+    symbol2->setCursor(SAT_CURSOR_MOVE);
 
     SAT_SymbolWidget* symbol3 = new SAT_SymbolWidget(SAT_Rect(10),SAT_SYMBOL_CIRCLE);
     left_column->appendChildWidget(symbol3);
     symbol3->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+    symbol3->setCursor(SAT_CURSOR_INVALID);
 
     SAT_SymbolWidget* symbol4 = new SAT_SymbolWidget(SAT_Rect(10),SAT_SYMBOL_FILLED_RECT);
     left_column->appendChildWidget(symbol4);
     symbol4->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
+    symbol4->setCursor(SAT_CURSOR_WAIT);
 
 
 
@@ -338,7 +342,7 @@
 //    //tweens->appendTween(MWaveformWidget,0,1000,5.0);
 //    double startpos[4] = { 100, 185,   0,  0 };
 //    double endpos[4]   = {  10, 285, 180, 60 };
-//    tweens->appendTween(666,MWaveformWidget,38,4,startpos,endpos,2.0);
+//    tweens->appendTween(SAT_WIDGET_TWEEN_RECT/*666*/,MWaveformWidget,38,4,startpos,endpos,2.0);
 
 // right column
 
@@ -348,8 +352,8 @@
     MRootPanel->appendChildWidget(right_column);
     right_column->setStretching(SAT_WIDGET_STRETCH_ALL);
     //right_column->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
-    
     right_column->setDrawBorder(false);
+    right_column->setInnerBorder(5);
     right_column->setFillBackground(true);
     right_column->setBackgroundColor(0.4);
     
@@ -372,6 +376,7 @@
       
     SAT_TimelineWidget* timeline = new SAT_TimelineWidget(SAT_Rect(10,390,300,90));
     right_column->appendChildWidget(timeline);
+    timeline->setStretching(SAT_WIDGET_STRETCH_RIGHT | SAT_WIDGET_STRETCH_BOTTOM);
     timeline->setDrawBorder(true);
     timeline->setBorderColor(SAT_LightGrey);
     timeline->setBorderWidth(0.5);
@@ -384,6 +389,9 @@
 
         SAT_TimelineSegment* segment2 = new SAT_TimelineSegment("C2",11,15);
         track1->addSegment(segment2);
+
+        SAT_TimelineSegment* segment3 = new SAT_TimelineSegment("3",15.2,17);
+        track1->addSegment(segment3);
 
       SAT_TimelineTrack* track2 = new SAT_TimelineTrack("Track 1");
       timeline->addTrack(track2);
