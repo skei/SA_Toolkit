@@ -450,7 +450,7 @@ public: // call stack
           //  (char *)callstack[i] - (char *)info.dli_saddr);
           const char* txt = status == 0 ? demangled : info.dli_sname;
           print("  %i: %s\n",i,txt);
-          free(demangled);
+          ::free(demangled);
         }
         else {
           //snprintf(buf, sizeof(buf), "%-3d %*0p\n",
@@ -460,7 +460,7 @@ public: // call stack
         //snprintf(buf, sizeof(buf), "%s\n", symbols[i]);
         //SAT_Print("%s\n", symbols[i]);
       }
-      free(symbols);
+      ::free(symbols);
       if (nFrames == nMaxFrames) {
         print("  [truncated]\n");
       }

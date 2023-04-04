@@ -160,6 +160,13 @@ public:
   //  APainter->popClip();
   //}
 
+  virtual void setRectAndBasis(SAT_Rect ARect) {
+    double S = getWindowScale();
+    setRect(ARect);
+    ARect.scale(1.0 / S);
+    setBasisRect(ARect);
+  }
+
 //------------------------------
 public:
 //------------------------------
@@ -638,8 +645,8 @@ public: // widget
   virtual void on_widget_timer(double ADelta) {
   }
 
-  virtual void on_widget_tween(uint32_t AId, uint32_t ACount, double* AData) {
-    switch (AId) {
+  virtual void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
+    switch (AType) {
       case SAT_WIDGET_TWEEN_RECT/*666*/: {
       //SAT_Print("id %i count %i data[0] %.2f data[1] %.2f data[2] %.2f data[3] %.2f\n",AId,ACount,AData[0],AData[1],AData[2],AData[3]);
         double S = getWindowScale();

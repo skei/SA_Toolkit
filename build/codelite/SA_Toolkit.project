@@ -243,7 +243,7 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="utils">
-        <File Name="../../src/base/utils/sat_tweening.h"/>
+        <File Name="../../src/base/utils/sat_tween_manager.h"/>
         <File Name="../../src/base/utils/sat_json.h"/>
         <File Name="../../src/base/utils/sat_tcc.h"/>
         <File Name="../../src/base/utils/sat_integer_math.h"/>

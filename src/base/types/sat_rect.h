@@ -20,6 +20,7 @@ public:
   union {
     struct { double x,y,w,h; };
     struct { double left,top,right,bottom; };
+    double data[4];
   };
 
 //------------------------------
@@ -54,25 +55,108 @@ public:
     h = _h;
   }
 
-  SAT_Rect(SAT_Point APos) {}
-  SAT_Rect(SAT_Point APos, SAT_Point ASize) {}
+  SAT_Rect(SAT_Point ASize) {
+    x = 0;
+    y = 0;
+    w = ASize.w;
+    h = ASize.h;
+  }
+  
+  SAT_Rect(SAT_Point APos, SAT_Point ASize) {
+    x = APos.x;
+    y = APos.y;
+    w = ASize.w;
+    h = ASize.h;
+  }
+
+  //SAT_Rect(const SAT_Rect& ARect) {
+  //  x = ARect.x;
+  //  y = ARect.y;
+  //  w = ARect.w;
+  //  h = ARect.h;
+  //}
 
 //------------------------------
 public:
 //------------------------------
+
+  SAT_Rect& operator += (double V) {
+    add(V);
+    return *this;
+  }
+
+  SAT_Rect& operator += (SAT_Point P) {
+    add(P);
+    return *this;
+  }
 
   SAT_Rect& operator += (SAT_Rect R) {
     add(R);
     return *this;
   }
 
+  //---
+
+  SAT_Rect& operator -= (double V) {
+    sub(V);
+    return *this;
+  }
+
+  SAT_Rect& operator -= (SAT_Point P) {
+    sub(P);
+    return *this;
+  }
+  
   SAT_Rect& operator -= (SAT_Rect R) {
     sub(R);
     return *this;
   }
 
+  //---
+
+  SAT_Rect& operator *= (double V) {
+    scale(V);
+    return *this;
+  }
+
+  SAT_Rect& operator *= (SAT_Point P) {
+    scale(P);
+    return *this;
+  }
+
+  SAT_Rect& operator *= (SAT_Rect R) {
+    scale(R);
+    return *this;
+  }
+
+  //---
+
+  SAT_Rect& operator /= (double V) {
+    double v;
+    v = (1.0 / V);
+    scale(v);
+    return *this;
+  }
+
+  SAT_Rect& operator /= (SAT_Point P) {
+    SAT_Point p = P;
+    p.x = (1.0 / P.x);
+    p.y = (1.0 / P.y);
+    scale(p);
+    return *this;
+  }
+
+  SAT_Rect& operator /= (SAT_Rect R) {
+    SAT_Rect r;
+    r.x = (1.0 / R.x);
+    r.y = (1.0 / R.y);
+    r.w = (1.0 / R.w);
+    r.h = (1.0 / R.h);
+    scale(r);
+    return *this;
+  }
+
 //  SAT_Rect& operator += (SAT_Point> P) {
-//    add(P);
 //    return *this;
 //  }
 //
@@ -163,13 +247,6 @@ public:
     h *= sy;
   }
 
-  void scale(SAT_Point s) {
-    x *= s.x;
-    y *= s.y;
-    w *= s.x;
-    h *= s.y;
-  }
-
   void scale(double sx, double sy, double sw, double sh) {
     x *= sx;
     y *= sy;
@@ -177,6 +254,19 @@ public:
     h *= sh;
   }
 
+  void scale(SAT_Point s) {
+    x *= s.x;
+    y *= s.y;
+    w *= s.x;
+    h *= s.y;
+  }
+
+  void scale(SAT_Rect r) {
+    x *= r.x;
+    y *= r.y;
+    w *= r.w;
+    h *= r.h;
+  }
 
   //----------
 

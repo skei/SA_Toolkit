@@ -57,8 +57,8 @@ protected:
   float     MRatio            = 0.6;
   SAT_Color MBlackColor        = SAT_Color(0.3,0.3,0.3);
   SAT_Color MWhiteColor        = SAT_Color(0.5,0.5,0.5);
-  SAT_Color MBlackActiveColor  = SAT_Color(0.2,0.2,0.2);
-  SAT_Color MWhiteActiveColor  = SAT_Color(0.6,0.6,0.6);
+  SAT_Color MBlackActiveColor  = SAT_Color(0.1,0.1,0.1);
+  SAT_Color MWhiteActiveColor  = SAT_Color(0.7,0.7,0.7);
   bool      MVertical         = false;
 
 //------------------------------

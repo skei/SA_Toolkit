@@ -160,6 +160,11 @@ public: // plugin
   /*
     https://isocpp.org/wiki/faq/freestore-mgmt#delete-this  
     "As long as you’re careful, it’s okay (not evil) for an object to commit suicide (delete this)"
+    
+    what if we have a destroy() in our own plugin, that calls this one (SAT_Plugin::destroy),
+    and then called 'delete this' there
+    and we could set that up as the default destructor (macro, like we do for the constructor)
+    (would it change anything?)
   */
 
   void destroy() override {

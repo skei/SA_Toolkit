@@ -130,6 +130,7 @@
 
   /*
     trace memcalls (malloc/new vs free/delete)
+    (compile error...)
   */
 
   //#define SAT_DEBUG_MEMTRACE

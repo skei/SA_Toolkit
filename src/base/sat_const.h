@@ -376,7 +376,9 @@
 #define SAT_WIDGET_STRETCH_VERTICAL             (SAT_WIDGET_STRETCH_TOP | SAT_WIDGET_STRETCH_BOTTOM)
 
 #define SAT_WIDGET_TWEEN_NONE                   0
-#define SAT_WIDGET_TWEEN_RECT                   1
+#define SAT_WIDGET_TWEEN_PAUSE                  1
+#define SAT_WIDGET_TWEEN_CLOSE                  2
+#define SAT_WIDGET_TWEEN_RECT                   3
 
 #define SAT_WIDGET_UPDATE_VALUE                 0
 

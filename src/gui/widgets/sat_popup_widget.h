@@ -6,7 +6,7 @@
 #include "gui/widgets/sat_panel_widget.h"
 #include "gui/sat_window.h"
 
-#define SAT_POPUP_WIDGET_USE_TWEENING
+//#define SAT_POPUP_WIDGET_USE_TWEENING
 
 //----------------------------------------------------------------------
 //
@@ -21,7 +21,9 @@ class SAT_PopupWidget
 private:
 //------------------------------
 
-  SAT_Window*     MWindow = nullptr;
+  SAT_Window*     MWindow     = nullptr;
+  SAT_Rect        MSavedRect  = {};
+  SAT_TweenChain* MTween      = nullptr;
 
 //------------------------------
 public:
@@ -32,6 +34,7 @@ public:
     setName("SAT_PopupWidget");
     setActive(false);
     setVisible(false);
+    MSavedRect = ARect;
   }
 
   //----------
@@ -52,48 +55,50 @@ public:
   //----------
 
   virtual bool open(SAT_Rect ARect) {
-    double S = getWindowScale();
     SAT_Rect rect = ARect;
+    //setRectAndBasis(MSavedRect);
+    MSavedRect = rect;
     uint32_t winw = MWindow->getWidth();
     uint32_t winh = MWindow->getHeight();
     if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - 5;
     if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - 5;
-    
-    setPos(rect.x,rect.y);
-    SAT_Rect basisrect = getBasisRect();
-    basisrect.x = rect.x / S;
-    basisrect.y = rect.y / S;
-    setBasisRect(basisrect);
-
+    setRectAndBasis(rect);
     
     #ifdef SAT_POPUP_WIDGET_USE_TWEENING
+      double S = getWindowScale();
       rect.scale(1.0/S);
-      SAT_Tweening* tweens = MWindow->getTweens();
-      //tweens->appendTween(MWaveformWidget,0,1000,5.0);
+      SAT_TweenManager* tweens = MWindow->getTweens();
       double startpos[4] = { rect.x+100, rect.y-100, 0,      0      };
       double endpos[4]   = { rect.x, rect.y, rect.w, rect.h };
-      tweens->appendTween(SAT_WIDGET_TWEEN_RECT/*666*/,this,38,4,startpos,endpos,1);
+      SAT_Assert(!MTween);
+      MTween = tweens->appendChain( new SAT_TweenChain() );
+      MTween->appendNode( new SAT_TweenNode(this,666,1.0,SAT_WIDGET_TWEEN_RECT,4,startpos,endpos,38) );
+      //MTween->appendNode( new SAT_TweenNode(this,666,3.0,SAT_WIDGET_TWEEN_PAUSE) );
+      //MTween->appendNode( new SAT_TweenNode(this,666,1.0,SAT_WIDGET_TWEEN_RECT,4,endpos,startpos,39) );
+      //MTween->appendNode( new SAT_TweenNode(this,666,0,SAT_WIDGET_TWEEN_CLOSE) );
+      MTween->start();
     #endif
     
     realignChildWidgets();
     do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
     setActive(true);
     setVisible(true);
-    //setValue(1);
-    //update();
     parentRedraw();
-    
     return true;
   }
 
   //----------
 
   virtual void close() {
+    //SAT_Print("close\n");
     do_widget_set_state(this,SAT_WIDGET_STATE_NORMAL);
     setActive(false);
     setVisible(false);
-    //setValue(0);
-    //update();
+    setRectAndBasis(MSavedRect);
+    if (MTween) {
+      if (MTween->isActive()) MTween->stop();
+      MTween = nullptr; // see assert in open()
+    }
     parentRedrawAll(); // redraw entire parent
   }
 
@@ -110,6 +115,20 @@ public:
       close();
     }
   }
+  
+  //----------
+  
+  void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) override {
+    SAT_PanelWidget::on_widget_tween(AId,AType,ACount,AData);
+    switch (AType) {
+      case SAT_WIDGET_TWEEN_CLOSE: {
+        close();
+        break;
+      }
+      
+    }
+  }
+  
 
 //------------------------------
 public:

@@ -9,7 +9,7 @@
 #include "base/sat.h"
 #include "base/system/sat_time.h"
 #include "base/system/sat_timer.h"
-#include "base/utils/sat_tweening.h"
+#include "base/utils/sat_tween_manager.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 #include "gui/sat_widget_listener.h"
@@ -111,7 +111,7 @@ protected:
   SAT_DirtyWidgetsQueue MPaintDirtyWidgets    = {};
   
   double                MPrevTime             = 0.0;
-  SAT_Tweening          MTweens               = {};
+  SAT_TweenManager      MTweens               = {};
  
   // widget handling
 
@@ -216,7 +216,7 @@ public:
   uint32_t          getWidth()        { return MWidth; }
   uint32_t          getHeight()       { return MHeight; }
   
-  SAT_Tweening*     getTweens()       { return &MTweens; }
+  SAT_TweenManager* getTweens()       { return &MTweens; }
 
 //------------------------------
 public:
@@ -250,7 +250,7 @@ public:
   */
 
   //virtual void setRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
-  virtual void appendRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
+  virtual SAT_Widget* appendRootWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     MRootWidget = AWidget;
     MRootWidget->setParent(nullptr);
     if (AListener) AWidget->setListener(AListener);
@@ -258,6 +258,7 @@ public:
     uint32_t width = MWindowWidth;
     uint32_t height = MWindowHeight;
     AWidget->setSize(width,height);
+    return AWidget;
   }
 
   //----------
@@ -848,7 +849,7 @@ public: // timer listener
       MTimerWidgets[i]->on_widget_timer(elapsed);
     }
     
-    MTweens.processAllNodes(elapsed,MScale);
+    MTweens.process(elapsed,MScale);
     
     SAT_Rect rect;
     uint32_t num = flushDirtyWidgets(&rect);
