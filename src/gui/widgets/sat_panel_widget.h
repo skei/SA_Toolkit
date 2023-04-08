@@ -163,10 +163,6 @@ public:
       else {
         painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
       }
-      
-      
-      
-      
     }
   }
 

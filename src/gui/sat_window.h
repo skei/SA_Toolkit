@@ -188,7 +188,7 @@ public:
   double            getInitialWidth()   { return MInitialWidth; }
   double            getInitialHeight()  { return MInitialHeight; }
   
-  SAT_TweenManager* getTweens()         { return &MTweens; }
+  //SAT_TweenManager* getTweens()         { return &MTweens; }
 
 
 //------------------------------
@@ -253,40 +253,6 @@ public:
   
   
 //------------------------------
-public: // buffer
-//------------------------------
-
-  #ifdef SAT_WINDOW_BUFFERED
-
-  //virtual void createBuffer(uint32_t AWidth, uint32_t AHeight) {
-  //}
-  
-  //----------
-
-  //virtual void deleteBuffer() {
-  //}
-
-  //----------
-
-  //virtual bool resizeBuffer(uint32_t AWidth, uint32_t AHeight) {
-  //  return false;
-  //}
-
-  //----------
-
-  //virtual bool checkBuffer(uint32_t AWidth, uint32_t AHeight) {
-  //  //uint32_t w2 = SAT_NextPowerOfTwo(AWidth);
-  //  //uint32_t h2 = SAT_NextPowerOfTwo(AHeight);
-  //  //if ((w2 != MAllocatedBufferWidth) || (h2 != MAllocatedBufferHeight)) {
-  //  //  resizeBuffer(w2,h2);
-  //  //  return true;
-  //  //}
-  //  return false;
-  //}
-
-  #endif // buffered
-
-//------------------------------
 public: // capture
 //------------------------------
 
@@ -346,61 +312,16 @@ public: // cursor
 
   //----------
   
-  
-  
-/*
- if (MMouseLockedWidget) { // todo: also if mouse_clicked?
-      if ((AXpos == MMouseClickedX) && (AYpos == MMouseClickedY)) {
-        MMousePreviousX = AXpos;
-        MMousePreviousY = AYpos;
-        return;
-      }
-      if (MCapturedWidget) {
-        int32_t deltax = AXpos - MMouseClickedX;
-        int32_t deltay = AYpos - MMouseClickedY;
-        MMouseDragX += deltax;
-        MMouseDragY += deltay;
-        MCapturedWidget->on_widget_mouse_move(MMouseDragX,MMouseDragY,AState,ATime);
-      }
-      setMouseCursorPos(MMouseClickedX,MMouseClickedY);
-    }
-    else {
-
-*/  
-  
-  
-  
-  
-  
-
   virtual void updateLockedMouse(int32_t AXpos, int32_t AYpos) {
     if ((AXpos == MLockedClickedX) && (AYpos == MLockedClickedY)) {
       MMousePreviousXpos = AXpos;
       MMousePreviousYpos = AYpos;
       return;
-
-      while (MPaintDirtyWidgets.read(&widget)) {
-        if (widget->getLastPainted() != paint_count) {
-          // !!!
-          if (widget->isRecursivelyVisible()) {
-            SAT_Rect cliprect = calcClipRect(widget);
-            //if (widget->autoClip())
-            painter->pushClip(cliprect);
-            widget->on_widget_paint(&MPaintContext);
-            //if (widget->autoClip())
-            painter->popClip();
-            widget->setLastPainted(paint_count);
-          count += 1;
-          }
-        }
-      }
-
     }
     int32_t xdiff = AXpos - MLockedClickedX;
     int32_t ydiff = AYpos - MLockedClickedY;
     MLockedCurrentX += xdiff;
     MLockedCurrentY += ydiff;
-    //SAT_Print("%i,%i current %i,%i\n",AXpos,AYpos,MLockedCurrentX,MLockedCurrentY);
     setMouseCursorPos(MLockedClickedX,MLockedClickedY);
   }
 
@@ -432,83 +353,6 @@ public: // hover
     }
     MHoverWidget = AHover;
   }
-
-//------------------------------
-public: // queues
-//------------------------------
-
-  // gui interaction
-  // do_widget_redraw, on_window_resize
-
-  //virtual bool queueDirtyWidgetFromGui(SAT_Widget* AWidget) {
-  //  MDirtyWidgetsQueue.write(AWidget);
-  //  return true;
-  //}
-
-  //----------
-  
-  // flushed by timer
-  
-  //virtual bool flushDirtyWidgetsFromGui() {
-  //  SAT_Widget* widget;
-  //  while (MDirtyWidgetsQueue.read(&widget)) {
-  //    // check last painted, etc..
-  //    MPaintWidgetsQueue.write(widget);
-  //  }
-  //  return false;
-  //}
-
-  //------------------------------
-  
-  // parameter changes from audio/process thread (event handling)
-
-  //virtual bool queueDirtyWidgetFromEvents(SAT_Widget* AWidget) {
-  //  return false;
-  //}
-
-  //----------
-  
-  // flushed by timer
-
-  //virtual bool flushDirtyWidgetsFromEvents() {
-  //  return false;
-  //}
-
-  //----------
-  
-  // written to by timer (after thinning/sorting)
-
-  //virtual bool queuePaintWidget(SAT_Widget* AWidget) {
-  //  MPaintWidgetsQueue.write(AWidget);
-  //  return false;
-  //}
-
-  //----------
-  
-  // finally flushed by EXPOSE, WM_PAINT
-  // all painted at once
-  // then updaterect only is copied to screen
-
-  //virtual bool flushPaintWidgets() {
-  //  SAT_PRINT;
-  //  return false;
-  //}
-
-//------------------------------
-public: // painting
-//------------------------------
-
-  //void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {//override {
-  //  //SAT_ImplementedWindow::beginPaint();
-  //  MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
-  //}
-
-  //----------
-
-  //void endPaint() {//override {
-  //  MWindowPainter->resetClip();
-  //  //SAT_ImplementedWindow::endPaint();
-  //}
 
 //------------------------------
 public: // window
@@ -785,54 +629,10 @@ public: // window
 
   //----------
   
-  /*
-  void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    MPaintContext.painter       = MWindowPainter;
-    MPaintContext.update_rect.x = AXpos;
-    MPaintContext.update_rect.y = AYpos;
-    MPaintContext.update_rect.w = AWidth;
-    MPaintContext.update_rect.h = AHeight;
-    MPaintContext.window_width  = MWindowWidth;
-    MPaintContext.window_height = MWindowHeight;
-    MPaintContext.window_scale  = MScale;
-    MOpenGL->makeCurrent();
-    uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
-    uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
-    if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
-      void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
-      SAT_Assert(buffer);
-      copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-      MWindowPainter->deleteRenderBuffer(MRenderBuffer);
-      MRenderBuffer = buffer;
-      MBufferWidth  = width2;
-      MBufferHeight = height2;
-      // paint root
-      MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-      MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-      MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
-      paintDirtyWidgets(&MPaintContext,MRootWidget);
-      MWindowPainter->endFrame();
-    }
-    else {
-      MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-      MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
-      MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
-      // paint dirty widgets
-      paintDirtyWidgets(&MPaintContext);
-      MWindowPainter->endFrame();
-    }
-    copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
-    MOpenGL->swapBuffers();
-    MOpenGL->resetCurrent();
-    MPaintContext.counter += 1;
-  }
-  */
-  
   virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
-    
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
@@ -870,10 +670,8 @@ public: // window
   
   virtual void on_window_timer(double AElapsed) {
     if (MListener) MListener->do_window_timer(this,AElapsed);
-
     for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(0,AElapsed);
     //MTweens.process(elapsed,MScale);
-    
     SAT_Rect rect;
     SAT_Widget* widget;
     while (MPendingDirtyWidgets.read(&widget)) {
@@ -882,7 +680,6 @@ public: // window
       MPaintDirtyWidgets.write(widget);
     }
     if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
-    
   }
 
 //------------------------------
