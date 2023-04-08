@@ -12,6 +12,7 @@ int main() {
   //SAT_DPrint("hello world!\n");
 
   SAT_Window* window = new SAT_Window(400,440,0,nullptr);
+  window->setInitialSize(400,440);
   
   SAT_PanelWidget* root = new SAT_PanelWidget(0);
   window->appendRootWidget(root);
@@ -25,12 +26,12 @@ int main() {
   knob->setTextSize(20);
   knob->setValueSize(50);
   
-  #ifdef SAT_LINUX
-    // win32 automatically receive a wm_paint after opening?
-    // linux doesn't? investigate..
-    //root->parentRedraw();
-    root->do_widget_redraw(root,0);
-  #endif
+//  #ifdef SAT_LINUX
+//    // win32 automatically receive a wm_paint after opening?
+//    // linux doesn't? investigate..
+//    //root->parentRedraw();
+//    root->do_widget_redraw(root,0);
+//  #endif
   
   window->show();
   window->eventLoop();

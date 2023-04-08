@@ -22,7 +22,7 @@ class SAT_PopupWidget
 private:
 //------------------------------
 
-  SAT_Window*     MWindow     = nullptr;
+  //SAT_Window*     MWindow     = nullptr;
   SAT_Rect        MSavedRect  = {};
   SAT_TweenChain* MTween      = nullptr;
 
@@ -59,8 +59,11 @@ public:
     SAT_Rect rect = ARect;
     //setRectAndBasis(MSavedRect);
     MSavedRect = rect;
-    uint32_t winw = MWindow->getWidth();
-    uint32_t winh = MWindow->getHeight();
+    //uint32_t winw = MWindow->getWidth();
+    //uint32_t winh = MWindow->getHeight();
+    
+    uint32_t winw = getOwner()->do_widget_get_width();
+    uint32_t winh = getOwner()->do_widget_get_height();
     if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - 5;
     if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - 5;
     setRectAndBasis(rect);
