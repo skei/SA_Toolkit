@@ -46,7 +46,8 @@ public:
     //if (isVisible()) {
       setTextColor(MHoverTextColor);
       setBackgroundColor(MHoverBackgroundColor);
-      parentRedraw();
+      //parentRedraw();
+      do_widget_redraw(this,0);
     //}
   }
 
@@ -61,7 +62,8 @@ public:
     if (isVisible()) {
       setTextColor(MTextColor);
       setBackgroundColor(MBackgroundColor);
-      parentRedraw();
+      //parentRedraw();
+      do_widget_redraw(this,0);
     }
   }
 
@@ -73,12 +75,14 @@ public:
       setTextColor(MTextColor);
       setBackgroundColor(MBackgroundColor);
       uint32_t index = getIndex();
-      do_widget_notify(this,SAT_WIDGET_NOTIFY_SELECT,index);
+      //do_widget_notify(this,SAT_WIDGET_NOTIFY_SELECT,index);
+      do_widget_select(this,index);
     }
     if (AButton == SAT_BUTTON_RIGHT) {
       setTextColor(MTextColor);
       setBackgroundColor(MBackgroundColor);
-      do_widget_notify(this,SAT_WIDGET_NOTIFY_CLOSE,0);
+      //do_widget_notify(this,SAT_WIDGET_NOTIFY_CLOSE,0);
+      do_widget_close(this);
     }
   }
 

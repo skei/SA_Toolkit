@@ -161,15 +161,17 @@ public:
             tw += deltax;
             th += deltay;
             
-//            SAT_DPoint tmin = MTarget->Layout.minSize;
-//            SAT_DPoint tmax = MTarget->Layout.maxSize;
-//            if ( (tw > tmin.w) && (tw < tmax.w)
-//              && (th > tmin.h) && (th < tmax.h) ) {
+            //SAT_DPoint tmin = MTarget->Layout.minSize;
+            //SAT_DPoint tmax = MTarget->Layout.maxSize;
+            //if ( (tw > tmin.w) && (tw < tmax.w)
+            //  && (th > tmin.h) && (th < tmax.h) ) {
   
-              MTarget->do_widget_resized(this,deltax,deltay);
-              parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
+              //MTarget->do_widget_resized(this,deltax,deltay);
+//              MTarget->do_widget_resized(this,deltax,deltay);
+              //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
+              do_widget_realign(this);
               
-//            }
+            //}
 
           //}
         } // sizer

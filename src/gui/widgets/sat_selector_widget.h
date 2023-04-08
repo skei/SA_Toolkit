@@ -72,7 +72,8 @@ public: // menu listener
     SAT_TextWidget* widget = (SAT_TextWidget*)MMenu->getChildWidget(AIndex);
     const char* text = widget->getText();
     setText(text);
-    parentRedraw();
+    //parentRedraw();
+    do_widget_redraw(this,0);
   }
 
   //----------

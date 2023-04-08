@@ -69,21 +69,28 @@ public:
 
   // from menu item
 
-  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-    //SAT_PopupWidget::do_widget_notify(ASender,AReason,AValue);
-    switch (AReason) {
-      case SAT_WIDGET_NOTIFY_SELECT: {
-        if (MMenuListener) MMenuListener->do_menu_select(AValue);
-        close();
-        break;
-      }
-      case SAT_WIDGET_NOTIFY_CLOSE: {
-        if (MMenuListener) MMenuListener->do_menu_cancel();
-        close();
-        break;
-      }
-    }
+//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+//    //SAT_PopupWidget::do_widget_notify(ASender,AReason,AValue);
+//    switch (AReason) {
+//      case SAT_WIDGET_NOTIFY_SELECT: {
+//        if (MMenuListener) MMenuListener->do_menu_select(AValue);
+//        close();
+//        break;
+//      }
+//      case SAT_WIDGET_NOTIFY_CLOSE: {
+//        if (MMenuListener) MMenuListener->do_menu_cancel();
+//        close();
+//        break;
+//      }
+//    }
+//  }
+
+  void do_widget_close(SAT_Widget* ASender) override {
   }
+    
+  void do_widget_select(SAT_Widget* ASender, int32_t AIndex) override {
+  }
+
 
 
 };

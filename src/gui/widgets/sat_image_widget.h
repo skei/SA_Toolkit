@@ -70,13 +70,14 @@ public:
 public:
 //------------------------------
 
-  void cleanup(SAT_Painter* APainter, bool ARecursive=true) override {
-    if (MInitialized) {
-      APainter->deleteImage(MImage);
-      MInitialized = false;
-    }
-    SAT_PanelWidget::cleanup(APainter,ARecursive);
-  }
+
+//  void cleanup(SAT_Painter* APainter, bool ARecursive=true) override {
+//    if (MInitialized) {
+//      APainter->deleteImage(MImage);
+//      MInitialized = false;
+//    }
+//    SAT_PanelWidget::cleanup(APainter,ARecursive);
+//  }
 
 //------------------------------
 public:

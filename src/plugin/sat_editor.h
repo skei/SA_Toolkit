@@ -101,7 +101,8 @@ public:
       if (widget) {
         widget->setValue(AValue);
         //widget->update();
-        widget->parentRedraw();
+        //parentRedraw();
+        widget->do_widget_redraw(widget,0);
       }
     }
   }
@@ -114,7 +115,8 @@ public:
       if (widget) {
         widget->setModulation(AValue);
         //widget->update();
-        widget->parentRedraw();
+        //widget->parentRedraw();
+        widget->do_widget_redraw(widget,0);
       }
     }
   }
@@ -149,7 +151,7 @@ public: // window listener
     push update into gui thread somwhow..
   */
 
-  void do_window_listener_timer(SAT_Window* ASender) override { // final
+  void do_window_timer(SAT_Window* ASender, double AElapsed) override { // final
     //SAT_PRINT;
     if (MListener) MListener->do_editor_listener_timer();
     //on_window_timer();
@@ -157,7 +159,7 @@ public: // window listener
 
   //----------
 
-  void do_window_listener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+  void do_window_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
     if (MListener) {
       SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection();
       if (param) {
@@ -170,7 +172,7 @@ public: // window listener
 
   //----------
 
-  void do_window_listener_redraw_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+  void do_window_redraw_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
     //SAT_PRINT;
   }
 

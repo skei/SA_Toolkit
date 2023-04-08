@@ -30,7 +30,7 @@ private:
   uint32_t  MDragDirection    = SAT_DIRECTION_UP;
   double    MDragSensitivity  = 0.001;
   double    MShiftSensitivity = 0.1;
-  bool      MAutoHideCursor   = true;
+  bool      MAutoHideCursor   = false;
   bool      MAutoLockCursor   = true;
   bool      MSnap             = false;
   double    MSnapPos          = 0.5;
@@ -126,6 +126,20 @@ private:
 public:
 //------------------------------
 
+
+  //uint32_t getNumPopupMenuItems() override {
+  //  return 3;
+  //}
+  
+  //const char* getPopupMenuItem(uint32_t AIndex) override {
+  //  switch (AIndex) {
+  //    case 0: return "Item1"; break;
+  //    case 1: return "Item2"; break;
+  //    case 2: return "Item3"; break;
+  //  }
+  //  return nullptr;
+  //}
+
 //  uint32_t getNumPopupMenuItems() override {
 //    return 3;
 //  }
@@ -140,6 +154,7 @@ public:
 //    }
 //    return nullptr;
 //  }
+
 
 //------------------------------
 public:

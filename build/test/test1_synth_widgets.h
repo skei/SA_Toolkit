@@ -47,15 +47,17 @@ public:
   
   //----------
 
-  void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
-    SAT_MovableWidget::prepare(AWindow,ARecursive);
-    MWindow = (SAT_Window*)AWindow;
+  //void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
+  virtual void prepare(SAT_WidgetOwner* AOwner) {
+    //SAT_MovableWidget::prepare(AWindow,ARecursive);
+    SAT_MovableWidget::prepare(AOwner);
+    MWindow = (SAT_Window*)AOwner;
     MWindow->registerTimerWidget(this);
   }
   
   //----------
 
-  void on_widget_timer(double ADelta) override {
+  void on_widget_timer(uint32_t AId, double ADelta) override {
     
     //SAT_Print("ADelta = %f\n",ADelta);
     
@@ -88,7 +90,8 @@ public:
     if (x4 <  0)  { x4 = 0; x4_add = -x4_add; }
     if (y4 <  0)  { y4 = 0; y4_add = -y4_add; }
     
-    parentRedraw();
+    //parentRedraw();
+    do_widget_redraw(this,0);
   };
 
   //----------

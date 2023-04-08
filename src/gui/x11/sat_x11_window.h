@@ -220,6 +220,9 @@ public:
 
   Display*      getX11Display() { return MDisplay;}
   xcb_window_t  getX11Window()  { return MWindow;}
+  
+  virtual uint32_t getWidth() { return MWindowWidth; }
+  virtual uint32_t getHeight() { return MWindowWidth; }
 
 //------------------------------
 public:
@@ -285,6 +288,8 @@ public:
     xcb_flush(MConnection);
     #ifdef SAT_X11_WAIT_FOR_MAPNOTIFY
       waitForMapNotify();
+      //MIsMapped = true;
+      //on_window_open();
     #endif
     if (MIsEmbedded) startEventThread();
   }

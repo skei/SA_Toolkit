@@ -28,7 +28,7 @@
 #include "gui/widgets/sat_sizer_widget.h"
 #include "gui/widgets/sat_slider_widget.h"
 #include "gui/widgets/sat_slider_bank_widget.h"
-#include "gui/widgets/sat_scroll_bar_widget0.h"
+#include "gui/widgets/sat_scroll_bar_widget.h"
 #include "gui/widgets/sat_scroll_bar_widget.h"
 #include "gui/widgets/sat_scroll_box_widget.h"
 #include "gui/widgets/sat_symbol_widget.h"

@@ -102,7 +102,7 @@ public: // child to parent
       MPages->setPage(sel/*,true*/);
       //MPages->on_realign();
 
-      MPages->realignChildWidgets(true);
+      MPages->realignChildWidgets();
       do_widget_redraw(MPages,0);
       
     }

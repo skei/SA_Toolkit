@@ -252,7 +252,9 @@
     waits for notify event before returning when opening windows..
   */
 
-  #define SAT_X11_WAIT_FOR_MAPNOTIFY
+  //#ifdef SAT_PLUGIN
+  //#define SAT_X11_WAIT_FOR_MAPNOTIFY
+  //#endif
 
   //----------
 
