@@ -141,9 +141,7 @@ public:
   //----------
 
   virtual ~SAT_Window() {
-    //delete MTimer;
-    //delete MWindowPainter;
-    //delete MOpenGL;
+    SAT_PRINT;
     if (MTimer) {
       if (MTimer->isRunning()) MTimer->stop();
       delete MTimer;
@@ -155,7 +153,6 @@ public:
     MWindowPainter->deleteRenderBuffer(MRenderBuffer);
     delete MWindowPainter;
     delete MOpenGL;
-    
   }
 
 //------------------------------
@@ -643,9 +640,9 @@ public: // window
   //----------
   
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
+    
     MOpenGL->makeCurrent();
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
@@ -673,16 +670,17 @@ public: // window
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
+      int32_t paint_count = MPaintContext.counter;
       while (MPaintDirtyWidgets.read(&widget)) {
         
-        //if (widget->getLastPainted() != paint_count) {
+        if (widget->getLastPainted() != paint_count) {
           SAT_Rect cliprect = calcClipRect(widget);
           MWindowPainter->pushClip(cliprect);
           widget->on_widget_paint(&MPaintContext);
           MWindowPainter->popClip();
-        //  widget->setLastPainted(paint_count);
+          widget->setLastPainted(paint_count);
           //count += 1;
-        //}
+        }
         
       }
       MWindowPainter->endFrame();

@@ -253,7 +253,7 @@
   */
 
   //#ifdef SAT_PLUGIN
-  //#define SAT_X11_WAIT_FOR_MAPNOTIFY
+    #define SAT_X11_WAIT_FOR_MAPNOTIFY
   //#endif
 
   //----------

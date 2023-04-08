@@ -43,6 +43,8 @@ private:
   SAT_Widget*           MParentWidget                       = nullptr;  // hierarchial parent
   SAT_WidgetArray       MChildWidgets                       = {};       // sub widgets
   int32_t               MIndex                              = -1;       // index (parent)
+  int32_t               MLastPainted                        = -1;
+  
   
   uint32_t              MAlignment                          = SAT_WIDGET_ALIGN_PARENT;
   uint32_t              MStretching                         = SAT_WIDGET_STRETCH_NONE;
@@ -110,6 +112,7 @@ public:
   virtual const char*         getHint()                         { return MHint; }
   virtual int32_t             getIndex()                        { return MIndex; }
   virtual SAT_Rect            getInitialRect()                  { return MInitialRect; }
+  virtual int32_t             getLastPainted()                  { return MLastPainted; }
   virtual SAT_WidgetListener* getListener()                     { return MListener; }
   virtual double              getModulation(uint32_t AIndex=0)  { return MModulations[AIndex]; }
   virtual int32_t             getMouseCursor()                  { return MMouseCursor; }
@@ -127,9 +130,6 @@ public:
   virtual bool                isDisabled()                      { return MIsDisabled; }
   virtual bool                isInteracting()                   { return MIsInteracting; }
 
-  //
-  
-  
 //------------------------------
 public:
 //------------------------------
@@ -139,21 +139,22 @@ public:
   virtual void setAutoClip(bool AState=true)                    { MAutoClip = AState; }
   virtual void setAutoHoverCursor(bool AState=true)             { MAutoHoverCursor = AState; }
   virtual void setAutoHoverHint(bool AState=true)               { MAutoHoverHint = AState; }
-  virtual void setBasisHeight(double AHeight)                   { MBasisRect.h = AHeight; } /*todo: scale*/
-  virtual void setBasisRect(SAT_Rect ARect)                     { MBasisRect = ARect; } /*todo: scale*/
-  virtual void setBasisWidth(double AWidth)                     { MBasisRect.w = AWidth; } /*todo: scale*/
+  virtual void setBasisHeight(double AHeight)                   { MBasisRect.h = AHeight; } /*scale*/
+  virtual void setBasisRect(SAT_Rect ARect)                     { MBasisRect = ARect; }     /*scale*/
+  virtual void setBasisWidth(double AWidth)                     { MBasisRect.w = AWidth; }  /*scale*/
   virtual void setCursor(int32_t ACursor)                       { MMouseCursor = ACursor; }
   virtual void setDisabled(bool AState=true)                    { MIsDisabled = AState; }
   virtual void setHeight(double AHeight)                        { MRect.h = AHeight; }
   virtual void setIndex(int32_t AIndex)                         { MIndex = AIndex; }
   virtual void setInnerBorder(SAT_Rect ARect)                   { MInnerBorder = ARect; }
   virtual void setInteracting(bool AState=true)                 { MIsInteracting = AState; }
+  virtual void setLastPainted(int32_t ACount)                   { MLastPainted = ACount; }
   virtual void setListener(SAT_WidgetListener* AListener)       { MListener = AListener; }
   virtual void setModulation(double AValue, uint32_t AIndex=0)  { MValues[AIndex] = AValue; }
   virtual void setName(const char* AName)                       { MName = AName; }
   virtual void setParentWidget(SAT_Widget* AParent)             { MParentWidget = AParent; }
   virtual void setRect(SAT_Rect ARect)                          { MRect = ARect; }
-//virtual void setRectAndBasis(SAT_Rect ARect)                  { MRect = ARect; MBasisRect = ARect; } /*todo: scale*/
+//virtual void setRectAndBasis(SAT_Rect ARect)                  { MRect = ARect; MBasisRect = ARect; } /*scale*/
   virtual void setSize(double AWidth, double AHeight)           { MRect.w = AWidth; MRect.h = AHeight; }
   virtual void setSpacing(SAT_Point ASpacing)                   { MSpacing = ASpacing; }
   virtual void setStretching(uint32_t AStretching)              { MStretching = AStretching; }
@@ -164,17 +165,6 @@ public:
 //------------------------------
 public: // hierarchy
 //------------------------------
-
-  //virtual SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
-  //  uint32_t index = MChildren.size();
-  //  AWidget->setParent(this);
-  //  if (AListener) AWidget->setListener(AListener);
-  //  else AWidget->setListener(this);
-  //  AWidget->setIndex(index);
-  //  //AWidget->addPos(MRect.x,MRect.y);
-  //  MChildren.append(AWidget);
-  //  return AWidget;
-  //}
 
   virtual SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     int32_t index = MChildWidgets.size();
@@ -332,21 +322,6 @@ public: // hierarchy
     }
     return this;
   }
-
-//  virtual SAT_Widget* findChildWidget(double AXpos, double AYpos) {
-//    for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-//      SAT_Widget* widget = MChildWidgets[i];
-//      if (widget->isActive()) {
-//        SAT_Rect rect = widget->getRect();
-//        if (rect.contains(AXpos,AYpos)) {
-//          SAT_Widget* child = widget->findChildWidget(AXpos,AYpos);
-//          return child;
-//        }
-//      }
-//    }
-//    if (MIsActive) return this;
-//    else return nullptr;
-//  }
 
   //----------
   
@@ -621,7 +596,7 @@ public: // base
   }
   
   virtual void on_widget_paint(SAT_PaintContext* AContext) {
-    paintChildWidgets(AContext);
+    if (MIsVisible) paintChildWidgets(AContext);
   }
   
   virtual void on_widget_timer(uint32_t AId, double ADelta) {
@@ -646,13 +621,17 @@ public: // base
   }
 
   virtual void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATimestamp) {
-    if (autoHoverCursor()) do_widget_set_cursor(this,MMouseCursor);
-    if (autoHoverHint()) do_widget_set_hint(this,0,MHint);
+    if (MIsActive && MIsVisible) {
+      if (autoHoverCursor()) do_widget_set_cursor(this,MMouseCursor);
+      if (autoHoverHint()) do_widget_set_hint(this,0,MHint);
+    }
   }
 
   virtual void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATimestamp) {
-    if (autoHoverCursor()) do_widget_set_cursor(this,SAT_CURSOR_DEFAULT);
-    if (autoHoverHint()) do_widget_set_hint(this,0,"");
+    if (MIsActive && MIsVisible) {
+      if (autoHoverCursor()) do_widget_set_cursor(this,SAT_CURSOR_DEFAULT);
+      if (autoHoverHint()) do_widget_set_hint(this,0,"");
+    }
   }
 
   virtual void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AValue) {

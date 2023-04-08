@@ -288,8 +288,8 @@ public:
     xcb_flush(MConnection);
     #ifdef SAT_X11_WAIT_FOR_MAPNOTIFY
       waitForMapNotify();
-      //MIsMapped = true;
-      //on_window_open();
+      MIsMapped = true;
+      on_window_open();
     #endif
     if (MIsEmbedded) startEventThread();
   }
