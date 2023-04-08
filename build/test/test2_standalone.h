@@ -7,9 +7,9 @@
 
 int main() {
   
-  SAT_PRINT;
-  SAT_Print("hello world!\n");
-  SAT_DPrint("hello world!\n");
+  //SAT_PRINT;
+  //SAT_Print("hello world!\n");
+  //SAT_DPrint("hello world!\n");
 
   SAT_Window* window = new SAT_Window(400,440,0,nullptr);
   
@@ -28,7 +28,8 @@ int main() {
   #ifdef SAT_LINUX
     // win32 automatically receive a wm_paint after opening?
     // linux doesn't? investigate..
-    root->parentRedraw();
+    //root->parentRedraw();
+    root->do_widget_redraw(root,0);
   #endif
   
   window->show();

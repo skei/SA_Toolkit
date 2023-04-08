@@ -74,7 +74,8 @@ public:
       setRect(mrect);
       mrect.scale(invscale);
       setBasisRect(mrect);
-      parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
+      //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
+      do_widget_realign(this);
     }
   }
 

@@ -21,7 +21,7 @@ class SAT_Timer;
 
 class SAT_TimerListener {
   public:
-    virtual void do_timer_listener_callback(SAT_Timer* ATimer) {}
+    virtual void do_timer_callback(SAT_Timer* ATimer) {}
 };
 
 //----------------------------------------------------------------------
@@ -181,7 +181,7 @@ public:
   //----------
 
   void on_timer() {
-    if (MTimerListener) MTimerListener->do_timer_listener_callback(this);
+    if (MTimerListener) MTimerListener->do_timer_callback(this);
   }
 
 };

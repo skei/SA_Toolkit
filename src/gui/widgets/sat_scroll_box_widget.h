@@ -111,16 +111,18 @@ public:
       float can_scroll = 1.0 - visible;
       can_scroll *= MContent->getContentRect().h;
       float scroll = can_scroll * delta;
-      MContent->scrollChildren(0,scroll);
-      if (draw) MContent->parentRedraw();
+      MContent->scrollChildWidgets(0,scroll);
+      //if (draw) MContent->parentRedraw();
+      if (draw) MContent->do_widget_redraw(MContent,0);
     }
     else if (ASender == MHorizontalScrollBar) {
       float delta = prev - pos;
       float can_scroll = 1.0 - visible;
       can_scroll *= MContent->getContentRect().w;
       float scroll = can_scroll * delta;
-      MContent->scrollChildren(scroll,0);
-      if (draw) MContent->parentRedraw();
+      MContent->scrollChildWidgets(scroll,0);
+      //if (draw) MContent->parentRedraw();
+      if (draw) MContent->do_widget_redraw(MContent,0);
     }
   }
 
@@ -129,15 +131,15 @@ public:
 //------------------------------
 
   SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) override {
-    AWidget->setParent(this);
+    AWidget->setParentWidget(this);
     return MContent->appendChildWidget(AWidget,AListener);
   }
 
   //----------
 
-  void realignChildWidgets(bool ARecursive=true) override {
+  void realignChildWidgets() override {
     //SAT_GLOBAL.DEBUG.print_callstack();
-    SAT_PanelWidget::realignChildWidgets(ARecursive);
+    SAT_PanelWidget::realignChildWidgets();
     SAT_Rect content = MContent->getContentRect();
     float rect_w = MContent->getRect().w;
 

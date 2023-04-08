@@ -272,14 +272,17 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="gui">
+      <File Name="../../src/gui/sat_base_window.h"/>
+      <File Name="../../src/gui/sat_base_widget.h"/>
+      <File Name="../../src/gui/sat_widget_owner.h"/>
+      <File Name="../../src/gui/sat_window.h"/>
+      <File Name="../../src/gui/sat_widget.h"/>
       <File Name="../../src/gui/sat_widgets.h"/>
       <File Name="../../src/gui/sat_window_listener.h"/>
       <File Name="../../src/gui/sat_painter.h"/>
       <File Name="../../src/gui/sat_paint_context.h"/>
       <File Name="../../src/gui/sat_opengl.h"/>
       <File Name="../../src/gui/sat_widget_listener.h"/>
-      <File Name="../../src/gui/sat_window.h"/>
-      <File Name="../../src/gui/sat_widget.h"/>
       <VirtualDirectory Name="widgets">
         <File Name="../../src/gui/widgets/sat_group_box_widget.h"/>
         <File Name="../../src/gui/widgets/sat_value_graph_widget.h"/>

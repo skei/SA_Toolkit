@@ -5,6 +5,7 @@
 #include "base/sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 #include "gui/sat_window.h"
+#include "base/utils/sat_tween_manager.h"
 
 //#define SAT_POPUP_WIDGET_USE_TWEENING
 
@@ -46,11 +47,11 @@ public:
 public:
 //------------------------------
 
-  void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
-    //SAT_PRINT;
-    SAT_PanelWidget::prepare(AWindow,ARecursive);
-    MWindow = (SAT_Window*)AWindow;
-  }
+//  void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
+//    //SAT_PRINT;
+//    SAT_PanelWidget::prepare(AWindow,ARecursive);
+//    MWindow = (SAT_Window*)AWindow;
+//  }
 
   //----------
 
@@ -80,10 +81,12 @@ public:
     #endif
     
     realignChildWidgets();
-    do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
+    //do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
+    do_widget_set_modal(this);
     setActive(true);
     setVisible(true);
-    parentRedraw();
+    //parentRedraw();
+    do_widget_redraw(this,0);
     return true;
   }
 
@@ -91,7 +94,8 @@ public:
 
   virtual void close() {
     //SAT_Print("close\n");
-    do_widget_set_state(this,SAT_WIDGET_STATE_NORMAL);
+    //do_widget_set_state(this,SAT_WIDGET_STATE_NORMAL);
+    do_widget_set_modal(nullptr);
     setActive(false);
     setVisible(false);
     setRectAndBasis(MSavedRect);
@@ -99,7 +103,11 @@ public:
       if (MTween->isActive()) MTween->stop();
       MTween = nullptr; // see assert in open()
     }
-    parentRedrawAll(); // redraw entire parent
+
+    //parentRedrawAll(); // redraw entire parent
+    
+    do_widget_redraw(this,0);   // !!! TOD: redraw parent..
+    
   }
 
 //------------------------------
@@ -109,12 +117,12 @@ public:
   // called from window
   // (clicking outside of modal widget)
 
-  void on_widget_notify(uint32_t AReason=SAT_WIDGET_NOTIFY_NONE) override {
-    //SAT_PanelWidget::on_widget_notify(AReason,AValue);
-    if (AReason == SAT_WIDGET_NOTIFY_CLOSE) {
-      close();
-    }
-  }
+//  void on_widget_notify(uint32_t AReason=SAT_WIDGET_NOTIFY_NONE) override {
+//    //SAT_PanelWidget::on_widget_notify(AReason,AValue);
+//    if (AReason == SAT_WIDGET_NOTIFY_CLOSE) {
+//      close();
+//    }
+//  }
   
   //----------
   

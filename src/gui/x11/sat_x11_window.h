@@ -220,6 +220,9 @@ public:
 
   Display*      getX11Display() { return MDisplay;}
   xcb_window_t  getX11Window()  { return MWindow;}
+  
+  virtual uint32_t getWidth() { return MWindowWidth; }
+  virtual uint32_t getHeight() { return MWindowWidth; }
 
 //------------------------------
 public:

@@ -86,7 +86,7 @@ public: // clipping
 
   //----------
 
-  virtual void pushOverlapClip(SAT_Rect ARect) {
+  virtual void pushOverlappingClip(SAT_Rect ARect) {
     SAT_Rect r = ARect;
     r.overlap(MClipRect);
     pushClip(r);
