@@ -180,6 +180,18 @@ public:
     drawBorder(AContext);
   }
 
+  //void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  //  SAT_DragValueWidget::on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+  //}
+
+  //void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  //  SAT_DragValueWidget::on_widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
+  //}
+
+  //void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
+  //  SAT_DragValueWidget::on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+  //}
+  
 };
 
 //----------------------------------------------------------------------

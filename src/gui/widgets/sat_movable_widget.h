@@ -18,11 +18,17 @@ class SAT_MovableWidget
 private:
 //------------------------------
 
-  bool MIsMoving        = false;
-  double MXClick        = 0.0;
-  double MYClick        = 0.0;
-  double MXClickOffset  = 0.0;
-  double MYClickOffset  = 0.0;
+  bool    MIsMoving       = false;
+  double  MXClick         = 0.0;
+  double  MYClick         = 0.0;
+  double  MXClickOffset   = 0.0;
+  double  MYClickOffset   = 0.0;
+  
+  double  MHoverDist        = 5.0;
+  //bool    MCanResizeLeft    = true;
+  //bool    MCanResizeRoght   = true;
+  //bool    MCanResizeTop     = true;
+  //bool    MCanResizeBottom  = true;
 
 //------------------------------
 public:
@@ -64,6 +70,7 @@ public:
   //----------
 
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
+    
     if (MIsMoving) {
       SAT_Rect mrect = getRect();
       double S = getWindowScale();
@@ -77,6 +84,19 @@ public:
       //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
       do_widget_realign(this);
     }
+//    else {
+//      SAT_Rect mrect = getRect();
+//      double left_dist    = AXpos - mrect.x;
+//      double right_dist   = mrect.x2() - AXpos;
+//      double top_dist     = AYpos - mrect.y;
+//      double bottom_dist  = mrect.y2() - AYpos;
+//      //SAT_Print("left_dist: %f right_dist %f\n",left_dist,right_dist);
+//      if      (left_dist < MHoverDist)   do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
+//      else if (right_dist < MHoverDist)  do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
+//      else if (top_dist < MHoverDist)    do_widget_set_cursor(this,SAT_CURSOR_ARROW_UP_DOWN);
+//      else if (bottom_dist < MHoverDist) do_widget_set_cursor(this,SAT_CURSOR_ARROW_UP_DOWN);
+//      else                               do_widget_set_cursor(this,SAT_CURSOR_MOVE);
+//    }
   }
 
   

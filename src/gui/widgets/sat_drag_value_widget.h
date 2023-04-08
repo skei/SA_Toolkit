@@ -41,7 +41,12 @@ private:
   bool      MBipolar          = false;
   double    MBipolarCenter    = 0.5;
   
-  bool      MWaitingFroDrag   = false;
+  bool      MWaitingForDrag   = false;
+
+  //bool      MIsDraggingLeft   = false;
+  //bool      MIsDraggingRight  = false;
+  //bool      MHoverLeftEdge    = false;
+  //bool      MHoverRightEdge   = false;
 
 //------------------------------
 public:
@@ -80,21 +85,22 @@ public:
     }
   }
   
-  virtual void setDragSensitivity(double ASens)   { MDragSensitivity = ASens; }
-  virtual void setShiftSensitivity(double ASens)  { MShiftSensitivity = ASens; }
-  virtual void setAutoHideCursor(bool AAuto)      { MAutoHideCursor = AAuto; }
-  virtual void setAutoLockCursor(bool AAuto)      { MAutoLockCursor = AAuto; }
-  virtual void setSnap(bool ASnap)                { MSnap = ASnap; }
-  virtual void setSnapPos(double APos)            { MSnapPos = APos; }
-  virtual void setSnapDist(double ADist)          { MSnapDist = ADist; }
-  virtual void setSnapSpeed(double ASpeed)        { MSnapSpeed = ASpeed; }
-  virtual void setQuantize(bool AQuant)           { MQuantize = AQuant; }
+  virtual void    setDragSensitivity(double ASens)    { MDragSensitivity = ASens; }
+  virtual void    setShiftSensitivity(double ASens)   { MShiftSensitivity = ASens; }
 
-  virtual void setBipolar(bool ABipolar)          { MBipolar = ABipolar; }
-  virtual void setBipolarCenter(double APos)      { MBipolarCenter = APos; }
+  virtual void    setAutoHideCursor(bool AAuto)       { MAutoHideCursor = AAuto; }
+  virtual void    setAutoLockCursor(bool AAuto)       { MAutoLockCursor = AAuto; }
 
-  virtual bool      isBipolar()           { return MBipolar; }
-  virtual double    getBipolarCenter()    { return MBipolarCenter; }
+  virtual void    setSnap(bool ASnap)                 { MSnap = ASnap; }
+  virtual void    setSnapPos(double APos)             { MSnapPos = APos; }
+  virtual void    setSnapDist(double ADist)           { MSnapDist = ADist; }
+  virtual void    setSnapSpeed(double ASpeed)         { MSnapSpeed = ASpeed; }
+  virtual void    setQuantize(bool AQuant)            { MQuantize = AQuant; }
+
+  virtual void    setBipolar(bool ABipolar)           { MBipolar = ABipolar; }
+  virtual void    setBipolarCenter(double APos)       { MBipolarCenter = APos; }
+  virtual bool    isBipolar()                         { return MBipolar; }
+  virtual double  getBipolarCenter()                  { return MBipolarCenter; }
 
 
 //------------------------------
@@ -120,6 +126,7 @@ private:
 public:
 //------------------------------
 
+
   //uint32_t getNumPopupMenuItems() override {
   //  return 3;
   //}
@@ -132,6 +139,22 @@ public:
   //  }
   //  return nullptr;
   //}
+
+//  uint32_t getNumPopupMenuItems() override {
+//    return 3;
+//  }
+//  
+//  //----------
+//  
+//  const char* getPopupMenuItem(uint32_t AIndex) override {
+//    switch (AIndex) {
+//      case 0: return "Item1"; break;
+//      case 1: return "Item2"; break;
+//      case 2: return "Item3"; break;
+//    }
+//    return nullptr;
+//  }
+
 
 //------------------------------
 public:
@@ -147,15 +170,20 @@ public:
       MIsDragging   = true;
       MClickedYpos  = AYpos;
       MClickedYpos  = AYpos;
-      MDragValue    = getValue();
-      //if (MSnap) MDragValue = snapValue(MDragValue);
-      MPreviousXpos = AXpos;
-      MPreviousYpos = AYpos;
       
-      MWaitingFroDrag = true;
-      //if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);
-      //if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
-      
+      //if (MHoverLeftEdge) {
+      //}
+      //else if (MHoverRightEdge) {
+      //}
+      //else {
+        MDragValue    = getValue();
+        //if (MSnap) MDragValue = snapValue(MDragValue);
+        MPreviousXpos = AXpos;
+        MPreviousYpos = AYpos;
+        MWaitingForDrag = true;
+        //if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);
+        //if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+      //}
     }
   }
 
@@ -164,7 +192,9 @@ public:
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
-      MWaitingFroDrag = false;
+      MWaitingForDrag = false;
+      //MHoverLeftEdge = false;
+      //MHoverRightEdge = false;
       if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_SHOW);
       if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
     }
@@ -174,13 +204,13 @@ public:
 
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
     
-    if (MWaitingFroDrag) {
-      MWaitingFroDrag = false;
+    if (MWaitingForDrag) {
+      MWaitingForDrag = false;
       if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);
       if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
     }
     
-    if (MIsDragging) {
+    else if (MIsDragging) {
       double value = MDragValue;
       double sens = MDragSensitivity;
       if (AState & SAT_STATE_CTRL) sens *= MShiftSensitivity;
@@ -207,11 +237,20 @@ public:
       if (MSnap && !(AState & SAT_STATE_SHIFT)) {
         value = snapValue(value);
       }
+      
       value = SAT_Clamp(value,0,1);
       setValue(value);
       do_widget_update(this,0);
       do_widget_redraw(this,0);
     }
+    
+    //else {
+    //  // check if hover left/right edge?
+    //  MHoverLeftEdge = false;
+    //  MHoverRightEdge = false;
+    //  // if...
+    //}
+    
     MPreviousXpos = AXpos;
     MPreviousYpos = AYpos;
   }

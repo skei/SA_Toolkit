@@ -55,8 +55,7 @@
   so we need to find a way to smooth the _combination_ of these
 
 * plugin: presets
-* plugin: update state (runtime)
-* plugin: editor state
+* plugin: state & editor state
 * plugin: generic editor
 * plugin: SAT_InstrumentPlugin, SAT_AudioEffectPlugin, JesusonicPlugin (for porting)..
 

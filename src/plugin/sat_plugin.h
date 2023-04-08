@@ -19,6 +19,7 @@
 #include "plugin/clap/sat_clap_utils.h"
 
 #include "audio/sat_audio_utils.h"
+#include "gui/sat_widgets.h"
 
 //----------------------------------------------------------------------
 
@@ -65,9 +66,9 @@ private:
   SAT_AudioPortArray                MAudioOutputPorts                             = {};
   SAT_NotePortArray                 MNoteInputPorts                               = {};
   SAT_NotePortArray                 MNoteOutputPorts                              = {};
-  uint32_t                          MInitialEditorWidth                           = 512;
-  uint32_t                          MInitialEditorHeight                          = 512;
-  double                            MInitialEditorScale                           = 1.0;
+  uint32_t                          MInitialEditorWidth                           = 0;//512;
+  uint32_t                          MInitialEditorHeight                          = 0;//512;
+  double                            MInitialEditorScale                           = 2.0;
 
   SAT_ProcessContext                MProcessContext                               = {};
   bool                              MIsInitialized                                = false;
@@ -619,6 +620,8 @@ public: // gui
   // set_parent().
   // After this call, the GUI may not be visible yet; don't forget to call show().
   // [main-thread]
+  
+  // see also initEditorWindow (default editor)
 
   bool gui_create(const char *api, bool is_floating) override {
     //SAT_Print("api %s is_floating %i\n",api,is_floating);
@@ -630,6 +633,25 @@ public: // gui
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
+    
+    // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
+    if ((MInitialEditorWidth <= 0) || (MInitialEditorHeight <= 0)) {
+      uint32_t num = MParameters.size();
+      
+      double w =  200 +             // slider width
+                  10 + 10;          // inner border (top/bottom)
+      
+      double h =  40 +              // header
+                  20 +              // footer
+                  10 + 10 +         // inner border
+                  (num * 20) +      // sliders
+                  ((num - 1) * 5);  // spacing
+                  
+      double s =  2.0;
+      
+      setInitialEditorSize(w,h,s);
+      
+    }
 
     uint32_t w = (double)MInitialEditorWidth * MInitialEditorScale;
     uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
@@ -1632,8 +1654,55 @@ public: // editor
   //----------
 
   // called from SAT_Plugin.gui_set_parent()
+  // see also gui_create (calculating default editor size if not defined)
 
   virtual bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
+
+    double width  = AWindow->getInitialWidth();
+    //double height = AWindow->getInitialHeight();    
+    //double scale  = AWindow->getScale();
+    
+    //AEditor->get_size(&width,&height);
+    //SAT_Print("width %.f height %.f scale %.2f\n",width,height,scale);
+    
+    SAT_PanelWidget* root = new SAT_PanelWidget(0);
+    AWindow->appendRootWidget(root);
+    root->setFillBackground(false);
+  
+    const clap_plugin_descriptor_t* descriptor = getDescriptor();
+    const char* format = getPluginFormat();
+    const char* name = descriptor->name;
+    
+    SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,width,40),name,format);
+    root->appendChildWidget(header);
+    
+    SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(SAT_Rect(0,0,width,20));
+    root->appendChildWidget(footer);
+    
+    SAT_PanelWidget* panel = new SAT_PanelWidget(0);
+    root->appendChildWidget(panel);
+    panel->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
+    panel->setInnerBorder(SAT_Rect(10,10,10,10));
+    panel->setSpacing(SAT_Point(5,5));
+    
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      double x = 10;
+      double y = 10 + (i * 20);
+      double w = width - 20;
+      double h = 20;
+      SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(x,y,w,h),"slider",0.0);
+      panel->appendChildWidget(slider);
+      slider->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+      AEditor->connect(slider,getParameter(i));
+    }
+  
+    //SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(100,140,200,200),"Knob",0.5);
+    //root->appendChildWidget(knob);
+    //knob->setArcThickness(20);
+    //knob->setTextSize(20);
+    //knob->setValueSize(50);    
+    
     return true;
   }
 

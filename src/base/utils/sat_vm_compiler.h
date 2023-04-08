@@ -8,7 +8,7 @@
     - macro, insert opcodes directly, instead of func call
     - do some of this in parsing...
     - jit (?)
-    - comments: { }
+    - comments: {} []
 
     label & -> @
     var   % -> #

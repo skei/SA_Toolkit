@@ -278,6 +278,7 @@ public: // hierarchy
   }
 
   //----------
+
   
   virtual void paintChildWidgets(SAT_PaintContext* AContext) {
     SAT_Rect mrect = getRect();
@@ -304,6 +305,52 @@ public: // hierarchy
       } // for
       if (MAutoClip) painter->popClip();
     } // num > 0
+
+
+  virtual void connect(void* AParameter, uint32_t AIndex=0) {
+    MConnections[AIndex] = AParameter;
+  }
+
+  //----------
+
+  virtual void parentUpdate() {
+    if (MListener) MListener->do_widget_update(this,0,0);
+  }
+
+  //----------
+
+  virtual void parentRedraw() {
+    if (MListener) MListener->do_widget_redraw(this,0,0);
+  }
+
+  //----------
+
+  virtual void parentRedrawAll() {
+    if (MListener) MListener->do_widget_redraw(nullptr,0,0);
+  }
+
+  //----------
+
+  virtual void parentNotify(uint32_t AReason, int32_t AValue) {
+    if (MListener) MListener->do_widget_notify(this,AReason,AValue);
+  }
+
+  //----------
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
+    uint32_t index = MChildren.size();
+    AWidget->setParent(this);
+    if (AListener) AWidget->setListener(AListener);
+    else AWidget->setListener(this);
+    AWidget->setIndex(index);
+    //AWidget->addPos(MRect.x,MRect.y);
+    MChildren.append(AWidget);
+    return AWidget;
+
   }
 
   //----------
@@ -495,7 +542,7 @@ public: // hierarchy
       
       // stretching
 
-      uint32_t child_stretching   = child->getStretching();
+      uint32_t child_stretching = child->getStretching();
       if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( client_rect.x );
       if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( client_rect.x2() );
       if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( client_rect.y );
@@ -513,13 +560,95 @@ public: // hierarchy
     } // for
     
     // PS!
+
     //    // add w if not auto-aligning?
     //    //MContentRect.w += innerborder.w;
+
+    // add w if not auto-aligning?
+    ////MContentRect.w += innerborder.w;
+
     
     MContentRect.h += innerborder.h;
     
   }
+
   
+
+
+  //----------
+
+  /*
+    return child widget at x,y
+    or self if no sub-widget at that point
+  */
+
+  virtual SAT_Widget* findChildWidget(double AXpos, double AYpos, bool ARecursive=true) {
+    if (!MRect.contains(AXpos,AYpos)) return nullptr;
+    if (!isActive()) return nullptr;
+    uint32_t num = MChildren.size();
+    if (num > 0) {
+      for (int32_t i=num-1; i>=0; i--) {
+        SAT_Widget* widget = MChildren[i];
+        if (widget->isActive() /*&& widget->isVisible()*/) {
+          SAT_Rect rect = widget->getRect();
+          if (rect.contains(AXpos,AYpos)) {
+            SAT_Widget* child = widget;
+            if (ARecursive) {
+              child = widget->findChildWidget(AXpos,AYpos,ARecursive);
+            }
+            return child;
+          }
+        }
+      }
+    }
+    return this;
+  }
+
+  //----------
+
+  virtual void paintChildWidgets(SAT_PaintContext* AContext, bool ARecursive=true) {
+    //SAT_Print("%s\n",getName());
+    uint32_t num = MChildren.size();
+    SAT_Rect mrect = getRect();
+    SAT_Painter* painter= AContext->painter;
+    
+    //SAT_Widget* parent = getParent();
+    //if (parent) {
+    //  SAT_Rect parent_rect = parent->getRect();
+    //  parent_rect.overlap(mrect);
+    //  painter->pushClip(parent_rect);
+    //}
+    
+    if (num > 0) {
+      if (MAutoClip) painter->pushOverlapClip(mrect);
+      for (uint32_t i=0; i<num; i++) {
+        SAT_Widget* widget = MChildren[i];
+        //if (widget->isVisible()) {
+        if (widget->isRecursivelyVisible()) {
+          SAT_Rect widgetrect = widget->getRect();
+          widgetrect.overlap(mrect);
+          if (widgetrect.isNotEmpty()) {
+            //if ( widgetrect.intersects(mrect) ) {
+              widget->on_widget_paint(AContext);
+            //} // intersects
+          } // not empty
+        } // visible
+      } // for
+      if (MAutoClip) painter->popClip();
+    } // num > 0
+    //painter->popClip();
+  }
+
+  //----------
+  
+  virtual bool isRecursivelyVisible() {
+    if (!MIsVisible) return false;
+    if (!MParent) return true;
+    return MParent->isRecursivelyVisible();
+  }
+
+
+
 //------------------------------
 public: // base
 //------------------------------
@@ -636,6 +765,34 @@ public: // widget listener
   }
 
   //----------
+
+
+  
+//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+//    if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+//  }
+
+  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+    switch(AReason) {
+      case SAT_WIDGET_NOTIFY_CLOSE:
+        //SAT_PRINT;
+        //realignChildWidgets(true);
+        //parentRedraw();
+        break;
+      case SAT_WIDGET_NOTIFY_REALIGN:
+        //SAT_Print("this: %s ASender: %s\n",getName(),ASender->getName());
+        realignChildWidgets(true);
+        parentRedraw();
+        break;
+      default:
+        //SAT_PRINT;
+        //realignChildWidgets(true);
+        //parentRedraw();
+        break;
+    }
+    if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+  }
+
 
   void do_widget_set_modal(SAT_Widget* ASender) override {
     if (MListener) MListener->do_widget_set_modal(ASender);
