@@ -59,11 +59,11 @@ public:
     SAT_Rect rect = ARect;
     //setRectAndBasis(MSavedRect);
     MSavedRect = rect;
-    //uint32_t winw = MWindow->getWidth();
-    //uint32_t winh = MWindow->getHeight();
+    uint32_t winw = getWindowWidth();
+    uint32_t winh = getWindowHeight();
     
-    uint32_t winw = getOwner()->do_widget_get_width();
-    uint32_t winh = getOwner()->do_widget_get_height();
+    //SAT_Print("winw %i winh %i,%i\n",winw,winh);
+    
     if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - 5;
     if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - 5;
     setRectAndBasis(rect);
@@ -101,15 +101,15 @@ public:
     do_widget_set_modal(nullptr);
     setActive(false);
     setVisible(false);
-    setRectAndBasis(MSavedRect);
-    if (MTween) {
-      if (MTween->isActive()) MTween->stop();
-      MTween = nullptr; // see assert in open()
-    }
-
-    //parentRedrawAll(); // redraw entire parent
-    
-    do_widget_redraw(this,0);   // !!! TOD: redraw parent..
+//    setRectAndBasis(MSavedRect);
+    #ifdef SAT_POPUP_WIDGET_USE_TWEENING
+      if (MTween) {
+        if (MTween->isActive()) MTween->stop();
+        MTween = nullptr; // see assert in open()
+      }
+    #endif
+    //parentRealign();
+    parentRedrawAll(); // redraw entire parent
     
   }
 
@@ -120,12 +120,10 @@ public:
   // called from window
   // (clicking outside of modal widget)
 
-//  void on_widget_notify(uint32_t AReason=SAT_WIDGET_NOTIFY_NONE) override {
-//    //SAT_PanelWidget::on_widget_notify(AReason,AValue);
-//    if (AReason == SAT_WIDGET_NOTIFY_CLOSE) {
-//      close();
-//    }
-//  }
+  void do_widget_close(SAT_Widget* ASender) override {
+    //if (MListener) MListener->do_widget_close(ASender);
+    close();
+  }
   
   //----------
   

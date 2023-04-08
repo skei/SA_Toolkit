@@ -319,7 +319,9 @@ public:
   //----------
 
   void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
-    //SAT_PRINT;
+    // x11 doesnæt like negative coords? (uint16_t)
+    AXpos = SAT_ClampI(AXpos,0,MWindowWidth);
+    AYpos = SAT_ClampI(AYpos,0,MWindowHeight);
     memset(MExposeEventBuffer,0,sizeof(MExposeEventBuffer));
     MExposeEvent->window        = MWindow;
     MExposeEvent->response_type = XCB_EXPOSE;

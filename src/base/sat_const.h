@@ -140,14 +140,14 @@
 #define SAT_DIRECTION_HORIZ                     5
 #define SAT_DIRECTION_VERT                      6
 
-//#define SAT_EDGE_NONE                           0
-//#define SAT_EDGE_LEFT                           0x01
-//#define SAT_EDGE_RIGHT                          0x02
-//#define SAT_EDGE_TOP                            0x04
-//#define SAT_EDGE_BOTTOM                         0x08
-//#define SAT_EDGE_ALL                            0x0f
-//#define SAT_EDGE_HORIZ                          (SAT_EDGE_LEFT | SAT_EDGE_RIGHT)
-//#define SAT_EDGE_VERT                           (SAT_EDGE_TOP | SAT_EDGE_BOTTOM)
+#define SAT_EDGE_NONE                           0
+#define SAT_EDGE_LEFT                           0x01
+#define SAT_EDGE_RIGHT                          0x02
+#define SAT_EDGE_TOP                            0x04
+#define SAT_EDGE_BOTTOM                         0x08
+#define SAT_EDGE_ALL                            0x0F
+#define SAT_EDGE_HORIZ                          (SAT_EDGE_LEFT | SAT_EDGE_RIGHT)
+#define SAT_EDGE_VERT                           (SAT_EDGE_TOP | SAT_EDGE_BOTTOM)
 
 #define SAT_FILE_READ_BINARY                    (char*)"rb"
 #define SAT_FILE_READ_TEXT                      (char*)"r"

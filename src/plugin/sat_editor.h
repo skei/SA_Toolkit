@@ -151,7 +151,7 @@ public: // window listener
     push update into gui thread somwhow..
   */
 
-  void do_window_timer(SAT_Window* ASender, double AElapsed) override { // final
+  void do_windowListener_timer(SAT_Window* ASender, double AElapsed) override { // final
     //SAT_PRINT;
     if (MListener) MListener->do_editor_listener_timer();
     //on_window_timer();
@@ -159,7 +159,7 @@ public: // window listener
 
   //----------
 
-  void do_window_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+  void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
     if (MListener) {
       SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection();
       if (param) {
@@ -172,7 +172,7 @@ public: // window listener
 
   //----------
 
-  void do_window_redraw_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+  void do_windowListener_redraw_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
     //SAT_PRINT;
   }
 
@@ -310,10 +310,12 @@ public: // clap
     //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
       // when our window is embedded, we don't get on_window_open events ??
-      if (!MPreparedWidgets) {
-        MWindow->on_window_open();
-        MPreparedWidgets = true;
-      }
+
+//      if (!MPreparedWidgets) {
+//        MWindow->on_window_open();
+//        MPreparedWidgets = true;
+//      }
+
       MWindow->show();
     }
     MIsOpen = true;

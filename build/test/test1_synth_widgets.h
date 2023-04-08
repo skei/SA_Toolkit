@@ -9,7 +9,7 @@ class test1_synth_widget
 private:
 //------------------------------
 
-  SAT_Window* MWindow = nullptr;
+  //SAT_Window* MWindow = nullptr;
   
   double x1 = 0.50;
   double y1 = 0.50;
@@ -35,24 +35,22 @@ public:
 
   test1_synth_widget(SAT_Rect ARect)
   : SAT_MovableWidget(ARect) {
-    
-    setBackgroundColor(SAT_Color(0.4,0.4,0.4,0.05));
-    
+    SAT_PRINT;
+    setBackgroundColor(SAT_Color(0.4,0.4,0.3,0.03));
   }
   
   //----------
 
   virtual ~test1_synth_widget() {
+    SAT_PRINT;
   }
   
   //----------
 
-  //void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
   virtual void prepare(SAT_WidgetOwner* AOwner) {
-    //SAT_MovableWidget::prepare(AWindow,ARecursive);
     SAT_MovableWidget::prepare(AOwner);
-    MWindow = (SAT_Window*)AOwner;
-    MWindow->registerTimerWidget(this);
+    SAT_Window* window = (SAT_Window*)AOwner;
+    window->registerTimerWidget(this);      // TODO: -> SAT_WidgetOwner
   }
   
   //----------
@@ -120,6 +118,7 @@ public:
     double _x4 = R.x + (x4 * R.w);
     double _y4 = R.y + (y4 * R.h);
     
+    //SAT_Print("%.f,%.f,%.f,%.f\n",R.x,R.y,R.w,R.h);
     painter->drawLine(_x1,_y1,_x2,_y2);
     painter->drawLine(_x2,_y2,_x3,_y3);
     painter->drawLine(_x3,_y3,_x4,_y4);

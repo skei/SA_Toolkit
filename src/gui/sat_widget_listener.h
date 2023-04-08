@@ -26,6 +26,7 @@ public:
   virtual void  do_widget_set_hint(SAT_Widget* ASender, uint32_t AMode, const char* AHint)  {}
   virtual void  do_widget_set_modal(SAT_Widget* ASender)                                    {}
   //virtual void  do_widget_notify(SAT_Widget* ASender, uint32_t AMessage, int32_t AValue)  {}
+  virtual void do_widget_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY)       {}
 
 };
 

@@ -142,8 +142,7 @@ public:
     MContainer->setVisible(true);
     setHeight(MOpenSize * S);
     setBasisHeight(MOpenSize);
-    //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
-    do_widget_realign(this);
+    parentRealignParent();
   }
 
   //----------
@@ -156,8 +155,7 @@ public:
     MContainer->setVisible(false);
     setHeight(MClosedSize * S);
     setBasisHeight(MClosedSize);
-    //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
-    do_widget_realign(this);
+    parentRealignParent();
   }
 
   //----------

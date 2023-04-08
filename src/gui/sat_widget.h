@@ -11,28 +11,6 @@
 #define SAT_WIDGET_DIRTY_QUEUE_SIZE 1024
 
 //----------------------------------------------------------------------
-
-//class SAT_TimerListener {
-//public:
-//  virtual void do_timerListener_update() {}
-//};
-
-//class SAT_Painter {
-//public:
-//  virtual void setClipRect(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-//  virtual void resetClip() {}
-//  virtual void pushClip(SAT_Rect ARect) {}
-//  virtual void pushOverlappingClip(SAT_Rect ARect) {}
-//  virtual void popClip() {}
-//};
-
-//struct SAT_PaintContext {
-//  SAT_Painter*  painter     = nullptr;
-//  SAT_Rect      updaterect  = {};
-//  uint32_t      counter     = 0;
-//};
-
-//----------------------------------------------------------------------
 //
 //
 //
@@ -219,6 +197,36 @@ public: // hierarchy
 
   //----------
   
+  virtual double getWindowWidth() {
+    if (MOwner) return MOwner->do_widgetOwner_get_width();
+    else return 0.0;
+  }
+  
+  virtual double getWindowHeight() {
+    if (MOwner) return MOwner->do_widgetOwner_get_height();
+    else return 0.0;
+  }
+  
+  virtual double getWindowScale() {
+    if (MOwner) return MOwner->do_widgetOwner_get_scale();
+    else return 1.0;
+  }
+  
+  //----------
+  
+  virtual void setLayout(uint32_t AAlign, uint32_t AStretch) {
+    MAlignment = AAlign;
+    MStretching = AStretch;
+  }
+  
+  //----------
+  
+  virtual void connect(void* AParameter, uint32_t AIndex=0) {
+    MConnections[AIndex] = AParameter;
+  }
+
+  //----------
+  
   virtual void prepare(SAT_WidgetOwner* AOwner) {
     on_widget_prepare();
     MOwner = AOwner;
@@ -240,19 +248,6 @@ public: // hierarchy
   
   //----------
   
-  virtual double getWindowScale() {
-    if (MOwner) return MOwner->do_widget_get_scale();
-    else return 1.0;
-  }
-  
-  //----------
-  
-  virtual void connect(void* AParameter, uint32_t AIndex=0) {
-    MConnections[AIndex] = AParameter;
-  }
-
-  //----------
-  
   virtual void setActive(bool AState=true, bool ARecursive=true) {
     MIsActive = AState;
     if (ARecursive) {
@@ -269,11 +264,6 @@ public: // hierarchy
         MChildWidgets[i]->setVisible(AState,ARecursive);
       }
     }
-  }
-
-  virtual void setLayout(uint32_t AAlign, uint32_t AStretch) {
-    MAlignment = AAlign;
-    MStretching = AStretch;
   }
 
   virtual void setRectAndBasis(SAT_Rect ARect) {
@@ -313,84 +303,53 @@ public: // hierarchy
 
   //----------
   
-  //virtual bool isRecursivelyVisible() {
-  //  if (!MIsVisible) return false;
-  //  if (!MParent) return true;
-  //  return MParent->isRecursivelyVisible();
-  //}
+  virtual bool isRecursivelyVisible() {
+    if (!MIsVisible) return false;
+    if (!MParentWidget) return true;
+    return MParentWidget->isRecursivelyVisible();
+  }
   
   //----------
 
-  //virtual SAT_Widget* findChildWidget(double AXpos, double AYpos, bool ARecursive=true) {
-  //  if (!MRect.contains(AXpos,AYpos)) return nullptr;
-  //  if (!isActive()) return nullptr;
-  //  uint32_t num = MChildren.size();
-  //  if (num > 0) {
-  //    for (int32_t i=num-1; i>=0; i--) {
-  //      SAT_Widget* widget = MChildren[i];
-  //      if (widget->isActive() /*&& widget->isVisible()*/) {
-  //        SAT_Rect rect = widget->getRect();
-  //        if (rect.contains(AXpos,AYpos)) {
-  //          SAT_Widget* child = widget;
-  //          if (ARecursive) {
-  //            child = widget->findChildWidget(AXpos,AYpos,ARecursive);
-  //          }
-  //          return child;
-  //        }
-  //      }
-  //    }
-  //  }
-  //  return this;
-  //}
-
-  virtual SAT_Widget* findChildWidget(double AXpos, double AYpos) {
-    for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-      SAT_Widget* widget = MChildWidgets[i];
-      if (widget->isActive()) {
-        SAT_Rect rect = widget->getRect();
-        if (rect.contains(AXpos,AYpos)) {
-          SAT_Widget* child = widget->findChildWidget(AXpos,AYpos);
-          return child;
+  virtual SAT_Widget* findChildWidget(double AXpos, double AYpos, bool ARecursive=true) {
+    if (!MRect.contains(AXpos,AYpos)) return nullptr;
+    if (!isActive()) return nullptr;
+    uint32_t num = MChildWidgets.size();
+    if (num > 0) {
+      for (int32_t i=num-1; i>=0; i--) {
+        SAT_Widget* widget = MChildWidgets[i];
+        if (widget->isActive() /*&& widget->isVisible()*/) {
+          SAT_Rect rect = widget->getRect();
+          if (rect.contains(AXpos,AYpos)) {
+            SAT_Widget* child = widget;
+            if (ARecursive) {
+              child = widget->findChildWidget(AXpos,AYpos,ARecursive);
+            }
+            return child;
+          }
         }
       }
     }
-    if (MIsActive) return this;
-    else return nullptr;
+    return this;
   }
+
+//  virtual SAT_Widget* findChildWidget(double AXpos, double AYpos) {
+//    for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+//      SAT_Widget* widget = MChildWidgets[i];
+//      if (widget->isActive()) {
+//        SAT_Rect rect = widget->getRect();
+//        if (rect.contains(AXpos,AYpos)) {
+//          SAT_Widget* child = widget->findChildWidget(AXpos,AYpos);
+//          return child;
+//        }
+//      }
+//    }
+//    if (MIsActive) return this;
+//    else return nullptr;
+//  }
 
   //----------
   
-  //virtual void paintChildWidgets(SAT_PaintContext* AContext, bool ARecursive=true) {
-  //  //SAT_Print("%s\n",getName());
-  //  uint32_t num = MChildWidgets.size();
-  //  SAT_Rect mrect = getRect();
-  //  SAT_Painter* painter= AContext->painter;
-  //  //SAT_Widget* parent = getParent();
-  //  //if (parent) {
-  //  //  SAT_Rect parent_rect = parent->getRect();
-  //  //  parent_rect.overlap(mrect);
-  //  //  painter->pushClip(parent_rect);
-  //  //}
-  //  if (num > 0) {
-  //    if (MAutoClip) painter->pushOverlappingClip(mrect);
-  //    for (uint32_t i=0; i<num; i++) {
-  //      SAT_Widget* widget = MChildWidgets[i];
-  //      //if (widget->isVisible()) {
-  //      if (widget->isRecursivelyVisible()) {
-  //        SAT_Rect widgetrect = widget->getRect();
-  //        widgetrect.overlap(mrect);
-  //        if (widgetrect.isNotEmpty()) {
-  //          //if ( widgetrect.intersects(mrect) ) {
-  //            widget->on_widget_paint(AContext);
-  //          //} // intersects
-  //        } // not empty
-  //      } // visible
-  //    } // for
-  //    if (MAutoClip) painter->popClip();
-  //  } // num > 0
-  //  //painter->popClip();
-  //}
-
   virtual void paintChildWidgets(SAT_PaintContext* AContext) {
     SAT_Rect mrect = getRect();
     SAT_Painter* painter= AContext->painter;
@@ -400,17 +359,12 @@ public: // hierarchy
       if (MAutoClip) painter->pushOverlappingClip(mrect);
       for (uint32_t i=0; i<num; i++) {
         SAT_Widget* widget = MChildWidgets[i];
-        //SAT_Print("%i. %s\n",i,widget->getName());
+        //if (widget->isRecursivelyVisible()) {
         if (widget->isVisible()) {
-          //SAT_Print("   is visible\n");
           SAT_Rect wr = widget->getRect();
-          //SAT_Print("   wr %.f, %.f, %.f, %.f\n",wr.x,wr.y,wr.w,wr.h);
           wr.overlap(mrect);
           if (wr.isNotEmpty()) {
-            //SAT_Print("   rect not empty\n");
-            //if ( widgetrect.intersects(mrect) ) {
-              widget->on_widget_paint(AContext);
-            //} // intersects
+            widget->on_widget_paint(AContext);
           } // not empty
         } // visible
       } // for
@@ -622,19 +576,31 @@ public: // hierarchy
 public:
 //------------------------------
 
-  virtual void update() {
+  virtual void parentUpdate() {
     if (MListener) MListener->do_widget_update(this,0,0);
   }
 
   //----------
 
-  virtual void redraw() {
+  virtual void parentRealign() {
+    if (MListener) MListener->do_widget_realign(this);
+  }
+
+  //----------
+
+  virtual void parentRealignParent() {
+    if (MListener) MListener->do_widget_realign(nullptr);
+  }
+
+  //----------
+
+  virtual void parentRedraw() {
     if (MListener) MListener->do_widget_redraw(this,0,0);
   }
 
   //----------
 
-  virtual void redrawAll() {
+  virtual void parentRedrawAll() {
     if (MListener) MListener->do_widget_redraw(nullptr,0,0);
   }
 
@@ -724,9 +690,13 @@ public: // widget listener
   //----------
 
   void do_widget_realign(SAT_Widget* ASender) override {
-    realignChildWidgets();
-    do_widget_redraw(this,0);
-    if (MListener) MListener->do_widget_realign(ASender);
+    if (ASender) {
+      realignChildWidgets();
+      do_widget_redraw(this,0);
+    }
+    else {
+      if (MListener) MListener->do_widget_realign(this);
+    }
   }
 
   //----------
@@ -761,7 +731,6 @@ public: // widget listener
   
   //----------
 
-  /*
   void do_widget_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {
     SAT_Rect mrect = getRect();
     double S = getWindowScale();
@@ -773,7 +742,6 @@ public: // widget listener
     //realignChildWidgets(true);
     //parentRedraw();
   }
-  */
 
   //----------
 

@@ -250,7 +250,7 @@
     left_column->appendChildWidget(selector);
     selector->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
-    SAT_ScrollBarWidget* scrollbar0 = new SAT_ScrollBarWidget(20);
+    SAT_ScrollBarWidget0* scrollbar0 = new SAT_ScrollBarWidget0(20);
     left_column->appendChildWidget(scrollbar0);
     scrollbar0->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     

@@ -230,7 +230,7 @@ public:
   
   //----------
 
-  virtual void copyBuffer(void* ADst, uint32_t ADstXpos, uint32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, uint32_t ASrcXpos, uint32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
+  virtual void copyBuffer(void* ADst, int32_t ADstXpos, int32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, int32_t ASrcXpos, int32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
     MWindowPainter->selectRenderBuffer(ADst,ADstWidth,ADstHeight);
     MWindowPainter->beginFrame(ADstWidth,ADstHeight);
     int32_t image = MWindowPainter->getImageFromRenderBuffer(ASrc);
@@ -251,6 +251,23 @@ public:
     MTimerWidgets.remove(AWidget);
   }
   
+  
+  //----------
+
+  SAT_Rect calcClipRect(SAT_Widget* AWidget) {
+    SAT_Rect rect = AWidget->getRect();
+    //SAT_Print(">>> %s : %.f,%.f,%.f,%.f\n",AWidget->getName(),rect.x,rect.y,rect.w,rect.h);
+    SAT_Widget* parent = AWidget->getParentWidget();
+    while (parent) {
+      SAT_Rect parentrect = parent->getRect();
+      //SAT_Print("%s : %.f,%.f,%.f,%.f\n",parent->getName(),parentrect.x,parentrect.y,parentrect.w,parentrect.h);
+      rect.overlap(parentrect);
+      SAT_Widget* next = parent->getParentWidget();
+      parent = next;
+    }
+    //SAT_Print("clip %.f,%.f,%.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
+    return rect;
+  }
   
 //------------------------------
 public: // capture
@@ -347,18 +364,18 @@ public: // hover
       if (MHoverWidget) MHoverWidget->on_widget_mouse_leave(AHover,AXpos,AYpos,0);
       if (AHover) {
         AHover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
-        if (AHover->autoHoverCursor()) do_widget_set_cursor(AHover,AHover->getMouseCursor());
-        if (AHover->autoHoverHint()) do_widget_set_hint(AHover,0,AHover->getHint());
+        //if (AHover->autoHoverCursor()) do_widget_set_cursor(AHover,AHover->getMouseCursor());
+        //if (AHover->autoHoverHint()) do_widget_set_hint(AHover,0,AHover->getHint());
       }
+      MHoverWidget = AHover;
     }
-    MHoverWidget = AHover;
   }
 
 //------------------------------
 public: // window
 //------------------------------
 
-  virtual void on_window_open() {
+  void on_window_open() override {
     SAT_PRINT;
     if (MRootWidget) {
       MRootWidget->prepare(this);
@@ -370,29 +387,29 @@ public: // window
 
   //----------
 
-  virtual void on_window_close() {
+  void on_window_close() override {
     SAT_PRINT;
   }
 
   //----------
 
-  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {
+  void on_window_move(int32_t AXpos, int32_t AYpos) override {
     //SAT_PRINT;
   }
 
   //----------
   
-  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {
+  void on_window_resize(int32_t AWidth, int32_t AHeight) override {
 
     MWidth = AWidth;
     MHeight = AHeight;
     MScale = recalcScale(AWidth,AHeight);
 
     // or should we check in paint()?
-    #ifdef SAT_WINDOW_BUFFERED
-      //bool resized = checkBuffer(AWidth,AHeight);
-      //if (resized) {}
-    #endif
+    //#ifdef SAT_WINDOW_BUFFERED
+    //  bool resized = checkBuffer(AWidth,AHeight);
+    //  if (resized) {}
+    //#endif
     
     if (MRootWidget) {
 
@@ -472,7 +489,7 @@ public: // window
   }  
   */
 
-  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) {
+  void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
     //bool dblclick = checkDoubleClick(ATimEsStamp);
     //bool scroll = checkScrollWheel(AButton);
     if (MHoverWidget) {
@@ -497,27 +514,13 @@ public: // window
 
   //----------
   
-  /*
-  void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    // if we captured a widget, notify it we released the button, and find new hovering widget
-    if (MCapturedWidget) {
-      if (MMouseClickedB == AButton) {
-        //AT_Print("release\n");
-        //MMouseLockedWidget = nullptr;
-        MCapturedWidget->on_widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
-        MCapturedWidget = nullptr;
-        updateHoverWidget(AXpos,AYpos);
-      }
-    }
-  }  
-  */
-
-  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) {
+  void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
     if (MMouseCapturedWidget) {
       if (AButton == MMouseClickedButton) {
         // released first button
         MMouseCapturedWidget->on_widget_mouse_release(AXpos,AYpos,AButton,AState,ATimestamp);
         MMouseCapturedWidget = nullptr;
+//        updateHoverWidget(AXpos,AYpos);
       }
       //else {
       //  // released later button
@@ -532,8 +535,10 @@ public: // window
   
   /*
   void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+    
     // if mouse is locked, we do the 'regular mouse things' with 'adjusted' (dragging) coords
     // and then reset the cursor back to where it was..
+    
     if (MMouseLockedWidget) { // todo: also if mouse_clicked?
       if ((AXpos == MMouseClickedX) && (AYpos == MMouseClickedY)) {
         MMousePreviousX = AXpos;
@@ -574,46 +579,54 @@ public: // window
   }  
   */
 
-  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATimestamp) {
+  void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATimestamp) override {
     MMouseCurrentXpos = AXpos;
     MMouseCurrentYpos = AYpos;
-    SAT_Widget* hover = findHoverWidget(AXpos,AYpos);
     int32_t x = AXpos;
     int32_t y = AYpos;
+    
     if (MMouseIsLocked) {
       updateLockedMouse(AXpos,AYpos);
       x = MLockedCurrentX;
       y = MLockedCurrentY;
     }
-    if (MMouseCapturedWidget) {
-      // check hover if drag'n'drop?
+    
+    if (MModalWidget) {
+      SAT_Widget* hover = findHoverWidget(AXpos,AYpos,MModalWidget);
+      updateHoverState(hover,x,y,0);
+      MModalWidget->on_widget_mouse_move(x,y,AState,ATimestamp);
+    }
+    else if (MMouseCapturedWidget) {
+      //SAT_Widget* hover = findHoverWidget(AXpos,AYpos,MMouseCapturedWidget);
       //updateHoverState(hover,x,y,0);
       MMouseCapturedWidget->on_widget_mouse_move(x,y,AState,ATimestamp);
     }
     else {
+      SAT_Widget* hover = findHoverWidget(AXpos,AYpos);
       updateHoverState(hover,x,y,0);
       if (hover) hover->on_widget_mouse_move(x,y,AState,ATimestamp);
     }
+    
     MMousePreviousXpos = AXpos;
     MMousePreviousYpos = AYpos;
   }
 
   //----------
 
-  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, SAT_Widget* AFrom) {
+  void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATimestamp) override {
     SAT_Widget* hover = findHoverWidget(AXpos,AYpos);
     updateHoverState(hover,AXpos,AYpos,0);
   }
 
   //----------
 
-  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, SAT_Widget* ATo) {
+  void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATimestamp) override {
     updateHoverState(nullptr,AXpos,AYpos,0);
   }
 
   //----------
 
-  virtual void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATimestamp) {
+  void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATimestamp) override {
     if (MKeyCapturedWidget) {
       MKeyCapturedWidget->on_widget_key_press(AKey,AState,ATimestamp);
     }
@@ -621,7 +634,7 @@ public: // window
 
   //----------
 
-  virtual void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATimestamp) {
+  void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATimestamp) override {
     if (MKeyCapturedWidget) {
       MKeyCapturedWidget->on_widget_key_release(AKey,AState,ATimestamp);
     }
@@ -629,7 +642,8 @@ public: // window
 
   //----------
   
-  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
+  void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+    
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
@@ -649,6 +663,8 @@ public: // window
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
       while (MPaintDirtyWidgets.read(&widget)) {} // widget->on_widget_paint(&MPaintContext);
+      //count = 1;
+
       MRootWidget->on_widget_paint(&MPaintContext);
       MWindowPainter->endFrame();
     }
@@ -657,19 +673,33 @@ public: // window
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
-      while (MPaintDirtyWidgets.read(&widget)) widget->on_widget_paint(&MPaintContext);
+      while (MPaintDirtyWidgets.read(&widget)) {
+        
+        //if (widget->getLastPainted() != paint_count) {
+          SAT_Rect cliprect = calcClipRect(widget);
+          MWindowPainter->pushClip(cliprect);
+          widget->on_widget_paint(&MPaintContext);
+          MWindowPainter->popClip();
+        //  widget->setLastPainted(paint_count);
+          //count += 1;
+        //}
+        
+      }
       MWindowPainter->endFrame();
     }
+   
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
     MPaintContext.counter += 1;
   }
   
-  //----------
-  
+//------------------------------
+public:
+//------------------------------
+
   virtual void on_window_timer(double AElapsed) {
-    if (MListener) MListener->do_window_timer(this,AElapsed);
+    if (MListener) MListener->do_windowListener_timer(this,AElapsed);
     for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(0,AElapsed);
     //MTweens.process(elapsed,MScale);
     SAT_Rect rect;
@@ -686,25 +716,25 @@ public: // window
 public: // widget owner
 //------------------------------
 
-  double do_widget_get_scale() override {
+  double do_widgetOwner_get_scale() override {
     return MScale;
   }
 
   //----------
 
-  //double do_widgetr_getWidth() override {
-  //  return MWidth;
-  //}
+  double do_widgetOwner_get_width() override {
+    return MWidth;
+  }
 
   //----------
 
-  //double do_widget_getHeight() override {
-  //  return MHeight;
-  //} 
+  double do_widgetOwner_get_height() override {
+    return MHeight;
+  } 
 
   //----------
 
-  SAT_Painter* do_widget_get_painter() override {
+  SAT_Painter* do_widgetOwner_get_painter() override {
     return MWindowPainter;
   } 
 
@@ -713,21 +743,32 @@ public: // widget listener
 //------------------------------
 
   void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    if (MListener) MListener->do_window_update_widget(ASender,AMode,AIndex);
+    if (MListener) MListener->do_windowListener_update_widget(ASender,AMode,AIndex);
   }
 
   //----------
   
   void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    SAT_Assert(ASender);
-    //if (!ASender) ASender = MRootWidget;
+    if (!ASender) ASender = MRootWidget;
     MPendingDirtyWidgets.write(ASender);
-    if (MListener) MListener->do_window_redraw_widget(ASender,AMode,AIndex);
+    if (MListener) MListener->do_windowListener_redraw_widget(ASender,AMode,AIndex);
   }
 
   //----------
 
   void do_widget_realign(SAT_Widget* ASender) override {
+//    SAT_PRINT;
+//    if (ASender) {
+//      //realignChildWidgets();
+//      //do_widget_redraw(this,0);
+//    }
+//    else {
+//      if (MRootWidget) {
+//        SAT_PRINT;
+//        //realignChildWidgets();
+//        //do_widget_redraw(nullptr,0);
+//      }
+//    }
   }
 
   //----------

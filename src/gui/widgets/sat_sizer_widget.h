@@ -167,9 +167,12 @@ public:
             //  && (th > tmin.h) && (th < tmax.h) ) {
   
               //MTarget->do_widget_resized(this,deltax,deltay);
-//              MTarget->do_widget_resized(this,deltax,deltay);
+              
+              MTarget->do_widget_resized(this,deltax,deltay);
+
               //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
-              do_widget_realign(this);
+              //do_widget_realign(this);
+              parentRealign();
               
             //}
 
