@@ -48,6 +48,7 @@
       <File Name="../../../SA_Plugins/sa_gain.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="test">
+      <File Name="../test/test7_gui2.h"/>
       <File Name="../test/test4_layout.h"/>
       <File Name="../test/test1_synth_widgets.h"/>
       <File Name="../test/test1_synth.h"/>
@@ -272,6 +273,11 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="gui">
+      <VirtualDirectory Name="gui2">
+        <File Name="../../src/gui2/sat_buffered_window.h"/>
+        <File Name="../../src/gui2/sat_window.h"/>
+        <File Name="../../src/gui2/sat_widget.h"/>
+      </VirtualDirectory>
       <File Name="../../src/gui/sat_widgets.h"/>
       <File Name="../../src/gui/sat_window_listener.h"/>
       <File Name="../../src/gui/sat_painter.h"/>

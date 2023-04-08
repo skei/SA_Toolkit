@@ -4,10 +4,11 @@
 
 #include "gui/widgets/sat_grid_widget.h"
 
-#define SAT_MAX_STATES 32
-
-#define SAT_BUTTON_ROW_SINGLE  0
-#define SAT_BUTTON_ROW_MULTI   1
+#define SAT_MAX_STATES        32
+#define SAT_BUTTON_ROW_SINGLE 0
+#define SAT_BUTTON_ROW_MULTI  1
+#define SAT_BUTTON_ROW_HORIZ 0
+#define SAT_BUTTON_ROW_VERT  1
 
 
 class SAT_ButtonRowWidget
@@ -17,7 +18,8 @@ class SAT_ButtonRowWidget
 protected:
 //------------------------------
 
-  int32_t     MMode                   = 0;
+  int32_t     MMode                   = SAT_BUTTON_ROW_SINGLE;
+  bool        MVertical               = false;
   int32_t     MSelected               = 0;
   bool        MStates[SAT_MAX_STATES] = {0};
   const char* MLabels[SAT_MAX_STATES] = {0};
@@ -42,9 +44,11 @@ protected:
 public:
 //------------------------------
 
-  SAT_ButtonRowWidget(SAT_Rect ARect, int32_t ANum, const char** ATxt=nullptr, int32_t AMode=SAT_BUTTON_ROW_SINGLE)
-  : SAT_GridWidget(ARect,ANum,1) {
+  SAT_ButtonRowWidget(SAT_Rect ARect, int32_t ANum, const char** ATxt=nullptr, int32_t AMode=SAT_BUTTON_ROW_SINGLE, bool AVertical=false)
+  : SAT_GridWidget(ARect, AVertical?1:ANum, AVertical?ANum:1 ) {
     setName("SAT_ButtonRowWidget");
+    
+    MVertical = AVertical;
 
 //    setNumParameters(1);
 
@@ -102,9 +106,13 @@ public:
     MDrawRoundedBottom = AState;
   }
 
-  void setTextSize(double ASize) { MTextSize = ASize; }
+  void setTextSize(double ASize) {
+    MTextSize = ASize;
+  }
 
-  void setAllowZeroBits(bool AAllow=true) { MAllowZeroBits = AAllow; }
+  void setAllowZeroBits(bool AAllow=true) {
+    MAllowZeroBits = AAllow;
+  }
 
 //------------------------------
 public:
@@ -201,44 +209,36 @@ public:
   //----------
 
   void selectButton(int32_t index) {
-
     MSelected = index;
-
     if (MMode == SAT_BUTTON_ROW_SINGLE) {
-
-      for (int32_t i=0; i<MNumColumns; i++) {
+      int32_t num;
+      if (MVertical) num = MNumRows;
+      else num = MNumColumns;
+      for (int32_t i=0; i<num; i++) {
         if (i==MSelected) {
           MStates[i] = true;
-//          MValues[0] = i;
+          //MValues[0] = i;
         }
         else {
           MStates[i] = false;
         }
       }
-
       //MValues[0] = MSelected;
-      
       //setValue(MSelected);
       SAT_GridWidget::setValue(MSelected);
-
-      //      float v = (float)MSelected / ((float)MNumColumns - 1.0f);
-      //      SAT_Widget::setValue(v);
-
+      //float v = (float)MSelected / ((float)MNumColumns - 1.0f);
+      //SAT_Widget::setValue(v);
     }
     else { // MULTI
-
       MStates[MSelected] = MStates[MSelected] ? false : true;
       if ( !MAllowZeroBits && (getNumActiveBits() == 0) ) {
         MStates[MSelected] = true;
       }
       //calcBitValue();
       //MValues[0] = getButtonBits();
-
       uint32_t bits = getButtonBits();
-      
       //setValue( bits );
       SAT_GridWidget::setValue( bits );
-
     }
   }
 
@@ -248,9 +248,9 @@ public:
 
   void selectValue(float AValue) {
     //SAT_Print("value %.3f\n",AValue);
-//    float num = AValue * MNumColumns;
-//    num = SAT_Min(num,float(MNumColumns-1));
-//    selectButton( (int)num );
+    // float num = AValue * MNumColumns;
+    // num = SAT_Min(num,float(MNumColumns-1));
+    // selectButton( (int)num );
     selectButton( (int)AValue );
   }
 
@@ -260,7 +260,11 @@ public:
 
   void on_clickCell(int32_t AX, int32_t AY, int32_t AB) override {
     if (AB == SAT_BUTTON_LEFT) {
-      selectButton(AX);
+      
+      //SAT_Print("MVertical %i AX %i AY %i\n",MVertical,AX,AY);
+      
+      if (MVertical) selectButton(AY);
+      else selectButton(AX);
       //setValue();
       do_widget_update(this,0);
       do_widget_redraw(this,0);
@@ -275,9 +279,13 @@ public:
     //SAT_Window* window = (SAT_Window*)getOwnerWindow();
     //double S = window->getWindowScale();
     double S = getWindowScale();
-
+    
+    int32_t AA;
+    if (MVertical) AA = AY;
+    else AA = AX;
+    
     SAT_Color c1,c2;
-    if (MStates[AX]) {
+    if (MStates[AA]) {
       c1 = MActiveCellColor;
       c2 = MBackgroundCellColor;
     }
@@ -297,13 +305,25 @@ public:
       
       //SAT_Print("AX %i MNumColumns %i\n",AX,MNumColumns);
       
-      if (AX == 0) {
-        ul = MTLCorner * S;
-        ll = MBLCorner * S;
+      if (MVertical) {
+        if (AY == 0) {
+          ul = MTLCorner * S;
+          ur = MTRCorner * S;
+        }
+        if (AY == (MNumRows-1))  {
+          ll = MBLCorner * S;
+          lr = MBRCorner * S;
+        }
       }
-      if (AX == (MNumColumns-1))  {
-        ur = MTRCorner * S;
-        lr = MBRCorner * S;
+      else {
+        if (AX == 0) {
+          ul = MTLCorner * S;
+          ll = MBLCorner * S;
+        }
+        if (AX == (MNumColumns-1))  {
+          ur = MTRCorner * S;
+          lr = MBRCorner * S;
+        }
       }
       
       painter->setFillColor(c1);
@@ -322,9 +342,9 @@ public:
 
     // text
 
-    const char* txt = MLabels[AX];
+    const char* txt = MLabels[AA];
     SAT_Color color = MTextColor;
-    if (MStates[AX]) color = MActiveTextColor;
+    if (MStates[AA]) color = MActiveTextColor;
     else color = MTextColor;
     if (txt) {
       painter->setTextColor(color);
@@ -332,7 +352,7 @@ public:
       painter->drawTextBox(ARect,txt,SAT_TEXT_ALIGN_CENTER);
     }
     else {
-      sprintf(buf,"%i",AX);
+      sprintf(buf,"%i",AA);
       painter->setTextColor(color);
       painter->setTextSize(MTextSize * S);
       painter->drawTextBox(ARect,buf,SAT_TEXT_ALIGN_CENTER);

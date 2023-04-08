@@ -231,6 +231,7 @@ public:
     /*SAT_Parameter* par2 =*/ appendParameter( new SAT_Parameter("Param2",0.4) );
       SAT_Parameter* par3 =   appendParameter( new SAT_Parameter("Param3",0.7) );
     par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    /*SAT_Parameter* par4 =*/ appendParameter( new SAT_Parameter("Param4",0.1) );
 
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
 

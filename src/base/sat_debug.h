@@ -12,6 +12,14 @@
   // The only two signals for which a handler cannot be defined are SIGKILL and SIGSTOP.
 */
 
+/*
+  callstack:
+  https://gist.github.com/fmela/591333/c64f4eb86037bb237862a8283df70cdfc25f01d3  
+  "If you are linking your binary using GNU ld you need to add --export-dynamic
+  or most of your symbols will just be resolved to the name of the binary."
+  (linker flag, not a compiler flag. You might need to try -Wl,--export-dynamic)
+*/
+
 //----------------------------------------------------------------------
 
 #ifndef SAT_DEBUG

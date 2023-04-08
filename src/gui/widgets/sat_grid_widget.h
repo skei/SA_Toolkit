@@ -202,7 +202,7 @@ public:
     //double S = window->getWindowScale();
     double S = getWindowScale();
 
-
+    //drawDropShadow(AContext); // grid will fill entire rect
     fillBackground(AContext);
 
     if ((MNumColumns > 0) && (MNumRows > 0)) {

@@ -56,7 +56,7 @@
 
 
     
-// left column
+// left column ------------------------------
 
 
 
@@ -88,10 +88,12 @@
 
     SAT_ValueWidget* val = new SAT_ValueWidget(20,"Param 1", 0.0);
     left_column->appendChildWidget(val);
+    AEditor->connect(val,getParameter(0));
     val->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     val->setTextSize(12);
     val->setRoundedCorners(true);
     val->setCornerSize(5);
+    
     
     SAT_GroupBoxWidget* groupbox1 = new SAT_GroupBoxWidget(100,true);
     left_column->appendChildWidget(groupbox1);
@@ -101,7 +103,7 @@
       groupbox1->appendChildWidget(grpage1);
       grpage1->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
       grpage1->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
-
+      
     SAT_GroupBoxWidget* groupbox2 = new SAT_GroupBoxWidget(100,true);
     left_column->appendChildWidget(groupbox2);
     groupbox2->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
@@ -110,6 +112,14 @@
       groupbox2->appendChildWidget(grpage2);
       grpage2->setBackgroundColor(SAT_Color(0.35,0.40,0.35));
       grpage2->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
+
+        for (uint32_t i=0; i<3; i++) {
+          SAT_KnobWidget* k = new SAT_KnobWidget(SAT_Rect(10+(i*40),10,35,35),"",0);
+          grpage2->appendChildWidget(k);
+          k->setTextSize(8);
+          k->setValueSize(8);
+          k->setArcThickness(4);
+        }
 
     SAT_GroupBoxWidget* groupbox3 = new SAT_GroupBoxWidget(100,true);
     left_column->appendChildWidget(groupbox3);
@@ -120,8 +130,16 @@
       grpage3->setBackgroundColor(SAT_Color(0.35,0.35,0.40));
       grpage3->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
 
+        for (uint32_t i=0; i<3; i++) {
+          SAT_SliderWidget* s = new SAT_SliderWidget(SAT_Rect(10,10+(i*20),100,15),"",0);
+          grpage3->appendChildWidget(s);
+          s->setTextSize(8);
+          s->setValueSize(8);
+        }
+
     SAT_DragValueWidget* dragval = new SAT_DragValueWidget(20,"Param 2", 0.0);
     left_column->appendChildWidget(dragval);
+    AEditor->connect(dragval,getParameter(1));
     dragval->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     dragval->setTextSize(7);
     dragval->setValueSize(7);
@@ -143,6 +161,7 @@
 
     SAT_SliderWidget* slider = new SAT_SliderWidget(20,"Param 3", 0.0);
     left_column->appendChildWidget(slider);
+    AEditor->connect(slider,getParameter(2));
     slider->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     slider->setTextSize(12);
     slider->setBipolar(true);
@@ -174,14 +193,33 @@
     tabs->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
       SAT_PanelWidget* page1 = new SAT_PanelWidget(0);
-      SAT_PanelWidget* page2 = new SAT_PanelWidget(0);
-      SAT_PanelWidget* page3 = new SAT_PanelWidget(0);
-      page1->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
-      page2->setBackgroundColor(SAT_Color(0.35,0.40,0.35));
-      page3->setBackgroundColor(SAT_Color(0.35,0.35,0.40));
       tabs->appendPage("page1",page1);
+      page1->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
+      
+      SAT_PanelWidget* page2 = new SAT_PanelWidget(0);
       tabs->appendPage("page2",page2);
+      page2->setBackgroundColor(SAT_Color(0.35,0.40,0.35));
+
+        for (uint32_t i=0; i<3; i++) {
+          SAT_KnobWidget* k = new SAT_KnobWidget(SAT_Rect(10+(i*40),10,35,35),"",0);
+          page2->appendChildWidget(k);
+          k->setTextSize(8);
+          k->setValueSize(8);
+          k->setArcThickness(4);
+        }
+
+      SAT_PanelWidget* page3 = new SAT_PanelWidget(0);
       tabs->appendPage("page3",page3);
+      page3->setBackgroundColor(SAT_Color(0.35,0.35,0.40));
+
+        for (uint32_t i=0; i<3; i++) {
+          SAT_SliderWidget* s = new SAT_SliderWidget(SAT_Rect(10,10+(i*20),100,15),"",0);
+          page3->appendChildWidget(s);
+          s->setTextSize(8);
+          s->setValueSize(8);
+          if (i==0) AEditor->connect(s,getParameter(3));
+        }
+
       tabs->selectPage(0);
     
     SAT_ButtonRowWidget* buttonrow = new SAT_ButtonRowWidget(20,5,buttontext,SAT_BUTTON_ROW_MULTI);
@@ -250,7 +288,7 @@
 
 
 
-// middle colume
+// middle colume ------------------------------
 
 
 
@@ -329,13 +367,16 @@
     //MWaveformWidget->setAlignment(SAT_EDGE_BOTTOM);
     //MWaveformWidget->setStretching(SAT_EDGE_RIGHT);
     
-    SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(SAT_Rect(10,400,180,70));
+    SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(SAT_Rect(10,400,100,70));
     middle_column->appendChildWidget(textbox);
     //textbox->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
-     
       for (uint32_t i=0; i<25; i++) { textbox->appendLine("Hello world!"); }
     
-    
+    SAT_ButtonRowWidget* buttonrow3 = new SAT_ButtonRowWidget(SAT_Rect(120,400,70,70),5,buttontext,SAT_BUTTON_ROW_SINGLE,true);
+    middle_column->appendChildWidget(buttonrow3);
+    buttonrow3->setRoundedCorners(true);
+    buttonrow3->setCornerSize(3);
+
 //    // tween test
 //
 //    SAT_Tweening* tweens = AWindow->getTweens();
@@ -344,7 +385,9 @@
 //    double endpos[4]   = {  10, 285, 180, 60 };
 //    tweens->appendTween(SAT_WIDGET_TWEEN_RECT/*666*/,MWaveformWidget,38,4,startpos,endpos,2.0);
 
-// right column
+
+
+// right column ------------------------------
 
 
 
@@ -374,6 +417,10 @@
         graph->addModule(module,i*10,i*10,"module");
       }
       
+    SAT_PanelWidget* sizable = new SAT_PanelWidget(SAT_Rect(165,265,145,115));
+    right_column->appendChildWidget(sizable);
+    sizable->setDrawBorder(true);
+
     SAT_TimelineWidget* timeline = new SAT_TimelineWidget(SAT_Rect(10,390,300,90));
     right_column->appendChildWidget(timeline);
     timeline->setStretching(SAT_WIDGET_STRETCH_RIGHT | SAT_WIDGET_STRETCH_BOTTOM);
@@ -410,16 +457,16 @@
     
 // animation
     
-    test1_synth_widget* animated = new test1_synth_widget(SAT_Rect(415,305,300,115));
-    MRootPanel->appendChildWidget(animated);
-    AWindow->registerTimerWidget(animated);
-    animated->setAlignment(SAT_WIDGET_ALIGN_PARENT );
-    
+    test1_synth_widget* movable = new test1_synth_widget(SAT_Rect(415,305,145,115));
+    MRootPanel->appendChildWidget(movable);
+    AWindow->registerTimerWidget(movable);
+    movable->setAlignment(SAT_WIDGET_ALIGN_PARENT );
+
 //
     
-    AEditor->connect(val,     getParameter(0));
-    AEditor->connect(dragval, getParameter(1));
-    AEditor->connect(slider,  getParameter(2));
+    //AEditor->connect(val,     getParameter(0));
+    //AEditor->connect(dragval, getParameter(1));
+    //AEditor->connect(slider,  getParameter(2));
 
     return true;
   }

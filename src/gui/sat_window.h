@@ -210,13 +210,15 @@ public:
 public:
 //------------------------------
 
-  SAT_Widget*       getRootWidget()   { return MRootWidget; }
-  SAT_PaintContext* getPaintContext() { return &MPaintContext; }
-  double            getScale()        { return MScale; }
-  uint32_t          getWidth()        { return MWidth; }
-  uint32_t          getHeight()       { return MHeight; }
+  SAT_Widget*       getRootWidget()     { return MRootWidget; }
+  SAT_PaintContext* getPaintContext()   { return &MPaintContext; }
+  double            getScale()          { return MScale; }
+  uint32_t          getWidth()          { return MWidth; }
+  uint32_t          getHeight()         { return MHeight; }
+  double            getInitialWidth()   { return MInitialWidth; }
+  double            getInitialHeight()  { return MInitialHeight; }
   
-  SAT_TweenManager* getTweens()       { return &MTweens; }
+  SAT_TweenManager* getTweens()         { return &MTweens; }
 
 //------------------------------
 public:
@@ -371,12 +373,17 @@ public:
     else {
       while (MPaintDirtyWidgets.read(&widget)) {
         if (widget->getLastPainted() != paint_count) {
-          SAT_Rect cliprect = calcClipRect(widget);
-          painter->pushClip(cliprect);
-          widget->on_widget_paint(&MPaintContext);
-          painter->popClip();
-          widget->setLastPainted(paint_count);
+          // !!!
+          if (widget->isRecursivelyVisible()) {
+            SAT_Rect cliprect = calcClipRect(widget);
+            //if (widget->autoClip())
+            painter->pushClip(cliprect);
+            widget->on_widget_paint(&MPaintContext);
+            //if (widget->autoClip())
+            painter->popClip();
+            widget->setLastPainted(paint_count);
           count += 1;
+          }
         }
       }
     }

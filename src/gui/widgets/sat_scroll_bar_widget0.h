@@ -1,6 +1,8 @@
 #ifndef sat_scroll_bar_widget0_included
 #define sat_scroll_bar_widget0_included
 
+// hover/drag state: 0=none, 1=left, 2=right, 3=both
+
 #include "base/sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 

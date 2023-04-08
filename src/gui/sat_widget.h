@@ -294,17 +294,11 @@ public:
 
   virtual SAT_Widget* appendChildWidget(SAT_Widget* AWidget, SAT_WidgetListener* AListener=nullptr) {
     uint32_t index = MChildren.size();
-
-//qwe
-    
     AWidget->setParent(this);
-    
     if (AListener) AWidget->setListener(AListener);
     else AWidget->setListener(this);
     AWidget->setIndex(index);
-
     //AWidget->addPos(MRect.x,MRect.y);
-
     MChildren.append(AWidget);
     return AWidget;
   }
@@ -362,9 +356,9 @@ public:
     double S = getWindowScale();
     SAT_Rect parent_rect = getRect();
 
-MContentRect = parent_rect;
-//MContentRect.w = 0;
-//MContentRect.h = 0;
+    MContentRect = parent_rect;
+    //MContentRect.w = 0;
+    //MContentRect.h = 0;
 
     SAT_Rect client_rect = parent_rect;
     
@@ -501,7 +495,7 @@ MContentRect = parent_rect;
       
       // stretching
 
-      uint32_t child_stretching   = child->getStretching();
+      uint32_t child_stretching = child->getStretching();
       if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( client_rect.x );
       if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( client_rect.x2() );
       if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( client_rect.y );
@@ -518,10 +512,9 @@ MContentRect = parent_rect;
       
     } // for
     
-// PS!
-
-//    // add w if not auto-aligning?
-//    //MContentRect.w += innerborder.w;
+    // PS!
+    // add w if not auto-aligning?
+    ////MContentRect.w += innerborder.w;
     
     MContentRect.h += innerborder.h;
     
@@ -561,7 +554,6 @@ MContentRect = parent_rect;
   virtual void paintChildWidgets(SAT_PaintContext* AContext, bool ARecursive=true) {
     //SAT_Print("%s\n",getName());
     uint32_t num = MChildren.size();
-    
     SAT_Rect mrect = getRect();
     SAT_Painter* painter= AContext->painter;
     
@@ -573,12 +565,11 @@ MContentRect = parent_rect;
     //}
     
     if (num > 0) {
-      
       if (MAutoClip) painter->pushOverlapClip(mrect);
-
       for (uint32_t i=0; i<num; i++) {
         SAT_Widget* widget = MChildren[i];
-        if (widget->isVisible()) {
+        //if (widget->isVisible()) {
+        if (widget->isRecursivelyVisible()) {
           SAT_Rect widgetrect = widget->getRect();
           widgetrect.overlap(mrect);
           if (widgetrect.isNotEmpty()) {
@@ -588,14 +579,19 @@ MContentRect = parent_rect;
           } // not empty
         } // visible
       } // for
-      
       if (MAutoClip) painter->popClip();
-      
     } // num > 0
-    
     //painter->popClip();
-    
   }
+
+  //----------
+  
+  virtual bool isRecursivelyVisible() {
+    if (!MIsVisible) return false;
+    if (!MParent) return true;
+    return MParent->isRecursivelyVisible();
+  }
+
 
 //------------------------------
 public: // widget
@@ -696,9 +692,9 @@ public: // widget listener
   void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
     switch(AReason) {
       case SAT_WIDGET_NOTIFY_CLOSE:
-    //    SAT_PRINT;
-    //    realignChildWidgets(true);
-    //    parentRedraw();
+        //SAT_PRINT;
+        //realignChildWidgets(true);
+        //parentRedraw();
         break;
       case SAT_WIDGET_NOTIFY_REALIGN:
         //SAT_Print("this: %s ASender: %s\n",getName(),ASender->getName());
@@ -706,9 +702,9 @@ public: // widget listener
         parentRedraw();
         break;
       default:
-    //    //SAT_PRINT;
-    //    realignChildWidgets(true);
-    //    //parentRedraw();
+        //SAT_PRINT;
+        //realignChildWidgets(true);
+        //parentRedraw();
         break;
     }
     if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
