@@ -347,7 +347,7 @@
 #define SAT_WIDGET_ALIGN_TOP_RIGHT              16
 #define SAT_WIDGET_ALIGN_BOTTOM                 17
 #define SAT_WIDGET_ALIGN_BOTTOM_LEFT            18
-#define SAT_WIDGET_ALIGN_BOTTOM_MIDDLE          19
+#define SAT_WIDGET_ALIGN_BOTTOM_CENTER          19
 #define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           20
 
 #define SAT_WIDGET_NOTIFY_NONE                  0

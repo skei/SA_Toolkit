@@ -30,7 +30,7 @@ private:
   uint32_t  MDragDirection    = SAT_DIRECTION_UP;
   double    MDragSensitivity  = 0.001;
   double    MShiftSensitivity = 0.1;
-  bool      MAutoHideCursor   = false;
+  bool      MAutoHideCursor   = true;
   bool      MAutoLockCursor   = true;
   bool      MSnap             = false;
   double    MSnapPos          = 0.5;
