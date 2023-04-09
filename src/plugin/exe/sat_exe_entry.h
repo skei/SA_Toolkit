@@ -29,7 +29,7 @@ public:
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     MPlugin = APlugin;
     MGui = AGui;
-    setTitle("SA_Toolkit :: SAT_ExeWindow");
+    setTitle("SA_Toolkit / SAT_ExeWindow");
   }
   
 //------------------------------
@@ -37,7 +37,6 @@ public:
 //------------------------------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) final {
-    //SAT_PRINT;
     MGui->set_size(MPlugin,AWidth,AHeight);
   }
 
@@ -77,7 +76,7 @@ public:
 //
 //----------------------------------------------------------------------
 
-void open_editor(const clap_plugin_t* plugin) {
+void handle_editor(const clap_plugin_t* plugin) {
   const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);
   if (gui) {
     uint32_t width,height;
@@ -147,7 +146,7 @@ void handle_plugin(const clap_plugin_t* plugin) {
   //process.steady_time         = 0;
   //process.transport           = nullptr;
   //plugin->process(plugin,&process); // will probably crash..
-  open_editor(plugin);
+  handle_editor(plugin);
   plugin->stop_processing(plugin);
   plugin->deactivate(plugin);
   plugin->destroy(plugin);
@@ -162,52 +161,30 @@ void handle_plugin(const clap_plugin_t* plugin) {
 //----------------------------------------------------------------------
 
 int main(int argc, char** argv) {
-
-  uint32_t    plugin_index      = 0;
-  //const char* plugin_path       = "";
-  //double      sample_rate       = 44100;
-  //uint32_t    min_frames_count  = 128;
-  //uint32_t    max_frames_count  = 128;
-
-  //SAT_HostImplementation* hostimpl = new SAT_HostImplementation();
+  uint32_t plugin_index = 0;
   SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
-
   const clap_host_t* host = hostimpl->getHost();
-  if (!host) {
-    SAT_Print("! ERROR: Couldn't create exe host implementation\n");
-  }
+  if (!host) { SAT_Print("! ERROR: Couldn't create exe host implementation\n"); }
   else {
     const clap_plugin_entry_t* entry = &clap_entry;
-    if (!entry) {
-      SAT_Print("! ERROR: clap_entry is null\n");
-    }
+    if (!entry) { SAT_Print("! ERROR: clap_entry is null\n"); }
     else {
       //uint32_t count = entry->init(plugin_path);
       const clap_plugin_factory_t* factory = (const clap_plugin_factory_t*)entry->get_factory(CLAP_PLUGIN_FACTORY_ID);
-      if (!factory) {
-        SAT_Print("! ERROR: Couldn't get factory from entry\n");
-      }
+      if (!factory) { SAT_Print("! ERROR: Couldn't get factory from entry\n"); }
       else {
         uint32_t count = factory->get_plugin_count(factory);
-        if (count == 0) {
-          SAT_Print("! ERROR: Plugin count is 0\n");
-        }
+        if (count == 0) { SAT_Print("! ERROR: Plugin count is 0\n"); }
         else {
           const clap_plugin_descriptor_t* descriptor = factory->get_plugin_descriptor(factory,plugin_index);
-          if (!descriptor) {
-            SAT_Print("! ERROR: Couldn't get descriptor from factory\n");
-          }
+          if (!descriptor) { SAT_Print("! ERROR: Couldn't get descriptor from factory\n"); }
           else {
             const char* plugin_id = descriptor->id;
-            if (!plugin_id) {
-              SAT_Print("! ERROR: plugin_id is null\n");
-            }
+            if (!plugin_id) { SAT_Print("! ERROR: plugin_id is null\n"); }
             else {
               const clap_plugin_t* plugin = factory->create_plugin(factory,host,plugin_id);
-              if (!plugin) {
-                SAT_Print("! ERROR: Couldn't create plugin from factory\n");
-              }
-              else {
+              if (!plugin) { SAT_Print("! ERROR: Couldn't create plugin from factory\n"); }
+              else { 
                 handle_plugin(plugin);
               } // plugin
             } // plugin_id

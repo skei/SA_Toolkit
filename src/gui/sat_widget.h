@@ -134,14 +134,13 @@ public:
 public:
 //------------------------------
 
-//virtual void setActive(bool AState=true)                      { MIsActive = AState; }
   virtual void setAlignment(uint32_t AAlignment)                { MAlignment = AAlignment; }
   virtual void setAutoClip(bool AState=true)                    { MAutoClip = AState; }
   virtual void setAutoHoverCursor(bool AState=true)             { MAutoHoverCursor = AState; }
   virtual void setAutoHoverHint(bool AState=true)               { MAutoHoverHint = AState; }
-  virtual void setBasisHeight(double AHeight)                   { MBasisRect.h = AHeight; } /*scale*/
-  virtual void setBasisRect(SAT_Rect ARect)                     { MBasisRect = ARect; }     /*scale*/
-  virtual void setBasisWidth(double AWidth)                     { MBasisRect.w = AWidth; }  /*scale*/
+  virtual void setBasisHeight(double AHeight)                   { MBasisRect.h = AHeight; }  /* scale? */
+  virtual void setBasisRect(SAT_Rect ARect)                     { MBasisRect = ARect; }      /* scale? */
+  virtual void setBasisWidth(double AWidth)                     { MBasisRect.w = AWidth; }   /* scale? */
   virtual void setCursor(int32_t ACursor)                       { MMouseCursor = ACursor; }
   virtual void setDisabled(bool AState=true)                    { MIsDisabled = AState; }
   virtual void setHeight(double AHeight)                        { MRect.h = AHeight; }
@@ -154,12 +153,10 @@ public:
   virtual void setName(const char* AName)                       { MName = AName; }
   virtual void setParentWidget(SAT_Widget* AParent)             { MParentWidget = AParent; }
   virtual void setRect(SAT_Rect ARect)                          { MRect = ARect; }
-//virtual void setRectAndBasis(SAT_Rect ARect)                  { MRect = ARect; MBasisRect = ARect; } /*scale*/
   virtual void setSize(double AWidth, double AHeight)           { MRect.w = AWidth; MRect.h = AHeight; }
   virtual void setSpacing(SAT_Point ASpacing)                   { MSpacing = ASpacing; }
   virtual void setStretching(uint32_t AStretching)              { MStretching = AStretching; }
   virtual void setValue(double AValue, uint32_t AIndex=0)       { MValues[AIndex] = AValue; }
-//virtual void setVisible(bool AState=true)                     { MIsVisible = AState; }
   virtual void setWidth(double AWidth)                          { MRect.w = AWidth; }
   
 //------------------------------
@@ -329,7 +326,6 @@ public: // hierarchy
     SAT_Rect mrect = getRect();
     SAT_Painter* painter= AContext->painter;
     uint32_t num = MChildWidgets.size();
-    //SAT_Print("num children: %i\n",num);
     if (num > 0) {
       if (MAutoClip) painter->pushOverlappingClip(mrect);
       for (uint32_t i=0; i<num; i++) {
@@ -721,33 +717,6 @@ public: // widget listener
     //realignChildWidgets(true);
     //parentRedraw();
   }
-
-  //----------
-
-  //  void do_widgetListener_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-  //    if (MListener) MListener->do_widgetListener_notify(ASender,AReason,AValue);
-  //  }
-
-  //void do_widgetListener_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-  //  switch(AReason) {
-  //    case SAT_WIDGET_NOTIFY_CLOSE:
-  //      //SAT_PRINT;
-  //      //realignChildWidgets(true);
-  //      //parentRedraw();
-  //      break;
-  //    case SAT_WIDGET_NOTIFY_REALIGN:
-  //      //SAT_Print("this: %s ASender: %s\n",getName(),ASender->getName());
-  //      realignChildWidgets(true);
-  //      parentRedraw();
-  //      break;
-  //    default:
-  //      //SAT_PRINT;
-  //      //realignChildWidgets(true);
-  //      //parentRedraw();
-  //      break;
-  //  }
-  //  if (MListener) MListener->do_widgetListener_notify(ASender,AReason,AValue);
-  //}
 
 };
 

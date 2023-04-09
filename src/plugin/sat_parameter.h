@@ -2,6 +2,22 @@
 #define sat_parameter_included
 //----------------------------------------------------------------------
 
+  /*
+    clap_id id;
+    clap_param_info_flags flags;
+    void *cookie;
+    char name[CLAP_NAME_SIZE];
+    char module[CLAP_PATH_SIZE];
+    double min_value;
+    double max_value;
+    double default_value;
+  */
+
+//----------
+
+#include "base/sat.h"
+#include "plugin/clap/sat_clap.h"
+
 class SAT_Parameter;
 typedef SAT_Array<SAT_Parameter*> SAT_ParameterArray;
 
@@ -16,17 +32,6 @@ class SAT_Parameter {
 //------------------------------
 protected:
 //------------------------------
-
-  /*
-    clap_id id;
-    clap_param_info_flags flags;
-    void *cookie;
-    char name[CLAP_NAME_SIZE];
-    char module[CLAP_PATH_SIZE];
-    double min_value;
-    double max_value;
-    double default_value;
-  */
 
   clap_param_info_t MInfo                           = {0};
 

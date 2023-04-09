@@ -21,23 +21,22 @@ struct SAT_ProcessContext {
   SAT_ParameterArray*   parameters          = {};         // plugin parameters
   uint32_t              counter             = 0;          // ever-increasing counter (each process call)
 
-  //bool                  has_tempo           = false;
-  //double                tempo               = 0.0;        // in bpm
-  //double                tempo_inc           = 0.0;        // tempo increment for each samples and until the next time info event
-  //bool                  has_beats_time      = false;
-  //clap_beattime         loop_start_beats    = 0;
-  //clap_beattime         loop_end_beats      = 0;
-  //clap_beattime         bar_start           = 0;          // start pos of the current bar
-  //int32_t               bar_number          = 0;          // bar at song pos 0 has the number 0
-  //bool                  has_seconds_time    = false;
-  //clap_sectime          song_pos_seconds    = 0;          // position in seconds
-  //clap_sectime          loop_start_seconds  = 0;
-  //clap_sectime          loop_end_seconds    = 0;
+//bool                  has_tempo           = false;
+//double                tempo               = 0.0;        // in bpm
+//double                tempo_inc           = 0.0;        // tempo increment for each samples and until the next time info event
+//bool                  has_beats_time      = false;
+//clap_beattime         loop_start_beats    = 0;
+//clap_beattime         loop_end_beats      = 0;
+//clap_beattime         bar_start           = 0;          // start pos of the current bar
+//int32_t               bar_number          = 0;          // bar at song pos 0 has the number 0
+//bool                  has_seconds_time    = false;
+//clap_sectime          song_pos_seconds    = 0;          // position in seconds
+//clap_sectime          loop_start_seconds  = 0;
+//clap_sectime          loop_end_seconds    = 0;
 
-
-  //uint32_t              oversampling  = 1;        // oversampling for current block
-  float**               voice_buffer  = nullptr;  // voice/output buffer
-  uint32_t              voice_length  = 0;        // length
+//uint32_t              oversampling        = 1;        // oversampling for current block
+  float**               voice_buffer        = nullptr;  // voice/output buffer
+  uint32_t              voice_length        = 0;        // length
 
 
 };

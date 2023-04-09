@@ -2,7 +2,7 @@
 #define sat_widget_owner_included
 //----------------------------------------------------------------------
 
-// aka SAT_Window..
+// (aka SAT_Window)
 
 class SAT_Widget;
 
