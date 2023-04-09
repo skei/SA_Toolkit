@@ -6,6 +6,14 @@
 #include "base/sat_const.h"
 #include "base/utils/sat_math.h"
 
+  //SYSTEMTIME st;
+  //GetSystemTime(&st);
+  //printf("The system time is: %02d:%02d\n", st.wHour, st.wMinute);
+    
+  //SYSTEMTIME lt;
+  //GetLocalTime(&lt);
+  //printf(" The local time is: %02d:%02d\n", lt.wHour, lt.wMinute);
+
 //----------------------------------------------------------------------
 //
 //----------------------------------------------------------------------
@@ -17,7 +25,14 @@ double SAT_GetTimeMS(void) {
 //----------
 
 double SAT_GetTime(void) {
-  return 0.0;
+  SYSTEMTIME st;
+  GetSystemTime(&st);
+  double time = ((double)st.wHour         * 60 * 60)
+              + ((double)st.wMinute       * 60)
+              +  (double)st.wSecond
+              + ((double)st.wMilliseconds * 0.001);
+  //printf("time %f\n",time);
+  return time;
 }
 
 //----------

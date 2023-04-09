@@ -16,9 +16,6 @@
 //----------------------------------------------------------------------
 
 class SAT_Timer;
-
-//----------
-
 class SAT_TimerListener {
   public:
     virtual void do_timer_callback(SAT_Timer* ATimer) {}

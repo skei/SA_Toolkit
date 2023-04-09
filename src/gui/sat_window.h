@@ -166,7 +166,11 @@ public:
     //if (MRootWidget) {
     //  MRootWidget->realignChildWidgets();
     //}
-    MTimer->start(SAT_WINDOW_TIMER_MS,false);
+    #ifdef SAT_WIN32
+      MTimer->start(SAT_WINDOW_TIMER_MS,getWin32Window(),false);
+    #else
+      MTimer->start(SAT_WINDOW_TIMER_MS,false);
+    #endif
   }
   
   //----------

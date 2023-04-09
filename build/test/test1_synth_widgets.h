@@ -57,7 +57,7 @@ public:
 
   void on_widget_timer(uint32_t AId, double ADelta) override {
     
-    //SAT_Print("ADelta = %f\n",ADelta);
+//    SAT_Print("ADelta = %f\n",ADelta);
     
     x1 += (x1_add * ADelta);
     y1 += (y1_add * ADelta);
@@ -98,6 +98,7 @@ public:
     
     SAT_Painter* painter = AContext->painter;
     double S = getWindowScale();
+    
     SAT_Rect R = getRect();
     R.shrink(S*2.0);
     

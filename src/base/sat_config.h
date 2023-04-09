@@ -242,6 +242,8 @@
   //----------
 
   /*
+    the entire window will be invalidated (force full redraw)
+    when we receive a WM_SIZE event
   */
   
   //#define SAT_WIN32_INVALIDATE_WHEN_RESIZING  

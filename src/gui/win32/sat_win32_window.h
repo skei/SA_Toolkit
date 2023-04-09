@@ -1024,7 +1024,7 @@ private: // remap
         //SAT_Print("WM_SIZE w %i h %i (type %i)\n",w,h,wParam);
 
         #ifdef SAT_WIN32_INVALIDATE_WHEN_RESIZING
-        invalidate(0,0,w,h);
+          invalidate(0,0,w,h);
         #endif
 
         //if ( (w != MRect.w) || (h != MRect.h) ) {
