@@ -198,8 +198,6 @@ public:
   void on_widget_paint(SAT_PaintContext* AContext) override {
     SAT_Rect mrect = getRect();
     SAT_Painter* painter = AContext->painter;
-    //SAT_Window* window = (SAT_Window*)getOwnerWindow();
-    //double S = window->getWindowScale();
     double S = getWindowScale();
 
     //drawDropShadow(AContext); // grid will fill entire rect

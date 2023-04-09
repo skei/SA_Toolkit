@@ -230,8 +230,6 @@ public:
     //if (MNumAreas > 0) {
       SAT_Painter* painter = AContext->painter;
       SAT_Rect mrect = getRect();
-      //SAT_Window* window = (SAT_Window*)getOwnerWindow();
-      //double S = window->getWindowScale();
       double cx = mrect.x + (mrect.w * 0.5);
       double cy = mrect.y + (mrect.h * 0.5);
       double size = SAT_Min(mrect.w,mrect.h) * 0.5;
@@ -261,7 +259,6 @@ public:
     //if (MNumMarkers > 0) {
       SAT_Painter* painter = AContext->painter;
       SAT_Rect mrect = getRect();
-      //SAT_Window* window = (SAT_Window*)getOwnerWindow();
       double S = getWindowScale();
       double cx = mrect.x + (mrect.w * 0.5);
       double cy = mrect.y + (mrect.h * 0.5);
@@ -290,8 +287,6 @@ public:
     if (num > 1) {
       SAT_Painter* painter = AContext->painter;
       SAT_Rect mrect = getRect();
-      //SAT_Window* window = (SAT_Window*)getOwnerWindow();
-      //double S = window->getWindowScale();
       double cx = mrect.x + (mrect.w * 0.5);
       double cy = mrect.y + (mrect.h * 0.5);
       double size = SAT_Min(mrect.w,mrect.h) * 0.5;
@@ -320,7 +315,6 @@ public:
   //----------
 
   virtual void drawWaveform(SAT_PaintContext* AContext) {
-    //SAT_Window* window = (SAT_Window*)getOwnerWindow();
     double S = getWindowScale();
     SAT_Painter* painter = AContext->painter;
     SAT_Rect mrect = getRect();

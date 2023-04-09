@@ -153,7 +153,7 @@ public: // window listener
 
   void do_windowListener_timer(SAT_Window* ASender, double AElapsed) override { // final
     //SAT_PRINT;
-    if (MListener) MListener->do_editor_listener_timer();
+    if (MListener) MListener->do_editorListener_timer();
     //on_window_timer();
   }
 
@@ -165,7 +165,7 @@ public: // window listener
       if (param) {
         uint32_t index = param->getIndex();
         double value = ASender->getValue();
-        MListener->do_editor_listener_parameter_update(index,value);
+        MListener->do_editorListener_parameter_update(index,value);
       }
     }
   }
@@ -178,13 +178,13 @@ public: // window listener
 
   //----------
 
-  //void do_window_listener_set_widget_state(SAT_Widget* ASender, uint32_t AState) override {
+  //void do_windowListener_set_widget_state(SAT_Widget* ASender, uint32_t AState) override {
   //  //SAT_PRINT;
   //}
 
   //----------
 
-  //void do_window_listener_set_cursor(SAT_Widget* ASender, uint32_t ACursor) override {
+  //void do_windowListener_set_cursor(SAT_Widget* ASender, uint32_t ACursor) override {
   //  //SAT_PRINT;
   //}
 

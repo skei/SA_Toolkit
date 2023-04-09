@@ -85,7 +85,6 @@ public:
 
   virtual void drawImage(SAT_PaintContext* AContext) {
     if (MDrawImage) {
-      //SAT_Window* window = (SAT_Window*)getOwnerWindow();
       double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Rect mrect = getRect();

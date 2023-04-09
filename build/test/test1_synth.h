@@ -310,9 +310,9 @@ public:
 public:
 //------------------------------
 
-  void do_editor_listener_timer() override {
+  void do_editorListener_timer() override {
    
-    SAT_Plugin::do_editor_listener_timer();
+    SAT_Plugin::do_editorListener_timer();
     
     #ifndef SAT_EXE
     for (uint32_t voice=0; voice<NUM_VOICES; voice++) {

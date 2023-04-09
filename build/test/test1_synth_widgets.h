@@ -105,7 +105,7 @@ public:
     fillBackground(AContext);
     
     //painter->setDrawColor(SAT_Color(0.4,0.4,0.4,0.1));
-    painter->setDrawColor(SAT_Color(0,0,0,0.05));
+    painter->setDrawColor(SAT_Color(0,0,0,0.04));
 
     painter->setLineWidth(2.5 * S);
     

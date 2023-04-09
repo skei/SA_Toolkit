@@ -642,11 +642,11 @@ public: // window
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
-    
     MOpenGL->makeCurrent();
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
+      // if size has changed: create new buffer, copy old to new, delete old
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
       copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
@@ -661,7 +661,6 @@ public: // window
       SAT_Widget* widget;
       while (MPaintDirtyWidgets.read(&widget)) {} // widget->on_widget_paint(&MPaintContext);
       //count = 1;
-
       MRootWidget->on_widget_paint(&MPaintContext);
       MWindowPainter->endFrame();
     }
@@ -672,20 +671,20 @@ public: // window
       SAT_Widget* widget;
       int32_t paint_count = MPaintContext.counter;
       while (MPaintDirtyWidgets.read(&widget)) {
-        
-        if (widget->getLastPainted() != paint_count) {
-          SAT_Rect cliprect = calcClipRect(widget);
-          MWindowPainter->pushClip(cliprect);
-          widget->on_widget_paint(&MPaintContext);
-          MWindowPainter->popClip();
-          widget->setLastPainted(paint_count);
-          //count += 1;
+        if (widget->isVisible()) {
+          if (widget->getLastPainted() != paint_count) {
+            SAT_Rect cliprect = calcClipRect(widget);
+            // if cliprect visible
+            MWindowPainter->pushClip(cliprect);
+            widget->on_widget_paint(&MPaintContext);
+            MWindowPainter->popClip();
+            widget->setLastPainted(paint_count);
+            //count += 1;
+          }
         }
-        
       }
       MWindowPainter->endFrame();
     }
-   
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
@@ -755,18 +754,6 @@ public: // widget listener
   //----------
 
   void do_widget_realign(SAT_Widget* ASender) override {
-//    SAT_PRINT;
-//    if (ASender) {
-//      //realignChildWidgets();
-//      //do_widget_redraw(this,0);
-//    }
-//    else {
-//      if (MRootWidget) {
-//        SAT_PRINT;
-//        //realignChildWidgets();
-//        //do_widget_redraw(nullptr,0);
-//      }
-//    }
   }
 
   //----------
@@ -784,11 +771,9 @@ public: // widget listener
   void do_widget_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
     switch(ACursor) {
       case SAT_CURSOR_LOCK:
-        //MMouseLockedWidget = ASender;
         lockMouseCursor();
         break;
       case SAT_CURSOR_UNLOCK:
-        //MMouseLockedWidget = nullptr;
         unlockMouseCursor();
         break;
       case SAT_CURSOR_SHOW:  

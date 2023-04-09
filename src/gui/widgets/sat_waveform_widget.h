@@ -162,7 +162,6 @@ public:
 
   virtual void drawWaveform(SAT_PaintContext* AContext) {
 
-    //SAT_Window* window = (SAT_Window*)getOwnerWindow();
     double S = getWindowScale();
     SAT_Painter* painter = AContext->painter;
     SAT_Rect mrect = getRect();

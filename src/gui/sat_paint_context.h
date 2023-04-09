@@ -11,7 +11,7 @@ struct SAT_PaintContext {
   uint32_t      window_width  = 0;
   uint32_t      window_height = 0;
   double        window_scale  = 1.0;
-   int32_t      counter       = 0;          // ever-increasing counter (each on_window_paint)
+  int32_t       counter       = 0;          // ever-increasing counter (each on_window_paint)
 
 };
 

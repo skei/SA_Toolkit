@@ -33,16 +33,16 @@ class SAT_Widget
 private:
 //------------------------------
 
-  SAT_Rect              MRect                               = {};       // on screen, after alignment & scaling
-  SAT_Rect              MBasisRect                          = {};       // basis for alignment & scaling (unscaled, untransformed)
-  SAT_Rect              MInitialRect                        = {};       // as created, constructor
+  SAT_Rect              MRect                               = {};
+  SAT_Rect              MBasisRect                          = {};
+  SAT_Rect              MInitialRect                        = {};
   SAT_Rect              MContentRect                        = {};
 
-  SAT_WidgetOwner*      MOwner                              = nullptr;  // aka window
-  SAT_WidgetListener*   MListener                           = nullptr;  // event parent
-  SAT_Widget*           MParentWidget                       = nullptr;  // hierarchial parent
-  SAT_WidgetArray       MChildWidgets                       = {};       // sub widgets
-  int32_t               MIndex                              = -1;       // index (parent)
+  SAT_WidgetOwner*      MOwner                              = nullptr;
+  SAT_WidgetListener*   MListener                           = nullptr;
+  SAT_Widget*           MParentWidget                       = nullptr;
+  SAT_WidgetArray       MChildWidgets                       = {};
+  int32_t               MIndex                              = -1;
   int32_t               MLastPainted                        = -1;
   
   

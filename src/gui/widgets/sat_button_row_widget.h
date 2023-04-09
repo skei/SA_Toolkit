@@ -276,8 +276,6 @@ public:
   void on_paintCell(SAT_PaintContext* AContext, SAT_Rect ARect, int32_t AX, int32_t AY) override {
     char buf[256];
     SAT_Painter* painter= AContext->painter;
-    //SAT_Window* window = (SAT_Window*)getOwnerWindow();
-    //double S = window->getWindowScale();
     double S = getWindowScale();
     
     int32_t AA;

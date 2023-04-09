@@ -65,8 +65,6 @@ public:
   virtual void drawVoices(SAT_PaintContext* AContext) {
     if (MDrawVoices) {
       if (MMaxVoices > 0) {
-        //SAT_Window* window = (SAT_Window*)getOwnerWindow();
-        //double S = window->getWindowScale();
         SAT_Painter* painter = AContext->painter;
         SAT_Rect mrect = getRect();
 

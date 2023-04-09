@@ -29,6 +29,7 @@ protected:
   */
 
   clap_param_info_t MInfo                           = {0};
+
   int32_t           MIndex                          = -1;
   void*             MConnection                     = nullptr;
   
@@ -38,14 +39,15 @@ protected:
   sat_param_t       MSmoothValue                    = 0.0;
   sat_param_t       MSmoothFactor                   = 1.0;
 
-  int32_t           MLastPainted                    = -1;
-  int32_t           MLastUpdated                    = 0;
-  int32_t           MLastModulated                  = 0;
-  double            MLastUpdatedValue               = 0.0;
-  double            MLastModulatedValue             = 0.0;
-
   uint32_t          MNumDigits                      = 2;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
+
+//int32_t           MLastPainted                    = -1;
+//int32_t           MLastUpdated                    = 0;
+//int32_t           MLastModulated                  = 0;
+//double            MLastUpdatedValue               = 0.0;
+//double            MLastModulatedValue             = 0.0;
+
   
 
 //------------------------------
@@ -100,11 +102,11 @@ public:
   virtual sat_param_t           getValue()              { return MValue; }
   virtual sat_param_t           getModulation()         { return MModulation; }
 
-  virtual int32_t               getLastPainted()        { return MLastPainted; }
-  virtual int32_t               getLastUpdated()        { return MLastUpdated; }
-  virtual int32_t               getLastModulated()      { return MLastModulated; }
-  virtual sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
-  virtual sat_param_t           getLastModulatedValue() { return MLastModulated; }
+//virtual int32_t               getLastPainted()        { return MLastPainted; }
+//virtual int32_t               getLastUpdated()        { return MLastUpdated; }
+//virtual int32_t               getLastModulated()      { return MLastModulated; }
+//virtual sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
+//virtual sat_param_t           getLastModulatedValue() { return MLastModulated; }
 
 //------------------------------
 public:
@@ -126,14 +128,14 @@ public:
   virtual void setValue(double AValue)                    { MValue = AValue; }
   virtual void setModulation(double AValue)               { MModulation = AValue; }
 
-  virtual void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
-  virtual void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
-  virtual void setLastModulated(uint32_t ALast)           { MLastModulated = ALast; }
-  virtual void setLastUpdatedValue(sat_param_t AValue)    { MLastUpdatedValue = AValue; }
-  virtual void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
-
   virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
   virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
+
+//virtual void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
+//virtual void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
+//virtual void setLastModulated(uint32_t ALast)           { MLastModulated = ALast; }
+//virtual void setLastUpdatedValue(sat_param_t AValue)    { MLastUpdatedValue = AValue; }
+//virtual void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
 
 //------------------------------
 public:

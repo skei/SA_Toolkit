@@ -1712,7 +1712,7 @@ public: // editor listener
 
   // window -> editor -> this
 
-  void do_editor_listener_timer() override {
+  void do_editorListener_timer() override {
     //SAT_PRINT;
     flushModFromHostToGui();
     flushParamFromHostToGui();
@@ -1727,7 +1727,7 @@ public: // editor listener
     host queue is flushed at the end of process()
   */
 
-  void do_editor_listener_parameter_update(uint32_t AIndex, sat_param_t AValue) override {
+  void do_editorListener_parameter_update(uint32_t AIndex, sat_param_t AValue) override {
     //SAT_PRINT;
     
     //double value = AValue;
@@ -1772,7 +1772,7 @@ public: // queues
   /*
     TODO: check for duplicated (param/mod)
     called from:
-    - SAT_Plugin.do_editor_listener_timer
+    - SAT_Plugin.do_editorListener_timer
   */
 
   void flushParamFromHostToGui() {
@@ -1817,7 +1817,7 @@ public: // queues
     TODO: check for duplicates
     pop updates to array, check array for duplicates..
     called from:
-    - SAT_Plugin.do_editor_listener_timer
+    - SAT_Plugin.do_editorListener_timer
   */
 
   void flushModFromHostToGui() {
@@ -1841,7 +1841,7 @@ public: // queues
 
   /*
     called from:
-    - SAT_Plugin.do_editor_listener_parameter_update
+    - SAT_Plugin.do_editorListener_parameter_update
   */
 
   void queueParamFromGuiToAudio(uint32_t AIndex, sat_param_t AValue) {
@@ -1898,7 +1898,7 @@ public: // queues
 
   /*
     called from:
-    - SAT_Plugin.do_editor_listener_parameter_update
+    - SAT_Plugin.do_editorListener_parameter_update
   */
 
   void queueParamFromGuiToHost(uint32_t AIndex, sat_param_t AValue) {
@@ -2427,12 +2427,12 @@ private: // handle events
   //----------
 
   void handleParamValueEvent(const clap_event_param_value_t* event) {
-    uint32_t  process_count = MProcessContext.counter;
     uint32_t  index         = event->param_id;
     double    value         = event->value;
     MParameters[index]->setValue(value);
-    MParameters[index]->setLastUpdated(process_count);
-    MParameters[index]->setLastUpdatedValue(value);
+//    uint32_t  process_count = MProcessContext.counter;
+//    MParameters[index]->setLastUpdated(process_count);
+//    MParameters[index]->setLastUpdatedValue(value);
     if (MEditor && MEditor->isOpen()) {
       queueParamFromHostToGui(index,value);
     }
@@ -2447,12 +2447,12 @@ private: // handle events
   */
 
   void handleParamModEvent(const clap_event_param_mod_t* event) {
-    uint32_t  process_count = MProcessContext.counter;
     uint32_t  index   = event->param_id;
     double    value   = event->amount;
     MParameters[index]->setModulation(value);
-    MParameters[index]->setLastModulated(process_count);
-    MParameters[index]->setLastModulatedValue(value);
+//    uint32_t  process_count = MProcessContext.counter;
+//    MParameters[index]->setLastModulated(process_count);
+//    MParameters[index]->setLastModulatedValue(value);
     if (MEditor && MEditor->isOpen()) {
       queueModFromHostToGui(index,value);
     }

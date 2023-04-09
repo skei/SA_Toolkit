@@ -92,8 +92,6 @@ public:
 
     if (MDrawArc) {
 
-      //SAT_Window* window = (SAT_Window*)getOwnerWindow();
-      //double S = window->getWindowScale();
       double S = getWindowScale();
       SAT_Rect mrect = getRect();
       SAT_Painter* painter = AContext->painter;
@@ -216,8 +214,6 @@ public:
 
   void drawModulation(SAT_PaintContext* AContext) override {
     if (getDrawModulation()) {
-//    //SAT_Window* window = (SAT_Window*)getOwnerWindow();
-//    //double S = window->getWindowScale();
 //    double S = getWindowScale();
 //    SAT_Rect mrect = getRect();
 //    SAT_Painter* painter = AContext->painter;
