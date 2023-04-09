@@ -37,6 +37,15 @@ public:
   : SAT_MovableWidget(ARect) {
     SAT_PRINT;
     setBackgroundColor(SAT_Color(0.4,0.4,0.3,0.03));
+    
+    SAT_ButtonWidget* button = new SAT_ButtonWidget(SAT_Rect(10,10,50,15));
+    button->setTextSize(8);
+    button->setTextColor(SAT_White);
+    button->setFillBackground(true);
+    button->setBackgroundColor(SAT_DarkYellow);
+    button->setDrawBorder(false);
+    appendChildWidget(button);
+    
   }
   
   //----------
@@ -105,11 +114,6 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     
-    //painter->setDrawColor(SAT_Color(0.4,0.4,0.4,0.1));
-    painter->setDrawColor(SAT_Color(0,0,0,0.04));
-
-    painter->setLineWidth(2.5 * S);
-    
     double _x1 = R.x + (x1 * R.w);
     double _y1 = R.y + (y1 * R.h);
     double _x2 = R.x + (x2 * R.w);
@@ -119,13 +123,29 @@ public:
     double _x4 = R.x + (x4 * R.w);
     double _y4 = R.y + (y4 * R.h);
     
-    //SAT_Print("%.f,%.f,%.f,%.f\n",R.x,R.y,R.w,R.h);
-    painter->drawLine(_x1,_y1,_x2,_y2);
-    painter->drawLine(_x2,_y2,_x3,_y3);
-    painter->drawLine(_x3,_y3,_x4,_y4);
-    painter->drawLine(_x4,_y4,_x1,_y1);
-    //painter->drawCurveBezier(_x1,_y1,_x4,_y4,_x2,_y2,_x3,_y3);
+    painter->setFillColor(SAT_Color(1,0,0,0.5));
+    painter->fillCircle(_x1,_y1,3);
+    painter->fillCircle(_x4,_y4,3);
+
+    painter->setFillColor(SAT_Color(1,1,1,0.5));
+    painter->fillCircle(_x2,_y2,2);
+    painter->fillCircle(_x3,_y3,2);
     
+    painter->setLineWidth(0.5 * S);
+    painter->setDrawColor(SAT_Color(1,1,1,0.2));
+    painter->drawLine(_x1,_y1,_x2,_y2);
+    painter->drawLine(_x3,_y3,_x4,_y4);
+    
+    painter->setLineWidth(0.5 * S);
+    painter->setDrawColor(SAT_Color(1,1,1,0.2));
+    painter->drawLine(_x2,_y2,_x3,_y3);
+    //painter->drawLine(_x4,_y4,_x1,_y1);
+
+    painter->setLineWidth(2 * S);
+    painter->setDrawColor(SAT_Color(0,0,0,0.5));
+    painter->drawCurveBezier(_x1,_y1,_x4,_y4,_x2,_y2,_x3,_y3);
+    
+    paintChildWidgets(AContext);
     drawBorder(AContext);
     
   }

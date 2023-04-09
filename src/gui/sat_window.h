@@ -571,6 +571,7 @@ public: // window
       while (MPaintDirtyWidgets.read(&widget)) {} // widget->on_widget_paint(&MPaintContext);
       //count = 1;
       MRootWidget->on_widget_paint(&MPaintContext);
+      MRootWidget->setLastPainted(MPaintContext.counter); //paint_count);
       MWindowPainter->endFrame();
     }
     else {
@@ -578,16 +579,16 @@ public: // window
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
-      int32_t paint_count = MPaintContext.counter;
+      //int32_t paint_count = MPaintContext.counter;
       while (MPaintDirtyWidgets.read(&widget)) {
         if (widget->isVisible()) {
-          if (widget->getLastPainted() != paint_count) {
+          if (widget->getLastPainted() != MPaintContext.counter) { //paint_count) {
             SAT_Rect cliprect = calcClipRect(widget);
             // if cliprect visible
             MWindowPainter->pushClip(cliprect);
             widget->on_widget_paint(&MPaintContext);
             MWindowPainter->popClip();
-            widget->setLastPainted(paint_count);
+            widget->setLastPainted(MPaintContext.counter); //paint_count);
             //count += 1;
           }
         }
