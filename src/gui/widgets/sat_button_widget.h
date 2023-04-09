@@ -76,8 +76,8 @@ public:
       else {
         setValue(1.0);
       }
-      do_widget_update(this,0);
-      do_widget_redraw(this,0);
+      do_widgetListener_update(this,0);
+      do_widgetListener_redraw(this,0);
     }
   }
   
@@ -87,8 +87,8 @@ public:
     if (AButton == SAT_BUTTON_LEFT) {
       if (!MIsToggle) {
         setValue(0.0);
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widgetListener_update(this,0);
+        do_widgetListener_redraw(this,0);
       }
     }
   }

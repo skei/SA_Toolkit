@@ -156,6 +156,11 @@ public:
 
   //----------
   
+  //virtual void setNormalizedValue(sat_param_t AValue) {
+  //}
+
+  //----------
+  
   virtual double getNormalizedValue() {
     return normalizeValue(MValue);
   }

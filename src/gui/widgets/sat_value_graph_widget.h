@@ -166,22 +166,22 @@ public:
       if (index != MSelected) {
         MSelected = index;
         //STrace("MSelected: %i\n",MSelected);
-        do_widget_redraw(this,0);
+        do_widgetListener_redraw(this,0);
       }
   }
 
 //  void on_widget_enter(float AXpos, float AYpos, SAT_Widget* AFrom, uint32_t ATimeStamp=0) override {
-//    //if (flags.autoCursor) do_widget_setMouseCursor(this,MCursor);
-//    //if (flags.autoHint) do_widget_setHint(this,MHint);
+//    //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,MCursor);
+//    //if (flags.autoHint) do_widgetListener_setHint(this,MHint);
 //  }
 
   void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime=0) override {
-//    //if (flags.autoCursor) do_widget_setMouseCursor(this,SAT_CURSOR_DEFAULT);
-//    //if (flags.autoHint) do_widget_setHint(this,"");
+//    //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
+//    //if (flags.autoHint) do_widgetListener_setHint(this,"");
       //SWidget::on_leave(AWidget);
       if (MSelected>=0) {
         MSelected = -1;
-        do_widget_redraw(this,0);
+        do_widgetListener_redraw(this,0);
       }
       SAT_Widget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATime);
   }

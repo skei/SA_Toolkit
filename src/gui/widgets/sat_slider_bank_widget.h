@@ -125,11 +125,11 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
 
       MSliderValues[i] = SAT_Clamp(v,0,1);
-      do_widget_redraw(this,0);
+      do_widgetListener_redraw(this,0);
 
 //      if (Options.autoHideCursor) {
-//        do_widget_set_cursor(this,SAT_CURSOR_LOCK);
-//        do_widget_set_cursor(this,SAT_CURSOR_HIDE);
+//        do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
+//        do_widgetListener_set_cursor(this,SAT_CURSOR_HIDE);
 //      }
 
     }
@@ -142,8 +142,8 @@ public:
       MIsDragging = false;
       
 //      if (Options.autoHideCursor) {
-//        do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
-//        do_widget_set_cursor(this,SAT_CURSOR_SHOW);
+//        do_widgetListener_set_cursor(this,SAT_CURSOR_UNLOCK);
+//        do_widgetListener_set_cursor(this,SAT_CURSOR_SHOW);
 //      }
 
     }
@@ -160,11 +160,11 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
       MSliderValues[index] = SAT_Clamp(v,0,1);
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this,0);
+      do_widgetListener_redraw(this,0);
     }
     else {
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this,0);
+      do_widgetListener_redraw(this,0);
     }
   }
 
@@ -176,10 +176,10 @@ public:
     //SWidget::on_leave(AWidget);
     if (MHoverSlider >= 0) {
       MHoverSlider = -1;
-      do_widget_redraw(this,0);
+      do_widgetListener_redraw(this,0);
     }
-    //if (flags.autoCursor) do_widget_setMouseCursor(this,SAT_CURSOR_DEFAULT);
-    //if (flags.autoHint) do_widget_setHint(this,"");
+    //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
+    //if (flags.autoHint) do_widgetListener_setHint(this,"");
   }
 
 };

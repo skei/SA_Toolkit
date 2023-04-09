@@ -103,7 +103,7 @@ public:
     MThumbPos = APos;
     MThumbPos = SAT_Clamp(MThumbPos,0.0f,1.0f);
     //recalcThumbRect();
-    if (ARedraw) do_widget_redraw(this,0);
+    if (ARedraw) do_widgetListener_redraw(this,0);
   }
 
   //----------
@@ -118,7 +118,7 @@ public:
     }
     MThumbSize = SAT_Clamp(MThumbSize,0.0f,1.0f);
     //recalcThumbRect();
-    if (ARedraw) do_widget_redraw(this,0);
+    if (ARedraw) do_widgetListener_redraw(this,0);
   }
 
   //----------
@@ -245,7 +245,7 @@ public: // parent to child
         MClickedPos = MThumbPos;
         MIsDragging = true;
         //MIsInteractive  = true;
-        //do_widget_redraw(this,mrect,0);
+        //do_widgetListener_redraw(this,mrect,0);
       }
       else {
         if (MDirection == SAT_DIRECTION_VERT) {
@@ -253,15 +253,15 @@ public: // parent to child
             MPrevThumbPos = MThumbPos;
             MThumbPos -= MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widgetListener_update(this,0);
+            do_widgetListener_redraw(this,0);
           }
           else if (AYpos > MThumbRect.y2()) {
             MPrevThumbPos = MThumbPos;
             MThumbPos += MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widgetListener_update(this,0);
+            do_widgetListener_redraw(this,0);
           }
         }
         else {
@@ -269,15 +269,15 @@ public: // parent to child
             MPrevThumbPos = MThumbPos;
             MThumbPos -= MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widgetListener_update(this,0);
+            do_widgetListener_redraw(this,0);
           }
           else if (AXpos > MThumbRect.x2()) {
             MPrevThumbPos = MThumbPos;
             MThumbPos += MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widgetListener_update(this,0);
+            do_widgetListener_redraw(this,0);
           }
         } // !vertical
       } // !contains
@@ -290,7 +290,7 @@ public: // parent to child
       if (MIsDragging) {
         MIsDragging = false;
         //MIsInteractive = false;
-        do_widget_redraw(this,0);
+        do_widgetListener_redraw(this,0);
       }
     }
   }
@@ -319,8 +319,8 @@ public: // parent to child
         MThumbPos = MClickedPos + v;
         MThumbPos = SAT_Clamp(MThumbPos,0.0f,1.0f);
         //recalcThumbRect();
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widgetListener_update(this,0);
+        do_widgetListener_redraw(this,0);
       }
     }
   }
@@ -336,12 +336,12 @@ public: // parent to child
 public: // child to parent
 //------------------------------
 
-//  void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0) override {}
-//  void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode=0) override {}
-//  void do_widget_modal(SAT_Widget* ASender, uint32_t AMode=0) override {}
-//  void do_widget_cursor(SAT_Widget* ASender, uint32_t ACursor) override {}
-//  void do_widget_hint(SAT_Widget* ASender, const char* AHint) override {}
-//  void do_widget_notify(SAT_Widget* ASender, uint32_t AMode, int32_t AValue) override {}
+//  void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode=0) override {}
+//  void do_widgetListener_redraw(SAT_Widget* ASender, uint32_t AMode=0) override {}
+//  void do_widgetListener_modal(SAT_Widget* ASender, uint32_t AMode=0) override {}
+//  void do_widgetListener_cursor(SAT_Widget* ASender, uint32_t ACursor) override {}
+//  void do_widgetListener_hint(SAT_Widget* ASender, const char* AHint) override {}
+//  void do_widgetListener_notify(SAT_Widget* ASender, uint32_t AMode, int32_t AValue) override {}
 
 };
 

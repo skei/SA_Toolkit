@@ -69,13 +69,13 @@ public:
 
   // from menu item
 
-  void do_widget_close(SAT_Widget* ASender) override {
+  void do_widgetListener_close(SAT_Widget* ASender) override {
     close();
   }
     
   //----------
 
-  void do_widget_select(SAT_Widget* ASender, int32_t AIndex) override {
+  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex) override {
     if (MMenuListener) MMenuListener->do_menu_select(AIndex);
     close();
   }

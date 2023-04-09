@@ -826,7 +826,7 @@ public:
 
         } // node
       }
-      if (changed) do_widget_redraw(this,0);
+      if (changed) do_widgetListener_redraw(this,0);
       SAT_PanelWidget::on_widget_mouse_click(AButton,AState,AXpos,AYpos,ATime);
   }
 
@@ -898,7 +898,7 @@ public:
 
       }
 
-      if (changed) do_widget_redraw(this,0);
+      if (changed) do_widgetListener_redraw(this,0);
       //inherited;
       SAT_PanelWidget::on_widget_mouse_release(AButton,AState,AXpos,AYpos,ATime);
   }
@@ -990,7 +990,7 @@ public:
         changed = true;
       }
 
-      if (changed) do_widget_redraw(this,0);
+      if (changed) do_widgetListener_redraw(this,0);
       MMousePrevX = AXpos;
       MMousePrevY = AYpos;
 
@@ -1009,7 +1009,7 @@ public:
   public:
   //------------------------------
 
-//  void do_widget_realign(SAT_Widget* ASender, bool ARecursive=true) override {
+//  void do_widgetListener_realign(SAT_Widget* ASender, bool ARecursive=true) override {
 //    //SAT_PRINT;
 //    //alignChildren(ARecursive);
 //    findContentRect();

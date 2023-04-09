@@ -89,7 +89,7 @@ public:
     if (y4 <  0)  { y4 = 0; y4_add = -y4_add; }
     
     //parentRedraw();
-    do_widget_redraw(this,0);
+    do_widgetListener_redraw(this,0);
   };
 
   //----------

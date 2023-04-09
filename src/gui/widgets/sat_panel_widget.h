@@ -270,8 +270,8 @@ public:
         //SAT_Color temp  = MGradientColor1;
         //MGradientColor1 = MGradientColor2;
         //MGradientColor2 = temp;
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widgetListener_update(this,0);
+        do_widgetListener_redraw(this,0);
       }
     }
   }
@@ -286,8 +286,8 @@ public:
         //SAT_Color temp  = MGradientColor1;
         //MGradientColor1 = MGradientColor2;
         //MGradientColor2 = temp;
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widgetListener_update(this,0);
+        do_widgetListener_redraw(this,0);
       }
     }
   }

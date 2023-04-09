@@ -145,14 +145,14 @@ public:
       //if FMode = ksm_Horizontal then deltax := 0;
       //if FMode = ksm_Vertical then deltay := 0;
       //if (MMode == SAT_SIZER_WINDOW) {
-      //  if (MParent) MParent->do_widget_resized(this,deltax,deltay);
+      //  if (MParent) MParent->do_widgetListener_resized(this,deltax,deltay);
       //}
       //else {
 
         if (MTarget) {
 
           //if (MMode == SAT_WIDGET_SIZER_WINDOW) {
-          //  MTarget->do_widget_resized(this,deltax,deltay);
+          //  MTarget->do_widgetListener_resized(this,deltax,deltay);
           //}
           //else {
             float tw = MTarget->getRect().w;
@@ -166,19 +166,19 @@ public:
             //if ( (tw > tmin.w) && (tw < tmax.w)
             //  && (th > tmin.h) && (th < tmax.h) ) {
   
-              //MTarget->do_widget_resized(this,deltax,deltay);
+              //MTarget->do_widgetListener_resized(this,deltax,deltay);
               
-              MTarget->do_widget_resized(this,deltax,deltay);
+              MTarget->do_widgetListener_resized(this,deltax,deltay);
 
               //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
-              //do_widget_realign(this);
+              //do_widgetListener_realign(this);
               parentRealign();
               
             //}
 
           //}
         } // sizer
-      //  else self.do_widget_resized(self,deltax,deltay,FMode);
+      //  else self.do_widgetListener_resized(self,deltax,deltay,FMode);
       //}
       prevx = AXpos;
       prevy = AYpos;

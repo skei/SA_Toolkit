@@ -489,7 +489,7 @@ public:
       MDraggingLeft = MHoverLeft;
       MDraggingRight = MHoverRight;
     }
-    if (changed) do_widget_redraw(this,0);
+    if (changed) do_widgetListener_redraw(this,0);
     //KWidget::on_widgetMouseDown(AWidget,AXpos,AYpos,AButton,AState);
   }
 
@@ -503,7 +503,7 @@ public:
       MDraggingLeft = false;
       MDraggingRight = false;
     }
-    if (changed) do_widget_redraw(this,0);
+    if (changed) do_widgetListener_redraw(this,0);
     //KWidget::on_widgetMouseUp(AWidget,AXpos,AYpos,AButton,AState);
   }
 
@@ -570,7 +570,7 @@ public:
         changed = true;
       }
     } // not dragging
-    if (changed) do_widget_redraw(this,0);
+    if (changed) do_widgetListener_redraw(this,0);
     MPrevMouseX = AXpos;
     MPrevMouseY = AYpos;
   }
@@ -598,7 +598,7 @@ public:
       MHoverSegment = nullptr;
       changed = true;
     }
-    if (changed) do_widget_redraw(this,0);
+    if (changed) do_widgetListener_redraw(this,0);
     //KWidget::on_widgetLeave(AWidget, int32_t AXpos, int32_t AYpos);
   }
 

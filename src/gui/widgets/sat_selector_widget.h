@@ -73,7 +73,7 @@ public: // menu listener
     const char* text = widget->getText();
     setText(text);
     //parentRedraw();
-    do_widget_redraw(this,0);
+    do_widgetListener_redraw(this,0);
   }
 
   //----------

@@ -361,8 +361,8 @@ public: // hover
       if (MHoverWidget) MHoverWidget->on_widget_mouse_leave(AHover,AXpos,AYpos,0);
       if (AHover) {
         AHover->on_widget_mouse_enter(MHoverWidget,AXpos,AYpos,0);
-        //if (AHover->autoHoverCursor()) do_widget_set_cursor(AHover,AHover->getMouseCursor());
-        //if (AHover->autoHoverHint()) do_widget_set_hint(AHover,0,AHover->getHint());
+        //if (AHover->autoHoverCursor()) do_widgetListener_set_cursor(AHover,AHover->getMouseCursor());
+        //if (AHover->autoHoverHint()) do_widgetListener_set_hint(AHover,0,AHover->getHint());
       }
       MHoverWidget = AHover;
     }
@@ -739,13 +739,13 @@ public: // widget owner
 public: // widget listener
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+  void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     if (MListener) MListener->do_windowListener_update_widget(ASender,AMode,AIndex);
   }
 
   //----------
   
-  void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+  void do_widgetListener_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     if (!ASender) ASender = MRootWidget;
     MPendingDirtyWidgets.write(ASender);
     if (MListener) MListener->do_windowListener_redraw_widget(ASender,AMode,AIndex);
@@ -753,22 +753,22 @@ public: // widget listener
 
   //----------
 
-  void do_widget_realign(SAT_Widget* ASender) override {
+  void do_widgetListener_realign(SAT_Widget* ASender) override {
   }
 
   //----------
 
-  void do_widget_close(SAT_Widget* ASender) override {
+  void do_widgetListener_close(SAT_Widget* ASender) override {
   }
 
   //----------
 
-  void do_widget_select(SAT_Widget* ASender, int32_t AIndex) override {
+  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex) override {
   }
 
   //----------
 
-  void do_widget_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
+  void do_widgetListener_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
     switch(ACursor) {
       case SAT_CURSOR_LOCK:
         lockMouseCursor();
@@ -793,19 +793,19 @@ public: // widget listener
 
   //----------
 
-  void do_widget_set_hint(SAT_Widget* ASender, uint32_t AMode, const char* AHint) override {
+  void do_widgetListener_set_hint(SAT_Widget* ASender, uint32_t AMode, const char* AHint) override {
   }
 
   //----------
 
-  void do_widget_set_modal(SAT_Widget* ASender) override {
+  void do_widgetListener_set_modal(SAT_Widget* ASender) override {
     if (ASender) beginModal(ASender);
     else endModal();
   }
   
   //----------
 
-  //void do_widget_notify(SAT_Widget* ASender, uint32_t AMessage, int32_t AValue)  override {
+  //void do_widgetListener_notify(SAT_Widget* ASender, uint32_t AMessage, int32_t AValue)  override {
   //  return true;
   //}
 

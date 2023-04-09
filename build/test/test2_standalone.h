@@ -30,7 +30,7 @@ int main() {
 //    // win32 automatically receive a wm_paint after opening?
 //    // linux doesn't? investigate..
 //    //root->parentRedraw();
-//    root->do_widget_redraw(root,0);
+//    root->do_widgetListener_redraw(root,0);
 //  #endif
   
   window->show();

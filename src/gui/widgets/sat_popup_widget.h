@@ -22,7 +22,6 @@ class SAT_PopupWidget
 private:
 //------------------------------
 
-  //SAT_Window*     MWindow     = nullptr;
   SAT_Rect        MSavedRect  = {};
   SAT_TweenChain* MTween      = nullptr;
 
@@ -46,14 +45,6 @@ public:
 //------------------------------
 public:
 //------------------------------
-
-//  void prepare(SAT_WidgetListener* AWindow, bool ARecursive=true) override {
-//    //SAT_PRINT;
-//    SAT_PanelWidget::prepare(AWindow,ARecursive);
-//    MWindow = (SAT_Window*)AWindow;
-//  }
-
-  //----------
 
   virtual bool open(SAT_Rect ARect) {
     SAT_Rect rect = ARect;
@@ -84,12 +75,12 @@ public:
     #endif
     
     realignChildWidgets();
-    //do_widget_set_state(this,SAT_WIDGET_STATE_MODAL);
-    do_widget_set_modal(this);
+    //do_widgetListener_set_state(this,SAT_WIDGET_STATE_MODAL);
+    do_widgetListener_set_modal(this);
     setActive(true);
     setVisible(true);
     //parentRedraw();
-    do_widget_redraw(this,0);
+    do_widgetListener_redraw(this,0);
     return true;
   }
 
@@ -97,8 +88,8 @@ public:
 
   virtual void close() {
     //SAT_Print("close\n");
-    //do_widget_set_state(this,SAT_WIDGET_STATE_NORMAL);
-    do_widget_set_modal(nullptr);
+    //do_widgetListener_set_state(this,SAT_WIDGET_STATE_NORMAL);
+    do_widgetListener_set_modal(nullptr);
     setActive(false);
     setVisible(false);
 //    setRectAndBasis(MSavedRect);
@@ -120,8 +111,8 @@ public:
   // called from window
   // (clicking outside of modal widget)
 
-  void do_widget_close(SAT_Widget* ASender) override {
-    //if (MListener) MListener->do_widget_close(ASender);
+  void do_widgetListener_close(SAT_Widget* ASender) override {
+    //if (MListener) MListener->do_widgetListener_close(ASender);
     close();
   }
   

@@ -102,7 +102,7 @@ public:
         widget->setValue(AValue);
         //widget->update();
         //parentRedraw();
-        widget->do_widget_redraw(widget,0);
+        widget->do_widgetListener_redraw(widget,0);
       }
     }
   }
@@ -116,7 +116,7 @@ public:
         widget->setModulation(AValue);
         //widget->update();
         //widget->parentRedraw();
-        widget->do_widget_redraw(widget,0);
+        widget->do_widgetListener_redraw(widget,0);
       }
     }
   }

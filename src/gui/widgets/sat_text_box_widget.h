@@ -87,7 +87,7 @@ public:
 
     if (ARedraw) {
       MContent->realignChildWidgets();
-      do_widget_redraw(MContent,0); // only if visible?
+      do_widgetListener_redraw(MContent,0); // only if visible?
     }
   }
 

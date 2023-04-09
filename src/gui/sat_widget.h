@@ -552,31 +552,31 @@ public:
 //------------------------------
 
   virtual void parentUpdate() {
-    if (MListener) MListener->do_widget_update(this,0,0);
+    if (MListener) MListener->do_widgetListener_update(this,0,0);
   }
 
   //----------
 
   virtual void parentRealign() {
-    if (MListener) MListener->do_widget_realign(this);
+    if (MListener) MListener->do_widgetListener_realign(this);
   }
 
   //----------
 
   virtual void parentRealignParent() {
-    if (MListener) MListener->do_widget_realign(nullptr);
+    if (MListener) MListener->do_widgetListener_realign(nullptr);
   }
 
   //----------
 
   virtual void parentRedraw() {
-    if (MListener) MListener->do_widget_redraw(this,0,0);
+    if (MListener) MListener->do_widgetListener_redraw(this,0,0);
   }
 
   //----------
 
   virtual void parentRedrawAll() {
-    if (MListener) MListener->do_widget_redraw(nullptr,0,0);
+    if (MListener) MListener->do_widgetListener_redraw(nullptr,0,0);
   }
 
 //------------------------------
@@ -622,15 +622,15 @@ public: // base
 
   virtual void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATimestamp) {
     if (MIsActive && MIsVisible) {
-      if (autoHoverCursor()) do_widget_set_cursor(this,MMouseCursor);
-      if (autoHoverHint()) do_widget_set_hint(this,0,MHint);
+      if (autoHoverCursor()) do_widgetListener_set_cursor(this,MMouseCursor);
+      if (autoHoverHint()) do_widgetListener_set_hint(this,0,MHint);
     }
   }
 
   virtual void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATimestamp) {
     if (MIsActive && MIsVisible) {
-      if (autoHoverCursor()) do_widget_set_cursor(this,SAT_CURSOR_DEFAULT);
-      if (autoHoverHint()) do_widget_set_hint(this,0,"");
+      if (autoHoverCursor()) do_widgetListener_set_cursor(this,SAT_CURSOR_DEFAULT);
+      if (autoHoverHint()) do_widgetListener_set_hint(this,0,"");
     }
   }
 
@@ -645,7 +645,7 @@ public: // base
     //    R2.scale(S);
     //    setRect(R2);
     //    //R.scale(1.0 / S);
-    //    //do_widget_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
+    //    //do_widgetListener_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
     //    parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
     //    break;
     //  }
@@ -656,61 +656,61 @@ public: // base
 public: // widget listener
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    if (MListener) MListener->do_widget_update(ASender,AMode,AIndex);
+  void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+    if (MListener) MListener->do_widgetListener_update(ASender,AMode,AIndex);
   }
 
   //----------
 
-  void do_widget_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    if (MListener) MListener->do_widget_redraw(ASender,AMode,AIndex);
+  void do_widgetListener_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+    if (MListener) MListener->do_widgetListener_redraw(ASender,AMode,AIndex);
   }
 
   //----------
 
-  void do_widget_realign(SAT_Widget* ASender) override {
+  void do_widgetListener_realign(SAT_Widget* ASender) override {
     if (ASender) {
       realignChildWidgets();
-      do_widget_redraw(this,0);
+      do_widgetListener_redraw(this,0);
     }
     else {
-      if (MListener) MListener->do_widget_realign(this);
+      if (MListener) MListener->do_widgetListener_realign(this);
     }
   }
 
   //----------
 
-  void do_widget_close(SAT_Widget* ASender) override {
-    if (MListener) MListener->do_widget_close(ASender);
+  void do_widgetListener_close(SAT_Widget* ASender) override {
+    if (MListener) MListener->do_widgetListener_close(ASender);
   }
 
   //----------
 
-  void do_widget_select(SAT_Widget* ASender, int32_t AIndex) override {
-    if (MListener) MListener->do_widget_select(ASender,AIndex);
+  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex) override {
+    if (MListener) MListener->do_widgetListener_select(ASender,AIndex);
   }
 
   //----------
 
-  void do_widget_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
-    if (MListener) MListener->do_widget_set_cursor(ASender,ACursor);
+  void do_widgetListener_set_cursor(SAT_Widget* ASender, int32_t ACursor) override {
+    if (MListener) MListener->do_widgetListener_set_cursor(ASender,ACursor);
   }
 
   //----------
 
-  void do_widget_set_hint(SAT_Widget* ASender, uint32_t AMode, const char* AHint) override {
-    if (MListener) MListener->do_widget_set_hint(ASender,AMode,AHint);
+  void do_widgetListener_set_hint(SAT_Widget* ASender, uint32_t AMode, const char* AHint) override {
+    if (MListener) MListener->do_widgetListener_set_hint(ASender,AMode,AHint);
   }
 
   //----------
   
-  void do_widget_set_modal(SAT_Widget* ASender) override {
-    if (MListener) MListener->do_widget_set_modal(ASender);
+  void do_widgetListener_set_modal(SAT_Widget* ASender) override {
+    if (MListener) MListener->do_widgetListener_set_modal(ASender);
   }
   
   //----------
 
-  void do_widget_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {
+  void do_widgetListener_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {
     SAT_Rect mrect = getRect();
     double S = getWindowScale();
     mrect.w += ADeltaX;
@@ -724,11 +724,11 @@ public: // widget listener
 
   //----------
 
-  //  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
-  //    if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+  //  void do_widgetListener_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+  //    if (MListener) MListener->do_widgetListener_notify(ASender,AReason,AValue);
   //  }
 
-  //void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+  //void do_widgetListener_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
   //  switch(AReason) {
   //    case SAT_WIDGET_NOTIFY_CLOSE:
   //      //SAT_PRINT;
@@ -746,7 +746,7 @@ public: // widget listener
   //      //parentRedraw();
   //      break;
   //  }
-  //  if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
+  //  if (MListener) MListener->do_widgetListener_notify(ASender,AReason,AValue);
   //}
 
 };

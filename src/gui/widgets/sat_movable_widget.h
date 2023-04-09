@@ -158,11 +158,11 @@ public:
     
     else {
       MHoverEdge = findEdge(AXpos,AYpos,MHoverDist);
-      if      (MHoverEdge == SAT_EDGE_LEFT)   do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
-      else if (MHoverEdge == SAT_EDGE_RIGHT)  do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
-      else if (MHoverEdge == SAT_EDGE_TOP)    do_widget_set_cursor(this,SAT_CURSOR_ARROW_UP_DOWN);
-      else if (MHoverEdge == SAT_EDGE_BOTTOM) do_widget_set_cursor(this,SAT_CURSOR_ARROW_UP_DOWN);
-      else                                    do_widget_set_cursor(this,getMouseCursor());
+      if      (MHoverEdge == SAT_EDGE_LEFT)   do_widgetListener_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
+      else if (MHoverEdge == SAT_EDGE_RIGHT)  do_widgetListener_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
+      else if (MHoverEdge == SAT_EDGE_TOP)    do_widgetListener_set_cursor(this,SAT_CURSOR_ARROW_UP_DOWN);
+      else if (MHoverEdge == SAT_EDGE_BOTTOM) do_widgetListener_set_cursor(this,SAT_CURSOR_ARROW_UP_DOWN);
+      else                                    do_widgetListener_set_cursor(this,getMouseCursor());
     }
     
   }

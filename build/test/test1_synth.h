@@ -1,7 +1,3 @@
-
-#define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_VST3
-
 //
 
 #include "base/sat.h"
@@ -209,6 +205,7 @@ public:
     
     SAT_Observe(SAT_OBSERVE_DOUBLE,&MTestValue,"MTestValue");
     SAT_Observe(SAT_OBSERVE_DOUBLE,&qwe2,"qwe2");
+    
     //SAT_GLOBAL.DEBUG.print_callstack();
     //int* ptr = nullptr;
     //int a = *ptr;
@@ -290,30 +287,24 @@ public:
   
   //----------
     
-  bool gui_show() override {
-    bool result = SAT_Plugin::gui_show();
-    if (result) {
-      
-      //SAT_Window* window = getEditor()->getWindow();
-      //SAT_Tweening* tweens = window->getTweens();
-      //double start[4] = { 100, 185,   0,  0 };
-      //double end[4]   = {  10, 285, 180, 60 };
-      //tweens->appendTween(SAT_WIDGET_TWEEN_RECT/*666*/,MWaveformWidget,38,4,start,end,2.0);
-      
-    }
-    return result;
-  }
-
-    
+  //bool gui_show() final {
+  //  bool result = SAT_Plugin::gui_show();
+  //  if (result) {
+  //    SAT_Window* window = getEditor()->getWindow();
+  //    SAT_Tweening* tweens = window->getTweens();
+  //    double start[4] = { 100, 185,   0,  0 };
+  //    double end[4]   = {  10, 285, 180, 60 };
+  //    tweens->appendTween(SAT_WIDGET_TWEEN_RECT/*666*/,MWaveformWidget,38,4,start,end,2.0);
+  //  }
+  //  return result;
+  //}
 
 //------------------------------
 public:
 //------------------------------
 
-  void do_editorListener_timer() override {
-   
+  void do_editorListener_timer() final {
     SAT_Plugin::do_editorListener_timer();
-    
     #ifndef SAT_EXE
     for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
       uint32_t state = MVoiceManager.getVoiceState(voice);
@@ -321,7 +312,6 @@ public:
     }
     MVoicesWidget->parentRedraw();
     #endif
-    
   }
 
 //------------------------------

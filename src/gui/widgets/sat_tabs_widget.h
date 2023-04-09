@@ -95,7 +95,7 @@ public:
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+  void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     if (ASender == MHeader) {
       
       int32_t sel = MHeader->getSelected();
@@ -103,11 +103,10 @@ public: // child to parent
       //MPages->on_realign();
 
       MPages->realignChildWidgets();
-      do_widget_redraw(MPages,0);
+      do_widgetListener_redraw(MPages,0);
       
     }
-    SAT_Widget::do_widget_update(ASender,AMode,AIndex);
-    SAT_Widget::do_widget_redraw(MPages,0);
+    SAT_Widget::do_widgetListener_update(ASender,AMode,AIndex);
   }
 
 };

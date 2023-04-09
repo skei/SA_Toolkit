@@ -297,7 +297,7 @@ public:
           MIsDragging = true;
         }
         on_clickCell(x,y,AButton);
-        do_widget_redraw(this,0);
+        do_widgetListener_redraw(this,0);
       }
     }
   }
@@ -341,7 +341,7 @@ public:
           MSelectedYcount = y - MClickedY + 1;
         }
       //}
-      do_widget_redraw(this,0);
+      do_widgetListener_redraw(this,0);
     }
   }
 

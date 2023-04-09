@@ -113,7 +113,7 @@ public:
       float scroll = can_scroll * delta;
       MContent->scrollChildWidgets(0,scroll);
       //if (draw) MContent->parentRedraw();
-      if (draw) MContent->do_widget_redraw(MContent,0);
+      if (draw) MContent->do_widgetListener_redraw(MContent,0);
     }
     else if (ASender == MHorizontalScrollBar) {
       float delta = prev - pos;
@@ -122,7 +122,7 @@ public:
       float scroll = can_scroll * delta;
       MContent->scrollChildWidgets(scroll,0);
       //if (draw) MContent->parentRedraw();
-      if (draw) MContent->do_widget_redraw(MContent,0);
+      if (draw) MContent->do_widgetListener_redraw(MContent,0);
     }
   }
 
@@ -181,7 +181,7 @@ public:
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0, uint32_t AIndex=0) override {
+  void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode=0, uint32_t AIndex=0) override {
     if (ASender == MVerticalScrollBar) {
       //SAT_Print("vscroll\n");
       float visible = MVerticalScrollBar->getThumbSize();
@@ -198,7 +198,7 @@ public: // child to parent
     }
     else {
       //SAT_Print("...\n");
-      SAT_PanelWidget::do_widget_update(ASender,AMode,AIndex);
+      SAT_PanelWidget::do_widgetListener_update(ASender,AMode,AIndex);
     }
   }
   
@@ -206,7 +206,7 @@ public: // child to parent
   
   // only pass on event up, if you don't handle them..
   
-//  void do_widget_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
+//  void do_widgetListener_notify(SAT_Widget* ASender, uint32_t AReason, int32_t AValue) override {
 //    
 //    switch(AReason) {
 //
@@ -225,14 +225,14 @@ public: // child to parent
 //      default:
 //        //SAT_Print("default\n");
 //        //SAT_PRINT;
-//        //SAT_Widget::do_widget_notify(ASender,AReason,AValue);
-//        //if (MListener) MListener->do_widget_notify(ASender,AReason,AValue);
-//        //SAT_PanelWidget::do_widget_notify(ASender,AReason,AValue);
+//        //SAT_Widget::do_widgetListener_notify(ASender,AReason,AValue);
+//        //if (MListener) MListener->do_widgetListener_notify(ASender,AReason,AValue);
+//        //SAT_PanelWidget::do_widgetListener_notify(ASender,AReason,AValue);
 //        break;
 //        
 //    }
 //    
-//    SAT_PanelWidget::do_widget_notify(ASender,AReason,AValue);
+//    SAT_PanelWidget::do_widgetListener_notify(ASender,AReason,AValue);
 //  }
   
 };

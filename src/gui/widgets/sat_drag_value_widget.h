@@ -176,13 +176,17 @@ public:
       //else if (MHoverRightEdge) {
       //}
       //else {
+        
         MDragValue    = getValue();
+        
+        //SAT_Print("%f\n",MDragValue);
+        
         //if (MSnap) MDragValue = snapValue(MDragValue);
         MPreviousXpos = AXpos;
         MPreviousYpos = AYpos;
         MWaitingForDrag = true;
-        //if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);
-        //if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+        //if (MAutoHideCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_HIDE);
+        //if (MAutoLockCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
       //}
     }
   }
@@ -195,8 +199,8 @@ public:
       MWaitingForDrag = false;
       //MHoverLeftEdge = false;
       //MHoverRightEdge = false;
-      if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_SHOW);
-      if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+      if (MAutoHideCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_SHOW);
+      if (MAutoLockCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_UNLOCK);
     }
   }
 
@@ -206,8 +210,8 @@ public:
     
     if (MWaitingForDrag) {
       MWaitingForDrag = false;
-      if (MAutoHideCursor) do_widget_set_cursor(this,SAT_CURSOR_HIDE);
-      if (MAutoLockCursor) do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+      if (MAutoHideCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_HIDE);
+      if (MAutoLockCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
     }
     
     else if (MIsDragging) {
@@ -240,8 +244,8 @@ public:
       
       value = SAT_Clamp(value,0,1);
       setValue(value);
-      do_widget_update(this,0);
-      do_widget_redraw(this,0);
+      do_widgetListener_update(this,0);
+      do_widgetListener_redraw(this,0);
     }
     
     //else {
