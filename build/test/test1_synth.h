@@ -1,3 +1,5 @@
+//#define SAT_PLUGIN_VST3
+
 //
 
 #include "base/sat.h"

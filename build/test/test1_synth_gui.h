@@ -292,9 +292,9 @@
 
 
 
-    SAT_PanelWidget* middle_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
+    SAT_PanelWidget* middle_column = new SAT_PanelWidget(SAT_Rect(200,400));
     MRootPanel->appendChildWidget(middle_column);
-    middle_column->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
+    middle_column->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);//VERTICAL);
     middle_column->setName("middle_column");
     middle_column->setDrawBorder(true);
     middle_column->setBorderColor(0.5);

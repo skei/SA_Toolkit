@@ -38,15 +38,6 @@
 //
 //----------------------------------------------------------------------
 
-const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
-  .clap_version = CLAP_VERSION,
-  .id           = "me/myPresetDiscoveryProvider/0",
-  .name         = "myPresetDiscoveryProvider",
-  .vendor       = "me"
-};
-
-//----------------------------------------------------------------------
-
 // Initialize the preset provider.
 // It should declare all its locations, filetypes and sound packs.
 // Returns false if initialization failed.
@@ -66,6 +57,22 @@ void clap_preset_discovery_provider_destroy_callback(const struct clap_preset_di
 
 // reads metadata from the given file and passes them to the metadata receiver
 
+  /*
+  struct clap_preset_discovery_metadata_receiver {
+     void *receiver_data;
+     void on_error         (const struct clap_preset_discovery_metadata_receiver *receiver, int32_t os_error, const char *error_message);
+     bool begin_preset     (const struct clap_preset_discovery_metadata_receiver *receiver, const char *name, const char *load_key);
+     void add_plugin_id    (const struct clap_preset_discovery_metadata_receiver *receiver, const clap_plugin_id_t *plugin_id);
+     void set_soundpack_id (const struct clap_preset_discovery_metadata_receiver *receiver, const char *soundpack_id);
+     void set_flags        (const struct clap_preset_discovery_metadata_receiver *receiver, uint32_t flags);
+     void add_creator      (const struct clap_preset_discovery_metadata_receiver *receiver, const char *creator);
+     void set_description  (const struct clap_preset_discovery_metadata_receiver *receiver, const char *description);
+     void set_timestamps   (const struct clap_preset_discovery_metadata_receiver *receiver, clap_timestamp_t creation_time, clap_timestamp_t modification_time);
+     void add_feature      (const struct clap_preset_discovery_metadata_receiver *receiver, const char *feature);
+     void add_extra_info   (const struct clap_preset_discovery_metadata_receiver *receiver, const char *key, const char *value);
+  };
+  */
+
 bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, const char *uri, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
   return false;
 }
@@ -82,6 +89,15 @@ const void* clap_preset_discovery_provider_get_extension_callback(const struct c
 }
 
 //----------------------------------------------------------------------
+
+const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
+  .clap_version = CLAP_VERSION,
+  .id           = "me/myPresetDiscoveryProvider/0",
+  .name         = "myPresetDiscoveryProvider",
+  .vendor       = "me"
+};
+
+//----------
 
 const clap_preset_discovery_provider_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER = {
   .desc           = nullptr,
@@ -126,13 +142,27 @@ const clap_preset_discovery_provider_descriptor_t* clap_preset_discovery_factory
 // Returns null in case of error.
 // [thread-safe]
 
+  /*
+  struct clap_preset_discovery_indexer {
+    clap_version_t clap_version;
+    const char *name;
+    const char *vendor;
+    const char *url;
+    const char *version;
+    void       *indexer_data;
+    bool declare_filetype     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_filetype_t *filetype);
+    bool declare_location     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_location_t *location);
+    bool declare_soundpack    (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_soundpack_t *soundpack);
+    const void *get_extension (const struct clap_preset_discovery_indexer *indexer,
+  };
+  */
+
 const clap_preset_discovery_provider_t* clap_preset_discovery_factory_create_callback( const struct clap_preset_discovery_factory *factory, const clap_preset_discovery_indexer_t *indexer, const char *provider_id) {
   if (strcmp(provider_id,SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id) == 0) {
     return  &SAT_CLAP_PRESET_DISCOVERY_PROVIDER;
   }
   return nullptr;
 }
-
 
 //----------------------------------------------------------------------
 
