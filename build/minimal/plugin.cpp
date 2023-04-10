@@ -11,7 +11,7 @@ public:
     registerDefaultExtensions();    
     appendStereoInputPort();
     appendStereoOutputPort();
-    appendParameter(new SAT_Parameter("Param1",0.3))->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    appendParameter(new SAT_Parameter("Gain",0.5))->setFlag(CLAP_PARAM_IS_MODULATABLE);
     return SAT_Plugin::init();
   }
   void processAudio(SAT_ProcessContext* AContext) final {

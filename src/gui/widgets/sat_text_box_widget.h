@@ -25,10 +25,13 @@ public:
 //------------------------------
 
   SAT_TextBoxWidget(SAT_Rect ARect)
-  : SAT_ScrollBoxWidget(ARect,true,true) {
+  //: SAT_ScrollBoxWidget(ARect,true,true) {
+  : SAT_ScrollBoxWidget(ARect,true,false) {
     setName("SAT_TextBoxWidget");
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(true);
+    
+    
   }
 
   //----------
@@ -72,8 +75,12 @@ public:
     //while (MNumLines >= MMaxLines) { removeOldestLine(); }
     SAT_TextWidget* textwidget = new SAT_TextWidget( SAT_Rect(600,MTextSize),AText);
     //textwidget->Layout.alignment = SAT_WIDGET_ALIGN_FILL_TOP;
+    
+//    textwidget->setAlignment(SAT_WIDGET_ALIGN_TOP_LEFT);
+
     textwidget->setAlignment(SAT_WIDGET_ALIGN_TOP);
     textwidget->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+
     textwidget->setFillBackground(false);
     textwidget->setDrawBorder(false);
     textwidget->setTextAlignment(SAT_TEXT_ALIGN_LEFT);

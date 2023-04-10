@@ -61,7 +61,7 @@
 
 
     //SAT_PanelWidget* left_column = new SAT_PanelWidget(SAT_Rect(10,10,200,200));
-    SAT_ScrollBoxWidget* left_column = new SAT_ScrollBoxWidget(SAT_Rect(10,10,200,200));
+    SAT_ScrollBoxWidget* left_column = new SAT_ScrollBoxWidget(SAT_Rect(10,10,200,200),true,false);
     
     SAT_Widget* content = left_column->getContentWidget();
     content->setInnerBorder(SAT_Rect(6,6,6,6));
@@ -292,7 +292,7 @@
 
 
 
-    SAT_PanelWidget* middle_column = new SAT_PanelWidget(SAT_Rect(200,400));
+    SAT_PanelWidget* middle_column = new SAT_PanelWidget(SAT_Rect(200,490));
     MRootPanel->appendChildWidget(middle_column);
     middle_column->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);//VERTICAL);
     middle_column->setName("middle_column");
@@ -370,7 +370,7 @@
     SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(SAT_Rect(10,400,100,70));
     middle_column->appendChildWidget(textbox);
     //textbox->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
-      for (uint32_t i=0; i<25; i++) { textbox->appendLine("Hello world!"); }
+      for (uint32_t i=0; i<25; i++) { textbox->appendLine("Hello world! This is a test to see if it works.. 123abcxyzæøå"); }
     
     SAT_ButtonRowWidget* buttonrow3 = new SAT_ButtonRowWidget(SAT_Rect(120,400,70,70),5,buttontext,SAT_BUTTON_ROW_SINGLE,true);
     middle_column->appendChildWidget(buttonrow3);
@@ -417,9 +417,9 @@
         graph->addModule(module,i*10,i*10,"module");
       }
       
-    SAT_PanelWidget* sizable = new SAT_PanelWidget(SAT_Rect(165,265,145,115));
-    right_column->appendChildWidget(sizable);
-    sizable->setDrawBorder(true);
+    //SAT_PanelWidget* sizable = new SAT_PanelWidget(SAT_Rect(165,265,145,115));
+    //right_column->appendChildWidget(sizable);
+    //sizable->setDrawBorder(true);
 
     SAT_TimelineWidget* timeline = new SAT_TimelineWidget(SAT_Rect(10,390,300,90));
     right_column->appendChildWidget(timeline);

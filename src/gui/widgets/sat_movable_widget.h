@@ -25,7 +25,7 @@ private:
   double    MXClick         = 0.0;
   double    MYClick         = 0.0;
   double    MXPrev          = 0.0;
-  double    MYPrev         = 0.0;
+  double    MYPrev          = 0.0;
   double    MXClickOffset   = 0.0;
   double    MYClickOffset   = 0.0;
   
