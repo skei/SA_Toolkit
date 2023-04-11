@@ -26,6 +26,7 @@
 #include "gui/widgets/sat_plugin_header_widget.h"
 #include "gui/widgets/sat_plugin_footer_widget.h"
 #include "gui/widgets/sat_selector_widget.h"
+#include "gui/widgets/sat_shader_widget.h"  // needs opengl 4.1
 #include "gui/widgets/sat_sizer_widget.h"
 #include "gui/widgets/sat_slider_widget.h"
 #include "gui/widgets/sat_slider_bank_widget.h"

@@ -1,4 +1,5 @@
-//#define SAT_PLUGIN_VST3
+#define SAT_PLUGIN_CLAP
+#define SAT_PLUGIN_VST3
 
 //
 
@@ -109,7 +110,7 @@ public:
       memset(buffer,0,ALength * sizeof(float));
     }
     
-    SAT_GLOBAL.DEBUG.observe(SAT_OBSERVE_FLOAT,&ph,"ph");
+//    SAT_GLOBAL.DEBUG.observe(SAT_OBSERVE_FLOAT,&ph,"ph");
     
     return AState;
   }

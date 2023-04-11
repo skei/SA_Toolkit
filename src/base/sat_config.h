@@ -15,6 +15,8 @@
 #define SAT_MODMATRIX_MAX_SRC_COUNT             64
 #define SAT_MODMATRIX_MAX_DST_COUNT             64
 #define SAT_MODMATRIX_MAX_MOD_COUNT             64
+//#define SAT_OPENGL_MAJOR                        4
+//#define SAT_OPENGL_MINOR                        1
 #define SAT_OPENGL_MAJOR                        3
 #define SAT_OPENGL_MINOR                        2
 #define SAT_PAINTER_CLIP_RECT_SIZE              256

@@ -285,6 +285,7 @@
       <File Name="../../src/gui/sat_opengl.h"/>
       <File Name="../../src/gui/sat_widget_listener.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_shader_widget.h"/>
         <File Name="../../src/gui/widgets/sat_freq_resp_widget.h"/>
         <File Name="../../src/gui/widgets/sat_group_box_widget.h"/>
         <File Name="../../src/gui/widgets/sat_value_graph_widget.h"/>

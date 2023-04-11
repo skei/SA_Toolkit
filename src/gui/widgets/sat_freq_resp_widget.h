@@ -21,7 +21,7 @@
 class SAT_FR_Noop {
 private:
   float value   = 0.0;
-  float factor  = 0.5;
+  float factor  = 0.333;
 public:
   void reset() {
     value = 0.0;
@@ -29,6 +29,9 @@ public:
   float process(float AInput) {
     value += (AInput - value) * factor;
     return value;
+    //float result = (value + AInput) * 0.5;
+    //value = AInput;
+    //return result; // (AInput - result);
   }
 };
 
@@ -84,75 +87,61 @@ public:
 private:
 //------------------------------
 
-  //void makeWave(float *waveSamples, int32_t tableLen) {
-  //  float *freqRe = MIP_New float [tableLen];
-  //  float *freqIm = MIP_New float [tableLen];
-  //  // take FFT
-  //  for (int32_t idx = 0; idx < tableLen; idx++) {
-  //    freqIm[idx] = waveSamples[idx];
-  //    freqRe[idx] = 0.0;
-  //  }
-  //  fft(tableLen, freqRe, freqIm);
-  //}
-  
+  /*
+    in-place complex fft
+    After Cooley, Lewis, and Welch; from Rabiner & Gold (1975)
+    program adapted from FORTRAN
+    by K. Steiglitz  (ken@princeton.edu)
+    Computer Science Dept.
+    Princeton University 08544
+  */
+
   void fft(int32_t N, float *ar, float *ai) {
-    /*
-      in-place complex fft
-      After Cooley, Lewis, and Welch; from Rabiner & Gold (1975)
-      program adapted from FORTRAN
-      by K. Steiglitz  (ken@princeton.edu)
-      Computer Science Dept.
-      Princeton University 08544
-    */
-    int32_t i, j, k, L;             // indexes
-    int32_t M, TEMP, LE, LE1, ip;   // M = log N
-    int32_t NV2, NM1;
-    float t;                    // temp
-    float Ur, Ui, Wr, Wi, Tr, Ti;
-    float Ur_old;
-    // if ((N > 1) && !(N & (N - 1)))   // make sure we have a power of 2
-    NV2 = N >> 1;
-    NM1 = N - 1;
-    TEMP = N; // get M = log N
-    M = 0;
+    int32_t NV2 = N >> 1;
+    int32_t NM1 = N - 1;
+    int32_t TEMP = N; // get M = log N
+    int32_t M = 0;
     while (TEMP >>= 1) ++M;
     // shuffle
-    j = 1;
-    for (i = 1; i <= NM1; i++) {
-      if(i<j) {             // swap a[i] and a[j]
-        t = ar[j-1];
+    int32_t j = 1;
+    for (int32_t i=1; i<=NM1; i++) {
+      if (i < j) {
+        // swap a[i] and a[j]
+        float t = ar[j-1];
         ar[j-1] = ar[i-1];
         ar[i-1] = t;
         t = ai[j-1];
         ai[j-1] = ai[i-1];
         ai[i-1] = t;
       }
-      k = NV2;             // bit-reversed counter
-      while(k < j) {
+      // bit-reversed counter
+      int32_t k = NV2;
+      while (k < j) {
         j -= k;
         k /= 2;
       }
       j += k;
     }
-    LE = 1.;
-    for (L = 1; L <= M; L++) {            // stage L
-      LE1 = LE;                         // (LE1 = LE/2)
-      LE *= 2;                          // (LE = 2^L)
-      Ur = 1.0;
-      Ui = 0.;
-      Wr = cos(M_PI/(float)LE1);
-      Wi = -sin(M_PI/(float)LE1); // Cooley, Lewis, and Welch have "+" here
+    int32_t LE = 1;
+    for (int32_t L = 1; L <= M; L++) {      // stage L
+      int32_t LE1 = LE;                     // (LE1 = LE/2)
+      LE *= 2;                              // (LE = 2^L)
+      float Ur = 1.0;
+      float Ui = 0.;
+      float Wr = cos(M_PI / (float)LE1);
+      float Wi = -sin(M_PI / (float)LE1);   // Cooley, Lewis, and Welch have "+" here
       for (j = 1; j <= LE1; j++) {
-        for (i = j; i <= N; i += LE) { // butterfly
-          ip = i+LE1;
-          Tr = ar[ip-1] * Ur - ai[ip-1] * Ui;
-          Ti = ar[ip-1] * Ui + ai[ip-1] * Ur;
-          ar[ip-1] = ar[i-1] - Tr;
-          ai[ip-1] = ai[i-1] - Ti;
-          ar[i-1]  = ar[i-1] + Tr;
-          ai[i-1]  = ai[i-1] + Ti;
+        // butterfly
+        for (int32_t i = j; i <= N; i += LE) {
+          int32_t ip = i + LE1;
+          float Tr = ar[ip - 1] * Ur - ai[ip - 1] * Ui;
+          float Ti = ar[ip - 1] * Ui + ai[ip - 1] * Ur;
+          ar[ip - 1] = ar[i - 1] - Tr;
+          ai[ip - 1] = ai[i - 1] - Ti;
+          ar[i  - 1] = ar[i - 1] + Tr;
+          ai[i  - 1] = ai[i - 1] + Ti;
         }
-        Ur_old = Ur;
+        float Ur_old = Ur;
         Ur = Ur_old * Wr - Ui * Wi;
         Ui = Ur_old * Wi + Ui * Wr;
       }
@@ -179,7 +168,7 @@ public:
 //------------------------------
 
   virtual void drawFreqResp(SAT_PaintContext* AContext) {
-    SAT_PRINT;
+    //SAT_PRINT;
     SAT_Assert(AContext);
     if (MDrawFreqResp) {
       double S = getWindowScale();
@@ -207,13 +196,25 @@ public:
       double xpos = mrect.x;
       
       for (uint32_t i=0; i<mrect.w; i++) {
-        uint32_t p = (uint32_t)SAT_Trunc(index);
 
-//        float re = rbuffer[p];
-//        float im = ibuffer[p];
-//        float v = sqrt((re*re) + (im*im));
+        // https://www.kvraudio.com/forum/viewtopic.php?p=6204732#p6204732
+        float freqMin = 1;            // 20 (hz)
+        float freqMax = FFT_SIZE * 0.5;     // 22050 (hz)
+        float width   = mrect.w;      // 500 (pixels)
+        //float F = (double)i;
+        float X = (double)i;
+        float F = freqMin * exp(log(freqMax / freqMin) * X / width);
+        //float X = width * log( F / freqMin) / log(freqMax / freqMin);
 
-        float v = buffer[p];
+        //uint32_t p = (uint32_t)SAT_Trunc(index);
+        //float v = buffer[p];
+        
+        float fr = SAT_Fract(F);
+
+        uint32_t p = (uint32_t)SAT_Trunc(F);
+        
+        float v = (buffer[p]   * (1.0 - fr))
+                + (buffer[p+1] * (      fr));
 
         //SAT_Print("%i (index %f adder %f) = %f\n",i,index,adder,v);
         
