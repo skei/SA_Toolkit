@@ -24,12 +24,13 @@ class SAT_ValueGraphWidget
 private:
 //------------------------------
 
-  SAT_Color      MBackColor;
-  SAT_Color      MLineColor;
-  SAT_Color      MNodeColor;
-  int32_t         MNumNodes;
-  SAT_ValueGraphNode MNodes[SAT_NUM_WIDGETNODES];
-  int32_t         MSelected;
+  SAT_Color           MBackColor;
+  SAT_Color           MLineColor;
+  double              MLineWidth = 1.0;
+  SAT_Color           MNodeColor;
+  int32_t             MNumNodes;
+  SAT_ValueGraphNode  MNodes[SAT_NUM_WIDGETNODES];
+  int32_t             MSelected;
 
 //------------------------------
 public:
@@ -98,6 +99,9 @@ public:
     //painter->pushClip(getRect());
     
     if (MNumNodes>0) {
+      
+      painter->setLineWidth(MLineWidth*S);
+      
       //int32 halfw = (mrect.w/2);
       int32_t halfh = (mrect.h/2);
       if (MNumNodes==1) {

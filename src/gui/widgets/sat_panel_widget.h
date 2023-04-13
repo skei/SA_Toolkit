@@ -47,6 +47,9 @@ protected:
   double    MDropShadowXOffsetTMP = 0.0;
   double    MDropShadowYOffsetTMP = 0.0;
   
+  SAT_Rect  MMappedIndicatorOffset     = SAT_Rect();
+  SAT_Rect  MAutomationIndicatorOffset = SAT_Rect();
+  
 //------------------------------
 public:
 //------------------------------
@@ -248,6 +251,50 @@ public:
     }
   }
 
+  //----------
+
+  virtual void drawHostIndicators(SAT_PaintContext* AContext) {
+    SAT_Assert(AContext);
+    
+    SAT_Painter* painter = AContext->painter;
+    SAT_Assert(painter);
+    double S = getWindowScale();
+    SAT_Rect mrect = getRect();
+    
+    SAT_Parameter* param = (SAT_Parameter*)getConnection();
+    if (param) {
+      
+      uint32_t state = param->getAutomationState();
+      if (state != CLAP_PARAM_INDICATION_AUTOMATION_NONE) {
+        SAT_PRINT;
+        double x = mrect.x2() - (4.0 * S);
+        double y = mrect.y + (4.0 * S);
+        SAT_Color color = param->getAutomationColor();
+        painter->setFillColor(color);
+        painter->fillCircle(x,y,3*S);
+      }
+      
+      bool mapped = param->getIsMapped();
+      if (mapped) {
+        SAT_PRINT;
+        SAT_Color color = param->getMappedColor();
+        painter->setFillColor(color);
+        //double coords[8] = {
+        //  mrect.x,          mrect.y,
+        //  mrect.x + (5*S),  mrect.y,
+        //  mrect.x,          mrect.y + (5*S),
+        //  mrect.x,          mrect.y
+        //};
+        //painter->fillLineStrip(4,coords);
+        double x = mrect.x + (2.0 * S);
+        double y = mrect.y + (2.0 * S);
+        double w = (4.0 * S);
+        double h = (4.0 * S);
+        painter->fillRect(x,y,w,h);
+      }
+      
+    }
+  }
 
 //------------------------------
 public:
@@ -257,40 +304,41 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     paintChildWidgets(AContext);
+    drawHostIndicators(AContext);
     drawBorder(AContext);
   }
   
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    if (AButton == SAT_BUTTON_LEFT) {
-      if (MDrawDropShadow && !MDropShadowInner) {
-        MDropShadowXOffsetTMP = MDropShadowXOffset;
-        MDropShadowYOffsetTMP = MDropShadowYOffset;
-        MDropShadowXOffset = 0;
-        MDropShadowYOffset = 0;
-        //SAT_Color temp  = MGradientColor1;
-        //MGradientColor1 = MGradientColor2;
-        //MGradientColor2 = temp;
-        do_widgetListener_update(this,0);
-        do_widgetListener_redraw(this,0);
-      }
-    }
-  }
+//  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+//    if (AButton == SAT_BUTTON_LEFT) {
+//      if (MDrawDropShadow && !MDropShadowInner) {
+//        MDropShadowXOffsetTMP = MDropShadowXOffset;
+//        MDropShadowYOffsetTMP = MDropShadowYOffset;
+//        MDropShadowXOffset = 0;
+//        MDropShadowYOffset = 0;
+//        //SAT_Color temp  = MGradientColor1;
+//        //MGradientColor1 = MGradientColor2;
+//        //MGradientColor2 = temp;
+//        do_widgetListener_update(this,0);
+//        do_widgetListener_redraw(this,0);
+//      }
+//    }
+//  }
   
   //----------
 
-  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    if (AButton == SAT_BUTTON_LEFT) {
-      if (MDrawDropShadow && !MDropShadowInner) {
-        MDropShadowXOffset = MDropShadowXOffsetTMP;
-        MDropShadowYOffset = MDropShadowYOffsetTMP;
-        //SAT_Color temp  = MGradientColor1;
-        //MGradientColor1 = MGradientColor2;
-        //MGradientColor2 = temp;
-        do_widgetListener_update(this,0);
-        do_widgetListener_redraw(this,0);
-      }
-    }
-  }
+//  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+//    if (AButton == SAT_BUTTON_LEFT) {
+//      if (MDrawDropShadow && !MDropShadowInner) {
+//        MDropShadowXOffset = MDropShadowXOffsetTMP;
+//        MDropShadowYOffset = MDropShadowYOffsetTMP;
+//        //SAT_Color temp  = MGradientColor1;
+//        //MGradientColor1 = MGradientColor2;
+//        //MGradientColor2 = temp;
+//        do_widgetListener_update(this,0);
+//        do_widgetListener_redraw(this,0);
+//      }
+//    }
+//  }
   
 };
 

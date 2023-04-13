@@ -1,5 +1,5 @@
-#define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_VST3
+//#define SAT_PLUGIN_CLAP
+//#define SAT_PLUGIN_VST3
 
 //
 
@@ -228,7 +228,8 @@ public:
                 SAT_TERM_UNDERLINE "underline\n" SAT_TERM_RESET );
     SAT_DPrint( SAT_TERM_FG_RED "hello" SAT_TERM_FG_YELLOW " world2\n" SAT_TERM_RESET);
    
-    registerDefaultSynthExtensions();
+    //registerDefaultSynthExtensions();
+    registerAllExtensions();
     appendClapNoteInputPort();
     appendStereoOutputPort();
 

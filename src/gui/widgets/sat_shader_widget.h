@@ -7,7 +7,8 @@
 #include "gui/widgets/sat_panel_widget.h"
 
 #ifdef SAT_LINUX
-  #include <GL/gl.h>
+  //#include <GL/gl.h>
+  #include "gui/sat_opengl.h"
 #endif
 
 //----------------------------------------------------------------------
@@ -128,24 +129,33 @@ public:
 
   void init() {
     
-    VertexShaderID = glCreateShaderProgramv( GL_VERTEX_SHADER,   1, &vsh );
-    FragmentShaderID = glCreateShaderProgramv( GL_FRAGMENT_SHADER, 1, &fsh );
+//    #if (SAT_OPENGL_MAJOR >= 4) and (SAT_OPENGL_MINOR >= 1)
+//    
+//      VertexShaderID = glCreateShaderProgramv( GL_VERTEX_SHADER,   1, &vsh );
+//      FragmentShaderID = glCreateShaderProgramv( GL_FRAGMENT_SHADER, 1, &fsh );
+//      
+//      glGenProgramPipelines(1,&ProgramPipelineID);
+//      glBindProgramPipeline(ProgramPipelineID);
+//      glUseProgramStages(ProgramPipelineID, GL_VERTEX_SHADER_BIT, VertexShaderID);
+//      glUseProgramStages(ProgramPipelineID, GL_FRAGMENT_SHADER_BIT, FragmentShaderID);
+//      glBindProgramPipeline(0);
+//      
+//      glGenBuffers(1,&VertexBufferID);
+//      glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
+//      glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+//      glBindBuffer(GL_ARRAY_BUFFER, 0);    
+//
+//      glGenBuffers(1,&IndexBufferID);
+//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
+//      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_DYNAMIC_DRAW);    
+//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+//    
+//    #else
+//    
+//      #warning needs opengl 4.1
+//      
+//    #endif
     
-    glGenProgramPipelines(1,&ProgramPipelineID);
-    glBindProgramPipeline(ProgramPipelineID);
-    glUseProgramStages(ProgramPipelineID, GL_VERTEX_SHADER_BIT, VertexShaderID);
-    glUseProgramStages(ProgramPipelineID, GL_FRAGMENT_SHADER_BIT, FragmentShaderID);
-    glBindProgramPipeline(0);
-    
-    glGenBuffers(1,&VertexBufferID);
-    glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);    
-
-    glGenBuffers(1,&IndexBufferID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_DYNAMIC_DRAW);    
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
   }
   
 //------------------------------
@@ -155,7 +165,7 @@ public:
   virtual void drawShader(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     
-    SAT_PRINT;
+    //SAT_PRINT;
     
     if (MDrawShader) {
       

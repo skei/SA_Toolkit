@@ -48,6 +48,7 @@ public:
 
   virtual bool open(SAT_Rect ARect) {
     SAT_Rect rect = ARect;
+    double S = getWindowScale();
     //setRectAndBasis(MSavedRect);
     MSavedRect = rect;
     uint32_t winw = getWindowWidth();
@@ -55,12 +56,11 @@ public:
     
     //SAT_Print("winw %i winh %i,%i\n",winw,winh);
     
-    if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - 5;
-    if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - 5;
+    if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - (5*S);
+    if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - (5*S);
     setRectAndBasis(rect);
     
     #ifdef SAT_POPUP_WIDGET_USE_TWEENING
-      double S = getWindowScale();
       rect.scale(1.0/S);
       SAT_TweenManager* tweens = MWindow->getTweens();
       double startpos[4] = { rect.x+100, rect.y-100, 0,      0      };

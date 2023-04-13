@@ -113,6 +113,7 @@ public:
     fillBackground(AContext);
     drawText(AContext);
     drawValue(AContext);
+    drawHostIndicators(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
   }

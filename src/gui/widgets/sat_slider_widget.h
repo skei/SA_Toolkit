@@ -165,6 +165,8 @@ public:
 
     }
   }
+  
+  //
 
 //------------------------------
 public:
@@ -176,7 +178,8 @@ public:
     drawSliderBar(AContext);
     drawText(AContext);
     drawValue(AContext);
-    //paintChildren(AContext);
+    drawHostIndicators(AContext);
+    paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 

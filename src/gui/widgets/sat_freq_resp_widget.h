@@ -10,7 +10,6 @@
 #include "gui/widgets/sat_panel_widget.h"
 
 #define FFT_SIZE  128
-#define NUM_FREQUS 128
 
 //----------------------------------------------------------------------
 //
@@ -128,8 +127,8 @@ private:
       LE *= 2;                              // (LE = 2^L)
       float Ur = 1.0;
       float Ui = 0.;
-      float Wr = cos(M_PI / (float)LE1);
-      float Wi = -sin(M_PI / (float)LE1);   // Cooley, Lewis, and Welch have "+" here
+      float Wr = cos(SAT_PI / (float)LE1);
+      float Wi = -sin(SAT_PI / (float)LE1);   // Cooley, Lewis, and Welch have "+" here
       for (j = 1; j <= LE1; j++) {
         // butterfly
         for (int32_t i = j; i <= N; i += LE) {
@@ -158,9 +157,10 @@ private:
       rbuffer[i] = MProcessor.process(v);
       ibuffer[i] = 0.0;
     }
-    //DFT(rbuffer,FFT_SIZE,tbuffer,FFT_SIZE);
     fft(FFT_SIZE,rbuffer,ibuffer);
-    for (uint32_t i=0; i<FFT_SIZE; i++) buffer[i] = sqrt((rbuffer[i]*rbuffer[i]) + (ibuffer[i]*ibuffer[i]));
+    for (uint32_t i=0; i<FFT_SIZE; i++) {
+      buffer[i] = sqrt((rbuffer[i] * rbuffer[i]) + (ibuffer[i] * ibuffer[i]));
+    }
   }
 
 //------------------------------
@@ -175,55 +175,34 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
-      
       mrect.shrink(2);
-      
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       float h05 = mrect.h * 0.5;
-      
       painter->setDrawColor(MLineColor);
       painter->setLineWidth(1*S);
-      
-      //float xx = mrect.x;
       float index = 0.0;
       float adder = (1.0 / (double)mrect.w) * (double)FFT_SIZE * 0.5;
-      
       float prevy;
       if (MIsBipolar) prevy = mrect.y + h05;
       else prevy = mrect.y2();
-
       double xpos = mrect.x;
-      
       for (uint32_t i=0; i<mrect.w; i++) {
-
         // https://www.kvraudio.com/forum/viewtopic.php?p=6204732#p6204732
-        float freqMin = 1;            // 20 (hz)
-        float freqMax = FFT_SIZE * 0.5;     // 22050 (hz)
-        float width   = mrect.w;      // 500 (pixels)
+        float freqMin = 1;                // 20 (hz)
+        float freqMax = FFT_SIZE * 0.5;   // 22050 (hz)
+        float width   = mrect.w;          // 500 (pixels)
         //float F = (double)i;
         float X = (double)i;
         float F = freqMin * exp(log(freqMax / freqMin) * X / width);
         //float X = width * log( F / freqMin) / log(freqMax / freqMin);
-
-        //uint32_t p = (uint32_t)SAT_Trunc(index);
-        //float v = buffer[p];
-        
         float fr = SAT_Fract(F);
-
         uint32_t p = (uint32_t)SAT_Trunc(F);
-        
-        float v = (buffer[p]   * (1.0 - fr))
-                + (buffer[p+1] * (      fr));
-
-        //SAT_Print("%i (index %f adder %f) = %f\n",i,index,adder,v);
-        
+        float v = (buffer[p]   * (1.0 - fr)) + (buffer[p+1] * fr);
         float y;
         if (MIsBipolar) y = mrect.y + h05 - (v * h05);
         else y = mrect.y2() - (v * mrect.h);
-        
         if (i==0) prevy = y;
-        
         painter->drawLine(xpos,prevy,xpos+1.0,y);
         xpos += 1.0;
         prevy = y;
@@ -248,8 +227,6 @@ public:
 };
 
 #undef FFT_SIZE
-#undef NUM_FREQUS
-
 
 //----------------------------------------------------------------------
 #endif

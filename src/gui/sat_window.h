@@ -465,7 +465,16 @@ public: // window
       }
       //else {} // clicked another button
     }
-    //else {} // not hovering over a widget..
+    else {
+      // not hovering over a widget..      
+      if (MModalWidget) {
+        if ((AButton == SAT_BUTTON_LEFT) || (AButton == SAT_BUTTON_RIGHT)) {
+          //SAT_Print("nope.. closeing modal\n");
+          //MModalWidget->close();
+          MModalWidget->do_widgetListener_close(MModalWidget);
+        }
+      }
+    }
   }
 
   //----------
@@ -558,7 +567,10 @@ public: // window
       // if size has changed: create new buffer, copy old to new, delete old
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
-      copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
+      
+      // we don't need to copy the buffer if we're redrawing the entire thing anyway, do we?
+      //copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
+
       MWindowPainter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
@@ -568,10 +580,12 @@ public: // window
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
+
       while (MPaintDirtyWidgets.read(&widget)) {} // widget->on_widget_paint(&MPaintContext);
       //count = 1;
       MRootWidget->on_widget_paint(&MPaintContext);
       MRootWidget->setLastPainted(MPaintContext.counter); //paint_count);
+
       MWindowPainter->endFrame();
     }
     else {

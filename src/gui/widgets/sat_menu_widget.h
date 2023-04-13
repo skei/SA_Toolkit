@@ -31,7 +31,7 @@ class SAT_MenuWidget
 private:
 //------------------------------
 
-  SAT_MenuListener* MMenuListener         = nullptr;
+  SAT_MenuListener* MMenuListener     = nullptr;
   bool              MRightClickClose  = true;
 
 //------------------------------

@@ -60,7 +60,7 @@ public:
       MVerticalScrollBar->setStretching(SAT_WIDGET_STRETCH_VERTICAL);
       MVerticalScrollBar->setDirection(SAT_DIRECTION_VERT);
       if (showHorizontalScrollBar) {
-//        MVerticalScrollBar->Layout.extraBorder.h = 10;
+        MVerticalScrollBar->setPostLayoutOffset(SAT_Rect(0,0,0,10));
       }
     }
     

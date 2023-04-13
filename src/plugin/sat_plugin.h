@@ -947,7 +947,10 @@ public: // param indication
   // [main-thread]
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
-    //SAT_Print("\n");
+//    SAT_Parameter* param = MParameters[param_id];
+//    param->setMappingIndication(has_mapping,color,label,description);
+//    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
+//    if (widget) widget->parentRedraw();
   }
 
   //----------
@@ -957,9 +960,22 @@ public: // param indication
   // color: if set, the color to use to display the automation indication in the plugin GUI
   // Parameter indications should not be saved in the plugin context, and are off by default.
   // [main-thread]
+  
+  
+  /*
+  state:
+  0 CLAP_PARAM_INDICATION_AUTOMATION_NONE     // The host doesn't have an automation for this parameter
+  1 CLAP_PARAM_INDICATION_AUTOMATION_PRESENT  // The host has an automation for this parameter, but it isn't playing it
+  2 CLAP_PARAM_INDICATION_AUTOMATION_PLAYING = 2 // // The host is playing an automation for this parameter
+  3 CLAP_PARAM_INDICATION_AUTOMATION_RECORDING = 3, // // The host is recording an automation on this parameter
+  4 CLAP_PARAM_INDICATION_AUTOMATION_OVERRIDING // The host should play an automation for this parameter, but the user has started to adjust this parameter and is overriding the automation playback
+  */
 
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
-    //SAT_Print("\n");
+//    SAT_Parameter* param = MParameters[param_id];
+//    param->setAutomationIndication(automation_state,color);
+//    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
+//    if (widget) widget->parentRedraw();
   }
 
 //------------------------------
@@ -1102,7 +1118,7 @@ public: // remote controls
   // [main-thread]
 
   uint32_t remote_controls_count() override {
-    //SAT_Print("-> 1\n");
+    SAT_Print("-> 1\n");
     return 1;
   }
 
@@ -1112,7 +1128,7 @@ public: // remote controls
   // [main-thread]
 
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
-    //SAT_Print("-> true\n");
+    SAT_Print("-> true\n");
     switch (page_index) {
       case 0: {
         page->page_id = 0;
@@ -1122,10 +1138,10 @@ public: // remote controls
         page->param_ids[1] = 1;
         page->param_ids[2] = 2;
         page->param_ids[3] = 3;
-        page->param_ids[4] = 4;
-        page->param_ids[5] = 5;
-        page->param_ids[6] = 6;
-        page->param_ids[7] = 7;
+        page->param_ids[4] = 0;
+        page->param_ids[5] = 1;
+        page->param_ids[6] = 2;
+        page->param_ids[7] = 3;
         return true;
       }
     }
