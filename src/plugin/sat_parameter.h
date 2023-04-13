@@ -270,14 +270,14 @@ public:
   
   virtual void setMappingIndication(bool has_mapping, const clap_color_t *color, const char *label, const char *description) {
     SAT_Print("param %i has_mapping %i color %i.%i.%i label %s descr %s\n",MIndex,has_mapping,color->red,color->green,color->blue,label,description);
-    MIsMapped     = has_mapping;
+    MIsMapped = has_mapping;
     double r = (double)color->red * SAT_INV255;
     double g = (double)color->green * SAT_INV255;
     double b = (double)color->blue * SAT_INV255;
     double a = (double)color->alpha * SAT_INV255;
-    MMappedColor  = SAT_Color(r,g,b,a);
-    MMappedLabel  = label;
-    MMappedDesc   = description;
+    MMappedColor = SAT_Color(r,g,b,a);
+    MMappedLabel = label;
+    MMappedDesc = description;
     
   }
   

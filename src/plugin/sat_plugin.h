@@ -947,10 +947,10 @@ public: // param indication
   // [main-thread]
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
-//    SAT_Parameter* param = MParameters[param_id];
-//    param->setMappingIndication(has_mapping,color,label,description);
-//    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
-//    if (widget) widget->parentRedraw();
+    SAT_Parameter* param = MParameters[param_id];
+    param->setMappingIndication(has_mapping,color,label,description);
+    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
+    if (widget && MEditor && MEditor->isOpen()) widget->parentRedraw();
   }
 
   //----------
@@ -972,10 +972,10 @@ public: // param indication
   */
 
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
-//    SAT_Parameter* param = MParameters[param_id];
-//    param->setAutomationIndication(automation_state,color);
-//    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
-//    if (widget) widget->parentRedraw();
+    SAT_Parameter* param = MParameters[param_id];
+    param->setAutomationIndication(automation_state,color);
+    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
+    if (widget && MEditor && MEditor->isOpen()) widget->parentRedraw();
   }
 
 //------------------------------
