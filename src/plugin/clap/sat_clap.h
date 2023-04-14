@@ -111,6 +111,7 @@ struct SAT_ClapHostExtensions {
   const clap_host_transport_control_t*        transport_control       = nullptr; // draft
   const clap_host_triggers_t*                 triggers                = nullptr; // draft
   const clap_host_tuning_t*                   tuning                  = nullptr; // draft
+  const clap_host_voice_info_t*               voice_info              = nullptr;
 };
 
 //----------------------------------------------------------------------

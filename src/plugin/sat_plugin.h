@@ -976,6 +976,7 @@ public: // param indication
   // [main-thread]
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
+    SAT_PRINT;
     SAT_Parameter* param = MParameters[param_id];
     param->setMappingIndication(has_mapping,color,label,description);
     SAT_Widget* widget = (SAT_Widget*)param->getConnection();

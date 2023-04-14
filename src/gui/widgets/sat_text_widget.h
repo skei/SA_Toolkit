@@ -4,6 +4,7 @@
 
 #include "base/sat.h"
 #include "plugin/sat_parameter.h"
+#include "gui/widgets/sat_movable_widget.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 //----------------------------------------------------------------------
@@ -13,7 +14,8 @@
 //----------------------------------------------------------------------
 
 class SAT_TextWidget
-: public SAT_PanelWidget {
+//: public SAT_PanelWidget {
+: public SAT_MovableWidget {
 
 //------------------------------
 private:
@@ -31,7 +33,8 @@ public:
 //------------------------------
 
   SAT_TextWidget(SAT_Rect ARect, const char* AText)
-  : SAT_PanelWidget(ARect) {
+  //: SAT_PanelWidget(ARect) {
+  : SAT_MovableWidget(ARect) {
     setName("SAT_TextWidget");
     strcpy(MText,AText);
     setFillBackground(true);
