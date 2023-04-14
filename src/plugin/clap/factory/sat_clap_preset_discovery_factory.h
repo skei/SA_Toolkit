@@ -34,8 +34,43 @@
 
 //----------------------------------------------------------------------
 //
+//
+//
+//----------------------------------------------------------------------
+
+
+  /*
+  struct clap_preset_discovery_indexer {
+    clap_version_t clap_version;
+    const char *name;
+    const char *vendor;
+    const char *url;
+    const char *version;
+    void       *indexer_data;
+    bool declare_filetype     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_filetype_t *filetype);
+    bool declare_location     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_location_t *location);
+    bool declare_soundpack    (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_soundpack_t *soundpack);
+    const void *get_extension (const struct clap_preset_discovery_indexer *indexer,
+  };
+  */
+
+
+const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
+
+
+//----------------------------------------------------------------------
+//
 // provider
 //
+//----------------------------------------------------------------------
+
+const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
+  .clap_version = CLAP_VERSION,
+  .id           = "skei.audio/SAPresetProvider/0",
+  .name         = "SAPresetProvider",
+  .vendor       = "skei.audio"
+};
+
 //----------------------------------------------------------------------
 
 // Initialize the preset provider.
@@ -43,7 +78,25 @@
 // Returns false if initialization failed.
 
 bool clap_preset_discovery_provider_init_callback(const struct clap_preset_discovery_provider *provider) {
-  return false;
+  SAT_PRINT;
+  
+  const clap_preset_discovery_filetype_t filetype = {
+    "skei.audio preset",  //const char *name;
+    "(description)",      //"const char *description; // optional
+    "SA_Preset"
+  };
+  
+  const clap_preset_discovery_location_t location = {
+    CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,  //uint32_t flags;
+    "skei.audio presets",                   //const char *name;
+    CLAP_PRESET_DISCOVERY_LOCATION_FILE,    //uint32_t kind;
+    "./presets"                             //const char *location;
+  };
+  
+  SAT_GLOBAL_CLAP_PRESET_INDEXER->declare_filetype(SAT_GLOBAL_CLAP_PRESET_INDEXER,&filetype);
+  SAT_GLOBAL_CLAP_PRESET_INDEXER->declare_location(SAT_GLOBAL_CLAP_PRESET_INDEXER,&location);
+  
+  return true;
 }
 
 //----------
@@ -51,6 +104,7 @@ bool clap_preset_discovery_provider_init_callback(const struct clap_preset_disco
 // Destroys the preset provider
 
 void clap_preset_discovery_provider_destroy_callback(const struct clap_preset_discovery_provider *provider) {
+  SAT_PRINT;
 }
 
 //----------
@@ -72,9 +126,12 @@ void clap_preset_discovery_provider_destroy_callback(const struct clap_preset_di
      void add_extra_info   (const struct clap_preset_discovery_metadata_receiver *receiver, const char *key, const char *value);
   };
   */
-
-bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, const char *uri, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
-  return false;
+  
+bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, uint32_t location_kind, const char *location, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
+  SAT_PRINT;
+  // read from file (location)
+  // call metadata_provider-> ...
+  return true;
 }
 
 //----------
@@ -85,22 +142,14 @@ bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_pres
 // You can call it within provider->init() call, and after.
 
 const void* clap_preset_discovery_provider_get_extension_callback(const struct clap_preset_discovery_provider *provider, const char *extension_id) {
-  return nullptr;
+  SAT_PRINT;
+  return "SA_Preset";
 }
 
 //----------------------------------------------------------------------
 
-const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
-  .clap_version = CLAP_VERSION,
-  .id           = "me/myPresetDiscoveryProvider/0",
-  .name         = "myPresetDiscoveryProvider",
-  .vendor       = "me"
-};
-
-//----------
-
 const clap_preset_discovery_provider_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER = {
-  .desc           = nullptr,
+  .desc           = &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR,//nullptr,
   .provider_data  = nullptr,
   .init           = clap_preset_discovery_provider_init_callback,
   .destroy        = clap_preset_discovery_provider_destroy_callback,
@@ -118,6 +167,7 @@ const clap_preset_discovery_provider_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER = {
 // [thread-safe]
 
 uint32_t clap_preset_discovery_factory_count_callback(const struct clap_preset_discovery_factory *factory) {
+  SAT_PRINT;
   return 1;
 }
 
@@ -128,8 +178,13 @@ uint32_t clap_preset_discovery_factory_count_callback(const struct clap_preset_d
 // The descriptor must not be freed.
 // [thread-safe]
 
-const clap_preset_discovery_provider_descriptor_t* clap_preset_discovery_factory_get_descriptor_callback( const struct clap_preset_discovery_factory *factory, uint32_t index) {
-  if (index == 0) return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR;
+const clap_preset_discovery_provider_descriptor_t* clap_preset_discovery_factory_get_descriptor_callback(const struct clap_preset_discovery_factory *factory, uint32_t index) {
+  SAT_Print("index %i\n",index);
+  if (index == 0) {
+    SAT_Print("yes\n");
+    return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR;
+  }
+    SAT_Print("no\n");
   return nullptr;
 }
 
@@ -142,31 +197,27 @@ const clap_preset_discovery_provider_descriptor_t* clap_preset_discovery_factory
 // Returns null in case of error.
 // [thread-safe]
 
-  /*
-  struct clap_preset_discovery_indexer {
-    clap_version_t clap_version;
-    const char *name;
-    const char *vendor;
-    const char *url;
-    const char *version;
-    void       *indexer_data;
-    bool declare_filetype     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_filetype_t *filetype);
-    bool declare_location     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_location_t *location);
-    bool declare_soundpack    (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_soundpack_t *soundpack);
-    const void *get_extension (const struct clap_preset_discovery_indexer *indexer,
-  };
-  */
-
 const clap_preset_discovery_provider_t* clap_preset_discovery_factory_create_callback( const struct clap_preset_discovery_factory *factory, const clap_preset_discovery_indexer_t *indexer, const char *provider_id) {
+  SAT_Print("provider_id %s\n",provider_id);
+  
+  SAT_Print("name:    %s\n",indexer->name);
+  SAT_Print("vendor:  %s\n",indexer->vendor);
+  SAT_Print("url:     %s\n",indexer->url);
+  SAT_Print("version: %s\n",indexer->version);
+  
+  SAT_GLOBAL_CLAP_PRESET_INDEXER = indexer;
+  
   if (strcmp(provider_id,SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id) == 0) {
+    SAT_Print("yes\n");
     return  &SAT_CLAP_PRESET_DISCOVERY_PROVIDER;
   }
+  SAT_Print("no\n");
   return nullptr;
 }
 
 //----------------------------------------------------------------------
 
-const clap_preset_discovery_factory_t SAT_CLAP_PRESET_FACTORY {
+const clap_preset_discovery_factory_t SAT_CLAP_PRESET_DISCOVERY_FACTORY {
   .count          = clap_preset_discovery_factory_count_callback,
   .get_descriptor = clap_preset_discovery_factory_get_descriptor_callback,
   .create         = clap_preset_discovery_factory_create_callback

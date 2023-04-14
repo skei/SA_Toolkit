@@ -495,6 +495,21 @@ public: // context menu
   // host.context_menu_popup()
   
   //----------
+  
+  
+  
+  
+
+
+  // CLAP_CONTEXT_MENU_TARGET_KIND_GLOBAL = 0,
+  // CLAP_CONTEXT_MENU_TARGET_KIND_PARAM = 1,
+
+  // CLAP_CONTEXT_MENU_ITEM_ENTRY
+  // CLAP_CONTEXT_MENU_ITEM_CHECK_ENTRY
+  // CLAP_CONTEXT_MENU_ITEM_SEPARATOR
+  // CLAP_CONTEXT_MENU_ITEM_BEGIN_SUBMENU
+  // CLAP_CONTEXT_MENU_ITEM_END_SUBMENU
+  // CLAP_CONTEXT_MENU_ITEM_TITLE
 
   // Insert plugin's menu items into the menu builder.
   // If target is null, assume global context.
@@ -510,10 +525,20 @@ public: // context menu
   //   bool(CLAP_ABI *add_item)(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind, const void *item_data);
   //   bool(CLAP_ABI *supports)(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind);
   //} clap_context_menu_builder_t;
+  
+//  clap_context_menu_entry entry = {
+//    "hello world!", // const char *label;
+//    true,           // bool is_enabled;
+//    0               //clap_id     action_id;
+//  };
 
   bool context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) override {
-    //SAT_Print("\n");
+    SAT_Print("target kind %i id %i\n",target->kind,target->id);
     return false;
+//    if (builder->supports(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY)) {
+//      builder->add_item(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY,&entry);
+//    }
+//    return true;
   }
 
   //----------
@@ -523,8 +548,12 @@ public: // context menu
   // [main-thread]
 
   bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
-    //SAT_Print("\n");
+    SAT_Print("target kind %i id %i action %i\n",target->kind,target->id,action_id);
     return false;
+//    if (action_id == 0) {
+//      SAT_Print("hello world!!!");
+//    }
+//    return true;
   }
 
 //------------------------------
