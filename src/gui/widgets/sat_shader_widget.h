@@ -2,83 +2,26 @@
 #define sat_shader_widget_included
 //----------------------------------------------------------------------
 
+/*
+  https://gist.github.com/kazt81/1526616
+  
+  Triangle_opengl_3_1
+  A cross platform version of
+  http://www.opengl.org/wiki/Tutorial:_OpenGL_3.1_The_First_Triangle_%28C%2B%2B/Win%29
+  with some code from http://www.lighthouse3d.com/opengl/glsl/index.php?oglexample1
+  and from the book OpenGL Shading Language 3rd Edition, p215-216
+  Daniel Livingstone, October 2010
+*/  
+
+//----------------------------------------------------------------------
+
 #include "base/sat.h"
 #include "plugin/sat_parameter.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 #ifdef SAT_LINUX
-  //#include <GL/gl.h>
   #include "gui/sat_opengl.h"
 #endif
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-  const char* vsh = \
-    "#version 430\n"
-    "layout (location=0) in vec2 inVer;"
-    "out vec2 p;"
-    "out gl_PerVertex"
-    "{"
-    "vec4 gl_Position;"
-    "};"
-    "void main()"
-    "{"
-    "gl_Position=vec4(inVer,0.0,1.0);"
-    "p=inVer;"
-    "}";
-
-  const char* fsh = \
-    "#version 430\n"
-    "layout (location=0) uniform vec4 fpar[4];"
-    "layout (location=0) out vec4 co;"
-    "in vec2 p;"
-    "float iSphere(in vec3 ro, in vec3 rd, in vec4 sph)"
-    "{"
-    "vec3  q = ro - sph.xyz;"
-    "float b = dot( q, rd );"
-    "float c = dot( q, q ) - sph.w*sph.w;"
-    "float h = b*b - c;"
-    "if( h>0.0 ) h = -b - sqrt( h );"
-    "return h;"
-    "}"
-    "void main()"
-    "{"
-    "vec3 w=normalize(fpar[1].xyz-fpar[0].xyz);"
-    "vec3 u=normalize(cross(w,vec3(0.0,1.0,0.0)));"
-    "vec3 v=cross(u,w);"
-    "vec3 ro = fpar[0].xyz;"
-    "vec3 rd = normalize( p.x*u*1.77 + p.y*v + 0.75*w );"
-    "float dif = dot( p, vec2(0.707) );"
-    "float t = iSphere(ro,rd,fpar[2]);"
-    "if(t>0.0)"
-    "{"
-    "vec3 pos = ro + t*rd;"
-    "vec3 nor = normalize( pos - fpar[2].xyz );"
-    "dif = dot(nor,vec3(0.57703));"
-    "}"
-    "co = dif*vec4(0.5,0.4,0.3,0.0) + vec4(0.5,0.5,0.5,1.0);"
-    "}";
-
-    const GLfloat g_vertex_buffer_data[] = {
-//      -0.9f, -0.9f, 0.0f,
-//       0.9f, -0.9f, 0.0f,
-//       0.9f,  0.9f, 0.0f,
-//      -0.9f,  0.9f, 0.0f,
-
-       100, 100, 0,
-       200, 100, 0,
-       200, 200, 0,
-       100, 200, 0,
-    };
-
-    const GLuint g_index_buffer_data[] = {
-      0, 1, 2,
-      0, 2, 3
-    };
 
 //----------------------------------------------------------------------
 //
@@ -93,14 +36,54 @@ class SAT_ShaderWidget
 private:
 //------------------------------
 
-  bool          MDrawShader = false;
+  bool MDrawShader = true;
   
-  unsigned int  ProgramPipelineID;
-  int           VertexShaderID;
-  int           FragmentShaderID;
+  //----------
   
-  GLuint        VertexBufferID;
-  GLuint        IndexBufferID;    
+  const char* vertex_shader_source =
+    "//#version 130"
+    "in vec3 in_Position;"
+    "in vec3 in_Color;"
+    "out vec3 ex_Color;"
+    "void main(void) {"
+    "  ex_Color = in_Color;"
+    "  gl_Position = vec4(in_Position, 1.0);"
+    "}";
+
+  const char* fragment_shader_source =
+    "//#version 130"
+    "precision highp float; // needed only for version 1.30"
+    "in vec3 ex_Color;"
+    "out vec4 out_Color;"
+    "void main(void) {"
+    "  out_Color = vec4(ex_Color,1.0);"
+    "}";
+
+  GLfloat vertices[9] = {
+    0.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f
+  };
+  
+  GLfloat vertices2[9] = {
+       0.0f,   0.0f, 0.0f,
+       0.0f, 100.0f, 0.0f,
+     100.0f,   0.0f, 0.0f
+  };
+
+  GLfloat colours[9] = {
+       1.0f,   0.0f,   0.0f,
+       0.0f,   1.0f,   0.0f,
+       0.0f,   0.0f,   1.0f
+  };
+  
+  unsigned int  vertex_array_object[2];
+  unsigned int  vertex_buffer_object[3];
+
+  GLuint        vertex_shader;
+  GLuint        fragment_shader;
+  GLuint        shader_program;
+  
 
 //------------------------------
 public:
@@ -115,7 +98,13 @@ public:
   //----------
 
   virtual ~SAT_ShaderWidget() {
+    // cleanup shaders..
   }
+
+//------------------------------
+public:
+//------------------------------
+
 
 //------------------------------
 public:
@@ -127,36 +116,142 @@ public:
   
   //----------
 
-  void init() {
-    
-//    #if (SAT_OPENGL_MAJOR >= 4) and (SAT_OPENGL_MINOR >= 1)
-//    
-//      VertexShaderID = glCreateShaderProgramv( GL_VERTEX_SHADER,   1, &vsh );
-//      FragmentShaderID = glCreateShaderProgramv( GL_FRAGMENT_SHADER, 1, &fsh );
-//      
-//      glGenProgramPipelines(1,&ProgramPipelineID);
-//      glBindProgramPipeline(ProgramPipelineID);
-//      glUseProgramStages(ProgramPipelineID, GL_VERTEX_SHADER_BIT, VertexShaderID);
-//      glUseProgramStages(ProgramPipelineID, GL_FRAGMENT_SHADER_BIT, FragmentShaderID);
-//      glBindProgramPipeline(0);
-//      
-//      glGenBuffers(1,&VertexBufferID);
-//      glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
-//      glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-//      glBindBuffer(GL_ARRAY_BUFFER, 0);    
-//
-//      glGenBuffers(1,&IndexBufferID);
-//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
-//      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_DYNAMIC_DRAW);    
-//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-//    
-//    #else
-//    
-//      #warning needs opengl 4.1
-//      
-//    #endif
-    
+  // Display (hopefully) useful error messages if shader fails to compile
+  
+  void printShaderInfoLog(GLint shader) {
+    int infoLogLen = 0;
+    int charsWritten = 0;
+    GLchar *infoLog;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLen);
+    // should additionally check for OpenGL errors here
+    if (infoLogLen > 0) {
+      infoLog = new GLchar[infoLogLen];
+      // error check for fail to allocate memory omitted
+      glGetShaderInfoLog(shader,infoLogLen, &charsWritten, infoLog);
+      SAT_Print("InfoLog: %s\n",infoLog);
+      delete [] infoLog;
+    }
+    // should additionally check for OpenGL errors here
   }
+  
+  //----------
+
+  void init(void) {
+    // Allocate Vertex Array Objects
+    
+    glGenVertexArrays(2,&vertex_array_object[0]);
+    
+    // first Vertex Array Object
+    glBindVertexArray(vertex_array_object[0]);
+    glGenBuffers(2,vertex_buffer_object);
+    // VBO for vertex data
+    glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[0]);
+    glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices,GL_STATIC_DRAW);
+    glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
+    glEnableVertexAttribArray(0);
+    // VBO for colour data
+    glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[1]);
+    glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colours,GL_STATIC_DRAW);
+    glVertexAttribPointer((GLuint)1,3,GL_FLOAT,GL_FALSE,0,0);
+    glEnableVertexAttribArray(1);
+    // second Vertex Array Object
+    glBindVertexArray(vertex_array_object[1]);
+    glGenBuffers(1,&vertex_buffer_object[2]);
+    // VBO for vertex data
+    glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[2]);
+    glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices2,GL_STATIC_DRAW);
+    glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+  }
+
+  //----------
+
+  void initShaders(void) {
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);	
+    GLint vlen = strlen(vertex_shader_source);
+    GLint flen = strlen(fragment_shader_source);
+    glShaderSource(vertex_shader,1,&vertex_shader_source,&vlen);
+    glShaderSource(fragment_shader,1,&fragment_shader_source,&flen);
+
+    GLint compiled;
+
+    glCompileShader(vertex_shader);
+    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&compiled);
+    if (!compiled) {
+      SAT_Print("Vertex shader not compiled.\n");
+      printShaderInfoLog(vertex_shader);
+    } 
+    else {
+      SAT_Print("Vertex shader compiled.\n");
+    }
+
+    glCompileShader(fragment_shader);
+    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &compiled);
+    if (!compiled) {
+      SAT_Print("Fragment shader not compiled.\n");
+      printShaderInfoLog(fragment_shader);
+    } 
+    else {
+      SAT_Print("Fragment shader compiled.\n");
+    }
+    
+    shader_program = glCreateProgram();
+    glBindAttribLocation(shader_program,0, "in_Position");
+    glBindAttribLocation(shader_program,1, "in_Color");
+    glAttachShader(shader_program,vertex_shader);
+    glAttachShader(shader_program,fragment_shader);
+    glLinkProgram(shader_program);
+
+//    glUseProgram(shader_program);
+//    glUseProgram(0);
+
+  }
+  
+  //----------
+
+  void draw_using_shader() {
+    SAT_Print("shading!\n");
+    //glViewport(0,0,1000,1000);
+    //glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(shader_program);
+    glBindVertexArray(vertex_array_object[0]);	// First VAO
+    glDrawArrays(GL_TRIANGLES, 0, 3);	          // draw first object
+    glBindVertexArray(vertex_array_object[1]);	// select second VAO
+    glVertexAttrib3f((GLuint)1, 1.0, 0.0, 0.0); // set constant color attribute
+    glDrawArrays(GL_TRIANGLES, 0, 3);	          // draw second object
+    glBindVertexArray(0);
+    //glUseProgram(0);
+    //glutSwapBuffers();
+  }
+
+  //----------
+
+
+  //----------
+
+  //int main (int argc, char* argv[]) {
+  //  glutInit(&argc, argv);
+  //  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+  //  glutInitWindowSize(600,600);
+  //  glutCreateWindow("Triangle Test");
+  //  glewInit();
+  //  GLenum err = glewInit();
+  //  if (GLEW_OK != err) {
+  //    /* Problem: glewInit failed, something is seriously wrong. */
+  //    cout << "glewInit failed, aborting." << endl;
+  //    exit (1);
+  //  }
+  //  cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << endl;
+  //  cout << "OpenGL version " << glGetString(GL_VERSION) << " supported" << endl;
+  //  init();
+  //  initShaders();
+  //  glutDisplayFunc(display);
+  //  glutReshapeFunc(reshape);	
+  //  glutMainLoop();
+  //  return 0;
+  //}
   
 //------------------------------
 public:
@@ -164,21 +259,7 @@ public:
 
   virtual void drawShader(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
-    
-    //SAT_PRINT;
-    
     if (MDrawShader) {
-      
-//      glBindProgramPipeline(ProgramPipelineID);
-//      glUseProgramStages(ProgramPipelineID, GL_VERTEX_SHADER_BIT, VertexShaderID);
-//      glUseProgramStages(ProgramPipelineID, GL_FRAGMENT_SHADER_BIT, FragmentShaderID);
-//    
-//      glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
-//      glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-//
-//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
-//      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_DYNAMIC_DRAW);    
-      
       //double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
@@ -187,51 +268,13 @@ public:
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       
-      //---
-
-//      float fparams[4*4];
-//      float t  = 0;
-//      // camera position
-//      fparams[ 0] = 2.0f * sinf(1.0f * t + 0.1f);
-//      fparams[ 1] = 0.0f;
-//      fparams[ 2] = 2.0f * cosf(1.0f * t);
-//      // camera target
-//      fparams[ 4] = 0.0f;
-//      fparams[ 5] = 0.0f;
-//      fparams[ 6] = 0.0f;
-//      // sphere
-//      fparams[ 8] = 0.0f;
-//      fparams[ 9] = 0.0f;
-//      fparams[10] = 0.0f;
-//      fparams[11] = 1.0f;
-//      glProgramUniform4fv(FragmentShaderID,0,4,fparams);
-
-      //glRects( -1, -1, 1, 1 );
-
-//      glBindProgramPipeline(ProgramPipelineID);
-//      glUseProgramStages(ProgramPipelineID, GL_VERTEX_SHADER_BIT, VertexShaderID);
-//      glUseProgramStages(ProgramPipelineID, GL_FRAGMENT_SHADER_BIT, FragmentShaderID);
-//
-//      glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
-//      glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
-//      glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-//
-//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
-//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferID);
-//      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, GL_DYNAMIC_DRAW);    
-//      
-//      glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,nullptr);   // crashes..
-//      
-//      glBindProgramPipeline(0);
-//      glBindBuffer(GL_ARRAY_BUFFER, 0);    
-//      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+      //painter->setFillColor(SAT_White);
+      //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
       
-
-      //---
+      draw_using_shader();
       
     }
   }
-
 
 //------------------------------
 public:
@@ -247,92 +290,5 @@ public:
 
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-#if 0
-
-void intro_do( long time ) {
-  const float t  = 0.001f*(float)time;
-  // camera position
-  fparams[ 0] = 2.0f*sinf(1.0f*t+0.1f);
-  fparams[ 1] = 0.0f;
-  fparams[ 2] = 2.0f*cosf(1.0f*t);
-  // camera target
-  fparams[ 4] = 0.0f;
-  fparams[ 5] = 0.0f;
-  fparams[ 6] = 0.0f;
-  // sphere
-  fparams[ 8] = 0.0f;
-  fparams[ 9] = 0.0f;
-  fparams[10] = 0.0f;
-  fparams[11] = 1.0f;
-  //--- render -----------------------------------------
-  oglProgramUniform4fv( fsid, 0, 4, fparams );
-  glRects( -1, -1, 1, 1 );
-}
-
-#define oglCreateShaderProgramv ((PFNGLCREATESHADERPROGRAMVPROC)myglfunc[0])
-#define oglGenProgramPipelines  ((PFNGLGENPROGRAMPIPELINESPROC)myglfunc[1])
-#define oglBindProgramPipeline  ((PFNGLBINDPROGRAMPIPELINEPROC)myglfunc[2])
-#define oglUseProgramStages     ((PFNGLUSEPROGRAMSTAGESPROC)myglfunc[3])
-#define oglProgramUniform4fv    ((PFNGLPROGRAMUNIFORM4FVPROC)myglfunc[4])
-
-#ifdef DEBUG
-#define oglGetProgramiv         ((PFNGLGETPROGRAMIVPROC)myglfunc[5])
-#define oglGetProgramInfoLog    ((PFNGLGETPROGRAMINFOLOGPROC)myglfunc[6])
-#endif
-
-static char *glFuncNames[] = {
-    "glCreateShaderProgramv",
-    "glGenProgramPipelines",
-    "glBindProgramPipeline",
-    "glUseProgramStages",
-    "glProgramUniform4fv" };
-
-extern void *myglfunc[];
-
-//...
-  for( int i=0; i<5; i++ ) {
-    myglfunc[i] = wglGetProcAddress( glFuncNames[i] );
-    if ( !myglfunc[i] ) return;
-  }
-  if( !intro_init() ) return;
-  // play intro
-  long t;
-  long to = timeGetTime();
-  do {
-    t = timeGetTime() - to;
-    intro_do( t );
-    wglSwapLayerBuffers( hDC, WGL_SWAP_MAIN_PLANE ); //SwapBuffers( hDC );
-  } while ( !GetAsyncKeyState(VK_ESCAPE) && t<(MZK_DURATION*1000) );
-
-  #ifdef CLEANDESTROY
-    sndPlaySound(0,0);
-    ChangeDisplaySettings( 0, 0 );
-    ShowCursor(1);
-  #endif
-
-  ExitProcess(0);
-}
-
-#endif // 0

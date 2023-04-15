@@ -14,8 +14,8 @@
 //----------------------------------------------------------------------
 
 class SAT_TextWidget
-//: public SAT_PanelWidget {
-: public SAT_MovableWidget {
+: public SAT_PanelWidget {
+//: public SAT_MovableWidget {
 
 //------------------------------
 private:
@@ -33,8 +33,8 @@ public:
 //------------------------------
 
   SAT_TextWidget(SAT_Rect ARect, const char* AText)
-  //: SAT_PanelWidget(ARect) {
-  : SAT_MovableWidget(ARect) {
+  : SAT_PanelWidget(ARect) {
+  //: SAT_MovableWidget(ARect) {
     setName("SAT_TextWidget");
     strcpy(MText,AText);
     setFillBackground(true);

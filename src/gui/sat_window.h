@@ -168,6 +168,8 @@ public:
   double            getInitialHeight()  { return MInitialHeight; }
   
   //SAT_TweenManager* getTweens()         { return &MTweens; }
+  
+  SAT_OpenGL*       getOpenGL()         { return MOpenGL; }
 
 //------------------------------
 public:
