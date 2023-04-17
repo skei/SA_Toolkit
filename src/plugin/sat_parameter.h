@@ -323,17 +323,17 @@ public:
 //------------------------------
 
   sat_param_t getValue() override {
-    return SAT_Trunc(MValue+0.5);
+    return SAT_Trunc(MValue);//+0.5);
   }
 
   void setValue(double AValue) override {
-    MValue = SAT_Trunc(AValue+0.5);
+    MValue = SAT_Trunc(AValue);//+0.5);
   }
 
   //----------
 
   bool valueToText(double value, char *display, uint32_t size) override {
-    sprintf(display,"%.f",SAT_Trunc(value+0.5));
+    sprintf(display,"%.f",SAT_Trunc(value));//+0.5));
     return true;
   }
 

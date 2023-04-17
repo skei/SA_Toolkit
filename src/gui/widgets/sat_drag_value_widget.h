@@ -177,7 +177,11 @@ public:
       //}
       //else {
         
-        MDragValue    = getValue();
+        double value = getValue();
+        //SAT_Parameter* param = (SAT_Parameter*)getConnection();
+        //if (param) value = param->getNormalizedValue();
+        //SAT_Print("%f\n",value);
+        MDragValue = value;
         
         //SAT_Print("%f\n",MDragValue);
         
@@ -244,6 +248,7 @@ public:
       
       value = SAT_Clamp(value,0,1);
       setValue(value);
+      //SAT_Print("value %f\n",value); // ok.. 0..1
       do_widgetListener_update(this,0);
       do_widgetListener_redraw(this,0);
     }

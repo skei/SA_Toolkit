@@ -82,7 +82,9 @@ public:
     //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
     SAT_Widget* widget = (SAT_Widget*)AParam->getConnection();
     if (widget) {
-      widget->setValue(AValue);
+//      widget->setValue(AValue);
+      sat_param_t normalized_value = AParam->normalizeValue(AValue);
+      widget->setValue(normalized_value);
     }
   }
 
@@ -99,7 +101,10 @@ public:
       //uint32_t counter = pc->counter;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
       if (widget) {
-        widget->setValue(AValue);
+        
+        sat_param_t normalized_value = AParameter->normalizeValue(AValue);
+        
+        widget->setValue(normalized_value);
         //widget->update();
         //parentRedraw();
         widget->do_widgetListener_redraw(widget,0);
@@ -164,7 +169,9 @@ public: // window listener
       SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection();
       if (param) {
         uint32_t index = param->getIndex();
+        
         double value = ASender->getValue();
+        
         MListener->do_editorListener_parameter_update(index,value);
       }
     }

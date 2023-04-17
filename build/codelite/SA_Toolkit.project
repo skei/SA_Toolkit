@@ -48,15 +48,16 @@
       <File Name="../../../SA_Plugins/sa_gain.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="test">
-      <File Name="../test/test7_gui2.h"/>
-      <File Name="../test/test4_layout.h"/>
-      <File Name="../test/test1_synth_widgets.h"/>
-      <File Name="../test/test1_synth.h"/>
-      <File Name="../test/test3_minimal.h"/>
-      <File Name="../test/test2_standalone.h"/>
-      <File Name="../test/test1_synth_gui.h"/>
-      <File Name="../test/test6_ara.h"/>
-      <File Name="../test/test5_reaper_ext.h"/>
+      <File Name="../test/test_params.h"/>
+      <File Name="../test/test_gui2.h"/>
+      <File Name="../test/test_ara.h"/>
+      <File Name="../test/test_reaper_ext.h"/>
+      <File Name="../test/test_layout.h"/>
+      <File Name="../test/test_minimal.h"/>
+      <File Name="../test/test_standalone.h"/>
+      <File Name="../test/test_synth_widgets.h"/>
+      <File Name="../test/test_synth_gui.h"/>
+      <File Name="../test/test_synth.h"/>
     </VirtualDirectory>
     <File Name="../build.cpp"/>
   </VirtualDirectory>
@@ -285,6 +286,7 @@
       <File Name="../../src/gui/sat_opengl.h"/>
       <File Name="../../src/gui/sat_widget_listener.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_range_bar_widget.h"/>
         <File Name="../../src/gui/widgets/sat_shader_widget.h"/>
         <File Name="../../src/gui/widgets/sat_freq_resp_widget.h"/>
         <File Name="../../src/gui/widgets/sat_group_box_widget.h"/>
@@ -297,7 +299,6 @@
         <File Name="../../src/gui/widgets/sat_sizer_widget.h"/>
         <File Name="../../src/gui/widgets/sat_scroll_box_widget.h"/>
         <File Name="../../src/gui/widgets/sat_scroll_bar_widget.h"/>
-        <File Name="../../src/gui/widgets/sat_scroll_bar_widget0.h"/>
         <File Name="../../src/gui/widgets/sat_curve_widget.h"/>
         <File Name="../../src/gui/widgets/sat_plugin_footer_widget.h"/>
         <File Name="../../src/gui/widgets/sat_movable_widget.h"/>

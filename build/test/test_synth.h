@@ -10,7 +10,7 @@
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
 
-#include "test1_synth_widgets.h"
+#include "test_synth_widgets.h"
 
 //----------------------------------------------------------------------
 //
@@ -233,12 +233,16 @@ public:
     appendClapNoteInputPort();
     appendStereoOutputPort();
 
-    /*SAT_Parameter* par1 =*/ appendParameter( new SAT_Parameter("Param1",0.1) );
-    /*SAT_Parameter* par2 =*/ appendParameter( new SAT_Parameter("Param2",0.4) );
-      SAT_Parameter* par3 =   appendParameter( new SAT_Parameter("Param3",0.7) );
-    par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
-    /*SAT_Parameter* par4 =*/ appendParameter( new SAT_Parameter("Param4",0.1) );
+    SAT_Parameter* par1 = appendParameter( new SAT_Parameter("Param1",0.1) );
+    SAT_Parameter* par2 = appendParameter( new SAT_Parameter("Param2",0.4, -2, 4) );
+    SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",0.7,0,2) );
+    SAT_Parameter* par4 = appendParameter( new SAT_IntParameter("Param4",0, -5, 5) );
 
+    par1->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    par2->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    par4->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
 
     //setProcessThreaded(false);
@@ -292,7 +296,7 @@ public:
 public:
 //------------------------------
 
-  #include "test1_synth_gui.h"
+  #include "test_synth_gui.h"
   
 //------------------------------
 public:

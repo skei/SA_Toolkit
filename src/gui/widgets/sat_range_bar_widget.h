@@ -1,12 +1,12 @@
-#ifndef sat_scroll_bar_widget0_included
-#define sat_scroll_bar_widget0_included
+#ifndef sat_range_bar_widget0_included
+#define sat_range_bar_widget0_included
 
 // hover/drag state: 0=none, 1=left, 2=right, 3=both
 
 #include "base/sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 
-class SAT_ScrollBarWidget0
+class SAT_RangeBarWidget
 : public SAT_PanelWidget {
 
 //------------------------------
@@ -22,29 +22,34 @@ private:
   SAT_Color MDragColor      = SAT_DarkestGrey;
   int32_t   MHoverState     = 0;
   int32_t   MDragState      = 0;
-  
+ 
   double    MPrevX          = 0;
   double    MPrevY          = 0;
+  
+  double    MHorizSens      = 0.1;
+  double    MVertSens       = 0.1;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_ScrollBarWidget0(SAT_Rect ARect)
+  SAT_RangeBarWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
     setName("SAT_ScrollBarWidget");
   }
   
   //----------
 
-  virtual ~SAT_ScrollBarWidget0() {
+  virtual ~SAT_RangeBarWidget() {
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void setDrawThumb(bool ADraw=true) { MDrawThumb = ADraw; }
+  virtual void setDrawThumb(bool ADraw=true) {
+    MDrawThumb = ADraw;
+  }
   
 //------------------------------
 public:
@@ -138,6 +143,8 @@ public:
       MPrevY = AYpos;
       MDragState = MHoverState;
       parentRedraw();
+      do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
+      do_widgetListener_set_cursor(this,SAT_CURSOR_HIDE);
     }
   }
   
@@ -151,6 +158,8 @@ public:
   void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MDragState = 0;
     parentRedraw();
+    do_widgetListener_set_cursor(this,SAT_CURSOR_UNLOCK);
+    do_widgetListener_set_cursor(this,SAT_CURSOR_SHOW);
   }
 
   //----------
@@ -161,6 +170,9 @@ public:
     MPrevX = AXpos;
     double ydiff = AYpos - MPrevY;
     MPrevY = AYpos;
+    
+    xdiff *= MHorizSens;
+    ydiff *= MVertSens;
     
     SAT_Rect mrect = getRect();
     switch (MDragState) {
@@ -189,9 +201,9 @@ public:
         v += (xdiff / range);
         v = SAT_Clamp(v,0,1);
         setValue(v);
+        SAT_Print("v %.3f thumb %.3f\n",v,MThumbSize);
         parentRedraw();
         //double v = (AXpos - mrect.x) / (mrect.w * (1.0 - MThumbSize));
-        //SAT_Print("%f\n",v);
         //setValue(v);
         //redraw();
         break;

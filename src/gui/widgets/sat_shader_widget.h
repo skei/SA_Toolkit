@@ -67,8 +67,8 @@ private:
   
   GLfloat vertices2[9] = {
        0.0f,   0.0f, 0.0f,
-       0.0f, 100.0f, 0.0f,
-     100.0f,   0.0f, 0.0f
+     100.0f,   0.0f, 0.0f,
+       0.0f, 100.0f, 0.0f
   };
 
   GLfloat colours[9] = {
@@ -144,24 +144,29 @@ public:
     // first Vertex Array Object
     glBindVertexArray(vertex_array_object[0]);
     glGenBuffers(2,vertex_buffer_object);
+    
     // VBO for vertex data
     glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[0]);
     glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices,GL_STATIC_DRAW);
     glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
     glEnableVertexAttribArray(0);
+    
     // VBO for colour data
     glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[1]);
     glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colours,GL_STATIC_DRAW);
     glVertexAttribPointer((GLuint)1,3,GL_FLOAT,GL_FALSE,0,0);
     glEnableVertexAttribArray(1);
+    
     // second Vertex Array Object
     glBindVertexArray(vertex_array_object[1]);
     glGenBuffers(1,&vertex_buffer_object[2]);
+
     // VBO for vertex data
     glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[2]);
     glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices2,GL_STATIC_DRAW);
     glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
     glEnableVertexAttribArray(0);
+    
     glBindVertexArray(0);
   }
 
@@ -211,26 +216,6 @@ public:
   
   //----------
 
-  void draw_using_shader() {
-    SAT_Print("shading!\n");
-    //glViewport(0,0,1000,1000);
-    //glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shader_program);
-    glBindVertexArray(vertex_array_object[0]);	// First VAO
-    glDrawArrays(GL_TRIANGLES, 0, 3);	          // draw first object
-    glBindVertexArray(vertex_array_object[1]);	// select second VAO
-    glVertexAttrib3f((GLuint)1, 1.0, 0.0, 0.0); // set constant color attribute
-    glDrawArrays(GL_TRIANGLES, 0, 3);	          // draw second object
-    glBindVertexArray(0);
-    //glUseProgram(0);
-    //glutSwapBuffers();
-  }
-
-  //----------
-
-
-  //----------
-
   //int main (int argc, char* argv[]) {
   //  glutInit(&argc, argv);
   //  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -271,7 +256,25 @@ public:
       //painter->setFillColor(SAT_White);
       //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
       
-      draw_using_shader();
+      //draw_using_shader();
+      SAT_Print("shading!\n");
+      
+      //glViewport(0,0,1000,1000);
+      //glClear(GL_COLOR_BUFFER_BIT);
+      
+      glUseProgram(shader_program);
+      
+      glBindVertexArray(vertex_array_object[0]);	// First VAO
+      glDrawArrays(GL_TRIANGLES, 0, 3);	          // draw first object
+      
+      glBindVertexArray(vertex_array_object[1]);	// select second VAO
+      glVertexAttrib3f((GLuint)1, 1.0, 0.0, 0.0); // set constant color attribute
+      glDrawArrays(GL_TRIANGLES, 0, 3);	          // draw second object
+      
+      glBindVertexArray(0);
+      glUseProgram(0);
+      
+      //glutSwapBuffers();
       
     }
   }
@@ -283,11 +286,15 @@ public:
   void on_widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
-    drawShader(AContext);
+//    drawShader(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
   }
 
+  void on_widget_postpaint(SAT_PaintContext* AContext) override {
+    drawShader(AContext);
+  }
+  
 };
 
 //----------------------------------------------------------------------

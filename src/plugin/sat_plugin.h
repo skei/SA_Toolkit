@@ -1898,7 +1898,7 @@ public: // queues
     item.value  = AValue;
     if (!MParamFromGuiToAudioQueue.write(item)) {
       //SAT_Log("queueParamFromGuiToAudio: couldn't write to queue\n");
-      SAT_Print("queueParamFromGuiToAudio: couldn't write to queue\n");
+//      SAT_Print("queueParamFromGuiToAudio: couldn't write to queue\n");
     }
   }
 
@@ -1955,7 +1955,7 @@ public: // queues
     item.value  = AValue;
     if (!MParamFromGuiToHostQueue.write(item)) {
       //SAT_Log("queueParamFromGuiToHost: couldn't write to queue\n");
-      SAT_Print("queueParamFromGuiToHost: couldn't write to queue\n");
+//      SAT_Print("queueParamFromGuiToHost: couldn't write to queue\n");
     }
   }
 
@@ -2126,8 +2126,8 @@ public: // parameters
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
       SAT_Parameter* param = MParameters[i];
-      //double value = MParameters[i]->getValue();//getDefaultValue();
-      double value = MParameters[i]->getNormalizedValue();//getDefaultValue();
+      double value = MParameters[i]->getValue();//getDefaultValue();
+      //double value = MParameters[i]->getNormalizedValue();//getDefaultValue();
       MEditor->updateParameterValue(param,i,value);
     }
   }

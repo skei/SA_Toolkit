@@ -13,12 +13,14 @@
 
 
 
-#include "test/test1_synth.h"
-//#include "test/test2_standalone.h"
-//#include "test/test3_minimal.h" // -> build/minimal/plugin.cpp
-//#include "test/test4_layout.h"
-//#include "test/test5_reaper_ext.h"
-//#include "test/test6_ara.h"
+#include "test/test_synth.h"
+//#include "test/test_standalone.h"
+//#include "test/test_minimal.h" // -> build/minimal/plugin.cpp
+//#include "test/test_layout.h"
+//#include "test/test_reaper_ext.h"
+//#include "test/test_ara.h"
+
+//#include "test/test_params.h"
 
 
 

@@ -248,9 +248,9 @@
     left_column->appendChildWidget(selector);
     selector->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
-    SAT_ScrollBarWidget0* scrollbar0 = new SAT_ScrollBarWidget0(20);
-    left_column->appendChildWidget(scrollbar0);
-    scrollbar0->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+    SAT_RangeBarWidget* rangebar = new SAT_RangeBarWidget(20);
+    left_column->appendChildWidget(rangebar);
+    rangebar->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     
     SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(30);
     left_column->appendChildWidget(keyboard);
@@ -357,12 +357,9 @@
 
 //    SAT_ShaderWidget* shader = new SAT_ShaderWidget(SAT_Rect(130,205,50,50));
 //    middle_column->appendChildWidget(shader);
-//    
-//    SAT_OpenGL* gl = AWindow->getOpenGL();
-//    gl->makeCurrent();
+//    AWindow->appendPostPaint(shader);
 //    shader->init();
 //    shader->initShaders();
-//    gl->resetCurrent();
 
     SAT_CurveWidget* curve1 = new SAT_CurveWidget(SAT_Rect(10,260,20,20),false);
     middle_column->appendChildWidget(curve1);

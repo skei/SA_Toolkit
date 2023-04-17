@@ -55,6 +55,8 @@ private:
   void*               MRenderBuffer           = nullptr;
   SAT_Timer*          MTimer                  = nullptr;
   SAT_WidgetArray     MTimerWidgets           = {};
+  SAT_WidgetArray     MPrePaintWidgets        = {};
+  SAT_WidgetArray     MPostPaintWidgets       = {};
   
   void*               MBuffer                 = nullptr;
   uint32_t            MBufferWidth            = 0;
@@ -231,7 +233,6 @@ public:
     MTimerWidgets.remove(AWidget);
   }
   
-  
   //----------
 
   virtual SAT_Rect calcClipRect(SAT_Widget* AWidget) {
@@ -246,6 +247,43 @@ public:
     return rect;
   }
   
+  //----------
+  
+//  /*
+//    select render buffer:
+//    void nvgluBindFramebuffer(NVGLUframebuffer* fb) {
+//      if (defaultFBO == -1) glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
+//      glBindFramebuffer(GL_FRAMEBUFFER, fb != NULL ? fb->fbo : defaultFBO);
+//    }
+//  */    
+  
+  // opengl context is made current
+  
+  virtual void prepaint(SAT_PaintContext* AContext) {
+    for (uint32_t i=0; i<MPrePaintWidgets.size(); i++) {
+      MPrePaintWidgets[i]->on_widget_prepaint(AContext);
+    }
+  }
+
+  //----------
+
+  // opengl context is still current
+  
+  virtual void postpaint(SAT_PaintContext* AContext) {
+    for (uint32_t i=0; i<MPostPaintWidgets.size(); i++) {
+      MPostPaintWidgets[i]->on_widget_postpaint(AContext);
+    }
+  }
+
+
+void appendPrePaint(SAT_Widget* AWidget) {
+  MPrePaintWidgets.append(AWidget);
+}
+
+void appendPostPaint(SAT_Widget* AWidget) {
+  MPostPaintWidgets.append(AWidget);
+}
+
 //------------------------------
 public: // capture
 //------------------------------
@@ -563,6 +601,9 @@ public: // window
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
+    
+    //prepaint(&MPaintContext);
+    
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
@@ -579,6 +620,9 @@ public: // window
       MBufferHeight = height2;
       // paint dirty widgets to render buffer
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+      
+prepaint(&MPaintContext);
+      
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
@@ -589,9 +633,15 @@ public: // window
       MRootWidget->setLastPainted(MPaintContext.counter); //paint_count);
 
       MWindowPainter->endFrame();
+      
+postpaint(&MPaintContext);
+      
     }
     else {
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+
+prepaint(&MPaintContext);
+
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
@@ -610,8 +660,14 @@ public: // window
         }
       }
       MWindowPainter->endFrame();
+      
+postpaint(&MPaintContext);
+      
     }
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
+    
+    //postpaint(&MPaintContext);
+    
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
     MPaintContext.counter += 1;

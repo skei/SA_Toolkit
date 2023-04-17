@@ -151,7 +151,7 @@ public:
   virtual void setInteracting(bool AState=true)                 { MIsInteracting = AState; }
   virtual void setLastPainted(int32_t ACount)                   { MLastPainted = ACount; }
   virtual void setListener(SAT_WidgetListener* AListener)       { MListener = AListener; }
-  virtual void setModulation(double AValue, uint32_t AIndex=0)  { MValues[AIndex] = AValue; }
+  virtual void setModulation(double AValue, uint32_t AIndex=0)  { MModulations[AIndex] = AValue; }
   virtual void setName(const char* AName)                       { MName = AName; }
 //  virtual void setOuterBorder(SAT_Rect ARect)                   { MOuterBorder = ARect; }
   virtual void setParentWidget(SAT_Widget* AParent)             { MParentWidget = AParent; }
@@ -604,8 +604,14 @@ public: // base
   virtual void on_widget_resize(double AWidth, double AHeight) {
   }
   
+  virtual void on_widget_prepaint(SAT_PaintContext* AContext) {
+  }
+  
   virtual void on_widget_paint(SAT_PaintContext* AContext) {
     if (MIsVisible) paintChildWidgets(AContext);
+  }
+  
+  virtual void on_widget_postpaint(SAT_PaintContext* AContext) {
   }
   
   virtual void on_widget_timer(uint32_t AId, double ADelta) {
