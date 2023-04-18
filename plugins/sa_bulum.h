@@ -1,8 +1,15 @@
 #ifndef sa_bulum_included
 #define sa_bulum_included
 //----------------------------------------------------------------------
+/*
 
-//#define SAT_PLUGIN_GENERIC_EDITOR
+  TODO:
+  
+  - replace primitive buffer with proper interpolated delay line
+  - display w/ delay buffer & grains
+
+*/
+//----------------------------------------------------------------------
 
 #include "plugin/sat_plugin.h"
 #include "gui/sat_widgets.h"
@@ -19,11 +26,8 @@
   #define PLUGIN_NAME   "SA_bulum"
 #endif
 
-#define EDITOR_WIDTH    400
-#define EDITOR_HEIGHT   (40 + 10 + (13 * (20 + 10)) + 20)
-
-#define SAT_MAX_GRAINS  1024
-#define SAT_BUFFERSIZE  (1024*1024)
+#define MAX_GRAINS  1024
+#define BUFFERSIZE  (1024*1024)
 
 //----------
 
@@ -80,21 +84,13 @@ class sa_bulum_plugin
 private:
 //------------------------------
 
-  const clap_audio_port_info_t sa_bulum_audio_input_ports[1] = {
-    { 0, "audio in 1", CLAP_AUDIO_PORT_IS_MAIN, 2, CLAP_PORT_STEREO, CLAP_INVALID_ID }
-  };
+  float     MSampleRate         = 0.0;
 
-  const clap_audio_port_info_t sa_bulum_audio_output_ports[1] = {
-    { 0, "audio out 1", CLAP_AUDIO_PORT_IS_MAIN, 2, CLAP_PORT_STEREO, CLAP_INVALID_ID }
-  };
+  SAT_Grain MGrains[MAX_GRAINS] = {0};
+  float     MBuffer[BUFFERSIZE] = {0};
 
-  float     MSampleRate             = 0.0;
-
-  SAT_Grain MGrains[SAT_MAX_GRAINS] = {0};
-  float     MBuffer[SAT_BUFFERSIZE] = {0};
-
-  bool      need_precalc            = true;
-  bool      need_recalc             = false;
+  bool      need_precalc        = true;
+  bool      need_recalc         = false;
 
   float     master      = 0.0;
   int32_t   numgrains   = 0;
@@ -124,27 +120,25 @@ public: // plugin
 //------------------------------
 
   bool init() final {
-    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT);
     appendStereoInputPort();
     appendStereoOutputPort();
     registerDefaultExtensions();
-    appendParameter(new SAT_Parameter(      "Master",            -6,   -60,  6    ));
-    appendParameter(new SAT_IntParameter(   "Number of grains",   10,   1,   100  ));
-    appendParameter(new SAT_Parameter(      "Buffer size",        1000, 1,   1000 ));
-    appendParameter(new SAT_TextParameter(  "Freeze",             0,    0,   1,   freeze_txt ));
-    appendParameter(new SAT_Parameter(      "Grain distance",     20,   0,   100  ));
-    appendParameter(new SAT_Parameter(      "Grain size",         30,   1,   100  ));
-    appendParameter(new SAT_Parameter(      "Grain duration",     300,  1,   1000 ));
-    appendParameter(new SAT_Parameter(      "Grain pitch",        1,    0,   10   ));
-    appendParameter(new SAT_Parameter(      "Grain envelope",     0,    0,   1    ));
-    appendParameter(new SAT_Parameter(      "Distance jitter",    0.2,  0,   1    ));
-    appendParameter(new SAT_Parameter(      "Pitch jitter",       0.2,  0,   1    ));
-    appendParameter(new SAT_Parameter(      "Size jitter",        0.2,  0,   1    ));
-    appendParameter(new SAT_Parameter(      "Duration jitter",    0.2,  0,   1    ));
+    appendParameter(new SAT_Parameter(      "Master",              -6,   -60,  6                  ));
+    appendParameter(new SAT_IntParameter(   "Number of grains",     10,   1,   MAX_GRAINS         ));
+    appendParameter(new SAT_Parameter(      "Buffer size",          1000, 1,   1000               ));
+    appendParameter(new SAT_TextParameter(  "Freeze",               0,    0,   1,     freeze_txt  ));
+    appendParameter(new SAT_Parameter(      "Grain distance",       20,   0,   100                ));
+    appendParameter(new SAT_Parameter(      "Grain size",           30,   1,   100                ));
+    appendParameter(new SAT_Parameter(      "Grain duration",       300,  1,   1000               ));
+    appendParameter(new SAT_Parameter(      "Grain pitch",          1,    0,   4                  ));
+    appendParameter(new SAT_Parameter(      "Grain envelope",       0,    0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Distance jitter",      0.2,  0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Pitch jitter",         0.2,  0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Size jitter",          0.2,  0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Duration jitter",      0.2,  0,   1                  ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     bool result = SAT_Plugin::init();
     if (result) {
-//      setDefaultParameterValues();
       need_precalc = true;
       return true;
     }
@@ -157,28 +151,6 @@ public: // plugin
     MSampleRate = sample_rate;
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
-
-//  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-//    // background panel
-//    SAT_PanelWidget* panel = new SAT_PanelWidget(0);
-//    AWindow->appendRootWidget(panel);
-//    panel->setDrawBorder(false);
-//    // header
-//    const char* plugin_format = getPluginFormat();
-//    SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,200,40),"bulum",plugin_format);
-//    panel->appendChildWidget(header);
-//    // footer
-//    SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(SAT_Rect(0,EDITOR_HEIGHT-20,200,20));
-//    panel->appendChildWidget(footer);
-//    // sliders
-//    for (uint32_t i=0; i<getNumParameters(); i++) {
-//      SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10, 50 + (i*30),380,20),"",0.0);
-//      panel->appendChildWidget(slider);
-//      AEditor->connect( slider,  getParameter(i) );
-//    }
-//    return true;
-//  }
-
 
 //------------------------------
 private:
@@ -193,7 +165,7 @@ private:
     else freeze = false;
     graindist = ( getParameterValue(4) / 1000) * MSampleRate;
     grainsize = ( getParameterValue(5) / 1000) * MSampleRate;
-    graindur = ( getParameterValue(6) / 1000) * MSampleRate;
+    graindur  = ( getParameterValue(6) / 1000) * MSampleRate;
   }
 
   //----------
@@ -207,10 +179,8 @@ private:
 //------------------------------
 
   bool handleParamValue(const clap_event_param_value_t* param_value) final {
-    //SAT_Plugin::processParamValue(param_value);
     uint32_t index = param_value->param_id;
     float value = param_value->value;
-    SAT_Print("%i = %f\n",index,value);
     switch (index) {
       case 0:  master      = pow(2,(value / 6)); break;
       case 1:  numgrains   = trunc( value ); break;
@@ -238,10 +208,10 @@ private:
     if (need_recalc) recalc(MSampleRate);
 
     uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
+    float*  in0  = process->audio_inputs[0].data32[0];
+    float* in1   = process->audio_inputs[0].data32[1];
+    float* out0  = process->audio_outputs[0].data32[0];
+    float* out1  = process->audio_outputs[0].data32[1];
 
     float spl0,spl1;
     for (uint32_t i=0; i<len; i++) {
@@ -251,6 +221,7 @@ private:
       *out0++ = spl0;
       *out1++ = spl1;
     }
+    
   }
 
 //------------------------------
@@ -263,6 +234,7 @@ private:
     float out0 = 0;
     float out1 = 0;
     int32_t newgrain = -1;
+    
     //if (numgrains > 0) {
       for (int32_t i=0; i<numgrains; i++) {
         if (MGrains[i].on) {
@@ -285,6 +257,7 @@ private:
         else newgrain = i;
       }
     //}
+    
     if (countdown <= 0) {
       countdown = graindist;
       if (newgrain > 0) {
@@ -313,17 +286,18 @@ private:
       }
     }
     countdown -= 1;
+    
     if (!freeze) {
       MBuffer[index*2] = in0;
       MBuffer[index*2+1] = in1;
     }
+    
     index += 1;
     if (index >= buffersize) index -= buffersize;
+    
     *spl0 = out0 * master;
     *spl1 = out1 * master;
   }
-
-  //----------
 
 };
 
@@ -334,9 +308,16 @@ private:
 //----------------------------------------------------------------------
 
 #ifndef SAT_NO_ENTRY
+
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_bulum_descriptor,sa_bulum_plugin);
+  
 #endif
+
+//----------
+
+#undef MAX_GRAINS
+#undef BUFFERSIZE
 
 //----------------------------------------------------------------------
 #endif

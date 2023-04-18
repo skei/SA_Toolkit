@@ -106,16 +106,18 @@ void handle_editor(const clap_plugin_t* plugin) {
       const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_WIN32, .win32 = win32window };
     #endif
     
-    
     gui->set_parent(plugin,&clapwindow);
     gui->show(plugin);
-    gui->set_size(plugin,width,height);
+    gui->set_size(plugin,width,height); // is this needed?
 
     window->show();
     window->eventLoop();
+    
+    // window->hide(); //why not here?
 
     gui->hide(plugin);
     gui->destroy(plugin);
+    
     window->hide();
     delete window;
   }

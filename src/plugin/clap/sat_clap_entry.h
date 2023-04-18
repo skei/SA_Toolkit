@@ -23,14 +23,6 @@ void clap_entry_deinit_callback(void) {
 
 //----------
 
-/*
-  bitwig asks for
-    clap.plugin-factory
-    clap.plugin-invalidation-factory/draft0
-  reaper asks for
-    clap.plugin-factory
-*/
-
 const void* clap_entry_get_factory_callback(const char* factory_id) {
   int32_t index = SAT_GLOBAL.REGISTRY.findFactory(factory_id);
   if (index > 0) {
@@ -43,11 +35,11 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
     SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> SAT_CLAP_PLUGIN_FACTORY\n",factory_id);
     return &SAT_CLAP_PLUGIN_FACTORY;
   }
-//  if (strcmp(factory_id,CLAP_PRESET_DISCOVERY_FACTORY_ID) == 0) {
-//    return &SAT_CLAP_PRESET_DISCOVERY_FACTORY;
-//  }
   //if (strcmp(factory_id,CLAP_PLUGIN_INVALIDATION_FACTORY_ID) == 0) {
   //  return &SAT_CLAP_PLUGIN_INVALIDATION_FACTORY;
+  //}
+  //if (strcmp(factory_id,CLAP_PRESET_DISCOVERY_FACTORY_ID) == 0) {
+  //  return &SAT_CLAP_PRESET_DISCOVERY_FACTORY;
   //}
   // nope..
   SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> null (no factory found)\n",factory_id);
