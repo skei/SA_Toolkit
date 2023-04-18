@@ -291,9 +291,9 @@ public:
     drawBorder(AContext);
   }
 
-  void on_widget_postpaint(SAT_PaintContext* AContext) override {
-    drawShader(AContext);
-  }
+//  void on_widget_postpaint(SAT_PaintContext* AContext) override {
+//    drawShader(AContext);
+//  }
   
 };
 

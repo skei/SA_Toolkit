@@ -191,6 +191,8 @@ public:
     return normalizeValue(MValue);
   }
   
+  //----------
+  
   virtual double getNormalizedModulation() {
     double range = MInfo.max_value - MInfo.min_value;
     if (range <= 0.0) return MModulation;
@@ -323,17 +325,20 @@ public:
 //------------------------------
 
   sat_param_t getValue() override {
-    return SAT_Trunc(MValue);//+0.5);
+    //SAT_Print("MValue %f -> %f\n",MValue,SAT_Round(MValue));
+    return SAT_Round(MValue);
   }
 
   void setValue(double AValue) override {
-    MValue = SAT_Trunc(AValue);//+0.5);
+    //SAT_Print("AValue %f\n",AValue);
+    MValue = AValue;
   }
 
   //----------
 
   bool valueToText(double value, char *display, uint32_t size) override {
-    sprintf(display,"%.f",SAT_Trunc(value));//+0.5));
+    sprintf(display,"%.f",SAT_Round(value));
+    //SAT_Print("value %f -> %s\n",value,display);
     return true;
   }
 

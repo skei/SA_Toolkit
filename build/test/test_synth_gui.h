@@ -352,7 +352,7 @@
     knob->setSnapPos(0.5);
     knob->setValue(0.25);
     
-    SAT_FreqRespWidget<SAT_FR_Noop>* freqres = new SAT_FreqRespWidget<SAT_FR_Noop>(SAT_Rect(70,205,50,50));
+    SAT_FreqRespWidget<SAT_TestFreqRes>* freqres = new SAT_FreqRespWidget<SAT_TestFreqRes>(SAT_Rect(70,205,50,50));
     middle_column->appendChildWidget(freqres);
 
 //    SAT_ShaderWidget* shader = new SAT_ShaderWidget(SAT_Rect(130,205,50,50));

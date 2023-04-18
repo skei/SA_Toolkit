@@ -221,12 +221,12 @@ public:
     SAT_PRINT;
     SAT_Print("Hello world!\n");
     SAT_DPrint( SAT_TERM_RESET
-                SAT_TERM_NORMAL "normal " SAT_TERM_RESET
-                SAT_TERM_BOLD "bold " SAT_TERM_RESET
-                SAT_TERM_FAINT "faint " SAT_TERM_RESET
-                SAT_TERM_ITALICS "italics " SAT_TERM_RESET
-                SAT_TERM_UNDERLINE "underline\n" SAT_TERM_RESET );
-    SAT_DPrint( SAT_TERM_FG_RED "hello" SAT_TERM_FG_YELLOW " world2\n" SAT_TERM_RESET);
+                SAT_TERM_NORMAL     "normal "     SAT_TERM_RESET
+                SAT_TERM_BOLD       "bold "       SAT_TERM_RESET
+                SAT_TERM_FAINT      "faint "      SAT_TERM_RESET
+                SAT_TERM_ITALICS    "italics "    SAT_TERM_RESET
+                SAT_TERM_UNDERLINE  "underline\n" SAT_TERM_RESET );
+    SAT_DPrint( SAT_TERM_FG_RED     "hello"       SAT_TERM_FG_YELLOW " world2\n" SAT_TERM_RESET );
    
     //registerDefaultSynthExtensions();
     registerAllExtensions();

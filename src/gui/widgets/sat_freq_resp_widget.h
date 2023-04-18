@@ -17,10 +17,10 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_FR_Noop {
+class SAT_TestFreqRes {
 private:
   float value   = 0.0;
-  float factor  = 0.333;
+  float factor  = 0.3;
 public:
   void reset() {
     value = 0.0;

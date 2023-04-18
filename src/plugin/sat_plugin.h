@@ -1772,9 +1772,14 @@ public: // editor listener
     process queue is flushed at the start of process()
     host queue is flushed at the end of process()
   */
+  
+  // AValue = widget-space (0..1)
 
   void do_editorListener_parameter_update(uint32_t AIndex, sat_param_t AValue) override {
     //SAT_PRINT;
+    
+    // parameters are in clap-space
+    // widgets are 0..1
     
     //double value = AValue;
     double value = MParameters[AIndex]->denormalizeValue(AValue);
@@ -1828,6 +1833,10 @@ public: // queues
     while (MParamFromHostToGuiQueue.read(&item)) {
       count += 1;
       SAT_Parameter* parameter = MParameters[item.index];
+      
+      // parameters are in clap-space
+      // widgets are 0..1
+      
       MEditor->updateParameterFromHost(parameter,item.value);
     }
     //if (count > 0) { SAT_Print("flushParamFromHostToGui: %i events\n",count); }
@@ -2127,8 +2136,12 @@ public: // parameters
     for (uint32_t i=0; i<num; i++) {
       SAT_Parameter* param = MParameters[i];
       double value = MParameters[i]->getValue();//getDefaultValue();
+      
+      // parameters are in clap-space
+      // widgets are 0..1
+      
       //double value = MParameters[i]->getNormalizedValue();//getDefaultValue();
-      MEditor->updateParameterValue(param,i,value);
+      MEditor->initParameterValue(param,i,value);
     }
   }
 

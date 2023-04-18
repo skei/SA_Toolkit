@@ -70,6 +70,8 @@ public:
 
   /*
     called from SAT_Plugin.updateEditorParameterValues()
+      (AValue in clap-space)
+
     - before editor is opened
     - todo: SAT_Plugin.state_load ???
   */
@@ -78,22 +80,37 @@ public:
   //  //SAT_Print("%i = %.3f %s\n",AIndex,AValue,ARedraw?" (redraw)":"");
   //}
   
-  void updateParameterValue(SAT_Parameter* AParam, uint32_t AIndex, sat_param_t AValue) {
+  // parameters are in clap-space
+  // widgets are 0..1
+  
+  
+  void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
     SAT_Widget* widget = (SAT_Widget*)AParam->getConnection();
     if (widget) {
-//      widget->setValue(AValue);
-      sat_param_t normalized_value = AParam->normalizeValue(AValue);
-      widget->setValue(normalized_value);
+      
+//      sat_param_t normalized_value = AParam->normalizeValue(AValue);
+//      widget->setValue(normalized_value);
+
+      //widget->setValue(AValue);
+      
+      double v = AParam->normalizeValue(AValue);
+      widget->setValue(v);
+      
+      
+
     }
   }
 
   //----------
 
   /*
-    called from flushParamFromHostToGui()
-    timer thread
+    called from SAT_Plugin.flushParamFromHostToGui() - timer thread
+    (AValue in clap-space)
   */
+
+  // parameters are in clap-space
+  // widgets are 0..1
 
   void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
@@ -101,9 +118,7 @@ public:
       //uint32_t counter = pc->counter;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
       if (widget) {
-        
         sat_param_t normalized_value = AParameter->normalizeValue(AValue);
-        
         widget->setValue(normalized_value);
         //widget->update();
         //parentRedraw();
@@ -114,11 +129,20 @@ public:
   
   //----------
 
+  // parameters are in clap-space
+  // widgets are 0..1
+  
+  // AValue, clap-space
+
   void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
       SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
       if (widget) {
-        widget->setModulation(AValue);
+//        sat_param_t normalized_modulation = AParameter->normalizeValue(AValue);
+//        widget->setModulation(normalized_modulation);
+        
+        sat_param_t normalized_value = AParameter->normalizeValue(AValue);
+        widget->setModulation(normalized_value);
         //widget->update();
         //widget->parentRedraw();
         widget->do_widgetListener_redraw(widget,0);
@@ -170,6 +194,9 @@ public: // window listener
       if (param) {
         uint32_t index = param->getIndex();
         
+        // parameters are in clap-space
+        // widgets are 0..1
+
         double value = ASender->getValue();
         
         MListener->do_editorListener_parameter_update(index,value);
