@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="SA_Toolkit" Version="11000" InternalType="Console">
+  <VirtualDirectory Name="plugins">
+    <VirtualDirectory Name="ports">
+      <File Name="../../plugins/ports/transient_killer.h"/>
+      <File Name="../../plugins/ports/tilteq.h"/>
+      <File Name="../../plugins/ports/sonic_maximizer.h"/>
+      <File Name="../../plugins/ports/small_room_reverb.h"/>
+      <File Name="../../plugins/ports/saturation.h"/>
+      <File Name="../../plugins/ports/phaser.h"/>
+      <File Name="../../plugins/ports/limiter.h"/>
+      <File Name="../../plugins/ports/large_room_reverb.h"/>
+      <File Name="../../plugins/ports/iirfilter.h"/>
+      <File Name="../../plugins/ports/hrtf.h"/>
+      <File Name="../../plugins/ports/hall_reverb.h"/>
+      <File Name="../../plugins/ports/freeverb.h"/>
+      <File Name="../../plugins/ports/exciter2.h"/>
+      <File Name="../../plugins/ports/exciter.h"/>
+      <File Name="../../plugins/ports/event_horizon.h"/>
+      <File Name="../../plugins/ports/compciter.h"/>
+    </VirtualDirectory>
+    <File Name="../../plugins/sa_tyr.h"/>
+    <File Name="../../plugins/sa_transpose.h"/>
+    <File Name="../../plugins/sa_pitch.h"/>
+    <File Name="../../plugins/sa_nity.h"/>
+    <File Name="../../plugins/sa_mael.h"/>
+    <File Name="../../plugins/sa_lad.h"/>
+    <File Name="../../plugins/sa_gain.h"/>
+    <File Name="../../plugins/sa_cred.h"/>
+    <File Name="../../plugins/sa_bulum.h"/>
+    <File Name="../../plugins/sa_botage.h"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="CppCheck"/>
   </Plugins>
@@ -17,36 +47,6 @@
     <File Name="../../doc/compiling.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="build">
-    <VirtualDirectory Name="SA_Plugins">
-      <VirtualDirectory Name="ports">
-        <File Name="../../../SA_Plugins/ports/transient_killer.h"/>
-        <File Name="../../../SA_Plugins/ports/tilteq.h"/>
-        <File Name="../../../SA_Plugins/ports/sonic_maximizer.h"/>
-        <File Name="../../../SA_Plugins/ports/small_room_reverb.h"/>
-        <File Name="../../../SA_Plugins/ports/saturation.h"/>
-        <File Name="../../../SA_Plugins/ports/phaser.h"/>
-        <File Name="../../../SA_Plugins/ports/limiter.h"/>
-        <File Name="../../../SA_Plugins/ports/large_room_reverb.h"/>
-        <File Name="../../../SA_Plugins/ports/iirfilter.h"/>
-        <File Name="../../../SA_Plugins/ports/hrtf.h"/>
-        <File Name="../../../SA_Plugins/ports/hall_reverb.h"/>
-        <File Name="../../../SA_Plugins/ports/freeverb.h"/>
-        <File Name="../../../SA_Plugins/ports/exciter2.h"/>
-        <File Name="../../../SA_Plugins/ports/exciter.h"/>
-        <File Name="../../../SA_Plugins/ports/event_horizon.h"/>
-        <File Name="../../../SA_Plugins/ports/compciter.h"/>
-      </VirtualDirectory>
-      <File Name="../../../SA_Plugins/sa_tyr.h"/>
-      <File Name="../../../SA_Plugins/sa_transpose.h"/>
-      <File Name="../../../SA_Plugins/sa_pitch.h"/>
-      <File Name="../../../SA_Plugins/sa_nity.h"/>
-      <File Name="../../../SA_Plugins/sa_mael.h"/>
-      <File Name="../../../SA_Plugins/sa_lad.h"/>
-      <File Name="../../../SA_Plugins/sa_cred.h"/>
-      <File Name="../../../SA_Plugins/sa_bulum.h"/>
-      <File Name="../../../SA_Plugins/sa_botage.h"/>
-      <File Name="../../../SA_Plugins/sa_gain.h"/>
-    </VirtualDirectory>
     <VirtualDirectory Name="test">
       <File Name="../test/test_params.h"/>
       <File Name="../test/test_gui2.h"/>
