@@ -651,7 +651,7 @@ public: // gui
   // [main-thread]
   
   // see also initEditorWindow (default editor)
-
+  
   bool gui_create(const char *api, bool is_floating) override {
     //SAT_Print("api %s is_floating %i\n",api,is_floating);
     if (is_floating == true) return false;
@@ -667,7 +667,7 @@ public: // gui
     if ((MInitialEditorWidth <= 0) || (MInitialEditorHeight <= 0)) {
       uint32_t num = MParameters.size();
       
-      double w =  200 +             // slider width
+      double w =  300 +             // slider width
                   10 + 10;          // inner border (top/bottom)
       
       double h =  40 +              // header
@@ -2647,9 +2647,11 @@ public: // process audio
   virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
-    float** inputs = process->audio_inputs[0].data32;
-    float** outputs = process->audio_outputs[0].data32;
-    SAT_CopyStereoBuffer(outputs,inputs,length);
+    if ((MAudioInputPorts.size() > 0) && (MAudioOutputPorts.size() > 0)) {
+      float** inputs = process->audio_inputs[0].data32;
+      float** outputs = process->audio_outputs[0].data32;
+      SAT_CopyStereoBuffer(outputs,inputs,length);
+    }
   }
 
   //----------

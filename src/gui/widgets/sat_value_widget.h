@@ -87,8 +87,25 @@ public:
       if (mrect.h <= 0.0) return;
       
       SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
-      if (param) sprintf(MValueText,"%s",param->getValueText());
-      else sprintf(MValueText,"%.2f",getValue());
+      if (param) {
+        
+        double pv = getValue();
+        double dpv = param->denormalizeValue(pv);
+
+        //double wv = param->getValue();
+        //double dwv = param->denormalizeValue(wv);
+        
+        //SAT_Print("denormalize. param %f -> dpv %f. widget %i ->  dwv %f\n",pv,dpv,wv,dwv);
+        
+        param->valueToText(dpv,MValueText,255);
+
+      }
+      else {
+        
+        double v = getValue();
+        sprintf(MValueText,"%.2f",v);
+
+      }
       
       painter->setTextColor(MValueColor);
       painter->setTextSize(MValueSize*S);

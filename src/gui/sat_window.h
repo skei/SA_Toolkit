@@ -143,7 +143,7 @@ public:
   //----------
 
   virtual ~SAT_Window() {
-    SAT_PRINT;
+    //SAT_PRINT;
     if (MTimer) {
       if (MTimer->isRunning()) MTimer->stop();
       delete MTimer;
@@ -391,7 +391,7 @@ public:
 //------------------------------
 
   void show() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     SAT_ImplementedWindow::show();
     //if (MRootWidget) {
     //  MRootWidget->realignChildWidgets();
@@ -406,7 +406,7 @@ public:
   //----------
   
   void hide() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     MTimer->stop();
     SAT_ImplementedWindow::hide();
   }
@@ -416,7 +416,7 @@ public: // window
 //------------------------------
 
   void on_window_open() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     if (MRootWidget) {
       MRootWidget->prepare(this);
       MRootWidget->realignChildWidgets();
@@ -428,7 +428,7 @@ public: // window
   //----------
 
   void on_window_close() override {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   //----------

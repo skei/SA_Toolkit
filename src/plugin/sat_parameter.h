@@ -47,23 +47,23 @@ protected:
   uint32_t          MNumDigits                      = 2;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
 
+  uint32_t          MModulationState                = 0;
+  SAT_Color         MModulationColor                = SAT_White;
+
+  bool              MIsMapped                       = false;
+  SAT_Color         MMappedColor                    = SAT_White;
+  const char*       MMappedLabel                    = "";
+  const char*       MMappedDesc                     = "";
+  
+  uint32_t          MAutomationState                = CLAP_PARAM_INDICATION_AUTOMATION_NONE;
+  SAT_Color         MAutomationColor                = SAT_White;
+  
 //int32_t           MLastPainted                    = -1;
 //int32_t           MLastUpdated                    = 0;
 //int32_t           MLastModulated                  = 0;
 //double            MLastUpdatedValue               = 0.0;
 //double            MLastModulatedValue             = 0.0;
 
-  uint32_t    MModulationState  = 0;
-  SAT_Color   MModulationColor  = SAT_White;
-
-  bool        MIsMapped         = false;
-  SAT_Color   MMappedColor      = SAT_White;
-  const char* MMappedLabel      = "";
-  const char* MMappedDesc       = "";
-  
-  uint32_t    MAutomationState  = CLAP_PARAM_INDICATION_AUTOMATION_NONE;
-  SAT_Color   MAutomationColor  = SAT_White;
-  
 //------------------------------
 public:
 //------------------------------
@@ -151,8 +151,8 @@ public:
   virtual void setIndex(int32_t AIndex)                   { MIndex = AIndex; MInfo.id = AIndex; }
   virtual void connect(void* AWidget)                     { MConnection = AWidget; }
 
-  virtual void setValue(double AValue)                    { MValue = AValue; }
-  virtual void setModulation(double AValue)               { MModulation = AValue; }
+  virtual void setValue(sat_param_t AValue)               { MValue = AValue; }
+  virtual void setModulation(sat_param_t AValue)          { MModulation = AValue; }
 
   virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
   virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
@@ -168,16 +168,18 @@ public:
 //------------------------------
 
   virtual sat_param_t normalizeValue(sat_param_t AValue) {
-    double range = MInfo.max_value - MInfo.min_value;
-    if (range <= 0.0) return AValue;
+    sat_param_t range = MInfo.max_value - MInfo.min_value;
+    SAT_Assert(range > 0.0);
     return (AValue - MInfo.min_value) / range;
   }
 
   //----------
 
   virtual sat_param_t denormalizeValue(sat_param_t AValue) {
-    double range = MInfo.max_value - MInfo.min_value;
-    return MInfo.min_value + (AValue * range);
+    sat_param_t range = MInfo.max_value - MInfo.min_value;
+    SAT_Assert(range > 0.0);
+    sat_param_t v = MInfo.min_value + (AValue * range);
+    return v;
   }
 
   //----------
@@ -187,14 +189,14 @@ public:
 
   //----------
   
-  virtual double getNormalizedValue() {
+  virtual sat_param_t getNormalizedValue() {
     return normalizeValue(MValue);
   }
   
   //----------
   
-  virtual double getNormalizedModulation() {
-    double range = MInfo.max_value - MInfo.min_value;
+  virtual sat_param_t getNormalizedModulation() {
+    sat_param_t range = MInfo.max_value - MInfo.min_value;
     if (range <= 0.0) return MModulation;
     return MModulation / range;
   }
@@ -215,18 +217,18 @@ public:
   //----------
 
   virtual bool textToValue(const char* AText, sat_param_t* AValue) {
-    double value = atof(AText);
+    sat_param_t value = atof(AText);
     *AValue = value;
     return true;
   }
 
   //----------
   
-  virtual const char* getValueText() {
-    valueToText(MValue,MValueText,SAT_MAX_NAME_LENGTH);
-    //SAT_Print("%f -> %s\n",MValue,MValueText);
-    return MValueText;
-  }
+//  virtual const char* getValueText() {
+//    valueToText(MValue,MValueText,SAT_MAX_NAME_LENGTH);
+//    //SAT_Print("%f -> %s\n",MValue,MValueText);
+//    return MValueText;
+//  }
   
   //----------
 
@@ -242,9 +244,9 @@ public:
 
   // http://www.kvraudio.com/forum/viewtopic.php?p=6515525#p6515525
 
-  virtual void updateSmoothing(double ATolerance=0.001, uint32_t ASteps=1) {
-    double target = MValue + MModulation;
-    double diff = (target - MSmoothValue);
+  virtual void updateSmoothing(sat_param_t ATolerance=0.001, uint32_t ASteps=1) {
+    sat_param_t target = MValue + MModulation;
+    sat_param_t diff = (target - MSmoothValue);
     if ( abs(diff) < ATolerance ) MSmoothValue = target;
     else {
       if (ASteps == 1) {
@@ -310,7 +312,7 @@ class SAT_IntParameter
 public:
 //------------------------------
 
-  SAT_IntParameter(const char* AName, double AValue=0.0, double AMin=0.0, double AMax=1.0)
+  SAT_IntParameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMin=0.0, sat_param_t AMax=1.0)
   : SAT_Parameter(AName,AValue,AMin,AMax) {
     setFlag(CLAP_PARAM_IS_STEPPED);
   }
@@ -325,20 +327,36 @@ public:
 //------------------------------
 
   sat_param_t getValue() override {
-    //SAT_Print("MValue %f -> %f\n",MValue,SAT_Round(MValue));
-    return SAT_Round(MValue);
-  }
-
-  void setValue(double AValue) override {
-    //SAT_Print("AValue %f\n",AValue);
-    MValue = AValue;
+    int32_t i = (int32_t)MValue;
+//    SAT_Print("MValue %f -> i %i -> %f\n",MValue,i,(sat_param_t)i);
+    return i;//SAT_Trunc(MValue);
+    //return (int32_t)MValue;
   }
 
   //----------
 
-  bool valueToText(double value, char *display, uint32_t size) override {
-    sprintf(display,"%.f",SAT_Round(value));
-    //SAT_Print("value %f -> %s\n",value,display);
+  void setValue(sat_param_t AValue) override {
+//    SAT_Print("AValue %f -> MValue\n",AValue);
+    MValue = AValue;
+  }
+
+  //----------
+  
+  // value & MValue not always in sync!
+  // (MValue 14.999999) value 14.999999 -> display 14
+  // (MValue 14.999999) value 14.000000 -> display 13
+  // (MValue 19.000000) value 19.000000 -> display 18
+  
+  // how can 1.000000 become 0?
+
+  bool valueToText(sat_param_t value, char *display, uint32_t size) override {
+    //sprintf(display,"%.f",SAT_Round(value));
+    //sprintf(display,"%i",(int)SAT_Trunc(value));
+    
+    int32_t i = (int32_t)value;
+//    SAT_Print("i = %i\n",i);
+    sprintf(display,"%i",i);
+    //SAT_Print("(MValue %f) value %f -> i %i -> display %s\n",MValue,value,i,display);
     return true;
   }
 
@@ -363,7 +381,7 @@ private:
 public:
 //------------------------------
 
-  SAT_TextParameter(const char* AName, double AValue=0.0, double AMin=0.0, double AMax=1.0, const char** AText=nullptr)
+  SAT_TextParameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMin=0.0, sat_param_t AMax=1.0, const char** AText=nullptr)
   : SAT_IntParameter(AName,AValue,AMin,AMax) {
     MText = AText;
   }
@@ -377,7 +395,7 @@ public:
 public:
 //------------------------------
 
-  bool valueToText(double value, char *display, uint32_t size) override {
+  bool valueToText(sat_param_t value, char *display, uint32_t size) override {
     uint32_t index = SAT_Trunc(value+0.5);
     if (index <= MInfo.max_value) {
       strcpy(display,MText[index]);
