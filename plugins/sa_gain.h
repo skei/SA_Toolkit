@@ -1,3 +1,7 @@
+#ifndef sa_gain_included
+#define sa_gain_included
+//----------------------------------------------------------------------
+
 #include "base/sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/clap/sat_clap.h"
@@ -6,9 +10,9 @@
 #include "gui/sat_widgets.h"
 
 #ifdef SAT_DEBUG
-  #define PLUGIN_NAME "SA_Gain (debug)"
+  #define PLUGIN_NAME "sa_gain (debug)"
 #else
-  #define PLUGIN_NAME "SA_Gain"
+  #define PLUGIN_NAME "sa_gain"
 #endif
 
 //----------------------------------------------------------------------
@@ -103,5 +107,12 @@ public:
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_gain_descriptor,sa_gain_plugin)
+#endif
+
+//----------
+
+#undef PLUGIN_NAME
+
+//----------------------------------------------------------------------
 #endif
 

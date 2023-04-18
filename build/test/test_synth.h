@@ -1,3 +1,7 @@
+#ifndef test_synth1_included
+#define test_synth1_included
+//----------------------------------------------------------------------
+
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_VST3
 
@@ -19,9 +23,9 @@
 //----------------------------------------------------------------------
 
 #ifdef SAT_DEBUG
-  #define PLUGIN_NAME "test1_synth (debug)"
+  #define PLUGIN_NAME "test_synth (debug)"
 #else
-  #define PLUGIN_NAME "test1_synth"
+  #define PLUGIN_NAME "test_synth"
 #endif
 
 #define EDITOR_WIDTH  720
@@ -36,7 +40,7 @@ const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t test1_synth_descriptor = {
+const clap_plugin_descriptor_t test_synth_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
   .name         = PLUGIN_NAME,
@@ -61,7 +65,7 @@ const clap_plugin_descriptor_t test1_synth_descriptor = {
 
 #define NUM_VOICES 32
 
-class test1_synth_voice {
+class test_synth_voice {
 
 //------------------------------
 private:
@@ -172,14 +176,14 @@ public:
 //
 //----------------------------------------------------------------------
 
-class test1_synth_plugin
+class test_synth_plugin
 : public SAT_Plugin {
 
 //------------------------------
 private:
 //------------------------------
 
-  SAT_VoiceManager<test1_synth_voice,NUM_VOICES>  MVoiceManager = {};
+  SAT_VoiceManager<test_synth_voice,NUM_VOICES>  MVoiceManager = {};
   //SAT_PanelWidget*    MRootPanel      = nullptr;
   SAT_VoicesWidget*   MVoicesWidget   = nullptr;
   SAT_WaveformWidget* MWaveformWidget = nullptr;
@@ -193,7 +197,7 @@ public:
 
   //SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin);
 
-  test1_synth_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  test_synth_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
     //SAT_Print("sizeof(myPlugin) : %i\n",sizeof(myPlugin));
   }
@@ -477,3 +481,5 @@ public:
 #endif // SAT_NO_ENTRY
 
 //----------------------------------------------------------------------
+#endif
+

@@ -71,17 +71,21 @@
 
 
 
+#include "../plugins/SA_Plugins.h"
+
+
+//#include "../plugins/sa_bulum.h"
+//#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_pitch.h"
-//#include "../plugins/sa_transpose.h"
-
-//----------
 
 //#include "../plugins/sa_botage.h"
-#include "../plugins/sa_bulum.h"
-//#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_lad.h"
 //#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_nity.h"
+//#include "../plugins/sa_transpose.h"
 //#include "../plugins/sa_tyr.h"
+
+//----------
+
 

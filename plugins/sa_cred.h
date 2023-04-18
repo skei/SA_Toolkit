@@ -1,3 +1,6 @@
+#ifndef sa_cred_included
+#define sa_cred_included
+//----------------------------------------------------------------------
 
 #include "base/sat.h"
 #include "audio/sat_audio_utils.h"
@@ -13,8 +16,8 @@
   #define PLUGIN_NAME   "sa_cred"
 #endif
 
-#define EDITOR_WIDTH    400
-#define EDITOR_HEIGHT   (40 + 10 + (13 * (20 + 10)) + 20)
+//#define EDITOR_WIDTH    400
+//#define EDITOR_HEIGHT   (40 + 10 + (13 * (20 + 10)) + 20)
 
 //----------------------------------------------------------------------
 //
@@ -245,3 +248,11 @@ public:
   SAT_PLUGIN_ENTRY(sa_cred_descriptor,sa_cred_plugin);
 #endif
 
+//----------
+
+#undef PLUGIN_NAME
+//#undef EDITOR_WIDTH
+//#undef EDITOR_HEIGHT
+
+//----------------------------------------------------------------------
+#endif

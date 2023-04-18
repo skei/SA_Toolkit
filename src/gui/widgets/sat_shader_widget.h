@@ -246,8 +246,8 @@ public:
     SAT_Assert(AContext);
     if (MDrawShader) {
       //double S = getWindowScale();
-      SAT_Painter* painter = AContext->painter;
-      SAT_Assert(painter);
+      //SAT_Painter* painter = AContext->painter;
+      //SAT_Assert(painter);
       SAT_Rect mrect = getRect();
       //shrink..
       if (mrect.w <= 0.0) return;

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="SA_Toolkit" Version="11000" InternalType="Console">
+  <Plugins>
+    <Plugin Name="CppCheck"/>
+  </Plugins>
   <VirtualDirectory Name="plugins">
+    <File Name="../../plugins/SA_Plugins.h"/>
     <VirtualDirectory Name="ports">
       <File Name="../../plugins/ports/transient_killer.h"/>
       <File Name="../../plugins/ports/tilteq.h"/>
@@ -30,9 +34,6 @@
     <File Name="../../plugins/sa_bulum.h"/>
     <File Name="../../plugins/sa_botage.h"/>
   </VirtualDirectory>
-  <Plugins>
-    <Plugin Name="CppCheck"/>
-  </Plugins>
   <VirtualDirectory Name="tools">
     <File Name="../../tools/dump_ttl.sh"/>
     <File Name="../../tools/dump_ttl.c" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;"/>
@@ -586,7 +587,7 @@
   <Dependencies Name="win32_exe_release"/>
   <Dependencies Name="win32_plugin_debug"/>
   <Dependencies Name="win32_plugin_release"/>
-  <Settings Type="Dynamic Library">
+  <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -658,7 +659,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="linux_exe_release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-O3;-ffast-math;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_EXE"/>
@@ -775,7 +776,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="linux_plugin_release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-static;-fPIC" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-O3;-ffast-math;-Wall;-static;-fPIC" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_PLUGIN"/>
@@ -882,7 +883,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="win32_exe_release" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-O3;-ffast-math;-Wall;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_EXE"/>
@@ -978,7 +979,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="win32_plugin_release" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;-static;-fPIC;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-O3;-ffast-math;-Wall;-static;-fPIC;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="SAT_PLUGIN"/>

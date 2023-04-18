@@ -21,9 +21,9 @@
 //----------------------------------------------------------------------
 
 #ifdef SAT_DEBUG
-  #define PLUGIN_NAME   "SA_bulum (debug)"
+  #define PLUGIN_NAME   "sa_bulum (debug)"
 #else
-  #define PLUGIN_NAME   "SA_bulum"
+  #define PLUGIN_NAME   "sa_bulum"
 #endif
 
 #define MAX_GRAINS  1024
@@ -316,8 +316,12 @@ private:
 
 //----------
 
+//----------
+
+#undef PLUGIN_NAME
 #undef MAX_GRAINS
 #undef BUFFERSIZE
 
 //----------------------------------------------------------------------
 #endif
+
