@@ -44,8 +44,9 @@ public:
     //SAT_Print("id %s\n",extension_id);
     if (strcmp(extension_id,CLAP_EXT_AMBISONIC)           == 0) return &MAmbisonicExt;
     if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS)         == 0) return &MAudioPortsExt;
-    if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS_CONFIG)  == 0) return &MAudioPortsExt;
+    if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS_CONFIG)  == 0) return &MAudioPortsConfigExt;
     if (strcmp(extension_id,CLAP_EXT_CHECK_FOR_UPDATE)    == 0) return &MCheckForUpdateExt;
+    if (strcmp(extension_id,CLAP_EXT_CONTEXT_MENU)        == 0) return &MContextMenuExt;
     if (strcmp(extension_id,CLAP_EXT_CV)                  == 0) return &MCVExt;
     if (strcmp(extension_id,CLAP_EXT_EVENT_REGISTRY)      == 0) return &MEventRegistryExt;
     if (strcmp(extension_id,CLAP_EXT_GUI)                 == 0) return &MGuiExt;

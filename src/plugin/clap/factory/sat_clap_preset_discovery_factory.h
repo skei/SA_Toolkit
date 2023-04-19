@@ -24,40 +24,9 @@
 
   Then to load a preset, use ext/draft/preset-load.h.
 
-  ---
-
-  TODO: registry
-        preset provider in registry? (pprovider data, preset indexer)
 */
 
 #include "plugin/clap/sat_clap.h"
-
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-
-  /*
-  struct clap_preset_discovery_indexer {
-    clap_version_t clap_version;
-    const char *name;
-    const char *vendor;
-    const char *url;
-    const char *version;
-    void       *indexer_data;
-    bool declare_filetype     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_filetype_t *filetype);
-    bool declare_location     (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_location_t *location);
-    bool declare_soundpack    (const struct clap_preset_discovery_indexer *indexer, const clap_preset_discovery_soundpack_t *soundpack);
-    const void *get_extension (const struct clap_preset_discovery_indexer *indexer,
-  };
-  */
-
-
-// !!! todo: use SAT_REGISTRY
-const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
 
 //----------------------------------------------------------------------
 //
@@ -72,7 +41,7 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
     .vendor       = "skei.audio"
   };
 
-//----------------------------------------------------------------------
+  //----------------------------------------------------------------------
 
   // Initialize the preset provider.
   // It should declare all its locations, filetypes and sound packs.
@@ -80,21 +49,26 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
 
   bool clap_preset_discovery_provider_init_callback(const struct clap_preset_discovery_provider *provider) {
     SAT_PRINT;
-    const clap_preset_discovery_filetype_t filetype = {
-      "skei.audio preset",  //const char *name;
-      "(description)",      //"const char *description; // optional
-      "SA_Preset"           // file extension
-    };
+    const clap_preset_discovery_indexer_t* indexer = (const clap_preset_discovery_indexer_t*)provider->provider_data;
     const clap_preset_discovery_location_t location = {
-      CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,    //uint32_t flags;
-      "skei.audio Presets",                     //const char *name;
-      CLAP_PRESET_DISCOVERY_LOCATION_FILE,      //uint32_t kind;
-      "/home/skei/Code/SA_Toolkit/bin/presets"  //const char *location;
+      CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,    // uint32_t flags;
+      "test_synth presets",                     // const char *name;
+      CLAP_PRESET_DISCOVERY_LOCATION_FILE,      // uint32_t kind;
+      "/home/skei/Code/SA_Toolkit/bin/presets"  // const char *location;
     };
-    SAT_GLOBAL_CLAP_PRESET_INDEXER->declare_location(SAT_GLOBAL_CLAP_PRESET_INDEXER,&location);
-    SAT_GLOBAL_CLAP_PRESET_INDEXER->declare_filetype(SAT_GLOBAL_CLAP_PRESET_INDEXER,&filetype);
-    //SAT_GLOBAL_CLAP_PRESET_INDEXER->declare_soundpack(SAT_GLOBAL_CLAP_PRESET_INDEXER,&soundpack);
-    //void* ptr = SAT_GLOBAL_CLAP_PRESET_INDEXER->get_extension(SAT_GLOBAL_CLAP_PRESET_INDEXER,"");
+    if (!indexer->declare_location(indexer,&location)) {
+      SAT_Print("OUCH! indexer->declare_location returned false\n");
+    }
+    const clap_preset_discovery_filetype_t filetype = {
+      "test_synth preset",              // const char *name;
+      "preset for test_synth (debug)",  // "const char *description; // optional
+      "sap"                             // file extension
+    };
+    if (!indexer->declare_filetype(indexer,&filetype)) {
+      SAT_Print("OUCH! indexer->declare_filetype returned false\n");
+    }
+    //indexer->declare_soundpack(indexer,&soundpack);
+    //void* ptr = indexer->get_extension(indexer,"");
     return true;
   }
 
@@ -107,27 +81,13 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
   }
 
   //----------
-
+  
   // reads metadata from the given file and passes them to the metadata receiver
 
-  /*
-  struct clap_preset_discovery_metadata_receiver {
-     void *receiver_data;
-     void on_error         (const struct clap_preset_discovery_metadata_receiver *receiver, int32_t os_error, const char *error_message);
-     bool begin_preset     (const struct clap_preset_discovery_metadata_receiver *receiver, const char *name, const char *load_key);
-     void add_plugin_id    (const struct clap_preset_discovery_metadata_receiver *receiver, const clap_plugin_id_t *plugin_id);
-     void set_soundpack_id (const struct clap_preset_discovery_metadata_receiver *receiver, const char *soundpack_id);
-     void set_flags        (const struct clap_preset_discovery_metadata_receiver *receiver, uint32_t flags);
-     void add_creator      (const struct clap_preset_discovery_metadata_receiver *receiver, const char *creator);
-     void set_description  (const struct clap_preset_discovery_metadata_receiver *receiver, const char *description);
-     void set_timestamps   (const struct clap_preset_discovery_metadata_receiver *receiver, clap_timestamp_t creation_time, clap_timestamp_t modification_time);
-     void add_feature      (const struct clap_preset_discovery_metadata_receiver *receiver, const char *feature);
-     void add_extra_info   (const struct clap_preset_discovery_metadata_receiver *receiver, const char *key, const char *value);
-  };
-  */
-  
   bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, uint32_t location_kind, const char *location, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
     SAT_PRINT;
+    //const clap_preset_discovery_indexer_t* indexer = (const clap_preset_discovery_indexer_t*)provider->provider_data;
+    
     switch (location_kind) {
       
       // The preset are located in a file on the OS filesystem.
@@ -135,16 +95,21 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
       // So both '/' and '\' shall work on Windows as a separator.
 
       case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
-        SAT_Print("location: %s\n",location);
-        if (metadata_receiver->begin_preset(metadata_receiver,"test1","testkey")) {
-          SAT_PRINT;
-          clap_plugin_id_t id = { "clap", SAT_VENDOR "/test1_synth (debug)/" SAT_VERSION };
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
+        //metadata_receiver->on_error(metadata_receiver,0,"error");
+        if (metadata_receiver->begin_preset(metadata_receiver,"name","key")) {
+          clap_plugin_id_t id = {
+            .abi = "clap",                                        // The plugin ABI name, in lowercase. eg: "clap"
+            .id = SAT_VENDOR "/test_synth (debug)/" SAT_VERSION   // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
+          };
           metadata_receiver->add_plugin_id(metadata_receiver,&id);
-          metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
-          metadata_receiver->add_creator(metadata_receiver,"testcreator");
-          metadata_receiver->set_description(metadata_receiver,"A really nice sound!");
-          metadata_receiver->add_feature(metadata_receiver,"poly");
-          metadata_receiver->add_extra_info(metadata_receiver,"key","value");
+          //metadata_receiver->set_soundpack_id(metadata_receiver,"");
+          metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_FACTORY_CONTENT);
+          metadata_receiver->add_creator(metadata_receiver,"test_synth_creator");
+          metadata_receiver->set_description(metadata_receiver,"A nice sound!");
+          //metadata_receiver->add_feature(metadata_receiver,"poly");
+          metadata_receiver->set_timestamps(metadata_receiver,CLAP_TIMESTAMP_UNKNOWN,CLAP_TIMESTAMP_UNKNOWN);
+          //metadata_receiver->add_extra_info(metadata_receiver,"key","value");
         }
         return true;
       }
@@ -154,13 +119,12 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
       // will act as a preset container.
       
       case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
-        SAT_PRINT;
-        break;
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN\n");
+        return false;
       }
       
     }
-    // read from file (location)
-    // call metadata_provider-> ...
+    
     return false;
   }
 
@@ -176,10 +140,11 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
     return "SA_Preset";
   }
 
-//----------------------------------------------------------------------
+  //----------------------------------------------------------------------
 
-  const clap_preset_discovery_provider_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER = {
-    .desc           = &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR,//nullptr,
+  //const
+  clap_preset_discovery_provider_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER = {
+    .desc           = &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR,
     .provider_data  = nullptr,
     .init           = clap_preset_discovery_provider_init_callback,
     .destroy        = clap_preset_discovery_provider_destroy_callback,
@@ -210,8 +175,8 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
 
   const clap_preset_discovery_provider_descriptor_t* clap_preset_discovery_factory_get_descriptor_callback(const struct clap_preset_discovery_factory *factory, uint32_t index) {
     SAT_Print("index %i\n",index);
-    if (index == 0) { 
-      return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR;
+    switch (index) {
+      case 0: return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR;
     }
     return nullptr;
   }
@@ -226,24 +191,21 @@ const clap_preset_discovery_indexer_t* SAT_GLOBAL_CLAP_PRESET_INDEXER = nullptr;
   // [thread-safe]
 
   const clap_preset_discovery_provider_t* clap_preset_discovery_factory_create_callback( const struct clap_preset_discovery_factory *factory, const clap_preset_discovery_indexer_t *indexer, const char *provider_id) {
-    SAT_Print("provider_id %s\n",provider_id);
-    SAT_Print("* indexer.name:    %s\n",indexer->name);
-    SAT_Print("* indexer.vendor:  %s\n",indexer->vendor);
-    SAT_Print("* indexer.url:     %s\n",indexer->url);
-    SAT_Print("* indexer.version: %s\n",indexer->version);
-    
-    // !!!!!
-    SAT_GLOBAL_CLAP_PRESET_INDEXER = indexer;
-    
+    SAT_Print( "provider_id '%s'\n",provider_id);
+    SAT_DPrint("  SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id: '%s')\n",SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id);
+    SAT_DPrint("  indexer.name:    '%s'\n",indexer->name);
+    SAT_DPrint("  indexer.vendor:  '%s'\n",indexer->vendor);
+    SAT_DPrint("  indexer.url:     '%s'\n",indexer->url);
+    SAT_DPrint("  indexer.version: '%s'\n",indexer->version);
     if (strcmp(provider_id,SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id) == 0) {
-      SAT_Print("yes\n");
-      return  &SAT_CLAP_PRESET_DISCOVERY_PROVIDER;
+      SAT_CLAP_PRESET_DISCOVERY_PROVIDER.provider_data = (void*)indexer;
+      return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER;
     }
     SAT_Print("no\n");
     return nullptr;
   }
 
-//----------------------------------------------------------------------
+  //----------------------------------------------------------------------
 
   const clap_preset_discovery_factory_t SAT_CLAP_PRESET_DISCOVERY_FACTORY {
     .count          = clap_preset_discovery_factory_count_callback,

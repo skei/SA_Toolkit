@@ -321,7 +321,7 @@ public: // ambisonic (draft)
   // [main-thread]
 
   bool ambisonic_get_info(bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) override {
-    //SAT_Print("config_id %i is_input %i port_index %i \n",config_id,is_input,port_index);
+    SAT_Print("is_input %i port_index %i\n",is_input,port_index);
     return false;
   }
 
@@ -370,7 +370,7 @@ public: // audio ports activation (draft)
   // [main-thread]
 
   bool audio_ports_activation_can_activate_while_processing() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return false;
   }
 
@@ -383,7 +383,7 @@ public: // audio ports activation (draft)
   // [active ? audio-thread : main-thread]
 
   bool audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active) override {
-    //SAT_Print("is_input %i port_index %i is_active %i\n",is_input,port_index,is_active);
+    SAT_Print("is_input %i port_index %i is_active %i\n",is_input,port_index,is_active);
     return false;
   }
 
@@ -399,7 +399,7 @@ public: // audio ports config
   // [main-thread]
 
   uint32_t audio_ports_config_count() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return 1;
   }
 
@@ -412,7 +412,7 @@ public: // audio ports config
   // uses first input/output audio port
 
   bool audio_ports_config_get(uint32_t index, clap_audio_ports_config_t *config) override {
-    //SAT_Print("index %i\n",index);
+    SAT_Print("index %i\n",index);
     config->id = 0;
     strcpy(config->name,"apconfig1");
     if (MAudioInputPorts.size() > 0) {
@@ -452,7 +452,7 @@ public: // audio ports config
   // [main-thread,plugin-deactivated]
 
   bool audio_ports_config_select(clap_id config_id) override {
-    //SAT_Print("config_id %i\n",config_id);
+    SAT_Print("config_id %i\n",config_id);
     MSelectedAudioPortsConfig = config_id;
     return true;
   }
@@ -468,7 +468,7 @@ public: // check for updates
   // [main-thread]
 
   void check_for_updates_check(bool include_preview) override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
 //------------------------------
@@ -476,12 +476,14 @@ public: // configurable audio ports
 //------------------------------
 
   bool configurable_audio_ports_is_port_configurable(bool is_input, uint32_t port_index) override {
+    SAT_Print("\n");
     return false;
   }
   
   //----------
   
   bool configurable_audio_ports_request_configuration(const struct clap_audio_port_configuration_request *requests,uint32_t request_count) override {
+    SAT_Print("\n");
     return false;
   }
 
@@ -534,7 +536,7 @@ public: // context menu
 
   bool context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) override {
     SAT_Print("target kind %i id %i\n",target->kind,target->id);
-    return false;
+    return true;
 //    if (builder->supports(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY)) {
 //      builder->add_item(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY,&entry);
 //    }
@@ -549,7 +551,7 @@ public: // context menu
 
   bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
     SAT_Print("target kind %i id %i action %i\n",target->kind,target->id,action_id);
-    return false;
+    return true;
 //    if (action_id == 0) {
 //      SAT_Print("hello world!!!");
 //    }
@@ -568,7 +570,7 @@ public: // cv
   // [main-thread]
 
   bool cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return false;
   }
 
@@ -583,12 +585,14 @@ public: // extensible audio ports
 //------------------------------
 
   bool extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) override {
+    SAT_Print("\n");
     return false;
   }
   
   //----------
   
   bool extensible_audio_ports_remove_port(bool is_input, uint32_t index) override {
+    SAT_Print("\n");
     return false;
   }
 
@@ -884,7 +888,7 @@ public: // midi mappings
   // [main-thread]
 
   uint32_t midi_mappings_count() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return 0;
   }
 
@@ -893,7 +897,7 @@ public: // midi mappings
   // [main-thread]
 
   bool midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) override {
-    //SAT_Print("index %i\n",index);
+    SAT_Print("index %i\n",index);
     //mapping->channel
     //mapping->number
     //mapping->param_id
@@ -912,7 +916,7 @@ public: // note name
   // [main-thread]
 
   uint32_t note_name_count() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return 0;
   }
 
@@ -922,7 +926,7 @@ public: // note name
   // [main-thread]
 
   bool note_name_get(uint32_t index, clap_note_name_t *note_name) override {
-    //SAT_Print("index %i\n",index);
+    SAT_Print("index %i\n",index);
     //note_name->name
     //note_name->port
     //note_name->key
@@ -976,7 +980,7 @@ public: // param indication
   // [main-thread]
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
-    SAT_PRINT;
+    SAT_Print("param_id %i has_mapping %i color %i.%i.%i label %s desc %s\n",param_id,has_mapping,color->red,color->green,color->blue,label,description);
     SAT_Parameter* param = MParameters[param_id];
     param->setMappingIndication(has_mapping,color,label,description);
     SAT_Widget* widget = (SAT_Widget*)param->getConnection();
@@ -1002,6 +1006,7 @@ public: // param indication
   */
 
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
+    SAT_Print("param_id %i automation_state %i color %i.%i.%i\n",param_id,automation_state,color->red,color->green,color->blue);
     SAT_Parameter* param = MParameters[param_id];
     param->setAutomationIndication(automation_state,color);
     SAT_Widget* widget = (SAT_Widget*)param->getConnection();
@@ -1112,7 +1117,7 @@ public: // posix fd support
   // [main-thread]
 
   void posix_fd_support_on_fd(int fd, clap_posix_fd_flags_t flags) override {
-    //SAT_Print("fd %i flags %08x\n",fd,flags);
+    SAT_Print("fd %i flags %i\n",fd,flags);
   }
 
 //------------------------------
@@ -1131,8 +1136,8 @@ public: // preset load
   // [main-thread]
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
-    //SAT_Print("uri %s load:key %s\n",uri,load_key);
-    return false;
+    SAT_Print("location_kind %i location %s, load_key %s\n",location_kind,location,load_key);
+    return true;
   }
 
 //------------------------------
@@ -1187,7 +1192,7 @@ public: // render
   // [main-thread]
 
   bool render_has_hard_realtime_requirement() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return false;
   }
 
@@ -1197,7 +1202,7 @@ public: // render
   // [main-thread]
 
   bool render_set(clap_plugin_render_mode mode) override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     MRenderMode = mode;
     return true;
   }
@@ -1218,7 +1223,7 @@ public: // resource directory
   // [main-thread]
 
   void resource_directory_set_directory(const char *path, bool is_shared) override {
-    //SAT_Print("path %s is_shared %i\n",path,is_shared);
+    SAT_Print("path %s is_shared %i\n",path,is_shared);
   }
 
   //----------
@@ -1229,7 +1234,7 @@ public: // resource directory
   // [main-thread]
 
   void resource_directory_collect(bool all) override {
-    //SAT_Print("all %i\n",all);
+    SAT_Print("all %i\n",all);
   }
 
   //----------
@@ -1238,7 +1243,7 @@ public: // resource directory
   // [main-thread]
 
   uint32_t resource_directory_get_files_count() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return 0;
   }
 
@@ -1251,7 +1256,7 @@ public: // resource directory
   // [main-thread]
 
   int32_t resource_directory_get_file_path(uint32_t index, char *path, uint32_t path_size) override {
-    //SAT_Print("index %i\n");
+    SAT_Print("index %i\n");
     return -1;
   }
 
@@ -1277,7 +1282,7 @@ public: // state
   // [main-thread]
 
   bool state_save(const clap_ostream_t *stream) override {
-    //SAT_Print;
+    SAT_PRINT;
     uint32_t total = 0;
     uint32_t written = 0;
     uint32_t version = 0;
@@ -1318,7 +1323,7 @@ public: // state
   // [main-thread]
 
   bool state_load(const clap_istream_t *stream) override {
-    //SAT_PRINT;
+    SAT_PRINT;
     uint32_t total = 0;
     uint32_t read = 0;
     uint32_t version = 0;
@@ -1390,6 +1395,7 @@ public: // state context (draft)
   // [main-thread]
 
   bool state_context_save(const clap_ostream_t *stream, uint32_t context_type) override {
+    SAT_PRINT;
     switch (context_type) {
       case CLAP_STATE_CONTEXT_FOR_DUPLICATE:  return state_save(stream);
       case CLAP_STATE_CONTEXT_FOR_PRESET:     return state_save(stream);
@@ -1406,6 +1412,7 @@ public: // state context (draft)
   // [main-thread]
 
   bool state_context_load(const clap_istream_t *stream, uint32_t context_type) override {
+    SAT_PRINT;
     switch (context_type) {
       case CLAP_STATE_CONTEXT_FOR_DUPLICATE:  return state_load(stream);
       case CLAP_STATE_CONTEXT_FOR_PRESET:     return state_load(stream);
@@ -1429,7 +1436,7 @@ public: // surround
   // [main-thread]
 
   uint32_t surround_get_channel_map(bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return 0;
   }
 
@@ -1439,7 +1446,7 @@ public: // surround
   // [main-thread]
 
   void surround_changed() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
 //------------------------------
@@ -1455,7 +1462,7 @@ public: // tail
   // [main-thread,audio-thread]
 
   uint32_t tail_get() override {
-    //SAT_Print("-> 0\n");
+    SAT_Print("-> 0\n");
     return 0;
   }
 
@@ -1477,7 +1484,7 @@ public: // thread pool
   // Called by the thread pool
 
   void thread_pool_exec(uint32_t task_index) override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
 //------------------------------
@@ -1492,7 +1499,7 @@ public: // timer support
   // [main-thread]
 
   void timer_support_on_timer(clap_id timer_id) override {
-    //SAT_Print("timer id %i\n",timer_id);
+    SAT_Print("timer id %i\n",timer_id);
   }
 
 //------------------------------
@@ -1507,7 +1514,7 @@ public: // track info
   // [main-thread]
 
   void track_info_changed() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
 //------------------------------
@@ -1539,7 +1546,7 @@ public: // triggers
   // [main-thread]
 
   uint32_t triggers_count() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     return 0;
   }
 
@@ -1560,7 +1567,7 @@ public: // triggers
   */
 
   bool triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) override {
-    //SAT_Print("index %i\n",index);
+    SAT_Print("index %i\n",index);
     return false;
   }
 
@@ -1579,7 +1586,7 @@ public: // tuning
   // [main-thread]
 
   void tuning_changed() override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
 //------------------------------
@@ -1603,7 +1610,7 @@ public: // voice info
   // can decide to only use global modulation mapping.
 
   bool voice_info_get(clap_voice_info_t *info) override {
-    //SAT_Print("\n");
+    SAT_Print("\n");
     info->voice_count     = 16;
     info->voice_capacity  = 16;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;

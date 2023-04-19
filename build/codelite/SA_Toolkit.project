@@ -4,6 +4,7 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <File Name="../../plugins/sa_demo.h"/>
     <File Name="../../plugins/sa_plugins.h"/>
     <VirtualDirectory Name="ports">
       <File Name="../../plugins/ports/transient_killer.h"/>
