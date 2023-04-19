@@ -2,31 +2,35 @@
 #define sat_clap_preset_discovery_factory_incuded
 //----------------------------------------------------------------------
 
-/*
-  Preset Discovery enables a plug-in host to identify where presets are found, what
-  extensions they have, which plug-ins they apply to, and other metadata associated with the
-  presets so that they can be indexed and searched for quickly within the plug-in host's browser.
-
-  This has a number of advantages for the user:
-  - it allows them to browse for presets from one central location in a consistent way
-  - the user can browse for presets without having to commit to a particular plug-in first
-
-  The API works as follow to index presets and presets metadata:
-  1. clap_plugin_entry.get_factory(CLAP_PRESET_DISCOVERY_FACTORY_ID)
-  2. clap_preset_discovery_factory_t.create(...)
-  3. clap_preset_discovery_provider.init() (only necessary the first time, declarations can be cached)
-    `-> clap_preset_discovery_indexer.declare_filetype()
-    `-> clap_preset_discovery_indexer.declare_location()
-    `-> clap_preset_discovery_indexer.declare_soundpack() (optional)
-    `-> clap_preset_discovery_indexer.set_invalidation_watch_file() (optional)
-  4. crawl the given locations and monitor file system changes
-    `-> clap_preset_discovery_indexer.get_metadata() for each presets files
-
-  Then to load a preset, use ext/draft/preset-load.h.
-
-*/
-
 #include "plugin/clap/sat_clap.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+  const clap_preset_discovery_location_t test_synth_preset_location = {
+    .flags    = CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
+    .name     = "test_synth_presets",
+    .kind     = CLAP_PRESET_DISCOVERY_LOCATION_FILE,
+    .location = "/home/skei/Code/SA_Toolkit/bin/presets/"
+  };
+  
+  //----------
+
+  const clap_preset_discovery_filetype_t test_synth_preset_filetype = {
+    .name           = "test_synth_preset",
+    .description    = "preset for test_synth", // optional
+    .file_extension = "sap"
+  };
+
+  //----------
+  
+  const clap_plugin_id_t test_synth_plugin_id = {
+    .abi  = "clap",                   // The plugin ABI name, in lowercase. eg: "clap"
+    .id   = test_synth_descriptor.id  // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
+  };
 
 //----------------------------------------------------------------------
 //
@@ -36,9 +40,9 @@
 
   const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
     .clap_version = CLAP_VERSION,
-    .id           = "skei.audio/test_synth_preset_provider/0",
+    .id           = SAT_VENDOR "/test_synth_preset_provider/" SAT_VERSION,
     .name         = "test_synth_preset_provider",
-    .vendor       = "skei.audio"
+    .vendor       = SAT_VENDOR
   };
 
   //----------------------------------------------------------------------
@@ -50,25 +54,17 @@
   bool clap_preset_discovery_provider_init_callback(const struct clap_preset_discovery_provider *provider) {
     SAT_PRINT;
     const clap_preset_discovery_indexer_t* indexer = (const clap_preset_discovery_indexer_t*)provider->provider_data;
-    const clap_preset_discovery_location_t location = {
-      .flags    = CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
-      .name     = "test_synth_presets",
-      .kind     = CLAP_PRESET_DISCOVERY_LOCATION_FILE,
-      .location = "/home/skei/Code/SA_Toolkit/bin/presets"
-    };
-    if (!indexer->declare_location(indexer,&location)) {
-      SAT_Print("oops! indexer->declare_location returned false\n");
-    }
-    const clap_preset_discovery_filetype_t filetype = {
-      .name           = "test_synth_preset",
-      .description    = "preset for test_synth", // optional
-      .file_extension = "sap"
-    };
-    if (!indexer->declare_filetype(indexer,&filetype)) {
+    if (!indexer->declare_filetype(indexer,&test_synth_preset_filetype)) {
       SAT_Print("Oops! indexer->declare_filetype returned false\n");
+      return false;
+    }
+    if (!indexer->declare_location(indexer,&test_synth_preset_location)) {
+      SAT_Print("oops! indexer->declare_location returned false\n");
+      return false;
     }
     //indexer->declare_soundpack(indexer,&soundpack);
     //void* ptr = indexer->get_extension(indexer,"");
+    SAT_Print("ok\n");
     return true;
   }
 
@@ -86,7 +82,6 @@
 
   bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, uint32_t location_kind, const char *location, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
     SAT_PRINT;
-    //const clap_preset_discovery_indexer_t* indexer = (const clap_preset_discovery_indexer_t*)provider->provider_data;
     
     switch (location_kind) {
       
@@ -96,21 +91,22 @@
       
       case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
-        //metadata_receiver->on_error(metadata_receiver,0,"error");
-        if (metadata_receiver->begin_preset(metadata_receiver,"name","key")) {
-          clap_plugin_id_t id = {
-            .abi  = "clap",                   // The plugin ABI name, in lowercase. eg: "clap"
-            .id   = test_synth_descriptor.id  // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
-          };
-          SAT_Print("plugin_id: '%s'\n",test_synth_descriptor.id);
-          metadata_receiver->add_plugin_id(metadata_receiver,&id);
-          metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
-          metadata_receiver->add_creator(metadata_receiver,"test_synth_creator");
-          metadata_receiver->set_description(metadata_receiver,"test_synth_description");
-          metadata_receiver->set_timestamps(metadata_receiver,CLAP_TIMESTAMP_UNKNOWN,CLAP_TIMESTAMP_UNKNOWN);
-          //metadata_receiver->add_extra_info(metadata_receiver,"key","value");
+        
+        //const char* name = SAT_GetFilenameFromPath(location);
+        //SAT_Print("preset: '%s'\n",name);
+        ////char* SAT_StripFileExt(char* APath) // modifies APath..
+        
+        //if (metadata_receiver->begin_preset(metadata_receiver,"testpresetname","testpresetkey")) {
+        if (metadata_receiver->begin_preset(metadata_receiver,nullptr,nullptr)) {
+          SAT_Print("(plugin_id: '%s')\n",test_synth_descriptor.id);
+          metadata_receiver->add_plugin_id(metadata_receiver,&test_synth_plugin_id);
+          metadata_receiver->add_feature(metadata_receiver,"lead");
+          metadata_receiver->add_creator(metadata_receiver,"tor.helge.skei");
+          //metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
+          //metadata_receiver->set_description(metadata_receiver,"..description..");
+          return true;
         }
-        return true;
+        return false;
       }
       
       // The preset is bundled within the plugin DSO itself.
@@ -200,7 +196,6 @@
       SAT_CLAP_PRESET_DISCOVERY_PROVIDER.provider_data = (void*)indexer;
       return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER;
     }
-    SAT_Print("no\n");
     return nullptr;
   }
 

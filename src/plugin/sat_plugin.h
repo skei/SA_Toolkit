@@ -1129,23 +1129,23 @@ public: // preset load
 
   //----------
 
-  // Loads a preset in the plugin native preset file format from a URI. eg:
-  // - "file:///home/abique/.u-he/Diva/Presets/Diva/HS Bass Nine.h2p", load_key: null
-  // - "plugin://<plugin-id>", load_key: <XXX>
-  // The preset discovery provider defines the uri and load_key to be passed to this function.
+  // Loads a preset in the plugin native preset file format from a location.
+  // The preset discovery provider defines the location and load_key to be passed to this function.
   // [main-thread]
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
     SAT_PRINT;
     switch (location_kind) {
-      case CLAP_PRESET_DISCOVERY_LOCATION_FILE:
+      case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
         MHost->preset_load_loaded(location_kind,location,load_key);
         return true;
-      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN:
+      }
+      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
         MHost->preset_load_loaded(location_kind,location,load_key);
         return true;
+      }
     }
     return false;
   }
