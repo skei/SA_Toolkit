@@ -102,8 +102,9 @@
             .abi  = "clap",                   // The plugin ABI name, in lowercase. eg: "clap"
             .id   = test_synth_descriptor.id  // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
           };
+          SAT_Print("plugin_id: '%s'\n",test_synth_descriptor.id);
           metadata_receiver->add_plugin_id(metadata_receiver,&id);
-          metadata_receiver->set_flags(metadata_receiver,0);//CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
+          metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
           metadata_receiver->add_creator(metadata_receiver,"test_synth_creator");
           metadata_receiver->set_description(metadata_receiver,"test_synth_description");
           metadata_receiver->set_timestamps(metadata_receiver,CLAP_TIMESTAMP_UNKNOWN,CLAP_TIMESTAMP_UNKNOWN);
