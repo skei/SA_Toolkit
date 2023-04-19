@@ -547,7 +547,6 @@ public:
 #ifndef SAT_NO_ENTRY
 
   #include "plugin/sat_entry.h"
-
   SAT_PLUGIN_ENTRY(test_synth_descriptor,test_synth_plugin);
 
   /*

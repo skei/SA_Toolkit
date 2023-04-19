@@ -1136,8 +1136,18 @@ public: // preset load
   // [main-thread]
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
-    SAT_Print("location_kind %i location %s, load_key %s\n",location_kind,location,load_key);
-    return true;
+    SAT_PRINT;
+    switch (location_kind) {
+      case CLAP_PRESET_DISCOVERY_LOCATION_FILE:
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
+        MHost->preset_load_loaded(location_kind,location,load_key);
+        return true;
+      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN:
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
+        MHost->preset_load_loaded(location_kind,location,load_key);
+        return true;
+    }
+    return false;
   }
 
 //------------------------------

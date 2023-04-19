@@ -36,8 +36,8 @@
 
   const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
     .clap_version = CLAP_VERSION,
-    .id           = "skei.audio/SAPresetProvider/0",
-    .name         = "SAPresetProvider",
+    .id           = "skei.audio/test_synth_preset_provider/0",
+    .name         = "test_synth_preset_provider",
     .vendor       = "skei.audio"
   };
 
@@ -51,21 +51,21 @@
     SAT_PRINT;
     const clap_preset_discovery_indexer_t* indexer = (const clap_preset_discovery_indexer_t*)provider->provider_data;
     const clap_preset_discovery_location_t location = {
-      CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,    // uint32_t flags;
-      "test_synth presets",                     // const char *name;
-      CLAP_PRESET_DISCOVERY_LOCATION_FILE,      // uint32_t kind;
-      "/home/skei/Code/SA_Toolkit/bin/presets"  // const char *location;
+      .flags    = CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
+      .name     = "test_synth_presets",
+      .kind     = CLAP_PRESET_DISCOVERY_LOCATION_FILE,
+      .location = "/home/skei/Code/SA_Toolkit/bin/presets"
     };
     if (!indexer->declare_location(indexer,&location)) {
-      SAT_Print("OUCH! indexer->declare_location returned false\n");
+      SAT_Print("oops! indexer->declare_location returned false\n");
     }
     const clap_preset_discovery_filetype_t filetype = {
-      "test_synth preset",              // const char *name;
-      "preset for test_synth (debug)",  // "const char *description; // optional
-      "sap"                             // file extension
+      .name           = "test_synth_preset",
+      .description    = "preset for test_synth", // optional
+      .file_extension = "sap"
     };
     if (!indexer->declare_filetype(indexer,&filetype)) {
-      SAT_Print("OUCH! indexer->declare_filetype returned false\n");
+      SAT_Print("Oops! indexer->declare_filetype returned false\n");
     }
     //indexer->declare_soundpack(indexer,&soundpack);
     //void* ptr = indexer->get_extension(indexer,"");
@@ -93,21 +93,19 @@
       // The preset are located in a file on the OS filesystem.
       // The location is then a path which works with the OS file system functions (open, stat, ...)
       // So both '/' and '\' shall work on Windows as a separator.
-
+      
       case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
         //metadata_receiver->on_error(metadata_receiver,0,"error");
         if (metadata_receiver->begin_preset(metadata_receiver,"name","key")) {
           clap_plugin_id_t id = {
-            .abi = "clap",                                        // The plugin ABI name, in lowercase. eg: "clap"
-            .id = SAT_VENDOR "/test_synth (debug)/" SAT_VERSION   // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
+            .abi  = "clap",                   // The plugin ABI name, in lowercase. eg: "clap"
+            .id   = test_synth_descriptor.id  // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
           };
           metadata_receiver->add_plugin_id(metadata_receiver,&id);
-          //metadata_receiver->set_soundpack_id(metadata_receiver,"");
-          metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_FACTORY_CONTENT);
+          metadata_receiver->set_flags(metadata_receiver,0);//CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
           metadata_receiver->add_creator(metadata_receiver,"test_synth_creator");
-          metadata_receiver->set_description(metadata_receiver,"A nice sound!");
-          //metadata_receiver->add_feature(metadata_receiver,"poly");
+          metadata_receiver->set_description(metadata_receiver,"test_synth_description");
           metadata_receiver->set_timestamps(metadata_receiver,CLAP_TIMESTAMP_UNKNOWN,CLAP_TIMESTAMP_UNKNOWN);
           //metadata_receiver->add_extra_info(metadata_receiver,"key","value");
         }
@@ -136,8 +134,8 @@
   // You can call it within provider->init() call, and after.
 
   const void* clap_preset_discovery_provider_get_extension_callback(const struct clap_preset_discovery_provider *provider, const char *extension_id) {
-    SAT_PRINT;
-    return "SA_Preset";
+    SAT_Print("%s\n",extension_id);
+    return nullptr;
   }
 
   //----------------------------------------------------------------------
