@@ -14,7 +14,7 @@
     .flags    = CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
     .name     = "test_synth_presets",
     .kind     = CLAP_PRESET_DISCOVERY_LOCATION_FILE,
-    .location = "/home/skei/Code/SA_Toolkit/bin/presets/"
+    .location = "/home/skei/Code/SA_Toolkit/bin/presets"
   };
   
   //----------
@@ -22,7 +22,7 @@
   const clap_preset_discovery_filetype_t test_synth_preset_filetype = {
     .name           = "test_synth_preset",
     .description    = "preset for test_synth", // optional
-    .file_extension = "sap"
+    .file_extension = "sa_preset"
   };
 
   //----------
@@ -40,8 +40,8 @@
 
   const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
     .clap_version = CLAP_VERSION,
-    .id           = SAT_VENDOR "/test_synth_preset_provider/" SAT_VERSION,
-    .name         = "test_synth_preset_provider",
+    .id           = "test_synth_preset_provider/1",
+    .name         = "test_synth preset provider",
     .vendor       = SAT_VENDOR
   };
 
@@ -92,12 +92,16 @@
       case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
         
-        //const char* name = SAT_GetFilenameFromPath(location);
-        //SAT_Print("preset: '%s'\n",name);
-        ////char* SAT_StripFileExt(char* APath) // modifies APath..
+        const char* filename = SAT_GetFilenameFromPath(location);
+        char name[SAT_MAX_PATH_LENGTH] = {0};
+        strcpy(name,filename);
+        SAT_StripFileExt(name);
         
+        //SAT_Print("preset: '%s'\n",name);
+        
+        //if (metadata_receiver->begin_preset(metadata_receiver,nullptr,nullptr)) {
         //if (metadata_receiver->begin_preset(metadata_receiver,"testpresetname","testpresetkey")) {
-        if (metadata_receiver->begin_preset(metadata_receiver,nullptr,nullptr)) {
+        if (metadata_receiver->begin_preset(metadata_receiver,name,location)) {
           SAT_Print("(plugin_id: '%s')\n",test_synth_descriptor.id);
           metadata_receiver->add_plugin_id(metadata_receiver,&test_synth_plugin_id);
           metadata_receiver->add_feature(metadata_receiver,"lead");
