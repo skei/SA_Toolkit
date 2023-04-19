@@ -1,90 +1,18 @@
-#ifndef sat_global_included
-#define sat_global_included
+#ifndef sat_global_utils_included
+#define sat_global_utils_included
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "base/sat_debug.h"
-#include "base/utils/sat_log_file.h"
-#include "plugin/sat_registry.h"
+#include "base/sat_global.h"
+//#include "base/sat_debug.h"
+//#include "base/utils/sat_log_file.h"
+//#include "plugin/sat_registry.h"
 
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
-
-class SAT_Global {
-
-//------------------------------
-public:
-//------------------------------
-
-  bool          isInitialized = false;
-  SAT_Debug     DEBUG         = {};
-  SAT_LogFile   LOG           = {};
-  SAT_Registry  REGISTRY      = {};
-  
-//------------------------------
-public:
-//------------------------------
-
-  SAT_Global() {
-    initialize();
-  }
-
-  //----------
-
-  ~SAT_Global() {
-    cleanup();
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  void initialize() {
-    if (!isInitialized) {
-      //LOG.print("SAT_GLOBAL.initialize\n");
-      DEBUG.initialize();
-      LOG.initialize();
-      REGISTRY.initialize();
-      isInitialized = true;
-    }
-  }
-
-  //----------
-
-  void cleanup() {
-    //LOG.print("SAT_GLOBAL.cleanup\n");
-    if (isInitialized) {
-      DEBUG.cleanup();
-      LOG.cleanup();
-      REGISTRY.cleanup();
-      isInitialized = false;
-    }
-  }
-  
-};
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-
-
-SAT_Global SAT_GLOBAL = {};
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-//TODO: -> sat_global_utils.h ?? helpers.h?
-
-#if 0
 
 //------------------------------
 // log
@@ -208,16 +136,14 @@ SAT_Global SAT_GLOBAL = {};
 //------------------------------
 
   void SAT_NoPrint(const char*,...) {}
+
   #define SAT_Print   SAT_NoPrint
   #define SAT_DPrint  SAT_NoPrint
   #define SAT_PRINT   {}
   
   #define SAT_Observe(x,y,z) {}
-  
 
 #endif // debug
-
-#endif // 0
 
 //----------------------------------------------------------------------
 #endif

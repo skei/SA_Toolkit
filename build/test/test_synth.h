@@ -456,7 +456,7 @@ public:
 
   #include "plugin/sat_entry.h"
 
-  SAT_PLUGIN_ENTRY(test1_synth_descriptor,test1_synth_plugin);
+  SAT_PLUGIN_ENTRY(test_synth_descriptor,test_synth_plugin);
 
   /*
   
@@ -479,6 +479,11 @@ public:
   */
 
 #endif // SAT_NO_ENTRY
+
+#undef PLUGIN_NAME
+#undef EDITOR_WIDTH
+#undef EDITOR_HEIGHT
+#undef EDITOR_SCALE
 
 //----------------------------------------------------------------------
 #endif

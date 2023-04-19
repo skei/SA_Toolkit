@@ -4,7 +4,7 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
-    <File Name="../../plugins/SA_Plugins.h"/>
+    <File Name="../../plugins/sa_plugins.h"/>
     <VirtualDirectory Name="ports">
       <File Name="../../plugins/ports/transient_killer.h"/>
       <File Name="../../plugins/ports/tilteq.h"/>
@@ -169,6 +169,7 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="base">
+      <File Name="../../src/base/sat_global_utils.h"/>
       <File Name="../../src/base/sat_test.h"/>
       <VirtualDirectory Name="debug">
         <File Name="../../src/base/debug/sat_debug_test.h"/>
