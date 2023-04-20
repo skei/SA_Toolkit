@@ -41,7 +41,7 @@
 
   const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
     .clap_version = CLAP_VERSION,
-    .id           = "sa_preset_discovery_provider",
+    .id           = SAT_VENDOR "/sa_preset_discovery_provider",
     .name         = "sa_preset discovery provider",
     .vendor       = SAT_VENDOR
   };
