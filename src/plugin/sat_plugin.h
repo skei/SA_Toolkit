@@ -283,9 +283,10 @@ public: // plugin
   // [thread-safe]
 
   const void* get_extension(const char *id) override {
-    SAT_Log("SAT_Plugin.get_extension (id %s)\n",id);
-    //SAT_Print("id %s -> %p\n",id,MExtensions.getItem(id));
-    return MExtensions.getItem(id);
+    const void* result = MExtensions.getItem(id);
+    SAT_Log("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
+    SAT_Print("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
+    return result;
   }
 
   //----------
