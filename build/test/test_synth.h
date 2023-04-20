@@ -42,10 +42,10 @@ const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
 const clap_plugin_descriptor_t test_synth_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
-  .name         = PLUGIN_NAME,
   //.id           = "SA.test_synth",
   //.name         = "test_synth",
+  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
+  .name         = PLUGIN_NAME,
   .vendor       = SAT_VENDOR,
   .url          = "",
   .manual_url   = "",
