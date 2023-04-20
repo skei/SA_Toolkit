@@ -16,7 +16,7 @@
 
   const clap_preset_discovery_location_t sat_preset_location = {
     .flags    = CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
-    .name     = "test_synth_presets",
+    .name     = "sa_presets",
     .kind     = CLAP_PRESET_DISCOVERY_LOCATION_FILE,
     .location = "/home/skei/Code/SA_Toolkit/bin/presets/"
   };
