@@ -27,10 +27,14 @@
 
   //----------
   
+  //char test_synth_plugin_id_buffer[SAT_MAX_NAME_LENGTH] = {0};
+
   const clap_plugin_id_t test_synth_plugin_id = {
     .abi  = "clap",                   // The plugin ABI name, in lowercase. eg: "clap"
     .id   = test_synth_descriptor.id  // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
+    //.id   = test_synth_plugin_id_buffer
   };
+
 
 //----------------------------------------------------------------------
 //
@@ -99,10 +103,14 @@
         
         //SAT_Print("preset: '%s'\n",name);
         
+        //strcpy(test_synth_plugin_id_buffer,"plugin://");
+        //strcat(test_synth_plugin_id_buffer,test_synth_descriptor.id);
+        
         //if (metadata_receiver->begin_preset(metadata_receiver,nullptr,nullptr)) {
         //if (metadata_receiver->begin_preset(metadata_receiver,"testpresetname","testpresetkey")) {
         if (metadata_receiver->begin_preset(metadata_receiver,name,location)) {
-          SAT_Print("(plugin_id: '%s')\n",test_synth_descriptor.id);
+          //SAT_Print("(plugin_id: '%s')\n",test_synth_plugin_id_buffer);
+          SAT_Print("(plugin_id: '%s')\n",test_synth_plugin_id.id);
           metadata_receiver->add_plugin_id(metadata_receiver,&test_synth_plugin_id);
           metadata_receiver->add_feature(metadata_receiver,"lead");
           metadata_receiver->add_creator(metadata_receiver,"tor.helge.skei");
