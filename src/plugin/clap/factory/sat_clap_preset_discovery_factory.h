@@ -2,6 +2,10 @@
 #define sat_clap_preset_discovery_factory_incuded
 //----------------------------------------------------------------------
 
+// work in progress..
+// ugly and hacky..
+// cleanup later..
+
 #include "plugin/clap/sat_clap.h"
 
 //----------------------------------------------------------------------
