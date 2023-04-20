@@ -162,6 +162,15 @@ public:
       fflush(MHandle);
     }
   }
+  
+  //
+  
+  // note that fgets don't strip the terminating \n, checking its
+  // presence would allow to handle lines longer that sizeof(line)
+
+  virtual char* readLine(char* ABuffer, uint32_t AMaxSize) {
+    return fgets(ABuffer,AMaxSize,MHandle);
+  }  
 
 };
 

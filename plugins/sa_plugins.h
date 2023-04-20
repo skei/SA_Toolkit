@@ -45,6 +45,5 @@ const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descrip
   return nullptr;
 }
 
-
 //----------------------------------------------------------------------
 #endif

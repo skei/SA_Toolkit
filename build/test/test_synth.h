@@ -22,11 +22,11 @@
 //
 //----------------------------------------------------------------------
 
-#ifdef SAT_DEBUG
-  #define PLUGIN_NAME "test_synth (debug)"
-#else
+//#ifdef SAT_DEBUG
+//  #define PLUGIN_NAME "test_synth (debug)"
+//#else
   #define PLUGIN_NAME "test_synth"
-#endif
+//#endif
 
 #define EDITOR_WIDTH  720
 #define EDITOR_HEIGHT 550
@@ -44,7 +44,7 @@ const clap_plugin_descriptor_t test_synth_descriptor = {
   .clap_version = CLAP_VERSION,
   //.id           = "SA.test_synth",
   //.name         = "test_synth",
-  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
+  .id           = SAT_VENDOR "/" PLUGIN_NAME "/0",
   .name         = PLUGIN_NAME,
   .vendor       = SAT_VENDOR,
   .url          = "",
@@ -242,18 +242,19 @@ public:
     appendClapNoteInputPort();
     appendStereoOutputPort();
 
-    SAT_Parameter* par1 = appendParameter( new SAT_Parameter("Param1",0.1) );
-    SAT_Parameter* par2 = appendParameter( new SAT_Parameter("Param2",0.4, -2, 4) );
-    SAT_Parameter* par3 = appendParameter( new SAT_Parameter("Param3",0.7,0,2) );
-    SAT_Parameter* par4 = appendParameter( new SAT_IntParameter("Param4",0, -5, 5) );
+    /*SAT_Parameter* par1 =*/ appendParameter( new SAT_Parameter("Param1",0.1) );
+    /*SAT_Parameter* par2 =*/ appendParameter( new SAT_Parameter("Param2",0.4, -2, 4) );
+    /*SAT_Parameter* par3 =*/ appendParameter( new SAT_Parameter("Param3",0.7,0,2) );
+    /*SAT_Parameter* par4 =*/ appendParameter( new SAT_IntParameter("Param4",0, -5, 5) );
 
-    par1->setFlag(CLAP_PARAM_IS_MODULATABLE);
-    par2->setFlag(CLAP_PARAM_IS_MODULATABLE);
-    par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
-    par4->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    //par1->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    //par2->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    //par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    //par4->setFlag(CLAP_PARAM_IS_MODULATABLE);
+    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
-
+    
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     

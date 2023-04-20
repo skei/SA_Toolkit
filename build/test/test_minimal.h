@@ -1,3 +1,4 @@
+/*
 
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_utils.h"
@@ -20,7 +21,7 @@ public:
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
 
-
+*/
 
 //----------------------------------------------------------------------
 //
@@ -61,7 +62,7 @@ SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
 //
 //----------------------------------------------------------------------
 
-/*
+
 
 #include "base/sat.h"
 #include "audio/sat_audio_utils.h"
@@ -123,7 +124,7 @@ public:
 
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
 
-*/
+
 
 
 

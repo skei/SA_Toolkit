@@ -16,6 +16,7 @@ extern const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_
 
 typedef SAT_Array<const clap_plugin_descriptor_t*> SAT_DescriptorArray;
 typedef SAT_Array<const clap_plugin_factory_t*> SAT_FactoryArray;
+//typedef SAT_Array<const clap_preset_discovery_provider_t*> SAT_PresetDiscoveryProviderArray;
 
 //----------------------------------------------------------------------
 //
@@ -29,10 +30,11 @@ class SAT_Registry {
 private:
 //------------------------------
 
-  bool                  MIsInitialized  = false;
-  SAT_DescriptorArray   MDescriptors    = {};
-  SAT_FactoryArray      MFactories      = {};
-  SAT_ConstCharPtrArray MFactoryIds     = {};
+  bool                              MIsInitialized            = false;
+  SAT_DescriptorArray               MDescriptors              = {};
+  SAT_FactoryArray                  MFactories                = {};
+  SAT_ConstCharPtrArray             MFactoryIds               = {};
+  //SAT_PresetDiscoveryProviderArray  MPresetDiscoveryProviders = {};
 
 //------------------------------
 public:
@@ -126,6 +128,28 @@ public: // factories
     }
     return -1;
   }
+
+//------------------------------
+public: // preset discovery providers
+//------------------------------
+
+//  int32_t registerPresetDiscoveryProvider(const clap_preset_discovery_provider_t* AProvider) {
+//    int32_t index = MPresetDiscoveryProviders.size();
+//    MPresetDiscoveryProviders.append(AProvider);
+//    return index;
+//  }
+
+  //----------
+
+//  uint32_t getNumPresetDiscoveryProviders() {
+//    return MPresetDiscoveryProviders.size();
+//  }
+
+  //----------
+
+//  const clap_preset_discovery_provider_t* getPresetDiscoveryProvider(uint32_t AIndex) {
+//    return MPresetDiscoveryProviders[AIndex];
+//  }
 
 };
 

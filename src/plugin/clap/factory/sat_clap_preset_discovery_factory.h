@@ -10,31 +10,28 @@
 //
 //----------------------------------------------------------------------
 
-  const clap_preset_discovery_location_t test_synth_preset_location = {
-    .flags    = 0,//CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
+  // .location = Actual location in which to crawl presets.
+  // For FILE kind, the location can be either a path to a directory or a file.
+  // For PLUGIN kind, the location must be null.
+
+  const clap_preset_discovery_location_t sat_preset_location = {
+    .flags    = CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
     .name     = "test_synth_presets",
     .kind     = CLAP_PRESET_DISCOVERY_LOCATION_FILE,
-    .location = "/home/skei/Code/SA_Toolkit/bin/presets"
+    .location = "/home/skei/Code/SA_Toolkit/bin/presets/"
   };
   
   //----------
+  
+  // .file_extension
+  // `.' isn't included in the string.
+  // If empty or NULL then every file should be matched.
 
-  const clap_preset_discovery_filetype_t test_synth_preset_filetype = {
-    .name           = "test_synth_preset",
-    .description    = "preset for test_synth", // optional
+  const clap_preset_discovery_filetype_t sat_preset_filetype = {
+    .name           = "sa_preset",
+    .description    = "skei.audio preset file", // optional
     .file_extension = "sa_preset"
   };
-
-  //----------
-  
-  //char test_synth_plugin_id_buffer[SAT_MAX_NAME_LENGTH] = {0};
-
-  const clap_plugin_id_t test_synth_plugin_id = {
-    .abi  = "clap",                   // The plugin ABI name, in lowercase. eg: "clap"
-    .id   = test_synth_descriptor.id  // The plugin ID, for example "com.u-he.Diva". If the ABI rely upon binary plugin ids, then they shall be hex encoded (lower case).            
-    //.id   = test_synth_plugin_id_buffer
-  };
-
 
 //----------------------------------------------------------------------
 //
@@ -44,18 +41,16 @@
 
   const clap_preset_discovery_provider_descriptor_t SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR = {
     .clap_version = CLAP_VERSION,
-    .id           = "test_synth_preset_provider/1",
-    .name         = "test_synth preset provider",
+    .id           = "sa_preset_discovery_provider",
+    .name         = "sa_preset discovery provider",
     .vendor       = SAT_VENDOR
   };
 
   //----------------------------------------------------------------------
 
-  /*
-    Initialize the preset provider.
-    It should declare all its locations, filetypes and sound packs.
-    Returns false if initialization failed.
-  */
+  // Initialize the preset provider.
+  // It should declare all its locations, filetypes and sound packs.
+  // Returns false if initialization failed.
 
   bool clap_preset_discovery_provider_init_callback(const struct clap_preset_discovery_provider *provider) {
     SAT_PRINT;
@@ -64,11 +59,11 @@
       SAT_Print("indexer == null\n");
       return false;
     }
-    if (!indexer->declare_filetype(indexer,&test_synth_preset_filetype)) {
+    if (!indexer->declare_filetype(indexer,&sat_preset_filetype)) {
       SAT_Print("Oops! indexer->declare_filetype returned false\n");
       return false;
     }
-    if (!indexer->declare_location(indexer,&test_synth_preset_location)) {
+    if (!indexer->declare_location(indexer,&sat_preset_location)) {
       SAT_Print("oops! indexer->declare_location returned false\n");
       return false;
     }
@@ -80,9 +75,7 @@
 
   //----------
 
-  /*
-    Destroys the preset provider
-  */
+  // Destroys the preset provider
 
   void clap_preset_discovery_provider_destroy_callback(const struct clap_preset_discovery_provider *provider) {
     SAT_PRINT;
@@ -90,122 +83,113 @@
 
   //----------
   
-  /*
-    reads metadata from the given file and passes them to the metadata receiver
-  */
+  // reads metadata from the given file and passes them to the metadata receiver
 
   bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, uint32_t location_kind, const char *location, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
-    
+
     SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
-    SAT_Print("(plugin_id: '%s')\n",test_synth_plugin_id.id);
+    SAT_File file = {};
 
     switch (location_kind) {
       
-      /*
-        The preset are located in a file on the OS filesystem.
-        The location is then a path which works with the OS file system functions (open, stat, ...)
-        So both '/' and '\' shall work on Windows as a separator.
-      */
+      // The preset are located in a file on the OS filesystem.
+      // The location is then a path which works with the OS file system functions (open, stat, ...)
+      // So both '/' and '\' shall work on Windows as a separator.
       
       case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
-
-        const char* filename = SAT_GetFilenameFromPath(location);
-
-        //char name[SAT_MAX_PATH_LENGTH] = {0};
-        //strcpy(name,filename);
-        //SAT_StripFileExt(name);
-        //strcpy(test_synth_plugin_id_buffer,"plugin://");
-        //strcat(test_synth_plugin_id_buffer,test_synth_descriptor.id);
-        //SAT_Print("preset: '%s'\n",name);
         
-        /*
-          This must be called for every preset in the file and before any preset metadata is sent with the calls below.
-          If the preset file is a preset container then name and load_key are mandatory, otherwise they are optional.
-          The load_key is a machine friendly string used to load the preset inside the container via a
-          the preset-load plug-in extension. The load_key can also just be the subpath if that's what
-          the plugin wants but it could also be some other unique id like a database primary key or a
-          binary offset. It's use is entirely up to the plug-in.
-          If the function returns false, the the provider must stop calling back into the receiver.
-        */
+        // load strings from preset file
+        // TODO: this is ugly.. we need something better than this!
+        
+        char id[256]        = {0};
+        char name[256]      = {0};
+        char author[256]    = {0};
+        char desc[256]      = {0};
+        char load_key[256]  = {0};
+        
+        if (!file.exists(location)) {
+          SAT_Print("Error! '%s' does not exist\n");
+          return false;
+        }
+        
+        file.open(location,SAT_FILE_READ_TEXT);
+        file.readLine(id,256);
+        file.readLine(name,256);
+        file.readLine(author,256);
+        file.readLine(desc,256);
+        file.readLine(load_key,256);
+        file.close();
+          
+        // cleanup line endings a little..
+        if (id[strlen(id)-1] == '\n') id[strlen(id)-1] = 0;
+        if (name[strlen(name)-1] == '\n') name[strlen(name)-1] = 0;
+        if (author[strlen(author)-1] == '\n') author[strlen(author)-1] = 0;
+        if (desc[strlen(desc)-1] == '\n') desc[strlen(desc)-1] = 0;
+        if (load_key[strlen(load_key)-1] == '\n') load_key[strlen(load_key)-1] = 0;
 
-        if (metadata_receiver->begin_preset(metadata_receiver,filename,location)) {
-        //if (metadata_receiver->begin_preset(metadata_receiver,nullptr,nullptr)) {
+        SAT_Print("id '%s' name '%s' author '%s' desc '%s' load_key '%s'\n",id,name,author,desc,load_key);
+
+        // This must be called for every preset in the file and before any preset metadata is sent with the calls below.
+        // If the preset file is a preset container then name and load_key are mandatory, otherwise they are optional.
+        // The load_key is a machine friendly string used to load the preset inside the container via a
+        // the preset-load plug-in extension. The load_key can also just be the subpath if that's what
+        // the plugin wants but it could also be some other unique id like a database primary key or a
+        // binary offset. It's use is entirely up to the plug-in.
+        // If the function returns false, the the provider must stop calling back into the receiver.
+        
+        if (metadata_receiver->begin_preset(metadata_receiver,name,load_key)) {
           
-          /*
-            Adds a plug-in id that this preset can be used with.
-          */
+          // Adds a plug-in id that this preset can be used with.
+          const clap_plugin_id_t plugin_id = { "clap", id };
+          metadata_receiver->add_plugin_id(metadata_receiver,&plugin_id);
           
-          metadata_receiver->add_plugin_id(metadata_receiver,&test_synth_plugin_id);
-          
-          /*
-            Sets the sound pack to which the preset belongs to.
-          */
-          
+          // Sets the sound pack to which the preset belongs to.
           //metadata_receiver->set_soundpack_id(metadata_receiver,"");
 
-          /*
-            Sets the flags, see clap_preset_discovery_flags.
-            If unset, they are then inherited from the location.
-          */
+          // Adds a creator name for the preset.
+          metadata_receiver->add_creator(metadata_receiver,author);
           
-//          metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
+          // Sets a description of the preset.          
+          metadata_receiver->set_description(metadata_receiver,desc);
           
-          /*
-            Adds a creator name for the preset.
-          */
+          // Sets the creation time and last modification time of the preset.
+          // If one of the times isn't known, set it to CLAP_TIMESTAMP_UNKNOWN.
+          // If this function is not called, then the indexer may look at the file's creation and
+          // modification time.
+          //metadata_receiver->set_timestamps(metadata_receiver,CLAP_TIMESTAMP_UNKNOWN,CLAP_TIMESTAMP_UNKNOWN);
           
-          metadata_receiver->add_creator(metadata_receiver,"tor.helge.skei");
+          // Sets the flags, see clap_preset_discovery_flags.
+          // If unset, they are then inherited from the location.
+          //metadata_receiver->set_flags(metadata_receiver,CLAP_PRESET_DISCOVERY_IS_USER_CONTENT);
           
-          /*
-            Sets a description of the preset.          
-          */
+          // Adds a feature to the preset.
+          // The feature string is arbitrary, it is the indexer's job to understand it and remap it to its
+          // internal categorization and tagging system.
+          // However, the strings from plugin-features.h should be understood by the indexer and one of the
+          // plugin category could be provided to determine if the preset will result into an audio-effect,
+          // instrument, ...
+          // Examples:
+          // kick, drum, tom, snare, clap, cymbal, bass, lead, metalic, hardsync, crossmod, acid,
+          // distorted, drone, pad, dirty, etc...
+          //metadata_receiver->add_feature(metadata_receiver,"lead");
           
-          metadata_receiver->set_description(metadata_receiver,"..description..");
-          
-          /*
-            Sets the creation time and last modification time of the preset.
-            If one of the times isn't known, set it to CLAP_TIMESTAMP_UNKNOWN.
-            If this function is not called, then the indexer may look at the file's creation and
-            modification time.
-          */
-          
-          metadata_receiver->set_timestamps(metadata_receiver,CLAP_TIMESTAMP_UNKNOWN,CLAP_TIMESTAMP_UNKNOWN);
-          
-          /*
-            Adds a feature to the preset.
-            The feature string is arbitrary, it is the indexer's job to understand it and remap it to its
-            internal categorization and tagging system.
-            However, the strings from plugin-features.h should be understood by the indexer and one of the
-            plugin category could be provided to determine if the preset will result into an audio-effect,
-            instrument, ...
-            Examples:
-            kick, drum, tom, snare, clap, cymbal, bass, lead, metalic, hardsync, crossmod, acid,
-            distorted, drone, pad, dirty, etc...
-          */
-          
-          metadata_receiver->add_feature(metadata_receiver,"lead");
-          
-          /*
-            Adds extra information to the metadata.
-          */
-          
-          metadata_receiver->add_extra_info(metadata_receiver,"key","value");
+          // Adds extra information to the metadata.
+          //metadata_receiver->add_extra_info(metadata_receiver,"key","value");
           
           return true;
           
-        }
+        } // begin_preset
+        
         else {
-          SAT_Print("metadata_receiver->begin_preset(%p,%s,%s) returned false\n",metadata_receiver,filename,location);
+          SAT_Print("metadata_receiver->begin_preset(%p,%s,%s) returned false\n",metadata_receiver,name,load_key);
           return false;
         }
         
       }
       
-      /*
-        The preset is bundled within the plugin DSO itself.
-        The location must then be null, as the preset are within the plugin itsel and then the plugin
-        will act as a preset container.
-      */
+      // The preset is bundled within the plugin DSO itself.
+      // The location must then be null, as the preset are within the plugin itsel and then the plugin
+      // will act as a preset container.
       
       case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN\n");
@@ -217,7 +201,6 @@
         return false;
       }
       
-      
     } // switch
     
     return false;
@@ -225,12 +208,10 @@
 
   //----------
 
-  /*
-    Query an extension.
-    The returned pointer is owned by the provider.
-    It is forbidden to call it before provider->init().
-    You can call it within provider->init() call, and after.
-  */
+  // Query an extension.
+  // The returned pointer is owned by the provider.
+  // It is forbidden to call it before provider->init().
+  // You can call it within provider->init() call, and after.
 
   const void* clap_preset_discovery_provider_get_extension_callback(const struct clap_preset_discovery_provider *provider, const char *extension_id) {
     SAT_Print("%s\n",extension_id);
@@ -255,10 +236,8 @@
 //
 //----------------------------------------------------------------------
 
-  /*
-    Get the number of preset providers available.
-    [thread-safe]
-  */
+  // Get the number of preset providers available.
+  // [thread-safe]
 
   uint32_t clap_preset_discovery_factory_count_callback(const struct clap_preset_discovery_factory *factory) {
     SAT_PRINT;
@@ -267,12 +246,10 @@
 
   //----------
 
-  /*
-    Retrieves a preset provider descriptor by its index.
-    Returns null in case of error.
-    The descriptor must not be freed.
-    [thread-safe]
-  */
+  // Retrieves a preset provider descriptor by its index.
+  // Returns null in case of error.
+  // The descriptor must not be freed.
+  // [thread-safe]
 
   const clap_preset_discovery_provider_descriptor_t* clap_preset_discovery_factory_get_descriptor_callback(const struct clap_preset_discovery_factory *factory, uint32_t index) {
     SAT_Print("index %i\n",index);
@@ -284,18 +261,16 @@
 
   //----------
 
-  /*
-    Create a preset provider by its id.
-    The returned pointer must be freed by calling preset_provider->destroy(preset_provider);
-    The preset provider is not allowed to use the indexer callbacks in the create method.
-    It is forbidden to call back into the indexer before the indexer calls provider->init().
-    Returns null in case of error.
-    [thread-safe]
-  */
+  // Create a preset provider by its id.
+  // The returned pointer must be freed by calling preset_provider->destroy(preset_provider);
+  // The preset provider is not allowed to use the indexer callbacks in the create method.
+  // It is forbidden to call back into the indexer before the indexer calls provider->init().
+  // Returns null in case of error.
+  // [thread-safe]
 
   const clap_preset_discovery_provider_t* clap_preset_discovery_factory_create_callback( const struct clap_preset_discovery_factory *factory, const clap_preset_discovery_indexer_t *indexer, const char *provider_id) {
     SAT_Print( "provider_id '%s'\n",provider_id);
-    SAT_Print("  SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id: '%s')\n",SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id);
+    //SAT_Print("  SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id: '%s')\n",SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id);
     SAT_Print("  indexer.name:    '%s'\n",indexer->name);
     SAT_Print("  indexer.vendor:  '%s'\n",indexer->vendor);
     SAT_Print("  indexer.url:     '%s'\n",indexer->url);
