@@ -10,11 +10,11 @@
 
 //----------
 
-#ifdef SAT_DEBUG
-  #define PLUGIN_NAME   "sa_demo (debug)"
-#else
+//#ifdef SAT_DEBUG
+//  #define PLUGIN_NAME   "sa_demo (debug)"
+//#else
   #define PLUGIN_NAME   "sa_demo"
-#endif
+//#endif
 
 //----------------------------------------------------------------------
 //
@@ -24,7 +24,7 @@
 
 const clap_plugin_descriptor_t sa_demo_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
+  .id           = SAT_VENDOR "/" PLUGIN_NAME,
   .name         = PLUGIN_NAME,
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,

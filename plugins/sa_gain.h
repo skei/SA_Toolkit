@@ -9,11 +9,11 @@
 #include "plugin/sat_plugin.h"
 #include "gui/sat_widgets.h"
 
-#ifdef SAT_DEBUG
-  #define PLUGIN_NAME "sa_gain (debug)"
-#else
+//#ifdef SAT_DEBUG
+//  #define PLUGIN_NAME "sa_gain (debug)"
+//#else
   #define PLUGIN_NAME "sa_gain"
-#endif
+//#endif
 
 //----------------------------------------------------------------------
 //
@@ -23,7 +23,7 @@
 
 const clap_plugin_descriptor_t sa_gain_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
+  .id           = SAT_VENDOR "/" PLUGIN_NAME,
   .name         = PLUGIN_NAME,
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,

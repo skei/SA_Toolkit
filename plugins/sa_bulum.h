@@ -20,11 +20,11 @@
 //
 //----------------------------------------------------------------------
 
-#ifdef SAT_DEBUG
-  #define PLUGIN_NAME   "sa_bulum (debug)"
-#else
+//#ifdef SAT_DEBUG
+//  #define PLUGIN_NAME   "sa_bulum (debug)"
+//#else
   #define PLUGIN_NAME   "sa_bulum"
-#endif
+//#endif
 
 #define MAX_GRAINS  1024
 #define BUFFERSIZE  (1024*1024)
@@ -56,7 +56,7 @@ const char* freeze_txt[2] = { "off", "on" };
 
 const clap_plugin_descriptor_t sa_bulum_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
+  .id           = SAT_VENDOR "/" PLUGIN_NAME,
   .name         = PLUGIN_NAME,
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,

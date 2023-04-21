@@ -10,11 +10,11 @@
 
 //----------------------------------------------------------------------
 
-#ifdef SAT_DEBUG
-  #define PLUGIN_NAME   "sa_cred (debug)"
-#else
+//#ifdef SAT_DEBUG
+//  #define PLUGIN_NAME   "sa_cred (debug)"
+//#else
   #define PLUGIN_NAME   "sa_cred"
-#endif
+//#endif
 
 //#define EDITOR_WIDTH    400
 //#define EDITOR_HEIGHT   (40 + 10 + (13 * (20 + 10)) + 20)
@@ -27,7 +27,7 @@
 
 const clap_plugin_descriptor_t sa_cred_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/" PLUGIN_NAME "/" SAT_VERSION,
+  .id           = SAT_VENDOR "/" PLUGIN_NAME,
   .name         = PLUGIN_NAME,
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,

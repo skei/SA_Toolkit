@@ -291,90 +291,89 @@ public:
   //----------
   //----------
   
-//  static bool add_item_callback(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind, const void *item_data) {
-//    switch (item_kind) {
-//      
-//      // clickable menu entry. data: const clap_context_menu_item_entry_t*
-//      case CLAP_CONTEXT_MENU_ITEM_ENTRY: {
-//        SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_ENTRY\n",item_kind);
-//        clap_context_menu_entry_t* entry = (clap_context_menu_entry_t*)item_data;
-//        SAT_Print("  is enabled: %i\n",entry->is_enabled);
-//        SAT_Print("  label: %s\n",entry->label);
-//        SAT_Print("  action_id: %i\n",entry->action_id);
-//        return true;//break;
-//      }
-//
-//      // clickable menu entry which will feature both a checkmark and a label. data: const clap_context_menu_item_check_entry_t*
-//      case CLAP_CONTEXT_MENU_ITEM_CHECK_ENTRY:
-//        SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_CHECK_ENTRY\n",item_kind);
-//        return true;//break;
-//
-//      // separator line. data: NULL
-//      case CLAP_CONTEXT_MENU_ITEM_SEPARATOR:
-//        SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_SEPARATOR\n",item_kind);
-//        return true;//break;
-//
-//      // Starts a sub menu with the given label. data: const clap_context_menu_item_begin_submenu_t*
-//      case CLAP_CONTEXT_MENU_ITEM_BEGIN_SUBMENU:
-//        SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_BEGIN_SUBMENU\n",item_kind);
-//        return true;//break;
-//
-//      // Ends the current sub menu. data: NULL
-//      case CLAP_CONTEXT_MENU_ITEM_END_SUBMENU:
-//        SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_END_SUBMENU\n",item_kind);
-//        return true;//break;
-//
-//      // title entry. data: const clap_context_menu_item_title_t *
-//      case CLAP_CONTEXT_MENU_ITEM_TITLE: {
-//        SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_TITLE\n",item_kind);
-//        clap_context_menu_item_title_t* title = (clap_context_menu_item_title_t*)item_data;
-//        SAT_Print("  is enabled: %i\n",title->is_enabled);
-//        SAT_Print("  title: %s\n",title->title);
-//        return true;//break;
-//      }
-//        
-//    }
-//    return false;
-//  }
-//  
-//  static bool supports_callback(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind) {
-//    SAT_Print("supports item kind %s\n",item_kind);
-//    return true;
-//  }
-//  
-//  clap_context_menu_builder_t builder_ = {
-//    .ctx      = this,
-//    .add_item = add_item_callback,
-//    .supports = supports_callback
-//  };
-//  
-//  clap_context_menu_target_t target_ = {
-//    CLAP_CONTEXT_MENU_TARGET_KIND_PARAM,
-//    //CLAP_CONTEXT_MENU_TARGET_KIND_GLOBAL,
-//    0   //clap_id  id;
-//  };
+  //static bool add_item_callback(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind, const void *item_data) {
+  //  switch (item_kind) {
+  //    
+  //    // clickable menu entry. data: const clap_context_menu_item_entry_t*
+  //    case CLAP_CONTEXT_MENU_ITEM_ENTRY: {
+  //      SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_ENTRY\n",item_kind);
+  //      clap_context_menu_entry_t* entry = (clap_context_menu_entry_t*)item_data;
+  //      SAT_Print("  is enabled: %i\n",entry->is_enabled);
+  //      SAT_Print("  label: %s\n",entry->label);
+  //      SAT_Print("  action_id: %i\n",entry->action_id);
+  //      return true;//break;
+  //    }
+  //
+  //    // clickable menu entry which will feature both a checkmark and a label. data: const clap_context_menu_item_check_entry_t*
+  //    case CLAP_CONTEXT_MENU_ITEM_CHECK_ENTRY:
+  //      SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_CHECK_ENTRY\n",item_kind);
+  //      return true;//break;
+  //
+  //    // separator line. data: NULL
+  //    case CLAP_CONTEXT_MENU_ITEM_SEPARATOR:
+  //      SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_SEPARATOR\n",item_kind);
+  //      return true;//break;
+  //
+  //    // Starts a sub menu with the given label. data: const clap_context_menu_item_begin_submenu_t*
+  //    case CLAP_CONTEXT_MENU_ITEM_BEGIN_SUBMENU:
+  //      SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_BEGIN_SUBMENU\n",item_kind);
+  //      return true;//break;
+  //
+  //    // Ends the current sub menu. data: NULL
+  //    case CLAP_CONTEXT_MENU_ITEM_END_SUBMENU:
+  //      SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_END_SUBMENU\n",item_kind);
+  //      return true;//break;
+  //
+  //    // title entry. data: const clap_context_menu_item_title_t *
+  //    case CLAP_CONTEXT_MENU_ITEM_TITLE: {
+  //      SAT_Print("%i = CLAP_CONTEXT_MENU_ITEM_TITLE\n",item_kind);
+  //      clap_context_menu_item_title_t* title = (clap_context_menu_item_title_t*)item_data;
+  //      SAT_Print("  is enabled: %i\n",title->is_enabled);
+  //      SAT_Print("  title: %s\n",title->title);
+  //      return true;//break;
+  //    }
+  //      
+  //  }
+  //  return false;
+  //}
+  //
+  //static bool supports_callback(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind) {
+  //  SAT_Print("supports item kind %s\n",item_kind);
+  //  return true;
+  //}
+  //
+  //clap_context_menu_builder_t builder_ = {
+  //  .ctx      = this,
+  //  .add_item = add_item_callback,
+  //  .supports = supports_callback
+  //};
+  //
+  //clap_context_menu_target_t target_ = {
+  //  CLAP_CONTEXT_MENU_TARGET_KIND_PARAM,
+  //  //CLAP_CONTEXT_MENU_TARGET_KIND_GLOBAL,
+  //  0   //clap_id  id;
+  //};
   
   //----------
   //----------
   //----------
   
   bool start_processing() final {
-//    SAT_Host* host = getHost();
-//    if (host) {
-//      SAT_Print("has host\n");
-//      if (host->ext.context_menu) {
-//        SAT_Print("has context menu\n");
-//        if (host->context_menu_can_popup()) {
-//          SAT_Print("can popup\n");
-//          host->context_menu_populate(&target_,&builder_);
-//          host->context_menu_popup(&target_,0,100,100);
-//          //host->context_menu_perform(target,action_id);
-//        }
-//      }
-//    }
+    //SAT_Host* host = getHost();
+    //if (host) {
+    //  SAT_Print("has host\n");
+    //  if (host->ext.context_menu) {
+    //    SAT_Print("has context menu\n");
+    //    if (host->context_menu_can_popup()) {
+    //      SAT_Print("can popup\n");
+    //      host->context_menu_populate(&target_,&builder_);
+    //      host->context_menu_popup(&target_,0,100,100);
+    //      //host->context_menu_perform(target,action_id);
+    //    }
+    //  }
+    //}
     return SAT_Plugin::start_processing();
   }
-  
   
   //----------
 
@@ -513,31 +512,27 @@ public:
 
   // interleaved
 
-  /*
-  void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
-    const clap_process_t* process = AContext->process;
-    //uint32_t length = process->frames_count;
-    float* inputs[2];
-    float* outputs[2];
-    inputs[0]  = process->audio_inputs[0].data32[0] + offset;
-    inputs[1]  = process->audio_inputs[0].data32[1] + offset;
-    outputs[0] = process->audio_outputs[0].data32[0] + offset;
-    outputs[1] = process->audio_outputs[0].data32[1] + offset;
-    SAT_CopyStereoBuffer(outputs,inputs,length);
-    sat_param_t scale = getParameterValue(2) + getModulationValue(2);
-    scale = SAT_Clamp(scale,0,1);
-    SAT_ScaleStereoBuffer(outputs,scale,length);
-  }
-  */
+  //void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
+  //  const clap_process_t* process = AContext->process;
+  //  //uint32_t length = process->frames_count;
+  //  float* inputs[2];
+  //  float* outputs[2];
+  //  inputs[0]  = process->audio_inputs[0].data32[0] + offset;
+  //  inputs[1]  = process->audio_inputs[0].data32[1] + offset;
+  //  outputs[0] = process->audio_outputs[0].data32[0] + offset;
+  //  outputs[1] = process->audio_outputs[0].data32[1] + offset;
+  //  SAT_CopyStereoBuffer(outputs,inputs,length);
+  //  sat_param_t scale = getParameterValue(2) + getModulationValue(2);
+  //  scale = SAT_Clamp(scale,0,1);
+  //  SAT_ScaleStereoBuffer(outputs,scale,length);
+  //}
 
   //----------
 
   // quantized
 
-  /*
-  void processAudio(SAT_ProcessContext* AContext, uint32_t offset) final {
-  }
-  */
+  //void processAudio(SAT_ProcessContext* AContext, uint32_t offset) final {
+  //}
 
   };
 
@@ -573,6 +568,8 @@ public:
   */
 
 #endif // SAT_NO_ENTRY
+
+//----------
 
 #undef PLUGIN_NAME
 #undef EDITOR_WIDTH
