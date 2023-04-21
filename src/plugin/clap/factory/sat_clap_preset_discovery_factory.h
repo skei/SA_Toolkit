@@ -18,13 +18,16 @@
   // For FILE kind, the location can be either a path to a directory or a file.
   // For PLUGIN kind, the location must be null.
 
+  char location_string[SAT_MAX_PATH_LENGTH] = {0};
+
   const clap_preset_discovery_location_t sat_preset_location = {
     .flags    = CLAP_PRESET_DISCOVERY_IS_USER_CONTENT,
     .name     = "sa_presets",
     .kind     = CLAP_PRESET_DISCOVERY_LOCATION_FILE,
-    .location = "/home/skei/Code/SA_Toolkit/bin/presets/"
+    .location = location_string // "/home/skei/Code/SA_Toolkit/bin/presets/"
   };
   
+
   //----------
   
   // .file_extension
@@ -67,6 +70,15 @@
       SAT_Print("Oops! indexer->declare_filetype returned false\n");
       return false;
     }
+
+
+//
+
+    SAT_GetHomePath(location_string);
+    strcat(location_string,".skei.audio/");
+    
+//    
+    
     if (!indexer->declare_location(indexer,&sat_preset_location)) {
       SAT_Print("oops! indexer->declare_location returned false\n");
       return false;

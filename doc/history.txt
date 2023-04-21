@@ -13,6 +13,6 @@
   - gui: svg support (via nanosvg)
   - gui: widget-system rewritten from scatch, more flexible, dynamic and performant
   - plugin: better painting & resizing
-  - vst2: initial support is back
+  - vst3: initial support is back
   - win32: initial support is back
   - general: countless bugfixes, tweaks and fixes
