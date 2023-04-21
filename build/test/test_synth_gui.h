@@ -358,8 +358,8 @@
 //    SAT_ShaderWidget* shader = new SAT_ShaderWidget(SAT_Rect(130,205,50,50));
 //    middle_column->appendChildWidget(shader);
 //    AWindow->appendPostPaint(shader);
-//    shader->init();
-//    shader->initShaders();
+//    //shader->init();
+//    //shader->initShaders();
 
     SAT_CurveWidget* curve1 = new SAT_CurveWidget(SAT_Rect(10,260,20,20),false);
     middle_column->appendChildWidget(curve1);

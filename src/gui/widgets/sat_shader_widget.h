@@ -36,6 +36,7 @@ class SAT_ShaderWidget
 private:
 //------------------------------
 
+  bool MInitialized = false;
   bool MDrawShader = true;
   
   //----------
@@ -56,25 +57,26 @@ private:
     "in vec3 ex_Color;"
     "out vec4 out_Color;"
     "void main(void) {"
-    "  out_Color = vec4(ex_Color,1.0);"
+    //"  out_Color = vec4(e/x_Color,1.0);"
+    "  out_Color = vec4(0,0,1,1);"
     "}";
 
   GLfloat vertices[9] = {
-    0.0f, 0.0f, 0.0f,
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f
+    -0.5,  0.5, 0,
+     0.5,  0.5, 0,
+    -0.5, -0.5, 0
   };
   
   GLfloat vertices2[9] = {
-       0.0f,   0.0f, 0.0f,
-     100.0f,   0.0f, 0.0f,
-       0.0f, 100.0f, 0.0f
+     0.5,  0.5, 0,
+     0.5, -0.5, 0,
+    -0.5, -0.5, 0
   };
 
   GLfloat colours[9] = {
-       1.0f,   0.0f,   0.0f,
-       0.0f,   1.0f,   0.0f,
-       0.0f,   0.0f,   1.0f
+     1.0f,   0.0f,   0.0f,
+     0.0f,   1.0f,   0.0f,
+     0.0f,   0.0f,   1.0f
   };
   
   unsigned int  vertex_array_object[2];
@@ -83,7 +85,6 @@ private:
   GLuint        vertex_shader;
   GLuint        fragment_shader;
   GLuint        shader_program;
-  
 
 //------------------------------
 public:
@@ -137,37 +138,37 @@ public:
   //----------
 
   void init(void) {
-    // Allocate Vertex Array Objects
     
     glGenVertexArrays(2,&vertex_array_object[0]);
-    
+    glGenBuffers(2, vertex_buffer_object);
+    glGenBuffers(1,&vertex_buffer_object[2]);
+      
     // first Vertex Array Object
     glBindVertexArray(vertex_array_object[0]);
-    glGenBuffers(2,vertex_buffer_object);
-    
-    // VBO for vertex data
-    glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[0]);
-    glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices,GL_STATIC_DRAW);
-    glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
-    glEnableVertexAttribArray(0);
-    
-    // VBO for colour data
-    glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[1]);
-    glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colours,GL_STATIC_DRAW);
-    glVertexAttribPointer((GLuint)1,3,GL_FLOAT,GL_FALSE,0,0);
-    glEnableVertexAttribArray(1);
+      
+      // VBO for vertex data
+      glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[0]);
+        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices,GL_STATIC_DRAW);
+        glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
+        glEnableVertexAttribArray(0);
+        
+      // VBO for colour data
+      glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[1]);
+        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colours,GL_STATIC_DRAW);
+        glVertexAttribPointer((GLuint)1,3,GL_FLOAT,GL_FALSE,0,0);
+        glEnableVertexAttribArray(1);
     
     // second Vertex Array Object
     glBindVertexArray(vertex_array_object[1]);
-    glGenBuffers(1,&vertex_buffer_object[2]);
-
-    // VBO for vertex data
-    glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[2]);
-    glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices2,GL_STATIC_DRAW);
-    glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
-    glEnableVertexAttribArray(0);
+      
+      // VBO for vertex data
+      glBindBuffer(GL_ARRAY_BUFFER,vertex_buffer_object[2]);
+        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices2,GL_STATIC_DRAW);
+        glVertexAttribPointer((GLuint)0,3,GL_FLOAT,GL_FALSE,0,0); 
+        glEnableVertexAttribArray(0);
     
     glBindVertexArray(0);
+    
   }
 
   //----------
@@ -185,21 +186,23 @@ public:
     glCompileShader(vertex_shader);
     glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&compiled);
     if (!compiled) {
-      SAT_Print("Vertex shader not compiled.\n");
+      SAT_Print("%i = Vertex shader not compiled.\n",compiled);
       printShaderInfoLog(vertex_shader);
     } 
     else {
-      SAT_Print("Vertex shader compiled.\n");
+      SAT_Print("%i = Vertex shader compiled.\n",compiled);
+      printShaderInfoLog(vertex_shader);
     }
 
     glCompileShader(fragment_shader);
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &compiled);
     if (!compiled) {
-      SAT_Print("Fragment shader not compiled.\n");
+      SAT_Print("%i = Fragment shader not compiled.\n",compiled);
       printShaderInfoLog(fragment_shader);
     } 
     else {
-      SAT_Print("Fragment shader compiled.\n");
+      SAT_Print("%i = Fragment shader compiled.\n",compiled);
+      printShaderInfoLog(fragment_shader);
     }
     
     shader_program = glCreateProgram();
@@ -207,6 +210,7 @@ public:
     glBindAttribLocation(shader_program,1, "in_Color");
     glAttachShader(shader_program,vertex_shader);
     glAttachShader(shader_program,fragment_shader);
+    
     glLinkProgram(shader_program);
 
 //    glUseProgram(shader_program);
@@ -214,51 +218,30 @@ public:
 
   }
   
-  //----------
-
-  //int main (int argc, char* argv[]) {
-  //  glutInit(&argc, argv);
-  //  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-  //  glutInitWindowSize(600,600);
-  //  glutCreateWindow("Triangle Test");
-  //  glewInit();
-  //  GLenum err = glewInit();
-  //  if (GLEW_OK != err) {
-  //    /* Problem: glewInit failed, something is seriously wrong. */
-  //    cout << "glewInit failed, aborting." << endl;
-  //    exit (1);
-  //  }
-  //  cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << endl;
-  //  cout << "OpenGL version " << glGetString(GL_VERSION) << " supported" << endl;
-  //  init();
-  //  initShaders();
-  //  glutDisplayFunc(display);
-  //  glutReshapeFunc(reshape);	
-  //  glutMainLoop();
-  //  return 0;
-  //}
-  
 //------------------------------
 public:
 //------------------------------
 
   virtual void drawShader(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
+    //double S = getWindowScale();
+    //SAT_Painter* painter = AContext->painter;
+    //SAT_Assert(painter);
+    SAT_Rect mrect = getRect();
+    if (mrect.w <= 0.0) return;
+    if (mrect.h <= 0.0) return;
+
     if (MDrawShader) {
-      //double S = getWindowScale();
-      //SAT_Painter* painter = AContext->painter;
-      //SAT_Assert(painter);
-      SAT_Rect mrect = getRect();
-      //shrink..
-      if (mrect.w <= 0.0) return;
-      if (mrect.h <= 0.0) return;
       
-      //painter->setFillColor(SAT_White);
-      //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+      if (!MInitialized) {
+        init();
+        initShaders();
+        MInitialized = true;
+      }
       
-      //draw_using_shader();
-      SAT_Print("shading!\n");
-      
+      //SAT_WidgetOwner* owner = getOwner();
+      //double w = owner->do_widgetOwner_get_width();
+      //double h = owner->do_widgetOwner_get_height();
       //glViewport(0,0,1000,1000);
       //glClear(GL_COLOR_BUFFER_BIT);
       
@@ -274,8 +257,6 @@ public:
       glBindVertexArray(0);
       glUseProgram(0);
       
-      //glutSwapBuffers();
-      
     }
   }
 
@@ -284,16 +265,19 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    drawDropShadow(AContext);
-    fillBackground(AContext);
+//    drawDropShadow(AContext);
+//    fillBackground(AContext);
 //    drawShader(AContext);
-    paintChildWidgets(AContext);
-    drawBorder(AContext);
+//    paintChildWidgets(AContext);
+//    drawBorder(AContext);
   }
+  
+  //----------
 
-//  void on_widget_postpaint(SAT_PaintContext* AContext) override {
-//    drawShader(AContext);
-//  }
+  void on_widget_postpaint(SAT_PaintContext* AContext) override {
+    //SAT_PRINT;
+    drawShader(AContext);
+  }
   
 };
 

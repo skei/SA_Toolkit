@@ -409,13 +409,13 @@ public: // audio ports config
   // gets information about a configuration
   // [main-thread]
 
-  //TODO: fix this..
+  //TODO: ugly hack.. fix this..
   // uses first input/output audio port
 
   bool audio_ports_config_get(uint32_t index, clap_audio_ports_config_t *config) override {
     SAT_Print("index %i\n",index);
     config->id = 0;
-    strcpy(config->name,"apconfig1");
+    strcpy(config->name,"config1");
     if (MAudioInputPorts.size() > 0) {
       clap_audio_port_info_t* info      = MAudioInputPorts[0]->getInfo();
       config->input_port_count          = 1;
@@ -498,14 +498,20 @@ public: // context menu
   // host.context_menu_popup()
   
   //----------
-  
-  
-  
-  
 
+  //typedef struct clap_context_menu_target {
+  //   uint32_t kind;
+  //   clap_id  id;
+  //} clap_context_menu_target_t;
 
   // CLAP_CONTEXT_MENU_TARGET_KIND_GLOBAL = 0,
   // CLAP_CONTEXT_MENU_TARGET_KIND_PARAM = 1,
+
+  //typedef struct clap_context_menu_builder {
+  //   void *ctx;
+  //   bool add_item(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind, const void *item_data);
+  //   bool supports(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind);
+  //} clap_context_menu_builder_t;
 
   // CLAP_CONTEXT_MENU_ITEM_ENTRY
   // CLAP_CONTEXT_MENU_ITEM_CHECK_ENTRY
@@ -513,30 +519,28 @@ public: // context menu
   // CLAP_CONTEXT_MENU_ITEM_BEGIN_SUBMENU
   // CLAP_CONTEXT_MENU_ITEM_END_SUBMENU
   // CLAP_CONTEXT_MENU_ITEM_TITLE
+  
+  //
 
   // Insert plugin's menu items into the menu builder.
   // If target is null, assume global context.
   // [main-thread]
-
-  //typedef struct clap_context_menu_target {
-  //   uint32_t kind;
-  //   clap_id  id;
-  //} clap_context_menu_target_t;
-
-  //typedef struct clap_context_menu_builder {
-  //   void *ctx;
-  //   bool(CLAP_ABI *add_item)(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind, const void *item_data);
-  //   bool(CLAP_ABI *supports)(const struct clap_context_menu_builder *builder, clap_context_menu_item_kind_t item_kind);
-  //} clap_context_menu_builder_t;
   
-//  clap_context_menu_entry entry = {
-//    "hello world!", // const char *label;
-//    true,           // bool is_enabled;
-//    0               //clap_id     action_id;
-//  };
-
   bool context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) override {
     SAT_Print("target kind %i id %i\n",target->kind,target->id);
+    //clap_id target_id = target->id;
+    switch (target->kind) {
+      case CLAP_CONTEXT_MENU_TARGET_KIND_GLOBAL: {
+        clap_context_menu_entry menuitem = { "hello global menu!", true, 0 };
+        builder->add_item(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY,&menuitem);
+        break;
+      }
+      case CLAP_CONTEXT_MENU_TARGET_KIND_PARAM: {
+        clap_context_menu_entry menuitem = { "hello param menu!", true, 0 };
+        builder->add_item(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY,&menuitem);
+        break;
+      }
+    }
     return true;
 //    if (builder->supports(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY)) {
 //      builder->add_item(builder,CLAP_CONTEXT_MENU_ITEM_ENTRY,&entry);
@@ -552,11 +556,22 @@ public: // context menu
 
   bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
     SAT_Print("target kind %i id %i action %i\n",target->kind,target->id,action_id);
+    //clap_id target_id = target->id;
+    switch (target->kind) {
+      case CLAP_CONTEXT_MENU_TARGET_KIND_GLOBAL: {
+        if (action_id == 0) {
+          SAT_Print("global action 0\n");
+        }
+        break;
+      }
+      case CLAP_CONTEXT_MENU_TARGET_KIND_PARAM: {
+        if (action_id == 0) {
+          SAT_Print("param action 0\n");
+        }
+        break;
+      }
+    }
     return true;
-//    if (action_id == 0) {
-//      SAT_Print("hello world!!!");
-//    }
-//    return true;
   }
 
 //------------------------------
@@ -586,14 +601,14 @@ public: // extensible audio ports
 //------------------------------
 
   bool extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) override {
-    SAT_Print("\n");
+    SAT_Print("is_input %i channel_count %i port_type %s\n",is_input,channel_count,port_type);
     return false;
   }
   
   //----------
   
   bool extensible_audio_ports_remove_port(bool is_input, uint32_t index) override {
-    SAT_Print("\n");
+    SAT_Print("is_input %i index %i\n",is_input,index);
     return false;
   }
 
@@ -1135,7 +1150,6 @@ public: // preset load
   // [main-thread]
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
-    SAT_PRINT;
     switch (location_kind) {
       case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
@@ -1146,6 +1160,10 @@ public: // preset load
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
         MHost->preset_load_loaded(location_kind,location,load_key);
         return true;
+      }
+      default: {
+        SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
+        return false;
       }
     }
     return false;
@@ -1172,14 +1190,14 @@ public: // remote controls
 
   // Get a page by index.
   // [main-thread]
-
+  
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
     SAT_Print("-> true\n");
     switch (page_index) {
       case 0: {
+        strcpy(page->section_name,"Section 1");
         page->page_id = 0;
         strcpy(page->page_name,"Page 1");
-        strcpy(page->section_name,"Section 1");
         page->param_ids[0] = 0;
         page->param_ids[1] = 1;
         page->param_ids[2] = 2;
@@ -1188,6 +1206,7 @@ public: // remote controls
         page->param_ids[5] = 1;
         page->param_ids[6] = 2;
         page->param_ids[7] = 3;
+        page->is_for_preset = false;
         return true;
       }
     }

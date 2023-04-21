@@ -59,13 +59,13 @@ public:
   virtual void                on_main_thread() {}
 
   virtual bool                ambisonic_get_info(bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) { return false; }
+  virtual uint32_t            audio_ports_count(bool is_input) { return 0; }
+  virtual bool                audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) { return false; }
   virtual bool                audio_ports_activation_can_activate_while_processing() { return false; }
   virtual bool                audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active) { return false; }
   virtual uint32_t            audio_ports_config_count() { return 0; }
   virtual bool                audio_ports_config_get(uint32_t index, clap_audio_ports_config_t *config) { return false; }
   virtual bool                audio_ports_config_select(clap_id config_id) { return false; }
-  virtual uint32_t            audio_ports_count(bool is_input) { return 0; }
-  virtual bool                audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) { return false; }
   virtual void                check_for_updates_check(bool include_preview) { }
   virtual bool                configurable_audio_ports_is_port_configurable(bool is_input, uint32_t port_index) { return false; }
   virtual bool                configurable_audio_ports_request_configuration(const struct clap_audio_port_configuration_request *requests,uint32_t request_count) { return false; }
@@ -240,6 +240,29 @@ protected:
   };
 
 //------------------------------
+private: // ext: audio ports
+//------------------------------
+
+  static
+  uint32_t clap_plugin_audio_ports_count_callback(const clap_plugin_t* plugin, bool is_input) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->audio_ports_count(is_input);
+  }
+
+  static
+  bool clap_plugin_audio_ports_get_callback(const clap_plugin_t* plugin, uint32_t index, bool is_input, clap_audio_port_info_t *info) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->audio_ports_get(index,is_input,info);
+  }
+
+protected:
+
+  const clap_plugin_audio_ports_t MAudioPortsExt {
+    .count  = clap_plugin_audio_ports_count_callback,
+    .get    = clap_plugin_audio_ports_get_callback
+  };
+
+//------------------------------
 private: // ext: audio ports activation
 //------------------------------
 
@@ -292,29 +315,6 @@ protected:
     .count  = clap_plugin_audio_ports_config_count_callback,
     .get    = clap_plugin_audio_ports_config_get_callback,
     .select = clap_plugin_audio_ports_config_select_callback
-  };
-
-//------------------------------
-private: // ext: audio ports
-//------------------------------
-
-  static
-  uint32_t clap_plugin_audio_ports_count_callback(const clap_plugin_t* plugin, bool is_input) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->audio_ports_count(is_input);
-  }
-
-  static
-  bool clap_plugin_audio_ports_get_callback(const clap_plugin_t* plugin, uint32_t index, bool is_input, clap_audio_port_info_t *info) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->audio_ports_get(index,is_input,info);
-  }
-
-protected:
-
-  const clap_plugin_audio_ports_t MAudioPortsExt {
-    .count  = clap_plugin_audio_ports_count_callback,
-    .get    = clap_plugin_audio_ports_get_callback
   };
 
 //------------------------------

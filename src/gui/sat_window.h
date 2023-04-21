@@ -257,7 +257,8 @@ public:
 //    }
 //  */    
   
-  // opengl context is made current
+  // called just after opengl context is made current
+  // before nanovg
   
   virtual void prepaint(SAT_PaintContext* AContext) {
     for (uint32_t i=0; i<MPrePaintWidgets.size(); i++) {
@@ -267,7 +268,8 @@ public:
 
   //----------
 
-  // opengl context is still current
+  // called just before opengl swapBuffers
+  // after all nanovg painting & buffer copying
   
   virtual void postpaint(SAT_PaintContext* AContext) {
     for (uint32_t i=0; i<MPostPaintWidgets.size(); i++) {
@@ -602,7 +604,7 @@ public: // window
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
     
-    //prepaint(&MPaintContext);
+prepaint(&MPaintContext);
     
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
@@ -618,10 +620,12 @@ public: // window
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
       MBufferHeight = height2;
+      
+      
       // paint dirty widgets to render buffer
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
       
-prepaint(&MPaintContext);
+  //prepaint(&MPaintContext);
       
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
@@ -634,13 +638,13 @@ prepaint(&MPaintContext);
 
       MWindowPainter->endFrame();
       
-postpaint(&MPaintContext);
+  //postpaint(&MPaintContext);
       
     }
     else {
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
 
-prepaint(&MPaintContext);
+  //prepaint(&MPaintContext);
 
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
@@ -661,12 +665,13 @@ prepaint(&MPaintContext);
       }
       MWindowPainter->endFrame();
       
-postpaint(&MPaintContext);
+  //postpaint(&MPaintContext);
       
     }
+    
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
     
-    //postpaint(&MPaintContext);
+postpaint(&MPaintContext);
     
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
