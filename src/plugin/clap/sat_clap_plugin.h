@@ -6,7 +6,6 @@
 // (called from host)
 
 #include "plugin/clap/sat_clap.h"
-#include "plugin/clap/sat_clap_host.h"
 
 //----------------------------------------------------------------------
 //

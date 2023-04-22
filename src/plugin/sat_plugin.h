@@ -285,7 +285,7 @@ public: // plugin
   const void* get_extension(const char *id) override {
     const void* result = MExtensions.getItem(id);
     SAT_Log("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
-    SAT_Print("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
+    //SAT_Print("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
     return result;
   }
 
@@ -1192,21 +1192,27 @@ public: // remote controls
   // [main-thread]
   
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
-    SAT_Print("-> true\n");
+    SAT_Print("page_index %i\n",page_index);
     switch (page_index) {
       case 0: {
-        strcpy(page->section_name,"Section 1");
+        strcpy(page->section_name,"..section name..");
         page->page_id = 0;
-        strcpy(page->page_name,"Page 1");
-        page->param_ids[0] = 0;
-        page->param_ids[1] = 1;
-        page->param_ids[2] = 2;
-        page->param_ids[3] = 3;
-        page->param_ids[4] = 0;
-        page->param_ids[5] = 1;
-        page->param_ids[6] = 2;
-        page->param_ids[7] = 3;
+        strcpy(page->page_name,"Params 1-8");
         page->is_for_preset = false;
+        //page->param_ids[0] = 0;
+        //page->param_ids[1] = 1;
+        //page->param_ids[2] = 2;
+        //page->param_ids[3] = 3;
+        //page->param_ids[4] = 0;
+        //page->param_ids[5] = 1;
+        //page->param_ids[6] = 2;
+        //page->param_ids[7] = 3;
+        uint32_t num = SAT_MinI(8,getNumParameters());
+        SAT_Print("num %i\n",num);
+        for (uint32_t i=0; i<num; i++) {
+          SAT_Print("%i = %i\n",i,i);
+          page->param_ids[i] = i;
+        }
         return true;
       }
     }
@@ -2395,45 +2401,6 @@ public: // note output ports
 public: // events
 //------------------------------
 
-  //virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  //}
-
-  //----------
-
-  virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  }
-
-  //----------
-
-  /*
-    if threading: push events onto each voice's oqn event queue, and handle
-    them individually for each voice during audio processing..
-  */
-
-  //virtual void prepareEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  //}
-
-  //----------
-
-  // called from SAT_Plugin.process(), just before processAudio()
-
-  virtual void processEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-    if (!in_events) return;
-    //if (!out_events) return;
-    uint32_t size = in_events->size(in_events);
-    for (uint32_t i=0; i<size; i++) {
-      const clap_event_header_t* header = in_events->get(in_events,i);
-      handleEvent(header);
-    }
-  }
-
-  //----------
-
-  //virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  //}
-
-  //----------
-
   virtual bool handleNoteOn(const clap_event_note_t* event) { return false; }
   virtual bool handleNoteOff(const clap_event_note_t* event) { return false; }
   virtual bool handleNoteChoke(const clap_event_note_t* event) { return false; }
@@ -2444,28 +2411,6 @@ public: // events
   virtual bool handleMidi(const clap_event_midi_t* event) { return false; }
   virtual bool handleMidiSysex(const clap_event_midi_sysex_t* event) { return false; }
   virtual bool handleMidi2(const clap_event_midi2_t* event) { return false; }
-
-  //----------
-
-  void handleEvent(const clap_event_header_t* header) {
-    switch (header->type) {
-      case CLAP_EVENT_NOTE_ON:          handleNoteOnEvent(        (clap_event_note_t*)header);            break;
-      case CLAP_EVENT_NOTE_OFF:         handleNoteOffEvent(       (clap_event_note_t*)header);            break;
-      case CLAP_EVENT_NOTE_CHOKE:       handleNoteChokeEvent(     (clap_event_note_t*)header);            break;
-      case CLAP_EVENT_NOTE_EXPRESSION:  handleNoteExpressionEvent((clap_event_note_expression_t*)header); break;
-      case CLAP_EVENT_PARAM_VALUE:      handleParamValueEvent(    (clap_event_param_value_t*)header);     break;
-      case CLAP_EVENT_PARAM_MOD:        handleParamModEvent(      (clap_event_param_mod_t*)header);       break;
-      case CLAP_EVENT_TRANSPORT:        handleTransportEvent(     (clap_event_transport_t*)header);       break;
-      case CLAP_EVENT_MIDI:             handleMidiEvent(          (clap_event_midi_t*)header);            break;
-      case CLAP_EVENT_MIDI_SYSEX:       handleMidiSysexEvent(     (clap_event_midi_sysex_t*)header);      break;
-      case CLAP_EVENT_MIDI2:            handleMidi2Event(         (clap_event_midi2_t*)header);           break;
-    }
-  }
-
-  //----------
-
-  //void prepareEvent(const clap_event_header_t* header) {
-  //}
 
 //------------------------------
 private: // handle events
@@ -2678,6 +2623,25 @@ private: // handle events
   }
 
 //------------------------------
+public:
+//------------------------------
+
+  void handleEvent(const clap_event_header_t* header) {
+    switch (header->type) {
+      case CLAP_EVENT_NOTE_ON:          handleNoteOnEvent(        (clap_event_note_t*)header);            break;
+      case CLAP_EVENT_NOTE_OFF:         handleNoteOffEvent(       (clap_event_note_t*)header);            break;
+      case CLAP_EVENT_NOTE_CHOKE:       handleNoteChokeEvent(     (clap_event_note_t*)header);            break;
+      case CLAP_EVENT_NOTE_EXPRESSION:  handleNoteExpressionEvent((clap_event_note_expression_t*)header); break;
+      case CLAP_EVENT_PARAM_VALUE:      handleParamValueEvent(    (clap_event_param_value_t*)header);     break;
+      case CLAP_EVENT_PARAM_MOD:        handleParamModEvent(      (clap_event_param_mod_t*)header);       break;
+      case CLAP_EVENT_TRANSPORT:        handleTransportEvent(     (clap_event_transport_t*)header);       break;
+      case CLAP_EVENT_MIDI:             handleMidiEvent(          (clap_event_midi_t*)header);            break;
+      case CLAP_EVENT_MIDI_SYSEX:       handleMidiSysexEvent(     (clap_event_midi_sysex_t*)header);      break;
+      case CLAP_EVENT_MIDI2:            handleMidi2Event(         (clap_event_midi2_t*)header);           break;
+    }
+  }
+
+//------------------------------
 public: // process audio
 //------------------------------
 
@@ -2732,6 +2696,35 @@ public: // process audio
 
   //----------
 
+//------------------------------
+public: // process events
+//------------------------------
+
+  virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
+
+  //----------
+
+  virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
+
+  //----------
+
+  // called from SAT_Plugin.process(), just before processAudio()
+
+  virtual void processEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+    if (!in_events) return;
+    //if (!out_events) return;
+    uint32_t size = in_events->size(in_events);
+    for (uint32_t i=0; i<size; i++) {
+      const clap_event_header_t* header = in_events->get(in_events,i);
+      // test if clap space, etc?
+      handleEvent(header);
+    }
+  }
+
+  //----------
+
   // processes events at their sample accurate place, and audio inbetween
 
   virtual void processInterleaved(SAT_ProcessContext* AContext) {
@@ -2774,7 +2767,7 @@ public: // process audio
   // and then the audio)..
   // events could be processed up to (slicesize - 1) samples 'early'..
 
-  void processQuantized(SAT_ProcessContext* AContext) {
+  virtual void processQuantized(SAT_ProcessContext* AContext) {
 
     uint32_t buffer_length = AContext->process->frames_count;
     uint32_t remaining = buffer_length;
