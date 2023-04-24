@@ -1213,6 +1213,12 @@ public: // remote controls
           SAT_Print("%i = %i\n",i,i);
           page->param_ids[i] = i;
         }
+        
+        for (uint32_t i=num; i<8; i++) {
+          SAT_Print("%i = %i\n",i,i);
+          page->param_ids[i] = CLAP_INVALID_ID;
+        }
+        
         return true;
       }
     }

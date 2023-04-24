@@ -120,13 +120,14 @@ public:
       //XCB_EVENT_MASK_RESIZE_REDIRECT  |
       //XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY|
       XCB_EVENT_MASK_STRUCTURE_NOTIFY;
+      
     uint32_t window_mask =
       XCB_CW_BACK_PIXMAP    |
       XCB_CW_BORDER_PIXEL   |
       XCB_CW_EVENT_MASK     |
       XCB_CW_COLORMAP;
     uint32_t window_mask_values[4] = {
-      XCB_NONE,
+      XCB_NONE,                           // shouldn't this be XCB_BACK_PIXMAP_NONE ??
       0,
       event_mask,
       MScreen->default_colormap
