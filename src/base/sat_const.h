@@ -73,6 +73,7 @@
 //
 //----------------------------------------------------------------------
 
+#define SAT_ALIGNMENT_SIMD                      16
 #define SAT_ALIGNMENT_CACHE                     64
 
 #define SAT_AUDIO_FILE_READ                     0x10

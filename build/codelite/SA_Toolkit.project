@@ -4,6 +4,9 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <VirtualDirectory Name="templates">
+      <File Name="../../plugins/templates/effect.h"/>
+    </VirtualDirectory>
     <File Name="../../plugins/sa_ports.h"/>
     <File Name="../../plugins/sa_demo.h"/>
     <File Name="../../plugins/sa_plugins.h"/>
