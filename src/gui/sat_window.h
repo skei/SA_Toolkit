@@ -10,6 +10,11 @@
 
 #define SAT_WINDOW_BUFFERED
 
+#define SAT_WINDOW_DEFAULT_CONSTRUCTOR(WINDOW)                                                \
+  WINDOW(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, SAT_WindowListener* AListener)  \
+  : SAT_Window(AWidth,AHeight,AParent,AListener) {                                            \
+  }
+
 //----------------------------------------------------------------------
 //
 //
@@ -600,6 +605,9 @@ public: // window
   //----------
   
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+    
+    SAT_Assert(MWindowPainter);
+    
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
@@ -608,7 +616,9 @@ prepaint(&MPaintContext);
     
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
+
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
+      
       // if size has changed: create new buffer, copy old to new, delete old
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
@@ -633,15 +643,19 @@ prepaint(&MPaintContext);
 
       while (MPaintDirtyWidgets.read(&widget)) {} // widget->on_widget_paint(&MPaintContext);
       //count = 1;
-      MRootWidget->on_widget_paint(&MPaintContext);
-      MRootWidget->setLastPainted(MPaintContext.counter); //paint_count);
+      if (MRootWidget) {
+        MRootWidget->on_widget_paint(&MPaintContext);
+        MRootWidget->setLastPainted(MPaintContext.counter); //paint_count);
+      }
 
       MWindowPainter->endFrame();
       
   //postpaint(&MPaintContext);
+  
       
     }
     else {
+      
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
 
   //prepaint(&MPaintContext);

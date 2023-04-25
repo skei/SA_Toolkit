@@ -11,8 +11,6 @@
 
 
 
-
-
 //#include "test/test_ara.h"
 //#include "test/test_layout.h"
 //#include "test/test_minimal.h" // -> build/minimal/plugin.cpp
@@ -21,7 +19,7 @@
 //#include "test/test_standalone.h"
 #include "test/test_synth.h"
 
-
+//#include "test/test2.h"
 
 
 
@@ -43,8 +41,8 @@
 //#include "../plugins/ports/sa_eventhor.h"
 //#include "../plugins/ports/sa_exciter.h"
 //#include "../plugins/ports/sa_exciter2.h"
-
 //#include "../plugins/ports/sa_freeverb.h"
+
 //#include "../plugins/ports/sa_hall_reverb.h"
 //#include "../plugins/ports/sa_hrtf.h"
 //#include "../plugins/ports/sa_iirfilter.h"

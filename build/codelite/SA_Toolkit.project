@@ -51,6 +51,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="build">
     <VirtualDirectory Name="test">
+      <File Name="../test/test2.h"/>
       <File Name="../test/test_params.h"/>
       <File Name="../test/test_gui2.h"/>
       <File Name="../test/test_ara.h"/>

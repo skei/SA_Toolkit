@@ -73,6 +73,7 @@ public:
     // slider
 
     if (MDrawSliderBar) {
+      
       double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);

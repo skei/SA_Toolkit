@@ -14,6 +14,7 @@
 #include "../plugins/ports/sa_eventhor.h"
 #include "../plugins/ports/sa_exciter.h"
 #include "../plugins/ports/sa_exciter2.h"
+#include "../plugins/ports/sa_freeverb.h"
 
 //----------------------------------------------------------------------
 //
@@ -26,6 +27,7 @@ void SAT_Register(SAT_Registry* ARegistry) {
   ARegistry->registerDescriptor(&sa_eventhor_descriptor);
   ARegistry->registerDescriptor(&sa_exciter_descriptor);
   ARegistry->registerDescriptor(&sa_exciter2_descriptor);
+  ARegistry->registerDescriptor(&sa_freeverb_descriptor);
 }
 
 //----------
@@ -37,6 +39,7 @@ const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descrip
     case 1: plugin = new sa_eventhor_plugin(ADescriptor,AHost);   return plugin->getPlugin();
     case 2: plugin = new sa_exciter_plugin(ADescriptor,AHost);    return plugin->getPlugin();
     case 3: plugin = new sa_exciter2_plugin(ADescriptor,AHost);   return plugin->getPlugin();
+    case 4: plugin = new sa_freeverb_plugin(ADescriptor,AHost);   return plugin->getPlugin();
   }
   return nullptr;
 }

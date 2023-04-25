@@ -186,9 +186,19 @@ public:
         break;
       }
       case 2: {
-        //MThumbSize += (xdiff / mrect.w);
-        //MThumbSize = SAT_Clamp(MThumbSize,0,1);
-        //redraw();
+        
+//        double v = (xdiff / mrect.w);
+//        
+//        MThumbSize += (v * 0.5);
+//        MThumbSize = SAT_Clamp(MThumbSize,0,1);
+//        
+//        double value = getValue();
+//        value = SAT_Clamp(value,0,1);
+//        setValue(value);
+//        value -= (v * 0.5);
+//        
+//        parentRedraw();
+        
         break;
       }
       case 3: {

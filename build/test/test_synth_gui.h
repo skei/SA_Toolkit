@@ -117,7 +117,7 @@
           k->setArcThickness(4);
         }
 
-    SAT_GroupBoxWidget* groupbox3 = new SAT_GroupBoxWidget(100,true);
+    SAT_GroupBoxWidget* groupbox3 = new SAT_GroupBoxWidget(100,false);
     left_column->appendChildWidget(groupbox3);
     groupbox3->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     
