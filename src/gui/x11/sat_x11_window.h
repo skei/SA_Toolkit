@@ -24,7 +24,10 @@ private:
   xcb_screen_t*               MScreen                       = nullptr;
   xcb_gcontext_t              MScreenGC                     = XCB_NONE;
   xcb_window_t                MWindow                       = XCB_NONE;
-  bool                        MIsEventThreadActive          = false;
+
+//bool                        MIsEventThreadActive          = false;
+  std::atomic<bool>           MIsEventThreadActive          {false};
+
   pthread_t                   MEventThread                  = 0;
   xcb_client_message_event_t* MClientMessageEvent           = (xcb_client_message_event_t*)MClientMessageEventBuffer;
   char*                       MClientMessageEventBuffer[32] = {0};
@@ -39,7 +42,7 @@ private:
   xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
   xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
   xcb_cursor_t                MWindowCursor                 = XCB_NONE;
-  bool                        MIsCursorHidden               = false;
+  bool                        MIsCursorHidden               = false;          // TODO: std::atomic<bool> {false};
 
 //------------------------------
 protected:

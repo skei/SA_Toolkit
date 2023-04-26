@@ -49,14 +49,13 @@ private:
 
   double MPrevTime = 0.0;
 
+  // set in on_window_paint
+  // checked in on_window_timer
+  std::atomic<bool>   MIsPainting {false};
+
 //------------------------------
 private:
 //------------------------------
-
-  // set in on_window_paint
-  // checked in on_window_timer
-
-  std::atomic<bool> MIsPainting {false};
 
   SAT_WindowListener* MListener               = nullptr;
   SAT_Painter*        MWindowPainter          = nullptr;
@@ -702,7 +701,7 @@ public: // window
     // buffer not resized & updated correctly..
     // delayed events, etc..
     
-SAT_Sleep(25);
+//SAT_Sleep(50);
     
     MIsPainting = false;
 
@@ -715,7 +714,7 @@ public:
   virtual void on_window_timer(double AElapsed) {
     
     if (MIsPainting) {
-      //SAT_Print("still painting.. returning..\n");
+      SAT_Print("still painting.. returning..\n");
       // todo: remember choice, so we know we have to redraw (root?)
       // next time the timer fires?
     }
