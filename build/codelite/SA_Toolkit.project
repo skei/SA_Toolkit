@@ -8,10 +8,9 @@
       <File Name="../../plugins/templates/effect.h"/>
     </VirtualDirectory>
     <File Name="../../plugins/sa_ports.h"/>
-    <File Name="../../plugins/sa_demo.h"/>
     <File Name="../../plugins/sa_plugins.h"/>
     <VirtualDirectory Name="ports">
-      <File Name="../../plugins/ports/sa_eventhor.h"/>
+      <File Name="../../plugins/ports/sa_event_horizon.h"/>
       <File Name="../../plugins/ports/sa_transient_killer.h"/>
       <File Name="../../plugins/ports/sa_tilteq.h"/>
       <File Name="../../plugins/ports/sa_sonic_maximizer.h"/>
@@ -31,9 +30,6 @@
     <File Name="../../plugins/sa_tyr.h"/>
     <File Name="../../plugins/sa_transpose.h"/>
     <File Name="../../plugins/sa_pitch.h"/>
-    <File Name="../../plugins/sa_nity.h"/>
-    <File Name="../../plugins/sa_mael.h"/>
-    <File Name="../../plugins/sa_lad.h"/>
     <File Name="../../plugins/sa_gain.h"/>
     <File Name="../../plugins/sa_cred.h"/>
     <File Name="../../plugins/sa_bulum.h"/>

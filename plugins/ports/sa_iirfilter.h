@@ -158,7 +158,7 @@ public:
     xn2 = 0.0;
     yn1 = 0.0;
     yn2 = 0.0;
-    omega = 2.0 * M_PI * p_freq/samplerate;
+    omega = 2.0 * SAT_PI * p_freq/samplerate;
     cs = cos(omega);
     sn = sin(omega);
     a1pha = sn / (2.0 * p_qfact);
@@ -241,7 +241,7 @@ public:
           make_poly_from_roots(poles, (size_t)2, &a0);
         }
         { /* Normalise to 0dB at 1kHz (Thanks to Glenn Davis) */
-          double y = 2.0 * M_PI * 1000.0 / samplerate ;
+          double y = 2.0 * SAT_PI * 1000.0 / samplerate ;
           double b_re = b0 + b1 * cos(-y) +b2 * cos(-2.0 * y);
           double a_re = a0 + a1 * cos(-y) + a2 * cos(-2.0 * y);
           double b_im = b1 * sin(-y) + b2 * sin(-2.0 * y);
@@ -276,7 +276,7 @@ public:
         a2 = (A + 1) + (A - 1) * cs - beta * sn;
         break;
       case RIAA_CD:
-        omega = 2 * M_PI * 5283/samplerate;
+        omega = 2 * SAT_PI * 5283/samplerate;
         cs = cos(omega);
         sn = sin(omega);
         a1pha = sn / (2.0 * 0.4845);

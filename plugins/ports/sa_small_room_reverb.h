@@ -240,8 +240,8 @@ private:
 
   void recalc(float srate) {
     need_recalc = false;
-    wet = exp(getParameterValue(0)/8.65617);
-    dry = exp(getParameterValue(1)/8.65617);
+    dry = exp(getParameterValue(0)/8.65617);
+    wet = exp(getParameterValue(1)/8.65617);
     g = 1-getParameterValue(2)/100;
     a0 = 0;
     a0_len = (srate*35/1000);

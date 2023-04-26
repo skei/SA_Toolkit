@@ -1,5 +1,5 @@
-#ifndef sa_eventhor_included
-#define sa_eventhor_included
+#ifndef sa_event_horizon_included
+#define sa_event_horizon_included
 //----------------------------------------------------------------------
 
 /*
@@ -33,10 +33,10 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t sa_eventhor_descriptor = {
+const clap_plugin_descriptor_t sa_event_horizon_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_eventhor",
-  .name         = "sa_eventhor",
+  .id           = SAT_VENDOR "/sa_event_horizon",
+  .name         = "sa_event_horizon",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -52,7 +52,7 @@ const clap_plugin_descriptor_t sa_eventhor_descriptor = {
 //
 //----------------------------------------------------------------------
 
-class sa_eventhor_plugin
+class sa_event_horizon_plugin
 : public SAT_Plugin {
   
 //------------------------------
@@ -80,7 +80,7 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_eventhor_plugin)
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_event_horizon_plugin)
 
   //----------
   
@@ -178,7 +178,7 @@ private:
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(sa_eventhor_descriptor,sa_eventhor_plugin)
+  SAT_PLUGIN_ENTRY(sa_event_horizon_descriptor,sa_event_horizon_plugin)
 #endif
 
 
