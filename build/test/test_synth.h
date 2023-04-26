@@ -536,9 +536,10 @@ public:
   // quantized
 
   //void processAudio(SAT_ProcessContext* AContext, uint32_t offset) final {
+  //  processAudio(AContext,offset,SAT_AUDIO_QUANTIZED_SIZE);
   //}
 
-  };
+};
 
 //----------------------------------------------------------------------
 //

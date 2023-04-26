@@ -180,7 +180,8 @@ double SAT_RandomRange_LCG(double minval, double maxval) {
 //----------
 
 int32_t SAT_RandomInt_LCG(void) {
-  return rand_lcg();// & 0x7fffffff;
+  //return rand_lcg();// & 0x7fffffff;
+  return abs(rand_lcg());
 }
 
 // -SAT_RandomMax..SAT_RandomMax

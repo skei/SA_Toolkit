@@ -2,13 +2,24 @@
 #define sat_window_included
 //----------------------------------------------------------------------
 
+/*
+  to terrorize the gui system a little, we insert i sleep() for 1..50 ms
+  every time we paint (on_window_paint), just after we make the opengl
+  context current.. and also, every time we resize the fbo
+  (just after deleting the old one)
+*/
+
+//#define SAT_WINDOW_FUZZY_TEST_PAINT
+//#define SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS 50
+
+//----------
+
 #include "base/sat.h"
 #include "base/system/sat_timer.h"
 #include "gui/sat_widget.h"
 #include "gui/sat_window_listener.h"
 
-
-#define SAT_WINDOW_BUFFERED
+//#define SAT_WINDOW_BUFFERED
 
 #define SAT_WINDOW_DEFAULT_CONSTRUCTOR(WINDOW)                                                \
   WINDOW(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, SAT_WindowListener* AListener)  \
@@ -134,7 +145,7 @@ public:
     MWindowPainter = new SAT_Painter(MOpenGL);
     SAT_Assert(MWindowPainter);
     // buffer
-    #ifdef SAT_WINDOW_BUFFERED
+    //#ifdef SAT_WINDOW_BUFFERED
       // buffer  
       uint32_t width2 = SAT_NextPowerOfTwo(AWidth);
       uint32_t height2 = SAT_NextPowerOfTwo(AHeight);
@@ -143,7 +154,7 @@ public:
       SAT_Assert(MRenderBuffer);
       MBufferWidth = width2;
       MBufferHeight = height2;
-    #endif
+    //#endif
     MOpenGL->resetCurrent();
     // timer
     MTimer = new SAT_Timer(this);
@@ -616,6 +627,12 @@ public: // window
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
     
+    #ifdef SAT_WINDOW_FUZZY_TEST_PAINT
+      int32_t rnd_ms = SAT_RandomRangeInt(1,SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS);
+      SAT_Print("makeCurrent.. sleep for %i ms\n",rnd_ms);
+      SAT_Sleep(rnd_ms > 0 ? rnd_ms : 1);
+    #endif
+    
     prepaint(&MPaintContext);
     
     /*
@@ -637,6 +654,14 @@ public: // window
       //copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
 
       MWindowPainter->deleteRenderBuffer(MRenderBuffer);
+      
+      #ifdef SAT_WINDOW_FUZZY_TEST_PAINT
+        int32_t rnd_ms = SAT_RandomRangeInt(1,SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS);
+        SAT_Print("deleteRenderBuffer.. sleep for %i ms\n",rnd_ms);
+        SAT_Sleep(rnd_ms > 0 ? rnd_ms : 1);
+      #endif
+      
+      
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
       MBufferHeight = height2;
@@ -691,18 +716,11 @@ public: // window
     }
     
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
-    
-    postpaint(&MPaintContext);
-    
+    postpaint(&MPaintContext);    
+
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
     MPaintContext.counter += 1;
-    
-    // this created a lot of havoc!!
-    // buffer not resized & updated correctly..
-    // delayed events, etc..
-    
-//SAT_Sleep(50);
     
     MIsPainting = false;
 
