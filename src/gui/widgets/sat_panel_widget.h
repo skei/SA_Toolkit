@@ -291,6 +291,7 @@ public:
         double w = (5.0 * S);
         double h = (5.0 * S);
         painter->fillRect(x,y,w,h);
+        // TODO: draw triangle
       }
       
     }
