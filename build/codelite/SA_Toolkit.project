@@ -290,6 +290,7 @@
       <File Name="../../src/gui/sat_opengl.h"/>
       <File Name="../../src/gui/sat_widget_listener.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_dual_slider_widget.h"/>
         <File Name="../../src/gui/widgets/sat_range_bar_widget.h"/>
         <File Name="../../src/gui/widgets/sat_shader_widget.h"/>
         <File Name="../../src/gui/widgets/sat_freq_resp_widget.h"/>

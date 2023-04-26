@@ -55,19 +55,21 @@ public:
 public:
 //------------------------------
 
-  virtual SAT_Color getDisabledColor()  { return MDisabledColor; }
-  virtual double    getDisabledAlpha()  { return MDisabledAlpha; }
-  virtual bool      getDrawModulation() { return MDrawModulation; }
-  virtual bool      getDrawValue()      { return MDrawValue; }
-  virtual bool      isInteracting()     { return MIsInteracting; }
+  virtual SAT_Color   getDisabledColor()  { return MDisabledColor; }
+  virtual double      getDisabledAlpha()  { return MDisabledAlpha; }
+  virtual bool        getDrawModulation() { return MDrawModulation; }
+  virtual bool        getDrawValue()      { return MDrawValue; }
+  virtual bool        isInteracting()     { return MIsInteracting; }
+  //virtual SAT_Rect    getValueOffset()    { return MValueOffset; }
+  //virtual char*       getValueText()      { return MValueText; }
 
-  virtual void      setIsInteracting(bool AState=true) { MIsInteracting = AState; }
-  virtual void      setDrawValue(bool ADraw=true)      { MDrawValue = ADraw; }
-  virtual void      setValueColor(SAT_Color AColor)    { MValueColor = AColor; }
-  virtual void      setValueSize(double ASize)         { MValueSize = ASize; }
-  virtual void      setValueAlignment(uint32_t AAlign) { MValueAlignment = AAlign; }
-  virtual void      setValueOffset(SAT_Rect AOffset)   { MValueOffset = AOffset; }
-  virtual void      setDrawModulation(bool ADraw=true) { MDrawModulation = ADraw; }
+  virtual void        setIsInteracting(bool AState=true) { MIsInteracting = AState; }
+  virtual void        setDrawValue(bool ADraw=true)      { MDrawValue = ADraw; }
+  virtual void        setValueColor(SAT_Color AColor)    { MValueColor = AColor; }
+  virtual void        setValueSize(double ASize)         { MValueSize = ASize; }
+  virtual void        setValueAlignment(uint32_t AAlign) { MValueAlignment = AAlign; }
+  virtual void        setValueOffset(SAT_Rect AOffset)   { MValueOffset = AOffset; }
+  virtual void        setDrawModulation(bool ADraw=true) { MDrawModulation = ADraw; }
 
 //------------------------------
 public:

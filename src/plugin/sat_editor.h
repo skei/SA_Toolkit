@@ -48,7 +48,9 @@ public:
   */
 
   virtual ~SAT_Editor() {
+    SAT_PRINT;
     if (MWindow) {
+      //if (MIsOpen) MWindow->hide();
       MWindow->on_window_close();
       delete MWindow;
     }
@@ -236,7 +238,9 @@ public: // clap
   void destroy() {
     //SAT_Print("\n");
     //if (MWindow) MWindow->on_window_close();
+    if (MIsOpen) MWindow->hide();
     MIsOpen = false;
+    
   }
 
   //----------
@@ -359,8 +363,8 @@ public: // clap
   //----------
 
   bool hide() {
-    //SAT_Print("\n");
-    if (MWindow && MIsOpen) MWindow->hide();
+    SAT_Print("\n");
+    if (MWindow /*&& MIsOpen*/) MWindow->hide();
     MIsOpen = false;
     return true;
   }

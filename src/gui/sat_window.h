@@ -52,6 +52,7 @@ private:
   // set in on_window_paint
   // checked in on_window_timer
   std::atomic<bool>   MIsPainting {false};
+  std::atomic<bool>   MIsClosing  {false};
 
 //------------------------------
 private:
@@ -711,35 +712,42 @@ public: // window
 public:
 //------------------------------
 
-  virtual void on_window_timer(double AElapsed) {
-    
+  virtual void on_window_timer(SAT_Timer* ATimer, double AElapsed) {
+    if (!ATimer->isRunning()) return;
     if (MIsPainting) {
-      SAT_Print("still painting.. returning..\n");
+      //SAT_Print("still painting.. returning..\n");
       // todo: remember choice, so we know we have to redraw (root?)
       // next time the timer fires?
     }
     else {
-    
       // flush param/mod fromHostToGui
       if (MListener) MListener->do_windowListener_timer(this,AElapsed);
-      
-      // anim
+      // wudget timers
       for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(0,AElapsed);
-      
       //MTweens.process(elapsed,MScale);
-      SAT_Rect rect;
+      
+      //bool has_rect = false;
+      SAT_Rect rect; // 0,0,0,0
+      
+      // dirty widgets
       SAT_Widget* widget;
       while (MPendingDirtyWidgets.read(&widget)) {
         //SAT_Print("%s\n",widget->getName());
+        
         rect.combine(widget->getRect());
+
+        //if (!has_rect) rect = widget->getRect();
+        //else {
+        //  rect.combine(widget->getRect());
+        //  has_rect = true;
+        //};
+
         if (!MPaintDirtyWidgets.write(widget)) {
           SAT_Print("couldn't write to MPaintDirtyWidgets queue\n");
         }
       }
       if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
-      
     } // !painting
-      
   }
 
 //------------------------------
@@ -844,10 +852,11 @@ public: // timer listener
 //------------------------------
 
   void do_timerListener_callback(SAT_Timer* ATimer) override {
+    if (!ATimer->isRunning()) return;
     double now = SAT_GetTime();
     double elapsed = now - MPrevTime;
     MPrevTime = now;
-    on_window_timer(elapsed);
+    on_window_timer(ATimer,elapsed);
   }
 
 };

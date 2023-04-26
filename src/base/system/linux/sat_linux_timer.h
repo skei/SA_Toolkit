@@ -65,7 +65,8 @@ private:
   sigevent            MSigEvent       = {};
   timer_t             MTimer          = nullptr;
   itimerspec          MTimerSpec      = {};
-  bool                MRunning        = false;
+  //bool                MRunning        = false;
+  std::atomic<bool>   MRunning        {false};
   SAT_TimerListener*  MTimerListener  = nullptr;
 
 //------------------------------
@@ -75,6 +76,7 @@ public:
   SAT_Timer(SAT_TimerListener* AListener/*, void* AUserPtr*/) {
 
     MTimerListener = AListener;
+    MRunning = false;
 
     MSigEvent.sigev_notify            = SIGEV_THREAD;
     MSigEvent.sigev_notify_function   = sat_timer_callback;
@@ -113,7 +115,9 @@ public:
 public:
 //------------------------------
 
-  bool isRunning() { return MRunning; }
+  bool isRunning() {
+    return MRunning;
+  }
 
   //----------
 
@@ -165,20 +169,21 @@ public:
 
   void stop() {
     if (MRunning) {
+      MRunning = false;
       MTimerSpec.it_interval.tv_sec   = 0;
       MTimerSpec.it_interval.tv_nsec  = 0;
       MTimerSpec.it_value.tv_sec      = 0;
       MTimerSpec.it_value.tv_nsec     = 0;
       /*int res =*/ timer_settime(MTimer, 0, &MTimerSpec, 0);
       //if (res != 0) { SAT_Print("error stopping timer\n"); }
-      MRunning = false;
+    //  MRunning = false;
     }
   }
 
   //----------
 
   void on_timer() {
-    if (MTimerListener) MTimerListener->do_timerListener_callback(this);
+    if (MTimerListener && MRunning) MTimerListener->do_timerListener_callback(this);
   }
 
 };

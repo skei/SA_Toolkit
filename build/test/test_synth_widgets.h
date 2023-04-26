@@ -37,7 +37,7 @@ public:
 
   test1_synth_widget(SAT_Rect ARect)
   : SAT_MovableWidget(ARect) {
-    SAT_PRINT;
+    //SAT_PRINT;
     //setBackgroundColor(SAT_Color(1,1,1,0.004));
     setBackgroundColor(SAT_DarkGrey);
     
@@ -54,7 +54,7 @@ public:
   //----------
 
   virtual ~test1_synth_widget() {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
   
   //----------
