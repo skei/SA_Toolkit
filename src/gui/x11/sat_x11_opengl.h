@@ -136,7 +136,7 @@ public:
       MDrawable = glXCreateWindow(MDisplay,MFBConfig,window,nullptr);
       //MDrawableIsWindow = true;
       
-      disableVSync(MDisplay,MDrawable);
+      //disableVSync(MDisplay,MDrawable);
 
     //}
     //else if (ATarget->tgtIsSurface()) { // todo

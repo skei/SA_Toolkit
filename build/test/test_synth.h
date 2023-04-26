@@ -401,11 +401,15 @@ public:
   void do_editorListener_timer() final {
     SAT_Plugin::do_editorListener_timer();
     //#ifndef SAT_EXE
-    for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
-      uint32_t state = MVoiceManager.getVoiceState(voice);
-      MVoicesWidget->setVoiceState(voice,state);
-    }
-    MVoicesWidget->parentRedraw();
+
+// update voices widget.. (move to widget itself (+ register timer)
+//
+//    for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
+//      uint32_t state = MVoiceManager.getVoiceState(voice);
+//      MVoicesWidget->setVoiceState(voice,state);
+//    }
+//    MVoicesWidget->parentRedraw();
+
     //#endif
   }
 

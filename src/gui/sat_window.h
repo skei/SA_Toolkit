@@ -53,6 +53,11 @@ private:
 private:
 //------------------------------
 
+  // set in on_window_paint
+  // checked in on_window_timer
+
+  std::atomic<bool> MIsPainting {false};
+
   SAT_WindowListener* MListener               = nullptr;
   SAT_Painter*        MWindowPainter          = nullptr;
   SAT_PaintContext    MPaintContext           = {};
@@ -447,7 +452,7 @@ public: // window
   //----------
   
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-
+    
     MWidth = AWidth;
     MHeight = AHeight;
     MScale = recalcScale(AWidth,AHeight);
@@ -459,14 +464,10 @@ public: // window
     //#endif
     
     if (MRootWidget) {
-
-      //if (MAutoScaleWidgets)
-        MRootWidget->scaleWidget(MScale);
+      MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(AWidth,AHeight);
       MRootWidget->realignChildWidgets();
-
       MPendingDirtyWidgets.write(MRootWidget);
-      
     }
   }
   
@@ -608,16 +609,25 @@ public: // window
     
     SAT_Assert(MWindowPainter);
     
+    SAT_Assert(MIsPainting == false);
+    MIsPainting = true;
+    
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
     
-prepaint(&MPaintContext);
+    prepaint(&MPaintContext);
     
+    /*
+      hmm... we should find a better way..
+    */    
+
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
 
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
+      
+      SAT_Print("resizing buffer!\n");
       
       // if size has changed: create new buffer, copy old to new, delete old
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
@@ -631,11 +641,10 @@ prepaint(&MPaintContext);
       MBufferWidth  = width2;
       MBufferHeight = height2;
       
-      
       // paint dirty widgets to render buffer
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
       
-  //prepaint(&MPaintContext);
+      //prepaint(&MPaintContext);
       
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
@@ -649,16 +658,14 @@ prepaint(&MPaintContext);
       }
 
       MWindowPainter->endFrame();
-      
-  //postpaint(&MPaintContext);
-  
+      //postpaint(&MPaintContext);
       
     }
     else {
       
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
 
-  //prepaint(&MPaintContext);
+      //prepaint(&MPaintContext);
 
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
@@ -679,17 +686,26 @@ prepaint(&MPaintContext);
       }
       MWindowPainter->endFrame();
       
-  //postpaint(&MPaintContext);
+      //postpaint(&MPaintContext);
       
     }
     
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
     
-postpaint(&MPaintContext);
+    postpaint(&MPaintContext);
     
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
     MPaintContext.counter += 1;
+    
+    // this created a lot of havoc!!
+    // buffer not resized & updated correctly..
+    // delayed events, etc..
+    
+SAT_Sleep(25);
+    
+    MIsPainting = false;
+
   }
   
 //------------------------------
@@ -697,17 +713,34 @@ public:
 //------------------------------
 
   virtual void on_window_timer(double AElapsed) {
-    if (MListener) MListener->do_windowListener_timer(this,AElapsed);
-    for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(0,AElapsed);
-    //MTweens.process(elapsed,MScale);
-    SAT_Rect rect;
-    SAT_Widget* widget;
-    while (MPendingDirtyWidgets.read(&widget)) {
-      //SAT_Print("%s\n",widget->getName());
-      rect.combine(widget->getRect());
-      MPaintDirtyWidgets.write(widget);
+    
+    if (MIsPainting) {
+      //SAT_Print("still painting.. returning..\n");
+      // todo: remember choice, so we know we have to redraw (root?)
+      // next time the timer fires?
     }
-    if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
+    else {
+    
+      // flush param/mod fromHostToGui
+      if (MListener) MListener->do_windowListener_timer(this,AElapsed);
+      
+      // anim
+      for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(0,AElapsed);
+      
+      //MTweens.process(elapsed,MScale);
+      SAT_Rect rect;
+      SAT_Widget* widget;
+      while (MPendingDirtyWidgets.read(&widget)) {
+        //SAT_Print("%s\n",widget->getName());
+        rect.combine(widget->getRect());
+        if (!MPaintDirtyWidgets.write(widget)) {
+          SAT_Print("couldn't write to MPaintDirtyWidgets queue\n");
+        }
+      }
+      if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
+      
+    } // !painting
+      
   }
 
 //------------------------------
@@ -748,7 +781,10 @@ public: // widget listener
   
   void do_widgetListener_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
     if (!ASender) ASender = MRootWidget;
-    MPendingDirtyWidgets.write(ASender);
+    if (!MPendingDirtyWidgets.write(ASender)) {
+      SAT_Print("couldn't write to MPendingDirtyWidgets queue\n");
+    }
+
     if (MListener) MListener->do_windowListener_redraw_widget(ASender,AMode,AIndex);
   }
 
