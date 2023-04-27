@@ -211,7 +211,7 @@ public:
         v += (xdiff / range);
         v = SAT_Clamp(v,0,1);
         setValue(v);
-        SAT_Print("v %.3f thumb %.3f\n",v,MThumbSize);
+        //SAT_Print("v %.3f thumb %.3f\n",v,MThumbSize);
         parentRedraw();
         //double v = (AXpos - mrect.x) / (mrect.w * (1.0 - MThumbSize));
         //setValue(v);

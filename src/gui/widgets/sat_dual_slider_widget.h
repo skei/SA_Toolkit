@@ -3,9 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "gui/widgets/sat_slider_widget.h"
-
-
+//#include "gui/widgets/sat_slider_widget.h"
+#include "gui/widgets/sat_panel_widget.h"
 
 //----------------------------------------------------------------------
 //
@@ -14,7 +13,7 @@
 //----------------------------------------------------------------------
 
 class SAT_DualSliderWidget
-: public SAT_SliderWidget {
+: public SAT_PanelWidget {
   
 //------------------------------
 private:
@@ -22,7 +21,7 @@ private:
 
   bool      MDrawValueBar     = true;
   bool      MDrawValues       = true;
-
+  
   SAT_Color MValue1Color      = SAT_White;
   double    MValue1Size       = 12;
   uint32_t  MValue1Alignment  = SAT_TEXT_ALIGN_LEFT;
@@ -37,17 +36,37 @@ private:
 
   SAT_Color MValueBarColor    = SAT_LightGrey;
   SAT_Rect  MValueBarOffset   = SAT_Rect(2,2,2,2);
+  
+  bool      MDrawText         = true;
+  char      MText[256]        = {0};
+  uint32_t  MTextAlignment    = SAT_TEXT_ALIGN_CENTER;
+  SAT_Rect  MTextOffset       = {};
+  SAT_Color MTextColor        = SAT_Black;
+  double    MTextSize         = 10.0;
+  
+  bool      MDrawHoverEdge    = true;
+  SAT_Color MEdgeColor = SAT_Black;
+  
+  double    MHoverDistance    = 5;
+  int32_t   MHoverEdge        = 0;
+  
+  bool      MIsDragging       = false;
+  int32_t   MDragEdge         = 0;
+  
+  double MPreviousXpos = 0.0;
+  double MPreviousYpos = 0.0;
 
 //------------------------------
 public:
 //------------------------------
 
   SAT_DualSliderWidget(SAT_Rect ARect, const char* AText, double AValue1, double AValue2)
-  : SAT_SliderWidget(ARect,AText,AValue1) {
+  : SAT_PanelWidget(ARect) {
     setName("SAT_DualSliderWidget");
+    setValue(AValue1,0);
     setValue(AValue2,1);
-    
-    setTextAlignment(SAT_TEXT_ALIGN_CENTER);
+    //setTextAlignment(SAT_TEXT_ALIGN_CENTER);
+    MTextAlignment = SAT_TEXT_ALIGN_CENTER;
   }
   
   //----------
@@ -59,10 +78,49 @@ public:
 public:
 //------------------------------
 
-  void drawSliderBar(SAT_PaintContext* AContext) override {
+  int32_t find_hover(double AXpos, double AYpos) {
+    double S = getWindowScale();
+    SAT_Rect mrect = getRect();
+    
+    if (!mrect.contains(AXpos,AYpos)) return 0;
+    
+    double hd = MHoverDistance * S;
+    double range = mrect.w;
+    
+    double v1 = getValue(0);
+    double x1 = mrect.x + (v1 * range);
+
+    double v2 = getValue(1);
+    double x2 = mrect.x + (v2 * range);
+
+    double dist_x1 = abs(x1 - AXpos);
+    double dist_x2 = abs(x2 - AXpos);
+    
+    int32_t hover = 0;
+    if (AXpos < x1) {
+      if (dist_x1 < hd) hover = 1;
+      else hover = -1;
+    }
+    else if (AXpos >= x2) {
+      if (dist_x2 < hd) hover = 2;
+      else hover = -2;
+    }
+    else {
+      // use smallest dist?
+      if (dist_x1 < hd) hover = 1;
+      else if (dist_x2 < hd) hover = 2;
+      else hover = 3;
+    }
+    //SAT_Print("hover %i\n",hover);
+    return hover;
+  }
+  
+  //----------
+
+  virtual void drawValueBar(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawValueBar) {
-      double S = getWindowScale();
+      //double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       
@@ -146,6 +204,85 @@ public:
     }
   }
   
+  //----------
+  
+  virtual void drawHoverEdge(SAT_PaintContext* AContext) {
+    SAT_Assert(AContext);
+    if (MDrawHoverEdge) {
+      //double S = getWindowScale();
+      SAT_Painter* painter = AContext->painter;
+      SAT_Assert(painter);
+      
+      double v1 = getValue(0);
+      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      if (param) v1 = param->denormalizeValue(v1);
+      
+      double v2 = getValue(1);
+      param = (SAT_Parameter*)getConnection(1);
+      if (param) v2 = param->denormalizeValue(v2);
+      
+      double S = getWindowScale();
+      SAT_Rect mrect = getRect();
+      mrect.shrink(MValueBarOffset);
+      //if ((mrect.w > 0.0) && (mrect.h > 0.0)) {
+  
+      double x = mrect.x;//  + (v1 * mrect.w) - (2*S);
+      double y = mrect.y;
+      double w = 4*S;
+      double h = mrect.h;
+
+      painter->setFillColor(MEdgeColor);
+
+      switch (MHoverEdge) {
+        case 1: {
+          x += (v1 * mrect.w) - (2*S);
+          painter->fillRect(x,y,w,h);
+          break;
+        }
+        case 2: {
+          x += (v2 * mrect.w) - (2*S);
+          painter->fillRect(x,y,w,h);
+          break;
+        }
+        case 3: {
+          x += (v1 * mrect.w);
+          w = (v2 - v1) * mrect.w;
+          painter->fillRect(x,y,w,h);
+          break;
+        }
+      }
+      
+    }
+  }
+  
+  
+  //----------
+  
+  virtual void drawText(SAT_PaintContext* AContext) {
+    SAT_Assert(AContext);
+    if (MDrawText) {
+      double S = getWindowScale();
+      SAT_Painter* painter = AContext->painter;
+      SAT_Assert(painter);
+      SAT_Rect mrect = getRect();
+      SAT_Rect textoffset = MTextOffset;
+      textoffset.scale(S);
+      mrect.shrink(textoffset);
+      if (mrect.w <= 0.0) return;
+      if (mrect.h <= 0.0) return;
+      painter->setTextColor(MTextColor);
+      painter->setTextSize(MTextSize*S);
+      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      if (param) {
+        painter->drawTextBox(mrect,param->getName(),MTextAlignment);
+      }
+      else {
+        painter->drawTextBox(mrect,MText,MTextAlignment);
+      }
+      
+    }
+  }  
+  
 //------------------------------
 public:
 //------------------------------
@@ -153,7 +290,8 @@ public:
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_PRINT;
     fillBackground(AContext);
-    drawSliderBar(AContext);
+    drawValueBar(AContext);
+    drawHoverEdge(AContext);
     drawText(AContext);
     drawValues(AContext);
     drawHostIndicators(AContext);
@@ -161,6 +299,129 @@ public:
     drawBorder(AContext);
   }
   
+  //----------
+  
+  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (AButton == SAT_BUTTON_LEFT) {
+      MPreviousXpos = AXpos;
+      MPreviousYpos = AYpos;
+      switch (MHoverEdge) {
+        case 1: { // left
+          //SAT_Print("left\n");
+          MIsDragging = true;
+          MDragEdge = 1;
+          break;
+        }
+        case 2: { // right
+          //SAT_Print("right\n");
+          MIsDragging = true;
+          MDragEdge = 2;
+          break;
+        }
+        case 3: { // center
+          //SAT_Print("middle\n");
+          MIsDragging = true;
+          MDragEdge = 3;
+          break;
+        }
+      }
+    }
+  }
+  
+  //----------
+  
+  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (AButton == SAT_BUTTON_LEFT) {
+      if (MIsDragging) {
+        MIsDragging = false;
+        MDragEdge = 0;
+        MHoverEdge = find_hover(AXpos,AYpos);
+        //SAT_Print("MHoverEdge = %i\n",MHoverEdge);
+      }
+      MIsDragging = false;
+    }
+  }
+  
+  //----------
+  
+  void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
+    
+    if (MIsDragging) {
+      
+      double value;
+      switch (MDragEdge) {
+        case 1: value = getValue(0); break;
+        case 2: value = getValue(1); break;
+      }
+      
+      double sens = 0.001;//MDragSensitivity;
+      if (AState & SAT_STATE_CTRL) sens *= 0.1;//MShiftSensitivity;
+      double diff = 0;
+      
+      diff = AXpos - MPreviousXpos;
+      value += (diff * sens);
+      value = SAT_Clamp(value,0,1);
+      
+      switch (MDragEdge) {
+        case 1:
+          //SAT_Print("MDragEdge %i value: %f\n",MDragEdge,value);
+          setValue(value,0);
+          do_widgetListener_update(this,0,0);
+          do_widgetListener_redraw(this,0,0);
+          break;
+        case 2:
+          //SAT_Print("MDragEdge %i value: %f\n",MDragEdge,value);
+          setValue(value,1);
+          do_widgetListener_update(this,0,1);
+          do_widgetListener_redraw(this,0,1);
+          break;
+        //case 3:
+        //  do_widgetListener_update(this,0,1);
+        //  do_widgetListener_redraw(this,0,1);
+        //  break;
+      }
+      
+      
+      //SAT_Print("value %f\n",value); // ok.. 0..1
+    
+    }
+    else {
+      int32_t edge = find_hover(AXpos,AYpos);
+      if (edge != MHoverEdge) {
+        //SAT_Print("MHoverEdge = %i\n",edge);
+        MHoverEdge = edge;
+        do_widgetListener_redraw(this,0);
+      }
+    }
+    
+    //SAT_PanelWidget::on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+    
+    //else {
+    //  // check if hover left/right edge?
+    //  MHoverLeftEdge = false;
+    //  MHoverRightEdge = false;
+    //  // if...
+    //}
+    
+    MPreviousXpos = AXpos;
+    MPreviousYpos = AYpos;
+
+  }
+  
+  //----------
+  
+  //void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {
+  //}
+
+  //----------
+  
+  void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
+    //SAT_Print("MHoverEdge %i\n",MHoverEdge);
+    if (MHoverEdge != 0) {
+      MHoverEdge = 0;
+      do_widgetListener_redraw(this,0);
+    }
+  }
 
 };
 

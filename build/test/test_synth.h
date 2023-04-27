@@ -241,8 +241,9 @@ public:
     /*SAT_Parameter* par2 =*/ appendParameter(new SAT_Parameter(   "Param2", 0.4, -2, 4));
     /*SAT_Parameter* par3 =*/ appendParameter(new SAT_Parameter(   "Param3", 0.7,  0, 2));
     /*SAT_Parameter* par4 =*/ appendParameter(new SAT_IntParameter("Param4", 0,   -5, 5));
-    appendParameter(new SAT_Parameter("P4"));
-    appendParameter(new SAT_Parameter("P5"));
+    
+    appendParameter(new SAT_Parameter("P4", 0.2));
+    appendParameter(new SAT_Parameter("P5", 0.8));
 
     //par1->setFlag(CLAP_PARAM_IS_MODULATABLE);
     //par2->setFlag(CLAP_PARAM_IS_MODULATABLE);

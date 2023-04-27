@@ -173,8 +173,10 @@
     
     SAT_DualSliderWidget* dualslider = new SAT_DualSliderWidget(20,"Dual", 0.2, 0.8);
     left_column->appendChildWidget(dualslider);
+    
     AEditor->connect(dualslider,getParameter(4),0);
     AEditor->connect(dualslider,getParameter(5),1);
+    
     dualslider->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
     SAT_ButtonWidget* button1 = new SAT_ButtonWidget(20);

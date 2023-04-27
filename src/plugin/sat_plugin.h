@@ -1832,7 +1832,7 @@ public: // editor listener
     
     //double value = AValue;
     double value = MParameters[AIndex]->denormalizeValue(AValue);
-    
+    //SAT_Print("AIndex %i AValue %f value %f\n",AIndex,AValue,value);
     setParameterValue(AIndex,value);
     queueParamFromGuiToHost(AIndex,value);
     queueParamFromGuiToAudio(AIndex,value);

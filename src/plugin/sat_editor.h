@@ -97,7 +97,7 @@ public:
       //widget->setValue(AValue);
       
       double v = AParam->normalizeValue(AValue);
-      widget->setValue(v);
+      widget->setValue(v,AIndex);
       
       
 
@@ -118,10 +118,13 @@ public:
     if (MIsOpen) {
       //SAT_PaintContext* pc = MWindow->getPaintContext();
       //uint32_t counter = pc->counter;
+
       SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
+      uint32_t index = AParameter->getConnectionIndex();
+
       if (widget) {
         sat_param_t normalized_value = AParameter->normalizeValue(AValue);
-        widget->setValue(normalized_value);
+        widget->setValue(normalized_value,index);
         //widget->update();
         //parentRedraw();
         widget->do_widgetListener_redraw(widget,0);
@@ -170,7 +173,7 @@ public:
 
   virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
     AWidget->connect(AParameter,AIndex);
-    AParameter->connect(AWidget);
+    AParameter->connect(AWidget,AIndex);
   }
 
 //------------------------------
@@ -189,19 +192,17 @@ public: // window listener
   }
 
   //----------
-
+  
   void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
     if (MListener) {
-      SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection();
+      SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection(AIndex);
+      double value = ASender->getValue(AIndex);
+      //uint32_t parm_index = ASender->getConnectionIndex();
       if (param) {
-        uint32_t index = param->getIndex();
-        
-        // parameters are in clap-space
-        // widgets are 0..1
-
-        double value = ASender->getValue();
-        
-        MListener->do_editorListener_parameter_update(index,value);
+        uint32_t param_index = param->getIndex();
+        // parameters are in clap-space, widgets are 0..1
+        //SAT_Print("AIndex %i param_index %i value %f\n",AIndex,param_index,value);
+        MListener->do_editorListener_parameter_update(param_index,value);
       }
     }
   }

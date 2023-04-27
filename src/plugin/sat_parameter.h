@@ -37,6 +37,7 @@ protected:
 
   int32_t           MIndex                          = -1;
   void*             MConnection                     = nullptr;
+  uint32_t          MConnectionIndex                = 0;
   
   sat_param_t       MValue                          = 0.0;
   sat_param_t       MModulation                     = 0.0;
@@ -112,6 +113,7 @@ public:
   virtual int32_t               getIndex()              { return MIndex; }
   virtual clap_param_info_t*    getParamInfo()          { return &MInfo; }
   virtual void*                 getConnection()         { return MConnection; }
+  virtual uint32_t              getConnectionIndex()    { return MConnectionIndex; }
 
   virtual sat_param_t           getValue()              { return MValue; }
   virtual sat_param_t           getModulation()         { return MModulation; }
@@ -149,7 +151,7 @@ public:
   virtual void setFlag(clap_param_info_flags AFlag)       { MInfo.flags |= AFlag; }
   virtual void clearFlag(clap_param_info_flags AFlag)     { MInfo.flags &= ~AFlag; }
   virtual void setIndex(int32_t AIndex)                   { MIndex = AIndex; MInfo.id = AIndex; }
-  virtual void connect(void* AWidget)                     { MConnection = AWidget; }
+  virtual void connect(void* AWidget, uint32_t AIndex=0)  { MConnection = AWidget; MConnectionIndex = AIndex; }
 
   virtual void setValue(sat_param_t AValue)               { MValue = AValue; }
   virtual void setModulation(sat_param_t AValue)          { MModulation = AValue; }
