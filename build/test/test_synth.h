@@ -14,6 +14,7 @@
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
 
+#include "test_synth_voice.h"
 #include "test_synth_widgets.h"
 
 //----------------------------------------------------------------------
@@ -37,8 +38,6 @@ const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
 const clap_plugin_descriptor_t test_synth_descriptor = {
   .clap_version = CLAP_VERSION,
-  //.id           = "SA.test_synth",
-  //.name         = "test_synth",
   .id           = SAT_VENDOR "/" PLUGIN_NAME,
   .name         = PLUGIN_NAME,
   .vendor       = SAT_VENDOR,
@@ -62,109 +61,110 @@ const clap_plugin_descriptor_t test_synth_descriptor = {
 
 #define NUM_VOICES 32
 
-class test_synth_voice {
-
-//------------------------------
-private:
-//------------------------------
-
-  uint32_t          MIndex    = 0;
-  SAT_VoiceContext* MContext  = nullptr;
-
-  float             srate     = 0.0;
-  float             ph        = 0.0;
-  float             phadd     = 0.0;
-  
-//------------------------------
-public:
-//------------------------------
-
-  void init(uint32_t AIndex, SAT_VoiceContext* AContext) {
-    MIndex = AIndex;
-    MContext = AContext;
-    srate = AContext->sample_rate;
-  }
-
-  //----------
-
-  sat_sample_t getEnvLevel() {
-    return 0.0;
-  }
-
-  //----------
-
-  uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
-    float* buffer = MContext->voice_buffer;
-    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
-    buffer += AOffset;
-    if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
-      for (uint32_t i=0; i<ALength; i++) {
-        ph = SAT_Fract(ph);
-        float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
-        //v = sin(v * SAT_PI2);
-        *buffer++ = v * 0.1;
-        ph += phadd;
-      }
-    } // playing
-    else {
-      memset(buffer,0,ALength * sizeof(float));
-    }
-    
-//    SAT_GLOBAL.DEBUG.observe(SAT_OBSERVE_FLOAT,&ph,"ph");
-    
-    return AState;
-  }
-
-  //----------
-
-  uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
-    
-    
-    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
-  }
-
-  //----------
-
-  uint32_t noteOn(uint32_t AKey, double AVelocity) {
-    //SAT_Print("\n");
-    ph = 0.0;
-    float hz = SAT_NoteToHz(AKey);
-    phadd = 1.0 / SAT_HzToSamples(hz,srate);
-    return SAT_VOICE_PLAYING;
-  }
-
-  //----------
-
-  uint32_t noteOff(uint32_t AKey, double AVelocity) {
-    //SAT_Print("\n");
-    return SAT_VOICE_FINISHED;
-  }
-
-  //----------
-
-  void noteChoke(uint32_t AKey, double AVelocity) {
-    //SAT_Print("\n");
-  }
-
-  //----------
-
-  void noteExpression(uint32_t AExpression, double AValue) {
-    //SAT_Print("\n");
-  }
-
-  //----------
-
-  void parameter(uint32_t AIndex, double AValue) {
-    //SAT_Print("\n");
-  }
-
-  //----------
-
-  void modulation(uint32_t AIndex, double AValue) {
-    //SAT_Print("\n");
-  }
-
-};
+//class test_synth_voice {
+//
+////------------------------------
+//private:
+////------------------------------
+//
+//  uint32_t          MIndex    = 0;
+//  SAT_VoiceContext* MContext  = nullptr;
+//
+//  float             srate     = 0.0;
+//  float             ph        = 0.0;
+//  float             phadd     = 0.0;
+//  
+////------------------------------
+//public:
+////------------------------------
+//
+//  void init(uint32_t AIndex, SAT_VoiceContext* AContext) {
+//    SAT_Print("AIndex %i\n",AIndex);
+//    MIndex = AIndex;
+//    MContext = AContext;
+//    srate = AContext->sample_rate;
+//  }
+//
+//  //----------
+//
+//  sat_sample_t getEnvLevel() {
+//    return 0.0;
+//  }
+//
+//  //----------
+//
+//  uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
+//    float* buffer = MContext->voice_buffer;
+//    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
+//    buffer += AOffset;
+//    if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
+//      for (uint32_t i=0; i<ALength; i++) {
+//        ph = SAT_Fract(ph);
+//        float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
+//        //v = sin(v * SAT_PI2);
+//        *buffer++ = v * 0.1;
+//        ph += phadd;
+//      }
+//    } // playing
+//    else {
+//      memset(buffer,0,ALength * sizeof(float));
+//    }
+//    
+////    SAT_GLOBAL.DEBUG.observe(SAT_OBSERVE_FLOAT,&ph,"ph");
+//    
+//    return AState;
+//  }
+//
+//  //----------
+//
+//  uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
+//    
+//    
+//    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
+//  }
+//
+//  //----------
+//
+//  uint32_t noteOn(uint32_t AKey, double AVelocity) {
+//    //SAT_Print("\n");
+//    ph = 0.0;
+//    float hz = SAT_NoteToHz(AKey);
+//    phadd = 1.0 / SAT_HzToSamples(hz,srate);
+//    return SAT_VOICE_PLAYING;
+//  }
+//
+//  //----------
+//
+//  uint32_t noteOff(uint32_t AKey, double AVelocity) {
+//    //SAT_Print("\n");
+//    return SAT_VOICE_FINISHED;
+//  }
+//
+//  //----------
+//
+//  void noteChoke(uint32_t AKey, double AVelocity) {
+//    //SAT_Print("\n");
+//  }
+//
+//  //----------
+//
+//  void noteExpression(uint32_t AExpression, double AValue) {
+//    //SAT_Print("\n");
+//  }
+//
+//  //----------
+//
+//  void parameter(uint32_t AIndex, double AValue) {
+//    //SAT_Print("\n");
+//  }
+//
+//  //----------
+//
+//  void modulation(uint32_t AIndex, double AValue) {
+//    //SAT_Print("\n");
+//  }
+//
+//};
 
 //----------------------------------------------------------------------
 //
@@ -191,12 +191,11 @@ private:
 public:
 //------------------------------
 
-  //SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin);
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(test_synth_plugin);
 
-  test_synth_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
-  : SAT_Plugin(ADescriptor,AHost) {
-    //SAT_Print("sizeof(myPlugin) : %i\n",sizeof(myPlugin));
-  }
+  //test_synth_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  //: SAT_Plugin(ADescriptor,AHost) {
+  //}
 
   //----------
 
@@ -213,13 +212,19 @@ public:
     
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
     
+    // test observers
+    
     SAT_Observe(SAT_OBSERVE_DOUBLE,&MTestValue,"MTestValue");
     SAT_Observe(SAT_OBSERVE_DOUBLE,&qwe2,"qwe2");
+    
+    // test crash handler
     
     //SAT_GLOBAL.DEBUG.print_callstack();
     //int* ptr = nullptr;
     //int a = *ptr;
     
+    // test print
+
     SAT_PRINT;
     SAT_Print("Hello world!\n");
     SAT_DPrint( SAT_TERM_RESET
@@ -229,6 +234,8 @@ public:
                 SAT_TERM_ITALICS    "italics "    SAT_TERM_RESET
                 SAT_TERM_UNDERLINE  "underline\n" SAT_TERM_RESET );
     SAT_DPrint( SAT_TERM_FG_RED     "hello"       SAT_TERM_FG_YELLOW " world2\n" SAT_TERM_RESET );
+    
+    //
    
     registerAllExtensions();
     //registerDefaultSynthExtensions();
@@ -245,16 +252,21 @@ public:
     appendParameter(new SAT_Parameter("P4", 0.2));
     appendParameter(new SAT_Parameter("P5", 0.8));
 
+    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+
     //par1->setFlag(CLAP_PARAM_IS_MODULATABLE);
     //par2->setFlag(CLAP_PARAM_IS_MODULATABLE);
     //par3->setFlag(CLAP_PARAM_IS_MODULATABLE);
     //par4->setFlag(CLAP_PARAM_IS_MODULATABLE);
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     
+    // block
+    
     //setProcessThreaded(false);
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
+    
+    // voice manager
     
     SAT_Host* host = getHost();
     const clap_plugin_t*  clapplugin = getPlugin();
@@ -263,8 +275,11 @@ public:
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     
-    // test crash..
+    // test crash
+    
     //double qwe = *(double*)nullptr;
+    
+    //
     
     return SAT_Plugin::init();
     
@@ -281,6 +296,7 @@ public:
   //----------
   
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    SAT_Print("sample_rate %.2f min_frames_count %i max_frames_count %i\n",sample_rate,min_frames_count,max_frames_count);
     MVoiceManager.activate(sample_rate,min_frames_count,max_frames_count);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
@@ -385,6 +401,7 @@ public:
   //----------
 
   bool voice_info_get(clap_voice_info_t *info) final {
+    SAT_Print("-> %i (CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES)\n",NUM_VOICES);
     info->voice_count     = NUM_VOICES;
     info->voice_capacity  = NUM_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;

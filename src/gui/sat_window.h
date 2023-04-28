@@ -661,7 +661,6 @@ public: // window
         SAT_Sleep(rnd_ms > 0 ? rnd_ms : 1);
       #endif
       
-      
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
       MBufferHeight = height2;
