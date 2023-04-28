@@ -4,6 +4,23 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <VirtualDirectory Name="sa_tyr">
+      <File Name="../../plugins/sa_tyr/sa_tyr_widgets.h"/>
+      <File Name="../../plugins/sa_tyr/sa_tyr_voice.h"/>
+      <File Name="../../plugins/sa_tyr/sa_tyr_res.h"/>
+      <File Name="../../plugins/sa_tyr/sa_tyr_parameters.h"/>
+      <File Name="../../plugins/sa_tyr/sa_tyr_osc.h"/>
+      <File Name="../../plugins/sa_tyr/sa_tyr_editor.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="sa_botage">
+      <File Name="../../plugins/sa_botage/sa_botage_widgets.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_processor.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_parameters.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_editor_page_seq.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_editor_page_prob.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_editor_page_perf.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_editor.h"/>
+    </VirtualDirectory>
     <VirtualDirectory Name="templates">
       <File Name="../../plugins/templates/effect.h"/>
     </VirtualDirectory>

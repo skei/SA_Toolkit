@@ -60,11 +60,11 @@ public:
 public:
 //------------------------------
 
-  bool isOpen() {
+  virtual bool isOpen() {
     return MIsOpen;
   }
 
-  SAT_Window* getWindow() {
+  virtual SAT_Window* getWindow() {
     return MWindow;
   }
 
@@ -86,7 +86,7 @@ public:
   // widgets are 0..1
   
   
-  void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, sat_param_t AValue) {
+  virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
     SAT_Widget* widget = (SAT_Widget*)AParam->getConnection();
     if (widget) {
@@ -114,7 +114,7 @@ public:
   // parameters are in clap-space
   // widgets are 0..1
 
-  void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
+  virtual void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
       //SAT_PaintContext* pc = MWindow->getPaintContext();
       //uint32_t counter = pc->counter;
@@ -139,7 +139,7 @@ public:
   
   // AValue, clap-space
 
-  void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
+  virtual void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
       SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
       if (widget) {
@@ -229,14 +229,14 @@ public: // window listener
 public: // clap
 //------------------------------
 
-  bool create() {
+  virtual bool create() {
     //SAT_Print("\n");
     return true;
   }
 
   //----------
 
-  void destroy() {
+  virtual void destroy() {
     //SAT_Print("\n");
     //if (MWindow) MWindow->on_window_close();
     if (MIsOpen) MWindow->hide();
@@ -246,7 +246,7 @@ public: // clap
 
   //----------
 
-  bool set_scale(double scale) {
+  virtual bool set_scale(double scale) {
     //SAT_Print("scale %f\n",scale);
     MScale = scale;     // win32: crashes.. huh?
     //SAT_Print("...\n"); // win32; not printed..
@@ -255,7 +255,7 @@ public: // clap
 
   //----------
 
-  bool get_size(uint32_t *width, uint32_t *height) {
+  virtual bool get_size(uint32_t *width, uint32_t *height) {
     //SAT_Print("-> %i,%i\n",MWidth,MHeight);
     *width = MWidth;
     *height = MHeight;
@@ -265,14 +265,14 @@ public: // clap
 
   //----------
 
-  bool can_resize() {
+  virtual bool can_resize() {
     //SAT_Print("\n");
     return true;
   }
 
   //----------
 
-  bool get_resize_hints(clap_gui_resize_hints_t *hints) {
+  virtual bool get_resize_hints(clap_gui_resize_hints_t *hints) {
     //SAT_Print("\n");
     hints->can_resize_horizontally  = true;
     hints->can_resize_vertically    = true;
@@ -291,7 +291,7 @@ public: // clap
     sizes are equal, so be careful with rounding/scaling..
   */
 
-  bool adjust_size(uint32_t *width, uint32_t *height) {
+  virtual bool adjust_size(uint32_t *width, uint32_t *height) {
     //SAT_Print("(%i,%i)\n",*width,*height);
     return true;
   }
@@ -303,7 +303,7 @@ public: // clap
     event, so we simulate one from here..
   */
 
-  bool set_size(uint32_t width, uint32_t height) {
+  virtual bool set_size(uint32_t width, uint32_t height) {
     //SAT_Print("width %i height %i\n",width,height);
     MWidth = width;
     MHeight = height;
@@ -316,7 +316,7 @@ public: // clap
 
   //----------
 
-  bool set_parent(const clap_window_t *window) {
+  virtual bool set_parent(const clap_window_t *window) {
     //SAT_Print("\n");
     MParent = window;
     if (!MWindow) {
@@ -330,14 +330,14 @@ public: // clap
 
   //----------
 
-  bool set_transient(const clap_window_t *window) {
+  virtual bool set_transient(const clap_window_t *window) {
     //SAT_Print("\n");
     return true;
   }
 
   //----------
 
-  void suggest_title(const char *title) {
+  virtual void suggest_title(const char *title) {
     //SAT_Print("title %s\n",title);
     MTitle = title;
     if (MWindow) MWindow->setTitle(title);
@@ -345,7 +345,7 @@ public: // clap
 
   //----------
 
-  bool show() {
+  virtual bool show() {
     //SAT_Print("\n");
     if (MWindow && !MIsOpen) {
       // when our window is embedded, we don't get on_window_open events ??
@@ -363,7 +363,7 @@ public: // clap
 
   //----------
 
-  bool hide() {
+  virtual bool hide() {
     SAT_Print("\n");
     if (MWindow /*&& MIsOpen*/) MWindow->hide();
     MIsOpen = false;

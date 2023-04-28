@@ -143,13 +143,13 @@ enum sa_botage_params_e {
 //
 //----------------------------------------------------------------------
 
-class MIP_ScalePercentParameter
-: public MIP_Parameter {
+class SAT_ScalePercentParameter
+: public SAT_Parameter {
 
 public:
 
-  MIP_ScalePercentParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0)
-  : MIP_Parameter(AName,AValue,AMin,AMax) {
+  SAT_ScalePercentParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0)
+  : SAT_Parameter(AName,AValue,AMin,AMax) {
   }
 
 public:
@@ -158,7 +158,7 @@ public:
     double v = powf(0.5,-value);
     v *= 100.0;
     //sprintf(display,"%.2f",v);
-    uint32_t iv = MIP_Trunc(v);
+    uint32_t iv = SAT_Trunc(v);
     sprintf(display,"%i",iv);
     return true;
   }
@@ -167,13 +167,13 @@ public:
 
 //----------------------------------------------------------------------
 
-class MIP_PercentParameter
-: public MIP_Parameter {
+class SAT_PercentParameter
+: public SAT_Parameter {
 
 public:
 
-  MIP_PercentParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0)
-  : MIP_Parameter(AName,AValue,AMin,AMax) {
+  SAT_PercentParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0)
+  : SAT_Parameter(AName,AValue,AMin,AMax) {
   }
 
 public:
@@ -182,7 +182,7 @@ public:
     double v = value;//powf(0.5,-value);
     v *= 100.0;
     //sprintf(display,"%.2f",v);
-    uint32_t iv = MIP_Trunc(v);
+    uint32_t iv = SAT_Trunc(v);
     sprintf(display,"%i",iv);
     return true;
   }
@@ -191,13 +191,13 @@ public:
 
 //----------------------------------------------------------------------
 
-class MIP_OffsetParameter
-: public MIP_Parameter {
+class SAT_OffsetParameter
+: public SAT_Parameter {
 
 public:
 
-  MIP_OffsetParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0)
-  : MIP_Parameter(AName,AValue,AMin,AMax) {
+  SAT_OffsetParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0)
+  : SAT_Parameter(AName,AValue,AMin,AMax) {
   }
 
 public:
@@ -206,7 +206,7 @@ public:
     double v = value;//powf(0.5,-value);
     v *= 8.0;
     //sprintf(display,"%.2f",v);
-    uint32_t iv = MIP_Trunc(v);
+    uint32_t iv = SAT_Trunc(v);
     sprintf(display,"%i",iv);
     return true;
   }
@@ -219,106 +219,106 @@ public:
 //
 //----------------------------------------------------------------------
 
-void sa_botage_init_parameters(MIP_Plugin* APlugin) {
+void sa_botage_init_parameters(SAT_Plugin* APlugin) {
 
-  APlugin->appendParameter(new MIP_IntParameter(          "Beats",                4,          1, 8 ));
-  APlugin->appendParameter(new MIP_IntParameter(          "Slices",               2,          1, 8 ));
+  APlugin->appendParameter(new SAT_IntParameter(          "Beats",                4,          1, 8 ));
+  APlugin->appendParameter(new SAT_IntParameter(          "Slices",               2,          1, 8 ));
 
   // ----- slice
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Range Prob",           0.25,       0, 1   ));
-  APlugin->appendParameter(new MIP_IntParameter(          "Range Slice Count",    0b00001111, 1, 255 ));
-  APlugin->appendParameter(new MIP_IntParameter(          "Range Loop Count",     0b00001111, 1, 255 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Range Prob",           0.25,       0, 1   ));
+  APlugin->appendParameter(new SAT_IntParameter(          "Range Slice Count",    0b00001111, 1, 255 ));
+  APlugin->appendParameter(new SAT_IntParameter(          "Range Loop Count",     0b00001111, 1, 255 ));
 
   // ----- env
 
-  APlugin->appendParameter(new MIP_Parameter(             "Loop Env Attack",      1,          0, 25 ));
-  APlugin->appendParameter(new MIP_Parameter(             "Loop Env Decay",       1,          0, 25 ));   // !!!!!
-  APlugin->appendParameter(new MIP_Parameter(             "Slice Env Attack",     0,          0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "Slice Env Decay",      0,          0, 1 ));    // !!!!!
+  APlugin->appendParameter(new SAT_Parameter(             "Loop Env Attack",      1,          0, 25 ));
+  APlugin->appendParameter(new SAT_Parameter(             "Loop Env Decay",       1,          0, 25 ));   // !!!!!
+  APlugin->appendParameter(new SAT_Parameter(             "Slice Env Attack",     0,          0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "Slice Env Decay",      0,          0, 1 ));    // !!!!!
 
 //  // ----- fx filter
 
   // ----- loop size
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Size Prob Range",      0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Size Min Range",      -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Size Max Range",       0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Size Prob Range",      0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Size Min Range",      -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Size Max Range",       0.5,       -1, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Size Prob Loop",       0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Size Min Loop",       -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Size Max Loop",        0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Size Prob Loop",       0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Size Min Loop",       -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Size Max Loop",        0.5,       -1, 1 ));
 
   // ----- loop speed
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Speed Prob Range",     0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Speed Min Range",     -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Speed Max Range",      0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Speed Prob Range",     0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Speed Min Range",     -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Speed Max Range",      0.5,       -1, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Speed Prob Loop",      0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Speed Min Loop",      -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "Speed Max Loop",       0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Speed Prob Loop",      0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Speed Min Loop",      -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "Speed Max Loop",       0.5,       -1, 1 ));
 
   // ----- loop offset
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Offset Prob Range",    0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_OffsetParameter(       "Offset Min Range",    -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_OffsetParameter(       "Offset Max Range",     0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Offset Prob Range",    0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_OffsetParameter(       "Offset Min Range",    -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_OffsetParameter(       "Offset Max Range",     0.5,       -1, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Offset Prob Loop",     0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_OffsetParameter(       "Offset Min Loop",     -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_OffsetParameter(       "Offset Max Loop",      0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Offset Prob Loop",     0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_OffsetParameter(       "Offset Min Loop",     -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_OffsetParameter(       "Offset Max Loop",      0.5,       -1, 1 ));
 
   // ----- loop reverse
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "Reverse Prob Range",   0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_PercentParameter(      "Reverse Prob Loop",    0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Reverse Prob Range",   0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "Reverse Prob Loop",    0.25,       0, 1 ));
 
   // ----- fx prob
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "FX Prob Range",        0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "FX Min Range",        -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "FX Max Range",         0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "FX Prob Range",        0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "FX Min Range",        -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "FX Max Range",         0.5,       -1, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "FX Prob Loop",         0.25,       0, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "FX Min Loop",         -0.5,       -1, 1 ));
-  APlugin->appendParameter(new MIP_ScalePercentParameter( "FX Max Loop",          0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "FX Prob Loop",         0.25,       0, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "FX Min Loop",         -0.5,       -1, 1 ));
+  APlugin->appendParameter(new SAT_ScalePercentParameter( "FX Max Loop",          0.5,       -1, 1 ));
 
   // ----- effects
 
-  APlugin->appendParameter(new MIP_TextParameter(         "FX Mode",              0,          0, FX_MODE_COUNT-1, fx_mode_text ));
+  APlugin->appendParameter(new SAT_TextParameter(         "FX Mode",              0,          0, FX_MODE_COUNT-1, fx_mode_text ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "FX1 Prob",             0.5,        0, 1 ));
-  APlugin->appendParameter(new MIP_TextParameter(         "FX1 Type",             1,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX1 Param1",           0.6,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX1 Param2",           0.4,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX1 Param3",           0.0,        0, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "FX1 Prob",             0.5,        0, 1 ));
+  APlugin->appendParameter(new SAT_TextParameter(         "FX1 Type",             1,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX1 Param1",           0.6,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX1 Param2",           0.4,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX1 Param3",           0.0,        0, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "FX2 Prob",             0.5,        0, 1 ));
-  APlugin->appendParameter(new MIP_TextParameter(         "FX2 Type",             2,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX2 Param1",           0.6,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX2 Param2",           0.4,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX2 Param3",           0.2,        0, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "FX2 Prob",             0.5,        0, 1 ));
+  APlugin->appendParameter(new SAT_TextParameter(         "FX2 Type",             2,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX2 Param1",           0.6,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX2 Param2",           0.4,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX2 Param3",           0.2,        0, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "FX3 Prob",             0.5,        0, 1 ));
-  APlugin->appendParameter(new MIP_TextParameter(         "FX3 Type",             3,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX3 Param1",           0.6,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX3 Param2",           0.4,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX3 Param3",           0.8,        0, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "FX3 Prob",             0.5,        0, 1 ));
+  APlugin->appendParameter(new SAT_TextParameter(         "FX3 Type",             3,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX3 Param1",           0.6,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX3 Param2",           0.4,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX3 Param3",           0.8,        0, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "FX4 Prob",             0,          0, 1 ));
-  APlugin->appendParameter(new MIP_TextParameter(         "FX4 Type",             4,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX4 Param1",           0.5,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX4 Param2",           0.5,        0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX4 Param3",           0.0,        0, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "FX4 Prob",             0,          0, 1 ));
+  APlugin->appendParameter(new SAT_TextParameter(         "FX4 Type",             4,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX4 Param1",           0.5,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX4 Param2",           0.5,        0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX4 Param3",           0.0,        0, 1 ));
 
-  APlugin->appendParameter(new MIP_PercentParameter(      "FX5 Prob",             0,          0, 1 ));
-  APlugin->appendParameter(new MIP_TextParameter(         "FX5 Type",             0,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX5 Param1",           0,          0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX5 Param2",           0,          0, 1 ));
-  APlugin->appendParameter(new MIP_Parameter(             "FX5 Param3",           0.0,        0, 1 ));
+  APlugin->appendParameter(new SAT_PercentParameter(      "FX5 Prob",             0,          0, 1 ));
+  APlugin->appendParameter(new SAT_TextParameter(         "FX5 Type",             0,          0, SA_BOTAGE_FX_TYPE_COUNT-1, fx_type_text ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX5 Param1",           0,          0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX5 Param2",           0,          0, 1 ));
+  APlugin->appendParameter(new SAT_Parameter(             "FX5 Param3",           0.0,        0, 1 ));
 
-  MIP_Assert( APlugin->getParameterCount() == SA_BOTAGE_PARAM_COUNT );
+  SAT_Assert( APlugin->getNumParameters() == SA_BOTAGE_PARAM_COUNT );
 
 }
 

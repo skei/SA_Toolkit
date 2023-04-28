@@ -213,14 +213,14 @@ private:
 private:
 //------------------------------
 
-  MIP_SvfFilter MFX_LP0  = {};
-  MIP_SvfFilter MFX_LP1  = {};
+  SAT_SvfFilter MFX_LP0  = {};
+  SAT_SvfFilter MFX_LP1  = {};
 
-  MIP_SvfFilter MFX_HP0  = {};
-  MIP_SvfFilter MFX_HP1  = {};
+  SAT_SvfFilter MFX_HP0  = {};
+  SAT_SvfFilter MFX_HP1  = {};
 
-  MIP_SvfFilter MFX_BP0  = {};
-  MIP_SvfFilter MFX_BP1 = {};
+  SAT_SvfFilter MFX_BP0  = {};
+  SAT_SvfFilter MFX_BP1 = {};
 
   double        MFX_LP_Input    = 0.0;
   double        MFX_LP_Prev     = 0.0;
@@ -368,7 +368,7 @@ public:
     }
 
     if (MIsPlaying && !MWasPlaying) {
-      //MIP_Print("play\n");
+      //SAT_Print("play\n");
       MPrevSlice = -1;
       MReadPos = 0.0;
       MWritePos = 0;
@@ -376,7 +376,7 @@ public:
       MBufferWrapped = false;
     }
     else if (MWasPlaying && !MIsPlaying) {
-      //MIP_Print("stop\n");
+      //SAT_Print("stop\n");
       // reset waveform areas/markers..
     }
     MWasPlaying = MIsPlaying;
@@ -386,7 +386,7 @@ public:
 public:
 //------------------------------
 
-  void processAudioBlock(MIP_ProcessContext* AContext) {
+  void processAudioBlock(SAT_ProcessContext* AContext) {
 
     const clap_process_t* process = AContext->process;
 
@@ -397,9 +397,9 @@ public:
 
     // buffer length
 
-    MIP_Assert( process->transport->tempo > 0.0);
-    MIP_Assert( par_num_beats > 0 );
-    MIP_Assert( par_num_slices > 0);
+    SAT_Assert( process->transport->tempo > 0.0);
+    SAT_Assert( par_num_beats > 0 );
+    SAT_Assert( par_num_slices > 0);
 
     double seconds_per_beat = 60.0 / process->transport->tempo;
     double samples_per_beat = seconds_per_beat * MSampleRate;
@@ -431,10 +431,10 @@ public:
 
         // (re-) calc slice length
 
-        MIP_Assert( slice_length > 0.0 );
+        SAT_Assert( slice_length > 0.0 );
 
         double slice_pos = (double)MWritePos / slice_length;
-        MSlice = MIP_Trunc(slice_pos);
+        MSlice = SAT_Trunc(slice_pos);
         MSliceFract = slice_pos - MSlice; // 0..1
         MSliceStart = MSlice * slice_length;
         MSliceLength = slice_length;
@@ -462,7 +462,7 @@ public:
         MReadPos = fmod(MReadPos,MBufferLength);
         if (MReadPos < 0.0) MReadPos += MBufferLength;
 
-        uint32_t pos = MIP_Trunc(MReadPos);
+        uint32_t pos = SAT_Trunc(MReadPos);
         float buf0 = MLeftBuffer[pos];
         float buf1 = MRightBuffer[pos];
         MReadPos += MReadSpeed;
@@ -523,12 +523,12 @@ private:
       bit <<= 1;
     }
     if (numbits == 0) return 0;
-    uint32_t rnd = MIP_RandomRangeInt(0,numbits-1);
+    uint32_t rnd = SAT_RandomRangeInt(0,numbits-1);
     bit = 1;
     for (uint32_t i=0; i<32; i++) {
       if (AValue & bit) {
         if (rnd == 0) {
-          //MIP_Print("i %i bit %i\n",i,bit);
+          //SAT_Print("i %i bit %i\n",i,bit);
           return (i + 1);
         }
         rnd -= 1;
@@ -553,13 +553,13 @@ private:
       MLoop = false;
       rnd_slice_on = true;
       // range
-      //if (MIP_RandomRange(0.0, 0.999) < par_range_prob) {
+      //if (SAT_RandomRange(0.0, 0.999) < par_range_prob) {
 
-      //if (MIP_Random() < par_range_prob) {
+      //if (SAT_Random() < par_range_prob) {
       //  startRange();
       //}
 
-      rnd_main_prob = MIP_Random();
+      rnd_main_prob = SAT_Random();
 
       if (rnd_main_prob < par_range_prob) {
         rnd_slice_on = true;
@@ -606,11 +606,11 @@ private:
   void startRange() {
     uint32_t remain = (par_num_beats * par_num_slices) - MSlice;
     uint32_t num_slices = randomBit(par_range_slice_count);
-    //num_slices = MIP_MaxI(num_slices,1);
-    //num_slices = MIP_MinI(num_slices,remain);
-    num_slices = MIP_ClampI(num_slices,1,remain);
+    //num_slices = SAT_MaxI(num_slices,1);
+    //num_slices = SAT_MinI(num_slices,remain);
+    num_slices = SAT_ClampI(num_slices,1,remain);
     uint32_t num_loops = randomBit(par_range_loop_count);
-    num_loops = MIP_MaxI(num_loops,1);
+    num_loops = SAT_MaxI(num_loops,1);
     MRange        = true;
     MRangeCount   = 0;
     MRangeStart   = MSliceStart;
@@ -681,51 +681,51 @@ private:
     MFX_BP_Current        = 0.0;
 
     // size
-    rnd_range_size = MIP_Random();
+    rnd_range_size = SAT_Random();
     if (rnd_range_size < par_prob_size_prob_range) {
       rnd_range_size_on = true;
       double s = par_prob_size_max_range - par_prob_size_min_range;
-      rnd_range_size_value = MIP_Random();
+      rnd_range_size_value = SAT_Random();
       s *= rnd_range_size_value;
       s += par_prob_size_min_range;
       float n = powf(0.5,-s);
       MLoopLength *= n;
-      MLoopLength = MIP_MaxI(MLoopLength,MIN_LOOP_LENGTH);
+      MLoopLength = SAT_MaxI(MLoopLength,MIN_LOOP_LENGTH);
     }
 
     // speed
-    rnd_range_speed = MIP_Random();
+    rnd_range_speed = SAT_Random();
     if (rnd_range_speed < par_prob_speed_prob_range) {
       rnd_range_speed_on = true;
       double s = par_prob_speed_max_range - par_prob_speed_min_range;
-      rnd_range_speed_value = MIP_Random();
+      rnd_range_speed_value = SAT_Random();
       s *= rnd_range_speed_value;
       s += par_prob_speed_min_range;
       float n = powf(0.5,-s);
       MReadSpeed *= n;
-      MReadSpeed = MIP_Clamp(MReadSpeed,-8.0,8.0);
+      MReadSpeed = SAT_Clamp(MReadSpeed,-8.0,8.0);
     }
 
     // offset
 
     MCurrentRangeOffset = 0.0;
 
-    rnd_range_offset = MIP_Random();
+    rnd_range_offset = SAT_Random();
     if (rnd_range_offset < par_prob_offset_prob_range) {
       rnd_range_offset_on = true;
       double s = par_prob_offset_max_range - par_prob_offset_min_range;
-      rnd_range_offset_value = MIP_Random();
+      rnd_range_offset_value = SAT_Random();
       s *= rnd_range_offset_value;
       s += par_prob_offset_min_range;
       s *= 8.9; //(double)(par_num_beats * par_num_slices);
-      s = MIP_Trunc(s);
+      s = SAT_Trunc(s);
       MCurrentRangeOffset = (s * MSliceLength);
       //MReadPos += (s * MSliceLength);
       MReadPos += MCurrentRangeOffset;
     }
 
     // reverse
-    rnd_range_reverse = MIP_Random();
+    rnd_range_reverse = SAT_Random();
     if (rnd_range_reverse < par_prob_reverse_prob_range) {
       rnd_range_reverse_on = true;
       MReadSpeed *= -1.0;
@@ -734,17 +734,17 @@ private:
     }
 
     // fx
-    rnd_range_fx = MIP_Random();
+    rnd_range_fx = SAT_Random();
     if (rnd_range_fx < par_prob_fx_prob_range) {
       rnd_range_fx_on = true;
-      rnd_range_fx_value = MIP_Random();
+      rnd_range_fx_value = SAT_Random();
       double s = par_prob_fx_max_range - par_prob_fx_min_range;
       s *= rnd_range_fx_value;
       s += par_prob_fx_min_range;
       float n = powf(0.5,-s);
       rnd_fx_value = n;
       //MLoopLength *= n;
-      //MLoopLength = MIP_MaxI(MLoopLength,MIN_LOOP_LENGTH);
+      //MLoopLength = SAT_MaxI(MLoopLength,MIN_LOOP_LENGTH);
     }
 
     //
@@ -762,7 +762,7 @@ private:
           double s4  = s3 + par_fx4_prob;
           double s5  = s4 + par_fx5_prob;
           if (s5 > 0) {
-            double r = MIP_RandomRange(0,s5);
+            double r = SAT_RandomRange(0,s5);
             if ((par_fx1_prob > 0) && (r <= s1)) {  rnd_fx1_on = true; break; }
             if ((par_fx2_prob > 0) && (r <= s2)) {  rnd_fx2_on = true; break; }
             if ((par_fx3_prob > 0) && (r <= s3)) {  rnd_fx3_on = true; break; }
@@ -772,11 +772,11 @@ private:
           break;
         }
         case 1: { // multi
-          rnd_fx1 = MIP_Random();
-          rnd_fx2 = MIP_Random();
-          rnd_fx3 = MIP_Random();
-          rnd_fx4 = MIP_Random();
-          rnd_fx5 = MIP_Random();
+          rnd_fx1 = SAT_Random();
+          rnd_fx2 = SAT_Random();
+          rnd_fx3 = SAT_Random();
+          rnd_fx4 = SAT_Random();
+          rnd_fx5 = SAT_Random();
           if (rnd_fx1 < par_fx1_prob) rnd_fx1_on = true;
           if (rnd_fx2 < par_fx2_prob) rnd_fx2_on = true;
           if (rnd_fx3 < par_fx3_prob) rnd_fx3_on = true;
@@ -833,51 +833,51 @@ private:
     //rnd_fx_value        = 1.0;
 
     // size
-    rnd_loop_size = MIP_Random();
+    rnd_loop_size = SAT_Random();
     if (rnd_loop_size < par_prob_size_prob_loop) {
       rnd_loop_size_on = true;
       double s = par_prob_size_max_loop - par_prob_size_min_loop;
-      rnd_loop_size_value = MIP_Random();
+      rnd_loop_size_value = SAT_Random();
       s *= rnd_loop_size_value;
       s += par_prob_size_min_loop;
       float n = powf(0.5,-s);
       MLoopLength *= n;
-      MLoopLength = MIP_MaxI(MLoopLength,MIN_LOOP_LENGTH);
+      MLoopLength = SAT_MaxI(MLoopLength,MIN_LOOP_LENGTH);
     }
 
     // speed
-    rnd_loop_speed = MIP_Random();
+    rnd_loop_speed = SAT_Random();
     if (rnd_loop_speed < par_prob_speed_prob_loop) {
       rnd_loop_speed_on = true;
       double s = par_prob_speed_max_loop - par_prob_speed_min_loop;
-      rnd_loop_speed_value = MIP_Random();
+      rnd_loop_speed_value = SAT_Random();
       s *= rnd_loop_speed_value;
       s += par_prob_speed_min_loop;
       float n = powf(0.5,-s);
       MReadSpeed *= n;
-      MReadSpeed = MIP_Clamp(MReadSpeed,-8.0,8.0);
+      MReadSpeed = SAT_Clamp(MReadSpeed,-8.0,8.0);
     }
 
     // offset
-    rnd_loop_offset = MIP_Random();
+    rnd_loop_offset = SAT_Random();
     if (rnd_loop_offset < par_prob_offset_prob_loop) {
       rnd_loop_offset_on = true;
       double s = par_prob_offset_max_loop - par_prob_offset_min_loop;
-      rnd_loop_offset_value = MIP_Random();
+      rnd_loop_offset_value = SAT_Random();
       s *= rnd_loop_offset_value;
       s += par_prob_offset_min_loop;
       s *= 8.9; // (double)(par_num_beats * par_num_slices);
-      s = MIP_Trunc(s);
-      //MIP_Print("s %.3f\n",s);
+      s = SAT_Trunc(s);
+      //SAT_Print("s %.3f\n",s);
       MReadPos += (s * MSliceLength);
     }
 
     // reverse
-    rnd_loop_reverse = MIP_Random();
-    //MIP_Print("rnd %.3f (par_prob_offset_prob_range %.3f)\n",rnd,par_prob_reverse_prob_range);
+    rnd_loop_reverse = SAT_Random();
+    //SAT_Print("rnd %.3f (par_prob_offset_prob_range %.3f)\n",rnd,par_prob_reverse_prob_range);
     if (rnd_loop_reverse < par_prob_reverse_prob_loop) {
       rnd_loop_reverse_on = true;
-      //MIP_Print("Reverse!\n");
+      //SAT_Print("Reverse!\n");
       MReadSpeed *= -1.0;
       if (MReadSpeed < 0.0) MReadPos += MLoopLength;
       else MReadPos -= MLoopLength;
@@ -885,18 +885,18 @@ private:
     }
 
     // fx
-    rnd_loop_fx = MIP_Random();
+    rnd_loop_fx = SAT_Random();
     if (rnd_loop_fx < par_prob_fx_prob_loop) {
       rnd_loop_fx_on = true;
-      rnd_loop_fx_value = MIP_Random();
+      rnd_loop_fx_value = SAT_Random();
       double s = par_prob_fx_max_loop - par_prob_fx_min_loop;
       s *= rnd_loop_fx_value;
       s += par_prob_fx_min_loop;
       float n = powf(0.5,-s);
       rnd_fx_value *= n;
-      //MIP_Print("rnd_fx_value: %.3f\n",rnd_loop_value);
+      //SAT_Print("rnd_fx_value: %.3f\n",rnd_loop_value);
       //MLoopLength *= n;
-      //MLoopLength = MIP_MaxI(MLoopLength,MIN_LOOP_LENGTH);
+      //MLoopLength = SAT_MaxI(MLoopLength,MIN_LOOP_LENGTH);
     }
 
   }
@@ -907,7 +907,7 @@ private:
 
   void handleBufferWrapping() {
     MBufferWrapped = true;
-    //MIP_Print("buffer finished\n");
+    //SAT_Print("buffer finished\n");
     MPrevSlice = -1;
   }
 
@@ -961,11 +961,11 @@ private:
       }
       case FX_LP: {
         MFX_LP_Input    = 1.0;
-        double freq     = MIP_Curve(par1,0.2);
+        double freq     = SAT_Curve(par1,0.2);
         double f2       = freq * rnd_fx_value; // * 0.5 .. 2
         double diff     = freq - f2;
         MFX_LP_Freq     = f2;
-        MFX_LP_BW       = 1.0 - MIP_Curve(par2,0.9);
+        MFX_LP_BW       = 1.0 - SAT_Curve(par2,0.9);
         MFX_LP_Movement = diff / MRangeLength;
         MFX_LP_Movement *= par3;
 
@@ -973,11 +973,11 @@ private:
       }
       case FX_HP: {
         MFX_HP_Input    = 1.0;
-        double freq     = MIP_Curve(par1,0.2);
+        double freq     = SAT_Curve(par1,0.2);
         double f2       = freq * rnd_fx_value; // * 0.5 .. 2
         double diff     = freq - f2;
         MFX_HP_Freq     = f2;
-        MFX_HP_BW       = 1.0 - MIP_Curve(par2,0.9);
+        MFX_HP_BW       = 1.0 - SAT_Curve(par2,0.9);
         MFX_HP_Movement = diff / MRangeLength;
         MFX_HP_Movement *= par3;
 
@@ -985,11 +985,11 @@ private:
       }
       case FX_BP: {
         MFX_BP_Input    = 1.0;
-        double freq     = MIP_Curve(par1,0.2);
+        double freq     = SAT_Curve(par1,0.2);
         double f2       = freq * rnd_fx_value; // * 0.5 .. 2
         double diff     = freq - f2;
         MFX_BP_Freq     = f2;
-        MFX_BP_BW       = 1.0 - MIP_Curve(par2,0.9);
+        MFX_BP_BW       = 1.0 - SAT_Curve(par2,0.9);
         MFX_BP_Movement = diff / MRangeLength;
         MFX_BP_Movement *= par3;
 
@@ -997,7 +997,7 @@ private:
       }
       case FX_DIST: {
         MFX_Dist_Input  = 1.0;
-        MFX_Dist_Amount   = MIP_Clamp(par1 * rnd_fx_value, 0,1);
+        MFX_Dist_Amount   = SAT_Clamp(par1 * rnd_fx_value, 0,1);
         MFX_Dist_Limit    = 1.0 - par2;
 
         break;
@@ -1054,7 +1054,7 @@ private:
       MFX_LP_Prev = MFX_LP_Input;
 
       if (MFX_LP_Input > 0.0) {
-        double f = MIP_Clamp(MFX_LP_Freq + MFX_LP_Current,0,1);
+        double f = SAT_Clamp(MFX_LP_Freq + MFX_LP_Current,0,1);
         MFX_LP0.setMode(1); // lp
         MFX_LP0.setFreq(f);
         MFX_LP0.setBW(MFX_LP_BW);
@@ -1064,7 +1064,7 @@ private:
         *in0 = MFX_LP0.process(*in0);
         *in1 = MFX_LP1.process(*in1);
         MFX_LP_Current += MFX_LP_Movement;
-        //MFX_LP_Freq = MIP_Clamp(MFX_LP_Freq,0,1);
+        //MFX_LP_Freq = SAT_Clamp(MFX_LP_Freq,0,1);
       }
 
       //
@@ -1076,7 +1076,7 @@ private:
       MFX_HP_Prev = MFX_HP_Input;
 
       if (MFX_HP_Input > 0.0) {
-        double f = MIP_Clamp(MFX_HP_Freq + MFX_HP_Current,0,1);
+        double f = SAT_Clamp(MFX_HP_Freq + MFX_HP_Current,0,1);
         MFX_HP0.setMode(2); // lp
         MFX_HP0.setFreq(f);
         MFX_HP0.setBW(MFX_HP_BW);
@@ -1086,7 +1086,7 @@ private:
         *in0 = MFX_HP0.process(*in0);
         *in1 = MFX_HP1.process(*in1);
         MFX_HP_Current += MFX_HP_Movement;
-        //MFX_HP_Freq = MIP_Clamp(MFX_HP_Freq,0,1);
+        //MFX_HP_Freq = SAT_Clamp(MFX_HP_Freq,0,1);
       }
 
       //
@@ -1098,7 +1098,7 @@ private:
       MFX_BP_Prev = MFX_BP_Input;
 
       if (MFX_BP_Input > 0.0) {
-        double f = MIP_Clamp(MFX_BP_Freq + MFX_BP_Current,0,1);
+        double f = SAT_Clamp(MFX_BP_Freq + MFX_BP_Current,0,1);
         MFX_BP0.setMode(3); // lp
         MFX_BP0.setFreq(f);
         MFX_BP0.setBW(MFX_BP_BW);
@@ -1108,20 +1108,20 @@ private:
         *in0 = MFX_BP0.process(*in0);
         *in1 = MFX_BP1.process(*in1);
         MFX_BP_Current += MFX_BP_Movement;
-        //MFX_BP_Freq = MIP_Clamp(MFX_BP_Freq,0,1);
+        //MFX_BP_Freq = SAT_Clamp(MFX_BP_Freq,0,1);
       }
 
       //
 
       if (MFX_Dist_Input > 0.0) {
-        float s = MIP_Sign(*in0);
+        float s = SAT_Sign(*in0);
         float a = abs(*in0);
         a *= 1.0 + (MFX_Dist_Amount * 2.0);
         if (a > 1.0) {
           a = 1.0 + (1.0 - a);
         }
         *in0 = (a * s * MFX_Dist_Limit);
-        s = MIP_Sign(*in1);
+        s = SAT_Sign(*in1);
         a = abs(*in1);
         a *= 1.0 + (MFX_Dist_Amount * 2.0);
         if (a > 1.0) {

@@ -2,19 +2,15 @@
 #define sa_botage_editor_included
 //----------------------------------------------------------------------
 
-#include "base/mip.h"
-#include "gui/mip_widgets.h"
-#include "plugin/mip_editor.h"
-
-//----------
+#include "base/sat.h"
+#include "gui/sat_widgets.h"
+//#include "plugin/sat_editor.h"
 
 #define BACKGROUNDCOLOR 0.2
 
 #define WAVEFORM_LINES  (360 * 3)
-#define WAVEFORM_COLOR  MIP_Color( 1,1,1 )
+#define WAVEFORM_COLOR  SAT_Color( 1,1,1 )
 #define WAVEFORM_WIDTH  1.0
-
-//----------------------------------------------------------------------
 
 const char* prob_slices_text[] = {
   "1", "2", "3", "4", "5", "6", "7", "8"
@@ -23,13 +19,13 @@ const char* prob_slices_text[] = {
 //----------------------------------------------------------------------
 
 class sa_botage_MenuWidget
-: public MIP_MenuWidget {
+: public SAT_MenuWidget {
 public:
   sa_botage_MenuWidget(uint32_t AWidth, uint32_t AHeight, const char** AText, uint32_t ACount)
-  : MIP_MenuWidget(MIP_DRect(0,0,AWidth,ACount*AHeight),nullptr) {
+  : SAT_MenuWidget(SAT_Rect(0,0,AWidth,ACount*AHeight)) {
     setFillBackground(true);
     for (uint32_t i=0; i<ACount; i++) {
-      MIP_MenuItemWidget* menuitem = new MIP_MenuItemWidget( MIP_DRect(0, i*AHeight, AWidth, AHeight ), AText[i] );
+      SAT_MenuItemWidget* menuitem = new SAT_MenuItemWidget( SAT_Rect(0, i*AHeight, AWidth, AHeight ), AText[i] );
       appendChildWidget(menuitem);
       menuitem->setDrawBorder(false);
       menuitem->setFillBackground(true);
@@ -41,11 +37,14 @@ public:
   }
 };
 
-
+//----------------------------------------------------------------------
+//
+//
+//
 //----------------------------------------------------------------------
 
 class sa_botage_editor
-: public MIP_Editor {
+: public SAT_Editor {
 
   friend class sa_botage_plugin;
 
@@ -53,173 +52,195 @@ class sa_botage_editor
 private:
 //------------------------------
 
-  MIP_PanelWidget*            MRootWidget       = nullptr;
-  MIP_CircularWaveformWidget* MWaveformWidget   = nullptr;
-  MIP_DragValueWidget*        MNumBeatsWidget   = nullptr;
-  MIP_DragValueWidget*        MNumSlicesWidget  = nullptr;
-  MIP_TextWidget*             MHintWidget       = nullptr;
+  SAT_PanelWidget*            MRootWidget       = nullptr;
+  SAT_CircularWaveformWidget* MWaveformWidget   = nullptr;
+  SAT_DragValueWidget*        MNumBeatsWidget   = nullptr;
+  SAT_DragValueWidget*        MNumSlicesWidget  = nullptr;
+  SAT_TextWidget*             MHintWidget       = nullptr;
 
-  MIP_PagesWidget*            MPages            = nullptr;
+  SAT_PagesWidget*            MPages            = nullptr;
 
-  MIP_ButtonWidget*           prob_page_button  = nullptr;
-  MIP_ButtonWidget*           seq_page_button   = nullptr;
-  MIP_ButtonWidget*           perf_page_button  = nullptr;
+  SAT_ButtonWidget*           prob_page_button  = nullptr;
+  SAT_ButtonWidget*           seq_page_button   = nullptr;
+  SAT_ButtonWidget*           perf_page_button  = nullptr;
 
   uint32_t                    MCurrentPage = 0;
 
   //
 
-  MIP_Color                   MReadPosColor   = MIP_Color( 0.0, 1.0, 0.0, 0.8 );
-  MIP_Color                   MWritePosColor  = MIP_Color( 1.0, 0.0, 0.0, 1.0 );
+  SAT_Color                   MReadPosColor   = SAT_Color( 0.0, 1.0, 0.0, 0.8 );
+  SAT_Color                   MWritePosColor  = SAT_Color( 1.0, 0.0, 0.0, 1.0 );
 
   double                      MReadPosWidth   = 2.0;
   double                      MWritePosWidth  = 2.5;
 
-  MIP_Color                   MRangeColor     = MIP_Color( 0.0, 0.4, 0.0, 0.5 );
-  MIP_Color                   MLoopColor      = MIP_Color( 0.2, 0.6, 0.2, 0.7 );
-  MIP_Color                   MSliceColor     = MIP_Color( 0.4, 0.4, 0.4, 0.5 );
+  SAT_Color                   MRangeColor     = SAT_Color( 0.0, 0.4, 0.0, 0.5 );
+  SAT_Color                   MLoopColor      = SAT_Color( 0.2, 0.6, 0.2, 0.7 );
+  SAT_Color                   MSliceColor     = SAT_Color( 0.4, 0.4, 0.4, 0.5 );
 
   //
 
-  MIP_KnobWidget*             MMainProbWidget           = nullptr;
+  SAT_KnobWidget*             MMainProbWidget           = nullptr;
 
-  MIP_ButtonRowWidget*        MMainSlicesWidget         = nullptr;
-  MIP_ButtonRowWidget*        MMainLoopsWidget          = nullptr;
+  SAT_ButtonRowWidget*        MMainSlicesWidget         = nullptr;
+  SAT_ButtonRowWidget*        MMainLoopsWidget          = nullptr;
 
-  MIP_KnobWidget*             MRangeSizeWidget          = nullptr;
-  MIP_KnobWidget*             MRangeSpeedWidget         = nullptr;
-  MIP_KnobWidget*             MRangeOffsetWidget        = nullptr;
-  MIP_KnobWidget*             MRangeReverseWidget       = nullptr;
-  MIP_KnobWidget*             MRangeFXWidget            = nullptr;
+  SAT_KnobWidget*             MRangeSizeWidget          = nullptr;
+  SAT_KnobWidget*             MRangeSpeedWidget         = nullptr;
+  SAT_KnobWidget*             MRangeOffsetWidget        = nullptr;
+  SAT_KnobWidget*             MRangeReverseWidget       = nullptr;
+  SAT_KnobWidget*             MRangeFXWidget            = nullptr;
 
-  MIP_KnobWidget*             MLoopSizeWidget           = nullptr;
-  MIP_KnobWidget*             MLoopSpeedWidget          = nullptr;
-  MIP_KnobWidget*             MLoopOffsetWidget         = nullptr;
-  MIP_KnobWidget*             MLoopReverseWidget        = nullptr;
-  MIP_KnobWidget*             MLoopFXWidget             = nullptr;
+  SAT_KnobWidget*             MLoopSizeWidget           = nullptr;
+  SAT_KnobWidget*             MLoopSpeedWidget          = nullptr;
+  SAT_KnobWidget*             MLoopOffsetWidget         = nullptr;
+  SAT_KnobWidget*             MLoopReverseWidget        = nullptr;
+  SAT_KnobWidget*             MLoopFXWidget             = nullptr;
 
-  MIP_DualSliderWidget*       MRangeSizeValueWidget     = nullptr;
-  MIP_DualSliderWidget*       MRangeSpeedValueWidget    = nullptr;
-  MIP_DualSliderWidget*       MRangeOffsetValueWidget   = nullptr;
-  MIP_DualSliderWidget*       MRangeFXValueWidget       = nullptr;
+  SAT_DualSliderWidget*       MRangeSizeValueWidget     = nullptr;
+  SAT_DualSliderWidget*       MRangeSpeedValueWidget    = nullptr;
+  SAT_DualSliderWidget*       MRangeOffsetValueWidget   = nullptr;
+  SAT_DualSliderWidget*       MRangeFXValueWidget       = nullptr;
 
-  MIP_DualSliderWidget*       MLoopSizeValueWidget      = nullptr;
-  MIP_DualSliderWidget*       MLoopSpeedValueWidget     = nullptr;
-  MIP_DualSliderWidget*       MLoopOffsetValueWidget    = nullptr;
-  MIP_DualSliderWidget*       MLoopFXValueWidget        = nullptr;
+  SAT_DualSliderWidget*       MLoopSizeValueWidget      = nullptr;
+  SAT_DualSliderWidget*       MLoopSpeedValueWidget     = nullptr;
+  SAT_DualSliderWidget*       MLoopOffsetValueWidget    = nullptr;
+  SAT_DualSliderWidget*       MLoopFXValueWidget        = nullptr;
 
-  MIP_SelectorWidget*         MFXTypeSelector[5]        = {0};
-  MIP_KnobWidget*             MFXProbKnob[5]            = {0};
-  MIP_KnobWidget*             MFXArgKnob[5*3]           = {0};
+  SAT_SelectorWidget*         MFXTypeSelector[5]        = {0};
+  SAT_KnobWidget*             MFXProbKnob[5]            = {0};
+  SAT_KnobWidget*             MFXArgKnob[5*3]           = {0};
+
 //------------------------------
 public:
 //------------------------------
 
-  sa_botage_editor(MIP_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, MIP_ParameterArray* AParameters, const clap_plugin_descriptor_t* descriptor)
-  : MIP_Editor(AListener,AWidth,AHeight,AParameters) {
+  //sa_botage_editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, SAT_ParameterArray* AParameters, const clap_plugin_descriptor_t* descriptor)
+  sa_botage_editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight)
+  : SAT_Editor(AListener,AWidth,AHeight) { // ,AParameters) {
+  }
+
+  //----------
+
+  //virtual ~sa_botage_editor() {
+  //  if (MRootWidget) delete MRootWidget;
+  //}
+
+//------------------------------
+public:
+//------------------------------
+
+  bool initEditorWindow(SAT_Window* AWindow, SAT_Plugin* APlugin) {
 
     // root
 
-    MRootWidget = new MIP_PanelWidget(MIP_DRect(0,0,SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT));
-    setRootWidget(MRootWidget);
+    MRootWidget = new SAT_PanelWidget(SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT));
+    AWindow->appendRootWidget(MRootWidget);
     MRootWidget->setFillBackground(true);
     MRootWidget->setBackgroundColor(BACKGROUNDCOLOR);
-    MRootWidget->setDrawBorder(true);
+    MRootWidget->setDrawBorder(false);
     MRootWidget->setBorderColor(0.5);
 
     // header
-
-    MIP_SAHeaderWidget* header  = new MIP_SAHeaderWidget(MIP_DRect(0,0,AWidth,80),descriptor);
-    MRootWidget->appendChildWidget(header);
-
+    
+    const char* format = APlugin->getPluginFormat();
+    SAT_PluginHeaderWidget* plugin_header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,40),"botage",format);
+    MRootWidget->appendChildWidget(plugin_header);
+    
+    // footer
+    
+    SAT_PluginFooterWidget* plugin_footer = new SAT_PluginFooterWidget(SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,20));
+    MRootWidget->appendChildWidget(plugin_footer);    
+    
     // hint
 
-    MHintWidget = new MIP_TextWidget(MIP_DRect(210,65,245,10),"Hello world!");
-    MRootWidget->appendChildWidget(MHintWidget);
-    MHintWidget->setFillBackground(true);
-    MHintWidget->setBackgroundColor(0.23);
-    MHintWidget->setDrawBorder(false);
-    MHintWidget->setBorderColor(MIP_COLOR_GRAY);
-    MHintWidget->setTextSize(9);
-    MHintWidget->setTextColor(0.8);
-    MHintWidget->setTextAlignment(MIP_TEXT_ALIGN_LEFT);
-    MHintWidget->setTextOffset(MIP_DRect(5,0,0,0));
+//    MHintWidget = new SAT_TextWidget(SAT_Rect(210,25,245,10),"Hello world!");
+//    MRootWidget->appendChildWidget(MHintWidget);
+//    MHintWidget->setFillBackground(true);
+//    MHintWidget->setBackgroundColor(0.23);
+//    MHintWidget->setDrawBorder(false);
+//    MHintWidget->setBorderColor(SAT_Grey);
+//    MHintWidget->setTextSize(9);
+//    MHintWidget->setTextColor(0.8);
+//    MHintWidget->setTextAlignment(SAT_TEXT_ALIGN_LEFT);
+//    MHintWidget->setTextOffset(SAT_Rect(5,0,0,0));
 
     // c
 
-    MIP_TextWidget* c_icon = new MIP_TextWidget(MIP_DRect(475,65,10,10),"c");
+    SAT_TextWidget* c_icon = new SAT_TextWidget(SAT_Rect(475,65,10,10),"c");
     MRootWidget->appendChildWidget(c_icon);
-    c_icon->setCursor(MIP_CURSOR_FINGER);
+    c_icon->setCursor(SAT_CURSOR_FINGER);
     c_icon->setTextSize(9);
     c_icon->setTextColor(0.8);
     c_icon->setDrawBorder(false);
     c_icon->setBorderColor(0.5);
     c_icon->setFillBackground(true);
     c_icon->setBackgroundColor(0.2);
-    c_icon->setHint("Config");
+//    c_icon->setHint("Config");
 
     // i
 
-    MIP_TextWidget* i_icon = new MIP_TextWidget(MIP_DRect(460,65,10,10),"i");
+    SAT_TextWidget* i_icon = new SAT_TextWidget(SAT_Rect(460,65,10,10),"i");
     MRootWidget->appendChildWidget(i_icon);
-    i_icon->setCursor(MIP_CURSOR_FINGER);
+    i_icon->setCursor(SAT_CURSOR_FINGER);
     i_icon->setTextSize(9);
     i_icon->setTextColor(0.8);
     i_icon->setDrawBorder(false);
     i_icon->setBorderColor(0.5);
     i_icon->setFillBackground(true);
     i_icon->setBackgroundColor(0.2);
-    i_icon->setHint("Info");
+//    i_icon->setHint("Info");
 
     // pages
 
-    prob_page_button = new MIP_ButtonWidget(MIP_DRect(240+272,5+60,30,10), "Prob",0);
+    prob_page_button = new SAT_ButtonWidget(SAT_Rect(240+272,5+60,30,10));
     MRootWidget->appendChildWidget(prob_page_button);
-    prob_page_button->setHint("Probabilities");
+    prob_page_button->setText("PROB","Prob");
+//    prob_page_button->setHint("Probabilities");
     prob_page_button->setFillBackground(true);
     prob_page_button->setBackgroundColor(0.3);
     prob_page_button->setDrawBorder(false);
     prob_page_button->setTextSize(9);
     prob_page_button->setTextColor(0.6);
 
-    seq_page_button = new MIP_ButtonWidget(MIP_DRect(275+272,5+60,30,10), "Seq",0);
+    seq_page_button = new SAT_ButtonWidget(SAT_Rect(275+272,5+60,30,10));
     MRootWidget->appendChildWidget(seq_page_button);
-    seq_page_button->setHint("Sequence");
+    prob_page_button->setText("SEQ","Seq");
+//    seq_page_button->setHint("Sequence");
     seq_page_button->setFillBackground(true);
     seq_page_button->setBackgroundColor(0.25);
     seq_page_button->setDrawBorder(false);
     seq_page_button->setTextSize(9);
     seq_page_button->setTextColor(0.6);
 
-    perf_page_button = new MIP_ButtonWidget(MIP_DRect(310+272,5+60,30,10), "Perf",0);
+    perf_page_button = new SAT_ButtonWidget(SAT_Rect(310+272,5+60,30,10));
     MRootWidget->appendChildWidget(perf_page_button);
-    perf_page_button->setHint("Perform");
+    prob_page_button->setText("PERF","Perf");
+//    perf_page_button->setHint("Perform");
     perf_page_button->setFillBackground(true);
     perf_page_button->setBackgroundColor(0.25);
     perf_page_button->setDrawBorder(false);
     perf_page_button->setTextSize(9);
     perf_page_button->setTextColor(0.6);
 
-    MPages = new MIP_PagesWidget( MIP_DRect(255,90,357,292));
+    MPages = new SAT_PagesWidget( SAT_Rect(255,90,357,292));
     MRootWidget->appendChildWidget(MPages);
 
-    #include "sa_botage_editor_page_prob.h"
-    #include "sa_botage_editor_page_seq.h"
-    #include "sa_botage_editor_page_perf.h"
-
-    MPages->appendPage(page_prob);
-    MPages->appendPage(page_seq);
-    MPages->appendPage(page_perf);
-
-    MPages->setPage(0);
-
-
+//    #include "sa_botage_editor_page_prob.h"
+//    #include "sa_botage_editor_page_seq.h"
+//    #include "sa_botage_editor_page_perf.h"
+//
+//    MPages->appendPage(page_prob);
+//    MPages->appendPage(page_seq);
+//    MPages->appendPage(page_perf);
+//
+//    MPages->setPage(0);
 
     //------------------------------
     // waveform / buffer
     //------------------------------
 
-    MWaveformWidget = new MIP_CircularWaveformWidget( MIP_DRect(10,90,230,230), WAVEFORM_LINES );
+    MWaveformWidget = new SAT_CircularWaveformWidget( SAT_Rect(10,90,230,230), WAVEFORM_LINES );
     MRootWidget->appendChildWidget(MWaveformWidget);
     MWaveformWidget->setGrid(4,2);
     MWaveformWidget->setFillBackground(false);;
@@ -228,125 +249,124 @@ public:
     MWaveformWidget->setZeroLineColor(0.6);
     MWaveformWidget->setWaveformColor( WAVEFORM_COLOR );
 
-
     // beats
 
-    MNumBeatsWidget = new MIP_DragValueWidget( MIP_DRect(10,330,110,16),"Beats");
+    MNumBeatsWidget = new SAT_DragValueWidget( SAT_Rect(10,330,110,16),"Beats",0);
     MRootWidget->appendChildWidget(MNumBeatsWidget);
     MNumBeatsWidget->setFillBackground(true);
     MNumBeatsWidget->setBackgroundColor( 0.5 );
-    MNumBeatsWidget->setTextColor(MIP_COLOR_BLACK);
+    MNumBeatsWidget->setTextColor(SAT_Black);
     MNumBeatsWidget->setTextSize(11);
-    MNumBeatsWidget->setValueColor(MIP_COLOR_BLACK);
+    MNumBeatsWidget->setValueColor(SAT_Black);
     MNumBeatsWidget->setValueSize(11);
-    MNumBeatsWidget->setHint("Number of beats in buffer");
-    MNumBeatsWidget->setInteractiveValueColor(MIP_COLOR_WHITE);
+//    MNumBeatsWidget->setHint("Number of beats in buffer");
+//    MNumBeatsWidget->setInteractiveValueColor(SAT_White);
 
     connect( MNumBeatsWidget,  AParameters->getItem(PAR_NUM_BEATS) );
 
     // slices
 
-    MNumSlicesWidget = new MIP_DragValueWidget( MIP_DRect(130,330,110,16),"Split Beats");
+    MNumSlicesWidget = new SAT_DragValueWidget( SAT_Rect(130,330,110,16),"Split Beats",0);
     MRootWidget->appendChildWidget(MNumSlicesWidget);
     MNumSlicesWidget->setFillBackground(true);
     MNumSlicesWidget->setBackgroundColor( 0.5 );
-    MNumSlicesWidget->setTextColor(MIP_COLOR_BLACK);
+    MNumSlicesWidget->setTextColor(SAT_Black);
     MNumSlicesWidget->setTextSize(11);
-    MNumSlicesWidget->setValueColor(MIP_COLOR_BLACK);
+    MNumSlicesWidget->setValueColor(SAT_Black);
     MNumSlicesWidget->setValueSize(11);
     MNumSlicesWidget->setHint("Number of slices per beat");
-    MNumSlicesWidget->setInteractiveValueColor(MIP_COLOR_WHITE);
+    MNumSlicesWidget->setInteractiveValueColor(SAT_COLOR_WHITE);
 
     connect( MNumSlicesWidget, AParameters->getItem(PAR_NUM_SLICES) );
 
     // loop env
 
-//    MIP_EnvSliderWidget* env1_slider = new MIP_EnvSliderWidget( MIP_DRect(10,356,110,16), "Loop", 0.1, 0.9 );
-//    MRootWidget->appendChildWidget(env1_slider);
-//    env1_slider->setCursor(MIP_CURSOR_ARROW_LEFT_RIGHT);
-//    env1_slider->setHint("Loop Envelope");
-//    env1_slider->setBackgroundColor(0.4);
-//    env1_slider->setSliderColor(0.6);
-//    env1_slider->setTextColor(MIP_Color(0,0,0,0.5));
-//    env1_slider->setTextSize(9);
-//    env1_slider->setValueColor(0.2);
-//    env1_slider->setBackgroundColor( MIP_Color(0.0, 0.5, 0.5) );
-//    env1_slider->setSliderColor( MIP_Color(0.0, 0.7, 0.7) );
-//    env1_slider->setInteractiveSliderColor( MIP_Color(0.0, 0.9, 0.9) );
-//
-//    connect( env1_slider, 0, AParameters->getItem(PAR_LOOP_ENV_ATTACK) );
-//    connect( env1_slider, 1, AParameters->getItem(PAR_LOOP_ENV_DECAY) );
+    //    SAT_EnvSliderWidget* env1_slider = new SAT_EnvSliderWidget( SAT_Rect(10,356,110,16), "Loop", 0.1, 0.9 );
+    //    MRootWidget->appendChildWidget(env1_slider);
+    //    env1_slider->setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);
+    //    env1_slider->setHint("Loop Envelope");
+    //    env1_slider->setBackgroundColor(0.4);
+    //    env1_slider->setSliderColor(0.6);
+    //    env1_slider->setTextColor(SAT_Color(0,0,0,0.5));
+    //    env1_slider->setTextSize(9);
+    //    env1_slider->setValueColor(0.2);
+    //    env1_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
+    //    env1_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
+    //    env1_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
+    //
+    //    connect( env1_slider, 0, AParameters->getItem(PAR_LOOP_ENV_ATTACK) );
+    //    connect( env1_slider, 1, AParameters->getItem(PAR_LOOP_ENV_DECAY) );
 
-    MIP_SliderWidget* env1a_slider = new MIP_SliderWidget( MIP_DRect(10,356,50,16), "Loop Start", 0.1 );
+    SAT_SliderWidget* env1a_slider = new SAT_SliderWidget( SAT_Rect(10,356,50,16), "Loop Start", 0.1 );
     MRootWidget->appendChildWidget(env1a_slider);
-    env1a_slider->setTextColor(MIP_Color(0,0,0,0.5));
+    env1a_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env1a_slider->setTextSize(9);
     env1a_slider->setDrawValue(false);
     env1a_slider->setValueColor(0.2);
-    env1a_slider->setBackgroundColor( MIP_Color(0.0, 0.5, 0.5) );
-    env1a_slider->setSliderColor( MIP_Color(0.0, 0.7, 0.7) );
-    env1a_slider->setInteractiveSliderColor( MIP_Color(0.0, 0.9, 0.9) );
+    env1a_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
+    env1a_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
+    env1a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
     connect( env1a_slider, AParameters->getItem(PAR_LOOP_ENV_ATTACK) );
 
-    MIP_SliderWidget* env1d_slider = new MIP_SliderWidget( MIP_DRect(10+60,356,50,16), "Loop End", 0.9 );
+    SAT_SliderWidget* env1d_slider = new SAT_SliderWidget( SAT_Rect(10+60,356,50,16), "Loop End", 0.9 );
     MRootWidget->appendChildWidget(env1d_slider);
-    env1d_slider->setTextColor(MIP_Color(0,0,0,0.5));
+    env1d_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env1d_slider->setTextSize(9);
     env1d_slider->setDrawValue(false);
     env1d_slider->setValueColor(0.2);
-    env1d_slider->setBackgroundColor( MIP_Color(0.0, 0.5, 0.5) );
-    env1d_slider->setSliderColor( MIP_Color(0.0, 0.7, 0.7) );
-    env1d_slider->setInteractiveSliderColor( MIP_Color(0.0, 0.9, 0.9) );
+    env1d_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
+    env1d_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
+    env1d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
     connect( env1d_slider, AParameters->getItem(PAR_LOOP_ENV_DECAY) );
 
     // slice env
 
-//    MIP_EnvSliderWidget* env2_slider = new MIP_EnvSliderWidget( MIP_DRect(130,356,110,16), "Slice", 0.1, 0.9 );
-//    MRootWidget->appendChildWidget(env2_slider);
-//    env2_slider->setCursor(MIP_CURSOR_ARROW_LEFT_RIGHT);
-//    env2_slider->setHint("Slice envelope");
-//    env2_slider->setBackgroundColor(0.4);
-//    env2_slider->setSliderColor(0.6);
-//    env2_slider->setTextColor(MIP_Color(0,0,0,0.5));
-//    env2_slider->setTextSize(9);
-//    env2_slider->setValueColor(0.2);
-//    env2_slider->setBackgroundColor( MIP_Color(0.0, 0.5, 0.5) );
-//    env2_slider->setSliderColor( MIP_Color(0.0, 0.7, 0.7) );
-//    env2_slider->setInteractiveSliderColor( MIP_Color(0.0, 0.9, 0.9) );
-//
-//    connect( env2_slider, 0, AParameters->getItem(PAR_SLICE_ENV_ATTACK) );
-//    connect( env2_slider, 1, AParameters->getItem(PAR_SLICE_ENV_DECAY) );
+    //    SAT_EnvSliderWidget* env2_slider = new SAT_EnvSliderWidget( SAT_Rect(130,356,110,16), "Slice", 0.1, 0.9 );
+    //    MRootWidget->appendChildWidget(env2_slider);
+    //    env2_slider->setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);
+    //    env2_slider->setHint("Slice envelope");
+    //    env2_slider->setBackgroundColor(0.4);
+    //    env2_slider->setSliderColor(0.6);
+    //    env2_slider->setTextColor(SAT_Color(0,0,0,0.5));
+    //    env2_slider->setTextSize(9);
+    //    env2_slider->setValueColor(0.2);
+    //    env2_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
+    //    env2_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
+    //    env2_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
+    //
+    //    connect( env2_slider, 0, AParameters->getItem(PAR_SLICE_ENV_ATTACK) );
+    //    connect( env2_slider, 1, AParameters->getItem(PAR_SLICE_ENV_DECAY) );
 
-    MIP_SliderWidget* env2a_slider = new MIP_SliderWidget( MIP_DRect(130,356,50,16), "Slice Start", 0.1 );
+    SAT_SliderWidget* env2a_slider = new SAT_SliderWidget( SAT_Rect(130,356,50,16), "Slice Start", 0.1 );
     MRootWidget->appendChildWidget(env2a_slider);
-    env2a_slider->setTextColor(MIP_Color(0,0,0,0.5));
+    env2a_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env2a_slider->setTextSize(9);
     env2a_slider->setDrawValue(false);
     env2a_slider->setValueColor(0.2);
-    env2a_slider->setBackgroundColor( MIP_Color(0.0, 0.5, 0.5) );
-    env2a_slider->setSliderColor( MIP_Color(0.0, 0.7, 0.7) );
-    env2a_slider->setInteractiveSliderColor( MIP_Color(0.0, 0.9, 0.9) );
+    env2a_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
+    env2a_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
+    env2a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
     connect( env2a_slider, AParameters->getItem(PAR_SLICE_ENV_ATTACK) );
 
-    MIP_SliderWidget* env2d_slider = new MIP_SliderWidget( MIP_DRect(130+60,356,50,16), "Slice End", 0.9 );
+    SAT_SliderWidget* env2d_slider = new SAT_SliderWidget( SAT_Rect(130+60,356,50,16), "Slice End", 0.9 );
     MRootWidget->appendChildWidget(env2d_slider);
-    env2d_slider->setTextColor(MIP_Color(0,0,0,0.5));
+    env2d_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env2d_slider->setTextSize(9);
     env2d_slider->setDrawValue(false);
     env2d_slider->setValueColor(0.2);
-    env2d_slider->setBackgroundColor( MIP_Color(0.0, 0.5, 0.5) );
-    env2d_slider->setSliderColor( MIP_Color(0.0, 0.7, 0.7) );
-    env2d_slider->setInteractiveSliderColor( MIP_Color(0.0, 0.9, 0.9) );
+    env2d_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
+    env2d_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
+    env2d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
     connect( env2d_slider, AParameters->getItem(PAR_SLICE_ENV_DECAY) );
 
     // footer
 
     //double height = ARootWidget->getHeight();
-    //sa_botage_footer* footer  = new sa_botage_footer(MIP_DRect(0,(height - SA_BOTAGE_FOOTER_HEIGHT),width,SA_BOTAGE_FOOTER_HEIGHT));
+    //sa_botage_footer* footer  = new sa_botage_footer(SAT_Rect(0,(height - SA_BOTAGE_FOOTER_HEIGHT),width,SA_BOTAGE_FOOTER_HEIGHT));
     //ARootWidget->appendChildWidget(footer);
 
     // menu
@@ -354,148 +374,153 @@ public:
     MRootWidget->appendChildWidget(fx_type_menu);
 
 
+
+    return true;
   }
 
-  //----------
 
-  virtual ~sa_botage_editor() {
-    if (MRootWidget) delete MRootWidget;
-  }
+    
+
+#if 0
+#endif // 0
+
 
 //------------------------------
 public:
 //------------------------------
 
   bool show() override {
-    uint32_t beats = MParameters->getItem(0)->getValue();
-    uint32_t slices = MParameters->getItem(1)->getValue();
-    MWaveformWidget->setGrid(beats,slices);
-    //double scale = 1.0;
-    //double aspect = (double)MEditorWidth / (double)MEditorHeight;
-    //if (aspect >= MAspectRatio) scale = (double)MEditorHeight / (double)MInitialHeight;
-    //else scale = (double)MEditorWidth / (double)MInitialWidth;
-    //MWindow->setWindowScale(scale);
-    return MIP_Editor::show();
+//    uint32_t beats = MParameters->getItem(0)->getValue();
+//    uint32_t slices = MParameters->getItem(1)->getValue();
+//    MWaveformWidget->setGrid(beats,slices);
+//    //double scale = 1.0;
+//    //double aspect = (double)MEditorWidth / (double)MEditorHeight;
+//    //if (aspect >= MAspectRatio) scale = (double)MEditorHeight / (double)MInitialHeight;
+//    //else scale = (double)MEditorWidth / (double)MInitialWidth;
+//    //MWindow->setWindowScale(scale);
+    return SAT_Editor::show();
   }
 
   //----------
 
-  void do_widget_update(MIP_Widget* AWidget, uint32_t AMode=0) override {
+  //void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+  void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
 
-    MIP_Editor::do_widget_update(AWidget,AMode);
+    SAT_Editor::do_windowListener_update_widget(ASender,AMode,AIndex);
 
-    if (AWidget == MNumBeatsWidget) {
-      double value = AWidget->getValue();
-      MWaveformWidget->setGrid(value);
-      MWaveformWidget->redraw();
-      return;
-    }
+//    if (AWidget == MNumBeatsWidget) {
+//      double value = AWidget->getValue();
+//      MWaveformWidget->setGrid(value);
+//      MWaveformWidget->redraw();
+//      return;
+//    }
+//
+//    if (AWidget == MNumSlicesWidget) {
+//      double value = AWidget->getValue();
+//      MWaveformWidget->setSubGrid(value);
+//      MWaveformWidget->redraw();
+//      return;
+//    }
+//
+//    if (AWidget == prob_page_button) {
+//      MCurrentPage = 0;
+//      MPages->setPage(0);
+//      MPages->redraw();
+//      prob_page_button->setBackgroundColor(0.3);
+//      seq_page_button->setBackgroundColor(0.25);
+//      perf_page_button->setBackgroundColor(0.25);
+//      prob_page_button->redraw();
+//      seq_page_button->redraw();
+//      perf_page_button->redraw();
+//      return;
+//    }
+//
+//    if (AWidget == seq_page_button)  {
+//      MCurrentPage = 1;
+//      MPages->setPage(2); MPages->redraw();
+//      prob_page_button->setBackgroundColor(0.25);
+//      seq_page_button->setBackgroundColor(0.3);
+//      perf_page_button->setBackgroundColor(0.25);
+//      prob_page_button->redraw();
+//      seq_page_button->redraw();
+//      perf_page_button->redraw();
+//      return;
+//    }
+//
+//    if (AWidget == perf_page_button) {
+//      MCurrentPage = 2;
+//      MPages->setPage(3); MPages->redraw();
+//      prob_page_button->setBackgroundColor(0.25);
+//      seq_page_button->setBackgroundColor(0.25);
+//      perf_page_button->setBackgroundColor(0.3);
+//      prob_page_button->redraw();
+//      seq_page_button->redraw();
+//      perf_page_button->redraw();
+//      return;
+//    }
+//
+//    for (uint32_t i=0; i<5; i++) {
+//      if (AWidget == MFXTypeSelector[i]) {
+//        uint32_t it = MFXTypeSelector[i]->getValue();
+//        for (uint32_t j=0; j<5; j++) {
+//          if (i != j) {
+//            // i=clicked, j=other
+//            uint32_t jt = MFXTypeSelector[j]->getValue();
+//            if (it == jt) {
+//              //SAT_Print("swap effect %i <-> %i\n",i,j);
+//
+//              if (it != 0) {
+//
+//                MFXTypeSelector[j]->setSelected(0);
+//                MFXTypeSelector[j]->update();
+//                MFXTypeSelector[j]->redraw();
+//
+//                //double iv1 = 0;//MFXArgKnob[(i*3)  ]->getValue();
+//                //double iv2 = 0;//MFXArgKnob[(i*3)+1]->getValue();
+//                //double iv3 = 0;//MFXArgKnob[(i*3)+2]->getValue();
+//                double jv1 = MFXArgKnob[(j*3)  ]->getValue();
+//                double jv2 = MFXArgKnob[(j*3)+1]->getValue();
+//                double jv3 = MFXArgKnob[(j*3)+2]->getValue();
+//
+//                MFXArgKnob[(i*3)  ]->setValue(jv1);
+//                MFXArgKnob[(i*3)+1]->setValue(jv2);
+//                MFXArgKnob[(i*3)+2]->setValue(jv3);
+//                MFXArgKnob[(i*3)  ]->update();
+//                MFXArgKnob[(i*3)+1]->update();
+//                MFXArgKnob[(i*3)+2]->update();
+//                MFXArgKnob[(i*3)  ]->redraw();
+//                MFXArgKnob[(i*3)+1]->redraw();
+//                MFXArgKnob[(i*3)+2]->redraw();
+//
+//                //MFXArgKnob[(j*3)+0]->setValue(iv1);
+//                //MFXArgKnob[(j*3)+1]->setValue(iv2);
+//                //MFXArgKnob[(j*3)+2]->setValue(iv3);
+//                //MFXArgKnob[(j*3)  ]->update();
+//                //MFXArgKnob[(j*3)+1]->update();
+//                //MFXArgKnob[(j*3)+2]->update();
+//                //MFXArgKnob[(j*3)  ]->redraw();
+//                //MFXArgKnob[(j*3)+1]->redraw();
+//                //MFXArgKnob[(j*3)+2]->redraw();
+//
+//              } // it!=0
+//
+//
+//            } // it==jt
+//          } // i"=j
+//        } // for j
+//      } // AWidget
+//    } // for i
 
-    if (AWidget == MNumSlicesWidget) {
-      double value = AWidget->getValue();
-      MWaveformWidget->setSubGrid(value);
-      MWaveformWidget->redraw();
-      return;
-    }
-
-    if (AWidget == prob_page_button) {
-      MCurrentPage = 0;
-      MPages->setPage(0);
-      MPages->redraw();
-      prob_page_button->setBackgroundColor(0.3);
-      seq_page_button->setBackgroundColor(0.25);
-      perf_page_button->setBackgroundColor(0.25);
-      prob_page_button->redraw();
-      seq_page_button->redraw();
-      perf_page_button->redraw();
-      return;
-    }
-
-    if (AWidget == seq_page_button)  {
-      MCurrentPage = 1;
-      MPages->setPage(2); MPages->redraw();
-      prob_page_button->setBackgroundColor(0.25);
-      seq_page_button->setBackgroundColor(0.3);
-      perf_page_button->setBackgroundColor(0.25);
-      prob_page_button->redraw();
-      seq_page_button->redraw();
-      perf_page_button->redraw();
-      return;
-    }
-
-    if (AWidget == perf_page_button) {
-      MCurrentPage = 2;
-      MPages->setPage(3); MPages->redraw();
-      prob_page_button->setBackgroundColor(0.25);
-      seq_page_button->setBackgroundColor(0.25);
-      perf_page_button->setBackgroundColor(0.3);
-      prob_page_button->redraw();
-      seq_page_button->redraw();
-      perf_page_button->redraw();
-      return;
-    }
-
-    for (uint32_t i=0; i<5; i++) {
-      if (AWidget == MFXTypeSelector[i]) {
-        uint32_t it = MFXTypeSelector[i]->getValue();
-        for (uint32_t j=0; j<5; j++) {
-          if (i != j) {
-            // i=clicked, j=other
-            uint32_t jt = MFXTypeSelector[j]->getValue();
-            if (it == jt) {
-              //MIP_Print("swap effect %i <-> %i\n",i,j);
-
-              if (it != 0) {
-
-                MFXTypeSelector[j]->setSelected(0);
-                MFXTypeSelector[j]->update();
-                MFXTypeSelector[j]->redraw();
-
-                //double iv1 = 0;//MFXArgKnob[(i*3)  ]->getValue();
-                //double iv2 = 0;//MFXArgKnob[(i*3)+1]->getValue();
-                //double iv3 = 0;//MFXArgKnob[(i*3)+2]->getValue();
-                double jv1 = MFXArgKnob[(j*3)  ]->getValue();
-                double jv2 = MFXArgKnob[(j*3)+1]->getValue();
-                double jv3 = MFXArgKnob[(j*3)+2]->getValue();
-
-                MFXArgKnob[(i*3)  ]->setValue(jv1);
-                MFXArgKnob[(i*3)+1]->setValue(jv2);
-                MFXArgKnob[(i*3)+2]->setValue(jv3);
-                MFXArgKnob[(i*3)  ]->update();
-                MFXArgKnob[(i*3)+1]->update();
-                MFXArgKnob[(i*3)+2]->update();
-                MFXArgKnob[(i*3)  ]->redraw();
-                MFXArgKnob[(i*3)+1]->redraw();
-                MFXArgKnob[(i*3)+2]->redraw();
-
-                //MFXArgKnob[(j*3)+0]->setValue(iv1);
-                //MFXArgKnob[(j*3)+1]->setValue(iv2);
-                //MFXArgKnob[(j*3)+2]->setValue(iv3);
-                //MFXArgKnob[(j*3)  ]->update();
-                //MFXArgKnob[(j*3)+1]->update();
-                //MFXArgKnob[(j*3)+2]->update();
-                //MFXArgKnob[(j*3)  ]->redraw();
-                //MFXArgKnob[(j*3)+1]->redraw();
-                //MFXArgKnob[(j*3)+2]->redraw();
-
-              } // it!=0
-
-
-            } // it==jt
-          } // i"=j
-        } // for j
-      } // AWidget
-    } // for i
   }
 
   //----------
 
-  void do_widget_set_hint(MIP_Widget* AWidget, const char* AHint) override {
-    if (strcmp(AHint,MHintWidget->getText()) != 0) {
-      MHintWidget->setText(AHint);
-      MHintWidget->redraw();
-    }
-    MIP_Editor::do_widget_set_hint(AWidget,AHint);
+  void do_windowListener_set_hint(SAT_Widget* AWidget, const char* AHint) override {
+//    if (strcmp(AHint,MHintWidget->getText()) != 0) {
+//      MHintWidget->setText(AHint);
+//      MHintWidget->redraw();
+//    }
+    SAT_Editor::do_windowListener_set_hint(AWidget,AHint);
   }
 
 //------------------------------
@@ -503,6 +528,8 @@ public:
 //------------------------------
 
   void updateWaveformWidget(sa_botage_processor* processor) {
+    
+#if 0
 
     uint32_t buflen = processor->MBufferLength;
     if (buflen > 0) {
@@ -568,11 +595,15 @@ public:
 
     } // buflen
 
+#endif // 0
+
   }
 
   //----------
 
   void updateProbIndicators(sa_botage_processor* processor) {
+    
+#if 0
 
     if (MCurrentPage == 0) {
 
@@ -695,6 +726,9 @@ public:
       }
 
     } // page == 0
+    
+#endif // 0    
+    
   }
 
 };

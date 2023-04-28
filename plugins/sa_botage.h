@@ -66,8 +66,9 @@ public:
 
   bool init() final {
     bool result = SAT_Plugin::init();
-    appendStereoInput();
-    appendStereoOutput();
+    registerDefaultExtensions();
+    appendStereoInputPort();
+    appendStereoOutputPort();
     sa_botage_init_parameters(this);
     return result;
   }
@@ -82,32 +83,52 @@ public:
 
   //----------
 
-  bool gui_create(const char* api, bool is_floating) final {
-    setEditorIsOpen(false);
-    uint32_t width = MInitialEditorWidth;
-    uint32_t height = MInitialEditorHeight;
-    const clap_plugin_descriptor_t* descriptor = getClapDescriptor();
-    SAT_Editor* editor = new sa_botage_editor(this,width,height,&MParameters,descriptor);
-    setEditor(editor);
-    return (editor);
+  //bool gui_create(const char* api, bool is_floating) final {
+  //  setEditorIsOpen(false);
+  //  uint32_t width = MInitialEditorWidth;
+  //  uint32_t height = MInitialEditorHeight;
+  //  const clap_plugin_descriptor_t* descriptor = getClapDescriptor();
+  //  SAT_Editor* editor = new sa_botage_editor(this,width,height,&MParameters,descriptor);
+  //  setEditor(editor);
+  //  return (editor);
+  //}
+
+  SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) final {
+    //SAT_PRINT;
+    //SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight);
+    //return editor;
+    return new sa_botage_editor(AListener,AWidth,AHeight);
   }
 
   //----------
 
-  void processParamValue(const clap_event_param_value_t* event) final {
+  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+    //SAT_PRINT;
+//    SAT_PanelWidget* MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT) );
+//    AWindow->appendRootWidget(MRootPanel);
+    
+    sa_botage_editor* ed = (sa_botage_editor*)AEditor;
+    return ed->initEditorWindow(AWindow,this);
+  }
+
+  //----------
+
+  bool handleParamValue(const clap_event_param_value_t* event) final {
     MProcessor.setParamValue(event->param_id,event->value);
+    return true;
   }
 
   //----------
 
-  void processTransport(const clap_event_transport_t* transport) final {
-    SAT_Plugin::processTransport(transport);
+  bool handleTransport(const clap_event_transport_t* transport) final {
+    SAT_Plugin::handleTransport(transport);
     MProcessor.transport(transport->flags);
+    return true;
   }
 
   //----------
 
-  void processAudioBlock(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext) final {
     MProcessor.processAudioBlock(AContext);
   }
 
@@ -115,14 +136,14 @@ public:
 public:
 //------------------------------
 
-  void on_editor_timer() override {
-    sa_botage_editor* editor = (sa_botage_editor*)getEditor();
-    if (editor && editor->isEditorOpen()) {
-      editor->updateWaveformWidget(&MProcessor);
-      editor->updateProbIndicators(&MProcessor);
-    }
-    SAT_Plugin::on_editor_timer();
-  }
+//  void on_editor_timer() override {
+//    sa_botage_editor* editor = (sa_botage_editor*)getEditor();
+//    if (editor && editor->isEditorOpen()) {
+//      editor->updateWaveformWidget(&MProcessor);
+//      editor->updateProbIndicators(&MProcessor);
+//    }
+//    SAT_Plugin::on_editor_timer();
+//  }
 
 };
 
@@ -135,7 +156,7 @@ public:
 #ifndef SAT_NO_ENTRY
 
   #include "plugin/sat_entry.h"
-  SAT_DEFAULT_ENTRY(sa_botage_descriptor,sa_botage_plugin);
+  SAT_PLUGIN_ENTRY(sa_botage_descriptor,sa_botage_plugin);
 
 #endif
 

@@ -45,7 +45,7 @@ private:
   double    MTextSize         = 10.0;
   
   bool      MDrawHoverEdge    = true;
-  SAT_Color MEdgeColor = SAT_Black;
+  SAT_Color MEdgeColor        = SAT_Black;
   
   double    MHoverDistance    = 5;
   int32_t   MHoverEdge        = 0;
@@ -347,39 +347,76 @@ public:
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
     
     if (MIsDragging) {
-      
-      double value;
-      switch (MDragEdge) {
-        case 1: value = getValue(0); break;
-        case 2: value = getValue(1); break;
-      }
+      double v1 = getValue(0);
+      double v2 = getValue(1);
       
       double sens = 0.001;//MDragSensitivity;
       if (AState & SAT_STATE_CTRL) sens *= 0.1;//MShiftSensitivity;
-      double diff = 0;
-      
-      diff = AXpos - MPreviousXpos;
-      value += (diff * sens);
-      value = SAT_Clamp(value,0,1);
+      double diff = AXpos - MPreviousXpos;
+
+      //double value;
+      //switch (MDragEdge) {
+      //  case 1: v1 = getValue(0); break;
+      //  case 2: v1 = getValue(1); break;
+      //}
       
       switch (MDragEdge) {
-        case 1:
+        case 1: {
+          v1 += (diff * sens);
+          v1 = SAT_Clamp(v1,0,1);
           //SAT_Print("MDragEdge %i value: %f\n",MDragEdge,value);
-          setValue(value,0);
+          setValue(v1,0);
           do_widgetListener_update(this,0,0);
           do_widgetListener_redraw(this,0,0);
           break;
-        case 2:
+        }
+        case 2: {
+          v2 += (diff * sens);
+          v2 = SAT_Clamp(v2,0,1);
           //SAT_Print("MDragEdge %i value: %f\n",MDragEdge,value);
-          setValue(value,1);
+          setValue(v2,1);
           do_widgetListener_update(this,0,1);
           do_widgetListener_redraw(this,0,1);
           break;
-        //case 3:
-        //  do_widgetListener_update(this,0,1);
-        //  do_widgetListener_redraw(this,0,1);
-        //  break;
+        }
+        case 3: {
+          v1 += (diff * sens);
+          v1 = SAT_Clamp(v1,0,1);
+          setValue(v1,0);
+          v2 += (diff * sens);
+          v2 = SAT_Clamp(v2,0,1);
+          setValue(v2,1);
+          do_widgetListener_update(this,0,0);
+          //do_widgetListener_redraw(this,0,0);
+          do_widgetListener_update(this,0,1);
+          //do_widgetListener_redraw(this,0,1);
+          do_widgetListener_redraw(this,0);
+          break;
+        }
       }
+      
+      
+//      v1 += (diff * sens);
+//      v1 = SAT_Clamp(v1,0,1);
+//      
+//      switch (MDragEdge) {
+//        case 1:
+//          //SAT_Print("MDragEdge %i value: %f\n",MDragEdge,value);
+//          setValue(v1,0);
+//          do_widgetListener_update(this,0,0);
+//          do_widgetListener_redraw(this,0,0);
+//          break;
+//        case 2:
+//          //SAT_Print("MDragEdge %i value: %f\n",MDragEdge,value);
+//          setValue(v1,1);
+//          do_widgetListener_update(this,0,1);
+//          do_widgetListener_redraw(this,0,1);
+//          break;
+//        //case 3:
+//        //  do_widgetListener_update(this,0,1);
+//        //  do_widgetListener_redraw(this,0,1);
+//        //  break;
+//      }
       
       
       //SAT_Print("value %f\n",value); // ok.. 0..1

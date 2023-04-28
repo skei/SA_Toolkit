@@ -263,9 +263,8 @@ public:
     
     SAT_Parameter* param = (SAT_Parameter*)getConnection();
     if (param) {
+
       uint32_t state = param->getAutomationState();
-      bool mapped = param->getIsMapped();
-      
       if (state != CLAP_PARAM_INDICATION_AUTOMATION_NONE) {
         //SAT_PRINT;
         double x = mrect.x2() - (4.0 * S);
@@ -275,23 +274,14 @@ public:
         painter->fillCircle(x,y,3*S);
       }
       
+      bool mapped = param->getIsMapped();
       if (mapped) {
         //SAT_PRINT;
+        double x = mrect.x + (4.0 * S);
+        double y = mrect.y + (4.0 * S);
         SAT_Color color = param->getMappedColor();
         painter->setFillColor(color);
-        //double coords[8] = {
-        //  mrect.x,          mrect.y,
-        //  mrect.x + (5*S),  mrect.y,
-        //  mrect.x,          mrect.y + (5*S),
-        //  mrect.x,          mrect.y
-        //};
-        //painter->fillLineStrip(4,coords);
-        double x = mrect.x + (2.0 * S);
-        double y = mrect.y + (2.0 * S);
-        double w = (5.0 * S);
-        double h = (5.0 * S);
-        painter->fillRect(x,y,w,h);
-        // TODO: draw triangle
+        painter->fillCircle(x,y,3*S); // TODO: draw triangle
       }
       
     }
