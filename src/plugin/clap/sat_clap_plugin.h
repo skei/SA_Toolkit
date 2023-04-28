@@ -34,11 +34,13 @@ public:
 public:
 //------------------------------
 
-  const clap_plugin_t* getPlugin() {
+  const
+  clap_plugin_t* getPlugin() {
     return &MPlugin;
   }
 
-  const clap_plugin_descriptor_t* getDescriptor() {
+  const
+  clap_plugin_descriptor_t* getDescriptor() {
     return MPlugin.desc;
   }
 
@@ -234,7 +236,8 @@ private: // draft: ambisonic
 
 protected:
 
-  const clap_plugin_ambisonic_t MAmbisonicExt = {
+  const
+  clap_plugin_ambisonic_t MAmbisonicExt = {
     .get_info = clap_plugin_ambisonic_get_info_callback
   };
 
@@ -256,7 +259,8 @@ private: // ext: audio ports
 
 protected:
 
-  const clap_plugin_audio_ports_t MAudioPortsExt {
+  const
+  clap_plugin_audio_ports_t MAudioPortsExt = {
     .count  = clap_plugin_audio_ports_count_callback,
     .get    = clap_plugin_audio_ports_get_callback
   };
@@ -281,7 +285,8 @@ private: // ext: audio ports activation
 
 protected:
 
-  const clap_plugin_audio_ports_activation_t MAudioPortsActivationExt {
+  const
+  clap_plugin_audio_ports_activation_t MAudioPortsActivationExt = {
     .can_activate_while_processing  = clap_plugin_audio_ports_activation_can_activate_while_processing_callback,
     .set_active                     = clap_plugin_audio_ports_activation_set_active_callback
   };
@@ -310,7 +315,8 @@ private: // ext: audio ports config
 
 protected:
 
-  const clap_plugin_audio_ports_config_t MAudioPortsConfigExt {
+  const
+  clap_plugin_audio_ports_config_t MAudioPortsConfigExt = {
     .count  = clap_plugin_audio_ports_config_count_callback,
     .get    = clap_plugin_audio_ports_config_get_callback,
     .select = clap_plugin_audio_ports_config_select_callback
@@ -328,7 +334,8 @@ private: // draft: check for update
 
 protected:
 
-  const clap_plugin_check_for_update_t MCheckForUpdateExt = {
+  const
+  clap_plugin_check_for_update_t MCheckForUpdateExt = {
     .check = clap_plugin_check_for_update_check_callback
   };
 
@@ -350,7 +357,8 @@ private: // draft: configurable audio ports
 
 protected:
 
-  const clap_plugin_configurable_audio_ports_t MConfigurableAudioPortsExt = {
+  const
+  clap_plugin_configurable_audio_ports_t MConfigurableAudioPortsExt = {
     .is_port_configurable   = clap_plugin_configurable_audio_ports_is_port_configurable_callback,
     .request_configuration  = clap_plugin_configurable_audio_ports_request_configuration_callback
   };
@@ -373,7 +381,8 @@ private: // draft context-menu
 
 protected:
 
-  const clap_plugin_context_menu_t MContextMenuExt = {
+  const
+  clap_plugin_context_menu_t MContextMenuExt = {
     .populate = clap_plugin_context_menu_populate_callback,
     .perform  = clap_plugin_context_menu_perform_callback
   };
@@ -390,7 +399,8 @@ private: // draft: cv
 
 protected:
 
-  const clap_plugin_cv_t MCVExt = {
+  const
+  clap_plugin_cv_t MCVExt = {
     .get_channel_type = clap_plugin_cv_get_channel_type_callback
   };
 
@@ -413,7 +423,8 @@ private: // draft: extensible audio ports
 
 protected:
 
-  const clap_plugin_extensible_audio_ports_t MExtensibleAudioPortsExt = {
+  const
+  clap_plugin_extensible_audio_ports_t MExtensibleAudioPortsExt = {
     .add_port     = clap_plugin_extensible_audio_ports_add_port_callback,
     .remove_port  = clap_plugin_extensible_audio_ports_remove_port_callback
   };
@@ -515,7 +526,8 @@ private: // ext: gui
 
 protected:
 
-  const clap_plugin_gui_t MGuiExt {
+  const
+  clap_plugin_gui_t MGuiExt = {
     .is_api_supported   = clap_plugin_gui_is_api_supported_callback,
     .get_preferred_api  = clap_plugin_gui_get_preferred_api_callback,
     .create             = clap_plugin_gui_create_callback,
@@ -545,7 +557,8 @@ private: // ext: latency
 
 protected:
 
-  const clap_plugin_latency_t MLatencyExt = {
+  const
+  clap_plugin_latency_t MLatencyExt = {
     .get = clap_plugin_latency_get_callback
   };
 
@@ -567,7 +580,8 @@ private: // draft: midi mappings
 
 protected:
 
-  const clap_plugin_midi_mappings_t MMidiMappingsExt = {
+  const
+  clap_plugin_midi_mappings_t MMidiMappingsExt = {
     .count  = clap_plugin_midi_mappings_count_callback,
     .get    = clap_plugin_midi_mappings_get_callback
   };
@@ -590,7 +604,8 @@ private: // ext: note names
 
 protected:
 
-  const clap_plugin_note_name MNoteNameExt = {
+  const
+  clap_plugin_note_name MNoteNameExt = {
     .count  = clap_plugin_note_name_count_callback,
     .get    = clap_plugin_note_name_get_callback
   };
@@ -613,7 +628,8 @@ private: // ext: note ports
 
 protected:
 
-  const clap_plugin_note_ports_t MNotePortsExt {
+  const
+  clap_plugin_note_ports_t MNotePortsExt = {
     .count  = clap_plugin_note_ports_count_callback,
     .get    = clap_plugin_note_ports_get_callback
   };
@@ -626,21 +642,24 @@ private: // draft: param indication
 
   static
   void clap_plugin_param_indication_set_mapping_callback(const clap_plugin_t *plugin, clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {
+    SAT_PRINT; // not printed
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
     plug->param_indication_set_mapping(param_id,has_mapping,color,label,description);
   }
 
   static
   void clap_plugin_param_indication_set_automation_callback(const clap_plugin_t *plugin, clap_id param_id, uint32_t automation_state, const clap_color_t *color) {
+    SAT_PRINT; // printed
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
     plug->param_indication_set_automation(param_id,automation_state,color);
   }
 
 protected:
 
-  const clap_plugin_param_indication_t MParamIndicationExt = {
+  const
+  clap_plugin_param_indication_t MParamIndicationExt = {
     .set_mapping    = clap_plugin_param_indication_set_mapping_callback,
-    .set_automation = clap_plugin_param_indication_set_automation_callback,
+    .set_automation = clap_plugin_param_indication_set_automation_callback
   };
 
 //------------------------------
@@ -707,7 +726,8 @@ private: // ext: posix fd support
 
 protected:
 
-  const clap_plugin_posix_fd_support_t MPosixFdSupportExt = {
+  const
+  clap_plugin_posix_fd_support_t MPosixFdSupportExt = {
     .on_fd = clap_plugin_posix_fd_support_on_fd_callback
   };
 
@@ -723,7 +743,8 @@ private: // draft: preset load
 
 protected:
 
-  const clap_plugin_preset_load_t MPresetLoadExt = {
+  const
+  clap_plugin_preset_load_t MPresetLoadExt = {
     //.from_file = clap_plugin_preset_load_from_file_callback
     .from_location = clap_plugin_preset_load_from_location_callback
   };
@@ -746,7 +767,8 @@ private: // draft: remote controls
 
 protected:
 
-  const clap_plugin_remote_controls_t MRemoteControlsExt = {
+  const
+  clap_plugin_remote_controls_t MRemoteControlsExt = {
     .count  = clap_plugin_remote_controls_count_callback,
     .get    = clap_plugin_remote_controls_get_callback
   };
@@ -769,7 +791,8 @@ private: // ext: render
 
 protected:
 
-  const clap_plugin_render_t MRenderExt = {
+  const
+  clap_plugin_render_t MRenderExt = {
     .has_hard_realtime_requirement  = clap_plugin_render_has_hard_realtime_requirement_callback,
     .set                            = clap_plugin_render_set_callback
   };
@@ -804,7 +827,8 @@ private: // draft: resource-directory
 
 protected:
 
-  const clap_plugin_resource_directory_t MResourceDirectoryExt = {
+  const
+  clap_plugin_resource_directory_t MResourceDirectoryExt = {
     .set_directory    = clap_plugin_resource_directory_set_directory_callback,
     .collect          = clap_plugin_resource_directory_collect_callback,
     .get_files_count  = clap_plugin_resource_directory_get_files_count_callback,
@@ -829,7 +853,8 @@ private: // ext: state
 
 protected:
 
-  const clap_plugin_state_t MStateExt = {
+  const
+  clap_plugin_state_t MStateExt = {
     .save = clap_plugin_state_save_callback,
     .load = clap_plugin_state_load_callback
   };
@@ -852,7 +877,8 @@ private: // draft: state-context
 
 protected:
 
-  const clap_plugin_state_context_t MStateContextExt = {
+  const
+  clap_plugin_state_context_t MStateContextExt = {
     .save = clap_plugin_state_context_save_callback,
     .load = clap_plugin_state_context_load_callback
   };
@@ -875,7 +901,8 @@ private: // draft: surround
 
 protected:
 
-  const clap_plugin_surround_t MSurroundExt = {
+  const
+  clap_plugin_surround_t MSurroundExt = {
     .get_channel_map  = clap_plugin_surround_get_channel_map_callback,
     .changed          = clap_plugin_surround_changed_callback
   };
@@ -892,7 +919,8 @@ private: // ext: tail
 
 protected:
 
-  const clap_plugin_tail_t MTailExt = {
+  const
+  clap_plugin_tail_t MTailExt = {
     .get = clap_plugin_tail_get_callback
   };
 
@@ -908,7 +936,8 @@ private: // ext: thread pool
 
 protected:
 
-  const clap_plugin_thread_pool_t MThreadPoolExt = {
+  const
+  clap_plugin_thread_pool_t MThreadPoolExt = {
     .exec = clap_plugin_thread_pool_exec_callback
   };
 
@@ -924,7 +953,8 @@ private: // ext: timer support
 
 protected:
 
-  const clap_plugin_timer_support_t MTimerSupportExt = {
+  const
+  clap_plugin_timer_support_t MTimerSupportExt = {
     .on_timer = clap_plugin_timer_support_on_timer_callback
   };
 
@@ -940,7 +970,8 @@ private: // draft: track info
 
 protected:
 
-  const clap_plugin_track_info_t MTrackInfoExt = {
+  const
+  clap_plugin_track_info_t MTrackInfoExt = {
     .changed = clap_plugin_track_info_changed_callback
   };
 
@@ -963,7 +994,8 @@ private: // draft: triggers
 
 protected:
 
-  const clap_plugin_triggers_t MTriggersExt = {
+  const
+  clap_plugin_triggers_t MTriggersExt = {
     .count = clap_plugin_triggers_count_callback,
     .get_info = clap_plugin_triggers_get_info_callback
   };
@@ -980,7 +1012,8 @@ private: // draft: tuning
 
 protected:
 
-  const clap_plugin_tuning_t MTuningExt = {
+  const
+  clap_plugin_tuning_t MTuningExt = {
     .changed = clap_plugin_tuning_changed_callback
   };
 
@@ -996,7 +1029,8 @@ private: // voice info
 
 protected:
 
-  const clap_plugin_voice_info_t MVoiceInfoExt = {
+  const
+  clap_plugin_voice_info_t MVoiceInfoExt = {
     .get = clap_plugin_voice_info_get_callback
   };
 

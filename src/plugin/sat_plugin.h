@@ -285,7 +285,7 @@ public: // plugin
   const void* get_extension(const char *id) override {
     const void* result = MExtensions.getItem(id);
     SAT_Log("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
-    //SAT_Print("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
+    SAT_Print("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
     return result;
   }
 
@@ -2500,6 +2500,10 @@ private: // handle events
 //    uint32_t  process_count = MProcessContext.counter;
 //    MParameters[index]->setLastModulated(process_count);
 //    MParameters[index]->setLastModulatedValue(value);
+
+    //SAT_Assert( MEditor );
+    //SAT_Assert( MEditor->isOpen() == true );
+
     if (MEditor && MEditor->isOpen()) {
       queueModFromHostToGui(index,value);
     }
