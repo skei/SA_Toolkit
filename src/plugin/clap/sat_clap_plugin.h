@@ -642,16 +642,16 @@ private: // draft: param indication
 
   static
   void clap_plugin_param_indication_set_mapping_callback(const clap_plugin_t *plugin, clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {
-    SAT_PRINT;      // not printed
-    SAT_Breakpoint; // not triggered
+//    SAT_PRINT;      // not printed
+//    SAT_Breakpoint; // not triggered
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
     plug->param_indication_set_mapping(param_id,has_mapping,color,label,description);
   }
 
   static
   void clap_plugin_param_indication_set_automation_callback(const clap_plugin_t *plugin, clap_id param_id, uint32_t automation_state, const clap_color_t *color) {
-    SAT_PRINT;      // printed
-    SAT_Breakpoint; // triggered
+//    SAT_PRINT;      // printed
+//    SAT_Breakpoint; // triggered
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
     plug->param_indication_set_automation(param_id,automation_state,color);
   }
