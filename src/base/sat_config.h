@@ -113,6 +113,15 @@
   //----------
 
   /*
+    breakpoint
+  */
+
+  #define SAT_DEBUG_BREAKPOINT  
+  
+
+  //----------
+
+  /*
     call stack
   */
 

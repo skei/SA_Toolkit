@@ -24,6 +24,7 @@
 
 #ifndef SAT_DEBUG
   #undef SAT_DEBUG_ASSERT
+  #undef SAT_DEBUG_BREAKPOINT  
   #undef SAT_DEBUG_CALL_STACK
   #undef SAT_DEBUG_CRASH_HANDLER
   #undef SAT_DEBUG_MEMTRACE
@@ -61,6 +62,22 @@
   #define SAT_Assert(x) {}
   
 #endif
+
+//------------------------------
+//
+//------------------------------
+
+#ifdef SAT_DEBUG_BREAKPOINT
+  #define SAT_Breakpoint asm("int $0x3\n")
+  //#define SAT_Error(name, fmt, ...) fprintf( stderr, "S3_ERROR " #name ": " fmt "\n", __VA_ARGS__ )
+
+#else // S3_DEBUG
+
+  #define SAT_Breakpoint {}
+  //#define SAT_Error(name, fmt, ...) {}
+
+#endif
+
 
 //------------------------------
 //
