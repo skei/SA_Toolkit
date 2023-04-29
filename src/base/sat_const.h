@@ -223,6 +223,11 @@
 #define SAT_TEXT_ALIGN_TOP                      0x04
 #define SAT_TEXT_ALIGN_BOTTOM                   0x08
 
+#define SAT_TYPE_NONE                           0
+#define SAT_TYPE_BYTE                           1
+#define SAT_TYPE_UINT32                         2
+#define SAT_TYPE_DOUBLE                         3
+
 /*
   https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
   0 Reset/Normal, 1 Bold, 2 Faint, 3 Italics, 4 Underlined

@@ -19,10 +19,6 @@ class SAT_Editor
 private:
 //------------------------------
 
-//  // set in destroy()
-//  // checked in 
-//  std::atomic<bool>     MIsClosing        {false};
-
   uint32_t              MWidth            = 0;
   uint32_t              MHeight           = 0;
   bool                  MProportional     = false;
@@ -33,8 +29,6 @@ private:
   SAT_EditorListener*   MListener         = nullptr;
   SAT_Window*           MWindow           = nullptr;
   bool                  MPreparedWidgets  = false;
-  
-  
 
 //------------------------------
 public:
@@ -95,19 +89,12 @@ public:
   // parameters are in clap-space
   // widgets are 0..1
   
-  
-  virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, sat_param_t AValue) {
+  virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue) {
     //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
     SAT_Widget* widget = (SAT_Widget*)AParam->getConnection();
     if (widget) {
-//      sat_param_t normalized_value = AParam->normalizeValue(AValue);
-//      widget->setValue(normalized_value);
-      //widget->setValue(AValue);
       double v = AParam->normalizeValue(AValue);
-      widget->setValue(v,AIndex);
-      
-      
-
+      widget->setValue(v,ASubIndex);
     }
   }
 
@@ -122,7 +109,6 @@ public:
   // widgets are 0..1
 
   virtual void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
-    //SAT_Assert(!MIsClosing);
     if (MIsOpen) {
       //SAT_PaintContext* pc = MWindow->getPaintContext();
       //uint32_t counter = pc->counter;
@@ -146,8 +132,6 @@ public:
   // AValue, clap-space
 
   virtual void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
-    //SAT_Assert(!MIsClosing);
-    
     if (MIsOpen) {
       SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
       if (widget) {
@@ -193,8 +177,6 @@ public: // window listener
   */
 
   void do_windowListener_timer(SAT_Window* ASender, double AElapsed) override { // final
-    //SAT_Assert(!MIsClosing);
-  
     //SAT_PRINT;
     if (MListener) MListener->do_editorListener_timer();
     //on_window_timer();
@@ -203,10 +185,9 @@ public: // window listener
   //----------
   
   void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
-    //SAT_Assert(!MIsClosing);
     if (MListener) {
       SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection(AIndex);
-      double value = ASender->getValue(AIndex);
+      double value = ASender->getValue(AIndex); // 0..1
       //uint32_t parm_index = ASender->getConnectionIndex();
       if (param) {
         uint32_t param_index = param->getIndex();
@@ -220,7 +201,6 @@ public: // window listener
   //----------
 
   void do_windowListener_redraw_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
-    //SAT_Assert(!MIsClosing);
     //SAT_PRINT;
   }
 

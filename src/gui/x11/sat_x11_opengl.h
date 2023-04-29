@@ -365,8 +365,10 @@ public: // extensions
   // make context current before calling this
 
   bool loadExtensions() {
-    //SAT_Print("calling sogl_loadOpenGL\n");
-    if (!sogl_loadOpenGL()) {
+    SAT_Print("calling sogl_loadOpenGL\n");
+    int result = sogl_loadOpenGL();
+    SAT_Print("sogl_loadOpenGL() says: %i\n",result);
+    if (!result) {
       SAT_Print("sogl_loadOpenGL() failed\n");
       const char** failures = sogl_getFailures();
       while (*failures) {
@@ -375,8 +377,6 @@ public: // extensions
       }
       return false;
     }
-    //int result = sogl_loadOpenGL();
-    //SAT_Print("sogl_loadOpenGL() says: %i\n",result);
     return true;
   }
 

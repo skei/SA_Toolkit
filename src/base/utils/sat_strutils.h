@@ -248,6 +248,26 @@ uint32_t SAT_HashString(const char* buffer) {
 
 //----------
 
+void SAT_HexDecode(void* ADst, char* ASrc, uint32_t AType) {
+  //TODO
+}
+
+//----------
+
+void SAT_HexEncode(char* ADst, uint8_t* ASrc, uint32_t ANum, uint32_t AType) {
+  uint8_t*  src = ASrc;
+  char*     dst = ADst;
+  for (uint32_t i=0; i<ANum; i++) {
+    uint8_t value = *src++;
+    uint32_t hi_nibble = (value & 0xf0) >> 4;
+    uint32_t lo_nibble = (value & 0x0f);
+    *dst++ = SAT_HEX_TABLE[ hi_nibble ];
+    *dst++ = SAT_HEX_TABLE[ lo_nibble ];
+  } // fror
+}
+
+//----------
+
 /*
   assume APos is valid
 */

@@ -223,7 +223,10 @@
           page3->appendChildWidget(s);
           s->setTextSize(8);
           s->setValueSize(8);
-          if (i==0) AEditor->connect(s,getParameter(3));
+          if (i == 0) {
+            AEditor->connect(s,getParameter(3));
+            s->setSnap(false);
+          }
         }
 
       tabs->selectPage(0);

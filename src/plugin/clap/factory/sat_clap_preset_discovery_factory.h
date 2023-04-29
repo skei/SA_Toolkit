@@ -92,9 +92,13 @@
   //----------
 
   // Destroys the preset provider
+  
+  // ??? is this never called?
+  // is bitwig keeping it loaded as long as the presets might be needed?
 
   void clap_preset_discovery_provider_destroy_callback(const struct clap_preset_discovery_provider *provider) {
     SAT_PRINT;
+    SAT_Breakpoint;
   }
 
   //----------

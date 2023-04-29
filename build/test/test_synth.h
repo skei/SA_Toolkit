@@ -83,15 +83,16 @@ public:
 
   bool init() final {
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
+    
     registerAllExtensions();
     appendClapNoteInputPort();
     appendStereoOutputPort();
-    appendParameter(new SAT_Parameter(   "Param1", 0.1       ));
-    appendParameter(new SAT_Parameter(   "Param2", 0.4, -2, 4));
-    appendParameter(new SAT_Parameter(   "Param3", 0.7,  0, 2));
-    appendParameter(new SAT_IntParameter("Param4", 0,   -5, 5));
-    appendParameter(new SAT_Parameter("P4", 0.2));
-    appendParameter(new SAT_Parameter("P5", 0.8));
+    appendParameter(new SAT_Parameter(    "Param1", 0.1        ));
+    appendParameter(new SAT_Parameter(    "Param2", 0.4, -2, 4 ));
+    appendParameter(new SAT_Parameter(    "Param3", 0.7,  0, 2 ));
+    appendParameter(new SAT_IntParameter( "Param4", 0,   -5, 5 ));
+    appendParameter(new SAT_Parameter(    "P4",     0.2        ));
+    appendParameter(new SAT_Parameter(    "P5",     0.8        ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     SAT_Host* host = getHost();

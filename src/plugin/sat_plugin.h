@@ -57,14 +57,12 @@ private:
 //------------------------------
 
   
-  // set in gui_destroy
-  // checked in handleParamModEvent
+  // set in gui_create (false), gui_destroy (true)
+  // checked in handleParamValueEvent, handleParamModEvent
   std::atomic<bool>                 MEditorIsClosing                              {false};
 
   const char*                       MPluginFormat                                 = "CLAP";
-
   SAT_Host*                         MHost                                         = nullptr;
-  
   SAT_Editor*                       MEditor                                       = nullptr;
   
   SAT_Dictionary<const void*>       MExtensions                                   = {};
@@ -1758,34 +1756,22 @@ public: // editor
   // see also gui_create (calculating default editor size if not defined)
 
   virtual bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
-
     double width  = AWindow->getInitialWidth();
-    //double height = AWindow->getInitialHeight();    
-    //double scale  = AWindow->getScale();
-    
-    //AEditor->get_size(&width,&height);
-    //SAT_Print("width %.f height %.f scale %.2f\n",width,height,scale);
-    
     SAT_PanelWidget* root = new SAT_PanelWidget(0);
     AWindow->appendRootWidget(root);
     root->setFillBackground(false);
-  
     const clap_plugin_descriptor_t* descriptor = getDescriptor();
     const char* format = getPluginFormat();
     const char* name = descriptor->name;
-    
     SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,width,40),name,format);
     root->appendChildWidget(header);
-    
     SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(SAT_Rect(0,0,width,20));
     root->appendChildWidget(footer);
-    
     SAT_PanelWidget* panel = new SAT_PanelWidget(0);
     root->appendChildWidget(panel);
     panel->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
     panel->setInnerBorder(SAT_Rect(10,10,10,10));
     panel->setSpacing(SAT_Point(5,5));
-    
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
       double x = 10;
@@ -1797,13 +1783,6 @@ public: // editor
       slider->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
       AEditor->connect(slider,getParameter(i));
     }
-  
-    //SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(100,140,200,200),"Knob",0.5);
-    //root->appendChildWidget(knob);
-    //knob->setArcThickness(20);
-    //knob->setTextSize(20);
-    //knob->setValueSize(50);    
-    
     return true;
   }
 
@@ -1832,13 +1811,9 @@ public: // editor listener
 
   void do_editorListener_parameter_update(uint32_t AIndex, sat_param_t AValue) override {
     //SAT_PRINT;
-    
     // parameters are in clap-space
     // widgets are 0..1
-    
-    //double value = AValue;
     double value = MParameters[AIndex]->denormalizeValue(AValue);
-    //SAT_Print("AIndex %i AValue %f value %f\n",AIndex,AValue,value);
     setParameterValue(AIndex,value);
     queueParamFromGuiToHost(AIndex,value);
     queueParamFromGuiToAudio(AIndex,value);
@@ -2197,12 +2172,12 @@ public: // parameters
     for (uint32_t i=0; i<num; i++) {
       SAT_Parameter* param = MParameters[i];
       double value = MParameters[i]->getValue();//getDefaultValue();
-      
       // parameters are in clap-space
       // widgets are 0..1
+      uint32_t sub = param->getConnectionIndex();
+      //SAT_Print("sub %i\n",sub);
       
-      //double value = MParameters[i]->getNormalizedValue();//getDefaultValue();
-      MEditor->initParameterValue(param,i,value);
+      MEditor->initParameterValue(param,i,sub,value); // (arg value  = clap space)
     }
   }
 

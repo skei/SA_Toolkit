@@ -178,8 +178,10 @@ public:
       //else {
         
         double value = getValue();
-        //SAT_Parameter* param = (SAT_Parameter*)getConnection();
-        //if (param) value = param->getNormalizedValue();
+        
+//        SAT_Parameter* param = (SAT_Parameter*)getConnection();
+//        if (param) value = param->normalizeValue(value);
+        
         //SAT_Print("%f\n",value);
         MDragValue = value;
         
@@ -245,10 +247,9 @@ public:
       if (MSnap && !(AState & SAT_STATE_SHIFT)) {
         value = snapValue(value);
       }
-      
       value = SAT_Clamp(value,0,1);
       setValue(value);
-      //SAT_Print("value %f\n",value); // ok.. 0..1
+
       do_widgetListener_update(this,0);
       do_widgetListener_redraw(this,0);
     }

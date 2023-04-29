@@ -60,6 +60,7 @@ private:
   double                MValues[SAT_WIDGET_MAX_VALUES]      = {0};
   double                MModulations[SAT_WIDGET_MAX_VALUES] = {0};
   void*                 MConnections[SAT_WIDGET_MAX_VALUES] = {0};
+  uint32_t              MNumConnections                     = 1;
   
   bool                  MAutoClip                           = true;
   bool                  MAutoHoverCursor                    = true;
@@ -120,6 +121,7 @@ public:
   virtual int32_t             getMouseCursor()                  { return MMouseCursor; }
   virtual const char*         getName()                         { return MName; }
   virtual uint32_t            getNumChildWidgets()              { return MChildWidgets.size(); }
+  virtual uint32_t            getNumConnections()               { return MNumConnections; }
   virtual SAT_WidgetOwner*    getOwner()                        { return MOwner; }
   virtual SAT_Widget*         getParentWidget()                 { return MParentWidget; }
   virtual SAT_Rect            getRect()                         { return MRect; }
@@ -214,6 +216,9 @@ public: // hierarchy
   
   virtual void connect(void* AParameter, uint32_t AIndex=0) {
     MConnections[AIndex] = AParameter;
+    if ((AIndex + 1) > MNumConnections) {
+      MNumConnections = AIndex + 1;
+    }
   }
 
   //----------
