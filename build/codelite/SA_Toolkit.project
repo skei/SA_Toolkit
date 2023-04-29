@@ -380,10 +380,12 @@
         <File Name="../../src/extern/reaper/localize-import.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="ara">
-        <File Name="../../src/extern/ara/ARAVST3.h"/>
-        <File Name="../../src/extern/ara/ARAInterface.h"/>
-        <File Name="../../src/extern/ara/ARACLAP.h"/>
-        <File Name="../../src/extern/ara/ARAAudioFileChunks.h"/>
+        <VirtualDirectory Name="arasdk">
+          <File Name="../../src/extern/ara/arasdk/ARAVST3.h"/>
+          <File Name="../../src/extern/ara/arasdk/ARAInterface.h"/>
+          <File Name="../../src/extern/ara/arasdk/ARACLAP.h"/>
+          <File Name="../../src/extern/ara/arasdk/ARAAudioFileChunks.h"/>
+        </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="xjson">
         <File Name="../../src/extern/xjson/xjson.h"/>

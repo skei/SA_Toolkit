@@ -56,10 +56,17 @@ class SAT_Plugin
 private:
 //------------------------------
 
+  
+  // set in gui_destroy
+  // checked in handleParamModEvent
+  std::atomic<bool>                 MEditorIsClosing                              {false};
+
   const char*                       MPluginFormat                                 = "CLAP";
 
   SAT_Host*                         MHost                                         = nullptr;
+  
   SAT_Editor*                       MEditor                                       = nullptr;
+  
   SAT_Dictionary<const void*>       MExtensions                                   = {};
   SAT_ParameterArray                MParameters                                   = {};
   SAT_AudioPortArray                MAudioInputPorts                              = {};
@@ -673,6 +680,7 @@ public: // gui
   // see also initEditorWindow (default editor)
   
   bool gui_create(const char *api, bool is_floating) override {
+    MEditorIsClosing = false;
     //SAT_Print("api %s is_floating %i\n",api,is_floating);
     if (is_floating == true) return false;
 
@@ -686,22 +694,16 @@ public: // gui
     // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
     if ((MInitialEditorWidth <= 0) || (MInitialEditorHeight <= 0)) {
       uint32_t num = MParameters.size();
-      
       double w =  300 +             // slider width
                   10 + 10;          // inner border (top/bottom)
-      
       double h =  40 +              // header
                   20 +              // footer
                   10 + 10 +         // inner border
                   (num * 20) +      // sliders
                   ((num - 1) * 5);  // spacing
-                  
       double s =  2.0;
-      
       setInitialEditorSize(w,h,s);
-      
     }
-
     uint32_t w = (double)MInitialEditorWidth * MInitialEditorScale;
     uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
     MEditor = createEditor(this,w,h);//MInitialEditorWidth,MInitialEditorHeight);
@@ -719,8 +721,12 @@ public: // gui
 
   void gui_destroy() override {
     //SAT_Print("\n");
+    MEditorIsClosing = true;
     MEditor->destroy();
     delete MEditor;
+    //SAT_Print("MEditor: %p\n");
+    //MEditor = (SAT_Editor*)0xdeadbeef;
+    //SAT_Print("MEditor: %p\n");
   }
 
   //----------
@@ -1215,7 +1221,7 @@ public: // remote controls
         }
         
         for (uint32_t i=num; i<8; i++) {
-          SAT_Print("%i = %i\n",i,i);
+          SAT_Print("%i = CLAP_INVALID_ID\n",i);
           page->param_ids[i] = CLAP_INVALID_ID;
         }
         
@@ -1886,7 +1892,9 @@ public: // queues
       // parameters are in clap-space
       // widgets are 0..1
       
-      MEditor->updateParameterFromHost(parameter,item.value);
+      if (MEditor && MEditor->isOpen()) {
+        MEditor->updateParameterFromHost(parameter,item.value);
+      }
     }
     //if (count > 0) { SAT_Print("flushParamFromHostToGui: %i events\n",count); }
   }
@@ -1931,7 +1939,11 @@ public: // queues
     while (MModFromHostToGuiQueue.read(&item)) {
       count += 1;
       SAT_Parameter* parameter = MParameters[item.index];
-      MEditor->updateModulationFromHost(parameter,item.value);
+
+      if (MEditor && MEditor->isOpen()) {
+        MEditor->updateModulationFromHost(parameter,item.value);
+      }
+      
     }
     //if (count > 0) { SAT_Print("flushModFromHostToGui: %i events\n",count); }
   }
@@ -2480,8 +2492,10 @@ private: // handle events
 //    uint32_t  process_count = MProcessContext.counter;
 //    MParameters[index]->setLastUpdated(process_count);
 //    MParameters[index]->setLastUpdatedValue(value);
-    if (MEditor && MEditor->isOpen()) {
-      queueParamFromHostToGui(index,value);
+    if (!MEditorIsClosing) {
+      if (MEditor && MEditor->isOpen()) {
+        queueParamFromHostToGui(index,value);
+      }
     }
     handleParamValue(event);
   }
@@ -2494,18 +2508,20 @@ private: // handle events
   */
 
   void handleParamModEvent(const clap_event_param_mod_t* event) {
+    //SAT_Assert(event);
+    //SAT_Assert(!MEditorIsClosing);
     uint32_t  index   = event->param_id;
     double    value   = event->amount;
     MParameters[index]->setModulation(value);
+    
 //    uint32_t  process_count = MProcessContext.counter;
 //    MParameters[index]->setLastModulated(process_count);
 //    MParameters[index]->setLastModulatedValue(value);
 
-    //SAT_Assert( MEditor );
-    //SAT_Assert( MEditor->isOpen() == true );
-
-    if (MEditor && MEditor->isOpen()) {
-      queueModFromHostToGui(index,value);
+    if (!MEditorIsClosing) {
+      if (MEditor && MEditor->isOpen()) {
+        queueModFromHostToGui(index,value);
+      }
     }
     handleParamMod(event);
   }

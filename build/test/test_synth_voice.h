@@ -30,7 +30,7 @@ public:
 //------------------------------
 
   void init(uint32_t AIndex, SAT_VoiceContext* AContext) {
-    SAT_Print("AIndex %i\n",AIndex);
+    //SAT_Print("AIndex %i\n",AIndex);
     MIndex = AIndex;
     MContext = AContext;
     srate = AContext->sample_rate;

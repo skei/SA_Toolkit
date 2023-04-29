@@ -63,7 +63,8 @@ private:
   // set in on_window_paint
   // checked in on_window_timer
   std::atomic<bool>   MIsPainting {false};
-  std::atomic<bool>   MIsClosing  {false};
+  
+//  std::atomic<bool>   MIsClosing  {false};
 
 //------------------------------
 private:

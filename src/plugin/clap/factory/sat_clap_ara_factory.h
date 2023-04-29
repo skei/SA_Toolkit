@@ -2,7 +2,7 @@
 #define sat_clap_ara_factory_included
 //----------------------------------------------------------------------
 
-#include "extern/ara/ARACLAP.h"
+#include "extern/ara/arasdk/ARACLAP.h"
 
 #if 0
 

@@ -71,9 +71,6 @@ private:
   SAT_VoicesWidget*   MVoicesWidget   = nullptr;
   SAT_WaveformWidget* MWaveformWidget = nullptr;
   
-  double  MTestValue  = 0.0;
-  double  qwe2        = 1.0;
-
 //------------------------------
 public:
 //------------------------------
@@ -289,7 +286,11 @@ public:
 
 #endif
 
-//----------
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 #undef PLUGIN_NAME
 #undef EDITOR_WIDTH

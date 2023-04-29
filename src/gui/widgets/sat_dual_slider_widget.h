@@ -454,7 +454,7 @@ public:
   
   void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
     //SAT_Print("MHoverEdge %i\n",MHoverEdge);
-    if (MHoverEdge != 0) {
+    if ((MHoverEdge != 0) && (!MIsDragging)) {
       MHoverEdge = 0;
       do_widgetListener_redraw(this,0);
     }
