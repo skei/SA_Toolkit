@@ -1,89 +1,101 @@
 
-----------------------------------------------------------------------
-  base
-----------------------------------------------------------------------
+======================================================================
 
---------------------
-  bugs
---------------------
+base
+
+======================================================================
+
+  ------------------------------
+    bugs
+  ------------------------------
 
 * random cpu spikes in bitwig (synth)
-
   4-5 seconds interval
   performance meter in bitwig says they last around 30 ms
   (no spikes with internal devices)
-  
   when i select "inside bitwig" or what it's called, so that the plugins
   are called within bitwig, and not as a separate process, there's no
   spikes.. something related to context switching? thread priorities?
-  
   similar spiking with u-he synths too, so it'æs not my code..
   no similar reports in bitwig forums..
-  so it's almost certainly my pipewire setup..
+  so it might be caused by my pipewire setup..
   investigate...
   
---------------------
-  todo
---------------------
+  ------------------------------
+    todo
+  ------------------------------
 
 * 'delete this'
-
   is the 'delete this' in SAT_Plugin.destroy() correct/working?
   printouts in destructors indicates it works..
   but memtrace, and also memcheck (codelite plugin, valgrind?)
   says there's memory leaks..
   
 * SAT_LockFreeQueue
-
   double/triple/quadruple-check validity..
+  
+* cleanup, redefine SAT_GLOBAL / DEBUG, LOG, PRINT
+  make them available (defined) _before_ defining plugin/gui stuff..
+  so we can print and log from the lowest levels..
 
-----------------------------------------------------------------------
-  plugin
-----------------------------------------------------------------------
+======================================================================
 
---------------------
-  bugs
---------------------
+plugin
+
+======================================================================
+
+  ------------------------------
+    bugs
+  ------------------------------
 
 * vst3: doesn't remember editor size when reopening
 
---------------------
-  todo
---------------------
+  ------------------------------
+    todo
+  ------------------------------
 
 * plugin: parameter smoothing
-
   a value in a synth might use a combination of:
   parameter + modulation + note expressions + (internal modulation)
   (and smoothed individually per voice)
   so we should probably smooth the _combination_ of these
   -> modulation matix/routing system?
 
-* plugin: presets
-* plugin: save editor state
+* plugin: presets (loading is almost there)
+
+* plugin: save editor state (editor_state)
+
 * plugin: SAT_InstrumentPlugin, SAT_AudioEffectPlugin, JesusonicPlugin (for easy porting), ..
+
 * plugin: reaper extensions
+
 * plugin: ara
 
-----------------------------------------------------------------------
-  gui
-----------------------------------------------------------------------
+======================================================================
 
---------------------
-  bugs
---------------------
+gui
 
-* win32: scroll-wheel breaks mouse responsitivity (can't reproduce in exe?)
+======================================================================
+
+  ------------------------------
+    bugs
+  ------------------------------
+
+* win32: scroll-wheel breaks mouse responsitivity
+  (can't reproduce in exe? fixed?)
+  
 * win32: resizing doesn't update screen properly (exe only?)
 
---------------------
-  todo
---------------------
+  ------------------------------
+    todo
+  ------------------------------
 
 * gui: investigate text/font alignment & accuracy
+
 * gui: window aspect ratio during resizing
+
 * gui: cached widgets (buffer, dirty_flag to update)
+
 * gui: opengl shaders
 
-----------------------------------------------------------------------
-
+======================================================================

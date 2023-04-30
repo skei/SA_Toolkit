@@ -2,7 +2,6 @@
 #define sat_debug_included
 //----------------------------------------------------------------------
 
-
 // todo: SAT_DEBUG_PRINT_LOG
 
 /*
@@ -32,6 +31,7 @@
   #undef SAT_DEBUG_PRINT_SOCKET
   #undef SAT_DEBUG_PRINT_THREAD
   #undef SAT_DEBUG_PRINT_TIME
+  #undef SAT_DEBUG_WINDOW
 #endif
 
 //----------------------------------------------------------------------

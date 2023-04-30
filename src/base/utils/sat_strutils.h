@@ -271,7 +271,6 @@ void SAT_HexDecode(void* ADst, char* ASrc, uint32_t ANum) {
     buffer[1] = *src++;
     buffer[2] = 0;
     uint32_t hex = (uint32_t)strtol(buffer,nullptr,16);
-    //SAT_Assert(hex < 255);
     *dst++ = hex;// & 0xff;
   } // fror
 }

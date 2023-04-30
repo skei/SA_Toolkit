@@ -122,7 +122,7 @@ private:
 public:
 //------------------------------
 
-  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent, SAT_WindowListener* AListener)
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0, SAT_WindowListener* AListener=nullptr)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     MWidth          = AWidth;
     MHeight         = AHeight;

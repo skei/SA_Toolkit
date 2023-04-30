@@ -130,7 +130,7 @@
       SAT_GLOBAL.DEBUG.print("\n")
       
   #endif
-
+  
 //------------------------------
 #else // ! debug
 //------------------------------
@@ -144,6 +144,43 @@
   #define SAT_Observe(x,y,z) {}
 
 #endif // debug
+
+//----------------------------------------------------------------------
+//
+// debug window (hack alert!)
+//
+//----------------------------------------------------------------------
+
+#ifdef SAT_DEBUG_WINDOW
+
+  #include "base/debug/sat_debug_window.h"
+  
+  SAT_DebugWindow* DEBUG_WINDOW = nullptr;
+  
+  class _sat_debug_window_class {
+
+  public:
+    _sat_debug_window_class() {
+      SAT_PRINT;
+      SAT_Assert(!DEBUG_WINDOW);
+      DEBUG_WINDOW = new SAT_DebugWindow(640,480);
+      SAT_Assert(DEBUG_WINDOW);
+      DEBUG_WINDOW->show();
+    }
+    
+    ~_sat_debug_window_class() {
+      SAT_PRINT;
+      SAT_Assert(DEBUG_WINDOW);
+      DEBUG_WINDOW->hide();
+      delete DEBUG_WINDOW;
+      DEBUG_WINDOW = nullptr;
+    }
+  
+  };
+  
+  _sat_debug_window_class SAT_GLOBAL_DEBUG_WINDOW = {};
+
+#endif
 
 //----------------------------------------------------------------------
 #endif

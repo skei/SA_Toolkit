@@ -192,6 +192,7 @@
       <File Name="../../src/base/sat_global_utils.h"/>
       <File Name="../../src/base/sat_test.h"/>
       <VirtualDirectory Name="debug">
+        <File Name="../../src/base/debug/sat_debug_window.h"/>
         <File Name="../../src/base/debug/sat_debug_test.h"/>
         <File Name="../../src/base/debug/sat_debug_print_window.h"/>
         <File Name="../../src/base/debug/sat_debug_print_time.h"/>

@@ -84,22 +84,21 @@ public:
   bool init() final {
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
     
-    double  data_buffer[256]  = {0};
-    char    hex_buffer[256]   = {0};
-    
-    data_buffer[0] = 1.0;
-    data_buffer[1] = SAT_PI;
-    data_buffer[2] = 12345678;
-    
-    SAT_HexEncode(hex_buffer,data_buffer,3*sizeof(double));
-    SAT_Print("hex: %s\n",hex_buffer);
-    
-    SAT_HexDecode(data_buffer,hex_buffer,3*sizeof(double));
-    SAT_Print("%.2f, %.2f, %.2f\n",data_buffer[0],data_buffer[1],data_buffer[2]);
+//    double data_buffer[256] = {0};
+//    char hex_buffer[256] = {0};
+//    data_buffer[0] = 1.0;
+//    data_buffer[1] = SAT_PI;
+//    data_buffer[2] = 12345678;
+//    SAT_HexEncode(hex_buffer,data_buffer,3*sizeof(double));
+//    SAT_HexDecode(data_buffer,hex_buffer,3*sizeof(double));
+//    SAT_Print("encoded: %s\n",hex_buffer);
+//    SAT_Print("decoded: %.2f, %.2f, %.2f\n",data_buffer[0],data_buffer[1],data_buffer[2]);
     
     registerAllExtensions();
+    
     appendClapNoteInputPort();
     appendStereoOutputPort();
+    
     appendParameter(new SAT_Parameter(    "Param1", 0.1        ));
     appendParameter(new SAT_Parameter(    "Param2", 0.4, -2, 4 ));
     appendParameter(new SAT_Parameter(    "Param3", 0.7,  0, 2 ));
@@ -107,13 +106,16 @@ public:
     appendParameter(new SAT_Parameter(    "P4",     0.2        ));
     appendParameter(new SAT_Parameter(    "P5",     0.8        ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+    
     SAT_Host* host = getHost();
     const clap_plugin_t*  clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
+    
+    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+    
     return SAT_Plugin::init();
   }
 
