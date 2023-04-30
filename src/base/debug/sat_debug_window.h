@@ -19,7 +19,9 @@ class SAT_DebugWindow
 private:
 //------------------------------
 
-  SAT_PanelWidget* panel = nullptr;
+  SAT_PanelWidget*    panel     = nullptr;
+  SAT_TextBoxWidget*  textbox   = nullptr;
+  SAT_PanelWidget*    observers = nullptr;
   
 //------------------------------
 public:
@@ -28,12 +30,27 @@ public:
   SAT_DebugWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0, SAT_WindowListener* AListener=nullptr)
   : SAT_Window(AWidth,AHeight,AParent,AListener) {
     SAT_PRINT;
+
     setTitle("SAT_DebugWindow");
-    panel = new SAT_PanelWidget(100);
+    
+    panel = new SAT_PanelWidget(200);
     appendRootWidget(panel);
-    panel->setDrawBorder(true);
-    panel->setFillBackground(true);
-    panel->setBackgroundColor(SAT_Red);
+    //panel->setFillBackground(false);
+    //anel->setDrawBorder(false);
+    
+    //panel->setInnerBorder(10);
+    //panel->setSpacing(10);
+    
+    observers = new SAT_PanelWidget(SAT_Rect(0,0,300,480));
+    panel->appendChildWidget(observers);
+    //observers->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT, SAT_WIDGET_STRETCH_VERTICAL);
+    observers->setFillBackground(true);
+    observers->setBackgroundColor(SAT_Grey);
+    
+    textbox = new SAT_TextBoxWidget(SAT_Rect(300,0,340,480));
+    panel->appendChildWidget(textbox);
+    //textbox->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT, SAT_WIDGET_STRETCH_VERTICAL);
+    
   }
   
   //----------
@@ -45,6 +62,17 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  void do_timerListener_callback(SAT_Timer* ATimer) override {
+    //SAT_PRINT;
+    
+//    uint32_t num = SAT_GLOBAL.DEBUG.getNumObservers();
+//    for (uint32_t i=0; i<num; i++) {
+//      SAT_Observable* obs = SAT_GLOBAL.DEBUG.getObserver(i);
+//    }
+    
+    SAT_Window::do_timerListener_callback(ATimer);
+  }
   
 };
 

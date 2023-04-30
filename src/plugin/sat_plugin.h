@@ -21,6 +21,10 @@
 #include "audio/sat_audio_utils.h"
 #include "gui/sat_widgets.h"
 
+#ifdef SAT_DEBUG_WINDOW
+  #include "base/debug/sat_debug_window.h"
+#endif
+
 //----------------------------------------------------------------------
 
 struct SAT_QueueItem {
@@ -60,6 +64,12 @@ private:
   // set in gui_create (false), gui_destroy (true)
   // checked in handleParamValueEvent, handleParamModEvent
   std::atomic<bool>                 MEditorIsClosing                              {false};
+  
+  #ifdef SAT_DEBUG_WINDOW
+  SAT_DebugWindow*                  MDebugWindow                                  = nullptr;
+  #endif
+  
+  //-----
 
   const char*                       MPluginFormat                                 = "CLAP";
   SAT_Host*                         MHost                                         = nullptr;
@@ -150,8 +160,14 @@ public: // plugin
 
   bool init() override {
     SAT_Log("SAT_Plugin.init\n");
-    //uint32_t num = MParameters.size();
-    //uint32_t size = num * sizeof(sat_param_t);
+    
+    #ifdef SAT_DEBUG_WINDOW
+      MDebugWindow = new SAT_DebugWindow(640,480);
+      MDebugWindow->setTitle("SAT_DebugWindow");
+      MDebugWindow->show();
+      MDebugWindow->startEventThread();
+    #endif
+    
     setDefaultParameterValues();
     MIsInitialized = true;
     return true;
@@ -175,6 +191,14 @@ public: // plugin
 
   void destroy() override {
     SAT_Log("SAT_Plugin.destroy\n");
+    
+    #ifdef SAT_DEBUG_WINDOW
+      if (MDebugWindow) {
+        MDebugWindow->stopEventThread();
+        delete MDebugWindow;
+      }
+    #endif
+    
     MIsInitialized = false;
     
     #ifdef SAT_DELETE_PLUGIN_IN_DESTROY

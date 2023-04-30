@@ -680,6 +680,17 @@ public: // observer
         //print("\n");
       }
     }
+    
+    //----------
+    
+    uint32_t getNumObservers() {
+      return MObservables.size();
+    }
+    
+    SAT_Observable* getObserver(uint32_t AIndex) {
+      return &MObservables[AIndex];
+    }
+    
   
   #endif
 

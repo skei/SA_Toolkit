@@ -423,10 +423,6 @@ public:
     return 0;
   }
 
-//------------------------------
-private:
-//------------------------------
-
   void startEventThread() {
     MIsEventThreadActive = true;
     pthread_create(&MEventThread,nullptr,xcb_event_thread_callback,this);
@@ -441,6 +437,10 @@ private:
     //xcb_flush(MConnection);
     pthread_join(MEventThread,&ret);
   }
+
+//------------------------------
+private:
+//------------------------------
 
   //----------
 

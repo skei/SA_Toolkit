@@ -17,6 +17,8 @@
 #include "test_synth_voice.h"
 #include "test_synth_widgets.h"
 
+//#include "base/debug/sat_debug_window.h"
+
 //----------------------------------------------------------------------
 //
 //
@@ -71,6 +73,8 @@ private:
   SAT_VoicesWidget*   MVoicesWidget   = nullptr;
   SAT_WaveformWidget* MWaveformWidget = nullptr;
   
+//  SAT_DebugWindow* debugwindow = nullptr;
+  
 //------------------------------
 public:
 //------------------------------
@@ -83,6 +87,11 @@ public:
 
   bool init() final {
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
+    
+//    debugwindow = new SAT_DebugWindow(640,480);
+//    //debugwindow->appendRootWidget( new SAT_PanelWidget(SAT_Rect(500,500)));
+//    debugwindow->show();
+//    debugwindow->startEventThread();
     
 //    double data_buffer[256] = {0};
 //    char hex_buffer[256] = {0};
@@ -119,6 +128,16 @@ public:
     return SAT_Plugin::init();
   }
 
+  //----------
+  
+//  void destroy() final {
+//    if (debugwindow) {
+//      debugwindow->stopEventThread();
+//      delete debugwindow;
+//    }
+//    SAT_Plugin::destroy();
+//  }
+  
   //----------
   
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {

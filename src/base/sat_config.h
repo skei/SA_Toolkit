@@ -190,9 +190,10 @@
   //----------
 
   /*
+    opens a debug window
   */
 
-  //#define SAT_DEBUG_WINDOW
+  #define SAT_DEBUG_WINDOW
 
 //----------------------------------------------------------------------
 //
