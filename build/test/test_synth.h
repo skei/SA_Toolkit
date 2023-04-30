@@ -84,6 +84,19 @@ public:
   bool init() final {
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
     
+    double  data_buffer[256]  = {0};
+    char    hex_buffer[256]   = {0};
+    
+    data_buffer[0] = 1.0;
+    data_buffer[1] = SAT_PI;
+    data_buffer[2] = 12345678;
+    
+    SAT_HexEncode(hex_buffer,data_buffer,3*sizeof(double));
+    SAT_Print("hex: %s\n",hex_buffer);
+    
+    SAT_HexDecode(data_buffer,hex_buffer,3*sizeof(double));
+    SAT_Print("%.2f, %.2f, %.2f\n",data_buffer[0],data_buffer[1],data_buffer[2]);
+    
     registerAllExtensions();
     appendClapNoteInputPort();
     appendStereoOutputPort();

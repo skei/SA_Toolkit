@@ -248,14 +248,8 @@ uint32_t SAT_HashString(const char* buffer) {
 
 //----------
 
-void SAT_HexDecode(void* ADst, char* ASrc, uint32_t AType) {
-  //TODO
-}
-
-//----------
-
-void SAT_HexEncode(char* ADst, uint8_t* ASrc, uint32_t ANum, uint32_t AType) {
-  uint8_t*  src = ASrc;
+void SAT_HexEncode(char* ADst, void* ASrc, uint32_t ANum) {
+  uint8_t*  src = (uint8_t*)ASrc;
   char*     dst = ADst;
   for (uint32_t i=0; i<ANum; i++) {
     uint8_t value = *src++;
@@ -263,6 +257,22 @@ void SAT_HexEncode(char* ADst, uint8_t* ASrc, uint32_t ANum, uint32_t AType) {
     uint32_t lo_nibble = (value & 0x0f);
     *dst++ = SAT_HEX_TABLE[ hi_nibble ];
     *dst++ = SAT_HEX_TABLE[ lo_nibble ];
+  } // fror
+}
+
+//----------
+
+void SAT_HexDecode(void* ADst, char* ASrc, uint32_t ANum) {
+  char*     src = ASrc;
+  uint8_t*  dst = (uint8_t*)ADst;
+  for (uint32_t i=0; i<ANum; i++) {
+    char buffer[3];
+    buffer[0] = *src++;
+    buffer[1] = *src++;
+    buffer[2] = 0;
+    uint32_t hex = (uint32_t)strtol(buffer,nullptr,16);
+    //SAT_Assert(hex < 255);
+    *dst++ = hex;// & 0xff;
   } // fror
 }
 
