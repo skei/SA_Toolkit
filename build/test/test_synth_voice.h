@@ -60,17 +60,12 @@ public:
     else {
       memset(buffer,0,ALength * sizeof(float));
     }
-    
-//    SAT_GLOBAL.DEBUG.observe(SAT_OBSERVE_FLOAT,&ph,"ph");
-    
     return AState;
   }
 
   //----------
 
   uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
-    
-    
     return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
   }
 

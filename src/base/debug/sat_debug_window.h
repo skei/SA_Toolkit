@@ -19,10 +19,14 @@ class SAT_DebugWindow
 private:
 //------------------------------
 
-  SAT_PanelWidget*    panel     = nullptr;
-  SAT_TextBoxWidget*  textbox   = nullptr;
-  SAT_PanelWidget*    observers = nullptr;
+  SAT_PanelWidget*          panel     = nullptr;
+  SAT_TextBoxWidget*        textbox   = nullptr;
   
+  #ifdef SAT_DEBUG_OBSERVER
+  SAT_DebugObserverWidget*  observer = nullptr;
+  #endif
+  
+
 //------------------------------
 public:
 //------------------------------
@@ -41,11 +45,13 @@ public:
     //panel->setInnerBorder(10);
     //panel->setSpacing(10);
     
-    observers = new SAT_PanelWidget(SAT_Rect(0,0,300,480));
-    panel->appendChildWidget(observers);
-    //observers->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT, SAT_WIDGET_STRETCH_VERTICAL);
-    observers->setFillBackground(true);
-    observers->setBackgroundColor(SAT_Grey);
+    #ifdef SAT_DEBUG_OBSERVER
+      observer = new SAT_DebugObserverWidget(SAT_Rect(0,0,300,480));
+      panel->appendChildWidget(observer);
+      //observer->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT, SAT_WIDGET_STRETCH_VERTICAL);
+      observer->setFillBackground(true);
+      observer->setBackgroundColor(SAT_Grey);
+    #endif
     
     textbox = new SAT_TextBoxWidget(SAT_Rect(300,0,340,480));
     panel->appendChildWidget(textbox);
@@ -65,7 +71,7 @@ public:
 
   void do_timerListener_callback(SAT_Timer* ATimer) override {
     //SAT_PRINT;
-    
+   
 //    uint32_t num = SAT_GLOBAL.DEBUG.getNumObservers();
 //    for (uint32_t i=0; i<num; i++) {
 //      SAT_Observable* obs = SAT_GLOBAL.DEBUG.getObserver(i);

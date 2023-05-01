@@ -1,5 +1,18 @@
 
+// PS! included directly inside test_synth.h
+// don't #include this manually..
 
+
+//------------------------------
+//
+//------------------------------
+  
+  const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
+
+//------------------------------
+//
+//------------------------------
+  
   //SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) final {
   //  //SAT_PRINT;
   //  SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight);
@@ -7,7 +20,7 @@
   //}
 
   //----------
-
+  
   bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     //SAT_PRINT;
     

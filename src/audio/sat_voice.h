@@ -95,6 +95,11 @@ public:
   sat_sample_t getEnvLevel() {
     return voice.getEnvLevel();
   }
+  
+  //----------
+
+  //double getVolume() {}
+  //double getPanning() {}
 
 //------------------------------
 private:

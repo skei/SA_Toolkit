@@ -65,12 +65,6 @@ private:
   // checked in handleParamValueEvent, handleParamModEvent
   std::atomic<bool>                 MEditorIsClosing                              {false};
   
-  #ifdef SAT_DEBUG_WINDOW
-  SAT_DebugWindow*                  MDebugWindow                                  = nullptr;
-  #endif
-  
-  //-----
-
   const char*                       MPluginFormat                                 = "CLAP";
   SAT_Host*                         MHost                                         = nullptr;
   SAT_Editor*                       MEditor                                       = nullptr;
@@ -100,6 +94,10 @@ private:
   bool                              MProcessThreaded                              = false; // not used here?
   uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
 
+  #ifdef SAT_DEBUG_WINDOW
+  SAT_DebugWindow*                  MDebugWindow                                  = nullptr;
+  #endif
+  
 //------------------------------
 public:
 //------------------------------

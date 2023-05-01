@@ -155,7 +155,9 @@ public:
 
   //----------
 
-  // process -> prepare
+  // 'handle..' -> 'prepare..'
+
+  //----------
 
   void handleNoteOn(const clap_event_note_t* event) {
     int32_t voice = findFreeVoice(SAT_VOICE_MANAGER_STEAL_VOICES);

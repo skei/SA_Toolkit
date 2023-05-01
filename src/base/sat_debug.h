@@ -529,7 +529,9 @@ public: // crash handler
         //SAT_DumpCallStack;
         //SAT_DumpCallStackSkip(0); // 2
         print_callstack();
-        print_observers();
+        #ifdef SAT_DEBUG_OBSERVER
+          print_observers();
+        #endif
         print("\n");
         exit(1); //_exit(1);
       #endif

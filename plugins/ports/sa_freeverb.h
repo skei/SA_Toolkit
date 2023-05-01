@@ -14,7 +14,7 @@
 #include "base/sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
+//#include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
 

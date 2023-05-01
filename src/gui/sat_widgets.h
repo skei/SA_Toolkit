@@ -45,5 +45,9 @@
 #include "gui/widgets/sat_voices_widget.h"
 #include "gui/widgets/sat_waveform_widget.h"
 
+#ifdef SAT_DEBUG_OBSERVER
+  #include "gui/widgets/sat_debug_observer_widget.h"
+#endif
+
 //----------------------------------------------------------------------
 #endif

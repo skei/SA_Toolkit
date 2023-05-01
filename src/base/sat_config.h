@@ -149,7 +149,7 @@
   /*
   */
   
-  #define SAT_DEBUG_OBSERVER
+  //#define SAT_DEBUG_OBSERVER
   
   //----------
   
@@ -193,7 +193,7 @@
     opens a debug window
   */
 
-  #define SAT_DEBUG_WINDOW
+  //#define SAT_DEBUG_WINDOW
 
 //----------------------------------------------------------------------
 //
@@ -209,6 +209,14 @@
 
   #define SAT_DELETE_PLUGIN_IN_DESTROY
 
+  //----------
+  
+  /*
+    use preset discovery factory (clap)
+  */
+  
+  //#ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY
+  
   //----------
 
   /*

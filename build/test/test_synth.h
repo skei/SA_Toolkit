@@ -5,6 +5,9 @@
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_VST3
 
+//#define SAT_DEBUG_WINDOW
+//#define SAT_DEBUG_OBSERVER
+
 //
 
 #include "base/sat.h"
@@ -17,8 +20,6 @@
 #include "test_synth_voice.h"
 #include "test_synth_widgets.h"
 
-//#include "base/debug/sat_debug_window.h"
-
 //----------------------------------------------------------------------
 //
 //
@@ -30,8 +31,6 @@
 #define EDITOR_HEIGHT 550
 #define EDITOR_SCALE  1.5
 #define NUM_VOICES    32
-
-const char* buttontext[5] = { "1", "2", "3", "IV", "five" };
 
 //----------------------------------------------------------------------
 //
@@ -50,7 +49,6 @@ const clap_plugin_descriptor_t test_synth_descriptor = {
   .version      = SAT_VERSION,
   .description  = "...",
   .features     = (const char* []) {
-    //CLAP_PLUGIN_FEATURE_AUDIO_EFFECT    
     CLAP_PLUGIN_FEATURE_INSTRUMENT,
     nullptr
   }
@@ -72,8 +70,8 @@ private:
   SAT_VoiceManager<test_synth_voice,NUM_VOICES>  MVoiceManager = {};
   SAT_VoicesWidget*   MVoicesWidget   = nullptr;
   SAT_WaveformWidget* MWaveformWidget = nullptr;
-  
-//  SAT_DebugWindow* debugwindow = nullptr;
+
+  double obs1 = 0.0; // being 'observed'
   
 //------------------------------
 public:
@@ -88,21 +86,18 @@ public:
   bool init() final {
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
     
-//    debugwindow = new SAT_DebugWindow(640,480);
-//    //debugwindow->appendRootWidget( new SAT_PanelWidget(SAT_Rect(500,500)));
-//    debugwindow->show();
-//    debugwindow->startEventThread();
+    SAT_Observe(SAT_OBSERVE_DOUBLE,&obs1,"num");
     
-//    double data_buffer[256] = {0};
-//    char hex_buffer[256] = {0};
-//    data_buffer[0] = 1.0;
-//    data_buffer[1] = SAT_PI;
-//    data_buffer[2] = 12345678;
-//    SAT_HexEncode(hex_buffer,data_buffer,3*sizeof(double));
-//    SAT_HexDecode(data_buffer,hex_buffer,3*sizeof(double));
-//    SAT_Print("encoded: %s\n",hex_buffer);
-//    SAT_Print("decoded: %.2f, %.2f, %.2f\n",data_buffer[0],data_buffer[1],data_buffer[2]);
-    
+    //double data_buffer[256] = {0};
+    //char hex_buffer[256] = {0};
+    //data_buffer[0] = 1.0;
+    //data_buffer[1] = SAT_PI;
+    //data_buffer[2] = 12345678;
+    //SAT_HexEncode(hex_buffer,data_buffer,3*sizeof(double));
+    //SAT_HexDecode(data_buffer,hex_buffer,3*sizeof(double));
+    //SAT_Print("encoded: %s\n",hex_buffer);
+    //SAT_Print("decoded: %.2f, %.2f, %.2f\n",data_buffer[0],data_buffer[1],data_buffer[2]);
+
     registerAllExtensions();
     
     appendClapNoteInputPort();
@@ -130,13 +125,13 @@ public:
 
   //----------
   
-//  void destroy() final {
-//    if (debugwindow) {
-//      debugwindow->stopEventThread();
-//      delete debugwindow;
-//    }
-//    SAT_Plugin::destroy();
-//  }
+  //void destroy() final {
+  //  if (debugwindow) {
+  //    debugwindow->stopEventThread();
+  //    delete debugwindow;
+  //  }
+  //  SAT_Plugin::destroy();
+  //}
   
   //----------
   
@@ -175,6 +170,7 @@ public:
   void do_editorListener_timer() final {
     SAT_Plugin::do_editorListener_timer();
     //update voices widget.. (move to widget itself (+ register timer)
+    // before or after sat_plugin:: ?
     for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
       uint32_t state = MVoiceManager.getVoiceState(voice);
       MVoicesWidget->setVoiceState(voice,state);
@@ -277,6 +273,9 @@ public:
     scale = SAT_Clamp(scale,0,1);
     
     SAT_ScaleStereoBuffer(outputs,scale,length);
+    
+    obs1 = MVoiceManager.getNumPlayingVoices();
+    
   }
 
   //----------

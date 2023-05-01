@@ -59,7 +59,7 @@ public:
   
   //----------
 
-  virtual void prepare(SAT_WidgetOwner* AOwner) {
+  void prepare(SAT_WidgetOwner* AOwner) override {
     SAT_MovableWidget::prepare(AOwner);
     SAT_Window* window = (SAT_Window*)AOwner;
     window->registerTimerWidget(this);      // TODO: -> SAT_WidgetOwner
