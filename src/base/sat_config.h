@@ -215,7 +215,7 @@
     use preset discovery factory (clap)
   */
   
-  //#ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY
+  //#define SAT_PLUGIN_USE_PRESET_DISCOVERY
   
   //----------
 

@@ -16,9 +16,10 @@ protected:
 //------------------------------
 
   //float     MTextHeight = 20.0;
-  float     MTextSize   = 10.0;
-  uint32_t  MNumLines   = 0;
-  uint32_t  MMaxLines   = 100;
+  float     MTextSize       = 10.0;
+  uint32_t  MTextAlignment  = SAT_TEXT_ALIGN_LEFT;
+  uint32_t  MNumLines       = 0;
+  uint32_t  MMaxLines       = 100;
 
 //------------------------------
 public:
@@ -65,6 +66,7 @@ public:
 
   virtual void setMaxLines(uint32_t ANum) { MMaxLines = ANum; }
   //virtual void setTextHeight(float ASize) { MTextHeight = ASize; }
+  virtual void setTextSize(double ASize) { MTextSize = ASize; }
 
 //------------------------------
 public:
@@ -83,7 +85,7 @@ public:
 
     textwidget->setFillBackground(false);
     textwidget->setDrawBorder(false);
-    textwidget->setTextAlignment(SAT_TEXT_ALIGN_LEFT);
+    textwidget->setTextAlignment(MTextAlignment);
     textwidget->setTextColor(SAT_Color(0)/*SAT_COLOR_BLACK*/);
     textwidget->setTextSize(MTextSize);
     //textwidget->Options.autoSize = true;

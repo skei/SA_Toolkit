@@ -641,7 +641,7 @@ public: // window
 
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
       
-      SAT_Print("resizing buffer!\n");
+      //SAT_Print("resizing buffer.. %i,%i\n",width2,height2);
       
       // if size has changed: create new buffer, copy old to new, delete old
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);

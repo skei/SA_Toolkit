@@ -1,8 +1,8 @@
-/*
+
+
 
 #include "plugin/sat_plugin.h"
-#include "audio/sat_audio_utils.h"
-const clap_plugin_descriptor_t myDescriptor = { CLAP_VERSION, "me/myPlugin/0.0.1", "myPlugin", "skei.audio", "", "", "", "0.0.1", "a nice plugin", (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr } };
+const clap_plugin_descriptor_t myDescriptor = { CLAP_VERSION, "me/myPlugin", "myPlugin", "me", "", "", "", "0.0.1", "a nice plugin", (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr } };
 class myPlugin : public SAT_Plugin {
 public:
   SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin)
@@ -21,7 +21,7 @@ public:
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
 
-*/
+
 
 //----------------------------------------------------------------------
 //
@@ -62,7 +62,7 @@ SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
 //
 //----------------------------------------------------------------------
 
-
+/*
 
 #include "base/sat.h"
 #include "plugin/sat_plugin.h"
@@ -113,7 +113,7 @@ public:
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
 
-
+*/
 
 //----------------------------------------------------------------------
 //

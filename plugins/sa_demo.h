@@ -1,17 +1,24 @@
-#ifndef test_synth_included
-#define test_synth_included
+#ifndef sa_demo_included
+#define sa_demo_included
 //----------------------------------------------------------------------
 
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_VST3
-
 //#define SAT_PLUGIN_USE_PRESET_DISCOVERY
-
 //#define SAT_DEBUG_WINDOW
 //#define SAT_DEBUG_OBSERVER
 
+#define PLUGIN_NAME   "sa_demo"
+#define EDITOR_WIDTH  640
+#define EDITOR_HEIGHT 480
+#define EDITOR_SCALE  1.5
+#define NUM_VOICES    32
 
-//----------
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 #include "base/sat.h"
 #include "audio/sat_audio_math.h"
@@ -20,20 +27,9 @@
 #include "gui/sat_widgets.h"
 #include "plugin/sat_plugin.h"
 
-#include "test_synth_voice.h"
-#include "test_synth_widgets.h"
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-#define PLUGIN_NAME   "test_synth"
-#define EDITOR_WIDTH  720
-#define EDITOR_HEIGHT 550
-#define EDITOR_SCALE  1.5
-#define NUM_VOICES    32
+#include "sa_demo/sa_demo_editor.h"
+#include "sa_demo/sa_demo_voice.h"
+#include "sa_demo/sa_demo_widgets.h"
 
 //----------------------------------------------------------------------
 //
@@ -41,7 +37,7 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t test_synth_descriptor = {
+const clap_plugin_descriptor_t sa_demo_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/" PLUGIN_NAME,
   .name         = PLUGIN_NAME,
@@ -63,46 +59,32 @@ const clap_plugin_descriptor_t test_synth_descriptor = {
 //
 //----------------------------------------------------------------------
 
-class test_synth_plugin
+class sa_demo_plugin
 : public SAT_Plugin {
 
 //------------------------------
 private:
 //------------------------------
 
-  SAT_VoiceManager<test_synth_voice,NUM_VOICES>  MVoiceManager = {};
+  SAT_VoiceManager<sa_demo_voice,NUM_VOICES>  MVoiceManager = {};
   SAT_VoicesWidget*   MVoicesWidget   = nullptr;
   SAT_WaveformWidget* MWaveformWidget = nullptr;
 
-  double obs1 = 0.0; // being 'observed'
+  //double obs1 = 0.0; // being 'observed'
   
 //------------------------------
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(test_synth_plugin);
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_demo_plugin);
 
 //------------------------------
 public:
 //------------------------------
 
   bool init() final {
-    SAT_Print("id: '%s'\n",test_synth_descriptor.id);
-    
-    SAT_Observe(SAT_OBSERVE_DOUBLE,&obs1,"num");
-    
-    //double data_buffer[256] = {0};
-    //char hex_buffer[256] = {0};
-    //data_buffer[0] = 1.0;
-    //data_buffer[1] = SAT_PI;
-    //data_buffer[2] = 12345678;
-    //SAT_HexEncode(hex_buffer,data_buffer,3*sizeof(double));
-    //SAT_HexDecode(data_buffer,hex_buffer,3*sizeof(double));
-    //SAT_Print("encoded: %s\n",hex_buffer);
-    //SAT_Print("decoded: %.2f, %.2f, %.2f\n",data_buffer[0],data_buffer[1],data_buffer[2]);
-
+    //SAT_Print("id: '%s'\n",sa_demo_descriptor.id);
     registerAllExtensions();
-    
     appendClapNoteInputPort();
     appendStereoOutputPort();
     
@@ -112,6 +94,7 @@ public:
     appendParameter(new SAT_IntParameter( "Param4", 0,   -5, 5 ));
     appendParameter(new SAT_Parameter(    "P4",     0.2        ));
     appendParameter(new SAT_Parameter(    "P5",     0.8        ));
+    
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     
     SAT_Host* host = getHost();
@@ -164,7 +147,18 @@ public:
 public:
 //------------------------------
 
-  #include "test_synth_gui.h"
+  SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) final {
+    sa_demo_editor* editor = new sa_demo_editor(AListener,AWidth,AHeight,getHost(),this);
+    return editor;
+  }
+
+  //----------
+  
+  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+    sa_demo_editor* editor = (sa_demo_editor*)AEditor;
+    editor->initialize(AWindow,getPluginFormat());
+    return true;
+  }
   
 //------------------------------
 public:
@@ -174,11 +168,13 @@ public:
     SAT_Plugin::do_editorListener_timer();
     //update voices widget.. (move to widget itself (+ register timer)
     // before or after sat_plugin:: ?
+    /*
     for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
       uint32_t state = MVoiceManager.getVoiceState(voice);
       MVoicesWidget->setVoiceState(voice,state);
     }
     MVoicesWidget->parentRedraw();
+    */
   }
 
 //------------------------------
@@ -271,14 +267,10 @@ public:
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
-    
-    sat_param_t scale = getParameterValue(2) + getModulationValue(2);
-    scale = SAT_Clamp(scale,0,1);
-    
-    SAT_ScaleStereoBuffer(outputs,scale,length);
-    
-    obs1 = MVoiceManager.getNumPlayingVoices();
-    
+    //sat_param_t scale = getParameterValue(2) + getModulationValue(2);
+    //scale = SAT_Clamp(scale,0,1);
+    //SAT_ScaleStereoBuffer(outputs,scale,length);
+    //obs1 = MVoiceManager.getNumPlayingVoices();
   }
 
   //----------
@@ -319,7 +311,7 @@ public:
 #ifndef SAT_NO_ENTRY
 
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(test_synth_descriptor,test_synth_plugin);
+  SAT_PLUGIN_ENTRY(sa_demo_descriptor,sa_demo_plugin);
 
 #endif
 

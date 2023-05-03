@@ -522,7 +522,7 @@ public:
   }
 
 //------------------------------
-private:
+//private:
 //------------------------------
 
   virtual void startEventThread() {

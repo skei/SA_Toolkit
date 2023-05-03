@@ -18,27 +18,29 @@ class SAT_ButtonRowWidget
 protected:
 //------------------------------
 
-  int32_t     MMode                   = SAT_BUTTON_ROW_SINGLE;
-  bool        MVertical               = false;
-  int32_t     MSelected               = 0;
-  bool        MStates[SAT_MAX_STATES] = {0};
-  const char* MLabels[SAT_MAX_STATES] = {0};
+  int32_t     MMode                       = SAT_BUTTON_ROW_SINGLE;
+  bool        MVertical                   = false;
+  int32_t     MSelected                   = 0;
+  bool        MStates[SAT_MAX_STATES]     = {0};
+  const char* MLabels[SAT_MAX_STATES]     = {0};
 
-  SAT_Color   MTextColor              = SAT_Color(0.0);//SAT_COLOR_DARK_GRAY;
-  SAT_Color   MActiveTextColor        = SAT_Color(0.0);//SAT_COLOR_BLACK;
+  uint32_t    MNumBits                    = 8;//8;
+  bool        MValueIsBits                = false;//true;
+  bool        MAllowZeroBits              = true;
 
-  double      MTextSize               = 12.0;
+  double      MTextSize                   = 12.0;
+  SAT_Color   MTextColor                  = SAT_Color(0.0);
+  SAT_Color   MActiveTextColor            = SAT_Color(0.0);
 
-  SAT_Color   MBackgroundCellColor    = SAT_Color(0.3);//SAT_COLOR_LIGHT_GRAY;
-  SAT_Color   MActiveCellColor        = SAT_Color(0.5);//SAT_COLOR_GRAY;
+  bool        MCellFillBackground         = true;
+  SAT_Color   MCellBackgroundColor        = SAT_Color(0.3);
+  SAT_Color   MCellActiveBackgroundColor  = SAT_Color(0.5);
 
-  bool        MValueIsBits            = false;//true;
-  uint32_t    MNumBits                = 8;//8;
-
-  bool        MDrawRoundedBottom      = true;
-  float       MRounded                = 5;
-
-  bool        MAllowZeroBits          = true;
+  bool        MCellDrawBorder             = true;
+  SAT_Color   MCellBorderColor            = SAT_Color(0.3);
+  bool        MDrawRoundedBottom          = true;
+  float       MRounded                    = 5;
+  
 
 //------------------------------
 public:
@@ -84,10 +86,15 @@ public:
 public:
 //------------------------------
 
-  virtual void setTextColor(SAT_Color AColor)           { MTextColor = AColor; }
-  virtual void setActiveTextColor(SAT_Color AColor)     { MActiveTextColor = AColor; }
-  virtual void setBackgroundCellColor(SAT_Color AColor) { MBackgroundCellColor = AColor; }
-  virtual void setActiveCellColor(SAT_Color AColor)     { MActiveCellColor = AColor; }
+  virtual void setTextColor(SAT_Color AColor)                 { MTextColor = AColor; }
+  virtual void setActiveTextColor(SAT_Color AColor)           { MActiveTextColor = AColor; }
+  
+  virtual void setCellFillBackground(bool AFill)              { MCellFillBackground = AFill; }
+  virtual void setCellBackgroundColor(SAT_Color AColor)       { MCellBackgroundColor = AColor; }
+  virtual void setCellActiveBackgroundColor(SAT_Color AColor) { MCellActiveBackgroundColor = AColor; }
+
+  virtual void setCellDrawBorder(bool ADraw)                  { MCellDrawBorder = ADraw; }
+  virtual void setCellBorderColor(SAT_Color AColor)           { MCellBorderColor = AColor; }
 
 //------------------------------
 public:
@@ -228,6 +235,8 @@ public:
       SAT_GridWidget::setValue(MSelected);
       //float v = (float)MSelected / ((float)MNumColumns - 1.0f);
       //SAT_Widget::setValue(v);
+      do_widgetListener_select(this,MSelected);
+      
     }
     else { // MULTI
       MStates[MSelected] = MStates[MSelected] ? false : true;
@@ -239,6 +248,7 @@ public:
       uint32_t bits = getButtonBits();
       //setValue( bits );
       SAT_GridWidget::setValue( bits );
+      do_widgetListener_select(this,bits);
     }
   }
 
@@ -284,25 +294,21 @@ public:
     
     SAT_Color c1,c2;
     if (MStates[AA]) {
-      c1 = MActiveCellColor;
-      c2 = MBackgroundCellColor;
+      c1 = MCellActiveBackgroundColor;
+      c2 = MCellBackgroundColor;
     }
     else {
-      c1 = MBackgroundCellColor;
-      c2 = MActiveCellColor;
+      c1 = MCellBackgroundColor;
+      c2 = MCellActiveBackgroundColor;
     }
 
     // background
     
     if (MRoundedCorners) {
-      
       double ul = 0;
       double ur = 0;
       double ll = 0;
       double lr = 0;
-      
-      //SAT_Print("AX %i MNumColumns %i\n",AX,MNumColumns);
-      
       if (MVertical) {
         if (AY == 0) {
           ul = MTLCorner * S;
@@ -323,19 +329,28 @@ public:
           lr = MBRCorner * S;
         }
       }
+
+      if (MCellFillBackground) {
+        painter->setFillColor(c1);
+        painter->fillRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
+      }
+      if (MCellDrawBorder) {
+        painter->setDrawColor( SAT_Color(0.25) );
+        painter->setLineWidth( 1.0 * S );
+        painter->drawRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
+      }
       
-      painter->setFillColor(c1);
-      painter->fillRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
-      painter->setDrawColor( SAT_Color(0.25) );
-      painter->setLineWidth( 1.0 * S );
-      painter->drawRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
     }
     else {
-      painter->setFillColor(c1);
-      painter->fillRect(ARect.x,ARect.y,ARect.w,ARect.h);
-      painter->setDrawColor( SAT_Color(0.25) );
-      painter->setLineWidth( 1.0 * S );
-      painter->drawRect(ARect.x,ARect.y,ARect.w,ARect.h);
+      if (MCellFillBackground) {
+        painter->setFillColor(c1);
+        painter->fillRect(ARect.x,ARect.y,ARect.w,ARect.h);
+      }
+      if (MCellDrawBorder) {
+        painter->setDrawColor( SAT_Color(0.25) );
+        painter->setLineWidth( 1.0 * S );
+        painter->drawRect(ARect.x,ARect.y,ARect.w,ARect.h);
+      }
     }
 
     // text
