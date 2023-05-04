@@ -27,15 +27,19 @@ public:
     
     const clap_host_t* host = AHost->getHost();
     
-    SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(SAT_Rect(0,0,200,400));
+    SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(200);
     appendChildWidget(textbox);
     textbox->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
     textbox->setTextSize(8);
     textbox->getContentWidget()->setInnerBorder(SAT_Rect(5,5,5,5));
+    textbox->setWidthLimits(100,500);
+    
     {
       
+      textbox->appendLine("",false);
       textbox->appendLine("The quick brown fox jumps over the lazy dog",false);
       textbox->appendLine("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",false);
+      textbox->appendLine("",false);
 
       strcpy(host_name,       "Name: ");        strcat(host_name,AHost->getName());
       strcpy(host_vendor,     "Vendor: ");      strcat(host_vendor,AHost->getVendor());
@@ -223,6 +227,8 @@ public:
       }
       
     } // textbox
+    
+    // sizer
     
     SAT_SizerWidget* sizer = new SAT_SizerWidget(SAT_Rect(3),SAT_DIRECTION_LEFT,textbox);
     appendChildWidget(sizer);

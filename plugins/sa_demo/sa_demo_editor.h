@@ -110,10 +110,13 @@ public:
     
     MCenterPanel = new SAT_PanelWidget(0);
     MRoot->appendChildWidget(MCenterPanel);
-    MCenterPanel->setLayout(SAT_WIDGET_ALIGN_DEFAULT,SAT_WIDGET_STRETCH_ALL);
+    MCenterPanel->setLayout(SAT_WIDGET_ALIGN_FILL,SAT_WIDGET_STRETCH_ALL);
     MCenterPanel->setFillBackground(false);
     MCenterPanel->setDrawBorder(false);
     {
+      
+      // left column
+      
       MLeftColumn = new SAT_PanelWidget(100);
       MCenterPanel->appendChildWidget(MLeftColumn);
       MLeftColumn->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
@@ -123,8 +126,11 @@ public:
       MLeftColumn->setBackgroundColor(0.2);
       MLeftColumn->setDrawBorder(false);
       {
-        //SAT_ButtonRowWidget* demo_buttons = new SAT_ButtonRowWidget(SAT_Rect(0,0,100,NUM_DEMOS*15),NUM_DEMOS,demo_buttontext,SAT_BUTTON_ROW_SINGLE,true);
-        MDemoButtons = new SAT_ButtonRowWidget(SAT_Rect(0,0,100,NUM_DEMOS*15),NUM_DEMOS,demo_buttontext,SAT_BUTTON_ROW_SINGLE,true);
+        
+        // buttons
+        
+        //MDemoButtons = new SAT_ButtonRowWidget(SAT_Rect(0,0,100,NUM_DEMOS*15),NUM_DEMOS,demo_buttontext,SAT_BUTTON_ROW_SINGLE,true);
+        MDemoButtons = new SAT_ButtonRowWidget(SAT_Rect(NUM_DEMOS*15),NUM_DEMOS,demo_buttontext,SAT_BUTTON_ROW_SINGLE,true);
         MLeftColumn->appendChildWidget(MDemoButtons);
         MDemoButtons->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
         MDemoButtons->setTextSize(9);
@@ -135,7 +141,19 @@ public:
         MDemoButtons->setCellActiveBackgroundColor(0.16);
         MDemoButtons->setCellDrawBorder(false);
         MDemoButtons->selectButton(0);
+        
+        // test
+        
+        //SAT_TextWidget* test_text = new SAT_TextWidget(SAT_Rect(200,100),"Test");
+        //MLeftColumn->appendChildWidget(test_text);
+        //test_text->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
+        //test_text->setFillBackground(true);
+        //test_text->setBackgroundColor(SAT_LightBlue2);
+        //test_text->setAutoTextSize(true);
+        
       } // MLeftColumn
+      
+      // pages
 
       MDemoPages = new SAT_PagesWidget(0);
       MCenterPanel->appendChildWidget(MDemoPages);
@@ -153,8 +171,10 @@ public:
         MDemoPages->appendPage( new sa_demo_page_layout(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_painting(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_animation(0,MPlugin) );
+        
       } // MDemoPages
       MDemoPages->setPage(0);
+
     } // center_panel
 
     //--------------------

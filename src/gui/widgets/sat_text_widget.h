@@ -24,11 +24,13 @@ private:
 
   bool      MDrawText         = true;
   SAT_Color MTextColor        = SAT_White;
-  double    MTextSize         = 10.0;
+  double    MTextSize         = 9.0;
   uint32_t  MTextAlignment    = SAT_TEXT_ALIGN_CENTER;
   SAT_Rect  MTextOffset       = {};
   //char      MText[256]        = {0};
   char      MText[1024]       = {0};
+  
+  bool      MAutoTextSize     = false;
 
 //------------------------------
 public:
@@ -55,6 +57,7 @@ public:
   virtual void setTextAlignment(uint32_t AAlign)  { MTextAlignment = AAlign; }
   virtual void setTextOffset(SAT_Rect AOffset)    { MTextOffset = AOffset; }
   virtual void setText(const char* AText)         { strcpy(MText,AText); }
+  virtual void setAutoTextSize(bool AAuto=true)   { MAutoTextSize = AAuto; }
 
   virtual const char* getText() { return MText; }
 
@@ -68,7 +71,7 @@ public:
     //  SAT_Painter* painter = window->getPainter();
     //  if (painter) {
         const char* text = getText();
-        SAT_Print("text: %s\n",text);
+        //SAT_Print("text: %s\n",text);
         double bounds[4];
         if (APainter->getTextBounds(text,bounds)) {
           //textwidget->setWidth(bounds[2]);
@@ -92,8 +95,26 @@ public:
       mrect.shrink(textoffset);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
+      double textsize = MTextSize * S;
       painter->setTextColor(MTextColor);
-      painter->setTextSize(MTextSize*S);
+      painter->setTextSize(textsize); // try original..
+      if (MAutoTextSize) {
+        double bounds[4];
+        if (painter->getTextBounds(MText,bounds)) {
+          //SAT_Print("%.2f, %.2f - %.2f, %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
+          double width = bounds[2] - bounds[0];
+          double height = bounds[3] - bounds[1];
+          double wratio = 1.0;
+          double hratio = 1.0;
+          if (width > 0)  wratio = mrect.w / width;
+          if (height > 0) hratio = mrect.h / height;
+          if (wratio < hratio) textsize *= wratio;
+          else textsize *= hratio;
+          //SAT_Print("mrect.w %.2f mrect.h %.2f wratio %.2f hratio %.2f\n",mrect.w,mrect.h,wratio,hratio);
+          painter->setTextSize(textsize);
+        }
+      }
+      
       SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
       if (param) {
         painter->drawTextBox(mrect,param->getName(),MTextAlignment);

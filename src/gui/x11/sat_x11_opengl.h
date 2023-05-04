@@ -365,9 +365,9 @@ public: // extensions
   // make context current before calling this
 
   bool loadExtensions() {
-    SAT_Print("calling sogl_loadOpenGL\n");
+    //SAT_Print("calling sogl_loadOpenGL\n");
     int result = sogl_loadOpenGL();
-    SAT_Print("sogl_loadOpenGL() says: %i\n",result);
+    //SAT_Print("sogl_loadOpenGL() says: %i\n",result);
     if (!result) {
       SAT_Print("sogl_loadOpenGL() failed\n");
       const char** failures = sogl_getFailures();

@@ -9,8 +9,8 @@
 //#define SAT_DEBUG_OBSERVER
 
 #define PLUGIN_NAME   "sa_demo"
-#define EDITOR_WIDTH  640
-#define EDITOR_HEIGHT 480
+#define EDITOR_WIDTH  800
+#define EDITOR_HEIGHT 600
 #define EDITOR_SCALE  1.5
 #define NUM_VOICES    32
 
@@ -122,7 +122,7 @@ public:
   //----------
   
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    SAT_Print("sample_rate %.2f min_frames_count %i max_frames_count %i\n",sample_rate,min_frames_count,max_frames_count);
+    //SAT_Print("sample_rate %.2f min_frames_count %i max_frames_count %i\n",sample_rate,min_frames_count,max_frames_count);
     MVoiceManager.activate(sample_rate,min_frames_count,max_frames_count);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
@@ -136,7 +136,7 @@ public:
   //----------
 
   bool voice_info_get(clap_voice_info_t *info) final {
-    SAT_Print("-> %i (CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES)\n",NUM_VOICES);
+    //SAT_Print("-> %i (CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES)\n",NUM_VOICES);
     info->voice_count     = NUM_VOICES;
     info->voice_capacity  = NUM_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;

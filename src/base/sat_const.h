@@ -340,22 +340,27 @@
 #define SAT_WIDGET_ALIGN_CENTER                 3
 #define SAT_WIDGET_ALIGN_HCENTER                4
 #define SAT_WIDGET_ALIGN_VCENTER                5
-#define SAT_WIDGET_ALIGN_LEFT                   6
-#define SAT_WIDGET_ALIGN_LEFT_TOP               7
-#define SAT_WIDGET_ALIGN_LEFT_CENTER            8
-#define SAT_WIDGET_ALIGN_LEFT_BOTTOM            9
-#define SAT_WIDGET_ALIGN_RIGHT                  10
-#define SAT_WIDGET_ALIGN_RIGHT_TOP              11
-#define SAT_WIDGET_ALIGN_RIGHT_CENTER           12
-#define SAT_WIDGET_ALIGN_RIGHT_BOTTOM           13
-#define SAT_WIDGET_ALIGN_TOP                    14
-#define SAT_WIDGET_ALIGN_TOP_LEFT               15
-#define SAT_WIDGET_ALIGN_TOP_CENTER             16
-#define SAT_WIDGET_ALIGN_TOP_RIGHT              17
-#define SAT_WIDGET_ALIGN_BOTTOM                 18
-#define SAT_WIDGET_ALIGN_BOTTOM_LEFT            19
-#define SAT_WIDGET_ALIGN_BOTTOM_CENTER          20
-#define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           21
+
+#define SAT_WIDGET_ALIGN_FILL                   6
+#define SAT_WIDGET_ALIGN_HFILL                  7
+#define SAT_WIDGET_ALIGN_VFILL                  8
+
+#define SAT_WIDGET_ALIGN_LEFT                   9
+#define SAT_WIDGET_ALIGN_LEFT_TOP               10
+#define SAT_WIDGET_ALIGN_LEFT_CENTER            11
+#define SAT_WIDGET_ALIGN_LEFT_BOTTOM            12
+#define SAT_WIDGET_ALIGN_RIGHT                  13
+#define SAT_WIDGET_ALIGN_RIGHT_TOP              14
+#define SAT_WIDGET_ALIGN_RIGHT_CENTER           15
+#define SAT_WIDGET_ALIGN_RIGHT_BOTTOM           16
+#define SAT_WIDGET_ALIGN_TOP                    17
+#define SAT_WIDGET_ALIGN_TOP_LEFT               18
+#define SAT_WIDGET_ALIGN_TOP_CENTER             19
+#define SAT_WIDGET_ALIGN_TOP_RIGHT              20
+#define SAT_WIDGET_ALIGN_BOTTOM                 21
+#define SAT_WIDGET_ALIGN_BOTTOM_LEFT            22
+#define SAT_WIDGET_ALIGN_BOTTOM_CENTER          23
+#define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           24
 
 #define SAT_WIDGET_NOTIFY_NONE                  0
 #define SAT_WIDGET_NOTIFY_CLOSE                 1

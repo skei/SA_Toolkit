@@ -356,7 +356,7 @@ public: // clap
   //----------
 
   virtual bool hide() {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MWindow /*&& MIsOpen*/) MWindow->hide();
     MIsOpen = false;
     return true;

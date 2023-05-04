@@ -51,7 +51,11 @@ private:
   SAT_Point             MSpacing                            = SAT_Point();
   SAT_Rect              MInnerBorder                        = SAT_Rect();
   SAT_Rect              MOuterBorder                        = SAT_Rect();
-  bool                  MOccupyLayoutArea                   = true;
+  bool                  MFillLayout                         = true;
+  double                MMinWidth                           = -1;
+  double                MMaxWidth                           = -1;
+  double                MMinHeight                          = -1;
+  double                MMaxHeight                          = -1;
   
   const char*           MName                               = "";
   const char*           MHint                               = "";
@@ -162,6 +166,28 @@ public:
   virtual void setStretching(uint32_t AStretching)              { MStretching = AStretching; }
   virtual void setValue(double AValue, uint32_t AIndex=0)       { MValues[AIndex] = AValue; }
   virtual void setWidth(double AWidth)                          { MRect.w = AWidth; }
+  
+  virtual void setMinWidth(double AValue)   { MMinWidth = AValue; }
+  virtual void setMinHeight(double AValue)  { MMinHeight = AValue; }
+  virtual void setMaxWidth(double AValue)   { MMaxWidth = AValue; }
+  virtual void setMaxHeight(double AValue)  { MMaxHeight = AValue; }
+  
+  virtual void setSizeLimits(double AMinW, double AMinH, double AMaxW, double AMaxH) {
+    MMinWidth  = AMinW;
+    MMinHeight = AMinH;
+    MMaxWidth  = AMaxW;
+    MMaxHeight = AMaxH;
+  }
+  
+  virtual void setWidthLimits(double AMinW, double AMaxW) {
+    MMinWidth  = AMinW;
+    MMaxWidth  = AMaxW;
+  }
+  
+  virtual void setHeightLimits(double AMinH, double AMaxH) {
+    MMinHeight = AMinH;
+    MMaxHeight = AMaxH;
+  }
   
 //------------------------------
 public: // hierarchy
@@ -330,6 +356,18 @@ public: // hierarchy
 
   //----------
   
+//private:
+//
+//  void stretch(SAT_Widget* child, SAT_Rect layout_rect) {
+//    uint32_t child_stretching = child->getStretching();
+//    if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( layout_rect.x );
+//    if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( layout_rect.x2() );
+//    if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( layout_rect.y );
+//    if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( layout_rect.y2() );
+//  }
+//  
+//public:
+  
   virtual void paintChildWidgets(SAT_PaintContext* AContext) {
     SAT_Rect mrect = getRect();
     SAT_Painter* painter= AContext->painter;
@@ -391,6 +429,9 @@ public: // hierarchy
       child->MRect.x = child_basisrect.x + layout_rect.x;
       child->MRect.y = child_basisrect.y + layout_rect.y;
       
+      child->MRect.w = child_basisrect.w;
+      child->MRect.h = child_basisrect.h;
+      
       // negative = percent
       
       SAT_Rect child_initialrect = child->getInitialRect();
@@ -399,20 +440,25 @@ public: // hierarchy
       if (child_initialrect.w < 0) child->MRect.w = layout_rect.w * (fabs(child_initialrect.w) * 0.01);
       if (child_initialrect.h < 0) child->MRect.h = layout_rect.h * (fabs(child_initialrect.h) * 0.01);
 
-      // stretching
-
-      uint32_t child_stretching = child->getStretching();
-      if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( layout_rect.x );
-      if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( layout_rect.x2() );
-      if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( layout_rect.y );
-      if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( layout_rect.y2() );
+//      // stretching
+//
+//      uint32_t child_stretching = child->getStretching();
+//      if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( layout_rect.x );
+//      if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( layout_rect.x2() );
+//      if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( layout_rect.y );
+//      if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( layout_rect.y2() );
 
       // alignment
-
+      
+      SAT_Rect pre_layout_rect = layout_rect;
       uint32_t child_alignment = child->getAlignment();
       switch(child_alignment) {
         
+        //case SAT_WIDGET_ALIGN_DEFAULT:
+        //case SAT_WIDGET_ALIGN_CLIENT:
+
         case SAT_WIDGET_ALIGN_NONE: {
+          // undo parent aligning
           child->MRect.x -= layout_rect.x;
           child->MRect.y -= layout_rect.y;
           break;
@@ -427,24 +473,64 @@ public: // hierarchy
           break;
         }
 
+        //--------------------
+        // center
+
         case SAT_WIDGET_ALIGN_CENTER: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_CENTER\n");
+          //SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_CENTER\n");
+          //child->MRect.x = (layout_rect.x + child->MRect.w) * 0.5;
+          //child->MRect.y = (layout_rect.y + child->MRect.h) * 0.5;
+          child->MRect.x = layout_rect.x + (layout_rect.w * 0.5) - (child->MRect.w * 0.5);
+          child->MRect.y = layout_rect.y + (layout_rect.h * 0.5) - (child->MRect.h * 0.5);
           break;
         }
         
         case SAT_WIDGET_ALIGN_HCENTER: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_HCENTER\n");
+          //SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_HCENTER\n");
+          //child->MRect.x = (layout_rect.x + child->MRect.w) * 0.5;
+          child->MRect.x = layout_rect.x + (layout_rect.w * 0.5) - (child->MRect.w * 0.5);
           break;
         }
         
         case SAT_WIDGET_ALIGN_VCENTER: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_VCENTER\n");
+          //SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_VCENTER\n");
+          //child->MRect.y = (layout_rect.y + child->MRect.h) * 0.5;
+          child->MRect.x = layout_rect.x + (layout_rect.w * 0.5) - (child->MRect.w * 0.5);
+          if (MFillLayout) {
+          }
           break;
         }
         
+        //--------------------
+        // fill
+
+        case SAT_WIDGET_ALIGN_FILL: {
+          child->MRect = layout_rect;
+          if (MFillLayout) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_HFILL: {
+          child->MRect.x = layout_rect.x;
+          child->MRect.w = layout_rect.w;
+          if (MFillLayout) {
+          }
+          break;
+        }
+        
+        case SAT_WIDGET_ALIGN_VFILL: {
+          child->MRect.y = layout_rect.y;
+          child->MRect.h = layout_rect.h;
+          break;
+        }
+        
+        //--------------------
+        // left
+        
         case SAT_WIDGET_ALIGN_LEFT: {
           child->MRect.x = layout_rect.x;
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
             layout_rect.x += (child->MRect.w + spacing.x);
             layout_rect.w -= (child->MRect.w + spacing.x);
           }
@@ -454,7 +540,7 @@ public: // hierarchy
         case SAT_WIDGET_ALIGN_LEFT_TOP: {
           child->MRect.x = layout_rect.x;
           child->MRect.y = layout_rect.y;
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
             layout_rect.x += (child->MRect.w + spacing.x);
             layout_rect.w -= (child->MRect.w + spacing.x);
           }
@@ -463,8 +549,9 @@ public: // hierarchy
         
         case SAT_WIDGET_ALIGN_LEFT_CENTER: {
           child->MRect.x = layout_rect.x;
-          child->MRect.y = (layout_rect.y + child->MRect.h) * 0.5;
-          if (MOccupyLayoutArea) {
+          //child->MRect.y = (layout_rect.y + child->MRect.h) * 0.5;
+          child->MRect.y = layout_rect.y + (layout_rect.h * 0.5) - (child->MRect.h * 0.5);
+          if (MFillLayout) {
             layout_rect.x += (child->MRect.w + spacing.x);
             layout_rect.w -= (child->MRect.w + spacing.x);
           }
@@ -474,17 +561,20 @@ public: // hierarchy
         case SAT_WIDGET_ALIGN_LEFT_BOTTOM: {
           child->MRect.x = layout_rect.x;
           child->MRect.y = layout_rect.y2() - child->MRect.h;
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
             layout_rect.x += (child->MRect.w + spacing.x);
             layout_rect.w -= (child->MRect.w + spacing.x);
           }
           break;
         }
         
+        //--------------------
+        // right
+        
         case SAT_WIDGET_ALIGN_RIGHT: {
           child->MRect.x = layout_rect.x2() - child->MRect.w;
-          layout_rect.w -= (child->MRect.w + spacing.x);
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
+            layout_rect.w -= (child->MRect.w + spacing.x);
           }
           break;
         }
@@ -492,15 +582,17 @@ public: // hierarchy
         case SAT_WIDGET_ALIGN_RIGHT_TOP: {
           child->MRect.x = layout_rect.x2() - child->MRect.w;
           child->MRect.y = layout_rect.y;
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
+            layout_rect.w -= (child->MRect.w + spacing.x);
           }
           break;
         }
         
         case SAT_WIDGET_ALIGN_RIGHT_CENTER: {
           child->MRect.x = layout_rect.x2() - child->MRect.w;
-          child->MRect.y = (layout_rect.y + child->MRect.h) * 0.5;
-          if (MOccupyLayoutArea) {
+          child->MRect.y = layout_rect.y + (layout_rect.h * 0.5) - (child->MRect.h * 0.5);
+          if (MFillLayout) {
+            layout_rect.w -= (child->MRect.w + spacing.x);
           }
           break;
         }
@@ -508,14 +600,18 @@ public: // hierarchy
         case SAT_WIDGET_ALIGN_RIGHT_BOTTOM: {
           child->MRect.x = layout_rect.x2() - child->MRect.w;
           child->MRect.y = layout_rect.y2() - child->MRect.h;
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
+            layout_rect.w -= (child->MRect.w + spacing.x);
           }
           break;
         }
         
+        //--------------------
+        //top
+
         case SAT_WIDGET_ALIGN_TOP: {
           child->MRect.y = layout_rect.y;
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
             layout_rect.y += (child->MRect.h + spacing.y);
             layout_rect.h -= (child->MRect.h + spacing.y);
           }
@@ -525,7 +621,7 @@ public: // hierarchy
         case SAT_WIDGET_ALIGN_TOP_LEFT: {
           child->MRect.x = layout_rect.x;
           child->MRect.y = layout_rect.y;
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
             layout_rect.y += (child->MRect.h + spacing.y);
             layout_rect.h -= (child->MRect.h + spacing.y);
           }
@@ -533,53 +629,87 @@ public: // hierarchy
         }
 
         case SAT_WIDGET_ALIGN_TOP_CENTER: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_TOP_CENTER\n");
+          child->MRect.x = layout_rect.x + (layout_rect.w * 0.5) - (child->MRect.w * 0.5);
+          child->MRect.y = layout_rect.y;
+          if (MFillLayout) {
+            layout_rect.y += (child->MRect.h + spacing.y);
+            layout_rect.h -= (child->MRect.h + spacing.y);
+          }
           break;
         }
 
         case SAT_WIDGET_ALIGN_TOP_RIGHT: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_TOP_RIGHT\n");
+          child->MRect.x = layout_rect.x2() - child->MRect.w;
+          child->MRect.y = layout_rect.y;
+          if (MFillLayout) {
+            layout_rect.y += (child->MRect.h + spacing.y);
+            layout_rect.h -= (child->MRect.h + spacing.y);
+          }
           break;
         }
 
+        //--------------------
+        // bottom
+
         case SAT_WIDGET_ALIGN_BOTTOM: {
           child->MRect.y = layout_rect.y2() - child->MRect.h;
-          layout_rect.h -= (child->MRect.h + spacing.y);
-          if (MOccupyLayoutArea) {
+          if (MFillLayout) {
+            layout_rect.h -= (child->MRect.h + spacing.y);
           }
           break;
         }
         
         case SAT_WIDGET_ALIGN_BOTTOM_LEFT: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_BOTTOM_LEFT\n");
+          child->MRect.x = layout_rect.x;
+          child->MRect.y = layout_rect.y2() - child->MRect.h;
+          if (MFillLayout) {
+            layout_rect.h -= (child->MRect.h + spacing.y);
+          }
           break;
         }
 
         case SAT_WIDGET_ALIGN_BOTTOM_CENTER: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_BOTTOM_CENTER\n");
+          child->MRect.x = layout_rect.x + (layout_rect.w * 0.5) - (child->MRect.w * 0.5);
+          child->MRect.y = layout_rect.y2() - child->MRect.h;
+          if (MFillLayout) {
+            layout_rect.h -= (child->MRect.h + spacing.y);
+          }
           break;
         }
 
         case SAT_WIDGET_ALIGN_BOTTOM_RIGHT: {
-          SAT_Print("unhandled alignment: SAT_WIDGET_ALIGN_BOTTOM_RIGHT\n");
+          child->MRect.x = layout_rect.x2() - child->MRect.w;
+          child->MRect.y = layout_rect.y2() - child->MRect.h;
+          if (MFillLayout) {
+            layout_rect.h -= (child->MRect.h + spacing.y);
+          }
           break;
         }
 
       }
       
-//      // stretching
-//
-//      uint32_t child_stretching = child->getStretching();
-//      if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( layout_rect.x );
-//      if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( layout_rect.x2() );
-//      if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( layout_rect.y );
-//      if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( layout_rect.y2() );
+      // stretching
       
-      // post
+      // (but layout_rect is already changed..)
+
+      uint32_t child_stretching = child->getStretching();
+      if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( layout_rect.x );
+      if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( layout_rect.x2() );
+      if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( layout_rect.y );
+      if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( layout_rect.y2() );
       
-      SAT_Rect post = child->MOuterBorder;
-      post.scale(S);
-      child->MRect.shrink(post);
+      // outer border (post)
+      
+      SAT_Rect outer_border = child->MOuterBorder;
+      outer_border.scale(S);
+      child->MRect.shrink(outer_border);
+      
+      // min/max
+      
+      if ((child->MMinWidth  >= 0) && (child->MRect.w < (child->MMinWidth  * S))) child->MRect.w = (child->MMinWidth  * S);
+      if ((child->MMinHeight >= 0) && (child->MRect.h < (child->MMinHeight * S))) child->MRect.h = (child->MMinHeight * S);
+      if ((child->MMaxWidth  >= 0) && (child->MRect.w > (child->MMaxWidth  * S))) child->MRect.w = (child->MMaxWidth  * S);
+      if ((child->MMaxHeight >= 0) && (child->MRect.h > (child->MMaxHeight * S))) child->MRect.h = (child->MMaxHeight * S);
 
       // recursive
 
@@ -769,6 +899,12 @@ public: // widget listener
     double S = getWindowScale();
     mrect.w += ADeltaX;
     mrect.h += ADeltaY;
+    
+    if ((MMinWidth  >= 0) && (mrect.w < (MMinWidth  * S))) return;//mrect.w = (MMinWidth  * S);
+    if ((MMinHeight >= 0) && (mrect.h < (MMinHeight * S))) return;//mrect.h = (MMinHeight * S);
+    if ((MMaxWidth  >= 0) && (mrect.w > (MMaxWidth  * S))) return;//mrect.w = (MMaxWidth  * S);
+    if ((MMaxHeight >= 0) && (mrect.h > (MMaxHeight * S))) return;//mrect.h = (MMaxHeight * S);
+    
     setRect(mrect);
     mrect.scale(1.0/S);
     setBasisRect(mrect);

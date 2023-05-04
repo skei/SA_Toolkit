@@ -312,7 +312,7 @@ public: // plugin
   const void* get_extension(const char *id) override {
     const void* result = MExtensions.getItem(id);
     SAT_Log("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
-    SAT_Print("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
+    //SAT_Print("SAT_Plugin.get_extension (id %s) -> %p\n",id,result);
     return result;
   }
 
@@ -1234,14 +1234,14 @@ public: // remote controls
         //page->param_ids[6] = 2;
         //page->param_ids[7] = 3;
         uint32_t num = SAT_MinI(8,getNumParameters());
-        SAT_Print("num %i\n",num);
+        //SAT_Print("num %i\n",num);
         for (uint32_t i=0; i<num; i++) {
-          SAT_Print("%i = %i\n",i,i);
+          //SAT_Print("%i = %i\n",i,i);
           page->param_ids[i] = i;
         }
         
         for (uint32_t i=num; i<8; i++) {
-          SAT_Print("%i = CLAP_INVALID_ID\n",i);
+          //SAT_Print("%i = CLAP_INVALID_ID\n",i);
           page->param_ids[i] = CLAP_INVALID_ID;
         }
         

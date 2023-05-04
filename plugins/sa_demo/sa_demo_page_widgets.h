@@ -19,14 +19,10 @@ public:
     setInnerBorder(SAT_Rect(10,10,10,10));
     //setSpacing(SAT_Point(5,5));
     
-//    SAT_TextWidget* text1 = new SAT_TextWidget(SAT_Rect(200,15),"widgets");
-//    appendChildWidget(text1);
-//    text1->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
-//    text1->setTextSize(9);
-    
-    SAT_PanelWidget* left_panel = new SAT_PanelWidget(SAT_Rect(0,0,200,200));
+    SAT_PanelWidget* left_panel = new SAT_PanelWidget(200);
     appendChildWidget(left_panel);
     left_panel->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
+    left_panel->setWidthLimits(100,400);
     {
     }
     
@@ -36,7 +32,7 @@ public:
     sizer->setBackgroundColor(0.3);
     sizer->setDrawBorder(false);
 
-    SAT_PanelWidget* right_panel = new SAT_PanelWidget(SAT_Rect(0,0,100,100));
+    SAT_PanelWidget* right_panel = new SAT_PanelWidget(0);
     appendChildWidget(right_panel);
     right_panel->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_ALL);
     {

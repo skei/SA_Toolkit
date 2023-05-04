@@ -64,7 +64,7 @@ public:
   */
   
   void prepare(SAT_WidgetOwner* AOwner) override {
-    SAT_PRINT;
+    //SAT_PRINT;
     SAT_ScrollBoxWidget::prepare(AOwner);
     SAT_Window* window = (SAT_Window*)AOwner;
     double S = getWindowScale();
