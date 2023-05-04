@@ -15,11 +15,12 @@ class SAT_TextBoxWidget
 protected:
 //------------------------------
 
-  //float     MTextHeight = 20.0;
-  float     MTextSize       = 10.0;
-  uint32_t  MTextAlignment  = SAT_TEXT_ALIGN_LEFT;
-  uint32_t  MNumLines       = 0;
-  uint32_t  MMaxLines       = 100;
+  SAT_Window* MWindow         = nullptr;
+  float       MTextSize       = 10.0;
+  uint32_t    MTextAlignment  = SAT_TEXT_ALIGN_LEFT;
+  uint32_t    MNumLines       = 0;
+  uint32_t    MMaxLines       = 100;
+  //float       MTextHeight = 20.0;
 
 //------------------------------
 public:
@@ -27,12 +28,10 @@ public:
 
   SAT_TextBoxWidget(SAT_Rect ARect)
   //: SAT_ScrollBoxWidget(ARect,true,true) {
-  : SAT_ScrollBoxWidget(ARect,true,false) {
+  : SAT_ScrollBoxWidget(ARect,true,true) {
     setName("SAT_TextBoxWidget");
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(true);
-    
-    
   }
 
   //----------
@@ -47,41 +46,62 @@ public:
 public:
 //------------------------------
 
-//  void on_widget_config(SAT_Widget* AOwnerWindow) {
-//    SAT_Window* window = (SAT_Window*)AOwnerWindow;
-//    SAT_Painter* painter = window->getPainter();
-//    uint32_t num = MContent->getNumChildWidgets();
-//    for (uint32_t i=0; i<num; i++) {
-//      SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChildWidget(i);
-//      if (textwidget) {
-//        textwidget->updateTextRect(painter);
-//      }
-//    }
-//    SAT_ScrollBoxWidget::on_widget_config(AOwnerWindow);
-//  }
+  virtual void setMaxLines(uint32_t ANum)   { MMaxLines = ANum; }
+  virtual void setTextSize(double ASize)    { MTextSize = ASize; }
+//virtual void setTextHeight(float ASize)   { MTextHeight = ASize; }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void setMaxLines(uint32_t ANum) { MMaxLines = ANum; }
-  //virtual void setTextHeight(float ASize) { MTextHeight = ASize; }
-  virtual void setTextSize(double ASize) { MTextSize = ASize; }
+  /*
+  void on_widget_config(SAT_Widget* AOwnerWindow) {
+    SAT_Window* window = (SAT_Window*)AOwnerWindow;
+    SAT_Painter* painter = window->getPainter();
+    uint32_t num = MContent->getNumChildWidgets();
+    for (uint32_t i=0; i<num; i++) {
+      SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChildWidget(i);
+      if (textwidget) {
+        textwidget->updateTextRect(painter);
+      }
+    }
+    SAT_ScrollBoxWidget::on_widget_config(AOwnerWindow);
+  }
+  */
+  
+  void prepare(SAT_WidgetOwner* AOwner) override {
+    //SAT_PRINT;
+    MWindow = (SAT_Window*)AOwner;
+    SAT_ScrollBoxWidget::prepare(AOwner);
+    
+//    if (MWindow) {
+//      SAT_Painter* painter = MWindow->getPainter();
+//      if (painter) {
+//        uint32_t num = MContent->getNumChildWidgets();
+//        for (uint32_t i=0; i<num; i++) {
+//          SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChildWidget(i);
+//          const char* text = textwidget->getText();
+//          SAT_Print("text: %s\n",text);
+//          double bounds[4];
+//          if (painter->getTextBounds(text,bounds)) {
+//            textwidget->setWidth(bounds[2]);
+//          }
+//        }
+//      }
+//    }
+    
+  }
 
 //------------------------------
 public:
 //------------------------------
 
   virtual void appendLine(const char* AText, bool ARedraw=true) {
-    if (MNumLines >= MMaxLines) { removeOldestLine(); }
-    //while (MNumLines >= MMaxLines) { removeOldestLine(); }
-    SAT_TextWidget* textwidget = new SAT_TextWidget( SAT_Rect(600,MTextSize),AText);
-    //textwidget->Layout.alignment = SAT_WIDGET_ALIGN_FILL_TOP;
-    
-//    textwidget->setAlignment(SAT_WIDGET_ALIGN_TOP_LEFT);
 
+    if (MNumLines >= MMaxLines) { removeOldestLine(); }
+    SAT_TextWidget* textwidget = new SAT_TextWidget( SAT_Rect(600,MTextSize),AText);
     textwidget->setAlignment(SAT_WIDGET_ALIGN_TOP);
-    textwidget->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+    //textwidget->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
 
     textwidget->setFillBackground(false);
     textwidget->setDrawBorder(false);
@@ -111,6 +131,12 @@ public:
       MNumLines -= 1;
     }
   }
+  
+  //----------
+  
+//  void on_widget_paint(SAT_PaintContext* AContext) override {
+//    SAT_ScrollBoxWidget::on_widget_paint(AContext);
+//  }
 
 };
 

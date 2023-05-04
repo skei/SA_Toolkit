@@ -182,6 +182,7 @@ public:
 //------------------------------
 
   SAT_Widget*       getRootWidget()     { return MRootWidget; }
+  SAT_Painter*      getPainter()        { return MWindowPainter; }
   SAT_PaintContext* getPaintContext()   { return &MPaintContext; }
   double            getScale()          { return MScale; }
   uint32_t          getWidth()          { return MWidth; }
@@ -298,13 +299,13 @@ public:
   }
 
 
-void appendPrePaint(SAT_Widget* AWidget) {
-  MPrePaintWidgets.append(AWidget);
-}
+  void appendPrePaint(SAT_Widget* AWidget) {
+    MPrePaintWidgets.append(AWidget);
+  }
 
-void appendPostPaint(SAT_Widget* AWidget) {
-  MPostPaintWidgets.append(AWidget);
-}
+  void appendPostPaint(SAT_Widget* AWidget) {
+    MPostPaintWidgets.append(AWidget);
+  }
 
 //------------------------------
 public: // capture

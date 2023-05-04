@@ -4,6 +4,12 @@
 
 #include "sa_demo_page_host.h"
 #include "sa_demo_page_plugin.h"
+#include "sa_demo_page_parameters.h"
+#include "sa_demo_page_audio.h"
+#include "sa_demo_page_synth.h"
+#include "sa_demo_page_widgets.h"
+#include "sa_demo_page_layout.h"
+#include "sa_demo_page_animation.h"
 
 class sa_demo_editor
 : public SAT_Editor
@@ -16,15 +22,17 @@ private:
   SAT_Host*   MHost   = nullptr;
   SAT_Plugin* MPlugin = nullptr;
 
-  #define NUM_DEMOS 6
+  #define NUM_DEMOS 8
 
   const char* demo_buttontext[NUM_DEMOS] = {
     "Host",
     "Plugin",
-    "Gui",
-    "Audio",
     "Parameters",
-    "Notes",
+    "Audio",
+    "Synth",
+    "Widgets",
+    "Layout",
+    "Animation"
   };
   
   SAT_PanelWidget*        MRoot         = nullptr;
@@ -64,7 +72,7 @@ public:
     if (ASender == MDemoButtons) {
       SAT_ButtonRowWidget* buttons = (SAT_ButtonRowWidget*)ASender;
       uint32_t page = buttons->getSelected();
-      SAT_Print("selected %i\n",page);
+      //SAT_Print("selected %i\n",page);
       MDemoPages->setPage(page);
       MDemoPages->parentRedraw();
     }
@@ -135,6 +143,12 @@ public:
       {
         MDemoPages->appendPage( new sa_demo_page_host(0,MHost) );
         MDemoPages->appendPage( new sa_demo_page_plugin(0,MPlugin) );
+        MDemoPages->appendPage( new sa_demo_page_parameters(0,MPlugin) );
+        MDemoPages->appendPage( new sa_demo_page_audio(0,MPlugin) );
+        MDemoPages->appendPage( new sa_demo_page_synth(0,MPlugin) );
+        MDemoPages->appendPage( new sa_demo_page_widgets(0,MPlugin) );
+        MDemoPages->appendPage( new sa_demo_page_layout(0,MPlugin) );
+        MDemoPages->appendPage( new sa_demo_page_animation(0,MPlugin) );
       } // MDemoPages
       MDemoPages->setPage(0);
     } // center_panel
