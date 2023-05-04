@@ -28,7 +28,7 @@ private:
   bool                  MIsOpen           = false;
   SAT_EditorListener*   MListener         = nullptr;
   SAT_Window*           MWindow           = nullptr;
-  bool                  MPreparedWidgets  = false;
+  //sbool                  MPreparedWidgets  = false;
 
 //------------------------------
 public:

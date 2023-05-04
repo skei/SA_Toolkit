@@ -38,21 +38,25 @@ public:
       case SAT_DIRECTION_LEFT:
         //Layout.alignment = SAT_WIDGET_ALIGN_FILL_LEFT;
         setAlignment(SAT_WIDGET_ALIGN_LEFT);
+        setStretching(SAT_WIDGET_STRETCH_VERTICAL);
         setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);
         break;
       case SAT_DIRECTION_RIGHT:
         //Layout.alignment = SAT_WIDGET_ALIGN_FILL_RIGHT;
         setAlignment(SAT_WIDGET_ALIGN_RIGHT);
+        setStretching(SAT_WIDGET_STRETCH_VERTICAL);
         setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);
         break;
       case SAT_DIRECTION_TOP:
         //Layout.alignment = SAT_WIDGET_ALIGN_FILL_TOP;
         setAlignment(SAT_WIDGET_ALIGN_TOP);
+        setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
         setCursor(SAT_CURSOR_ARROW_UP_DOWN);
         break;
       case SAT_DIRECTION_BOTTOM:
         //Layout.alignment = SAT_WIDGET_ALIGN_FILL_BOTTOM;
         setAlignment(SAT_WIDGET_ALIGN_BOTTOM);
+        setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
         setCursor(SAT_CURSOR_ARROW_UP_DOWN);
         break;
       //case SAT_WIDGET_SIZER_WINDOW:

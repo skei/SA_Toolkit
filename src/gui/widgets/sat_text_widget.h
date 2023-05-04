@@ -4,6 +4,7 @@
 
 #include "base/sat.h"
 #include "plugin/sat_parameter.h"
+#include "gui/sat_window.h"
 #include "gui/widgets/sat_movable_widget.h"
 #include "gui/widgets/sat_panel_widget.h"
 
@@ -26,7 +27,8 @@ private:
   double    MTextSize         = 10.0;
   uint32_t  MTextAlignment    = SAT_TEXT_ALIGN_CENTER;
   SAT_Rect  MTextOffset       = {};
-  char      MText[256]        = {0};
+  //char      MText[256]        = {0};
+  char      MText[1024]       = {0};
 
 //------------------------------
 public:
@@ -60,6 +62,24 @@ public:
 public:
 //------------------------------
 
+  virtual void adjustTextWidth(SAT_Painter* APainter) {
+    //SAT_Window* window = (SAT_Window*)getOwner();
+    //if (window) {
+    //  SAT_Painter* painter = window->getPainter();
+    //  if (painter) {
+        const char* text = getText();
+        SAT_Print("text: %s\n",text);
+        double bounds[4];
+        if (APainter->getTextBounds(text,bounds)) {
+          //textwidget->setWidth(bounds[2]);
+          setWidth(bounds[2]);
+        }
+    //  }
+    //}
+  }
+  
+  //----------
+
   virtual void drawText(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawText) {
@@ -74,8 +94,6 @@ public:
       if (mrect.h <= 0.0) return;
       painter->setTextColor(MTextColor);
       painter->setTextSize(MTextSize*S);
-      
-
       SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
       if (param) {
         painter->drawTextBox(mrect,param->getName(),MTextAlignment);
@@ -83,10 +101,8 @@ public:
       else {
         painter->drawTextBox(mrect,MText,MTextAlignment);
       }
-      
     }
   }
-
 
 //------------------------------
 public:

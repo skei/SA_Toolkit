@@ -9,6 +9,7 @@
 #include "sa_demo_page_synth.h"
 #include "sa_demo_page_widgets.h"
 #include "sa_demo_page_layout.h"
+#include "sa_demo_page_painting.h"
 #include "sa_demo_page_animation.h"
 
 class sa_demo_editor
@@ -22,7 +23,7 @@ private:
   SAT_Host*   MHost   = nullptr;
   SAT_Plugin* MPlugin = nullptr;
 
-  #define NUM_DEMOS 8
+  #define NUM_DEMOS 9
 
   const char* demo_buttontext[NUM_DEMOS] = {
     "Host",
@@ -32,6 +33,7 @@ private:
     "Synth",
     "Widgets",
     "Layout",
+    "Painting",
     "Animation"
   };
   
@@ -132,6 +134,7 @@ public:
         MDemoButtons->setCellBackgroundColor(0.2);
         MDemoButtons->setCellActiveBackgroundColor(0.16);
         MDemoButtons->setCellDrawBorder(false);
+        MDemoButtons->selectButton(0);
       } // MLeftColumn
 
       MDemoPages = new SAT_PagesWidget(0);
@@ -148,6 +151,7 @@ public:
         MDemoPages->appendPage( new sa_demo_page_synth(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_widgets(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_layout(0,MPlugin) );
+        MDemoPages->appendPage( new sa_demo_page_painting(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_animation(0,MPlugin) );
       } // MDemoPages
       MDemoPages->setPage(0);

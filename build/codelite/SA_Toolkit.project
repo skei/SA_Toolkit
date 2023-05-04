@@ -5,6 +5,7 @@
   </Plugins>
   <VirtualDirectory Name="plugins">
     <VirtualDirectory Name="sa_demo">
+      <File Name="../../plugins/sa_demo/sa_demo_page_painting.h"/>
       <File Name="../../plugins/sa_demo/sa_demo_page_layout.h"/>
       <File Name="../../plugins/sa_demo/sa_demo_page_widgets.h"/>
       <File Name="../../plugins/sa_demo/sa_demo_page_synth.h"/>
