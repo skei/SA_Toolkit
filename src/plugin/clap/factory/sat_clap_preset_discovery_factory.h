@@ -106,7 +106,7 @@
   // reads metadata from the given file and passes them to the metadata receiver
 
   bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, uint32_t location_kind, const char *location, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
-
+    
     SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
     SAT_File file = {};
 

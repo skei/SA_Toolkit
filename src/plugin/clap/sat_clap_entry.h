@@ -24,33 +24,26 @@ void clap_entry_deinit_callback(void) {
 //----------
 
 const void* clap_entry_get_factory_callback(const char* factory_id) {
-  
   int32_t index = SAT_GLOBAL.REGISTRY.findFactory(factory_id);
   if (index > 0) {
     const clap_plugin_factory_t* factory = SAT_GLOBAL.REGISTRY.getFactory(index);
     SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> %p\n",factory_id,factory);
     return factory;
   }
-  
   // no factory found.. try default ones
-  
   if (strcmp(factory_id,CLAP_PLUGIN_FACTORY_ID) == 0) {
     SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> SAT_CLAP_PLUGIN_FACTORY\n",factory_id);
     return &SAT_CLAP_PLUGIN_FACTORY;
   }
-  
   #ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY
     if (strcmp(factory_id,CLAP_PRESET_DISCOVERY_FACTORY_ID) == 0) {
       return &SAT_CLAP_PRESET_DISCOVERY_FACTORY;
     }
   #endif
-  
   //if (strcmp(factory_id,CLAP_PLUGIN_INVALIDATION_FACTORY_ID) == 0) {
   //  return &SAT_CLAP_PLUGIN_INVALIDATION_FACTORY;
   //}
-  
   // nope..
-  
   SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> null (no factory found)\n",factory_id);
   return nullptr;
 }

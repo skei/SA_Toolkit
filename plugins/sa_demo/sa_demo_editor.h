@@ -22,6 +22,8 @@ private:
 
   SAT_Host*   MHost   = nullptr;
   SAT_Plugin* MPlugin = nullptr;
+  
+  sa_demo_page_widgets* MPageWidgets = nullptr;
 
   #define NUM_DEMOS 9
 
@@ -64,6 +66,13 @@ public:
 public:
 //------------------------------
 
+  void set_track_name() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
 //  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex) {
 //    if (ASender == MDemoButtons) {
 //      SAT_PRINT;
@@ -80,6 +89,46 @@ public:
     }
     SAT_Editor::do_windowListener_update_widget(ASender,AMode,AIndex);
   }
+  
+  //----------
+  
+//  void do_windowListener_timer(SAT_Window* AWindow, double AElapsed) {
+//    if (MHost->ext.track_info) {
+//      SAT_Print("track info!\n");
+//      char buf1[512] = {0};
+//      char buf2[512] = {0};
+//      clap_track_info_t info;
+//      if (MHost->ext.track_info->get(MHost->getHost(),&info)) {
+//        //uint64_t flags; // see the flags above
+//        sprintf(buf1,"flags: %i ",(int)info.flags);
+//        strcat(buf2,buf1);
+//        if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME) {
+//          //char name[CLAP_NAME_SIZE]; // track name, available if flags contain CLAP_TRACK_INFO_HAS_TRACK_NAME
+//          sprintf(buf1,"name: '%s' ",info.name);
+//          strcat(buf2,buf1);
+//        }
+//        if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR) {
+//          //clap_color_t color; // track color, available if flags contain CLAP_TRACK_INFO_HAS_TRACK_COLOR
+//          sprintf(buf1,"color: %i,%i,%i ",info.color.red,info.color.green,info.color.blue);
+//          strcat(buf2,buf1);
+//        }
+//        if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL) {
+//          //int32_t audio_channel_count;
+//          //const char *audio_port_type;
+//          sprintf(buf1,"channels %i port<_type '%s' ",info.audio_channel_count,info.audio_port_type);
+//          strcat(buf2,buf1);
+//        }
+//        if (info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK) { strcat(buf2,"Return"); }  // This plugin is on a return track, initialize with wet 100%
+//        if (info.flags & CLAP_TRACK_INFO_IS_FOR_BUS) { strcat(buf2,"Bus"); }           // This plugin is on a bus track, initialize with appropriate settings for bus processing
+//        if (info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER) { strcat(buf2,"Master"); }        // This plugin is on the master, initialize with appropriate settings for channel processing
+//        SAT_Print("%s\n",buf2);
+//      }
+//    }
+//    else {
+//      SAT_Print("no track info!\n");
+//    }
+//    SAT_Editor::do_windowListener_timer(AWindow,AElapsed);
+//  }
 
 //------------------------------
 public:
@@ -98,7 +147,7 @@ public:
     // header
     
     //const char* format = getPluginFormat();
-    MPluginHeader = new SAT_PluginHeaderWidget(SAT_Rect(0,0,EDITOR_WIDTH,40),"demo",AFormat);
+    MPluginHeader = new SAT_PluginHeaderWidget(SAT_Rect(0,0,EDITOR_WIDTH,40),"toolkit demo",AFormat);
     MRoot->appendChildWidget(MPluginHeader);
     
     // footer
@@ -162,18 +211,28 @@ public:
       MDemoPages->setBackgroundColor(0.25);
       MDemoPages->setDrawBorder(false);
       {
+        
+        MPageWidgets = new sa_demo_page_widgets(0,MPlugin);
+
         MDemoPages->appendPage( new sa_demo_page_host(0,MHost) );
         MDemoPages->appendPage( new sa_demo_page_plugin(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_parameters(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_audio(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_synth(0,MPlugin) );
-        MDemoPages->appendPage( new sa_demo_page_widgets(0,MPlugin) );
+        MDemoPages->appendPage( MPageWidgets );
         MDemoPages->appendPage( new sa_demo_page_layout(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_painting(0,MPlugin) );
         MDemoPages->appendPage( new sa_demo_page_animation(0,MPlugin) );
         
       } // MDemoPages
+      
       MDemoPages->setPage(0);
+
+      //SAT_SelectorWidget* selector = MPageWidgets->getSelector1();
+      //MRoot->appendChildWidget(MPageWidgets);
+      SAT_MenuWidget* menu1 = MPageWidgets->getMenu1();
+      MRoot->appendChildWidget(menu1);
+      
 
     } // center_panel
 

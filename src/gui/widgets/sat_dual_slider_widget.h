@@ -23,13 +23,13 @@ private:
   bool      MDrawValues       = true;
   
   SAT_Color MValue1Color      = SAT_White;
-  double    MValue1Size       = 12;
+  double    MValue1Size       = 9;
   uint32_t  MValue1Alignment  = SAT_TEXT_ALIGN_LEFT;
   SAT_Rect  MValue1Offset     = {};
   char      MValue1Text[256]  = {0};
 
   SAT_Color MValue2Color      = SAT_White;
-  double    MValue2Size       = 12;
+  double    MValue2Size       = 9;
   uint32_t  MValue2Alignment  = SAT_TEXT_ALIGN_RIGHT;
   SAT_Rect  MValue2Offset     = {};
   char      MValue2Text[256]  = {0};
@@ -65,6 +65,7 @@ public:
     setName("SAT_DualSliderWidget");
     setValue(AValue1,0);
     setValue(AValue2,1);
+    strcpy(MText,AText);
     //setTextAlignment(SAT_TEXT_ALIGN_CENTER);
     MTextAlignment = SAT_TEXT_ALIGN_CENTER;
   }

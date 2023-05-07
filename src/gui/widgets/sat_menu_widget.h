@@ -53,8 +53,13 @@ public:
 public:
 //------------------------------
 
-  virtual void setRightClickClose(bool AClose=true)         { MRightClickClose = AClose; }
-  virtual void setMenuListener(SAT_MenuListener* AListener) { MMenuListener = AListener; }
+  virtual void setRightClickClose(bool AClose=true) {
+    MRightClickClose = AClose;
+  }
+  
+  virtual void setMenuListener(SAT_MenuListener* AListener) {
+    MMenuListener = AListener;
+  }
 
 //------------------------------
 public:

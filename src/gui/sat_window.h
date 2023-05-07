@@ -78,7 +78,7 @@ private:
   SAT_WidgetArray     MPrePaintWidgets        = {};
   SAT_WidgetArray     MPostPaintWidgets       = {};
   
-  void*               MBuffer                 = nullptr;
+  void*               MBuffer                 = nullptr; // fbo
   uint32_t            MBufferWidth            = 0;
   uint32_t            MBufferHeight           = 0;
 
@@ -724,7 +724,7 @@ public: // window
   }
   
 //------------------------------
-public:
+public: // timer
 //------------------------------
 
   virtual void on_window_timer(SAT_Timer* ATimer, double AElapsed) {

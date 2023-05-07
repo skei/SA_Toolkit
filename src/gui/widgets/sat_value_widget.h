@@ -20,7 +20,7 @@ private:
 
   bool      MDrawValue      = true;
   SAT_Color MValueColor     = SAT_White;
-  double    MValueSize      = 12;
+  double    MValueSize      = 9;
   uint32_t  MValueAlignment = SAT_TEXT_ALIGN_RIGHT;
   SAT_Rect  MValueOffset    = {};
   char      MValueText[256] = {0};

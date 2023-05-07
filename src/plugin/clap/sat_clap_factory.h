@@ -7,6 +7,8 @@
 #include "plugin/sat_registry.h"
 #include "plugin/sat_plugin.h"
 
+//----------
+
 #include "plugin/clap/factory/sat_clap_plugin_factory.h"
 
 #ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY

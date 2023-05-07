@@ -28,7 +28,7 @@ protected:
   bool        MValueIsBits                = false;//true;
   bool        MAllowZeroBits              = true;
 
-  double      MTextSize                   = 12.0;
+  double      MTextSize                   = 9.0;
   SAT_Color   MTextColor                  = SAT_Color(0.0);
   SAT_Color   MActiveTextColor            = SAT_Color(0.0);
 

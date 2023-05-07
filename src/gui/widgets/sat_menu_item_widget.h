@@ -26,10 +26,14 @@ public:
   : SAT_TextWidget(ARect,AText) {
     setName("SAT_MenuItemWidget");
     setCursor(SAT_CURSOR_FINGER);
-    setBorderColor(SAT_DarkerGrey);
+    setDrawBorder(false);
+    //setBorderColor(SAT_DarkerGrey);
     setFillBackground(true);
-    setTextColor(MTextColor);
     setBackgroundColor(MBackgroundColor);
+    setTextColor(MTextColor);
+    setAlignment(SAT_WIDGET_ALIGN_TOP_LEFT);
+    setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+    
   }
 
   //----------

@@ -11,7 +11,7 @@
 #define PLUGIN_NAME   "sa_demo"
 #define EDITOR_WIDTH  800
 #define EDITOR_HEIGHT 600
-#define EDITOR_SCALE  1.5
+#define EDITOR_SCALE  1.6
 #define NUM_VOICES    32
 
 //----------------------------------------------------------------------
