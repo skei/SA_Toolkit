@@ -132,10 +132,34 @@ public:
   virtual double              getValue(uint32_t AIndex=0)       { return MValues[AIndex]; }
   virtual double              getWidth()                        { return MRect.w; }
   
-  virtual bool                isActive()                        { return MIsActive; }
-  virtual bool                isVisible()                       { return MIsVisible; }
-  virtual bool                isDisabled()                      { return MIsDisabled; }
-  virtual bool                isInteracting()                   { return MIsInteracting; }
+  virtual bool isActive() {
+    return MIsActive;
+  }
+  
+  virtual bool isVisible() {
+    return MIsVisible;
+  }
+  
+  virtual bool isDisabled() {
+    return MIsDisabled;
+  }
+  
+  virtual bool isInteracting() {
+    return MIsInteracting;
+  }
+
+  virtual bool isRecursivelyActive() {
+    if (!MIsActive) return false;
+    if (!MParentWidget) return true;
+    return MParentWidget->isRecursivelyActive();
+  }
+
+  virtual bool isRecursivelyVisible() {
+    //SAT_PRINT;
+    if (!MIsVisible) return false;
+    if (!MParentWidget) return true;
+    return MParentWidget->isRecursivelyVisible();
+  }
 
 //------------------------------
 public:
@@ -302,7 +326,7 @@ public: // hierarchy
     uint32_t num = MChildWidgets.size();
     for (uint32_t i=0; i<num; i++) {
       SAT_Widget* child = MChildWidgets[i];
-      if (child->MIsVisible) {
+      if (child->isVisible()) {
         //child->setChildrenOffset(AOffsetX,AOffsetY);
         child->MRect.x += AOffsetX;
         child->MRect.y += AOffsetY;
@@ -326,14 +350,6 @@ public: // hierarchy
 
   //----------
   
-  virtual bool isRecursivelyVisible() {
-    if (!MIsVisible) return false;
-    if (!MParentWidget) return true;
-    return MParentWidget->isRecursivelyVisible();
-  }
-  
-  //----------
-
   virtual SAT_Widget* findChildWidget(double AXpos, double AYpos, bool ARecursive=true) {
     if (!MRect.contains(AXpos,AYpos)) return nullptr;
     if (!isActive()) return nullptr;
@@ -378,14 +394,18 @@ public: // hierarchy
       if (MAutoClip) painter->pushOverlappingClip(mrect);
       for (uint32_t i=0; i<num; i++) {
         SAT_Widget* widget = MChildWidgets[i];
+        
         //if (widget->isRecursivelyVisible()) {
         if (widget->isVisible()) {
+          
           SAT_Rect wr = widget->getRect();
           wr.overlap(mrect);
           if (wr.isNotEmpty()) {
             widget->on_widget_paint(AContext);
           } // not empty
+          
         } // visible
+        
       } // for
       if (MAutoClip) painter->popClip();
     } // num > 0
@@ -778,7 +798,7 @@ public: // base
   }
   
   virtual void on_widget_paint(SAT_PaintContext* AContext) {
-    if (MIsVisible) paintChildWidgets(AContext);
+    if (isVisible()) paintChildWidgets(AContext);
   }
   
   virtual void on_widget_postpaint(SAT_PaintContext* AContext) {
@@ -806,14 +826,14 @@ public: // base
   }
 
   virtual void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATimestamp) {
-    if (MIsActive && MIsVisible) {
+    if (isActive() && isVisible()) {
       if (autoHoverCursor()) do_widgetListener_set_cursor(this,MMouseCursor);
       if (autoHoverHint()) do_widgetListener_set_hint(this,0,MHint);
     }
   }
 
   virtual void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATimestamp) {
-    if (MIsActive && MIsVisible) {
+    if (isActive() && isVisible()) {
       if (autoHoverCursor()) do_widgetListener_set_cursor(this,SAT_CURSOR_DEFAULT);
       if (autoHoverHint()) do_widgetListener_set_hint(this,0,"");
     }

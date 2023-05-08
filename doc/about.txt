@@ -1,9 +1,0 @@
-
-author:
-  Tor-Helge Skei
-  tor.helge.skei@gmail.com
-  https://github.com/skei
-
-----------------------------------------------------------------------
-
-[TODO]

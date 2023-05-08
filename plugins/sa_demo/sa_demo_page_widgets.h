@@ -15,6 +15,8 @@ private:
   const char*     buttonrow_text[5] = { "One", "Two", "III", "4", "5" };
   SAT_MenuWidget* MMenu1            = nullptr;
   
+  float buffer[1024 * 2] = {0};
+  
 //------------------------------
 public:
 //------------------------------
@@ -26,6 +28,10 @@ public:
     setStretching(SAT_WIDGET_STRETCH_ALL);
     setInnerBorder(SAT_Rect(10,10,10,10));
     //setSpacing(SAT_Point(5,5));
+    
+    //----------
+    
+    for (uint32_t i=0; i<1024; i++) buffer[i] = SAT_RandomRange(-0.99,0.99);
     
     //----------
 
@@ -105,7 +111,6 @@ public:
       SAT_SelectorWidget* selector1 = new SAT_SelectorWidget(15,"Selector",MMenu1);
       left_panel->appendChildWidget(selector1);
       selector1->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
-      
     }
     
     SAT_SizerWidget* sizer = new SAT_SizerWidget(SAT_Rect(3),SAT_DIRECTION_LEFT,left_panel);
@@ -120,9 +125,53 @@ public:
     right_panel->setInnerBorder(SAT_Rect(5,5,5,5));
     right_panel->setSpacing(SAT_Point(5,5));
     {
+      
+      SAT_WaveformWidget* waveform1 = new SAT_WaveformWidget(100);
+      right_panel->appendChildWidget(waveform1);
+      waveform1->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
+      waveform1->setDrawWaveform(true);
+      waveform1->setWaveformWidth(1.0);
+      waveform1->setWaveformColor(SAT_Black);
+      waveform1->setNumGrid(4);
+      waveform1->setNumSubGrid(2);
+      waveform1->setBuffer(buffer,1024);
+      //waveform1->setBuffers(nullptr,nullptr,1024);
+      waveform1->setMarkerActive(0,false);
+      waveform1->setMarkerPos(0,0);
+      waveform1->setMarkerColor(0,SAT_Green);
+      waveform1->setMarkerWidth(0,2.0);
+      waveform1->setAreaActive(0,false);
+      waveform1->setAreaStart(0,0);
+      waveform1->setAreaLength(0,512);
+      waveform1->setAreaColor(0,SAT_Red);
+      
+      SAT_CircularWaveformWidget* cwaveform1 = new SAT_CircularWaveformWidget(100,512);
+      right_panel->appendChildWidget(cwaveform1);
+      cwaveform1->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_NONE);
+      
+      cwaveform1->setAudioBuffer(1024,buffer,false);
+      cwaveform1->setRadius(0.9, 0.5);
+      cwaveform1->setBipolar(true);
+      cwaveform1->setWaveformWidth(1.0);
+      cwaveform1->setWaveformColor(SAT_Black);
+      cwaveform1->setWaveformBackgroundColor(SAT_LightGrey);
+//      cwaveform1->setZeroLineColor(SAT_Color AColor);
+//      cwaveform1->setZeroLineWidth(double AWidth);
+      cwaveform1->setGrid(4,2);
+//      cwaveform1->setGrid(uint32_t AGrid);
+//      cwaveform1->setSubGrid(uint32_t ASubGrid);
+//      cwaveform1->setGridColor(SAT_Color AGrid, SAT_Color ASubGrid);
+//      cwaveform1->setGridWidth(double AGrid=0.002, double ASubGrid=0.001);
+//      cwaveform1->setAreaActive(uint32_t AIndex, bool AActive=true);
+//      cwaveform1->setAreaPos(uint32_t AIndex, double APos, double ASize);
+//      cwaveform1->setAreaColor(uint32_t AIndex, SAT_Color AColor);
+//      cwaveform1->setMarkerActive(uint32_t AIndex, bool AActive=true);
+//      cwaveform1->setMarkerPos(uint32_t AIndex, double APos, double ASize=0.0025);
+//      cwaveform1->setMarkerColor(uint32_t AIndex, SAT_Color AColor);
+
     }
     
-    //----------
+  //----------
     
 //    appendChildWidget(selector_menu);
     

@@ -694,7 +694,10 @@ public: // window
       SAT_Widget* widget;
       //int32_t paint_count = MPaintContext.counter;
       while (MPaintDirtyWidgets.read(&widget)) {
-        if (widget->isVisible()) {
+        
+        if (widget->isRecursivelyVisible()) {
+        //if (widget->isVisible()) {
+          
           if (widget->getLastPainted() != MPaintContext.counter) { //paint_count) {
             SAT_Rect cliprect = calcClipRect(widget);
             // if cliprect visible

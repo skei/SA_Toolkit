@@ -55,7 +55,7 @@ protected:
 
   SAT_Color MWaveformColor                          = SAT_Color(1.0);
   double    MWaveformWidth                          = 1.0;
-  SAT_Color MWaveformBackgroundColor                = SAT_Color(0.25);
+  SAT_Color MWaveformBackgroundColor                = SAT_Color(SAT_Grey);
 
   SAT_Color MZeroLineColor                          = SAT_Color(0.6);
   double    MZeroLineWidth                          = 1.0;
@@ -81,7 +81,7 @@ public:
   : SAT_PanelWidget(ARect) {
     setName("SAT_CircularWaveformWidget");
     setFillBackground(true);
-    setBackgroundColor(0.2);
+    setBackgroundColor(0.33);
     setDrawBorder(false);
     precalcLineCoords(ANumLines,ARect);
   }
@@ -324,6 +324,9 @@ public:
       painter->setLineWidth(MWaveformWidth * S);
       double bufferpos = 0.0;
       double bufferadd = (double)MAudioBufferSize / (double)MNumWaveformLineCoords;
+      
+      //SAT_Print("MNumWaveformLineCoords %i\n",MNumWaveformLineCoords);
+      
       for (uint32_t i=0; i<MNumWaveformLineCoords; i++) {
         uint32_t ip = SAT_Trunc(bufferpos);
         bufferpos += bufferadd;
@@ -342,10 +345,17 @@ public:
         double y1 = MWaveformLineCoords[(i * 4) + 1] * S;
         double x2 = MWaveformLineCoords[(i * 4) + 2] * S;
         double y2 = MWaveformLineCoords[(i * 4) + 3] * S;
+        
+        x1 += mrect.x;
+        y1 += mrect.y;
+        x2 += mrect.x;
+        y2 += mrect.y;
+        
         double sx = SAT_Interpolate_Linear(0.5,x1,x2);
         double sy = SAT_Interpolate_Linear(0.5,y1,y2);
         double ex = SAT_Interpolate_Linear(v,x1,x2);
         double ey = SAT_Interpolate_Linear(v,y1,y2);
+        
         MWaveformDrawCoords[(i * 4)    ] = sx;
         MWaveformDrawCoords[(i * 4) + 1] = sy;
         MWaveformDrawCoords[(i * 4) + 2] = ex;
@@ -360,10 +370,16 @@ public:
     double cx = mrect.x + (mrect.w * 0.5);
     double cy = mrect.y + (mrect.h * 0.5);
     double size = SAT_Min(mrect.w,mrect.h) * 0.5;
+    double r;
     double ri = size * MInnerRadius;
-    double ro = size * MOuterRadius;
-    double rw = ro - ri; //MOuterRadius - MInnerRadius;
-    double r  = ri + (rw * 0.5);
+    if (MBipolar) {
+      double ro = size * MOuterRadius;
+      double rw = ro - ri; //MOuterRadius - MInnerRadius;
+      r  = ri + (rw * 0.5);
+    }
+    else {
+      r = ri;
+    }
     painter->setDrawColor(MZeroLineColor);
     painter->setLineWidth(MZeroLineWidth * S);
     drawSegment(painter,cx,cy,r,0,SAT_PI2);
