@@ -169,6 +169,11 @@
       <File Name="../../src/plugin/sat_host.h"/>
       <File Name="../../src/plugin/sat_process_context.h"/>
       <VirtualDirectory Name="ladspa">
+        <File Name="../../src/plugin/ladspa/sat_ladspa_utils.h"/>
+        <File Name="../../src/plugin/ladspa/sat_ladspa_plugin.h"/>
+        <File Name="../../src/plugin/ladspa/sat_ladspa_host_implementation.h"/>
+        <File Name="../../src/plugin/ladspa/sat_ladspa_factory.h"/>
+        <File Name="../../src/plugin/ladspa/sat_ladspa_entry.h"/>
         <File Name="../../src/plugin/ladspa/sat_ladspa.h"/>
         <File Name="../../src/plugin/ladspa/sat_ladspa_hosted_plugin.h"/>
       </VirtualDirectory>

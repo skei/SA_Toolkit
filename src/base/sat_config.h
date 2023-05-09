@@ -18,6 +18,8 @@
 #define SAT_OPENGL_MAJOR                        3
 #define SAT_OPENGL_MINOR                        2
 #define SAT_PAINTER_CLIP_RECT_SIZE              256
+#define SAT_PLUGIN_LADSPA_MAX_NAME_LENGTH       256
+#define SAT_PLUGIN_LADSPA_MAX_PORT_NAME_LENGTH  64
 #define SAT_PLUGIN_MAX_BLOCK_SIZE               4096
 #define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK     32
 #define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK      1024
@@ -218,6 +220,18 @@
   //#define SAT_PLUGIN_USE_PRESET_DISCOVERY
   
   //----------
+  
+  /*
+    don't use vst2 shell plugin features
+  */
+  
+  #define SAT_PLUGIN_VST2_NO_SHELL
+  
+  //----------
+
+  //#define SAT_PLUGIN_VST2_VESTIGE
+  
+  //----------
 
   /*
     parameter changes not meant for a specific voice, will be sent to ALL voices
@@ -240,6 +254,8 @@
   */
 
   #define SAT_VOICE_MANAGER_CONVERT_MIDI
+  
+  
 
 
 //----------------------------------------------------------------------

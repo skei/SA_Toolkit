@@ -57,7 +57,7 @@ public:
 
     uint32_t index = 0;
 
-    #ifndef SAT_VST2_NO_SHELL
+    #ifndef SAT_PLUGIN_VST2_NO_SHELL
       uint32_t current_id = 0;
       if ( audioMaster(nullptr,audioMasterCanDo,0,0,(void*)"shellCategory",0) == 1) {
         //SAT_Print("host supports shellCategory\n");
@@ -94,7 +94,7 @@ public:
 
     SAT_Vst2Plugin* vst2_plugin  = new SAT_Vst2Plugin(host,plugin,audioMaster); // deleted in vst2_dispatcher_callback(effClose)
 
-    #ifndef SAT_VST2_NO_SHELL
+    #ifndef SAT_PLUGIN_VST2_NO_SHELL
       vst2plugin->MShellPluginCurrentId = current_id;
     #endif
 
@@ -233,6 +233,10 @@ AEffect* sat_vst2_entry(audioMasterCallback audioMaster) {
   if (!audioMaster(0,audioMasterVersion,0,0,0,0)) return 0;
   return GLOBAL_VST2_PLUGIN_ENTRY.entry(audioMaster);
 }
+
+//
+
+#undef SAT_VST2_ENTRY_SYMBOL
 
 //----------------------------------------------------------------------
 #endif

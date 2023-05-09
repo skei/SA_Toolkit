@@ -2,9 +2,15 @@
 #define sat_vst2_host_implementation_included
 //----------------------------------------------------------------------
 
+// a clap host, for the wrapper clap plugin
+
+//
+
 #include "base/sat.h"
 #include "plugin/vst2/sat_vst2.h"
 #include "plugin/sat_host_implementation.h"
+
+//----------------------------------------------------------------------
 
 class SAT_Vst2HostImplementation
 : public SAT_HostImplementation {
@@ -38,59 +44,6 @@ public:
     MAEffect = effect;
   }
   
-};
-
-//----------------------------------------------------------------------
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-#include "plugin/clap/mip_clap_host_implementation.h"
-
-class MIP_Vst2Host
-: public MIP_ClapHostImplementation {
-
-//------------------------------
-private:
-//------------------------------
-
-  audioMasterCallback   MAudioMaster  = nullptr;
-  AEffect*              MAEffect      = nullptr;
-
-//------------------------------
-public:
-//------------------------------
-
-  MIP_Vst2Host(audioMasterCallback audioMaster) {
-    MAudioMaster = audioMaster;
-  }
-
-  //----------
-
-  virtual ~MIP_Vst2Host() {
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  void setAEffect(AEffect* effect) {
-    MAEffect = effect;
-  }
-
 //------------------------------
 public: // clap plugin
 //------------------------------
@@ -99,7 +52,7 @@ public: // clap plugin
   void request_process() override {}
   void request_callback() override {}
 
-  const void* get_extension(const char *extension_id) override {
+  const void* get_extension(const char* extension_id) override {
     //if (strcmp(extension_id,CLAP_EXT_AMBISONIC) == 0)           return &MAmbisonic;
     //if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS) == 0)         return &MAudioPorts;
     //if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS_CONFIG) == 0)  return &MAudioPortsConfig;
@@ -131,44 +84,12 @@ public: // clap plugin
 public: // extensions
 //------------------------------
 
-  /*
-  void ambisonic_changed() override {}
-  uint32_t audio_ports_get_preferred_sample_size() override { return 0; }
-  void audio_ports_rescan(uint32_t flags) override {}
-  void audio_ports_config_rescan() override {}
-  void check_for_update_on_new_version(const clap_check_for_update_info *update_info) override {}
-  void event_filter_changed() override {}
-  bool event_registry_query(const char* space_name, uint16_t* space_id) override { return false; }
-  void file_reference_changed() override {}
-  void file_reference_set_dirty(clap_id resource_id) override {}
-  bool gui_resize(uint32_t width, uint32_t height) override { return false; }
-  void latency_changed() override {}
-  void log_log(clap_log_severity severity, const char *msg) override {}
-  void midi_mappings_changed() override {}
-  void note_name_changed() override {}
-  uint32_t note_ports_supported_dialects() override { return 0; }
-  void note_ports_rescan(uint32_t flags) override {}
-  void params_rescan(clap_param_rescan_flags flags) override {}
-  void params_clear(clap_id param_id, clap_param_clear_flags flags) override {}
-  void params_request_flush() override {}
-  bool posix_fd_support_register_fd(int fd, int flags) override { return false; }
-  bool posix_fd_support_modify_fd(int fd, int flags) override { return false; }
-  bool posix_fd_support_unregister_fd(int fd) override { return false; }
-  void quick_controls_changed(clap_quick_controls_changed_flags flags) override {}
-  void state_mark_dirty() override {}
-  void surround_changed() override {}
-  void surround_get_preferred_channel_map(uint8_t* channel_map, uint32_t channel_map_capacity, uint32_t* channel_count) override {}
-  bool thread_check_is_main_thread() override { return false; }
-  bool thread_check_is_audio_thread() override { return false; }
-  bool thread_pool_request_exec(uint32_t num_tasks) override { return false; }
-  bool timer_support_register_timer(uint32_t period_ms, clap_id *timer_id) override { return false; }
-  bool timer_support_unregister_timer(clap_id timer_id) override { return false; }
-  bool track_info_get(clap_track_info *info) override { return false; }
-  double tuning_get(int32_t key, int32_t channel) override { return 0.0; }
-  */
-
+  
+  
 };
 
+//----------------------------------------------------------------------
+#endif
 
 
 
@@ -176,6 +97,14 @@ public: // extensions
 
 
 
+
+
+
+
+
+
+
+#if 0
 
 
 //#ifndef kode_vst2_host_included

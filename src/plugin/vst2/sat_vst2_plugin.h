@@ -152,7 +152,7 @@ private:
   //  MIP_Editor*         MEditor             = nullptr;
   //#endif // MIP_NO_GUI
 
-  #ifndef MIP_VST2_NO_SHELL
+  #ifndef SAT_PLUGIN_VST2_NO_SHELL
     int32_t   MShellPluginLastQueried = -1;
     uint32_t  MShellPluginCurrentId = 0;
   #endif
@@ -1054,7 +1054,7 @@ public: // vst2
         uint32_t res = 0;
         //MIP_Plugin* plugin = (MIP_Plugin*)MPlugin->plugin_data;
 
-        #ifndef MIP_VST2_NO_SHELL
+        #ifndef SAT_PLUGIN_VST2_NO_SHELL
           if (MShellPluginCurrentId == 0) {
             if (MIP_REGISTRY.getNumDescriptors() > 1) {
               //MIP_Print("effGetPlugCategory -> shell\n");
@@ -1534,7 +1534,7 @@ public: // vst2
       // todo: fix this!
 
       case effShellGetNextPlugin: { // 70
-        #ifndef MIP_VST2_NO_SHELL
+        #ifndef SAT_PLUGIN_VST2_NO_SHELL
           if (MShellPluginLastQueried >= MIP_REGISTRY.getNumDescriptors()) return 0;
           const clap_plugin_descriptor_t* descriptor = MIP_REGISTRY.getDescriptor(MShellPluginLastQueried);
           MShellPluginLastQueried += 1;

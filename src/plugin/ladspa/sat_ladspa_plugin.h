@@ -1,17 +1,9 @@
-#ifndef sat_ladspa_included
-#define sat_ladspa_included
+#ifndef sat_ladspa_plugin_included
+#define sat_ladspa_plugin_included
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-
-#ifdef SAT_LINUX
-  #include <ladspa.h>
-#endif
-
-#ifdef SAT_WIN32
-  #include "/usr/include/ladspa.h"
-#endif
+#include "plugin/ladspa/sat_ladspa.h"
 
 //----------------------------------------------------------------------
 #endif
-

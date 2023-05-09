@@ -4,8 +4,6 @@
 
 #include "base/sat.h"
 
-#define SAT_VST2_NO_SHELL
-
 //#ifdef SAT_PLUGIN_VST2_VESTIGE
 //  typedef int32_t   VstInt32;
 //  typedef intptr_t  VstIntPtr;
