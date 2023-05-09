@@ -52,11 +52,9 @@ public:
 
   AEffect* entry(audioMasterCallback audioMaster) {
     SAT_Print("\n");
-
-    // shell
-
     uint32_t index = 0;
 
+    // shell
     #ifndef SAT_PLUGIN_VST2_NO_SHELL
       uint32_t current_id = 0;
       if ( audioMaster(nullptr,audioMasterCanDo,0,0,(void*)"shellCategory",0) == 1) {
@@ -72,28 +70,23 @@ public:
           }
         }
       }
-      //    if ( audioMaster(effect,audioMasterCanDo,0,0,(void*)"shellCategorycurID",0) == 1) {
-      //      SAT_Print("host supports shellCategorycurID\n");
-      //    }
+      //if ( audioMaster(effect,audioMasterCanDo,0,0,(void*)"shellCategorycurID",0) == 1) {
+      //  SAT_Print("host supports shellCategorycurID\n");
+      //}
     #endif
 
     char path[1024] = {};
     const char* plugin_path = SAT_GetLibFilename(path);
     SAT_Print("plugin_path '%s'\n",plugin_path);
-
     //SAT_GLOBAL.REGISTRY.setPath(plugin_path);
-
-    //SAT_Vst2Host* vst2_host = new SAT_Vst2Host(audioMaster); // deleted in SAT_Vst2Plugin destructor
     SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster); // deleted in SAT_Vst2Plugin destructor
-
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     const clap_host_t* host = vst2_host->getHost();
-    const clap_plugin_t* plugin = SAT_CreatePlugin(index,descriptor,host); // deleted in SAT_Vst2Plugin destructor (?)
-    
-    plugin->init(plugin); // destroy called in effClose
-
+    const clap_plugin_t* plugin = SAT_CreatePlugin(index,descriptor,host); // deleted in SAT_Vst2Plugin destructor (call setHost!)
+    plugin->init(plugin); // destroy() called in effClose
     SAT_Vst2Plugin* vst2_plugin  = new SAT_Vst2Plugin(host,plugin,audioMaster); // deleted in vst2_dispatcher_callback(effClose)
-
+    vst2_plugin->setHost(vst2_host);
+    
     #ifndef SAT_PLUGIN_VST2_NO_SHELL
       vst2plugin->MShellPluginCurrentId = current_id;
     #endif
@@ -117,11 +110,15 @@ public:
     */
 
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);
-    if (gui) {
-      flags |= effFlagsHasEditor;
-    }
+    if (gui) flags |= effFlagsHasEditor;
 
-    // is_synth..
+    uint32_t i = 0;
+    while (descriptor->features[i]) {
+      const char* str = descriptor->features[i++];
+      SAT_Print("feature %i: '%s'\n",i,str);
+      if (strcmp(str,"instrument") == 0) flags |= effFlagsIsSynth;
+    }
+    
     // flags |= effFlagsProgramChunks;
     // flags |= effFlagsNoSoundInStop;
     // flags |= effFlagsCanDoubleReplacing;
@@ -229,7 +226,7 @@ SAT_Vst2Entry GLOBAL_VST2_PLUGIN_ENTRY;
 //__SAT_EXPORT
 __attribute__ ((visibility ("default")))
 AEffect* sat_vst2_entry(audioMasterCallback audioMaster) {
-  //SAT_Print("\n");
+  SAT_Print("\n");
   if (!audioMaster(0,audioMasterVersion,0,0,0,0)) return 0;
   return GLOBAL_VST2_PLUGIN_ENTRY.entry(audioMaster);
 }

@@ -8,12 +8,13 @@ class SAT_Vst2Plugin {
 private:
 //------------------------------
 
-  const clap_host_t*    MHost         = nullptr;
-  const clap_plugin_t*  MPlugin       = nullptr;
-  AEffect               MAEffect      = {0};
-  audioMasterCallback   MAudioMaster  = nullptr;
+  const clap_host_t*          MHost         = nullptr;
+  const clap_plugin_t*        MPlugin       = nullptr;
+  AEffect                     MAEffect      = {0};
+  audioMasterCallback         MAudioMaster  = nullptr;
+  SAT_Vst2HostImplementation* MVst2Host     = nullptr;
 
-//------------------------------
+    //------------------------------
 public:
 //------------------------------
 
@@ -26,6 +27,7 @@ public:
   //----------
   
   ~SAT_Vst2Plugin() {
+    if (MVst2Host) delete MVst2Host;
   }
 
 //------------------------------
@@ -35,34 +37,46 @@ public:
   AEffect* getAEffect() {
     return &MAEffect;
   }
+  
+  //----------
+  
+  void setHost(SAT_Vst2HostImplementation* AHost) {
+    MVst2Host = AHost;
+  }
+  
 
 //------------------------------
 public:
 //------------------------------
 
   VstIntPtr vst2_dispatcher(VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt) {
+    SAT_Print("\n");
     return 0;
   }
 
   //----------
 
   void vst2_setParameter(VstInt32 index, float parameter) {
+    SAT_Print("\n");
   }
 
   //----------
 
   float vst2_getParameter(VstInt32 index) {
+    SAT_Print("\n");
     return 0.0;
   }
 
   //----------
 
   void vst2_process(float** inputs, float** outputs, VstInt32 sampleFrames) {
+    SAT_Print("\n");
   }
 
   //----------
 
   void vst2_processDouble(double** inputs, double** outputs, VstInt32 sampleFrames) {
+    SAT_Print("\n");
   }
     
 };
