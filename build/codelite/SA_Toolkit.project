@@ -173,6 +173,12 @@
         <File Name="../../src/plugin/ladspa/sat_ladspa_hosted_plugin.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="vst2">
+        <File Name="../../src/plugin/vst2/sat_vst2_utils.h"/>
+        <File Name="../../src/plugin/vst2/sat_vst2_plugin.h"/>
+        <File Name="../../src/plugin/vst2/sat_vst2_host_implementation.h"/>
+        <File Name="../../src/plugin/vst2/sat_vst2_hosted_plugin.h"/>
+        <File Name="../../src/plugin/vst2/sat_vst2_factory.h"/>
+        <File Name="../../src/plugin/vst2/sat_vst2.h"/>
         <File Name="../../src/plugin/vst2/sat_vst2_entry.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="clap">

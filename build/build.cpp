@@ -19,7 +19,7 @@
 //#include "test/test_params.h"
 //#include "test/test_reaper_ext.h"
 //#include "test/test_standalone.h"
-//#include "test/test_synth.h"
+#include "test/test_synth.h"
 
 //#include "test/test2.h"
 
@@ -87,7 +87,7 @@
 
 
 
-#include "../plugins/sa_demo.h"
+//#include "../plugins/sa_demo.h"
 
 //#include "../plugins/sa_plugins.h"
 
