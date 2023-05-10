@@ -214,6 +214,13 @@
   //----------
   
   /*
+  */
+  
+  //#define SAT_PLUGIN_USE_ARA
+  
+  //----------
+  
+  /*
     use preset discovery factory (clap)
   */
   
