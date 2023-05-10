@@ -10,6 +10,10 @@
   #include "plugin/exe/sat_exe_entry.h"
 #endif
 
+#ifdef SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
+  #include "plugin/exe/sat_exe_entry.h"
+#endif
+
 #ifdef SAT_PLUGIN_VST2
   #include "plugin/vst2/sat_vst2_entry.h"
 #endif

@@ -210,9 +210,9 @@ int main(int argc, char** argv) {
 
   //-rdynamic
   //-Wl,-Bsymbolic
-  
   //-Wl,-e,exe_entry_point
 
+#ifndef SAT_WIN32
 #ifdef SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
 
   #include <sys/types.h>
@@ -222,15 +222,15 @@ int main(int argc, char** argv) {
   extern "C" {
   
     //int my_test_global = 123;
-
+    //
     //int test_func() {
     //  printf("> test_func()\n");
     //  return 42;
     //}
-
+    //
     // not called?
     //int test_func_result = test_func();
-
+    //
     // not called?
     //__attribute__((constructor))
     //void ctor_test_func() {
@@ -245,27 +245,31 @@ int main(int argc, char** argv) {
       //SAT_Print("(my_test_global = %i)\n",my_test_global);
       //SAT_Print("(test_func_result = %i)\n",test_func_result);
       //SAT_Print("calling real main()..\n");
+      
       main_result = main(argc,argv);//,env);
+      
       //SAT_Print("..and we're back..\n");
       return &main_result;
     }
     
-  } // extern c
+//  } // extern c
 
   //------------------------------
   // __libc_start_main
   //------------------------------
+  
+//  extern int __libc_start_main(
+//    //int  *(main)(int, char**, char**),
+//    int  (*main)(int, char**, char**),
+//    int    argc,
+//    char** ubp_av,
+//    void (*init)(void),
+//    void (*fini)(void),
+//    void (*rtld_fini)(void),
+//    void (*stack_end)
+//  );
 
-  extern int __libc_start_main(
-    int  *(main)(int, char**, char**),
-    //int  (*main)(int, char**, char**),
-    int    argc,
-    char** ubp_av,
-    void (*init)(void),
-    void (*fini)(void),
-    void (*rtld_fini)(void),
-    void (*stack_end)
-  );
+  extern int __libc_start_main(int *(main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end));
 
   //------------------------------
   // entry_point
@@ -289,8 +293,13 @@ int main(int argc, char** argv) {
     SAT_Print("calling _exit..\n");
     _exit(EXIT_SUCCESS);
   }
+  
+
+  } // extern c
+ 
 
 #endif // SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
+#endif // SAT_WIN32
 
 //----------------------------------------------------------------------
 #endif

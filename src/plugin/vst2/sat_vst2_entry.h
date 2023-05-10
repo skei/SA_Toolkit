@@ -84,6 +84,7 @@ public:
     const clap_host_t* host = vst2_host->getHost();
     const clap_plugin_t* plugin = SAT_CreatePlugin(index,descriptor,host); // deleted in SAT_Vst2Plugin destructor (call setHost!)
     plugin->init(plugin); // destroy() called in effClose
+    
     SAT_Vst2Plugin* vst2_plugin  = new SAT_Vst2Plugin(host,plugin,audioMaster); // deleted in vst2_dispatcher_callback(effClose)
     vst2_plugin->setHost(vst2_host);
     
