@@ -2,7 +2,7 @@
 #define sat_exe_entry_included
 //----------------------------------------------------------------------
 
-#define SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
+//#define SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
 
 #include "plugin/sat_host_implementation.h"
 #include "plugin/clap/sat_clap_entry.h"

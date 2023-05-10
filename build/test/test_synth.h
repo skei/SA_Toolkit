@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 //#define SAT_PLUGIN_CLAP
-//#define SAT_PLUGIN_VST2
+#define SAT_PLUGIN_VST2
 
 //#define SAT_PLUGIN_USE_PRESET_DISCOVERY
 
