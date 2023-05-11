@@ -774,6 +774,7 @@
         <IncludePath Value="."/>
         <Preprocessor Value="SAT_EXE"/>
         <Preprocessor Value="SAT_DEBUG"/>
+        <Preprocessor Value="SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY"/>
       </Compiler>
       <Linker Options="-fPIE;-Wl,-e,exe_entry_point" Required="yes">
         <Library Value="pthread"/>

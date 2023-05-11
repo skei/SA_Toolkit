@@ -216,6 +216,13 @@
   /*
   */
   
+  //#define SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
+  
+  //----------
+  
+  /*
+  */
+  
   //#define SAT_PLUGIN_USE_ARA
   
   //----------

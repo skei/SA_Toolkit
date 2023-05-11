@@ -252,51 +252,49 @@ int main(int argc, char** argv) {
       return &main_result;
     }
     
-//  } // extern c
+  //} // extern c
 
-  //------------------------------
-  // __libc_start_main
-  //------------------------------
+    //------------------------------
+    // __libc_start_main
+    //------------------------------
   
-//  extern int __libc_start_main(
-//    //int  *(main)(int, char**, char**),
-//    int  (*main)(int, char**, char**),
-//    int    argc,
-//    char** ubp_av,
-//    void (*init)(void),
-//    void (*fini)(void),
-//    void (*rtld_fini)(void),
-//    void (*stack_end)
-//  );
+    //extern int __libc_start_main(
+    //  //int  *(main)(int, char**, char**),
+    //  int  (*main)(int, char**, char**),
+    //  int    argc,
+    //  char** ubp_av,
+    //  void (*init)(void),
+    //  void (*fini)(void),
+    //  void (*rtld_fini)(void),
+    //  void (*stack_end)
+    //);
 
-  extern int __libc_start_main(int *(main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end));
+    extern int __libc_start_main(int *(main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end));
 
-  //------------------------------
-  // entry_point
-  //------------------------------
+    //------------------------------
+    // entry_point
+    //------------------------------
 
-  __attribute__((force_align_arg_pointer))
-  void exe_entry_point() {
-    SAT_Print("* entry_point()\n");
-    int argc = 0;
-    const char* argv[] = { "", 0 };
-    SAT_Print("> argc %i argv %s\n",argc,argv[0]);
-    SAT_Print("calling __libc_start_main..\n");
+    __attribute__((force_align_arg_pointer))
+    void exe_entry_point() {
+      SAT_Print("* entry_point()\n");
+      int argc = 0;
+      const char* argv[] = { "", 0 };
+      SAT_Print("> argc %i argv %s\n",argc,argv[0]);
+      SAT_Print("calling __libc_start_main..\n");
     
-//    SAT_REGISTRY.initialize();
+      //    SAT_REGISTRY.initialize();
 
-    //__libc_start_main(main_trampoline,argc,(char**)argv,my_init,my_fini,my_rtld_fini,0);//&my_stack[500000]);
-    __libc_start_main(main_trampoline,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
-    //__libc_start_main(main,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
+      //__libc_start_main(main_trampoline,argc,(char**)argv,my_init,my_fini,my_rtld_fini,0);//&my_stack[500000]);
+      //__libc_start_main(main,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
+      __libc_start_main(main_trampoline,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
     
-    SAT_Print("..back from __libc_start_main\n");
-    SAT_Print("calling _exit..\n");
-    _exit(EXIT_SUCCESS);
-  }
-  
+      SAT_Print("..back from __libc_start_main\n");
+      SAT_Print("calling _exit..\n");
+      _exit(EXIT_SUCCESS);
+    }
 
   } // extern c
- 
 
 #endif // SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
 #endif // SAT_WIN32

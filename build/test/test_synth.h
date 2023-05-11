@@ -2,16 +2,13 @@
 #define test_synth_included
 //----------------------------------------------------------------------
 
-#define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_VST2
-#define SAT_PLUGIN_VST3
-#define SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
+//#define SAT_PLUGIN_CLAP
+//#define SAT_PLUGIN_VST2
+//#define SAT_PLUGIN_VST3
 
 //#define SAT_PLUGIN_USE_PRESET_DISCOVERY
-
 //#define SAT_DEBUG_WINDOW
 //#define SAT_DEBUG_OBSERVER
-
 
 //----------
 
@@ -72,11 +69,11 @@ class test_synth_plugin
 private:
 //------------------------------
 
-  SAT_VoiceManager<test_synth_voice,NUM_VOICES>  MVoiceManager = {};
-  SAT_VoicesWidget*   MVoicesWidget   = nullptr;
-  SAT_WaveformWidget* MWaveformWidget = nullptr;
+  SAT_VoiceManager<test_synth_voice,NUM_VOICES> MVoiceManager   = {};
+  SAT_VoicesWidget*                             MVoicesWidget   = nullptr;
+  SAT_WaveformWidget*                           MWaveformWidget = nullptr;
 
-  double obs1 = 0.0; // being 'observed'
+  double                                        obs1            = 0.0; // being 'observed'
   
 //------------------------------
 public:
@@ -276,7 +273,6 @@ public:
     
     sat_param_t scale = getParameterValue(2) + getModulationValue(2);
     scale = SAT_Clamp(scale,0,1);
-    
     SAT_ScaleStereoBuffer(outputs,scale,length);
     
     obs1 = MVoiceManager.getNumPlayingVoices();

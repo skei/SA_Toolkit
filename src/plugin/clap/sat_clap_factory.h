@@ -11,12 +11,11 @@
 
 #include "plugin/clap/factory/sat_clap_plugin_factory.h"
 
+//#include "plugin/clap/factory/sat_clap_invalidation_factory.h"
+
 #ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY
   #include "plugin/clap/factory/sat_clap_preset_discovery_factory.h"
 #endif
-
-//#include "plugin/clap/factory/sat_clap_invalidation_factory.h"
-
 
 #ifdef SAT_PLUGIN_USE_ARA
   #include "plugin/clap/factory/sat_clap_ara_factory.h"

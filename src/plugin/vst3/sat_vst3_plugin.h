@@ -78,6 +78,7 @@ private:
   char                            MEvents[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK * SAT_PLUGIN_VST3_MAX_EVENT_SIZE]  = {0};
   uint32_t                        MLastNoteId         = 0;
   SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS] = {};
+  
   SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_VST3_MAX_GUI_EVENTS> MHostParamQueue = {}; // gui -> host
   double  MQueuedHostParamValues[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK] = {0};
 
@@ -262,6 +263,8 @@ private:
   }
 
   //----------
+  
+  //TODO: "implicit points" at start/end of buffer?
 
   void prepareParameters(ProcessData& data) {
     IParameterChanges* paramChanges = data.inputParameterChanges;
