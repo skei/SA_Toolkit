@@ -2203,17 +2203,23 @@ public: // parameters
     }
   }
 
+  //----------
+  
   void setAllParameterFlags(clap_param_info_flags AFlag) {
     for (uint32_t i=0; i<MParameters.size(); i++) {
       MParameters[i]->setFlag(AFlag);
     }
   }
   
+  //----------
+  
   void clearAllParameterFlags(clap_param_info_flags AFlag) {
     for (uint32_t i=0; i<MParameters.size(); i++) {
       MParameters[i]->clearFlag(AFlag);
     }
   }
+  
+  //----------
   
 //------------------------------
 public: // modulation

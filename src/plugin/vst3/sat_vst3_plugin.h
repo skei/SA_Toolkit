@@ -1186,7 +1186,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API setupProcessing(ProcessSetup& setup) override {
-    MProcessMode  = setup.sampleRate;         // kRealtime, kPrefetch, kOffline
+    MProcessMode  = setup.processMode;         // kRealtime, kPrefetch, kOffline
     MSampleSize   = setup.symbolicSampleSize; // kSample32, kSample64
     MBlockSize    = setup.maxSamplesPerBlock;
     MSampleRate   = setup.sampleRate;

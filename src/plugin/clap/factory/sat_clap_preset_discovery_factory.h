@@ -65,7 +65,7 @@
   // Returns false if initialization failed.
 
   bool clap_preset_discovery_provider_init_callback(const struct clap_preset_discovery_provider *provider) {
-    SAT_PRINT;
+    //SAT_PRINT;
     const clap_preset_discovery_indexer_t* indexer = (const clap_preset_discovery_indexer_t*)provider->provider_data;
     if (!indexer) {
       SAT_Print("indexer == null\n");
@@ -85,7 +85,7 @@
     }
     //indexer->declare_soundpack(indexer,&soundpack);
     //void* ptr = indexer->get_extension(indexer,"");
-    SAT_Print("ok\n");
+    //SAT_Print("ok\n");
     return true;
   }
 
@@ -97,7 +97,7 @@
   // is bitwig keeping it loaded as long as the presets might be needed?
 
   void clap_preset_discovery_provider_destroy_callback(const struct clap_preset_discovery_provider *provider) {
-    SAT_PRINT;
+    //SAT_PRINT;
     SAT_Breakpoint;
   }
 
@@ -107,7 +107,7 @@
 
   bool clap_preset_discovery_provider_get_metadata_callback(const struct clap_preset_discovery_provider *provider, uint32_t location_kind, const char *location, const clap_preset_discovery_metadata_receiver_t *metadata_receiver) {
     
-    SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
+    //SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location: '%s'\n",location);
     SAT_File file = {};
 
     switch (location_kind) {
@@ -148,7 +148,7 @@
         if (desc[strlen(desc)-1] == '\n') desc[strlen(desc)-1] = 0;
         if (load_key[strlen(load_key)-1] == '\n') load_key[strlen(load_key)-1] = 0;
 
-        SAT_Print("id '%s' name '%s' author '%s' desc '%s' load_key '%s'\n",id,name,author,desc,load_key);
+        //SAT_Print("id '%s' name '%s' author '%s' desc '%s' load_key '%s'\n",id,name,author,desc,load_key);
 
         // This must be called for every preset in the file and before any preset metadata is sent with the calls below.
         // If the preset file is a preset container then name and load_key are mandatory, otherwise they are optional.
@@ -213,7 +213,7 @@
       // will act as a preset container.
       
       case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
-        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN\n");
+        //SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN\n");
         return false;
       }
       
@@ -273,7 +273,7 @@
   // [thread-safe]
 
   const clap_preset_discovery_provider_descriptor_t* clap_preset_discovery_factory_get_descriptor_callback(const struct clap_preset_discovery_factory *factory, uint32_t index) {
-    SAT_Print("index %i\n",index);
+    //SAT_Print("index %i\n",index);
     switch (index) {
       case 0: return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR;
     }
@@ -290,12 +290,11 @@
   // [thread-safe]
 
   const clap_preset_discovery_provider_t* clap_preset_discovery_factory_create_callback( const struct clap_preset_discovery_factory *factory, const clap_preset_discovery_indexer_t *indexer, const char *provider_id) {
-    SAT_Print( "provider_id '%s'\n",provider_id);
-    //SAT_Print("  SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id: '%s')\n",SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id);
-    SAT_Print("  indexer.name:    '%s'\n",indexer->name);
-    SAT_Print("  indexer.vendor:  '%s'\n",indexer->vendor);
-    SAT_Print("  indexer.url:     '%s'\n",indexer->url);
-    SAT_Print("  indexer.version: '%s'\n",indexer->version);
+    //SAT_Print( "provider_id '%s'\n",provider_id);
+    //SAT_Print("  indexer.name:    '%s'\n",indexer->name);
+    //SAT_Print("  indexer.vendor:  '%s'\n",indexer->vendor);
+    //SAT_Print("  indexer.url:     '%s'\n",indexer->url);
+    //SAT_Print("  indexer.version: '%s'\n",indexer->version);
     if (strcmp(provider_id,SAT_CLAP_PRESET_DISCOVERY_PROVIDER_DESCRIPTOR.id) == 0) {
       SAT_CLAP_PRESET_DISCOVERY_PROVIDER.provider_data = (void*)indexer;
       return &SAT_CLAP_PRESET_DISCOVERY_PROVIDER;

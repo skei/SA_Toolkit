@@ -6,7 +6,7 @@
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 
-//#define SAT_PLUGIN_USE_PRESET_DISCOVERY
+#define SAT_PLUGIN_USE_PRESET_DISCOVERY
 //#define SAT_DEBUG_WINDOW
 //#define SAT_DEBUG_OBSERVER
 
@@ -72,7 +72,6 @@ private:
   SAT_VoiceManager<test_synth_voice,NUM_VOICES> MVoiceManager   = {};
   SAT_VoicesWidget*                             MVoicesWidget   = nullptr;
   SAT_WaveformWidget*                           MWaveformWidget = nullptr;
-
   double                                        obs1            = 0.0; // being 'observed'
   
 //------------------------------
@@ -114,7 +113,7 @@ public:
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     
     SAT_Host* host = getHost();
-    const clap_plugin_t*  clapplugin = getPlugin();
+    const clap_plugin_t* clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(true);
@@ -157,6 +156,71 @@ public:
     info->voice_capacity  = NUM_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
     return true;
+  }
+
+  //----------
+
+//    switch (location_kind) {
+//      case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
+//        SAT_Print("FILE location '%s', load_key '%s'\n",location,load_key);
+//        SAT_Host* host = getHost();
+//        if (host) host->preset_load_loaded(location_kind,location,load_key);
+//        return true;
+//      }
+//      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
+//        SAT_Print("PLUGIN location '%s', load_key '%s'\n",location,load_key);
+//        SAT_Host* host = getHost();
+//        if (host) host->preset_load_loaded(location_kind,location,load_key);
+//        return true;
+//      }
+//      default: {
+//        SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
+//        return false;
+//      }
+//    }
+//    return false;
+
+  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
+    if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
+      SAT_Print("location '%s', load_key '%s'\n",location,load_key);
+      
+//      char line_buffer[256] = {0};
+//      sat_param_t param_buffer[SAT_PLUGIN_MAX_PARAMETERS] = {0};
+//      SAT_File file = {};
+//      if (!file.exists(location)) {
+//        SAT_Print("Error! '%s' does not exist\n");
+//        return false;
+//      }
+//      void* ptr = param_buffer;
+//      if (file.open(location,SAT_FILE_READ_TEXT)) {
+//        for (uint32_t i=0; i<5; i++) file.readLine(line_buffer,256); // skip metadata
+//        while (file.readLine(line_buffer,256)) {
+//          if (line_buffer[strlen(line_buffer)-1] == '\n') line_buffer[strlen(line_buffer)-1] = 0;
+//          if (line_buffer[0] != 0) {
+//            SAT_Print("%s\n",line_buffer);
+//            ptr = SAT_HexDecode(ptr,line_buffer,32); // num bytes
+//          }
+//        }
+//        file.close();
+//      }
+//      //uint32_t size = ((sat_param_t*)ptr - param_buffer) / sizeof(sat_param_t);
+//      intptr_t size = (intptr_t)ptr;
+//      size -= (intptr_t)param_buffer;
+//      if (ptr != param_buffer) {
+//        SAT_Print("decoded %i\n",size);
+//      }
+//      //sat_param_t* param_ptr = (sat_param_t*)ptr;
+//      //uint32_t num_params = getNumParameters();
+//      //for (uint32_t i=0; i<num_params; i++) {
+//      //  sat_param_t value = *param_ptr++;
+//      //  SAT_Print("%i : %f\n",i,value);
+//      //}
+      
+      SAT_Host* host = getHost();
+      if (host) host->preset_load_loaded(location_kind,location,load_key);
+      return true;
+    }
+    return false;
   }
 
 //------------------------------

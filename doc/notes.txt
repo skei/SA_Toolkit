@@ -5,11 +5,11 @@ base
 
 ======================================================================
 
-  ------------------------------
-    bugs
-  ------------------------------
+bugs:
+------------------------------
 
 * random cpu spikes in bitwig (synth)
+
   4-5 seconds interval
   performance meter in bitwig says they last around 30 ms
   (no spikes with internal devices)
@@ -21,20 +21,22 @@ base
   so it might be caused by my pipewire setup..
   investigate...
   
-  ------------------------------
-    todo
-  ------------------------------
+todo:
+------------------------------
 
 * 'delete this'
+
   is the 'delete this' in SAT_Plugin.destroy() correct/working?
   printouts in destructors indicates it works..
   but memtrace, and also memcheck (codelite plugin, valgrind?)
   says there's memory leaks..
   
 * SAT_LockFreeQueue
+
   double/triple/quadruple-check validity..
   
 * cleanup, redefine SAT_GLOBAL / DEBUG, LOG, PRINT
+
   make them available (defined) _before_ defining plugin/gui stuff..
   so we can print and log from the lowest levels..
 
@@ -44,24 +46,21 @@ plugin
 
 ======================================================================
 
-  ------------------------------
-    bugs
-  ------------------------------
+bugs:
+------------------------------
 
 * vst3: doesn't remember editor size when reopening
 
-  ------------------------------
-    todo
-  ------------------------------
+todo:
+------------------------------
 
 * plugin: parameter smoothing
+
   a value in a synth might use a combination of:
   parameter + modulation + note expressions + (internal modulation)
   (and smoothed individually per voice)
   so we should probably smooth the _combination_ of these
   -> modulation matix/routing system?
-
-* plugin: presets (loading is almost there)
 
 * plugin: save editor state (editor_state)
 
@@ -71,24 +70,34 @@ plugin
 
 * plugin: ara
 
+* plugin: presets
+
+  ~/.skei.audio/presets/*.sa_preset
+  text file: line 1: id of plugin, 2: name, 3: author, 4: description, 5: load key,
+  6..: hex-encoded data, maybe dmc compressed?
+  SAT_Plugin.loadPreset(uint8_t* data) ?
+
 ======================================================================
 
 gui
 
 ======================================================================
 
-  ------------------------------
-    bugs
-  ------------------------------
+bugs:
+------------------------------
 
 * win32: scroll-wheel breaks mouse responsitivity
   (can't reproduce in exe? fixed?)
+  todo: check..
   
 * win32: resizing doesn't update screen properly (exe only?)
 
-  ------------------------------
-    todo
-  ------------------------------
+* win32, clap, carla..
+  resize doesn't update screen
+  (do we receive resize events?)
+
+todo:
+------------------------------
 
 * gui: investigate text/font alignment & accuracy
 

@@ -73,10 +73,10 @@
     <File Name="../../tools/bin2h.c" ExcludeProjConfig="linux_exelib_debug;linux_exe_debug;linux_exe_release;linux_plugin_debug;linux_plugin_release;win32_plugin_release;win32_exe_debug;win32_exe_release;win32_plugin_debug;"/>
   </VirtualDirectory>
   <VirtualDirectory Name="doc">
+    <File Name="../../doc/licenses.txt"/>
     <File Name="../../doc/notes.txt"/>
     <File Name="../../doc/makedocs.sh"/>
     <File Name="../../doc/doxygen.cfg"/>
-    <File Name="../../doc/about.txt"/>
     <File Name="../../doc/history.txt"/>
     <File Name="../../doc/compiling.txt"/>
   </VirtualDirectory>
