@@ -2,8 +2,8 @@
 #define sa_plugins_included
 //----------------------------------------------------------------------
 
-#define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_VST3
+//#define SAT_PLUGIN_CLAP
+//#define SAT_PLUGIN_VST3
 
 #define SAT_NO_ENTRY
 

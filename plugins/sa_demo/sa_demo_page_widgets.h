@@ -169,6 +169,10 @@ public:
 //      cwaveform1->setMarkerPos(uint32_t AIndex, double APos, double ASize=0.0025);
 //      cwaveform1->setMarkerColor(uint32_t AIndex, SAT_Color AColor);
 
+      SAT_Knob2Widget* knob2 = new SAT_Knob2Widget(SAT_Rect(64,80),"Knob2",0.0);
+      right_panel->appendChildWidget(knob2);
+      knob2->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_NONE);
+
     }
     
   //----------

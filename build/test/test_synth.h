@@ -187,10 +187,12 @@ public:
 //      char line_buffer[256] = {0};
 //      sat_param_t param_buffer[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 //      SAT_File file = {};
+
 //      if (!file.exists(location)) {
 //        SAT_Print("Error! '%s' does not exist\n");
 //        return false;
 //      }
+
 //      void* ptr = param_buffer;
 //      if (file.open(location,SAT_FILE_READ_TEXT)) {
 //        for (uint32_t i=0; i<5; i++) file.readLine(line_buffer,256); // skip metadata
@@ -203,12 +205,9 @@ public:
 //        }
 //        file.close();
 //      }
-//      //uint32_t size = ((sat_param_t*)ptr - param_buffer) / sizeof(sat_param_t);
-//      intptr_t size = (intptr_t)ptr;
-//      size -= (intptr_t)param_buffer;
-//      if (ptr != param_buffer) {
-//        SAT_Print("decoded %i\n",size);
-//      }
+
+        //setAllParameters(param_buffer);
+        
 //      //sat_param_t* param_ptr = (sat_param_t*)ptr;
 //      //uint32_t num_params = getNumParameters();
 //      //for (uint32_t i=0; i<num_params; i++) {

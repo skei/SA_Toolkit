@@ -17,6 +17,7 @@
 #include "gui/widgets/sat_image_widget.h"
 #include "gui/widgets/sat_keyboard_widget.h"
 #include "gui/widgets/sat_knob_widget.h"
+#include "gui/widgets/sat_knob2_widget.h"
 #include "gui/widgets/sat_logo_widget.h"
 #include "gui/widgets/sat_menu_widget.h"
 #include "gui/widgets/sat_menu_item_widget.h"

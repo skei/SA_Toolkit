@@ -27,7 +27,7 @@
 
 //----------------------------------------------------------------------
 
-struct SAT_QueueItem {
+struct SAT_ParamQueueItem {
   uint32_t    type;
   uint32_t    index;
   union {
@@ -36,10 +36,10 @@ struct SAT_QueueItem {
   };
 };
 
-typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ModFromHostToGuiQueue;
-typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;
-typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;
-typedef SAT_LockFreeQueue<SAT_QueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ModFromHostToGuiQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;
 
 #define SAT_PLUGIN_DEFAULT_CONSTRUCTOR(PLUGIN)                                  \
   PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
@@ -131,13 +131,11 @@ public: // plugin
   SAT_Editor*         getEditor()         { return MEditor; }
   SAT_Host*           getHost()           { return MHost; }
   SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
-
   const char*         getPluginFormat()   { return MPluginFormat; }
 
   //----------
 
   void setPluginFormat(const char* AFormat)     { MPluginFormat = AFormat; }
-
   void setProcessThreaded(bool AThreaded=true)  { MProcessThreaded = AThreaded; }
   void setEventMode(uint32_t AMode)             { MEventMode = AMode; }
 
@@ -1859,7 +1857,7 @@ public: // queues
 
   void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     item.type   = CLAP_EVENT_PARAM_VALUE;
     item.index  = AIndex;
     item.value  = AValue;
@@ -1881,7 +1879,7 @@ public: // queues
   void flushParamFromHostToGui() {
     uint32_t count = 0;
     //SAT_Print("\n");
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     while (MParamFromHostToGuiQueue.read(&item)) {
       count += 1;
       SAT_Parameter* parameter = MParameters[item.index];
@@ -1910,7 +1908,7 @@ public: // queues
 
   void queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     item.type   = CLAP_EVENT_PARAM_MOD;
     item.index  = AIndex;
     item.value  = AValue;
@@ -1931,7 +1929,7 @@ public: // queues
 
   void flushModFromHostToGui() {
     //SAT_Print("\n");
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     uint32_t count = 0;
     while (MModFromHostToGuiQueue.read(&item)) {
       count += 1;
@@ -1959,7 +1957,7 @@ public: // queues
 
   void queueParamFromGuiToAudio(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     item.type   = CLAP_EVENT_PARAM_VALUE;
     item.index  = AIndex;
     item.value  = AValue;
@@ -1980,7 +1978,7 @@ public: // queues
   void flushParamFromGuiToAudio() {
     uint32_t count = 0;
     //SAT_Print("\n");
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     while (MParamFromGuiToAudioQueue.read(&item)) {
       count += 1;
       //SAT_PRINT;
@@ -2016,7 +2014,7 @@ public: // queues
 
   void queueParamFromGuiToHost(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     item.type   = CLAP_EVENT_PARAM_VALUE;
     item.index  = AIndex;
     item.value  = AValue;
@@ -2037,7 +2035,7 @@ public: // queues
   void flushParamFromGuiToHost(const clap_output_events_t *out_events) {
     uint32_t count = 0;
     //SAT_Print("\n");
-    SAT_QueueItem item;
+    SAT_ParamQueueItem item;
     while (MParamFromGuiToHostQueue.read(&item)) {
       count += 1;
       //SAT_Print("%i = %.3f\n",item.index,item.value);
@@ -2221,6 +2219,14 @@ public: // parameters
   
   //----------
   
+  void setAllParameters(sat_param_t* AValues) {
+    uint32_t num_params = getNumParameters();
+    for (uint32_t i=0; i<num_params; i++) {
+      SAT_Print("%i : %f\n",i,AValues[i]);
+      //setParameter(i,AValues[i]);
+    }
+  }
+  
 //------------------------------
 public: // modulation
 //------------------------------
@@ -2235,6 +2241,16 @@ public: // modulation
     MParameters[AIndex]->setModulation(AValue);
   }
 
+  //----------
+  
+  void resetAllModulations() {
+    uint32_t num_params = getNumParameters();
+    for (uint32_t i=0; i<num_params; i++) {
+      SAT_Print("%i : %f\n",i);
+      //setModulation(0);
+    }
+  }
+  
 //------------------------------
 public: // audio input ports
 //------------------------------

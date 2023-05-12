@@ -2,8 +2,8 @@
 #define sa_ports_included
 //----------------------------------------------------------------------
 
-#define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_VST3
+//#define SAT_PLUGIN_CLAP
+//#define SAT_PLUGIN_VST3
 
 #include "base/sat.h"
 #include "plugin/sat_entry.h"
