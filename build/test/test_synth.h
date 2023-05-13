@@ -6,8 +6,6 @@
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 //#define SAT_PLUGIN_USE_PRESET_DISCOVERY
-//#define SAT_DEBUG_WINDOW
-//#define SAT_DEBUG_OBSERVER
 
 //----------
 
@@ -71,7 +69,6 @@ private:
   SAT_VoiceManager<test_synth_voice,NUM_VOICES> MVoiceManager   = {};
   SAT_VoicesWidget*                             MVoicesWidget   = nullptr;
   SAT_WaveformWidget*                           MWaveformWidget = nullptr;
-  double                                        obs1            = 0.0; // being 'observed'
   
 //------------------------------
 public:
@@ -86,23 +83,14 @@ public:
   bool init() final {
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
     
-    SAT_Observe(SAT_OBSERVE_DOUBLE,&obs1,"num");
-    
-    //double data_buffer[256] = {0};
-    //char hex_buffer[256] = {0};
-    //data_buffer[0] = 1.0;
-    //data_buffer[1] = SAT_PI;
-    //data_buffer[2] = 12345678;
-    //SAT_HexEncode(hex_buffer,data_buffer,3*sizeof(double));
-    //SAT_HexDecode(data_buffer,hex_buffer,3*sizeof(double));
-    //SAT_Print("encoded: %s\n",hex_buffer);
-    //SAT_Print("decoded: %.2f, %.2f, %.2f\n",data_buffer[0],data_buffer[1],data_buffer[2]);
-
+    // extensions
     registerAllExtensions();
     
+    // ports
     appendClapNoteInputPort();
     appendStereoOutputPort();
     
+    // parameters
     appendParameter(new SAT_Parameter(    "Param1", 0.1        ));
     appendParameter(new SAT_Parameter(    "Param2", 0.4, -2, 4 ));
     appendParameter(new SAT_Parameter(    "Param3", 0.7,  0, 2 ));
@@ -111,29 +99,20 @@ public:
     appendParameter(new SAT_Parameter(    "P5",     0.8        ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     
+    // voice manager
     SAT_Host* host = getHost();
     const clap_plugin_t* clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
-    
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     
+    // editor
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     
     return SAT_Plugin::init();
   }
 
-  //----------
-  
-  //void destroy() final {
-  //  if (debugwindow) {
-  //    debugwindow->stopEventThread();
-  //    delete debugwindow;
-  //  }
-  //  SAT_Plugin::destroy();
-  //}
-  
   //----------
   
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
@@ -159,26 +138,6 @@ public:
   }
 
   //----------
-
-//    switch (location_kind) {
-//      case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
-//        SAT_Print("FILE location '%s', load_key '%s'\n",location,load_key);
-//        SAT_Host* host = getHost();
-//        if (host) host->preset_load_loaded(location_kind,location,load_key);
-//        return true;
-//      }
-//      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
-//        SAT_Print("PLUGIN location '%s', load_key '%s'\n",location,load_key);
-//        SAT_Host* host = getHost();
-//        if (host) host->preset_load_loaded(location_kind,location,load_key);
-//        return true;
-//      }
-//      default: {
-//        SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
-//        return false;
-//      }
-//    }
-//    return false;
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
     if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
@@ -295,50 +254,58 @@ public:
 public:
 //------------------------------
 
-  // block
+  // block (synth)
 
   void processAudio(SAT_ProcessContext* AContext) final {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     float** outputs = process->audio_outputs[0].data32;
+    
+    // process voices
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
-    
+
+    // scale outputs
     sat_param_t scale = getParameterValue(2) + getModulationValue(2);
     scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);
-    
-    obs1 = MVoiceManager.getNumPlayingVoices();
-    
+
   }
 
   //----------
 
   // interleaved
 
-  //void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
-  //  const clap_process_t* process = AContext->process;
-  //  //uint32_t length = process->frames_count;
-  //  float* inputs[2];
-  //  float* outputs[2];
-  //  inputs[0]  = process->audio_inputs[0].data32[0] + offset;
-  //  inputs[1]  = process->audio_inputs[0].data32[1] + offset;
-  //  outputs[0] = process->audio_outputs[0].data32[0] + offset;
-  //  outputs[1] = process->audio_outputs[0].data32[1] + offset;
-  //  SAT_CopyStereoBuffer(outputs,inputs,length);
-  //  sat_param_t scale = getParameterValue(2) + getModulationValue(2);
-  //  scale = SAT_Clamp(scale,0,1);
-  //  SAT_ScaleStereoBuffer(outputs,scale,length);
-  //}
+  /*
+  void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
+    const clap_process_t* process = AContext->process;
+
+    // copy inputs to outputs
+    float* inputs[2];
+    float* outputs[2];
+    inputs[0]  = process->audio_inputs[0].data32[0] + offset;
+    inputs[1]  = process->audio_inputs[0].data32[1] + offset;
+    outputs[0] = process->audio_outputs[0].data32[0] + offset;
+    outputs[1] = process->audio_outputs[0].data32[1] + offset;
+    SAT_CopyStereoBuffer(outputs,inputs,length);
+
+    // scale outputs
+    sat_param_t scale = getParameterValue(2) + getModulationValue(2);
+    scale = SAT_Clamp(scale,0,1);
+    SAT_ScaleStereoBuffer(outputs,scale,length);
+  }
+  */
 
   //----------
 
   // quantized
 
-  //void processAudio(SAT_ProcessContext* AContext, uint32_t offset) final {
-  //  processAudio(AContext,offset,SAT_AUDIO_QUANTIZED_SIZE);
-  //}
+  /*
+  void processAudio(SAT_ProcessContext* AContext, uint32_t offset) final {
+    processAudio(AContext,offset,SAT_AUDIO_QUANTIZED_SIZE);
+  }
+  */
 
 };
 
@@ -365,6 +332,7 @@ public:
 #undef EDITOR_WIDTH
 #undef EDITOR_HEIGHT
 #undef EDITOR_SCALE
+#undef NUM_VOICES
 
 //----------------------------------------------------------------------
 #endif
