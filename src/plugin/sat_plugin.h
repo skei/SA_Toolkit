@@ -2227,6 +2227,68 @@ public: // parameters
     }
   }
   
+  //----------
+  
+  bool loadPresetFromFile(const char* APath) {
+    char line_buffer[256] = {0};
+    SAT_File file = {};
+    if (!file.exists(APath)) {
+      SAT_Print("Error! '%s' does not exist\n",APath);
+      return false;
+    }
+    
+    
+    if (file.open(APath,SAT_FILE_READ_TEXT)) {
+      for (uint32_t i=0; i<5; i++) file.readLine(line_buffer,256); // skip metadata
+      
+      // hex
+
+      //sat_param_t param_buffer[SAT_PLUGIN_MAX_PARAMETERS] = {0};
+      //void* ptr = param_buffer;
+      //while (file.readLine(line_buffer,256)) {
+      //  if (line_buffer[strlen(line_buffer)-1] == '\n') line_buffer[strlen(line_buffer)-1] = 0;
+      //  if (line_buffer[0] != 0) {
+      //    SAT_Print("%s\n",line_buffer);
+      //    ptr = SAT_HexDecode(ptr,line_buffer,32); // num bytes
+      //  }
+      //}
+      //sat_param_t* param_ptr = (sat_param_t*)ptr;
+      //uint32_t num_params = getNumParameters();
+      //for (uint32_t i=0; i<num_params; i++) {
+      //  sat_param_t value = *param_ptr++;
+      //  SAT_Print("%i : %f\n",i,value);
+      //}
+      //setAllParameters(param_buffer);
+      
+      // ascii
+      
+      uint32_t i = 0;
+      while (file.readLine(line_buffer,256)) {
+        if (line_buffer[strlen(line_buffer)-1] == '\n') line_buffer[strlen(line_buffer)-1] = 0;
+        if (line_buffer[0] != 0) {
+          
+          SAT_Print("line %i: '%s'\n",i,line_buffer);
+          
+          //ptr = SAT_HexDecode(ptr,line_buffer,32); // num bytes
+          //setParameterValue(i,v);
+
+          //double v = atof(line_buffer);
+          //SAT_Print("%i = %f\n",i,v);
+          
+          i += 1;
+        }
+      }
+      file.close();
+    }
+    else {
+      SAT_Print("Error opening file '%s'\n",APath);
+      return false;
+    }
+    
+    return true;
+    
+  }
+  
 //------------------------------
 public: // modulation
 //------------------------------

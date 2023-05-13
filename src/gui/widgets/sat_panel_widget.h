@@ -277,11 +277,24 @@ public:
       bool mapped = param->getIsMapped();
       if (mapped) {
         //SAT_PRINT;
-        double x = mrect.x + (4.0 * S);
-        double y = mrect.y + (4.0 * S);
+        
+//        double x = mrect.x + (4.0 * S);
+//        double y = mrect.y + (4.0 * S);
+//        SAT_Color color = param->getMappedColor();
+//        painter->setFillColor(color);
+//        painter->fillCircle(x,y,3*S); // TODO: draw triangle
+        
+        double coords[] = {
+          mrect.x + (1.0 * S),        mrect.y + (1.0 * S),
+          mrect.x + (5.0 * S),        mrect.y + (1.0 * S),
+          mrect.x + (1.0 * S),        mrect.y + (5.0 * S),
+          mrect.x + (1.0 * S),        mrect.y + (1.0 * S)
+        };
         SAT_Color color = param->getMappedColor();
+        //painter->setLineWidth(MPenWidth * S);
         painter->setFillColor(color);
-        painter->fillCircle(x,y,3*S); // TODO: draw triangle
+        painter->fillLineStrip(4,coords);
+        
       }
       
     }

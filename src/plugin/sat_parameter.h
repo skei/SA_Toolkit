@@ -42,8 +42,8 @@ protected:
   sat_param_t       MValue                          = 0.0;
   sat_param_t       MModulation                     = 0.0;
   
-  sat_param_t       MSmoothValue                    = 0.0;
-  sat_param_t       MSmoothFactor                   = 1.0;
+//  sat_param_t       MSmoothValue                    = 0.0;
+//  sat_param_t       MSmoothFactor                   = 1.0;
 
   uint32_t          MNumDigits                      = 2;
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
@@ -156,8 +156,8 @@ public:
   virtual void setValue(sat_param_t AValue)               { MValue = AValue; }
   virtual void setModulation(sat_param_t AValue)          { MModulation = AValue; }
 
-  virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
-  virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
+//  virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
+//  virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
 
 //virtual void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
 //virtual void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
@@ -243,29 +243,29 @@ public:
   
   // smoothing should be done in modulationmatrix (moduationmanager?)
   // and include internal modulation, not expressions, ..
-
+  //
   // http://www.kvraudio.com/forum/viewtopic.php?p=6515525#p6515525
 
-  virtual void updateSmoothing(sat_param_t ATolerance=0.001, uint32_t ASteps=1) {
-    sat_param_t target = MValue + MModulation;
-    sat_param_t diff = (target - MSmoothValue);
-    if ( abs(diff) < ATolerance ) MSmoothValue = target;
-    else {
-      if (ASteps == 1) {
-        //updateSmoothing();
-        MSmoothValue += diff * MSmoothFactor;
-      }
-      else {
-        MSmoothValue += diff * (1.0 - pow( (1.0 - MSmoothFactor), ASteps) );
-      }
-    }
-  }
+//  virtual void updateSmoothing(sat_param_t ATolerance=0.001, uint32_t ASteps=1) {
+//    sat_param_t target = MValue + MModulation;
+//    sat_param_t diff = (target - MSmoothValue);
+//    if ( abs(diff) < ATolerance ) MSmoothValue = target;
+//    else {
+//      if (ASteps == 1) {
+//        //updateSmoothing();
+//        MSmoothValue += diff * MSmoothFactor;
+//      }
+//      else {
+//        MSmoothValue += diff * (1.0 - pow( (1.0 - MSmoothFactor), ASteps) );
+//      }
+//    }
+//  }
 
   //----------
 
-  virtual sat_param_t getSmoothedValue() {
-    return MSmoothValue;
-  }
+//  virtual sat_param_t getSmoothedValue() {
+//    return MSmoothValue;
+//  }
 
   //----------
   

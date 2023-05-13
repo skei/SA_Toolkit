@@ -261,7 +261,7 @@
   // [thread-safe]
 
   uint32_t clap_preset_discovery_factory_count_callback(const struct clap_preset_discovery_factory *factory) {
-    SAT_PRINT;
+    //SAT_PRINT;
     return 1;
   }
 

@@ -5,8 +5,7 @@
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
-
-#define SAT_PLUGIN_USE_PRESET_DISCOVERY
+//#define SAT_PLUGIN_USE_PRESET_DISCOVERY
 //#define SAT_DEBUG_WINDOW
 //#define SAT_DEBUG_OBSERVER
 
@@ -116,6 +115,7 @@ public:
     const clap_plugin_t* clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
+    
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
     
@@ -183,41 +183,12 @@ public:
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
     if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
       SAT_Print("location '%s', load_key '%s'\n",location,load_key);
-      
-//      char line_buffer[256] = {0};
-//      sat_param_t param_buffer[SAT_PLUGIN_MAX_PARAMETERS] = {0};
-//      SAT_File file = {};
-
-//      if (!file.exists(location)) {
-//        SAT_Print("Error! '%s' does not exist\n");
-//        return false;
-//      }
-
-//      void* ptr = param_buffer;
-//      if (file.open(location,SAT_FILE_READ_TEXT)) {
-//        for (uint32_t i=0; i<5; i++) file.readLine(line_buffer,256); // skip metadata
-//        while (file.readLine(line_buffer,256)) {
-//          if (line_buffer[strlen(line_buffer)-1] == '\n') line_buffer[strlen(line_buffer)-1] = 0;
-//          if (line_buffer[0] != 0) {
-//            SAT_Print("%s\n",line_buffer);
-//            ptr = SAT_HexDecode(ptr,line_buffer,32); // num bytes
-//          }
-//        }
-//        file.close();
-//      }
-
-        //setAllParameters(param_buffer);
-        
-//      //sat_param_t* param_ptr = (sat_param_t*)ptr;
-//      //uint32_t num_params = getNumParameters();
-//      //for (uint32_t i=0; i<num_params; i++) {
-//      //  sat_param_t value = *param_ptr++;
-//      //  SAT_Print("%i : %f\n",i,value);
-//      //}
-      
-      SAT_Host* host = getHost();
-      if (host) host->preset_load_loaded(location_kind,location,load_key);
-      return true;
+      if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
+        loadPresetFromFile(location);
+        SAT_Host* host = getHost();
+        if (host) host->preset_load_loaded(location_kind,location,load_key);
+        return true;
+      }
     }
     return false;
   }
