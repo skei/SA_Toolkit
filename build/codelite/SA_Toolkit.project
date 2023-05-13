@@ -84,11 +84,7 @@
     <VirtualDirectory Name="test">
       <File Name="../test/test_synth_voice.h"/>
       <File Name="../test/test2.h"/>
-      <File Name="../test/test_params.h"/>
-      <File Name="../test/test_gui2.h"/>
-      <File Name="../test/test_ara.h"/>
       <File Name="../test/test_reaper_ext.h"/>
-      <File Name="../test/test_layout.h"/>
       <File Name="../test/test_minimal.h"/>
       <File Name="../test/test_standalone.h"/>
       <File Name="../test/test_synth_widgets.h"/>

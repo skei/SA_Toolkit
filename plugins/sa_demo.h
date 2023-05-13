@@ -325,6 +325,7 @@ public:
 #undef EDITOR_WIDTH
 #undef EDITOR_HEIGHT
 #undef EDITOR_SCALE
+#undef NUM_VOICES
 
 //----------------------------------------------------------------------
 #endif
