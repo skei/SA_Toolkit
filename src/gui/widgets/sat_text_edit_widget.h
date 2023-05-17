@@ -124,8 +124,9 @@ public:
 
       //int32_t txtwidth = painter->getTextWidth(MText);
       float bounds[4];
-      painter->getTextBounds(mrect.x,mrect.y,MText,nullptr,bounds);
-      int32_t txtwidth  = bounds[2] - bounds[0];
+      double advance = painter->getTextBounds(mrect.x,mrect.y,MText,nullptr,bounds);
+      //int32_t txtwidth  = bounds[2] - bounds[0];
+      int32_t txtwidth  = advance;
       //height = bounds[3] - bounds[1];
 
 
@@ -197,7 +198,7 @@ public:
   // AKey = key code, not ascii..
 
   void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimeStamp=0) override {
-    //SAT_Print("AChar %i AKey %i AState %i\n",(int)AChar,AKey,AState);
+    SAT_Print("AChar %i AKeySym %i AState %i\n",(int)AChar,AKeySym,AState);
     //SAT_DRect mrect = getRect();
     int32_t len;
     char  c;
@@ -254,7 +255,7 @@ public:
         if ((AKeySym >= 32) && (AKeySym <= 127)) {
           c = AKeySym & 0xff;
           // hack-alert!
-//          if ((c >= 'a') && (c <= 'z') && (AState == SAT_KEY_SHIFT)) { c -= 32; }
+          if ((c >= 'a') && (c <= 'z') && (AState == SAT_STATE_SHIFT)) { c -= 32; }
           SAT_InsertChar(MText,MCaretPos,c);
           MCaretPos += 1;
           do_widgetListener_update(this,0);

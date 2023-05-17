@@ -601,7 +601,7 @@ public: // window
   //----------
 
   void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
-    SAT_Print("AKeySym %i AState %i\n",AKeySym,AState);
+    //SAT_Print("AChar %i AKeySym %i AState %i\n",AChar,AKeySym,AState);
     if (MKeyCapturedWidget) {
       MKeyCapturedWidget->on_widget_key_press(AChar,AKeySym,AState,ATimestamp);
     }
@@ -610,7 +610,7 @@ public: // window
   //----------
 
   void on_window_key_release(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
-    SAT_Print("AKey %i AState %i\n",AKey,AState);
+    //SAT_Print("AChar %i AKeySym %i AState %i\n",AChar,AKeySym,AState);
     if (MKeyCapturedWidget) {
       MKeyCapturedWidget->on_widget_key_release(AKey,AKeySym,AState,ATimestamp);
     }

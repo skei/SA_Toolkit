@@ -733,13 +733,25 @@ private:
     //uint32_t ks = 0;
     uint32_t ks = keysym;
     
+/*
+if (sym == XKB_KEY_KP_Space) codepoint = XKB_KEY_space & 0x7f;
+else codepoint = sym & 0x7f;
+*/    
+    
+    
+    
+    
     switch (keysym) {
       case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
-      case XKB_KEY_space:       ks = SAT_KEY_ESC;       break;
+      case XKB_KEY_KP_Space:    ks = SAT_KEY_ESC;       break;
       case XKB_KEY_Home:        ks = SAT_KEY_HOME;      break;
       case XKB_KEY_End:         ks = SAT_KEY_END;       break;
-      case XKB_KEY_leftarrow:   ks = SAT_KEY_LEFT;      break;
-      case XKB_KEY_rightarrow:  ks = SAT_KEY_RIGHT;     break;
+      //case XKB_KEY_leftarrow:   ks = SAT_KEY_LEFT;      break;
+      //case XKB_KEY_rightarrow:  ks = SAT_KEY_RIGHT;     break;
+      case XKB_KEY_Left:        ks = SAT_KEY_LEFT;      break;
+      case XKB_KEY_Right:       ks = SAT_KEY_RIGHT;     break;
+      case XKB_KEY_KP_Left:     ks = SAT_KEY_LEFT;      break;
+      case XKB_KEY_KP_Right:    ks = SAT_KEY_RIGHT;     break;
       case XKB_KEY_Delete:      ks = SAT_KEY_DELETE;    break;
       case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
     }

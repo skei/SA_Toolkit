@@ -50,7 +50,8 @@ public:
   virtual void    setClip(SAT_Rect ARect) {}
   virtual void    resetClip() {}
 
-  virtual bool    getTextBounds(const char* AText, double* ABounds) { return false; }
+  //virtual bool    getTextBounds(const char* AText, double* ABounds) { return false; }
+  virtual double  getTextBounds(const char* AText, double* ABounds) { return 0.0; }
 
   virtual void    setDrawColor(SAT_Color color) {}
   virtual void    setFillColor(SAT_Color color) {}

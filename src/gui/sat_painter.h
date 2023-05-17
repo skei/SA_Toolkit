@@ -141,10 +141,10 @@ public: // paint
 
   virtual void drawTextBox(SAT_Rect ARect, const char* AText, uint32_t AAlignment) {
     double bounds[4] = {0};
-    getTextBounds(AText,bounds);
+    double advance = getTextBounds(AText,bounds);
     double x = ARect.x   - bounds[0];
     double y = ARect.y   - bounds[1];
-    double w = bounds[2] - bounds[0];
+    double w = advance;//bounds[2] - bounds[0];
     double h = bounds[3] - bounds[1];
     
     if      (AAlignment & SAT_TEXT_ALIGN_LEFT)        { }

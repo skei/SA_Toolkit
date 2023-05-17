@@ -222,13 +222,17 @@ public: // clip
 
   //----------
 
-  bool getTextBounds(const char* AText, double* ABounds) {
-    nvgTextBounds(MContext,0,0,AText,nullptr,MTextBounds);
+  //bool getTextBounds(const char* AText, double* ABounds) {
+  double getTextBounds(const char* AText, double* ABounds) {
+    double advance = nvgTextBounds(MContext,0,0,AText,nullptr,MTextBounds);
+    //double width = MTextBounds[2] - MTextBounds[0];
+    //SAT_Print("advance %f width %f\n",advance,width);
     ABounds[0] = MTextBounds[0];
     ABounds[1] = MTextBounds[1];
     ABounds[2] = MTextBounds[2];
     ABounds[3] = MTextBounds[3];
-    return true;
+    //return true;
+    return advance;
   }
 
 //------------------------------

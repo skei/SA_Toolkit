@@ -78,13 +78,14 @@ public:
           SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChildWidget(i);
           const char* text = textwidget->getText();
           double bounds[4];
-          if (MPainter->getTextBounds(text,bounds)) {
-            double width = bounds[2] - bounds[0];
+          //if (MPainter->getTextBounds(text,bounds)) {
+          //  double width = bounds[2] - bounds[0];
+            double width = MPainter->getTextBounds(text,bounds);
             if (width > 0) width /= S;
             //if (width > widest) widest = width;
             textwidget->setWidth(width);
             textwidget->setBasisWidth(width);
-          }
+          //}
         }
 //        SAT_Widget* context = getContentWidget();
       }

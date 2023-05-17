@@ -73,10 +73,15 @@ public:
         const char* text = getText();
         //SAT_Print("text: %s\n",text);
         double bounds[4];
-        if (APainter->getTextBounds(text,bounds)) {
-          //textwidget->setWidth(bounds[2]);
-          setWidth(bounds[2]);
-        }
+
+//        if (APainter->getTextBounds(text,bounds)) {
+//          //textwidget->setWidth(bounds[2]);
+//          setWidth(bounds[2]);
+//        }
+
+        double advance = APainter->getTextBounds(text,bounds);
+        setWidth(advance);
+
     //  }
     //}
   }
@@ -100,9 +105,12 @@ public:
       painter->setTextSize(textsize); // try original..
       if (MAutoTextSize) {
         double bounds[4];
-        if (painter->getTextBounds(MText,bounds)) {
-          //SAT_Print("%.2f, %.2f - %.2f, %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
+        //if (painter->getTextBounds(MText,bounds)) {
+        //  //SAT_Print("%.2f, %.2f - %.2f, %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
+
+          painter->getTextBounds(MText,bounds);
           double width = bounds[2] - bounds[0];
+        
           double height = bounds[3] - bounds[1];
           double wratio = 1.0;
           double hratio = 1.0;
@@ -112,7 +120,7 @@ public:
           else textsize *= hratio;
           //SAT_Print("mrect.w %.2f mrect.h %.2f wratio %.2f hratio %.2f\n",mrect.w,mrect.h,wratio,hratio);
           painter->setTextSize(textsize);
-        }
+        //}
       }
       
       SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
