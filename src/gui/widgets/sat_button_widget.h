@@ -34,10 +34,11 @@ private:
 public:
 //------------------------------
 
-  SAT_ButtonWidget(SAT_Rect ARect)
+  SAT_ButtonWidget(SAT_Rect ARect, bool AIsToggle=false)
   : SAT_TextWidget(ARect,"") {
     setName("SAT_ButtonWidget");
     setCursor(SAT_CURSOR_FINGER);
+    MIsToggle = AIsToggle;
   }
 
   //----------
@@ -112,8 +113,8 @@ public:
     }
     
     fillBackground(AContext);
-    if (getValue() > 0.5) SAT_TextWidget::setText(MOnText);
-    else SAT_TextWidget::setText(MOffText);
+    //if (getValue() > 0.5) SAT_TextWidget::setText(MOnText);
+    //else SAT_TextWidget::setText(MOffText);
     drawText(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);

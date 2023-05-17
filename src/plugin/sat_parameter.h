@@ -329,36 +329,22 @@ public:
 //------------------------------
 
   sat_param_t getValue() override {
-    int32_t i = (int32_t)MValue;
-//    SAT_Print("MValue %f -> i %i -> %f\n",MValue,i,(sat_param_t)i);
-    return i;//SAT_Trunc(MValue);
-    //return (int32_t)MValue;
+    //SAT_Print("MValue %f\n",MValue);
+    return MValue;
   }
 
   //----------
 
   void setValue(sat_param_t AValue) override {
-//    SAT_Print("AValue %f -> MValue\n",AValue);
+    //SAT_Print("AValue %f\n",AValue);
     MValue = AValue;
   }
 
   //----------
   
-  // value & MValue not always in sync!
-  // (MValue 14.999999) value 14.999999 -> display 14
-  // (MValue 14.999999) value 14.000000 -> display 13
-  // (MValue 19.000000) value 19.000000 -> display 18
-  
-  // how can 1.000000 become 0?
-
   bool valueToText(sat_param_t value, char *display, uint32_t size) override {
-    //sprintf(display,"%.f",SAT_Round(value));
-    //sprintf(display,"%i",(int)SAT_Trunc(value));
-    
-    int32_t i = (int32_t)value;
-//    SAT_Print("i = %i\n",i);
-    sprintf(display,"%i",i);
-    //SAT_Print("(MValue %f) value %f -> i %i -> display %s\n",MValue,value,i,display);
+    //SAT_Print("value %f -> %.f\n",value,value);
+    sprintf(display,"%.f",value);
     return true;
   }
 
@@ -398,13 +384,8 @@ public:
 //------------------------------
 
   bool valueToText(sat_param_t value, char *display, uint32_t size) override {
-    uint32_t index = SAT_Trunc(value+0.5);
-    if (index <= MInfo.max_value) {
-      strcpy(display,MText[index]);
-    }
-    else {
-      strcpy(display,"error");
-    }
+    uint32_t index = SAT_Trunc(value);
+    strcpy(display,MText[index]);
     return true;
   }
 

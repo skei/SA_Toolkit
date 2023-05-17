@@ -4,7 +4,7 @@
 
 
 #define SA_BOTAGE_NAME          "sa_botage"
-#define SA_BOTAGE_EDITOR_WIDTH  490 + 132
+#define SA_BOTAGE_EDITOR_WIDTH  622
 #define SA_BOTAGE_EDITOR_HEIGHT 392
 
 //----------------------------------------------------------------------
@@ -56,7 +56,7 @@ public:
 
   sa_botage_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
-    setInitialEditorSize(SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT);
+    setInitialEditorSize(SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT,2.0);
     //SAT_PRINT;
   }
 
@@ -70,6 +70,9 @@ public:
     appendStereoInputPort();
     appendStereoOutputPort();
     sa_botage_init_parameters(this);
+    
+    setInitialEditorSize(SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT,1.5);
+    
     return result;
   }
 
@@ -160,6 +163,11 @@ public:
 
 #endif
 
+//
+
+#undef SA_BOTAGE_NAME
+#undef SA_BOTAGE_EDITOR_WIDTH
+#undef SA_BOTAGE_EDITOR_HEIGHT
 
 //----------------------------------------------------------------------
 #endif

@@ -10,7 +10,7 @@ uint32_t sat_vst2_create_unique_id(const clap_plugin_descriptor_t* descriptor) {
   //strcat(buffer,"MIP_MAGIC_M_PL");
   strcat(buffer,descriptor->name);
   strcat(buffer,descriptor->vendor);
-  strcat(buffer,descriptor->version);
+  strcat(buffer,descriptor->version); // we probably don't want version in the id..
   return SAT_HashString(buffer);
 }
 

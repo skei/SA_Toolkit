@@ -232,8 +232,8 @@ public: // parent to child
     drawBorder(AContext);
   }
 
-//  void on_widget_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) override {}
-//  void on_widget_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) override {}
+//  void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {}
+//  void on_widget_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {}
 
   void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     //SAT_Rect mrect = MRect;

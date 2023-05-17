@@ -154,16 +154,16 @@ public:
     
     // hint
 
-//    MHintWidget = new SAT_TextWidget(SAT_Rect(210,25,245,10),"Hello world!");
-//    MRootWidget->appendChildWidget(MHintWidget);
-//    MHintWidget->setFillBackground(true);
-//    MHintWidget->setBackgroundColor(0.23);
-//    MHintWidget->setDrawBorder(false);
-//    MHintWidget->setBorderColor(SAT_Grey);
-//    MHintWidget->setTextSize(9);
-//    MHintWidget->setTextColor(0.8);
-//    MHintWidget->setTextAlignment(SAT_TEXT_ALIGN_LEFT);
-//    MHintWidget->setTextOffset(SAT_Rect(5,0,0,0));
+    //    MHintWidget = new SAT_TextWidget(SAT_Rect(210,25,245,10),"Hello world!");
+    //    MRootWidget->appendChildWidget(MHintWidget);
+    //    MHintWidget->setFillBackground(true);
+    //    MHintWidget->setBackgroundColor(0.23);
+    //    MHintWidget->setDrawBorder(false);
+    //    MHintWidget->setBorderColor(SAT_Grey);
+    //    MHintWidget->setTextSize(9);
+    //    MHintWidget->setTextColor(0.8);
+    //    MHintWidget->setTextAlignment(SAT_TEXT_ALIGN_LEFT);
+    //    MHintWidget->setTextOffset(SAT_Rect(5,0,0,0));
 
     // c
 
@@ -193,37 +193,37 @@ public:
 
     // pages
 
-    prob_page_button = new SAT_ButtonWidget(SAT_Rect(240+272,5+60,30,10));
+    prob_page_button = new SAT_ButtonWidget(SAT_Rect(510,10,30,10));
     MRootWidget->appendChildWidget(prob_page_button);
     prob_page_button->setText("PROB","Prob");
-//    prob_page_button->setHint("Probabilities");
+    //prob_page_button->setHint("Probabilities");
     prob_page_button->setFillBackground(true);
     prob_page_button->setBackgroundColor(0.3);
     prob_page_button->setDrawBorder(false);
-    prob_page_button->setTextSize(9);
+    prob_page_button->setTextSize(8);
     prob_page_button->setTextColor(0.6);
 
-    seq_page_button = new SAT_ButtonWidget(SAT_Rect(275+272,5+60,30,10));
+    seq_page_button = new SAT_ButtonWidget(SAT_Rect(545,10,30,10));
     MRootWidget->appendChildWidget(seq_page_button);
-    prob_page_button->setText("SEQ","Seq");
-//    seq_page_button->setHint("Sequence");
+    seq_page_button->setText("SEQ","Seq");
+    //seq_page_button->setHint("Sequence");
     seq_page_button->setFillBackground(true);
     seq_page_button->setBackgroundColor(0.25);
     seq_page_button->setDrawBorder(false);
-    seq_page_button->setTextSize(9);
+    seq_page_button->setTextSize(8);
     seq_page_button->setTextColor(0.6);
 
-    perf_page_button = new SAT_ButtonWidget(SAT_Rect(310+272,5+60,30,10));
+    perf_page_button = new SAT_ButtonWidget(SAT_Rect(580,10,30,10));
     MRootWidget->appendChildWidget(perf_page_button);
-    prob_page_button->setText("PERF","Perf");
-//    perf_page_button->setHint("Perform");
+    perf_page_button->setText("PERF","Perf");
+    //perf_page_button->setHint("Perform");
     perf_page_button->setFillBackground(true);
     perf_page_button->setBackgroundColor(0.25);
     perf_page_button->setDrawBorder(false);
-    perf_page_button->setTextSize(9);
+    perf_page_button->setTextSize(8);
     perf_page_button->setTextColor(0.6);
 
-    MPages = new SAT_PagesWidget( SAT_Rect(255,90,357,292));
+    MPages = new SAT_PagesWidget( SAT_Rect(255,30,357,292));
     MRootWidget->appendChildWidget(MPages);
 
 //    #include "sa_botage_editor_page_prob.h"
@@ -240,7 +240,7 @@ public:
     // waveform / buffer
     //------------------------------
 
-    MWaveformWidget = new SAT_CircularWaveformWidget( SAT_Rect(10,90,230,230), WAVEFORM_LINES );
+    MWaveformWidget = new SAT_CircularWaveformWidget( SAT_Rect(10,40,230,230), WAVEFORM_LINES );
     MRootWidget->appendChildWidget(MWaveformWidget);
     MWaveformWidget->setGrid(4,2);
     MWaveformWidget->setFillBackground(false);;
@@ -251,7 +251,7 @@ public:
 
     // beats
 
-    MNumBeatsWidget = new SAT_DragValueWidget( SAT_Rect(10,330,110,16),"Beats",0);
+    MNumBeatsWidget = new SAT_DragValueWidget( SAT_Rect(10,280,110,16),"Beats",0);
     MRootWidget->appendChildWidget(MNumBeatsWidget);
     MNumBeatsWidget->setFillBackground(true);
     MNumBeatsWidget->setBackgroundColor( 0.5 );
@@ -259,14 +259,15 @@ public:
     MNumBeatsWidget->setTextSize(11);
     MNumBeatsWidget->setValueColor(SAT_Black);
     MNumBeatsWidget->setValueSize(11);
-//    MNumBeatsWidget->setHint("Number of beats in buffer");
-//    MNumBeatsWidget->setInteractiveValueColor(SAT_White);
+    //MNumBeatsWidget->setHint("Number of beats in buffer");
+    //MNumBeatsWidget->setInteractiveValueColor(SAT_White);
 
-    connect( MNumBeatsWidget,  AParameters->getItem(PAR_NUM_BEATS) );
+    //connect( MNumBeatsWidget, AParameters->getItem(PAR_NUM_BEATS) );
+    connect( MNumBeatsWidget, APlugin->getParameter(PAR_NUM_BEATS) );
 
     // slices
 
-    MNumSlicesWidget = new SAT_DragValueWidget( SAT_Rect(130,330,110,16),"Split Beats",0);
+    MNumSlicesWidget = new SAT_DragValueWidget( SAT_Rect(130,280,110,16),"Split Beats",0);
     MRootWidget->appendChildWidget(MNumSlicesWidget);
     MNumSlicesWidget->setFillBackground(true);
     MNumSlicesWidget->setBackgroundColor( 0.5 );
@@ -274,10 +275,10 @@ public:
     MNumSlicesWidget->setTextSize(11);
     MNumSlicesWidget->setValueColor(SAT_Black);
     MNumSlicesWidget->setValueSize(11);
-    MNumSlicesWidget->setHint("Number of slices per beat");
-    MNumSlicesWidget->setInteractiveValueColor(SAT_COLOR_WHITE);
+    //MNumSlicesWidget->setHint("Number of slices per beat");
+    //MNumSlicesWidget->setInteractiveValueColor(SAT_COLOR_WHITE);
 
-    connect( MNumSlicesWidget, AParameters->getItem(PAR_NUM_SLICES) );
+    connect( MNumSlicesWidget, APlugin->getParameter(PAR_NUM_SLICES) );
 
     // loop env
 
@@ -297,29 +298,29 @@ public:
     //    connect( env1_slider, 0, AParameters->getItem(PAR_LOOP_ENV_ATTACK) );
     //    connect( env1_slider, 1, AParameters->getItem(PAR_LOOP_ENV_DECAY) );
 
-    SAT_SliderWidget* env1a_slider = new SAT_SliderWidget( SAT_Rect(10,356,50,16), "Loop Start", 0.1 );
+    SAT_SliderWidget* env1a_slider = new SAT_SliderWidget( SAT_Rect(10,306,50,16), "Loop Start", 0.1 );
     MRootWidget->appendChildWidget(env1a_slider);
     env1a_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env1a_slider->setTextSize(9);
     env1a_slider->setDrawValue(false);
     env1a_slider->setValueColor(0.2);
     env1a_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
-    env1a_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
-    env1a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
+    env1a_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
+    //env1a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env1a_slider, AParameters->getItem(PAR_LOOP_ENV_ATTACK) );
+    connect( env1a_slider, APlugin->getParameter(PAR_LOOP_ENV_ATTACK) );
 
-    SAT_SliderWidget* env1d_slider = new SAT_SliderWidget( SAT_Rect(10+60,356,50,16), "Loop End", 0.9 );
+    SAT_SliderWidget* env1d_slider = new SAT_SliderWidget( SAT_Rect(10+60,306,50,16), "Loop End", 0.9 );
     MRootWidget->appendChildWidget(env1d_slider);
     env1d_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env1d_slider->setTextSize(9);
     env1d_slider->setDrawValue(false);
     env1d_slider->setValueColor(0.2);
     env1d_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
-    env1d_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
-    env1d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
+    env1d_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
+    //env1d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env1d_slider, AParameters->getItem(PAR_LOOP_ENV_DECAY) );
+    connect( env1d_slider, APlugin->getParameter(PAR_LOOP_ENV_DECAY) );
 
     // slice env
 
@@ -339,29 +340,29 @@ public:
     //    connect( env2_slider, 0, AParameters->getItem(PAR_SLICE_ENV_ATTACK) );
     //    connect( env2_slider, 1, AParameters->getItem(PAR_SLICE_ENV_DECAY) );
 
-    SAT_SliderWidget* env2a_slider = new SAT_SliderWidget( SAT_Rect(130,356,50,16), "Slice Start", 0.1 );
+    SAT_SliderWidget* env2a_slider = new SAT_SliderWidget( SAT_Rect(130,306,50,16), "Slice Start", 0.1 );
     MRootWidget->appendChildWidget(env2a_slider);
     env2a_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env2a_slider->setTextSize(9);
     env2a_slider->setDrawValue(false);
     env2a_slider->setValueColor(0.2);
     env2a_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
-    env2a_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
-    env2a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
+    env2a_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
+    //env2a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env2a_slider, AParameters->getItem(PAR_SLICE_ENV_ATTACK) );
+    connect( env2a_slider, APlugin->getParameter(PAR_SLICE_ENV_ATTACK) );
 
-    SAT_SliderWidget* env2d_slider = new SAT_SliderWidget( SAT_Rect(130+60,356,50,16), "Slice End", 0.9 );
+    SAT_SliderWidget* env2d_slider = new SAT_SliderWidget( SAT_Rect(130+60,306,50,16), "Slice End", 0.9 );
     MRootWidget->appendChildWidget(env2d_slider);
     env2d_slider->setTextColor(SAT_Color(0,0,0,0.5));
     env2d_slider->setTextSize(9);
     env2d_slider->setDrawValue(false);
     env2d_slider->setValueColor(0.2);
     env2d_slider->setBackgroundColor( SAT_Color(0.0, 0.5, 0.5) );
-    env2d_slider->setSliderColor( SAT_Color(0.0, 0.7, 0.7) );
-    env2d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
+    env2d_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
+    //env2d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env2d_slider, AParameters->getItem(PAR_SLICE_ENV_DECAY) );
+    connect( env2d_slider, APlugin->getParameter(PAR_SLICE_ENV_DECAY) );
 
     // footer
 
@@ -371,9 +372,7 @@ public:
 
     // menu
 
-    MRootWidget->appendChildWidget(fx_type_menu);
-
-
+//    MRootWidget->appendChildWidget(fx_type_menu);
 
     return true;
   }

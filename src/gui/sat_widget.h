@@ -807,10 +807,10 @@ public: // base
   virtual void on_widget_timer(uint32_t AId, double ADelta) {
   }
 
-  virtual void on_widget_key_press(uint32_t AKey, uint32_t AState, uint32_t ATimestamp) {
+  virtual void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) {
   }
 
-  virtual void on_widget_key_release(uint32_t AKey, uint32_t AState, uint32_t ATimestamp) {
+  virtual void on_widget_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) {
   }
 
   virtual void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) {
@@ -932,6 +932,13 @@ public: // widget listener
     //realignChildWidgets(true);
     //parentRedraw();
   }
+  
+  //----------
+  
+  void do_widgetListener_want_keys(SAT_Widget* ASender) override {
+    if (MListener) MListener->do_widgetListener_want_keys(ASender);
+  }
+  
 
 };
 

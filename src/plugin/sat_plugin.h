@@ -2512,7 +2512,8 @@ public: // events
   virtual bool handleMidi2(const clap_event_midi2_t* event) { return false; }
 
 //------------------------------
-private: // handle events
+//private: // handle events
+public:
 //------------------------------
 
   /*

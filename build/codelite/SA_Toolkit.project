@@ -60,7 +60,6 @@
       <File Name="../../plugins/ports/sa_compciter.h"/>
     </VirtualDirectory>
     <File Name="../../plugins/sa_tyr.h"/>
-    <File Name="../../plugins/sa_transpose.h"/>
     <File Name="../../plugins/sa_pitch.h"/>
     <File Name="../../plugins/sa_gain.h"/>
     <File Name="../../plugins/sa_cred.h"/>
@@ -82,6 +81,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="build">
     <VirtualDirectory Name="test">
+      <File Name="../test/test_parameters.h"/>
       <File Name="../test/test_synth_voice.h"/>
       <File Name="../test/test2.h"/>
       <File Name="../test/test_reaper_ext.h"/>

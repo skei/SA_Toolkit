@@ -282,7 +282,7 @@ public: // clap
     bitwig seems to call this repeatedly until the suggested, and returned
     sizes are equal, so be careful with rounding/scaling..
   */
-
+  
   virtual bool adjust_size(uint32_t *width, uint32_t *height) {
     //SAT_Print("(%i,%i)\n",*width,*height);
     return true;

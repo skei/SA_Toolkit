@@ -237,8 +237,8 @@ public:
   virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
   virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
   virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
@@ -709,8 +709,8 @@ private:
     xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
 
 //    xcb_keycode_t* keycode = xcb_key_symbols_get_keycode(MKeySyms,keysym);
-
-    //SAT_Print("AKey %i AState %i keysym %i keycode %i\n",AKey,AState,keysym,keycode[0]);
+//    SAT_Print("AKey %i AState %i keysym %i keycode %i\n",AKey,AState,keysym,keycode[0]);
+    
     /*
     //SAT_Print("AKey %i : keysym %i keycode ",AKey, keysym);
     if (*keycode != XCB_NO_SYMBOL) {
@@ -730,7 +730,9 @@ private:
     SAT_DPrint("  keysym_name '%s'\n",keysym_name);
     */
 
-    uint32_t ks = 0;
+    //uint32_t ks = 0;
+    uint32_t ks = keysym;
+    
     switch (keysym) {
       case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
       case XKB_KEY_space:       ks = SAT_KEY_ESC;       break;
@@ -857,9 +859,9 @@ private:
         uint8_t  k  = key_press->detail;
         uint16_t s  = key_press->state;
         uint32_t ts = key_press->time;
-        k = remapKey(k,s);
+        uint32_t ks = remapKey(k,s);
         s = remapState(s);
-        on_window_key_press(k,s,ts);
+        on_window_key_press(k,ks,s,ts);
        break;
       }
 
@@ -869,9 +871,9 @@ private:
         uint8_t  k  = key_release->detail;
         uint16_t s  = key_release->state;
         uint32_t ts = key_release->time;
-        k = remapKey(k,s);
+        uint32_t ks = remapKey(k,s);
         s = remapState(s);
-        on_window_key_release(k,s,ts);
+        on_window_key_release(k,ks,s,ts);
         break;
       }
 

@@ -52,6 +52,7 @@ public:
 
   AEffect* entry(audioMasterCallback audioMaster) {
     SAT_Print("\n");
+    
     uint32_t index = 0;
 
     // shell
@@ -80,22 +81,22 @@ public:
     SAT_Print("plugin_path '%s'\n",plugin_path);
     //SAT_GLOBAL.REGISTRY.setPath(plugin_path);
     
-//    SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster); // deleted in SAT_Vst2Plugin destructor
+//    SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);      // deleted in SAT_Vst2Plugin destructor
 //    const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
 //    const clap_host_t* host = vst2_host->getHost();
-//    const clap_plugin_t* plugin = SAT_CreatePlugin(index,descriptor,host); // deleted in SAT_Vst2Plugin destructor (call setHost!)
+//    const clap_plugin_t* plugin = SAT_CreatePlugin(index,descriptor,host);                    // deleted in SAT_Vst2Plugin destructor (call setHost!)
 //    plugin->init(plugin); // destroy() called in effClose
-//    SAT_Vst2Plugin* vst2_plugin  = new SAT_Vst2Plugin(host,plugin,audioMaster); // deleted in vst2_dispatcher_callback(effClose)
+//    SAT_Vst2Plugin* vst2_plugin  = new SAT_Vst2Plugin(host,plugin,audioMaster);               // deleted in vst2_dispatcher_callback(effClose)
 
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
-    SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);    // deleted in SAT_Vst2Plugin destructor
+    SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);        // deleted in SAT_Vst2Plugin destructor
     const clap_host_t* claphost = vst2_host->getHost();
-    const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,vst2_host->getHost()); // destroy() called in SAT_Vst2Plugin destructor
+    const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,claphost);              // destroy() called in SAT_Vst2Plugin destructor
     SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
     plugin->setPluginFormat("VST2");
     plugin->init();
     //SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(plugin);
-    SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(claphost,clapplugin,audioMaster); // deleted in vst2_dispatcher_callback/effClose
+    SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(claphost,clapplugin,audioMaster);           // deleted in vst2_dispatcher_callback/effClose
 
     // hmmm..
     vst2plugin->setHost(vst2_host);
@@ -129,7 +130,7 @@ public:
     while (descriptor->features[i]) {
       const char* str = descriptor->features[i++];
       SAT_Print("feature %i: '%s'\n",i,str);
-      if (strcmp(str,"instrument") == 0) flags |= effFlagsIsSynth;
+      if (strcmp(str,CLAP_PLUGIN_FEATURE_INSTRUMENT) == 0) flags |= effFlagsIsSynth;
     }
     
     // flags |= effFlagsProgramChunks;
