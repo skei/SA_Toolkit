@@ -261,7 +261,7 @@ public:
     double S = getWindowScale();
     SAT_Rect mrect = getRect();
     
-    SAT_Parameter* param = (SAT_Parameter*)getConnection();
+    SAT_Parameter* param = (SAT_Parameter*)getParameter();
     if (param) {
 
       uint32_t state = param->getAutomationState();

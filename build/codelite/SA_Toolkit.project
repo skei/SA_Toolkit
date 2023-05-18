@@ -319,6 +319,7 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="gui">
+      <File Name="../../src/gui/sat_base_painter.h"/>
       <File Name="../../src/gui/sat_base_window.h"/>
       <File Name="../../src/gui/sat_base_widget.h"/>
       <File Name="../../src/gui/sat_widget_owner.h"/>

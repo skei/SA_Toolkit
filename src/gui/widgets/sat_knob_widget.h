@@ -98,7 +98,7 @@ public:
       double value = getValue();
 
       //SAT_Parameter* param = getParameter();
-      SAT_Parameter* param = (SAT_Parameter*)getConnection();
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
 
       if (param) {
         value = param->normalizeValue(value);

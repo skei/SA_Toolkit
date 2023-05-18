@@ -170,7 +170,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime=0) override {
+  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime=0) override {
     SAT_Widget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATime);
     //SAT_DRect mrect = getRect();
     //SWidget::on_leave(AWidget);

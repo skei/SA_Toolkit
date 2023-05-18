@@ -126,11 +126,11 @@ public:
       SAT_Assert(painter);
       
       double v1 = getValue(0);
-      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) v1 = param->denormalizeValue(v1);
       
       double v2 = getValue(1);
-      param = (SAT_Parameter*)getConnection(1);
+      param = (SAT_Parameter*)getParameter(1);
       if (param) v2 = param->denormalizeValue(v2);
       
       SAT_Rect mrect = getRect();
@@ -164,7 +164,7 @@ public:
       mrect.shrink(valueoffset);
       //if ((mrect.w > 0.0) && (mrect.h > 0.0)) {
         
-      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
         double pv = getValue(0);
         double dpv = param->denormalizeValue(pv);
@@ -187,7 +187,7 @@ public:
       mrect.shrink(valueoffset);
       //if ((mrect.w > 0.0) && (mrect.h > 0.0)) {
         
-      param = (SAT_Parameter*)getConnection(1);
+      param = (SAT_Parameter*)getParameter(1);
       if (param) {
         double pv = getValue(1);
         double dpv = param->denormalizeValue(pv);
@@ -215,11 +215,11 @@ public:
       SAT_Assert(painter);
       
       double v1 = getValue(0);
-      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) v1 = param->denormalizeValue(v1);
       
       double v2 = getValue(1);
-      param = (SAT_Parameter*)getConnection(1);
+      param = (SAT_Parameter*)getParameter(1);
       if (param) v2 = param->denormalizeValue(v2);
       
       double S = getWindowScale();
@@ -273,7 +273,7 @@ public:
       if (mrect.h <= 0.0) return;
       painter->setTextColor(MTextColor);
       painter->setTextSize(MTextSize*S);
-      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
         painter->drawTextBox(mrect,param->getName(),MTextAlignment);
       }
@@ -453,7 +453,7 @@ public:
 
   //----------
   
-  void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
+  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
     //SAT_Print("MHoverEdge %i\n",MHoverEdge);
     if ((MHoverEdge != 0) && (!MIsDragging)) {
       MHoverEdge = 0;

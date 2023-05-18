@@ -67,6 +67,7 @@ private:
 //------------------------------
 
   SAT_VoiceManager<test_synth_voice,NUM_VOICES> MVoiceManager   = {};
+  
   SAT_VoicesWidget*                             MVoicesWidget   = nullptr;
   SAT_WaveformWidget*                           MWaveformWidget = nullptr;
   

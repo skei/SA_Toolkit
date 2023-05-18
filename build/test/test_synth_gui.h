@@ -288,6 +288,11 @@
     left_column->appendChildWidget(valuegraph);
     valuegraph->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 
+    SAT_TextEditWidget* textedit = new SAT_TextEditWidget(20,"text edit");
+    left_column->appendChildWidget(textedit);
+    textedit->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+    textedit->setTextSize(12);
+
     SAT_SymbolWidget* symbol1 = new SAT_SymbolWidget(10,SAT_SYMBOL_RECT);
     left_column->appendChildWidget(symbol1);
     symbol1->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
@@ -307,9 +312,7 @@
     left_column->appendChildWidget(symbol4);
     symbol4->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_NONE);
     symbol4->setCursor(SAT_CURSOR_WAIT);
-
-
-
+    
 // middle colume ------------------------------
 
 

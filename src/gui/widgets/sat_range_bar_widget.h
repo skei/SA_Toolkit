@@ -228,7 +228,7 @@ public:
 
   //----------
   
-  void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
+  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
     if (MHoverState != 0) {
       MHoverState = 0;
       parentRedraw();

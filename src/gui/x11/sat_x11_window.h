@@ -701,16 +701,9 @@ private:
   }
 
   //----------
-
-  // https://github.com/etale-cohomology/xcb/blob/master/loop.c
-
-  uint32_t remapKey(uint32_t AKey, uint32_t AState) {
-    int col = 0;
-    xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
-
-//    xcb_keycode_t* keycode = xcb_key_symbols_get_keycode(MKeySyms,keysym);
-//    SAT_Print("AKey %i AState %i keysym %i keycode %i\n",AKey,AState,keysym,keycode[0]);
-    
+  
+  //  xcb_keycode_t* keycode = xcb_key_symbols_get_keycode(MKeySyms,keysym);
+  //  SAT_Print("AKey %i AState %i keysym %i keycode %i\n",AKey,AState,keysym,keycode[0]);
     /*
     //SAT_Print("AKey %i : keysym %i keycode ",AKey, keysym);
     if (*keycode != XCB_NO_SYMBOL) {
@@ -723,41 +716,53 @@ private:
       //SAT_DPrint(" (%i)\n",i);
     }
     */
-
     /*
     char keysym_name[64];
     xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
     SAT_DPrint("  keysym_name '%s'\n",keysym_name);
     */
-
     //uint32_t ks = 0;
+    //free(keycode);
+    
+  /*
+  if (sym == XKB_KEY_KP_Space) codepoint = XKB_KEY_space & 0x7f;
+  else codepoint = sym & 0x7f;
+  */    
+  
+  //
+
+  // https://github.com/etale-cohomology/xcb/blob/master/loop.c
+
+  uint32_t remapKey(uint32_t AKey, uint32_t AState) {
+    int col = 0;
+    xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
+    // keycode = AKey ??
+    //xcb_keycode_t* keycode  = xcb_key_symbols_get_keycode(MKeySyms,keysym);
+    //free(keycode);
+    
+
+    //SAT_Print("AKey %i AState %i -> keysym %i\n",AKey,AState,keysym);
+   
+    //char buffer[256] = {0};
+    //uint32_t num = xkb_keysym_to_utf8(keysym,buffer,255);
+    //for (uint32_t i=0; i<num; i++) {
+    //  SAT_DPrint("%i\n",buffer[i]);
+    //}
+
     uint32_t ks = keysym;
-    
-/*
-if (sym == XKB_KEY_KP_Space) codepoint = XKB_KEY_space & 0x7f;
-else codepoint = sym & 0x7f;
-*/    
-    
-    
-    
-    
     switch (keysym) {
       case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
       case XKB_KEY_KP_Space:    ks = SAT_KEY_ESC;       break;
       case XKB_KEY_Home:        ks = SAT_KEY_HOME;      break;
       case XKB_KEY_End:         ks = SAT_KEY_END;       break;
-      //case XKB_KEY_leftarrow:   ks = SAT_KEY_LEFT;      break;
-      //case XKB_KEY_rightarrow:  ks = SAT_KEY_RIGHT;     break;
       case XKB_KEY_Left:        ks = SAT_KEY_LEFT;      break;
       case XKB_KEY_Right:       ks = SAT_KEY_RIGHT;     break;
-      case XKB_KEY_KP_Left:     ks = SAT_KEY_LEFT;      break;
-      case XKB_KEY_KP_Right:    ks = SAT_KEY_RIGHT;     break;
       case XKB_KEY_Delete:      ks = SAT_KEY_DELETE;    break;
       case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
     }
-
-//    free(keycode);
-
+    
+//    SAT_Print("AKey %i AState %i -> ks %i\n",AKey,AState,ks);
+    
     return ks;
   }
 

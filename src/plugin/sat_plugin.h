@@ -59,11 +59,10 @@ class SAT_Plugin
 //------------------------------
 private:
 //------------------------------
-
   
   // set in gui_create (false), gui_destroy (true)
   // checked in handleParamValueEvent, handleParamModEvent
-  std::atomic<bool>                 MEditorIsClosing                              {false};
+  std::atomic<bool>                 MIsEditorClosing                              {false};
   
   const char*                       MPluginFormat                                 = "CLAP";
   SAT_Host*                         MHost                                         = nullptr;
@@ -698,7 +697,7 @@ public: // gui
   // see also initEditorWindow (default editor)
   
   bool gui_create(const char *api, bool is_floating) override {
-    MEditorIsClosing = false;
+    MIsEditorClosing = false;
     //SAT_Print("api %s is_floating %i\n",api,is_floating);
     if (is_floating == true) return false;
 
@@ -739,7 +738,7 @@ public: // gui
 
   void gui_destroy() override {
     //SAT_Print("\n");
-    MEditorIsClosing = true;
+    MIsEditorClosing = true;
     MEditor->destroy();
     delete MEditor;
     //SAT_Print("MEditor: %p\n");
@@ -1023,7 +1022,7 @@ public: // param indication
     SAT_Print("param_id %i has_mapping %i color %i.%i.%i label %s desc %s\n",param_id,has_mapping,color->red,color->green,color->blue,label,description);
     SAT_Parameter* param = MParameters[param_id];
     param->setMappingIndication(has_mapping,color,label,description);
-    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
+    SAT_Widget* widget = (SAT_Widget*)param->getWidget();
     if (widget && MEditor && MEditor->isOpen()) widget->parentRedraw();
   }
 
@@ -1049,7 +1048,7 @@ public: // param indication
     SAT_Print("param_id %i automation_state %i color %i.%i.%i\n",param_id,automation_state,color->red,color->green,color->blue);
     SAT_Parameter* param = MParameters[param_id];
     param->setAutomationIndication(automation_state,color);
-    SAT_Widget* widget = (SAT_Widget*)param->getConnection();
+    SAT_Widget* widget = (SAT_Widget*)param->getWidget();
     if (widget && MEditor && MEditor->isOpen()) widget->parentRedraw();
   }
 
@@ -2194,7 +2193,7 @@ public: // parameters
       double value = MParameters[i]->getValue();//getDefaultValue();
       // parameters are in clap-space
       // widgets are 0..1
-      uint32_t sub = param->getConnectionIndex();
+      uint32_t sub = param->getWidgetIndex();
       //SAT_Print("sub %i\n",sub);
       
       MEditor->initParameterValue(param,i,sub,value); // (arg value  = clap space)
@@ -2574,7 +2573,7 @@ public:
 //    uint32_t  process_count = MProcessContext.counter;
 //    MParameters[index]->setLastUpdated(process_count);
 //    MParameters[index]->setLastUpdatedValue(value);
-    if (!MEditorIsClosing) {
+    if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
         queueParamFromHostToGui(index,value);
       }
@@ -2591,7 +2590,7 @@ public:
 
   void handleParamModEvent(const clap_event_param_mod_t* event) {
     //SAT_Assert(event);
-    //SAT_Assert(!MEditorIsClosing);
+    //SAT_Assert(!MIsEditorClosing);
     uint32_t  index   = event->param_id;
     double    value   = event->amount;
     MParameters[index]->setModulation(value);
@@ -2600,7 +2599,7 @@ public:
 //    MParameters[index]->setLastModulated(process_count);
 //    MParameters[index]->setLastModulatedValue(value);
 
-    if (!MEditorIsClosing) {
+    if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
         queueModFromHostToGui(index,value);
       }

@@ -26,8 +26,10 @@ private:
   SAT_Color MTextColor  = SAT_Black;
   SAT_Color MBackColor  = SAT_LightGrey;
   SAT_Color MCaretColor = SAT_BrightRed;
+  double    MCaretWidth = 1.0;
   bool      MEditing    = false;
   int32_t   MCaretPos   = 0;
+  double    MTextSize   = 10;
 
 //------------------------------
 public:
@@ -58,6 +60,11 @@ public:
     memset(MText,0,sizeof(MText));
     strncpy(MText,AText,255);
   }
+
+  virtual void setTextColor(SAT_Color AColor) { MTextColor = AColor; }
+  virtual void setBackColor(SAT_Color AColor) { MBackColor = AColor; }
+  virtual void setCaretColor(SAT_Color AColor) { MCaretColor = AColor; }
+  virtual void setTextSize(double ASize) { MTextSize = ASize; }
 
 //------------------------------
 private:
@@ -93,6 +100,8 @@ public:
     SAT_Painter* painter = AContext->painter;
     SAT_Rect mrect = getRect();
     SAT_Rect r;
+    
+    double S = getWindowScale();
 
 //    //painter->fillRectangle(mrect,MBackColor);
 //    painter->beginPath();
@@ -106,7 +115,7 @@ public:
       //APainter->setTextColor(MTextColor);
       //APainter->drawText(MRect.x+2,MRect.y,MRect.x2()-2,MRect.y2(),MText,SAT_TEXT_ALIGN_LEFT);
       r = mrect;
-      r.shrink(2,0,2,0); // 2 = text border
+      r.shrink(2*S,0,2*S,0); // 2 = text border
 
       //APainter->setColor(MTextColor);
       //APainter->drawText(r,MText,SAT_TEXT_ALIGN_LEFT);
@@ -116,6 +125,7 @@ public:
 //      painter->drawTextBox(r,MText,SAT_TEXT_ALIGN_LEFT,MTextColor);
 
       painter->setTextColor(MTextColor);
+      painter->setTextSize(MTextSize*S);
       painter->drawTextBox(r,MText,SAT_TEXT_ALIGN_LEFT);
 
       char c = MText[MCaretPos];
@@ -131,7 +141,7 @@ public:
 
 
       MText[MCaretPos] = c;
-      int32_t x = getRect().x + 2 + txtwidth; // 2 = caret distance/width
+      int32_t x = getRect().x + (2*S) + txtwidth; // 2 = caret distance/width
       //APainter->setDrawColor(MCaretColor);
       //APainter->drawLine(x,MRect.y,x,MRect.y2());
 
@@ -146,7 +156,7 @@ public:
 //      painter->strokeColor(MCaretColor);
 //      painter->stroke();
 
-        painter->setLineWidth(1);
+        painter->setLineWidth(MCaretWidth*S);
         painter->setDrawColor(MCaretColor);
         painter->drawLine(x,mrect.y,x,mrect.y2());
 
@@ -155,7 +165,7 @@ public:
       //APainter->setTextColor(MTextColor);
       //APainter->drawText(MRect.x+2,MRect.y,MRect.x2()-4,MRect.y2(),MText,SAT_TEXT_ALIGN_LEFT);
       r = mrect;
-      r.shrink(2,0,4,0);
+      r.shrink(2*S,0,4*S,0);
 
       //APainter->setColor(MTextColor);
       //APainter->drawText(r,MText,SAT_TEXT_ALIGN_LEFT);
@@ -165,6 +175,7 @@ public:
 //      painter->drawTextBox(r,MText,SAT_TEXT_ALIGN_LEFT,MTextColor);
 
       painter->setTextColor(MTextColor);
+      painter->setTextSize(MTextSize*S);
       painter->drawTextBox(r,MText,SAT_TEXT_ALIGN_LEFT);
 
 
@@ -198,7 +209,9 @@ public:
   // AKey = key code, not ascii..
 
   void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimeStamp=0) override {
-    SAT_Print("AChar %i AKeySym %i AState %i\n",(int)AChar,AKeySym,AState);
+    
+    //SAT_Print("AChar %i '%c' AKeySym %i AState %i\n",(int)AChar,AChar,AKeySym,AState);
+    
     //SAT_DRect mrect = getRect();
     int32_t len;
     char  c;
@@ -252,10 +265,17 @@ public:
         }
         break;
       default:
+      
+        //SAT_Print("%i\n",c);
+        
         if ((AKeySym >= 32) && (AKeySym <= 127)) {
           c = AKeySym & 0xff;
+          
           // hack-alert!
-          if ((c >= 'a') && (c <= 'z') && (AState == SAT_STATE_SHIFT)) { c -= 32; }
+          if ((c >= 'a') && (c <= 'z') && (AState == SAT_STATE_SHIFT)) {
+            c -= 32;
+          }
+          
           SAT_InsertChar(MText,MCaretPos,c);
           MCaretPos += 1;
           do_widgetListener_update(this,0);

@@ -877,7 +877,7 @@ public: // widget listener
   //----------
   
   void do_widgetListener_want_keys(SAT_Widget* ASender) override {
-    SAT_PRINT;
+    //SAT_PRINT;
     //MKeyCapturedWidget = ASender;
     captureKeys(ASender);
   }

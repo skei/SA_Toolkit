@@ -179,7 +179,7 @@ public:
 //    //if (flags.autoHint) do_widgetListener_setHint(this,MHint);
 //  }
 
-  void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime=0) override {
+  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime=0) override {
 //    //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
 //    //if (flags.autoHint) do_widgetListener_setHint(this,"");
       //SWidget::on_leave(AWidget);

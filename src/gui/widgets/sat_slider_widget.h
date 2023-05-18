@@ -93,7 +93,7 @@ public:
 
       painter->setFillColor(MSliderBarColor);
       
-      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       
       double value = 0.0;
       if (param) value = param->getNormalizedValue();

@@ -32,6 +32,7 @@ private:
   double    MHoverDist        = 5.0;
   uint32_t  MHoverEdge        = SAT_EDGE_NONE;
   
+  bool      MCanMove          = true;
   bool      MCanResizeLeft    = true;
   bool      MCanResizeRoght   = true;
   bool      MCanResizeTop     = true;
@@ -91,7 +92,7 @@ public:
         MIsSizing = true;
         MSizingEdge = MHoverEdge;
       }
-      else {
+      else if (MCanMove) {
         MIsMoving = true;
       }
     }

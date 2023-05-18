@@ -69,9 +69,9 @@ public:
 
   void on_widget_timer(uint32_t AId, double ADelta) override {
     
+    // hmm.. first frame?
     if (ADelta > 1) ADelta = 0;
-    
-//    SAT_Print("ADelta = %f\n",ADelta);
+    //SAT_Print("ADelta = %f\n",ADelta);
     
     x1 += (x1_add * ADelta);
     y1 += (y1_add * ADelta);
@@ -118,7 +118,6 @@ public:
     
     drawDropShadow(AContext);
     fillBackground(AContext);
-    
     paintChildWidgets(AContext);
     
     double _x1 = R.x + (x1 * R.w);

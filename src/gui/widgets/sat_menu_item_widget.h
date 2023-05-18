@@ -45,7 +45,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {
+  void on_widget_mouse_enter(SAT_BaseWidget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {
     SAT_TextWidget::on_widget_mouse_enter(AFrom,AXpos,AYpos,ATime);
     //if (isVisible()) {
       setTextColor(MHoverTextColor);
@@ -61,7 +61,7 @@ public:
   // so we added the 'isVisible' hack..
   // this should probably be fixed so we don't get called when menu closes...
 
-  void on_widget_mouse_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
+  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
     SAT_TextWidget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATime);
     if (isVisible()) {
       setTextColor(MTextColor);

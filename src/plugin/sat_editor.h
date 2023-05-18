@@ -73,25 +73,15 @@ public:
   //----------
 
   /*
-    called from SAT_Plugin.updateEditorParameterValues()
-      (AValue in clap-space)
-
-    - before editor is opened
-    - todo: SAT_Plugin.state_load ???
+    called from SAT_Plugin.initEditorParameterValues
   */
-
-  //void updateEditorParameterValue(uint32_t AIndex, sat_param_t AValue, bool ARedraw) {
-  //  //SAT_Print("%i = %.3f %s\n",AIndex,AValue,ARedraw?" (redraw)":"");
-  //}
-  
-  //----------
 
   // parameters are in clap-space
   // widgets are 0..1
   
   virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue) {
     //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
-    SAT_Widget* widget = (SAT_Widget*)AParam->getConnection();
+    SAT_Widget* widget = (SAT_Widget*)AParam->getWidget();
     if (widget) {
       double v = AParam->normalizeValue(AValue);
       widget->setValue(v,ASubIndex);
@@ -112,8 +102,8 @@ public:
     if (MIsOpen) {
       //SAT_PaintContext* pc = MWindow->getPaintContext();
       //uint32_t counter = pc->counter;
-      SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
-      uint32_t index = AParameter->getConnectionIndex();
+      SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
+      uint32_t index = AParameter->getWidgetIndex();
       if (widget) {
         sat_param_t normalized_value = AParameter->normalizeValue(AValue);
         widget->setValue(normalized_value,index);
@@ -133,7 +123,7 @@ public:
 
   virtual void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
     if (MIsOpen) {
-      SAT_Widget* widget = (SAT_Widget*)AParameter->getConnection();
+      SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
       if (widget) {
         //sat_param_t normalized_modulation = AParameter->normalizeValue(AValue);
         //widget->setModulation(normalized_modulation);
@@ -186,7 +176,7 @@ public: // window listener
   
   void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
     if (MListener) {
-      SAT_Parameter* param = (SAT_Parameter*)ASender->getConnection(AIndex);
+      SAT_Parameter* param = (SAT_Parameter*)ASender->getParameter(AIndex);
       double value = ASender->getValue(AIndex); // 0..1
       //uint32_t parm_index = ASender->getConnectionIndex();
       if (param) {

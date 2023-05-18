@@ -123,7 +123,7 @@ public:
         //}
       }
       
-      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
         painter->drawTextBox(mrect,param->getName(),MTextAlignment);
       }

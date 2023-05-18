@@ -88,7 +88,7 @@ public:
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       
-      SAT_Parameter* param = (SAT_Parameter*)getConnection(0);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
         
         double pv = getValue();
@@ -132,6 +132,7 @@ public:
     fillBackground(AContext);
     drawText(AContext);
     drawValue(AContext);
+    drawModulation(AContext);
     drawHostIndicators(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
