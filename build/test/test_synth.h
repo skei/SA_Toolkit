@@ -96,8 +96,8 @@ public:
     appendParameter(new SAT_Parameter(    "Param2", 0.4, -2, 4 ));
     appendParameter(new SAT_Parameter(    "Param3", 0.7,  0, 2 ));
     appendParameter(new SAT_IntParameter( "Param4", 0,   -5, 5 ));
-    appendParameter(new SAT_Parameter(    "P4",     0.2        ));
-    appendParameter(new SAT_Parameter(    "P5",     0.8        ));
+    appendParameter(new SAT_Parameter(    "P5",     0.2        ));
+    appendParameter(new SAT_Parameter(    "P6",     0.8        ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     
     // voice manager

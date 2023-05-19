@@ -92,7 +92,7 @@ public:
     do_widgetListener_set_modal(nullptr);
     setActive(false);
     setVisible(false);
-//    setRectAndBasis(MSavedRect);
+    //setRectAndBasis(MSavedRect);
     #ifdef SAT_POPUP_WIDGET_USE_TWEENING
       if (MTween) {
         if (MTween->isActive()) MTween->stop();

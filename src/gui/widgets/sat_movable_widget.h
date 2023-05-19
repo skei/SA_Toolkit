@@ -111,8 +111,7 @@ public:
 
   void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
     SAT_Rect mrect = getRect();
-    double S = getWindowScale();
-    double invscale = 1.0 / S;
+    //double S = getWindowScale();
     
     double xdiff = AXpos - MXPrev;
     double ydiff = AYpos - MYPrev;
@@ -124,9 +123,14 @@ public:
     if (MIsMoving) {
       mrect.x = AXpos - MXClickOffset;
       mrect.y = AYpos - MYClickOffset;
-      setRect(mrect);
-      mrect.scale(invscale);
-      setBasisRect(mrect);
+      
+//      double invscale = 1.0 / S;
+//      setRect(mrect);
+//      mrect.scale(invscale);
+//      setBasisRect(mrect);
+
+      setRectAndBasis(mrect);
+      
       parentRealign();
     }
     
@@ -151,9 +155,13 @@ public:
           break;
         }
       }
-      setRect(mrect);
-      mrect.scale(invscale);
-      setBasisRect(mrect);
+      
+//      setRect(mrect);
+//      mrect.scale(invscale);
+//      setBasisRect(mrect);
+
+        setRectAndBasis(mrect);
+      
       parentRealign();
     }
     

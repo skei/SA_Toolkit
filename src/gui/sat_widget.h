@@ -281,6 +281,11 @@ public: // hierarchy
 
   //----------
   
+  /*
+    called from:
+      SAT_Window.on_window_open (before realign)
+  */
+  
   virtual void prepare(SAT_WidgetOwner* AOwner) {
     MOwner = AOwner;
     on_widget_prepare();
@@ -292,6 +297,11 @@ public: // hierarchy
   }
 
   //----------
+  
+  /*
+    called from:
+      SAT_Window destructor (-> on_window_close?)
+  */
   
   virtual void cleanup(SAT_Painter* APainter) {
     on_widget_cleanup();
@@ -312,6 +322,8 @@ public: // hierarchy
     }
   }
 
+  //----------
+  
   virtual void setVisible(bool AState=true, bool ARecursive=true) {
     MIsVisible = AState;
     if (ARecursive) {
@@ -320,6 +332,14 @@ public: // hierarchy
       }
     }
   }
+  
+  //----------
+  
+  /*
+    called from:
+      SAT_PopupWidget.open() to reposition the menu
+      SAT_MovableWidget when dragging
+  */
 
   virtual void setRectAndBasis(SAT_Rect ARect) {
     double S = getWindowScale();
@@ -468,9 +488,7 @@ public: // hierarchy
         
         SAT_Rect child_initialrect = child->getInitialRect();
         
-        // layout_rect or parent_rect?
-        
-        if (child_initialrect.x < 0) child->MRect.x = (fabs(child_initialrect.x) * 0.01) * layout_rect.w;
+        if (child_initialrect.x < 0) child->MRect.x = (fabs(child_initialrect.x) * 0.01) * layout_rect.w; // (layout_rect or parent_rect?)
         if (child_initialrect.y < 0) child->MRect.y = (fabs(child_initialrect.y) * 0.01) * layout_rect.h;
         if (child_initialrect.w < 0) child->MRect.w = (fabs(child_initialrect.w) * 0.01) * layout_rect.w;
         if (child_initialrect.h < 0) child->MRect.h = (fabs(child_initialrect.h) * 0.01) * layout_rect.h;
@@ -756,6 +774,13 @@ public: // hierarchy
 public: // (shortcuts)
 //------------------------------
 
+  /*
+    usually called by other widgets, to make _this_ widget
+    call its listener
+  */
+  
+  //----------
+
   virtual void parentUpdate() {
     if (MListener) MListener->do_widgetListener_update(this,0,0);
   }
@@ -915,11 +940,15 @@ public: // widget listener
 
   //----------
   
+  // text edit, popup menu
+  
   void do_widgetListener_set_modal(SAT_Widget* ASender) override {
     if (MListener) MListener->do_widgetListener_set_modal(ASender);
   }
   
   //----------
+  
+  // called by SAT_SizerWidget (mose move)
 
   void do_widgetListener_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {
     SAT_Rect mrect = getRect();
@@ -932,14 +961,28 @@ public: // widget listener
     if ((MMaxWidth  >= 0) && (mrect.w > (MMaxWidth  * S))) return;//mrect.w = (MMaxWidth  * S);
     if ((MMaxHeight >= 0) && (mrect.h > (MMaxHeight * S))) return;//mrect.h = (MMaxHeight * S);
     
-    setRect(mrect);
-    mrect.scale(1.0/S);
-    setBasisRect(mrect);
+    // identical to setRectndBasis ?
+    
+//    setRect(mrect);
+//    mrect.scale(1.0/S);
+//    setBasisRect(mrect);
+
+//  virtual void setRectAndBasis(SAT_Rect ARect) {
+//    double S = getWindowScale();
+//    setRect(ARect);
+//    ARect.scale(1.0 / S);
+//    setBasisRect(ARect);
+//  }
+    
+    setRectAndBasis(mrect);
+    
     //realignChildWidgets(true);
     //parentRedraw();
   }
   
   //----------
+  
+  // text edit
   
   void do_widgetListener_want_keys(SAT_Widget* ASender) override {
     if (MListener) MListener->do_widgetListener_want_keys(ASender);
