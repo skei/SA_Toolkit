@@ -11,5 +11,5 @@ no makefile or other weird build system or cmake monstrosities in sight, just on
 some previews: https://www.youtube.com/@torhelgeskei
 see also: https://discord.gg/KMNea8P6Pe
 
-if you have questions, or want more info, the most up-to-date version(s), assistance in any way, something specific implemented (or properly done/finished), support for certain features or platforms, help combining your own code/project with this (or the opposite way), modifications/tweaks, etc - contact me.. i can maybe help you turn your idea into a finished plugin..
+if you have questions, or want more info, the most up-to-date version(s), assistance in any way, something specific implemented (or properly done/finished), support for certain features or platforms, help combining your own code/project with this (or the opposite way), modifications/tweaks, etc - contact me.. i can maybe help you turn your idea into a finished plugin.. ;.)
 
