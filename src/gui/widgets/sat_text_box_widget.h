@@ -103,6 +103,7 @@ public:
     double width = 600;//getWidth();
     double S = getWindowScale();
 
+
     SAT_Window* window = (SAT_Window*)getOwner();
     if (window) {
       SAT_Painter* painter = window->getPainter();

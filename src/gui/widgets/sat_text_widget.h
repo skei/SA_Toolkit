@@ -32,6 +32,11 @@ private:
   
   bool      MAutoTextSize     = false;
 
+  bool      MDrawTextDropShadow   = false;
+  double    MTextDropShadowSize   = 4.0;        //2.0;
+  SAT_Color MTextDropShadowColor  = SAT_Black;  //SAT_Color(0,0,0,0.75);
+  SAT_Point MTextDropShadowOffset = {2,2};      //{2,2};
+
 //------------------------------
 public:
 //------------------------------
@@ -58,6 +63,11 @@ public:
   virtual void setTextOffset(SAT_Rect AOffset)    { MTextOffset = AOffset; }
   virtual void setText(const char* AText)         { strcpy(MText,AText); }
   virtual void setAutoTextSize(bool AAuto=true)   { MAutoTextSize = AAuto; }
+
+  virtual void setDrawTextDropShadow(bool ADraw=true)     { MDrawTextDropShadow = ADraw; }
+  virtual void setTextDropShadowSize(double ASize)        { MTextDropShadowSize = ASize; }
+  virtual void setTextDropShadowColor(SAT_Color AColor)   { MTextDropShadowColor  = AColor; }
+  virtual void setTextDropShadowOffset(SAT_Point AOffset) { MTextDropShadowOffset = AOffset; }
 
   virtual const char* getText() { return MText; }
 
@@ -103,14 +113,13 @@ public:
       double textsize = MTextSize * S;
       painter->setTextColor(MTextColor);
       painter->setTextSize(textsize); // try original..
+
       if (MAutoTextSize) {
         double bounds[4];
         //if (painter->getTextBounds(MText,bounds)) {
         //  //SAT_Print("%.2f, %.2f - %.2f, %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
-
           painter->getTextBounds(MText,bounds);
           double width = bounds[2] - bounds[0];
-        
           double height = bounds[3] - bounds[1];
           double wratio = 1.0;
           double hratio = 1.0;
@@ -125,10 +134,35 @@ public:
       
       SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
-        painter->drawTextBox(mrect,param->getName(),MTextAlignment);
+        // drop shadow
+        //painter->drawTextBox(mrect,param->getName(),MTextAlignment);
+        char* text = param->getName();
+        SAT_Point p = painter->getTextPos(mrect,text,MTextAlignment);
+        
+        if (MDrawTextDropShadow) {
+          painter->setFontBlur(MTextDropShadowSize);
+          painter->setTextColor(MTextDropShadowColor);
+          painter->drawText(p.x + MTextDropShadowOffset.x, p.y + MTextDropShadowOffset.y, text);
+          painter->setFontBlur(0);
+        }
+        
+        painter->setTextColor(MTextColor);
+        painter->drawText(p.x,p.y,text);
+        
       }
       else {
-        painter->drawTextBox(mrect,MText,MTextAlignment);
+        // drop shadow
+        //painter->drawTextBox(mrect,MText,MTextAlignment);
+        SAT_Point p = painter->getTextPos(mrect,MText,MTextAlignment);
+        
+        if (MDrawTextDropShadow) {
+          painter->setFontBlur(MTextDropShadowSize);
+          painter->setTextColor(MTextDropShadowColor);
+          painter->drawText(p.x + MTextDropShadowOffset.x, p.y + MTextDropShadowOffset.y, MText);
+          painter->setFontBlur(0);
+        }
+        painter->setTextColor(MTextColor);
+        painter->drawText(p.x,p.y,MText);
       }
     }
   }

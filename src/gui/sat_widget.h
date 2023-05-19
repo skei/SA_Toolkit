@@ -35,29 +35,29 @@ class SAT_Widget
 private:
 //------------------------------
 
-  SAT_Rect              MRect                               = {}; // current screen rect
-  SAT_Rect              MBasisRect                          = {}; // alignment/layout basis
-  SAT_Rect              MInitialRect                        = {}; // from constructor
+  SAT_Rect              MInitialRect                        = {}; // from constructor (unscaled, un-abs)
+  SAT_Rect              MBasisRect                          = {}; // basis for alignment/layout/scaling
+  SAT_Rect              MRect                               = {}; // current screen rect (scaled, abs)
   SAT_Rect              MContentRect                        = {}; // child-widgets
   
   // hierarchy
 
-  SAT_WidgetOwner*      MOwner                              = nullptr;
-  SAT_WidgetListener*   MListener                           = nullptr;
-  SAT_Widget*           MParentWidget                       = nullptr;
-  SAT_WidgetArray       MChildWidgets                       = {};
-  int32_t               MIndex                              = -1;
-  int32_t               MLastPainted                        = -1;
+  SAT_WidgetOwner*      MOwner                              = nullptr;  // aka SAT_Window
+  SAT_WidgetListener*   MListener                           = nullptr;  // event listener (usually parent)
+  SAT_Widget*           MParentWidget                       = nullptr;  // parent in hierarchy
+  SAT_WidgetArray       MChildWidgets                       = {};       // children
+  int32_t               MIndex                              = -1;       // index in parent
+  int32_t               MLastPainted                        = -1;       // paint-counter of last painting (SAT_PaintContext.counter)
   
   // alignment
   
-  uint32_t              MAlignment                          = SAT_WIDGET_ALIGN_DEFAULT;//PARENT;
-  uint32_t              MStretching                         = SAT_WIDGET_STRETCH_NONE;
-  SAT_Point             MSpacing                            = SAT_Point();
-  SAT_Rect              MInnerBorder                        = SAT_Rect();
-  SAT_Rect              MOuterBorder                        = SAT_Rect();
-  bool                  MFillLayout                         = true;
-  double                MMinWidth                           = -1;
+  uint32_t              MAlignment                          = SAT_WIDGET_ALIGN_DEFAULT; //PARENT;
+  uint32_t              MStretching                         = SAT_WIDGET_STRETCH_NONE;  // stretch edges to layout rect
+  SAT_Point             MSpacing                            = SAT_Point();              // between widgets
+  SAT_Rect              MInnerBorder                        = SAT_Rect();               // border around child widgets
+  SAT_Rect              MOuterBorder                        = SAT_Rect();               // additional border (after alignment)
+  bool                  MFillLayout                         = true;                     // remove 'occupied' sdpace from layout rect when aligning
+  double                MMinWidth                           = -1;                       // resizing limits
   double                MMaxWidth                           = -1;
   double                MMinHeight                          = -1;
   double                MMaxHeight                          = -1;
@@ -69,17 +69,17 @@ private:
   int32_t               MMouseCursor                        = 0;
   double                MValues[SAT_WIDGET_MAX_VALUES]      = {0};
   double                MModulations[SAT_WIDGET_MAX_VALUES] = {0};
-  void*                 MParameters[SAT_WIDGET_MAX_VALUES]  = {0};
+  void*                 MParameters[SAT_WIDGET_MAX_VALUES]  = {0};    // connected parameters
   uint32_t              MNumParameters                      = 1;
   
-  bool                  MAutoClip                           = true;
-  bool                  MAutoHoverCursor                    = true;
-  bool                  MAutoHoverHint                      = true;
+  bool                  MAutoClip                           = true;   // automatically set clipping before drawing
+  bool                  MAutoHoverCursor                    = true;   // automatically set cursor when hovering over widget
+  bool                  MAutoHoverHint                      = true;   // automatically send hint text when hovering
   
-  bool                  MIsActive                           = true;
-  bool                  MIsVisible                          = true;
-  bool                  MIsDisabled                         = false;
-  bool                  MIsInteracting                      = false;
+  bool                  MIsActive                           = true;   // is active (receive events)
+  bool                  MIsVisible                          = true;   // is visible (will be painted/realigned)
+  bool                  MIsDisabled                         = false;  // not interactable
+  bool                  MIsInteracting                      = false;  // is currently being interacted with
   
   //
   

@@ -22,7 +22,7 @@ private:
   SAT_Color MValueColor     = SAT_White;
   double    MValueSize      = 9;
   uint32_t  MValueAlignment = SAT_TEXT_ALIGN_RIGHT;
-  SAT_Rect  MValueOffset    = {};
+  SAT_Rect  MValueOffset    = {0,0,0,0};
   char      MValueText[256] = {0};
 
   SAT_Color MDisabledColor  = SAT_Grey;
@@ -30,6 +30,11 @@ private:
 
   bool      MDrawModulation = true;
   bool      MIsInteracting  = false;
+
+  bool      MDrawValueDropShadow    = false;
+  double    MValueDropShadowSize    = 4.0;
+  SAT_Color MValueDropShadowColor   = SAT_Black;//SAT_Color(0,0,0,0.75);
+  SAT_Point MValueDropShadowOffset  = {2,2};
 
 //------------------------------
 protected:
@@ -70,6 +75,13 @@ public:
   virtual void        setValueAlignment(uint32_t AAlign) { MValueAlignment = AAlign; }
   virtual void        setValueOffset(SAT_Rect AOffset)   { MValueOffset = AOffset; }
   virtual void        setDrawModulation(bool ADraw=true) { MDrawModulation = ADraw; }
+  
+  virtual void setDrawValueDropShadow(bool ADraw=true)     { MDrawValueDropShadow = ADraw; }
+  virtual void setValueDropShadowSize(double ASize)        { MValueDropShadowSize = ASize; }
+  virtual void setValueDropShadowColor(SAT_Color AColor)   { MValueDropShadowColor  = AColor; }
+  virtual void setValueDropShadowOffset(SAT_Point AOffset) { MValueDropShadowOffset = AOffset; }
+
+  
 
 //------------------------------
 public:
@@ -87,31 +99,33 @@ public:
       mrect.shrink(valueoffset);
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
-      
       SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
-        
         double pv = getValue();
         double dpv = param->denormalizeValue(pv);
-
         //double wv = param->getValue();
         //double dwv = param->denormalizeValue(wv);
-        
         //SAT_Print("denormalize. param %f -> dpv %f. widget %i ->  dwv %f\n",pv,dpv,wv,dwv);
-        
         param->valueToText(dpv,MValueText,255);
-
       }
       else {
-        
         double v = getValue();
         sprintf(MValueText,"%.2f",v);
+      }
+      
+      painter->setTextSize(MValueSize*S);
+      SAT_Point p = painter->getTextPos(mrect,MValueText,MValueAlignment);
 
+      if (MDrawValueDropShadow) {
+        painter->setFontBlur(MValueDropShadowSize);
+        painter->setTextColor(MValueDropShadowColor);
+        painter->drawText(p.x + MValueDropShadowOffset.x, p.y + MValueDropShadowOffset.y, MValueText);
+        painter->setFontBlur(0);
       }
       
       painter->setTextColor(MValueColor);
-      painter->setTextSize(MValueSize*S);
-      painter->drawTextBox(mrect,MValueText,MValueAlignment);
+      painter->drawText(p.x, p.y, MValueText);
+      
     }
   }
 

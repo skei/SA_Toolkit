@@ -101,6 +101,11 @@
     val->setTextSize(12);
     val->setRoundedCorners(true);
     val->setCornerSize(5);
+    val->setDrawTextDropShadow(true);
+    val->setDrawValueDropShadow(true);
+    //val->setValueDropShadowColor(SAT_Black);
+    //val->setValueDropShadowSize(5);
+    //val->setValueDropShadowOffset(SAT_Point(1,1));
 
     //val->setPostLayoutOffset(SAT_Rect(10,0,0,0));
     

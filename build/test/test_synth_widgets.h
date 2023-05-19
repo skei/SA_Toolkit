@@ -31,6 +31,19 @@ private:
   
   double delta_delta = 0;
   
+  SAT_Color MSplineColor    = SAT_Color(0.2,0.2,0.2,1);
+  double    MSplineWidth    = 6.0;
+
+  double    MBallRadius     = 4.0;
+  SAT_Color MBallEndColor   = SAT_Color(1,1,0,0.5);
+  SAT_Color MBallCtrlColor  = SAT_Color(0,1,1,0.5);
+  
+  double    MLineWidth      = 1.0;
+  SAT_Color MLineColor      = SAT_Color(1,1,1,0.5);
+
+  double    MLineMidWidth   = 1.0;
+  SAT_Color MLineMidColor   = SAT_Color(1,1,1,0.2);
+
 //------------------------------
 public:
 //------------------------------
@@ -129,27 +142,32 @@ public:
     double _x4 = R.x + (x4 * R.w);
     double _y4 = R.y + (y4 * R.h);
     
-    painter->setLineWidth(4 * S);
-    painter->setDrawColor(SAT_Color(0.2,0.2,0.2,1));
+    // bezier
+
+    painter->setLineWidth(MSplineWidth * S);
+    painter->setDrawColor(MSplineColor);
     painter->drawCurveBezier(_x1,_y1,_x4,_y4,_x2,_y2,_x3,_y3);
-
-    painter->setFillColor(SAT_Color(1,1,0,0.5));
-    painter->fillCircle(_x1,_y1,3*S);
-    painter->fillCircle(_x4,_y4,3*S);
-
-    painter->setFillColor(SAT_Color(0,1,1,0.5));
-    painter->fillCircle(_x2,_y2,3*S);
-    painter->fillCircle(_x3,_y3,3*S);
     
-    painter->setLineWidth(1 * S);
-    painter->setDrawColor(SAT_Color(1,1,1,0.2));
+    // balls
+
+    painter->setFillColor(MBallEndColor);
+    painter->fillCircle(_x1,_y1,MBallRadius*S);
+    painter->fillCircle(_x4,_y4,MBallRadius*S);
+
+    painter->setFillColor(MBallCtrlColor);
+    painter->fillCircle(_x2,_y2,MBallRadius*S);
+    painter->fillCircle(_x3,_y3,MBallRadius*S);
+    
+    // lines
+    
+    painter->setLineWidth(MLineWidth * S);
+    painter->setDrawColor(MLineColor);
     painter->drawLine(_x1,_y1,_x2,_y2);
     painter->drawLine(_x3,_y3,_x4,_y4);
-    //painter->setLineWidth(1 * S);
-    //painter->setDrawColor(SAT_Color(1,1,1,0.2));
+    
+    painter->setLineWidth(MLineMidWidth * S);
+    painter->setDrawColor(MLineMidColor);
     painter->drawLine(_x2,_y2,_x3,_y3);
-    //painter->drawLine(_x4,_y4,_x1,_y1);
-
     
     drawBorder(AContext);
     

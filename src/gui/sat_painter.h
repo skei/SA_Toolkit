@@ -139,12 +139,13 @@ public: // clipping
 public: // paint
 //------------------------------
 
-  virtual void drawTextBox(SAT_Rect ARect, const char* AText, uint32_t AAlignment) {
+  virtual SAT_Point getTextPos(SAT_Rect ARect, const char* AText, uint32_t AAlignment) {
     double bounds[4] = {0};
-    double advance = getTextBounds(AText,bounds);
+    /*double advance =*/ getTextBounds(AText,bounds);
     double x = ARect.x   - bounds[0];
     double y = ARect.y   - bounds[1];
-    double w = advance;//bounds[2] - bounds[0];
+    //double w = advance;//bounds[2] - bounds[0];
+    double w = bounds[2] - bounds[0];
     double h = bounds[3] - bounds[1];
     
     if      (AAlignment & SAT_TEXT_ALIGN_LEFT)        { }
@@ -155,7 +156,15 @@ public: // paint
     else if (AAlignment & SAT_TEXT_ALIGN_BOTTOM)      { y = ARect.h - h + y; }
     else /*if (AAlignment & SAT_TEXT_ALIGN_CENTER)*/  { y += ((ARect.h - h) * 0.5); }
     
-    drawText(x,y,AText);
+    return SAT_Point(x,y);
+    
+  }
+  
+  //----------
+
+  virtual void drawTextBox(SAT_Rect ARect, const char* AText, uint32_t AAlignment) {
+    SAT_Point p = getTextPos(ARect,AText,AAlignment);
+    drawText(p.x,p.y,AText);
   }
 
 };

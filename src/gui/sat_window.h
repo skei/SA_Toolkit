@@ -58,12 +58,12 @@ class SAT_Window
 private:
 //------------------------------
 
-  double MPrevTime = 0.0;
-
   // set in on_window_paint
   // checked in on_window_timer
-  std::atomic<bool>   MIsPainting {false};
+  std::atomic<bool>   MIsPainting             {false};
   
+  double              MPrevTime               = 0.0;
+
 //------------------------------
 private:
 //------------------------------
