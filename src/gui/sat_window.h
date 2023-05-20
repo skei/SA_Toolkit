@@ -600,10 +600,10 @@ public: // window
 
   //----------
 
-  void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
+  void on_window_key_press(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
     //SAT_Print("AChar %i AKeySym %i AState %i\n",AChar,AKeySym,AState);
     if (MKeyCapturedWidget) {
-      MKeyCapturedWidget->on_widget_key_press(AChar,AKeySym,AState,ATimestamp);
+      MKeyCapturedWidget->on_widget_key_press(AKey,AKeySym,AState,ATimestamp);
     }
   }
 

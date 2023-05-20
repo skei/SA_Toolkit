@@ -4,6 +4,7 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <File Name="../../plugins/sa_everything.h"/>
     <VirtualDirectory Name="sa_demo">
       <File Name="../../plugins/sa_demo/sa_demo_page_painting.h"/>
       <File Name="../../plugins/sa_demo/sa_demo_page_layout.h"/>
@@ -42,6 +43,7 @@
     <File Name="../../plugins/sa_ports.h"/>
     <File Name="../../plugins/sa_plugins.h"/>
     <VirtualDirectory Name="ports">
+      <File Name="../../plugins/ports/sa_stretch.h"/>
       <File Name="../../plugins/ports/sa_event_horizon.h"/>
       <File Name="../../plugins/ports/sa_transient_killer.h"/>
       <File Name="../../plugins/ports/sa_tilteq.h"/>
@@ -637,7 +639,7 @@
   <Dependencies Name="win32_exe_release"/>
   <Dependencies Name="win32_plugin_debug"/>
   <Dependencies Name="win32_plugin_release"/>
-  <Settings Type="Dynamic Library">
+  <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new" C_Options="" Assembler="">
         <IncludePath Value="."/>

@@ -86,7 +86,8 @@
 
 
 
-#include "../plugins/sa_plugins.h"
+//#include "../plugins/sa_plugins.h"
+#include "../plugins/sa_everything.h"
 
 //----------
 
@@ -95,6 +96,7 @@
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_pitch.h"
+//#include "../plugins/sa_stretch.h"
 //#include "../plugins/sa_tyr.h" // TODO
 
 //----------

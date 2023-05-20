@@ -41,7 +41,7 @@ function print_help {
   echo "  -i input file name/path"
   echo "  -o output file name/path"
   echo "  -f format (CLAP, vst2, vst3, ladspa, dssi, lv2, exe)"
-  echo "  -g gui (NOGUI,xcb,win32)"
+  echo "  -g gui (NOGUI,xcb,win32,opengl)"
   echo "  -h this help"
   exit 1
 }

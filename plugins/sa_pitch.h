@@ -31,7 +31,11 @@ const clap_plugin_descriptor_t sa_pitch_descriptor = {
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "a simple pitch shifting plugin",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  .features     = (const char*[]) {
+                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
+                    CLAP_PLUGIN_FEATURE_PITCH_SHIFTER,
+                    nullptr
+                  }
 };
 
 //----------------------------------------------------------------------
@@ -92,6 +96,11 @@ public:
   }
   
   //----------
+  
+  /*
+    old code that has been 'dragged along' for years.. :-)
+    don't remember whrere it is from..  maybe a tutorial of some sort..
+  */
 
   void processAudio(SAT_ProcessContext* AContext) final {
     const clap_process_t* process = AContext->process;

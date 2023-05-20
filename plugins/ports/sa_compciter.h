@@ -56,7 +56,10 @@ const clap_plugin_descriptor_t sa_compciter_descriptor = {
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  .features     = (const char*[]) {
+                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
+                    nullptr
+                  }
 };
 
 //----------------------------------------------------------------------

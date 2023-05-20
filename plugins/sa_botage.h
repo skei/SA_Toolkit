@@ -32,7 +32,11 @@ const clap_plugin_descriptor_t sa_botage_descriptor = {
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "sabotages your audio",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  .features     = (const char*[]) {
+                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
+                    CLAP_PLUGIN_FEATURE_GLITCH,
+                    nullptr
+                  }
 };
 
 //----------------------------------------------------------------------

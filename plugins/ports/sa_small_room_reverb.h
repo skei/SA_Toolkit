@@ -31,7 +31,11 @@ const clap_plugin_descriptor_t sa_small_room_reverb_descriptor = {
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  .features     = (const char*[]) {
+                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
+                    CLAP_PLUGIN_FEATURE_REVERB,
+                    nullptr
+                  }
 };
 
 //----------------------------------------------------------------------

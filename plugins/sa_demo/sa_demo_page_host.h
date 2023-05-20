@@ -204,6 +204,8 @@ public:
         //if (info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK) textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK\n");
         //if (info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)          textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_BUS\n");
         //if (info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)       textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_MASTER\n");
+        
+        // gcc doesn't like this too much.. todo: snprintf?
         sprintf(track_info_buffer,"    name: '%s' color %i,%i,%i chan: %i port '%s'",info.name,info.color.red,info.color.green,info.color.blue,info.audio_channel_count,info.audio_port_type);
         textbox->appendLine(track_info_buffer);
       }

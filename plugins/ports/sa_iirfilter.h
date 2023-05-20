@@ -374,7 +374,10 @@ const clap_plugin_descriptor_t sa_iirfilter_descriptor = {
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  .features     = (const char*[]) {
+                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
+                    CLAP_PLUGIN_FEATURE_FILTER,
+                    nullptr }
 };
 
 //----------------------------------------------------------------------

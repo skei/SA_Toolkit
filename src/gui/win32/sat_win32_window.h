@@ -281,8 +281,8 @@ public:
   virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
   virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
   virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_key_press(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_key_release(uint32_t AKey, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_key_press(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_key_release(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
   virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
@@ -1193,7 +1193,7 @@ private: // remap
       case WM_KEYDOWN: {
         //if (MWindowListener) MWindowListener->on_keyDown(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-        on_window_key_press(wParam,lParam,time);
+        on_window_key_press(wParam,0,lParam,time);
         break;
       }
 
@@ -1202,7 +1202,7 @@ private: // remap
       case WM_KEYUP: {
         //if (MWindowListener) MWindowListener->on_keyUp(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-        on_window_key_release(wParam,lParam,time);
+        on_window_key_release(wParam,0,lParam,time);
         break;
       }
 
