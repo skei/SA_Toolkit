@@ -340,6 +340,13 @@ public: // set
 
   //----------
 
+//  // nanovg-rgb2hsv
+//  void setFontDilate(float dilate) {
+//    nvgFontDilate(MContext,dilate);
+//  }
+
+  //----------
+
   void setShapeAntiAlias(int enabled) {
     nvgShapeAntiAlias(MContext,enabled);
   }
@@ -379,6 +386,11 @@ public: // set
   }
 
   //----------
+
+//  // nanovg-rgb2hsv
+//  void setLineStyle(int style) {
+//    nvgLineStyle(MContext,style);
+//  }
 
 //------------------------------
 public: // draw
@@ -688,9 +700,17 @@ public: // font
 
   //----------
 
+  // orig
   int getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) {
     return nvgTextBreakLines(MContext,string,end,breakRowWidth,(NVGtextRow*)rows,maxRows);
   }
+  
+//  // nanovg-rgb2hsv
+//  int getTextBreakLines(NVGcontext* ctx, const char* string, const char* end, float breakRowWidth, NVGtextRow* rows, int maxRows, int skipSpaces) {
+//    return nvgTextBreakLines(MContext,string,end,breakRowWidth,rows,maxRows,skipSpaces);
+//  }
+  
+  
 
 //------------------------------
 public: // image

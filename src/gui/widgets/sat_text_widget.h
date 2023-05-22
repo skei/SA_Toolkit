@@ -164,6 +164,7 @@ public:
         painter->setTextColor(MTextColor);
         painter->drawText(p.x,p.y,MText);
       }
+      
     }
   }
 

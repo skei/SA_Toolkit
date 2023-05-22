@@ -399,6 +399,8 @@ extern "C" {
 //
 //----------------------------------------------------------------------
 
+// see: https://stackoverflow.com/questions/30621632/how-is-the-gnu-libc-so-both-a-shared-object-and-a-standalone-executable
+
 /*
   https://stackoverflow.com/questions/15265295/understanding-the-libc-init-array
 

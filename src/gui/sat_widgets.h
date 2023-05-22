@@ -10,6 +10,7 @@
 #include "gui/widgets/sat_curve_widget.h"
 #include "gui/widgets/sat_drag_value_widget.h"
 #include "gui/widgets/sat_dual_slider_widget.h"
+#include "gui/widgets/sat_dual_value_widget.h"
 #include "gui/widgets/sat_freq_resp_widget.h"
 #include "gui/widgets/sat_graph_widget.h"
 #include "gui/widgets/sat_grid_widget.h"

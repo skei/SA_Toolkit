@@ -488,10 +488,15 @@ public: // hierarchy
         
         SAT_Rect child_initialrect = child->getInitialRect();
         
-        if (child_initialrect.x < 0) child->MRect.x = (fabs(child_initialrect.x) * 0.01) * layout_rect.w; // (layout_rect or parent_rect?)
-        if (child_initialrect.y < 0) child->MRect.y = (fabs(child_initialrect.y) * 0.01) * layout_rect.h;
-        if (child_initialrect.w < 0) child->MRect.w = (fabs(child_initialrect.w) * 0.01) * layout_rect.w;
-        if (child_initialrect.h < 0) child->MRect.h = (fabs(child_initialrect.h) * 0.01) * layout_rect.h;
+        //if (child_initialrect.x < 0) child->MRect.x = (fabs(child_initialrect.x) * 0.01) * layout_rect.w;
+        //if (child_initialrect.y < 0) child->MRect.y = (fabs(child_initialrect.y) * 0.01) * layout_rect.h;
+        //if (child_initialrect.w < 0) child->MRect.w = (fabs(child_initialrect.w) * 0.01) * layout_rect.w;
+        //if (child_initialrect.h < 0) child->MRect.h = (fabs(child_initialrect.h) * 0.01) * layout_rect.h;
+
+        if (child_initialrect.x < 0) child->MRect.x = (fabs(child_initialrect.x) * 0.01) * parent_rect.w;
+        if (child_initialrect.y < 0) child->MRect.y = (fabs(child_initialrect.y) * 0.01) * parent_rect.h;
+        if (child_initialrect.w < 0) child->MRect.w = (fabs(child_initialrect.w) * 0.01) * parent_rect.w;
+        if (child_initialrect.h < 0) child->MRect.h = (fabs(child_initialrect.h) * 0.01) * parent_rect.h;
 
         // alignment
         

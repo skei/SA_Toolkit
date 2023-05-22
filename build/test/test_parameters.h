@@ -52,7 +52,7 @@ public:
     SAT_Parameter* param2 = new SAT_Parameter("Param2", 0.75);
     appendParameter(param2);
     
-    setInitialEditorSize(800,600,1.0);
+    setInitialEditorSize(400,300,3.0);
     return SAT_Plugin::init();
   }
   
@@ -62,15 +62,14 @@ public:
     SAT_PanelWidget* panel = new SAT_PanelWidget(0);
     AWindow->appendRootWidget(panel);
     
-//    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10,10,395,30),"Param1",0.5);
-//    panel->appendChildWidget(slider);
-//    slider->setTextSize(18);
-//    slider->setValueSize(18);
-//    AEditor->connect( slider, getParameter(0) );
-
-    SAT_TextEditWidget* textedit = new SAT_TextEditWidget(SAT_Rect(10,10,395,30),"textedit");
-    panel->appendChildWidget(textedit);
-
+    SAT_DualValueWidget* dualvalue = new SAT_DualValueWidget(SAT_Rect(10,10,200,20),0.2,0.8);
+    panel->appendChildWidget(dualvalue);
+    
+    SAT_DualSliderWidget* dualslider = new SAT_DualSliderWidget(SAT_Rect(10,35,200,20),"dualslider",0.2,0.8);
+    panel->appendChildWidget(dualslider);
+    
+    SAT_RangeBarWidget* rangebar = new SAT_RangeBarWidget(SAT_Rect(10,60,200,20));
+    panel->appendChildWidget(rangebar);
     
     return true;
   }
