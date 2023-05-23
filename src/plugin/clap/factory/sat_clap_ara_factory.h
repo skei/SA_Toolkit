@@ -7,46 +7,86 @@
 #include "extern/ara/arasdk/ARACLAP.h"
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
-// (ARA_CALL* initializeARAWithConfiguration) (const ARAInterfaceConfiguration * config);
-// (ARA_CALL* uninitializeARA) (void);
-// (ARA_CALL* createDocumentControllerWithDocument) (const ARADocumentControllerHostInstance * hostInstance, const ARADocumentProperties * properties);
+void ARA_CALL sat_ARAAssertFunction_callback(ARA_NAMESPACE ARAAssertCategory category, const void* problematicArgument, const char* diagnosis) {
+}
 
 //----------------------------------------------------------------------
 
-//struct ARAFactory {
-//  ARASize                               structSize;
-//  ARAAPIGeneration                      lowestSupportedApiGeneration;
-//  ARAAPIGeneration                      highestSupportedApiGeneration;
-//  ARAPersistentID                       factoryID;
-//  void                                  (ARA_CALL* initializeARAWithConfiguration) (const ARAInterfaceConfiguration * config);
-//  void                                  (ARA_CALL* uninitializeARA) (void);
-//  ARAUtf8String                         plugInName;
-//  ARAUtf8String                         manufacturerName;
-//  ARAUtf8String                         informationURL;
-//  ARAUtf8String                         version;
-//  const ARADocumentControllerInstance*  (ARA_CALL* createDocumentControllerWithDocument) (const ARADocumentControllerHostInstance * hostInstance, const ARADocumentProperties * properties);
-//  ARAPersistentID                       documentArchiveID;
-//  ARASize                               compatibleDocumentArchiveIDsCount;
-//  const ARAPersistentID*                compatibleDocumentArchiveIDs;
-//  ARASize                               analyzeableContentTypesCount;
-//  const ARAContentType*                 analyzeableContentTypes;
-//  ARAPlaybackTransformationFlags        supportedPlaybackTransformationFlags;
-//  ARA_ADDENDUM(2_0_Final) ARABool       supportsStoringAudioFileChunks;
+//struct ARAInterfaceConfiguration {
+//  ARASize             structSize;
+//  ARAAPIGeneration    desiredApiGeneration;
+//  ARAAssertFunction*  assertFunctionAddress;
 //};
 
-struct ARAFactory SAT_ARA_FACTORY {
-  .structSize                           = 0,
+void ARA_CALL sat_initializeARAWithConfiguration_callback(const struct ARA_NAMESPACE ARAInterfaceConfiguration* config) {
+  SAT_PRINT;
+  //config->structSize            = sizeof(struct ARA_NAMESPACE ARAInterfaceConfiguration);
+  //config->desiredApiGeneration  = 0;
+  //config->assertFunctionAddress = sat_ARAAssertFunction_callback;
+}
+
+//----------
+
+void ARA_CALL sat_uninitializeARA_callback(void) {
+  SAT_PRINT;
+}
+
+//----------
+
+//struct ARADocumentControllerInstance {
+//  ARASize                               structSize;
+//  ARADocumentControllerRef              documentControllerRef;
+//  const ARADocumentControllerInterface* documentControllerInterface;
+//};
+
+//struct ARADocumentControllerHostInstance {
+//  ARASize                                     structSize;
+//  ARAAudioAccessControllerHostRef             audioAccessControllerHostRef;
+//  const ARAAudioAccessControllerInterface*    audioAccessControllerInterface;
+//  ARAArchivingControllerHostRef               archivingControllerHostRef;
+//  const ARAArchivingControllerInterface*      archivingControllerInterface;
+//  ARAContentAccessControllerHostRef           contentAccessControllerHostRef;
+//  const ARAContentAccessControllerInterface*  contentAccessControllerInterface;
+//  ARAModelUpdateControllerHostRef             modelUpdateControllerHostRef;
+//  const ARAModelUpdateControllerInterface*    modelUpdateControllerInterface;
+//  ARAPlaybackControllerHostRef                playbackControllerHostRef;
+//  const ARAPlaybackControllerInterface*       playbackControllerInterface;
+//};
+
+//struct ARADocumentProperties {
+//  ARASize       structSize;
+//  ARAUtf8String name;
+//};
+
+const struct ARA_NAMESPACE ARADocumentControllerInstance* ARA_CALL sat_createDocumentControllerWithDocument_callback(const struct ARA_NAMESPACE ARADocumentControllerHostInstance* hostInstance, const struct ARA_NAMESPACE ARADocumentProperties* properties) {
+  if (properties) { SAT_Print("name: %s\n",properties->name); }
+  else { SAT_Print("properties = NULL\n"); }
+  return nullptr;
+}
+
+//----------------------------------------------------------------------
+//
+// ara factory
+//
+//----------------------------------------------------------------------
+
+const struct ARA_NAMESPACE ARAFactory SAT_ARA_FACTORY = {
+  .structSize                           = sizeof(struct ARA_NAMESPACE ARAFactory),
   .lowestSupportedApiGeneration         = 0,
   .highestSupportedApiGeneration        = 0,
-  .factoryID                            = "",
-  .initializeARAWithConfiguration       = nullptr,
-  .uninitializeARA                      = nullptr,
-  .plugInName                           = "",
-  .manufacturerName                     = "",
-  .informationURL                       = "",
-  .version                              = "",
-  .createDocumentControllerWithDocument = nullptr,
+  .factoryID                            = SAT_VENDOR "/ara_factory",
+  .initializeARAWithConfiguration       = sat_initializeARAWithConfiguration_callback,
+  .uninitializeARA                      = sat_uninitializeARA_callback,
+  .plugInName                           = "plugin name",
+  .manufacturerName                     = SAT_VENDOR,
+  .informationURL                       = SAT_URL,
+  .version                              = SAT_VERSION,
+  .createDocumentControllerWithDocument = sat_createDocumentControllerWithDocument_callback,
   .documentArchiveID                    = "",
   .compatibleDocumentArchiveIDsCount    = 0,
   .compatibleDocumentArchiveIDs         = nullptr,//(const ARAPersistentID* []) { nullptr, nullptr },
@@ -58,26 +98,36 @@ struct ARAFactory SAT_ARA_FACTORY {
 
 //----------------------------------------------------------------------
 
-uint32_t clap_ara_factory_get_factory_count_callback(const struct clap_ara_factory *factory) {
+uint32_t sat_clap_ara_factory_get_factory_count_callback(const struct clap_ara_factory *factory) {
+  SAT_PRINT;
   return 1;
 }
 
 //----------
 
-const ARA_NAMESPACE ARAFactory* clap_ara_factory_get_ara_factory_callback(const struct clap_ara_factory *factory, uint32_t index) {
+const ARA_NAMESPACE ARAFactory* sat_clap_ara_factory_get_ara_factory_callback(const struct clap_ara_factory *factory, uint32_t index) {
+  SAT_PRINT;
+  return &SAT_ARA_FACTORY;
 }
 
 //----------
 
-const char* clap_ara_factory_get_plugin_id_callback(const struct clap_ara_factory *factory, uint32_t index) {
+/*
+  return the id of the plugin that this factory is for..
+  TODO: add to SAT_REGISTRY.. SAT_RegisterARA()?
+*/
+
+const char* sat_clap_ara_factory_get_plugin_id_callback(const struct clap_ara_factory *factory, uint32_t index) {
+  SAT_PRINT;
+  return nullptr;
 }
 
 //----------------------------------------------------------------------
 
 ARA_DRAFT struct clap_ara_factory SAT_CLAP_ARA_FACTORY {
-  .get_factory_count  = clap_ara_factory_get_factory_count_callback,
-  .get_ara_factory    = clap_ara_factory_get_ara_factory_callback,
-  .get_plugin_id      = clap_ara_factory_get_plugin_id_callback
+  .get_factory_count  = sat_clap_ara_factory_get_factory_count_callback,
+  .get_ara_factory    = sat_clap_ara_factory_get_ara_factory_callback,
+  .get_plugin_id      = sat_clap_ara_factory_get_plugin_id_callback
 };
 
 //----------------------------------------------------------------------

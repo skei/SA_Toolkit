@@ -420,7 +420,9 @@ private:
   //    loadOpenGL();
 
   GLXContext createContext(GLXFBConfig fbconfig) {
-    GLXContext context = glXCreateNewContext(MDisplay,fbconfig,GLX_RGBA_TYPE,nullptr,True); // ???
+    
+    GLXContext context = glXCreateNewContext(MDisplay,fbconfig,GLX_RGBA_TYPE,nullptr,True);
+    
     SAT_Assert(context);
     loadExtensions();
     return context;

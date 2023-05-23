@@ -38,7 +38,7 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
     SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> SAT_CLAP_PLUGIN_FACTORY\n",factory_id);
     return &SAT_CLAP_PLUGIN_FACTORY;
   }
-  #ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY
+  #ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
     if (strcmp(factory_id,CLAP_PRESET_DISCOVERY_FACTORY_ID) == 0) {
       return &SAT_CLAP_PRESET_DISCOVERY_FACTORY;
     }
@@ -46,6 +46,9 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
   //if (strcmp(factory_id,CLAP_PLUGIN_INVALIDATION_FACTORY_ID) == 0) {
   //  return &SAT_CLAP_PLUGIN_INVALIDATION_FACTORY;
   //}
+  if (strcmp(factory_id,CLAP_EXT_ARA_FACTORY) == 0) {
+    return &SAT_CLAP_ARA_FACTORY;
+  }
   // nope..
   SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> null (no factory found)\n",factory_id);
   return nullptr;
