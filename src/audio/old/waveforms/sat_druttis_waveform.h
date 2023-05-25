@@ -1,5 +1,5 @@
-#ifndef mip_druttis_waveform_included
-#define mip_druttis_waveform_included
+#ifndef sat_druttis_waveform_included
+#define sat_druttis_waveform_included
 //----------------------------------------------------------------------
 
 #include <math.h>
@@ -50,7 +50,7 @@
 //----------------------------------------------------------------------
 
 //class KWaveform_Sin_Druttis {
-class MIP_DruttisSawWaveform {
+class SAT_DruttisSawWaveform {
 
   private:
     float _sr;
@@ -61,7 +61,7 @@ class MIP_DruttisSawWaveform {
 
   public:
 
-    MIP_DruttisSawWaveform() {
+    SAT_DruttisSawWaveform() {
       _sr     = 0.0f;
       _prev_t = 0.0f;
       //_f      = 0.0f;
@@ -95,7 +95,7 @@ class MIP_DruttisSawWaveform {
     //}
 
     float afact(float f) {
-      //result := 1 - sin(f*MIP_PI2); // flaw
+      //result := 1 - sin(f*SAT_PI2); // flaw
       return 1 - sqrt(f * 2 / _sr);
     }
 
@@ -104,7 +104,7 @@ class MIP_DruttisSawWaveform {
 
     float process(float t, float dt) {
       float f = 0.5f;//dt;
-      return sin( (((t*f)+_ps)*MIP_PI2) + (MIP_PI05*_fm*afact(f)) );
+      return sin( (((t*f)+_ps)*SAT_PI2) + (SAT_PI05*_fm*afact(f)) );
     }
 
 };
@@ -122,7 +122,7 @@ static float _prev_t  = 0.0;
 
 //----------------------------------------------------------------------
 
-void MIP_Waveform_Druttis_setSampleRate(float sr) {
+void SAT_Waveform_Druttis_setSampleRate(float sr) {
   _sr = sr;
 }
 
@@ -137,19 +137,19 @@ void MIP_Waveform_Druttis_setSampleRate(float sr) {
 // pw := pulse width (0 to 1) (1 square)
 
 float _afact(float f) {
-  //result := 1 - sin(f*MIP_PI2); // flaw
+  //result := 1 - sin(f*SAT_PI2); // flaw
   return 1 - sqrt(f * 2 / _sr);
 }
 
 //----------
 
-float MIP_Waveform_Sine_Druttis(float t, float f, float ps, float fm) {
-  return sin( (((t*f)+ps)*MIP_PI2) + (MIP_PI05*fm*_afact(f)) );
+float SAT_Waveform_Sine_Druttis(float t, float f, float ps, float fm) {
+  return sin( (((t*f)+ps)*SAT_PI2) + (SAT_PI05*fm*_afact(f)) );
 }
 
 //----------
 
-float MIP_Waveform_Saw_Druttis(float t, float f, float ps, float fm, float fb) {
+float SAT_Waveform_Saw_Druttis(float t, float f, float ps, float fm, float fb) {
   float result = KWaveform_Sine_Druttis(t,f,ps,fb*KWaveform_Sine_Druttis(_prev_t/*t-1*/,f,ps,fm));
   _prev_t = t;
   return result;
@@ -157,7 +157,7 @@ float MIP_Waveform_Saw_Druttis(float t, float f, float ps, float fm, float fb) {
 
 //----------
 
-float MIP_Waveform_Pulse_Druttis(float t, float f, float ps, float fm, float fb, float pm, float pw) {
+float SAT_Waveform_Pulse_Druttis(float t, float f, float ps, float fm, float fb, float pm, float pw) {
   return KWaveform_Saw_Druttis(t,f,ps,fm,fb) - KWaveform_Saw_Druttis(t,f,ps+(0.5*pw),fm,fb) * pm;
 }
 

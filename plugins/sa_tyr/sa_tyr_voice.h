@@ -11,7 +11,7 @@
 #include "audio/old/synthesis/sat_oscillator2.h"
 #include "audio/old/modulation/sat_envelope.h"
 #include "audio/old/waveforms/sat_polyblep_waveform.h"
-#include "plugin/sat_voice_manager.h"
+#include "audio/sat_voice_manager.h"
 
 //----------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ private:
 //------------------------------
 
   __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
-  float             MSliceBuffer[SAT_AUDIO_MAX_BLOCK_SIZE]  = {0};
+  float             MSliceBuffer[SAT_PLUGIN_MAX_BLOCK_SIZE]  = {0};
 
   SAT_VoiceContext* MContext                                = nullptr;
   uint32_t          MVoiceIndex                             = 0;
@@ -119,18 +119,18 @@ public:
     MVoiceIndex = AIndex;
     MContext = AContext;
 
-    MOscillator1.setSampleRate(MContext->samplerate);
-    MOscillator2.setSampleRate(MContext->samplerate);
-    MResonator1.setSampleRate(MContext->samplerate);
-    MResonator2.setSampleRate(MContext->samplerate);
-    MAmpEnvelope.setSampleRate(MContext->samplerate);
+    MOscillator1.setSampleRate(MContext->sample_rate);
+    MOscillator2.setSampleRate(MContext->sample_rate);
+    MResonator1.setSampleRate(MContext->sample_rate);
+    MResonator2.setSampleRate(MContext->sample_rate);
+    MAmpEnvelope.setSampleRate(MContext->sample_rate);
 
-    MO1InputFilter.setSampleRate(MContext->samplerate);
-    MO2InputFilter.setSampleRate(MContext->samplerate);
-    MR1InputFilter.setSampleRate(MContext->samplerate);
-    MR2InputFilter.setSampleRate(MContext->samplerate);
+    MO1InputFilter.setSampleRate(MContext->sample_rate);
+    MO2InputFilter.setSampleRate(MContext->sample_rate);
+    MR1InputFilter.setSampleRate(MContext->sample_rate);
+    MR2InputFilter.setSampleRate(MContext->sample_rate);
 
-    uint32_t num = MContext->parameters->size();
+    uint32_t num = MContext->process_context->parameters->size();
 
     MParameters         = (double*)malloc(num * sizeof(double));
     MModulations        = (double*)malloc(num * sizeof(double));
@@ -424,7 +424,7 @@ public:
         float osc1_hz = SAT_NoteToHz(note_key + note_tuning + o1_pitch);
 
         //osc1_hz = SAT_Clamp(osc1_hz,20,20000 * SA_TYR_OVERSAMPLING);
-        osc1_hz = SAT_Clamp(osc1_hz,20,MContext->samplerate);
+        osc1_hz = SAT_Clamp(osc1_hz,20,MContext->sample_rate);
 
         MOscillator1.setFrequency(osc1_hz);
 
@@ -459,7 +459,7 @@ public:
 
         float osc2_hz = SAT_NoteToHz(note_key + note_tuning + o2_pitch);
         //osc2_hz = SAT_Clamp(osc2_hz,20,20000 * SA_TYR_OVERSAMPLING);
-        osc2_hz = SAT_Clamp(osc2_hz,20,MContext->samplerate);
+        osc2_hz = SAT_Clamp(osc2_hz,20,MContext->sample_rate);
 
         MOscillator2.setFrequency(osc2_hz);
 
@@ -494,7 +494,7 @@ public:
 
         float res1_hz = SAT_NoteToHz(note_key + note_tuning + r1_pitch);
         //res1_hz = SAT_Clamp(res1_hz,20,20000 * SA_TYR_OVERSAMPLING);
-        res1_hz = SAT_Clamp(res1_hz,20,MContext->samplerate);
+        res1_hz = SAT_Clamp(res1_hz,20,MContext->sample_rate);
         MResonator1.setHz(res1_hz);
 
         float r1_shape  = SAT_Clamp( MParMod[PAR_RES1_SHAPE], 0, 1 );
@@ -517,7 +517,7 @@ public:
 
         float r1_spd = 1.0 - SAT_Clamp(MParMod[PAR_RES1_SPEED],0,1);
         //r1_spd = (r1_spd * r1_spd * r1_spd) * 10000 * SA_TYR_OVERSAMPLING;
-        r1_spd = (r1_spd * r1_spd * r1_spd) * MContext->samplerate * 0.25;
+        r1_spd = (r1_spd * r1_spd * r1_spd) * MContext->sample_rate * 0.25;
         MResonator1.setSpeed( r1_spd );
 
         float r1s = SAT_Clamp( MParMod[PAR_RES1_IN_S], 0, 1 );
@@ -538,7 +538,7 @@ public:
         float res2_hz = SAT_NoteToHz(note_key + note_tuning + r2_pitch);
 
         //res2_hz = SAT_Clamp(res2_hz,20,20000 * SA_TYR_OVERSAMPLING);
-        res2_hz = SAT_Clamp(res2_hz,20,MContext->samplerate);
+        res2_hz = SAT_Clamp(res2_hz,20,MContext->sample_rate);
 
         MResonator2.setHz(res2_hz);
 
@@ -562,7 +562,7 @@ public:
 
         float r2_spd = 1.0 - SAT_Clamp( MParMod[PAR_RES2_SPEED], 0,1 );
         //r2_spd = (r2_spd * r2_spd * r2_spd) * 10000 * SA_TYR_OVERSAMPLING;
-        r2_spd = (r2_spd * r2_spd * r2_spd) * MContext->samplerate * 0.25;
+        r2_spd = (r2_spd * r2_spd * r2_spd) * MContext->sample_rate * 0.25;
         MResonator2.setSpeed( r2_spd );
 
         float r2s = SAT_Clamp( MParMod[PAR_RES2_IN_S], 0, 1 );
@@ -694,7 +694,7 @@ public:
     }
 
     float* output_buffer = MContext->voice_buffer;
-    output_buffer += (MVoiceIndex * SAT_AUDIO_MAX_BLOCK_SIZE);
+    output_buffer += (MVoiceIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     output_buffer += AOffset;
     memcpy(output_buffer,MSliceBuffer,ALength*sizeof(float));
 
@@ -724,7 +724,7 @@ public:
   */
 
   uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
-    return process(AState,AOffset,SAT_AUDIO_SLICE_SIZE);
+    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
   }
 
 };

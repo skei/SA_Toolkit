@@ -10,19 +10,19 @@
 #include <math.h>
 
 #define mip_env_rate_scale     10.0f // 30.0f
-#define mip_env_threshold      0.001 //MIP_TINY
+#define mip_env_threshold      0.001 //SAT_TINY
 
-#define MIP_ENVELOPE_OFF       0
-#define MIP_ENVELOPE_ATTACK    1
-#define MIP_ENVELOPE_DECAY     2
-#define MIP_ENVELOPE_SUSTAIN   3
-#define MIP_ENVELOPE_RELEASE   4
-#define MIP_ENVELOPE_FINISHED  5
+#define SAT_ENVELOPE_OFF       0
+#define SAT_ENVELOPE_ATTACK    1
+#define SAT_ENVELOPE_DECAY     2
+#define SAT_ENVELOPE_SUSTAIN   3
+#define SAT_ENVELOPE_RELEASE   4
+#define SAT_ENVELOPE_FINISHED  5
 
 //----------------------------------------------------------------------
 
 template <class T>
-struct MIP_EnvelopeStage {
+struct SAT_EnvelopeStage {
   T target;
   T rate;
 };
@@ -36,20 +36,20 @@ struct MIP_EnvelopeStage {
 //----------------------------------------------------------------------
 
 template <class T>
-class MIP_Envelope {
+class SAT_Envelope {
 
   private:
 
     T                     MSampleRate = 0;// = 44100;
     T                     MValue = 0;
     int32_t               MStage = 0;
-    MIP_EnvelopeStage<T>  MStages[5]; // -,a,d,s,r
+    SAT_EnvelopeStage<T>  MStages[5]; // -,a,d,s,r
 
   public:
 
-    MIP_Envelope() {
+    SAT_Envelope() {
       //MScale = 50.0;//6.0;
-      MStage = MIP_ENVELOPE_OFF;
+      MStage = SAT_ENVELOPE_OFF;
       MValue = 0.0;
     }
 
@@ -62,7 +62,7 @@ class MIP_Envelope {
   public:
 
     void reset() {
-      MStage = MIP_ENVELOPE_OFF;
+      MStage = SAT_ENVELOPE_OFF;
       MValue = 0.0;
     }
 
@@ -89,23 +89,23 @@ class MIP_Envelope {
     //----------
 
     void setAttack(T AValue) {
-      MStages[MIP_ENVELOPE_ATTACK].target = 1.0;
-      MStages[MIP_ENVELOPE_ATTACK].rate   = calcRate(AValue);
+      MStages[SAT_ENVELOPE_ATTACK].target = 1.0;
+      MStages[SAT_ENVELOPE_ATTACK].rate   = calcRate(AValue);
     }
 
     void setDecay(T AValue) {
-      MStages[MIP_ENVELOPE_DECAY].rate = calcRate(AValue);
+      MStages[SAT_ENVELOPE_DECAY].rate = calcRate(AValue);
     }
 
     void setSustain(T AValue) {
-      MStages[MIP_ENVELOPE_DECAY].target = AValue;
-      MStages[MIP_ENVELOPE_SUSTAIN].target = AValue;
-      MStages[MIP_ENVELOPE_SUSTAIN].rate = 1.0;
+      MStages[SAT_ENVELOPE_DECAY].target = AValue;
+      MStages[SAT_ENVELOPE_SUSTAIN].target = AValue;
+      MStages[SAT_ENVELOPE_SUSTAIN].rate = 1.0;
     }
 
     void setRelease(T AValue) {
-      MStages[MIP_ENVELOPE_RELEASE].target = 0.0;
-      MStages[MIP_ENVELOPE_RELEASE].rate = calcRate(AValue);
+      MStages[SAT_ENVELOPE_RELEASE].target = 0.0;
+      MStages[SAT_ENVELOPE_RELEASE].rate = calcRate(AValue);
     }
 
     //----------
@@ -120,7 +120,7 @@ class MIP_Envelope {
     //----------
 
     void noteOn(void) {
-      MStage = MIP_ENVELOPE_ATTACK;
+      MStage = SAT_ENVELOPE_ATTACK;
       MValue = 0.0;
 
     }
@@ -128,15 +128,15 @@ class MIP_Envelope {
     //----------
 
     void noteOff(void) {
-      MStage = MIP_ENVELOPE_RELEASE;
+      MStage = SAT_ENVELOPE_RELEASE;
     }
 
     //----------
 
     T process(void) {
-      if (MStage == MIP_ENVELOPE_OFF) return 0.0;
-      if (MStage == MIP_ENVELOPE_FINISHED) return 0.0;
-      if (MStage == MIP_ENVELOPE_SUSTAIN) return MValue;
+      if (MStage == SAT_ENVELOPE_OFF) return 0.0;
+      if (MStage == SAT_ENVELOPE_FINISHED) return 0.0;
+      if (MStage == SAT_ENVELOPE_SUSTAIN) return MValue;
       T target = MStages[MStage].target;
       T rate   = MStages[MStage].rate;
       MValue += ( (target-MValue) * rate );
@@ -157,7 +157,7 @@ class MIP_Envelope {
       T rate   = MStages[MStage].rate;
 
       MValue += (target - MValue) * (1 - pow(1 - rate, ASteps));
-      //MValue += (target - MValue) * (1 - MIP_PowF2(1 - rate, ASteps));
+      //MValue += (target - MValue) * (1 - SAT_PowF2(1 - rate, ASteps));
 
       return result;
     }

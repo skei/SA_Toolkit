@@ -1,10 +1,10 @@
 
-class MIP_LtrWaveform {
+class SAT_LtrWaveform {
 };
 
 //
 //{$include mip.inc}
-//unit mip_osc_ltr;
+//unit sat_osc_ltr;
 //
 ////----------------------------------------------------------------------
 //interface
@@ -19,7 +19,7 @@ class MIP_LtrWaveform {
 ////----------------------------------------------------------------------
 //
 //uses
-//  mip_math;
+//  sat_math;
 //
 ////function KOsc_Saw_Sinc(t,dt:Single) : Single; inline;
 ////begin

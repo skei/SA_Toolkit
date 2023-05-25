@@ -128,6 +128,83 @@
       <File Name="../../src/midi/sat_midi.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="audio">
+      <VirtualDirectory Name="old">
+        <File Name="../../src/audio/old/sat_voice_manager.h"/>
+        <File Name="../../src/audio/old/sat_voice.h"/>
+        <File Name="../../src/audio/old/sat_audio_utils.h"/>
+        <File Name="../../src/audio/old/sat_audio_math.h"/>
+        <File Name="../../src/audio/old/sat_audio_file.h"/>
+        <VirtualDirectory Name="waveforms">
+          <File Name="../../src/audio/old/waveforms/sat_table_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_sinc_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_rochebois_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_ptr_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_polyblep_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_polyblep2_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_polyblamp_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_naive_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_minblep_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_ltr_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_eptr_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_dsf_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_druttis_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_dpw_waveform.h"/>
+          <File Name="../../src/audio/old/waveforms/sat_blit_waveform.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="synthesis">
+          <File Name="../../src/audio/old/synthesis/sat_waveguide.h"/>
+          <File Name="../../src/audio/old/synthesis/sat_sinusoid.h"/>
+          <File Name="../../src/audio/old/synthesis/sat_res1.h"/>
+          <File Name="../../src/audio/old/synthesis/sat_phasor.h"/>
+          <File Name="../../src/audio/old/synthesis/sat_oscillator2.h"/>
+          <File Name="../../src/audio/old/synthesis/sat_oscillator.h"/>
+          <File Name="../../src/audio/old/synthesis/sat_karplus_strong.h"/>
+          <File Name="../../src/audio/old/synthesis/sat_gordon_smith.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="processing">
+          <File Name="../../src/audio/old/processing/sat_delay.h"/>
+          <File Name="../../src/audio/old/processing/sat_convolution.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="modulation">
+          <File Name="../../src/audio/old/modulation/sat_lfo.h"/>
+          <File Name="../../src/audio/old/modulation/sat_envelope.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="io">
+          <File Name="../../src/audio/old/io/sat_audio_jack.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="filters">
+          <File Name="../../src/audio/old/filters/sat_svf_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_rc_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_rc2_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_rbj_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_onepole_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_moog_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_linkwitz_riley_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_karlsen_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_hiir_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_farrow_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_downsample_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_decimator_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_dc_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_cytomic_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_comb_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_apple_filter.h"/>
+          <File Name="../../src/audio/old/filters/sat_allpass_filter.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="analysis">
+          <File Name="../../src/audio/old/analysis/sat_walsh_hadamard.h"/>
+          <File Name="../../src/audio/old/analysis/sat_rms.h"/>
+          <File Name="../../src/audio/old/analysis/sat_pitch_tracker2.h"/>
+          <File Name="../../src/audio/old/analysis/sat_pitch_tracker.h"/>
+          <File Name="../../src/audio/old/analysis/sat_lpc.h"/>
+          <File Name="../../src/audio/old/analysis/sat_goertzel.h"/>
+          <File Name="../../src/audio/old/analysis/sat_fft.h"/>
+          <File Name="../../src/audio/old/analysis/sat_envelope_follower3.h"/>
+          <File Name="../../src/audio/old/analysis/sat_envelope_follower2.h"/>
+          <File Name="../../src/audio/old/analysis/sat_envelope_follower.h"/>
+          <File Name="../../src/audio/old/analysis/sat_beat_detector.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
       <File Name="../../src/audio/sat_voice_manager.h"/>
       <File Name="../../src/audio/sat_voice_context.h"/>
       <File Name="../../src/audio/sat_modulation_matrix.h"/>

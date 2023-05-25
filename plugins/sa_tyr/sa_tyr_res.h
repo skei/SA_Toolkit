@@ -2,10 +2,10 @@
 #define sa_tyr_res_included
 //----------------------------------------------------------------------
 
-//#include "base/utils/mip_interpolation.h"
-#include "audio/old/filters/mip_rc_filter.h"
-#include "audio/old/filters/mip_svf_filter.h"
-#include "audio/old/processing/mip_delay.h"
+//#include "base/utils/sat_interpolation.h"
+#include "audio/old/filters/sat_rc_filter.h"
+#include "audio/old/filters/sat_svf_filter.h"
+#include "audio/old/processing/sat_delay.h"
 
 #define DELAY_LENGTH (4096 * 4)
 
@@ -24,19 +24,19 @@ public:
 
   struct sa_tyr_DelayFx {
 
-    MIP_RcFilter<T> filter  = {};
+    SAT_RcFilter<T> filter  = {};
     T               rough   = 0.0;
     T               shape   = 0.0;
 
     T process(T x) {
-      T r = MIP_Random();
-      //MIP_Print("r %.2f rough %.2f\n",r,rough);
+      T r = SAT_Random();
+      //SAT_Print("r %.2f rough %.2f\n",r,rough);
       if (r >= rough) x = -x;
 
 //      T s = (shape*shape*shape*shape);
 //      x *= (1.0 + s);
 //      x = atan(x);
-//      x = MIP_Clamp(x,-1,1);
+//      x = SAT_Clamp(x,-1,1);
 
       return filter.process(x);
     }
@@ -47,7 +47,7 @@ public:
 public:
 //------------------------------
 
-  typedef MIP_InterpolatedDelay<DELAY_LENGTH,sa_tyr_DelayFx> sa_tyr_Delay;
+  typedef SAT_InterpolatedDelay<DELAY_LENGTH,sa_tyr_DelayFx> sa_tyr_Delay;
 
 //------------------------------
 private:
@@ -55,7 +55,7 @@ private:
 
   T             MSampleRate   = 0.0;
   sa_tyr_Delay  MDelay        = {};
-  //MIP_SvfFilter MInputShaper  = {};
+  //SAT_SvfFilter MInputShaper  = {};
 
   T             MHz           = 0.0;
   T             MShape        = 0.0;
@@ -128,7 +128,7 @@ public:
     // feedback
 
     T fb = MFeedback;
-    fb = MIP_Curve(fb,0.98);
+    fb = SAT_Curve(fb,0.98);
 
     // damp
 
@@ -144,11 +144,11 @@ public:
 
     if (ro < 0.5) {
       ro = ro * 2.0; // 0..0,5 -> 0..1
-      ro = MIP_Curve(ro,0.02);
+      ro = SAT_Curve(ro,0.02);
     }
     else {
       ro = (ro - 0.5) * 2.0; // 0.5..1 -> 0..1
-      ro = MIP_Curve(ro,0.98);
+      ro = SAT_Curve(ro,0.98);
       ro += 1.0;
     }
     // 0..2 -> 0..1

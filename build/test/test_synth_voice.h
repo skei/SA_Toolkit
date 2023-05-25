@@ -51,8 +51,8 @@ public:
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
         ph = SAT_Fract(ph);
-        float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
-        //v = sin(v * SAT_PI2);
+        //float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
+        float v = sin(ph * SAT_PI2);
         *buffer++ = v * 0.1;
         ph += phadd;
       }

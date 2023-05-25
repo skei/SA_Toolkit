@@ -1,14 +1,14 @@
-#ifndef mip_delay_included
-#define mip_delay_included
+#ifndef sat_delay_included
+#define sat_delay_included
 //----------------------------------------------------------------------
 
-#include "base/utils/mip_math.h"
-#include "audio/mip_audio_math.h"
-//#include "audio/filters/mip_dc_filter.h"
+#include "base/utils/sat_math.h"
+#include "audio/sat_audio_math.h"
+//#include "audio/filters/sat_dc_filter.h"
 
 //----------------------------------------------------------------------
 
-struct MIP_NoDelayFx {
+struct SAT_NoDelayFx {
   float process(float x) { return x; }
 };
 
@@ -19,8 +19,8 @@ struct MIP_NoDelayFx {
 //----------------------------------------------------------------------
 
 
-template <int MAX_DELAY, typename FBLOOPFX=MIP_NoDelayFx>
-class MIP_InterpolatedDelay {
+template <int MAX_DELAY, typename FBLOOPFX=SAT_NoDelayFx>
+class SAT_InterpolatedDelay {
 
   private:
 
@@ -29,17 +29,17 @@ class MIP_InterpolatedDelay {
     float       /*MPhase*/MDelayPos = 0.0f;
     bool        MWrapped            = false;
     FBLOOPFX    MFBLoopFX           = {};
-    //MIP_DcFilter  MDC;
+    //SAT_DcFilter  MDC;
 
     float MPhase = 0.0;
 
   public:
 
-    MIP_InterpolatedDelay() {
+    SAT_InterpolatedDelay() {
       clear();
     }
 
-    ~MIP_InterpolatedDelay() {
+    ~SAT_InterpolatedDelay() {
     }
 
   public:
@@ -77,8 +77,8 @@ class MIP_InterpolatedDelay {
 
     float process(float AInput, float AFeedback, float ADelay) {
 
-      MIP_Assert( ADelay > 0 );
-      MIP_Assert( ADelay < MAX_DELAY );
+      SAT_Assert( ADelay > 0 );
+      SAT_Assert( ADelay < MAX_DELAY );
 
       // calculate delay offset
       float back = (float)MCounter - ADelay;
@@ -104,7 +104,7 @@ class MIP_InterpolatedDelay {
       float output = ((c3 * x + c2) * x + c1) * x + c0;
 
       //output = MDC.process(output);
-      //output = MIP_KillDenormal(output);
+      //output = SAT_KillDenormal(output);
 
       float fb = output * AFeedback;
       float flt = MFBLoopFX.process(fb);
@@ -121,8 +121,8 @@ class MIP_InterpolatedDelay {
 
       //-----
 
-      MIP_Assert( MCounter >= 0 );
-      MIP_Assert( MCounter < MAX_DELAY );
+      SAT_Assert( MCounter >= 0 );
+      SAT_Assert( MCounter < MAX_DELAY );
 
       // if only part of next sample 'fits' inside delay length...
       //if ((/*MPhase*/MDelayPos + 1.0) >= ADelay) {
@@ -156,7 +156,7 @@ class MIP_InterpolatedDelay {
 //
 //----------------------------------------------------------------------
 
-//template <int MAX_DELAY, typename FBLOOPFX=MIP_NoDelayFx>
+//template <int MAX_DELAY, typename FBLOOPFX=SAT_NoDelayFx>
 //class KSimpleDelay {
 //
 //  private:

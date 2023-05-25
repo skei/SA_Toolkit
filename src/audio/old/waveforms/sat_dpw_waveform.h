@@ -1,5 +1,5 @@
-#ifndef mip_dpw_waveform_included
-#define mip_dpw_waveform_included
+#ifndef sat_dpw_waveform_included
+#define sat_dpw_waveform_included
 //----------------------------------------------------------------------
 
 /*
@@ -86,11 +86,11 @@
   / 1
 */
 
-class MIP_DpwSawWaveform {
+class SAT_DpwSawWaveform {
   private:
     float x1;
   public:
-    MIP_DpwSawWaveform() {
+    SAT_DpwSawWaveform() {
       reset();/*x1 = 0;*/
     }
     void reset(void) { x1 = 0; }
@@ -116,17 +116,17 @@ class MIP_DpwSawWaveform {
   / 1
 */
 
-class MIP_Dpw2SawWaveform {
+class SAT_Dpw2SawWaveform {
   private:
     float x1;
   public:
-    MIP_Dpw2SawWaveform() {
+    SAT_Dpw2SawWaveform() {
       x1 = 0;
     }
     void reset(void) { x1 = 0; }
     float process(float t, float dt) {
 
-      // Correct phase, so it would be in line with sin(2.*MIP_PI * t)
+      // Correct phase, so it would be in line with sin(2.*SAT_PI * t)
       t += (0.5f + (0.5f*dt));
       if (t >= 1) t -= 1;
 
@@ -152,11 +152,11 @@ class MIP_Dpw2SawWaveform {
   / 1
 */
 
-class MIP_Dpw3SawWaveform {
+class SAT_Dpw3SawWaveform {
   private:
     float x1,x2;
   public:
-    MIP_Dpw3SawWaveform() {
+    SAT_Dpw3SawWaveform() {
       x1 = 0;
       x2 = 0;
     }

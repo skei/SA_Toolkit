@@ -1,5 +1,5 @@
-#ifndef mip_rochebois_waveform_included
-#define mip_rochebois_waveform_included
+#ifndef sat_rochebois_waveform_included
+#define sat_rochebois_waveform_included
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
@@ -19,14 +19,14 @@
 
 //----------
 
-class MIP_RocheboisSawWaveform {
+class SAT_RocheboisSawWaveform {
   private:
     float aw0, ax0, ay0, az0;
     float aw1, ax1, ay1, az1;
     float dpw0, dpx0, dpy0, dpz0;
     float dpw1, dpx1, dpy1, dpz1;
   public:
-    MIP_RocheboisSawWaveform() {
+    SAT_RocheboisSawWaveform() {
       aw0 = 0.0f;   ax0 = 0.0f;   ay0 = 0.0f;   az0 = 0.0f;
       aw1 = 0.0f;   ax1 = 0.0f;   ay1 = 0.0f;   az1 = 0.0f;
       dpw0 = 1.0f;  dpx0 = 1.0f;  dpy0 = 1.0f;  dpz0 = 1.0f;

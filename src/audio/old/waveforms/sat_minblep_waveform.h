@@ -1,8 +1,8 @@
-#ifndef mip_minblep_waveform_included
-#define mip_minblep_waveform_included
+#ifndef sat_minblep_waveform_included
+#define sat_minblep_waveform_included
 //----------------------------------------------------------------------
 
-class MIP_MinblepWaveform {
+class SAT_MinblepWaveform {
 };
 
 #if 0
@@ -69,7 +69,7 @@ inline float SINC(float x) {
   float pix;
   if(x == 0.0f) return 1.0f;
   else {
-    pix = MIP_PI * x;
+    pix = SAT_PI * x;
     return sinf(pix) / pix;
   }
 }
@@ -84,7 +84,7 @@ inline void BlackmanWindow(int n, float *w) {
   float f1, f2, fm;
   fm = (float)m;
   for(i = 0; i <= m; i++) {
-    f1 = (2.0f * MIP_PI * (float)i) / fm;
+    f1 = (2.0f * SAT_PI * (float)i) / fm;
     f2 = 2.0f * f1;
     w[i] = 0.42f - (0.5f * cosf(f1)) + (0.08f * cosf(f2));
   }
@@ -103,7 +103,7 @@ void DFT(int n, float *realTime, float *imagTime, float *realFreq, float *imagFr
   }
   for(k = 0; k < n; k++) {
     for (i = 0; i < n; i++) {
-      p = (2.0f * MIP_PI * (float)(k * i)) / n;
+      p = (2.0f * SAT_PI * (float)(k * i)) / n;
       sr = cosf(p);
       si = -sinf(p);
       realFreq[k] += (realTime[i] * sr) - (imagTime[i] * si);
@@ -125,7 +125,7 @@ void InverseDFT(int n, float *realTime, float *imagTime, float *realFreq, float 
   }
   for(k = 0; k < n; k++) {
     for(i = 0; i < n; i++) {
-      p = (2.0f * MIP_PI * (float)(k * i)) / n;
+      p = (2.0f * SAT_PI * (float)(k * i)) / n;
       sr = cosf(p);
       si = -sinf(p);
       realTime[k] += (realFreq[i] * sr) + (imagFreq[i] * si);
@@ -162,10 +162,10 @@ inline void cexp(float x, float y, float *zx, float *zy) {
 void RealCepstrum(int n, float *signal, float *realCepstrum) {
   float *realTime, *imagTime, *realFreq, *imagFreq;
   int i;
-  realTime = MIP_New float[n];
-  imagTime = MIP_New float[n];
-  realFreq = MIP_New float[n];
-  imagFreq = MIP_New float[n];
+  realTime = SAT_New float[n];
+  imagTime = SAT_New float[n];
+  realFreq = SAT_New float[n];
+  imagFreq = SAT_New float[n];
   // Compose Complex FFT Input
   for(i = 0; i < n; i++) {
     realTime[i] = signal[i];
@@ -182,10 +182,10 @@ void RealCepstrum(int n, float *signal, float *realCepstrum) {
   InverseDFT(n, realTime, imagTime, realFreq, imagFreq);
   // Output Real Part Of FFT
   for(i = 0; i < n; i++) realCepstrum[i] = realTime[i];
-  MIP_Delete realTime;
-  MIP_Delete imagTime;
-  MIP_Delete realFreq;
-  MIP_Delete imagFreq;
+  SAT_Delete realTime;
+  SAT_Delete imagTime;
+  SAT_Delete realFreq;
+  SAT_Delete imagFreq;
 }
 
 //----------
@@ -196,10 +196,10 @@ void MinimumPhase(int n, float *realCepstrum, float *minimumPhase) {
   int i, nd2;
   float *realTime, *imagTime, *realFreq, *imagFreq;
   nd2 = n / 2;
-  realTime = MIP_New float[n];
-  imagTime = MIP_New float[n];
-  realFreq = MIP_New float[n];
-  imagFreq = MIP_New float[n];
+  realTime = SAT_New float[n];
+  imagTime = SAT_New float[n];
+  realFreq = SAT_New float[n];
+  imagFreq = SAT_New float[n];
   if ((n % 2) == 1) {
     realTime[0] = realCepstrum[0];
     for(i = 1; i < nd2; i++) realTime[i] = 2.0f * realCepstrum[i];
@@ -216,10 +216,10 @@ void MinimumPhase(int n, float *realCepstrum, float *minimumPhase) {
   for(i = 0; i < n; i++) cexp(realFreq[i], imagFreq[i], &realFreq[i], &imagFreq[i]);
   InverseDFT(n, realTime, imagTime, realFreq, imagFreq);
   for(i = 0; i < n; i++) minimumPhase[i] = realTime[i];
-  MIP_Delete realTime;
-  MIP_Delete imagTime;
-  MIP_Delete realFreq;
-  MIP_Delete imagFreq;
+  SAT_Delete realTime;
+  SAT_Delete imagTime;
+  SAT_Delete realFreq;
+  SAT_Delete imagFreq;
 }
 
 //----------
@@ -231,8 +231,8 @@ float *GenerateMinBLEP(int zeroCrossings, int overSampling) {
   float r, a, b;
   float *buffer1, *buffer2, *minBLEP;
   n = (zeroCrossings * 2 * overSampling) + 1;
-  buffer1 = MIP_New float[n];
-  buffer2 = MIP_New float[n];
+  buffer1 = SAT_New float[n];
+  buffer2 = SAT_New float[n];
   // Generate Sinc
   a = (float)-zeroCrossings;
   b = (float)zeroCrossings;
@@ -247,7 +247,7 @@ float *GenerateMinBLEP(int zeroCrossings, int overSampling) {
   RealCepstrum(n, buffer1, buffer2);
   MinimumPhase(n, buffer2, buffer1);
   // Integrate Into MinBLEP
-  minBLEP = MIP_New float[n];
+  minBLEP = SAT_New float[n];
   a = 0.0f;
   for(i = 0; i < n; i++) {
     a += buffer1[i];
@@ -257,8 +257,8 @@ float *GenerateMinBLEP(int zeroCrossings, int overSampling) {
   a = minBLEP[n - 1];
   a = 1.0f / a;
   for(i = 0; i < n; i++) minBLEP[i] *= a;
-  MIP_Delete buffer1;
-  MIP_Delete buffer2;
+  SAT_Delete buffer1;
+  SAT_Delete buffer2;
   return minBLEP;
 }
 

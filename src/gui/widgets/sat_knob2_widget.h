@@ -18,7 +18,8 @@ class SAT_Knob2Widget
 : public SAT_PanelWidget {
   
 //------------------------------
-private:
+//private:
+public:
 //------------------------------
 
   SAT_KnobWidget*   MKnobWidget   = nullptr;

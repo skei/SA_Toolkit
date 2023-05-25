@@ -3,12 +3,12 @@
 //----------------------------------------------------------------------
 
 //#include <math.h> // expf
-#include "base/utils/mip_fast_math.h" // MIP_ExpF
+#include "base/utils/sat_fast_math.h" // SAT_ExpF
 
 //----------
 
 template <class T>
-class MIP_RcFilter {
+class SAT_RcFilter {
 
   private:
 
@@ -29,13 +29,13 @@ class MIP_RcFilter {
 
   public:
 
-    MIP_RcFilter() {
+    SAT_RcFilter() {
       MValue  = 0;
       MTarget = 0;  // 1
       MWeight = 0;  // 1
     }
 
-    ~MIP_RcFilter() {
+    ~SAT_RcFilter() {
     }
 
     void setup(T AValue=0, T ATarget=0, T AWeight=0) {
@@ -57,8 +57,8 @@ class MIP_RcFilter {
     void setFrequency(T AFrequency/*, T ASampleRate*/) {
       //if (ASampleRate > 0)
 
-        //MWeight = 1 - expf(-MIP_PI2 * AFrequency / MSampleRate );
-        MWeight = 1 - MIP_ExpF(-MIP_PI2 * AFrequency / MSampleRate );
+        //MWeight = 1 - expf(-SAT_PI2 * AFrequency / MSampleRate );
+        MWeight = 1 - SAT_ExpF(-SAT_PI2 * AFrequency / MSampleRate );
 
       //else
       //  MWeight = 0;
@@ -72,7 +72,7 @@ class MIP_RcFilter {
     void setTime(T ATime) {
 
       //if (ATime > 0) MWeight = 1 - expf(-1 / ATime);
-      if (ATime > 0) MWeight = 1 - MIP_ExpF(-1 / ATime);
+      if (ATime > 0) MWeight = 1 - SAT_ExpF(-1 / ATime);
       else MWeight = 0;
     }
 

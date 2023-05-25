@@ -1,5 +1,5 @@
-#ifndef mip_sinc_waveform_included
-#define mip_sinc_waveform_included
+#ifndef sat_sinc_waveform_included
+#define sat_sinc_waveform_included
 //----------------------------------------------------------------------
 
 // can't get this to work..
@@ -56,7 +56,7 @@
 
 */
 
-class MIP_SincSawWaveform {
+class SAT_SincSawWaveform {
 
   private:
     //float p;      // current position
@@ -76,7 +76,7 @@ class MIP_SincSawWaveform {
 
   public:
 
-    MIP_SincSawWaveform() {
+    SAT_SincSawWaveform() {
       //p     = 0.0f;
       //dp    = 1.0f;
 
@@ -120,7 +120,7 @@ class MIP_SincSawWaveform {
       //  t = tmax + tmax - t;
       //  dt = -dt;
       //}
-      //x = MIP_PI * t;
+      //x = SAT_PI * t;
 
       //dt = 1.0f;
 
@@ -134,7 +134,7 @@ class MIP_SincSawWaveform {
         //_t = -_t;
         _dt = -_dt;
       }
-      x = MIP_PI * _t;
+      x = SAT_PI * _t;
 
       if (x < 0.00001f) x=0.00001f; //don't divide by 0
       saw = leak*saw + dc + (float)sin(x)/(x);

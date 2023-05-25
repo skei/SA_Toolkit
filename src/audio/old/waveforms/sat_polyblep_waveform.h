@@ -1,15 +1,15 @@
-#ifndef mip_polyblep_waveform_included
-#define mip_polyblep_waveform_included
+#ifndef sat_polyblep_waveform_included
+#define sat_polyblep_waveform_included
 //----------------------------------------------------------------------
 
-#include "base/utils/mip_math.h"
+#include "base/utils/sat_math.h"
 
 /*
 
 // http://www.kvraudio.com/forum/viewtopic.php?p=5269941#p5269941
 // subtract result from naive saw..
 
-float MIP_PolyBlep(float t, float dt) {
+float SAT_PolyBlep(float t, float dt) {
   // 0 <= t < 1
   if (t < dt) {
     t /= dt;
@@ -53,7 +53,7 @@ float MIP_PolyBlep(float t, float dt) {
 
 // subtract result from naive saw..
 
-float MIP_PolyBlep(float t, float dt) {
+float SAT_PolyBlep(float t, float dt) {
   // 0 <= t < 1
   if (t < dt) {
     t /= dt;
@@ -78,9 +78,9 @@ float MIP_PolyBlep(float t, float dt) {
 
 // subtract result from naive saw..
 
-float MIP_PolyBlep2(float t, float dt) {
-  if (t<dt) return - MIP_Sqr(t/dt - 1.0f);
-  else if (t > 1.0f - dt) return MIP_Sqr((t - 1.0f) / dt + 1.0f);
+float SAT_PolyBlep2(float t, float dt) {
+  if (t<dt) return - SAT_Sqr(t/dt - 1.0f);
+  else if (t > 1.0f - dt) return SAT_Sqr((t - 1.0f) / dt + 1.0f);
   return 0;
 }
 
@@ -99,7 +99,7 @@ float MIP_PolyBlep2(float t, float dt) {
 
 // add result to naive saw..
 
-float MIP_PolyBlep3(float t, float dt, float h) {
+float SAT_PolyBlep3(float t, float dt, float h) {
   float t0,c0;
   if (t > (1-dt)) {             // -- before transition -----------------------
     t0 = t - 1;                 // fractional phase (negative, in samples)
@@ -135,7 +135,7 @@ float MIP_PolyBlep3(float t, float dt, float h) {
 // valimaki huovilainen
 
 /*
-float MIP_PolyBlep4(float t, float dt) {
+float SAT_PolyBlep4(float t, float dt) {
   if (t>0) return (t - (t*t)/2.0 - 0.5);
   return ((t*t)/2.0 + t + 0.5);
 }
@@ -147,7 +147,7 @@ float MIP_PolyBlep4(float t, float dt) {
 // pekonen
 
 /*
-float MIP_PolyBlep5(float t, float dt) {
+float SAT_PolyBlep5(float t, float dt) {
   if (t>0) return t*t*t*t*3/14 - t*t*t*4/7 + t*6/7 - 0.5;
   else return -t*t*t*t*3/14 - t*t*t*4/7 + t*6/7 + 0.5;
 }
@@ -155,7 +155,7 @@ float MIP_PolyBlep5(float t, float dt) {
 
 // pekonen2
 
-/*float MIP_PolyBlep6(float t, float dt) {
+/*float SAT_PolyBlep6(float t, float dt) {
   if (t>0) return t*t*t*t*3/26 - t*t*t*4/13 - t*t*3/13 + t*24/26 - 0.5;
   else return -t*t*t*t*3/26 - t*t*t*4/13 + t*t*3/13 + t*24/26 + 0.5;
 }
@@ -165,38 +165,38 @@ float MIP_PolyBlep5(float t, float dt) {
 //
 //----------------------------------------------------------------------
 
-class MIP_PolyblepSawWaveform {
+class SAT_PolyblepSawWaveform {
   public:
     float process(float t, float dt) {
       // Correct phase, so it would be in line with sin(2.*M_PI * t)
       t += 0.5f;
       if (t >= 1) t -= 1;
       float saw = 2.0f * t - 1;
-      saw -= MIP_PolyBlep(t,dt);
+      saw -= SAT_PolyBlep(t,dt);
       return saw;
     }
 };
 
-class MIP_Polyblep2SawWaveform {
+class SAT_Polyblep2SawWaveform {
   public:
     float process(float t, float dt) {
       // Correct phase, so it would be in line with sin(2.*M_PI * t)
       t += 0.5f;
       if (t >= 1) t -= 1;
       float saw = 2.0f * t - 1;
-      saw -= MIP_PolyBlep2(t,dt);
+      saw -= SAT_PolyBlep2(t,dt);
       return saw;
     }
 };
 
-class MIP_Polyblep3SawWaveform {
+class SAT_Polyblep3SawWaveform {
   public:
     float process(float t, float dt) {
       // Correct phase, so it would be in line with sin(2.*M_PI * t)
       t += 0.5f;
       if (t >= 1) t -= 1;
       float saw = 2.0f * t - 1;
-      saw += MIP_PolyBlep3(t,dt,-2);
+      saw += SAT_PolyBlep3(t,dt,-2);
       return saw;
     }
 };
@@ -206,21 +206,21 @@ class MIP_Polyblep3SawWaveform {
 
 // pwm: replace the 0.5 to adjust pulsewidth
 
-class MIP_PolyblepSquWaveform {
+class SAT_PolyblepSquWaveform {
   public:
     float process(float t, float dt, float pw=0.5f) {
       // Correct phase, so it would be in line with sin(2.*M_PI * t)
       /*t += 0.5;
       if t >= 1 then t -= 1;*/
       float saw = 2.0f * t - 1;
-      saw -= MIP_PolyBlep(t,dt);
+      saw -= SAT_PolyBlep(t,dt);
       float result = saw;
 
       //t += 0.5f; // pulsewidth
       t += pw;
       if (t >= 1.0f) t -= 1.0f;
       saw = 2.0f * t - 1;
-      saw -= MIP_PolyBlep(t,dt);
+      saw -= SAT_PolyBlep(t,dt);
       result -= saw;
       return result;
     }
@@ -229,12 +229,12 @@ class MIP_PolyblepSquWaveform {
 
 //----------------------------------------------------------------------
 
-class MIP_PolyblepTriWaveform {
+class SAT_PolyblepTriWaveform {
   private:
-    MIP_PolyblepSquWaveform squ;
+    SAT_PolyblepSquWaveform squ;
     float x1;
   public:
-    MIP_PolyblepTriWaveform() {
+    SAT_PolyblepTriWaveform() {
       x1 = 0;
     }
     float process(float t, float dt) {
@@ -250,13 +250,13 @@ class MIP_PolyblepTriWaveform {
 // https://github.com/martinfinke/PolyBLEP/blob/master/PolyBLEP.cpp
 //----------------------------------------------------------------------
 
-class MIP_PolyblepRampWaveform {
+class SAT_PolyblepRampWaveform {
   public:
     float process(float t, float dt) {
       //t += 0.5f;
       if (t >= 1) t -= 1;
       float ramp = 1 - 2*t;
-      ramp += MIP_PolyBlep(t,dt);
+      ramp += SAT_PolyBlep(t,dt);
       return ramp;
     }
 };

@@ -1,5 +1,5 @@
-#ifndef mip_eptr_waveform_included
-#define mip_eptr_waveform_included
+#ifndef sat_eptr_waveform_included
+#define sat_eptr_waveform_included
 //----------------------------------------------------------------------
 
 /*
@@ -37,7 +37,7 @@
 //  return result;
 //}
 
-class MIP_EptrSawWaveform {
+class SAT_EptrSawWaveform {
   public:
     float process(float t, float dt) {
       float result = t;

@@ -308,8 +308,8 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     paintChildWidgets(AContext);
-    drawHostIndicators(AContext);
     drawBorder(AContext);
+    drawHostIndicators(AContext);
   }
   
 //  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {

@@ -93,7 +93,15 @@ public:
 //------------------------------
 
   bool init() final {
+    
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
+    
+    SAT_Print("ceil(-1.1) = %f\n",ceil(-1.1));
+    SAT_Print("ceil(-0.9) = %f\n",ceil(-0.9));
+    SAT_Print("ceil(-0.1) = %f\n",ceil(-0.1));
+    SAT_Print("ceil( 0.1) = %f\n",ceil( 0.1));
+    SAT_Print("ceil( 0.9) = %f\n",ceil( 0.9));
+    SAT_Print("ceil( 1.1) = %f\n",ceil( 1.1));
     
     // extensions
     registerAllExtensions();

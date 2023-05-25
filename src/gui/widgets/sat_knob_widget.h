@@ -271,9 +271,9 @@ public:
     drawText(AContext);
     drawValue(AContext);
     drawModulation(AContext);
-    drawHostIndicators(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
+    drawHostIndicators(AContext);
 
   }
 

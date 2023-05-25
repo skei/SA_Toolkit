@@ -2,10 +2,10 @@
 #define sa_tyr_osc_included
 //----------------------------------------------------------------------
 
-#include "base/utils/mip_fast_math.h"
-#include "base/utils/mip_interpolation.h"
-#include "audio/old/waveforms/mip_dsf_waveform.h"
-#include "audio/old/filters/mip_allpass_filter.h"
+#include "base/utils/sat_fast_math.h"
+#include "base/utils/sat_interpolation.h"
+#include "audio/old/waveforms/sat_dsf_waveform.h"
+#include "audio/old/filters/sat_allpass_filter.h"
 
 template <class T>
 class sa_tyr_osc {
@@ -35,12 +35,12 @@ protected:
   uint32_t        MPhaseModType   = 0;
   T               MPhaseModAmount = 0;
 
-  //MIP_DsfWaveform MDsf            = {};
+  //SAT_DsfWaveform MDsf            = {};
   //T               MPhase2         = 0.0;
   //T               MPhaseAdd2      = 0.0;
 
-  MIP_AllpassFilter<T> MAllpassW  = {};
-  MIP_AllpassFilter<T> MAllpassP  = {};
+  SAT_AllpassFilter<T> MAllpassW  = {};
+  SAT_AllpassFilter<T> MAllpassP  = {};
 
   T p_diff_prev = 0.0;
   T p_int_prev  = 0.0;
@@ -65,15 +65,15 @@ public:
 //------------------------------
 
   void setFrequency(T hz) {
-    //MIP_Print("hz %.2f\n",hz);
-    MIP_Assert( hz >= 1.0 );
-    MIP_Assert( hz < (MSampleRate * 0.5) );
+    //SAT_Print("hz %.2f\n",hz);
+    SAT_Assert( hz >= 1.0 );
+    SAT_Assert( hz < (MSampleRate * 0.5) );
     MPhaseAdd = hz * MInvSampleRate;
   }
 
   void setSampleRate(T ARate) {
     MSampleRate = ARate;
-    MIP_Assert(ARate > 0);
+    SAT_Assert(ARate > 0);
     MInvSampleRate = 1.0 / ARate;
   }
 
@@ -100,9 +100,9 @@ private:
 //------------------------------
 
 T curve(T in, T wm) {
-  T sign_in = MIP_Sign(in);
+  T sign_in = SAT_Sign(in);
   T abs_in = abs(in);
-  return MIP_Curve(abs_in,wm) * sign_in;
+  return SAT_Curve(abs_in,wm) * sign_in;
 }
 
 //------------------------------
@@ -113,7 +113,7 @@ public:
     tri_z1 = 0.0;
     //diff_z1 = 0.0;
     if (AResetPhase) {
-      if (ARandomPhase) MPhase = MIP_Random();
+      if (ARandomPhase) MPhase = SAT_Random();
       else MPhase = 0.0;
       //MPhase2 = 0.0;
     }
@@ -146,21 +146,21 @@ public:
 
       case SA_TYR_PM_TYPE_SYNC: {
         t *= 1.0 + (MPhaseModAmount * 12);
-        t = MIP_Fract(t);
+        t = SAT_Fract(t);
         break;
       }
 
       case SA_TYR_PM_TYPE_SYNC_CLAMP: {
         t *= 1.0 + (MPhaseModAmount * 12);
-        t = MIP_Clamp(t,0,1); // do we need this?
-        t = MIP_Fract(t);
+        t = SAT_Clamp(t,0,1); // do we need this?
+        t = SAT_Fract(t);
         break;
       }
 
       case SA_TYR_PM_TYPE_PHASE_MOD: {
         T f = mod * (MPhaseModAmount * 12);
         t += (t * f);
-        t = MIP_Fract(t);
+        t = SAT_Fract(t);
         break;
       }
 
@@ -211,14 +211,14 @@ public:
         }
         // saw 1
         T t1    = t;// + 0.5;
-        t1      = MIP_Fract(t1);
+        t1      = SAT_Fract(t1);
         T saw1  = ((2.0f * t1) - 1.0);
-        saw1   -= MIP_PolyBlep(t1,dt);
+        saw1   -= SAT_PolyBlep(t1,dt);
         // saw 2
         T t2    = t1 + MWidth;
-        t2      = MIP_Fract(t2);
+        t2      = SAT_Fract(t2);
         T saw2  = ((2.0 * t2) - 1.0);
-        saw2   -= MIP_PolyBlep(t2,dt);
+        saw2   -= SAT_PolyBlep(t2,dt);
         // squ
         T squ1  = saw1 - (saw2 * _squ);
         // tri
@@ -227,11 +227,11 @@ public:
         T tri1  = tri_z1 * 4.0;
         // sin
 
-        T sin1  = sin(t * MIP_PI2);
-//        T sin1  = MIP_SinF4( t * MIP_PI2);
+        T sin1  = sin(t * SAT_PI2);
+//        T sin1  = SAT_SinF4( t * SAT_PI2);
 
-        out     = MIP_Interpolate_Linear(_tri,squ1,tri1);
-        out     = MIP_Interpolate_Linear(_sin,out,sin1);
+        out     = SAT_Interpolate_Linear(_tri,squ1,tri1);
+        out     = SAT_Interpolate_Linear(_sin,out,sin1);
 
         break;
       }
@@ -269,7 +269,7 @@ public:
       }
 
       case SA_TYR_WM_TYPE_FOLD: {
-        T s = MIP_Sign(out);
+        T s = SAT_Sign(out);
         T a = abs(out);
         a *= 1.0 + (MWaveModAmount * 2.0);
         if (a > 1.0) {
@@ -281,13 +281,13 @@ public:
 
       case SA_TYR_WM_TYPE_AMPL_MOD: {
         T am = out * abs(mod);
-        out = MIP_Interpolate_Linear(MWaveModAmount,out,am);
+        out = SAT_Interpolate_Linear(MWaveModAmount,out,am);
         break;
       }
 
       case SA_TYR_WM_TYPE_RING_MOD: {
         T rm = out * mod;
-        out = MIP_Interpolate_Linear(MWaveModAmount,out,rm);
+        out = SAT_Interpolate_Linear(MWaveModAmount,out,rm);
         break;
       }
 
@@ -317,14 +317,14 @@ public:
 
     //    if ((MPhase < 0.0) || (MPhase >= 1.0)) {
     //      //MWrapped = true;
-    //      MPhase = MIP_Fract(MPhase);
+    //      MPhase = SAT_Fract(MPhase);
     //    }
 
     while (MPhase < 0.0)  MPhase += 1.0;
     while (MPhase >= 1.0) MPhase -= 1.0;
 
     //MPhase2 += MPhaseAdd2 + additional_phase_add;
-    //MPhase2 = MIP_Fract(MPhase2);
+    //MPhase2 = SAT_Fract(MPhase2);
 
     return out;
 

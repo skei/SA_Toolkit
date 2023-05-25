@@ -53,8 +53,11 @@ private:
   bool      MIsDragging       = false;
   int32_t   MDragEdge         = 0;
   
-  double MPreviousXpos = 0.0;
-  double MPreviousYpos = 0.0;
+  double    MPreviousXpos     = 0.0;
+  double    MPreviousYpos     = 0.0;
+  
+//  bool      MPushOther = true;
+//  bool      MStopOther = true;
 
 //------------------------------
 public:
@@ -119,9 +122,10 @@ public:
   //----------
 
   virtual void drawValueBar(SAT_PaintContext* AContext) {
+    //double S = getWindowScale();
     SAT_Assert(AContext);
     if (MDrawValueBar) {
-      //double S = getWindowScale();
+      double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       
@@ -136,10 +140,13 @@ public:
       SAT_Rect mrect = getRect();
       mrect.shrink(MValueBarOffset);
       //if ((mrect.w > 0.0) && (mrect.h > 0.0)) {
+        
+      //mrect.x += 2;
+      //mrect.w -= 4;
 
-      double x = mrect.x  + (v1 * mrect.w);
+      double x = mrect.x  + (v1 * mrect.w) - (2*S);
       double y = mrect.y;
-      double w = (v2 - v1) * mrect.w;
+      double w = ((v2 - v1) * mrect.w) + (4*S);
       double h = mrect.h;
       
       painter->setFillColor(MValueBarColor);
@@ -210,10 +217,11 @@ public:
   virtual void drawHoverEdge(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawHoverEdge) {
-      //double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       
+      double S = getWindowScale();
+
       double v1 = getValue(0);
       SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) v1 = param->denormalizeValue(v1);
@@ -222,16 +230,15 @@ public:
       param = (SAT_Parameter*)getParameter(1);
       if (param) v2 = param->denormalizeValue(v2);
       
-      double S = getWindowScale();
       SAT_Rect mrect = getRect();
       mrect.shrink(MValueBarOffset);
       //if ((mrect.w > 0.0) && (mrect.h > 0.0)) {
   
-      double x = mrect.x;//  + (v1 * mrect.w) - (2*S);
+      double x = mrect.x;
       double y = mrect.y;
       double w = 4*S;
       double h = mrect.h;
-
+      
       painter->setFillColor(MEdgeColor);
 
       switch (MHoverEdge) {
@@ -295,9 +302,9 @@ public:
     drawHoverEdge(AContext);
     drawText(AContext);
     drawValues(AContext);
-    drawHostIndicators(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
+    drawHostIndicators(AContext);
   }
   
   //----------

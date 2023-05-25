@@ -1,5 +1,5 @@
-#ifndef mip_audio_jack_included
-#define mip_audio_jack_included
+#ifndef sat_audio_jack_included
+#define sat_audio_jack_included
 //----------------------------------------------------------------------
 
 #include <jack/jack.h>
@@ -7,19 +7,19 @@
 
 //----------------------------------------------------------------------
 
-class MIP_AudioIOListener {
+class SAT_AudioIOListener {
   //virtual int on_audio_process(uint32_t length) { return 0; }
 };
 
 //----------------------------------------------------------------------
 
-class MIP_AudioJack {
+class SAT_AudioJack {
 
 //------------------------------
 private:
 //------------------------------
 
-  MIP_AudioIOListener*  MListener         = nullptr;
+  SAT_AudioIOListener*  MListener         = nullptr;
 
   jack_client_t*        MJackClient       = nullptr;
   jack_port_t*          MAudioInputPort1  = nullptr;
@@ -38,7 +38,7 @@ public:
 
 static
 int jack_process_callback(jack_nframes_t nframes, void* arg) {
-  MIP_AudioJack* jack = (MIP_AudioJack*)arg;
+  SAT_AudioJack* jack = (SAT_AudioJack*)arg;
   return jack->process(nframes);
 }
 
@@ -63,8 +63,8 @@ public:
         uint8_t msg2 = event.buffer[1];
         uint8_t msg3 = event.buffer[2];
 
-        //TODO: insert into MIP_MidiTrack
-        MIP_Print("midi: %02x %02x %02x\n",msg1,msg2,msg3);
+        //TODO: insert into SAT_MidiTrack
+        SAT_Print("midi: %02x %02x %02x\n",msg1,msg2,msg3);
 
         uint32_t offset = i;
         jack_midi_data_t* buffer = jack_midi_event_reserve(midi_out_port,offset,3);
@@ -92,7 +92,7 @@ public:
 public:
 //------------------------------
 
-    bool init(MIP_AudioIOListener* AListener) {
+    bool init(SAT_AudioIOListener* AListener) {
       MListener   = AListener;
       jack_status_t status;// = (jack_status_t)0;
       MJackClient = jack_client_open("MIP",JackNullOption,&status);

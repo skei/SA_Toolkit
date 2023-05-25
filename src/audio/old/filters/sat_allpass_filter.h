@@ -3,10 +3,10 @@
 //----------------------------------------------------------------------
 
 //#include "base/mip_math.h" // KKillDenorm
-#include "audio/mip_audio_math.h" // KKillDenorm
+#include "audio/sat_audio_math.h" // KKillDenorm
 
 template <typename T>
-class MIP_AllpassFilter {
+class SAT_AllpassFilter {
 
   private:
 
@@ -30,11 +30,11 @@ class MIP_AllpassFilter {
     //  y2  = 0;
     //}
 
-    MIP_AllpassFilter() {
+    SAT_AllpassFilter() {
       setCoefficient(0);
     }
 
-    MIP_AllpassFilter(T ACoefficient) {
+    SAT_AllpassFilter(T ACoefficient) {
       setCoefficient(ACoefficient);
     }
 
@@ -67,7 +67,7 @@ class MIP_AllpassFilter {
       //output := KKillDenorm(output);
       //y0 := output;
       y0 = x2 + ( (AInput-y2) * a );
-      y0 = MIP_KillDenormal(y0);
+      y0 = SAT_KillDenormal(y0);
       return y0;
     }
 
@@ -112,7 +112,7 @@ public:
 
     void Reset()
     {
-		MIP_Memset(this->_Buffer, 0, 3072 * sizeof(float));
+		SAT_Memset(this->_Buffer, 0, 3072 * sizeof(float));
     }
 
     __forceinline float Process(float input)
