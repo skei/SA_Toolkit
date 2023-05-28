@@ -92,7 +92,7 @@ public:
     
     // parameters
     appendParameter(new SAT_TextParameter("wf",   0, 0, 4, sa_synth_osc_type_text ));     // 0
-    //appendParameter(new SAT_IntParameter( "tu",   0, -12, 12 ));                          // 1
+  //appendParameter(new SAT_IntParameter( "tu",   0, -12, 12 ));                          // 1
     appendParameter(new SAT_Parameter(    "tu",   0, -2, 2 ));                            // 1
     appendParameter(new SAT_Parameter(    "A",    0   ));                                 // 2
     appendParameter(new SAT_Parameter(    "D",    0   ));                                 // 3
@@ -151,6 +151,39 @@ public:
     return true;
   }
 
+  //----------
+  
+  uint32_t remote_controls_count() override {
+    SAT_PRINT;
+    return 1;
+  }  
+  
+  //----------
+  
+  bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
+    SAT_PRINT;
+    switch (page_index) {
+      case 0: {
+        strcpy(page->section_name,"Section");
+        page->page_id = 0;
+        strcpy(page->page_name,"Parameters");
+        page->param_ids[0] = 0;
+        page->param_ids[1] = 1;
+        page->param_ids[2] = CLAP_INVALID_ID;
+        page->param_ids[3] = 13;
+        page->param_ids[4] = 6;
+        page->param_ids[5] = 7;
+        page->param_ids[6] = 8;
+        page->param_ids[7] = CLAP_INVALID_ID;
+        page->is_for_preset = false;
+        SAT_PRINT;
+        return true;
+      }
+    }
+    SAT_PRINT;
+    return false;
+  }  
+  
   //----------
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
