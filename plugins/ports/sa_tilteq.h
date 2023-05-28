@@ -83,7 +83,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     appendParameter(new SAT_TextParameter( "Processing",  0,  0,   1, str_proc ));
     appendParameter(new SAT_Parameter(     "Center Freq", 50, 0,   100 ));

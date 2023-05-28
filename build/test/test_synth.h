@@ -19,17 +19,6 @@
 #include "test_synth_voice.h"
 #include "test_synth_widgets.h"
 
-
-
-
-
-
-
-
-
-
-
-
 //----------------------------------------------------------------------
 //
 //
@@ -93,30 +82,22 @@ public:
 //------------------------------
 
   bool init() final {
-    
     SAT_Print("id: '%s'\n",test_synth_descriptor.id);
-    
-    SAT_Print("ceil(-1.1) = %f\n",ceil(-1.1));
-    SAT_Print("ceil(-0.9) = %f\n",ceil(-0.9));
-    SAT_Print("ceil(-0.1) = %f\n",ceil(-0.1));
-    SAT_Print("ceil( 0.1) = %f\n",ceil( 0.1));
-    SAT_Print("ceil( 0.9) = %f\n",ceil( 0.9));
-    SAT_Print("ceil( 1.1) = %f\n",ceil( 1.1));
     
     // extensions
     registerAllExtensions();
     
     // ports
     appendClapNoteInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     // parameters
-    appendParameter(new SAT_Parameter(    "Param1", 0.1        ));
-    appendParameter(new SAT_Parameter(    "Param2", 0.4, -2, 4 ));
-    appendParameter(new SAT_Parameter(    "Param3", 0.7,  0, 2 ));
-    appendParameter(new SAT_IntParameter( "Param4", 0,   -5, 5 ));
-    appendParameter(new SAT_Parameter(    "P5",     0.2        ));
-    appendParameter(new SAT_Parameter(    "P6",     0.8        ));
+    appendParameter(new SAT_Parameter(    "Param1", 0.1          ));
+    appendParameter(new SAT_Parameter(    "Param2", 0.4, -2,  4  ));
+    appendParameter(new SAT_Parameter(    "Param3", 0.7,  0,  2  ));
+    appendParameter(new SAT_IntParameter( "Param4", 0,   -5,  5  ));
+    appendParameter(new SAT_Parameter(    "P5",     0.2          ));
+    appendParameter(new SAT_Parameter(    "P6",     0.8          ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     
     // voice manager

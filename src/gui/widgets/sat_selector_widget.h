@@ -14,7 +14,8 @@
 //----------------------------------------------------------------------
 
 class SAT_SelectorWidget
-: public SAT_TextWidget
+//: public SAT_TextWidget
+: public SAT_ValueWidget
 , public SAT_MenuListener {
 
 //------------------------------
@@ -28,12 +29,15 @@ public:
 //------------------------------
 
   SAT_SelectorWidget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu)
-  : SAT_TextWidget(ARect,AText) {
+  //: SAT_TextWidget(ARect,AText) {
+  : SAT_ValueWidget(ARect,AText,0) {
     setName("SAT_SelectorWidget");
     setCursor(SAT_CURSOR_FINGER);
     MMenu = AMenu;
     MMenu->setMenuListener(this);
     setInnerBorder(SAT_Rect(2,2));
+    setDrawValue(false);
+    setTextSize(6);
     
       SAT_SymbolWidget* symbol = new SAT_SymbolWidget(SAT_Rect(7,6),SAT_SYMBOL_FILLED_TRI_DOWN);
       appendChildWidget(symbol);
@@ -63,14 +67,40 @@ public: // widget
       }
     }
   }
+  
+  void setValue(double value, uint32_t index=0) override {
+    //SAT_Print("value %f\n",value);
+    SAT_ValueWidget::setValue(value,index);
+    
+    SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    if (param) {
+      uint32_t i = param->denormalizeValue(value);
+      SAT_TextWidget* widget = (SAT_TextWidget*)MMenu->getChildWidget(i);
+      const char* text = widget->getText();
+      //SAT_Print("%s\n",text);
+      setText(text);
+      //parentRedraw();
+      do_widgetListener_redraw(this,0);
+    }
+    
+  }
 
 //------------------------------
 public: // menu listener
 //------------------------------
 
   void do_menu_select(int32_t AIndex) override {
+    
+    SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    if (param) {
+      double value = param->normalizeValue(AIndex);
+      setValue(value);
+      do_widgetListener_update(this,0);
+    }
+    
     SAT_TextWidget* widget = (SAT_TextWidget*)MMenu->getChildWidget(AIndex);
     const char* text = widget->getText();
+    //SAT_Print("%s\n",text);
     setText(text);
     //parentRedraw();
     do_widgetListener_redraw(this,0);

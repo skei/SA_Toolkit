@@ -120,7 +120,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     appendParameter(new SAT_Parameter( "Dry",      0,   -48,   0 ));
     appendParameter(new SAT_Parameter( "Wet",     -12,  -48,   0 ));

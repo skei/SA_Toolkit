@@ -31,6 +31,7 @@ private:
   char      MText[1024]       = {0};
   
   bool      MAutoTextSize     = false;
+  bool      MDrawParamText    = false;
 
   bool      MDrawTextDropShadow   = false;
   double    MTextDropShadowSize   = 4.0;        //2.0;
@@ -61,7 +62,12 @@ public:
   virtual void setTextSize(double ASize)          { MTextSize = ASize; }
   virtual void setTextAlignment(uint32_t AAlign)  { MTextAlignment = AAlign; }
   virtual void setTextOffset(SAT_Rect AOffset)    { MTextOffset = AOffset; }
-  virtual void setText(const char* AText)         { strcpy(MText,AText); }
+  
+  virtual void setText(const char* AText) {
+    //SAT_Print("%s\n",AText);
+    strcpy(MText,AText);
+  }
+  
   virtual void setAutoTextSize(bool AAuto=true)   { MAutoTextSize = AAuto; }
 
   virtual void setDrawTextDropShadow(bool ADraw=true)     { MDrawTextDropShadow = ADraw; }
@@ -132,13 +138,14 @@ public:
         //}
       }
       
-      SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
+      char* text = MText;
+      
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
         // drop shadow
         //painter->drawTextBox(mrect,param->getName(),MTextAlignment);
-        char* text = param->getName();
+        if (MDrawParamText) text = param->getName();
         SAT_Point p = painter->getTextPos(mrect,text,MTextAlignment);
-        
         if (MDrawTextDropShadow) {
           painter->setFontBlur(MTextDropShadowSize);
           painter->setTextColor(MTextDropShadowColor);
@@ -154,7 +161,6 @@ public:
         // drop shadow
         //painter->drawTextBox(mrect,MText,MTextAlignment);
         SAT_Point p = painter->getTextPos(mrect,MText,MTextAlignment);
-        
         if (MDrawTextDropShadow) {
           painter->setFontBlur(MTextDropShadowSize);
           painter->setTextColor(MTextDropShadowColor);
@@ -162,7 +168,7 @@ public:
           painter->setFontBlur(0);
         }
         painter->setTextColor(MTextColor);
-        painter->drawText(p.x,p.y,MText);
+        painter->drawText(p.x,p.y,text);
       }
       
     }

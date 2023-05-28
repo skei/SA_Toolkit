@@ -88,7 +88,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     appendParameter(new SAT_Parameter( "Threshold", 0,  -12, 1 ));
     appendParameter(new SAT_Parameter( "Ratio",     1,   1,  50 ));

@@ -104,7 +104,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter( "Low Cont",  1.0,   0.0, 10.0 ));
     appendParameter(new SAT_Parameter( "Process",   1.0,   0.0, 10.0 ));
     appendParameter(new SAT_Parameter( "Output",   -3.0, -30.0,  0.0 ));

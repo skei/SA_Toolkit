@@ -70,7 +70,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     appendParameter( new SAT_Parameter(   "Factor", 1,   0,  8 ));
     appendParameter( new SAT_Parameter("Semitones", 0, -24, 24 ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);

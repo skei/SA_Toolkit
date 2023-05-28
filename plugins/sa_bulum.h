@@ -125,7 +125,7 @@ public: // plugin
 
   bool init() final {
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     registerDefaultExtensions();
     appendParameter(new SAT_Parameter(      "Master",              -6,   -60,  6                  ));
     appendParameter(new SAT_IntParameter(   "Number of grains",     10,   1,   MAX_GRAINS         ));

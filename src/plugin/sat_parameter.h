@@ -124,16 +124,16 @@ public:
 //virtual sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
 //virtual sat_param_t           getLastModulatedValue() { return MLastModulated; }
 
-  uint32_t    getModulationState()  { return MModulationState; }
-  SAT_Color   getModulationColor()  { return MModulationColor; }
+  uint32_t                      getModulationState()    { return MModulationState; }
+  SAT_Color                     getModulationColor()    { return MModulationColor; }
 
-  bool        getIsMapped()         { return MIsMapped; }
-  SAT_Color   getMappedColor()      { return MMappedColor; }
-  const char* getMappedLabel()      { return MMappedLabel; }
-  const char* getMappedDesc()       { return MMappedDesc; }
+  bool                          getIsMapped()           { return MIsMapped; }
+  SAT_Color                     getMappedColor()        { return MMappedColor; }
+  const char*                   getMappedLabel()        { return MMappedLabel; }
+  const char*                   getMappedDesc()         { return MMappedDesc; }
   
-  uint32_t    getAutomationState()  { return MAutomationState; }
-  SAT_Color   getAutomationColor()  { return MAutomationColor; }
+  uint32_t                      getAutomationState()    { return MAutomationState; }
+  SAT_Color                     getAutomationColor()    { return MAutomationColor; }
 
 
 //------------------------------
@@ -334,6 +334,7 @@ public:
 
   sat_param_t getValue() override {
     //SAT_Print("MValue %f\n",MValue);
+    //return SAT_Trunc(value);
     return MValue;
   }
 
@@ -348,7 +349,10 @@ public:
   
   bool valueToText(sat_param_t value, char *display, uint32_t size) override {
     //SAT_Print("value %f -> %.f\n",value,value);
-    sprintf(display,"%.f",value);
+    sat_param_t v = SAT_Trunc(value);
+    sprintf(display,"%.f",v);
+    //sprintf(display,"%.f (%f)",v,value);
+    
     return true;
   }
 

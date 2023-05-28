@@ -469,7 +469,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     appendParameter( new SAT_Parameter(     "Roomsize", 0.56, 0.01, 2.0 ));
     appendParameter( new SAT_Parameter(     "Damp",     0.45, 0.01, 2.0 ));

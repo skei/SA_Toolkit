@@ -4,6 +4,11 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <VirtualDirectory Name="sa_synth">
+      <File Name="../../plugins/sa_synth/sa_synth_gui.h"/>
+      <File Name="../../plugins/sa_synth/sa_synth_voice.h"/>
+    </VirtualDirectory>
+    <File Name="../../plugins/sa_synth.h"/>
     <File Name="../../plugins/sa_everything.h"/>
     <VirtualDirectory Name="sa_demo">
       <File Name="../../plugins/sa_demo/sa_demo_page_painting.h"/>

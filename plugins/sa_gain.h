@@ -56,7 +56,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     setInitialEditorSize(300,160,1.0);
     

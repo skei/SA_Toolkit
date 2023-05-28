@@ -106,17 +106,11 @@ public:
 
   void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) { //, SAT_ParameterArray* AParameters) {
     //SAT_Print("AParameters %p\n",AParameters);
-
     MVoiceContext.process_context   = nullptr; //
     MVoiceContext.voice_buffer      = MVoiceBuffer;
     MVoiceContext.min_frames_count  = min_frames_count;
     MVoiceContext.max_frames_count  = max_frames_count;
     MVoiceContext.sample_rate       = sample_rate;
-
-    // !!
-    //MVoiceContext.parameters        = AParameters; // already in SAT_ProcessContext?
-    //
-
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].init(i,&MVoiceContext);
     }

@@ -16,8 +16,8 @@
 #include "../plugins/sa_cred.h"
 #include "../plugins/sa_gain.h"
 #include "../plugins/sa_pitch.h"
-
 #include "../plugins/sa_demo.h"
+#include "../plugins/sa_synth.h"
 
 //----------------------------------------------------------------------
 //
@@ -31,8 +31,8 @@ void SAT_Register(SAT_Registry* ARegistry) {
   ARegistry->registerDescriptor(&sa_cred_descriptor);
   ARegistry->registerDescriptor(&sa_gain_descriptor);
   ARegistry->registerDescriptor(&sa_pitch_descriptor);
-  
   ARegistry->registerDescriptor(&sa_demo_descriptor);
+  ARegistry->registerDescriptor(&sa_synth_descriptor);
 }
 
 //----------
@@ -46,6 +46,7 @@ const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descrip
     case 3: plugin = new sa_gain_plugin(ADescriptor,AHost);     return plugin->getPlugin();
     case 4: plugin = new sa_pitch_plugin(ADescriptor,AHost);    return plugin->getPlugin();
     case 5: plugin = new sa_demo_plugin(ADescriptor,AHost);     return plugin->getPlugin();
+    case 6: plugin = new sa_synth_plugin(ADescriptor,AHost);    return plugin->getPlugin();
   }
   return nullptr;
 }

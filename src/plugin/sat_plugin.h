@@ -90,7 +90,7 @@ private:
   SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
   SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
 
-  bool                              MProcessThreaded                              = false; // not used here?
+  bool                              MProcessThreaded                              = false;
   uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
 
   #ifdef SAT_DEBUG_WINDOW
@@ -272,7 +272,10 @@ public: // plugin
   // [audio-thread & active_state & processing_state]
 
   clap_process_status process(const clap_process_t* process) override {
+    
     MProcessContext.process = process;
+    MProcessContext.parameters = &MParameters;
+    
     flushParamFromGuiToAudio();
     if (process->transport) handleTransportEvent(process->transport);
     //preProcessEvents(process->in_events,process->out_events);
@@ -1707,7 +1710,7 @@ public: // extensions
     #ifndef SAT_NO_GUI
       registerExtension(CLAP_EXT_GUI,                     &MGuiExt);
     #endif
-    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
+    //registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
     registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                     &MStateExt);
   }
@@ -1716,6 +1719,7 @@ public: // extensions
 
   void registerDefaultSynthExtensions() {
     registerDefaultExtensions();
+    registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
     registerExtension(CLAP_EXT_THREAD_POOL,               &MThreadPoolExt);
     registerExtension(CLAP_EXT_VOICE_INFO,                &MVoiceInfoExt);
   }
@@ -2364,7 +2368,7 @@ public: // audio output ports
 
   //----------
 
-  SAT_AudioPort* appendStereoOutputPort() {
+  SAT_AudioPort* appendStereoAudioOutputPort() {
     uint32_t index = MAudioOutputPorts.size();
     SAT_AudioPort* port = new SAT_AudioPort(index,"Audio",CLAP_AUDIO_PORT_IS_MAIN,2,CLAP_PORT_STEREO,CLAP_INVALID_ID);
     MAudioOutputPorts.append(port);

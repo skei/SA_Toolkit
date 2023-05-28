@@ -76,7 +76,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     appendParameter(new SAT_Parameter(     "Saturation", 0,  0,   1 ));
     appendParameter(new SAT_IntParameter(  "Stages",     1,  1,   10 ));

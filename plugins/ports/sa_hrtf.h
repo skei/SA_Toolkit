@@ -80,7 +80,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     appendParameter(new SAT_Parameter( "Rotate",   0, -180,  180 ));
     appendParameter(new SAT_Parameter( "Slope",    0, -90,   90  ));

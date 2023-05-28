@@ -74,7 +74,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter( "Pitch",     0,    -1, 1   ));
     appendParameter(new SAT_Parameter( "Window",    100,   1, 200 ));
     appendParameter(new SAT_Parameter( "CrossFade", 100,   0, 100 ));

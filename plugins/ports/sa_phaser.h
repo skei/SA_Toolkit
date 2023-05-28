@@ -161,7 +161,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     
     appendParameter( new SAT_Parameter(   "LFO Freq",       0.4,  0.05, 5.0 ));
     appendParameter( new SAT_Parameter(   "LFO StartPhase", 0,    0,    256 ));

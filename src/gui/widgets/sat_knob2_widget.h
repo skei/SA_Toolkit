@@ -39,6 +39,7 @@ public:
     double w = ARect.w;
     double h = ARect.h - MTextHeight - MValueHeight;
     double size = SAT_Min(w,h);
+    double r = size * 0.2;
     
     MTextWidget  = new SAT_TextWidget( SAT_Rect(ARect.w,MTextHeight),"Text");
     MKnobWidget  = new SAT_KnobWidget( SAT_Rect(size,size),"",0.0);
@@ -49,12 +50,14 @@ public:
     
     MKnobWidget->setLayout(SAT_WIDGET_ALIGN_TOP_CENTER,SAT_WIDGET_STRETCH_NONE);
     MKnobWidget->setDrawValue(false);
-    MKnobWidget->setArcThickness(12);
+    MKnobWidget->setArcThickness(r);
 
     MValueWidget->setLayout(SAT_WIDGET_ALIGN_BOTTOM_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
-    MValueWidget->setDrawBorder(false);
     MValueWidget->setDrawText(false);
+    MValueWidget->setTextOffset(0);
+    MValueWidget->setValueOffset(0);
     MValueWidget->setValueAlignment(SAT_TEXT_ALIGN_CENTER);
+    MValueWidget->setDrawBorder(false);
     
     appendChildWidget(MTextWidget);
     appendChildWidget(MKnobWidget);
@@ -71,16 +74,18 @@ public:
 public:
 //------------------------------
 
-  //double getValue(uint32_t AIndex=0) override {
-  //  //MIP_PRINT;
-  //  return MKnobWidget->getValue();
-  //}
+//  double getValue(uint32_t AIndex=0) override {
+//    //MIP_PRINT;
+//    double v = MKnobWidget->getValue();
+//    SAT_Print("v %f\n",v);
+//    return v;
+//  }
   
   //----------
 
-  //void setValue(double v, uint32_t AIndex=0) override {
-  //  //MIP_PRINT;
-  //  MKnobWidget->setValue(v);
+//  void setValue(double v, uint32_t AIndex=0) override {
+//    SAT_Print("v %f\n",v);
+//    MKnobWidget->setValue(v);
   //  SAT_Parameter* parameter = MKnobWidget->getParameter();
   //  if (parameter) {
   //    parameter->valueToText(v,MKnobValueText,31);
@@ -90,7 +95,7 @@ public:
   //  }
   //  MValueWidget->setText(MKnobValueText);
   //  MValueWidget->redraw();
-  //}
+//  }
 
   //----------
 

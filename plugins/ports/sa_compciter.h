@@ -114,7 +114,7 @@ public:
   bool init() final {
     registerDefaultExtensions();    
     appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioOutputPort();
     appendParameter( new SAT_Parameter( "Drive", 0,    0,   60    ));
     appendParameter( new SAT_Parameter( "Dist",  25,   0,   100   ));
     appendParameter( new SAT_Parameter( "HP",    5000, 800, 12000 ));

@@ -95,13 +95,13 @@ public:
       double S = getWindowScale();
       SAT_Rect mrect = getRect();
       SAT_Painter* painter = AContext->painter;
-      double value = getValue();
 
       //SAT_Parameter* param = getParameter();
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
-
+      double value = getValue();
+      //SAT_Print("value %f\n",value);
       if (param) {
-        value = param->normalizeValue(value);
+        value = param->getNormalizedValue();//  normalizeValue(value);
       }
 
       double thickness  = MArcThickness * S;
