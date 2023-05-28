@@ -108,9 +108,9 @@ public:
     appendParameter(new SAT_Parameter(    "vol",  1   ));                                 // 13
     
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_PORT);
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_CHANNEL);
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_KEY);
+    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_PORT);
+    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_CHANNEL);
+    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_KEY);
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID);
     
     // voice manager

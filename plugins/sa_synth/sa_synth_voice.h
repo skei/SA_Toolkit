@@ -31,10 +31,12 @@ private:
   float             ph            = 0.0;
   float             phadd         = 0.0;
   
+  double p_tun    = 0.0;
   double p_flt    = 0.0;
   double p_fr     = 1.0;
   double p_bw     = 0.5;
   
+  double m_tun    = 0.0;
   double m_flt    = 0.0;
   double m_fr     = 0.0;
   double m_bw     = 0.0;
@@ -70,7 +72,7 @@ public:
   //----------
 
   uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
-    SAT_ParameterArray* parameters = MContext->process_context->parameters;
+    //SAT_ParameterArray* parameters = MContext->process_context->parameters;
     float* buffer = MContext->voice_buffer;
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     buffer += AOffset;
@@ -102,9 +104,11 @@ public:
         
         *buffer++ = v * 0.1;
         
-        SAT_Parameter* tuning = parameters->getItem(1);
-        double tun = tuning->getValue() + tuning->getModulation() + x_tuning;
+        //SAT_Parameter* tuning = parameters->getItem(1);
+        //double tun = tuning->getValue() + tuning->getModulation();
+        double tun = p_tun + m_tun;//tuning->getValue() + tuning->getModulation();
         tun = SAT_Clamp(tun,-2,2);
+        tun +=  x_tuning;
         
         float hz = SAT_NoteToHz(MKey + tun);
         phadd = 1.0 / SAT_HzToSamples(hz,srate);
@@ -130,12 +134,14 @@ public:
   uint32_t noteOn(uint32_t AKey, double AVelocity) {
     //SAT_Print("\n");
     ph = 0.0;
-    
-//    float hz = SAT_NoteToHz(AKey);
-//    phadd = 1.0 / SAT_HzToSamples(hz,srate);
+    //float hz = SAT_NoteToHz(AKey);
+    //phadd = 1.0 / SAT_HzToSamples(hz,srate);
     MKey = AKey;
     MVelocity = AVelocity;
-    
+    m_flt     = 0;
+    m_fr      = 0;
+    m_bw      = 0;
+    x_tuning  = 0.0;
     return SAT_VOICE_PLAYING;
   }
 
@@ -155,9 +161,18 @@ public:
   //----------
 
   void noteExpression(uint32_t AExpression, double AValue) {
-    SAT_Print("AExpression %i AValue %f\n",AExpression,AValue);
     switch (AExpression) {
-      case CLAP_NOTE_EXPRESSION_TUNING: x_tuning = AValue; break;
+      //case CLAP_NOTE_EXPRESSION_VOLUME:     SAT_Print("NOTE VOLUME EXPRESSION %.3f\n",value);     break; // with 0 < x <= 4, plain = 20 * log(x)
+      //case CLAP_NOTE_EXPRESSION_PAN:        SAT_Print("NOTE PAN EXPRESSION %.3f\n",value);        break; // pan, 0 left, 0.5 center, 1 right
+      //case CLAP_NOTE_EXPRESSION_TUNING:     SAT_Print("NOTE TUNING EXPRESSION %.3f\n",value);     break; // relative tuning in semitone, from -120 to +120
+      case CLAP_NOTE_EXPRESSION_TUNING:
+        x_tuning = AValue;
+        //SAT_Print("CLAP_NOTE_EXPRESSION_TUNING AValue %f\n",AExpression,AValue);
+        break;
+      //case CLAP_NOTE_EXPRESSION_VIBRATO:    SAT_Print("NOTE VIBRATO EXPRESSION %.3f\n",value);    break; // 0..1
+      //case CLAP_NOTE_EXPRESSION_EXPRESSION: SAT_Print("NOTE EXPRESSION EXPRESSION %.3f\n",value); break; // 0..1
+      //case CLAP_NOTE_EXPRESSION_BRIGHTNESS: SAT_Print("NOTE BRIGHTNESS EXPRESSION %.3f\n",value); break; // 0..1
+      //case CLAP_NOTE_EXPRESSION_PRESSURE:   SAT_Print("NOTE PRESSURE EXPRESSION %.3f\n",value);   break; // 0..1
     }
     //SAT_Print("\n");
   }
@@ -167,6 +182,7 @@ public:
   void parameter(uint32_t AIndex, double AValue) {
     //SAT_Print("\n");
     switch (AIndex) {
+      case 1: p_tun = AValue; break;
       case 6: p_flt = AValue; break;
       case 7: p_fr  = AValue; break;
       case 8: p_bw  = AValue; break;
@@ -178,6 +194,7 @@ public:
   void modulation(uint32_t AIndex, double AValue) {
     //SAT_Print("\n");
     switch (AIndex) {
+      case 1: m_tun = AValue; break;
       case 6: m_flt = AValue; break;
       case 7: m_fr  = AValue; break;
       case 8: m_bw  = AValue; break;

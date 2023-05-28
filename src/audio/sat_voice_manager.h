@@ -154,6 +154,9 @@ public:
   //----------
 
   void handleNoteOn(const clap_event_note_t* event) {
+    
+    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
+    
     int32_t voice = findFreeVoice(SAT_VOICE_MANAGER_STEAL_VOICES);
     if (voice >= 0) {
       MVoices[voice].state        = SAT_VOICE_WAITING;
@@ -228,6 +231,9 @@ public:
   //----------
 
   void handleNoteExpression(const clap_event_note_expression_t* event) {
+    
+    //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
+    
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -256,6 +262,9 @@ public:
   //----------
 
   void handleParamValue(const clap_event_param_value_t* event) {
+    
+    //SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
+    
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -291,6 +300,9 @@ public:
   */
 
   void handleParamMod(const clap_event_param_mod_t* event) {
+    
+    //SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
+    
     bool has_noteid = (event->note_id != -1);
     bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
