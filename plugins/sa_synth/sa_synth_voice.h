@@ -7,6 +7,7 @@
 
 #include "audio/old/filters/sat_svf_filter.h"
 #include "audio/old/waveforms/sat_polyblep2_waveform.h"
+#include "audio/old/modulation/sat_envelope.h"
 
 //----------------------------------------------------------------------
 //
@@ -25,7 +26,9 @@ private:
   SAT_VoiceContext*   MContext    = nullptr;
   //SAT_ParameterArray* MParameters = nullptr;
   
-  SAT_SvfFilter     MFilter       = {};
+  SAT_SvfFilter         MFilter   = {};
+  SAT_Envelope<double>  MOscEnv   = {};
+  SAT_Envelope<double>  MFltEnv   = {};
 
   float             srate         = 0.0;
   float             ph            = 0.0;
@@ -55,8 +58,14 @@ public:
     MIndex = AIndex;
     MContext = AContext;
     srate = AContext->sample_rate;
+
+    MOscEnv.setSampleRate(srate);
+    MOscEnv.setADSR(0,0,1,0);
+
+    MFltEnv.setSampleRate(srate);
+    MFltEnv.setADSR(0,0,1,0);
     
-      // process_context not set yet.. (only set/valid in process()
+    // process_context not set yet.. (only set/valid in process()
     //MParameters = MContext->process_context->parameters;
     //SAT_Print("MParameters %p\n",MParameters);
     //SAT_Assert(MParameters);
@@ -66,7 +75,8 @@ public:
   //----------
 
   sat_sample_t getEnvLevel() {
-    return 0.0;
+    //return 0.0;
+    return MOscEnv.getValue();
   }
 
   //----------
@@ -76,51 +86,63 @@ public:
     float* buffer = MContext->voice_buffer;
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     buffer += AOffset;
+    
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       
       for (uint32_t i=0; i<ALength; i++) {
+        
+        // envelopes
+        
+        double oenv = MOscEnv.process();
+//        double fenv = MFltEnv.process() * 0.5;//f_env_amt;
+        
+        //SAT_Print("voice stage: %i oenv %f\n",MOscEnv.getStage(),oenv);
+
+        // osc
 
         ph = SAT_Fract(ph);
-        
         //float v = sin(ph * SAT_PI2);
-        
         //float v = MOsc1.process(ph,phadd);
-        
         float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
         v -= SAT_PolyBlepSawWaveform(ph,phadd);
         
-        uint32_t  flt = SAT_ClampI( p_flt + m_flt, 0,4);
-        double    fr  = SAT_Clamp(  p_fr  + m_fr,  0,1);
-        double    bw  = SAT_Clamp(  p_bw  + m_bw,  0,1);
+        // filter
         
+        uint32_t  flt = SAT_ClampI( p_flt + m_flt, 0,4);
+        double    fr  = SAT_Clamp(  p_fr  + m_fr /*+ fenv*/,  0,1);
+        double    bw  = SAT_Clamp(  p_bw  + m_bw,  0,1);
         //SAT_Print("flt %i fr %.2f bw %.2f\n",flt,fr,bw);
         //SAT_Print("flt %i p_fr %.2f m_fr %.2f fr %.2f\n",flt,p_fr,m_fr,fr);
-        
         MFilter.setMode(flt);
         MFilter.setFreq(fr);
         MFilter.setBW(bw);
-        
         v = MFilter.process(v);
         
-        *buffer++ = v * 0.1;
+        *buffer++ = v * oenv * 0.25;  // !!!
         
-        //SAT_Parameter* tuning = parameters->getItem(1);
-        //double tun = tuning->getValue() + tuning->getModulation();
-        double tun = p_tun + m_tun;//tuning->getValue() + tuning->getModulation();
+        // update
+        
+        double tun = p_tun + m_tun;
         tun = SAT_Clamp(tun,-2,2);
         tun +=  x_tuning;
-        
         float hz = SAT_NoteToHz(MKey + tun);
         phadd = 1.0 / SAT_HzToSamples(hz,srate);
-        
         ph += phadd;
         
       }
     } // playing
+    
     else {
       memset(buffer,0,ALength * sizeof(float));
     }
-    return AState;
+
+    //return AState;
+    
+    uint32_t stage = MOscEnv.getStage();
+    if (stage == SAT_ENVELOPE_FINISHED) return SAT_VOICE_FINISHED;
+    else return AState;
+    
+    
   }
 
   //----------
@@ -142,6 +164,8 @@ public:
     m_fr      = 0;
     m_bw      = 0;
     x_tuning  = 0.0;
+    MOscEnv.noteOn();
+    MFltEnv.noteOn();
     return SAT_VOICE_PLAYING;
   }
 
@@ -149,7 +173,10 @@ public:
 
   uint32_t noteOff(uint32_t AKey, double AVelocity) {
     //SAT_Print("\n");
-    return SAT_VOICE_FINISHED;
+    MOscEnv.noteOff();
+    MFltEnv.noteOff();
+    //return SAT_VOICE_FINISHED;
+    return SAT_VOICE_RELEASED;
   }
 
   //----------
@@ -182,10 +209,19 @@ public:
   void parameter(uint32_t AIndex, double AValue) {
     //SAT_Print("\n");
     switch (AIndex) {
-      case 1: p_tun = AValue; break;
-      case 6: p_flt = AValue; break;
-      case 7: p_fr  = AValue; break;
-      case 8: p_bw  = AValue; break;
+      case 0:   // waveform
+      case 1:   p_tun = AValue;               break;
+      case 2:   MOscEnv.setAttack(AValue*5);  break;
+      case 3:   MOscEnv.setDecay(AValue*5);   break;
+      case 4:   MOscEnv.setSustain(AValue);   break;
+      case 5:   MOscEnv.setRelease(AValue*5); break;
+      case 6:   p_flt = AValue;               break;
+      case 7:   p_fr  = AValue;               break;
+      case 8:   p_bw  = AValue;               break;
+      case 9:   MFltEnv.setAttack(AValue*5);  break;
+      case 10:  MFltEnv.setDecay(AValue*5);   break;
+      case 11:  MFltEnv.setSustain(AValue);   break;
+      case 12:  MFltEnv.setRelease(AValue*5); break;
     }
   }
 

@@ -66,22 +66,12 @@ class SAT_Envelope {
       MValue = 0.0;
     }
 
-    /*
-      ???
-      we cheat a little, and multiply the ms value by 5..
-      ..easier to make log/exp ish curves (x*x*x)..
-      ???
-    */
-
     T calcRate(T ms) {
-
-
+      SAT_Assert(MSampleRate > 0);
       T a = ms * mip_env_rate_scale; // 0..1 -> 0..25
       a = (a*a*a);
-
       T scale = MSampleRate / 44100.0;
       a *= scale;
-
       a += 1.0;
       return 1.0 / a;
     }
@@ -139,8 +129,8 @@ class SAT_Envelope {
       if (MStage == SAT_ENVELOPE_SUSTAIN) return MValue;
       T target = MStages[MStage].target;
       T rate   = MStages[MStage].rate;
-      MValue += ( (target-MValue) * rate );
-      if (fabs(target-MValue) <= mip_env_threshold) {
+      MValue += ( (target - MValue) * rate );
+      if (fabs(target - MValue) <= mip_env_threshold) {
         MStage += 1;
       }
       return MValue;

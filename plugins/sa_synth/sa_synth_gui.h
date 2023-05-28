@@ -91,6 +91,11 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextColor(0.6);
     knob->setValueSize(7);
     
+    knob->setSnap(true);
+    knob->setSnapPos(0.5);
+    knob->setSnapDist(0.1);
+    knob->setSnapSpeed(1.5);
+    
     // adsr
 
     knob = new SAT_KnobWidget(SAT_Rect(5,60,20,20),"a",0);
@@ -131,7 +136,7 @@ const char* sa_synth_flt_type_text[5] = {
 
     // flt section
     
-    SAT_TextWidget* res_section_text = new SAT_TextWidget(SAT_Rect(115,5,105,12),"res 1");
+    SAT_TextWidget* res_section_text = new SAT_TextWidget(SAT_Rect(115,5,105,12),"flt 1");
     root->appendChildWidget(res_section_text);
     res_section_text->setDrawBorder(false);
     res_section_text->setFillBackground(true);

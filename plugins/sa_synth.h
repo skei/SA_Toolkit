@@ -66,6 +66,7 @@ private:
 //------------------------------
 
   SAT_VoiceManager<sa_synth_voice,NUM_VOICES> MVoiceManager   = {};
+
 //  SAT_VoicesWidget*                             MVoicesWidget   = nullptr;
 //  SAT_WaveformWidget*                           MWaveformWidget = nullptr;
   
@@ -105,7 +106,7 @@ public:
     appendParameter(new SAT_Parameter(    "D",    0   ));                                 // 10
     appendParameter(new SAT_Parameter(    "S",    1   ));                                 // 11
     appendParameter(new SAT_Parameter(    "R",    0   ));                                 // 12
-    appendParameter(new SAT_Parameter(    "vol",  1   ));                                 // 13
+    appendParameter(new SAT_Parameter(    "vol",  0.5 ));                                 // 13
     
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_PORT);
