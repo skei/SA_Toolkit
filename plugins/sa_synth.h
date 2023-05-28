@@ -9,6 +9,7 @@
 //----------
 
 #include "base/sat.h"
+#include "base/utils/sat_wrench.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
 #include "audio/sat_voice_manager.h"
@@ -17,6 +18,9 @@
 
 #include "sa_synth/sa_synth_voice.h"
 //#include "sa_synth/sa_synth_widgets.h"
+
+//----------
+
 
 //----------------------------------------------------------------------
 //
@@ -29,6 +33,8 @@
 #define EDITOR_HEIGHT 145
 #define EDITOR_SCALE  3.0
 #define NUM_VOICES    32
+
+typedef SAT_VoiceManager<sa_synth_voice,NUM_VOICES> sa_synth_voice_manager;
 
 //----------------------------------------------------------------------
 //
@@ -65,10 +71,14 @@ class sa_synth_plugin
 private:
 //------------------------------
 
-  SAT_VoiceManager<sa_synth_voice,NUM_VOICES> MVoiceManager   = {};
-
-//  SAT_VoicesWidget*                             MVoicesWidget   = nullptr;
+  //SAT_VoiceManager<sa_synth_voice,NUM_VOICES> MVoiceManager   = {};
+  
+  sa_synth_voice_manager  MVoiceManager   = {};
+  SAT_VoicesWidget*       MVoicesWidget   = nullptr;
+  
 //  SAT_WaveformWidget*                           MWaveformWidget = nullptr;
+
+  SAT_Wrench MWrench = {};
   
 //------------------------------
 public:
@@ -101,18 +111,19 @@ public:
     appendParameter(new SAT_Parameter(    "R",    0   ));                                 // 5
     appendParameter(new SAT_TextParameter("flt",  0, 0, 4, sa_synth_flt_type_text ));     // 6
     appendParameter(new SAT_Parameter(    "fr",   1   ));                                 // 7
-    appendParameter(new SAT_Parameter(    "bw",   0.5 ));                                 // 8
+    appendParameter(new SAT_Parameter(    "bw",   1   ));                                 // 8
     appendParameter(new SAT_Parameter(    "A",    0   ));                                 // 9
     appendParameter(new SAT_Parameter(    "D",    0   ));                                 // 10
     appendParameter(new SAT_Parameter(    "S",    1   ));                                 // 11
     appendParameter(new SAT_Parameter(    "R",    0   ));                                 // 12
-    appendParameter(new SAT_Parameter(    "vol",  0.5 ));                                 // 13
+    appendParameter(new SAT_Parameter(    "fa",   0   ));                                 // 13 flt env amt
+    appendParameter(new SAT_Parameter(    "vol",  0.5 ));                                 // 14
     
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID);
     //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_PORT);
     //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_CHANNEL);
     //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_KEY);
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID);
     
     // voice manager
     SAT_Host* host = getHost();
@@ -125,6 +136,16 @@ public:
     // editor
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     
+    // wrench
+    MWrench.registerFunction("print",wr_print);
+    uint32_t len = 0;
+    uint8_t* bytecode = MWrench.compile(wr_source_code,&len);
+    if (bytecode) {
+      SAT_PRINT;
+      MWrench.run(bytecode,len);
+    }
+    MWrench.free_bytecode(bytecode);
+
     return SAT_Plugin::init();
   }
 
@@ -206,12 +227,19 @@ public: // gui
 
   #include "sa_synth/sa_synth_gui.h"
   
+//  void timer_update(sa_tyr_voice_manager* voices) {
+  //update_voices_widget(&MVoiceManager);
+//  }
+
+  
+  
 //------------------------------
 public: // timer
 //------------------------------
 
   void do_editorListener_timer() final {
     SAT_Plugin::do_editorListener_timer();
+    update_voices_widget(&MVoiceManager);
 //    //update voices widget.. (move to widget itself (+ register timer)
 //    // before or after sat_plugin:: ?
 //    for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
@@ -315,7 +343,7 @@ public: // audio
     MVoiceManager.processAudio(AContext);
 
     // scale outputs
-    sat_param_t scale = getParameterValue(13) + getModulationValue(13);   // Gain
+    sat_param_t scale = getParameterValue(14) + getModulationValue(14);   // Gain
     scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);
 

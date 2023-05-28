@@ -168,7 +168,7 @@ const char* sa_synth_flt_type_text[5] = {
 
     // freq
     
-    knob = new SAT_KnobWidget(SAT_Rect(5,25,30,30),"frq",0);
+    knob = new SAT_KnobWidget(SAT_Rect(5,25,30,30),"frq",1);
     res_section->appendChildWidget(knob);
     AEditor->connect(knob,getParameter(7));
     knob->setArcThickness(4);
@@ -179,7 +179,7 @@ const char* sa_synth_flt_type_text[5] = {
     
     // bw
     
-    knob = new SAT_KnobWidget(SAT_Rect(70,25,30,30),"bw",0);
+    knob = new SAT_KnobWidget(SAT_Rect(40,25,30,30),"bw",1);
     res_section->appendChildWidget(knob);
     AEditor->connect(knob,getParameter(8));
     knob->setArcThickness(4);
@@ -187,6 +187,15 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextSize(6);
     knob->setTextColor(0.6);
     knob->setValueSize(7);
+    
+    knob = new SAT_KnobWidget(SAT_Rect(80,35,20,20),"a",0);
+    res_section->appendChildWidget(knob);
+    AEditor->connect(knob,getParameter(13)); // p_fltamt
+    knob->setArcThickness(2);
+    knob->setDrawBorder(false);
+    knob->setTextSize(6);
+    knob->setTextColor(0.6);
+    knob->setValueSize(6);
     
     // adsr
 
@@ -226,16 +235,21 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextColor(0.6);
     knob->setValueSize(5);
     
-    // master
+    // gain
     
     knob = new SAT_KnobWidget(SAT_Rect(5,110,30,30),"G",1);
     root->appendChildWidget(knob);
-    AEditor->connect(knob,getParameter(13));
+    AEditor->connect(knob,getParameter(14));
     knob->setArcThickness(4);
     knob->setDrawBorder(false);
     knob->setTextSize(6);
     knob->setTextColor(0.6);
     knob->setValueSize(7);
+    
+    // voices
+    
+    MVoicesWidget = new SAT_VoicesWidget(SAT_Rect(115,110,105,5), NUM_VOICES);
+    root->appendChildWidget(MVoicesWidget);
     
     //---
     
@@ -243,3 +257,32 @@ const char* sa_synth_flt_type_text[5] = {
 
     return true;
   }
+  
+//------------------------------
+
+//    if (MIsEditorOpen) { // && not resizing
+//      uint32_t playing = 0;
+//      uint32_t released = 0;
+//      for (uint32_t v=0; v<SA_TYR_NUM_VOICES; v++) {
+//        uint32_t state = voices->getVoiceState(v);
+//        MVoiceWidget->voice_state[v] = state;
+//        if (state == SAT_VOICE_PLAYING) playing += 1;
+//        if (state == SAT_VOICE_RELEASED) released += 1;
+//      }
+//      MPlayingVoicesWidget->setValue(playing);
+//      MReleasedVoicesWidget->setValue(released);
+//      MTotalVoicesWidget->setValue(playing + released);
+//      MVoiceWidget->redraw();
+//      MPlayingVoicesWidget->redraw();
+//      MReleasedVoicesWidget->redraw();
+//      MTotalVoicesWidget->redraw();
+//    }
+
+  void update_voices_widget(sa_synth_voice_manager* AVoiceManager) {
+    for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
+      uint32_t state = AVoiceManager->getVoiceState(voice);
+      MVoicesWidget->setVoiceState(voice,state);
+    }
+    MVoicesWidget->parentRedraw();
+  }
+    

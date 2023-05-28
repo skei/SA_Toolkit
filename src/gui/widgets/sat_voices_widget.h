@@ -62,6 +62,20 @@ public:
 public:
 //------------------------------
 
+  //void prepare(SAT_WidgetOwner* AOwner) override {
+  //  SAT_PanelWidget::prepare(AOwner);
+  //  SAT_Window* window = (SAT_Window*)AOwner;
+  //  window->registerTimerWidget(this);
+  //}
+  
+  //----------
+
+  //void on_widget_timer(uint32_t AId, double ADelta) override {
+  //  SAT_PRINT;
+  //}
+
+  //----------
+
   virtual void drawVoices(SAT_PaintContext* AContext) {
     if (MDrawVoices) {
       if (MMaxVoices > 0) {

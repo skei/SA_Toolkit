@@ -147,6 +147,14 @@ public:
   //  return false;
   //}
 
+  bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
+    if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   return false;
+    if ((port    != -1) && (MVoices[index].note.port    != port))     return false;
+    if ((channel != -1) && (MVoices[index].note.channel != channel))  return false;
+    if ((key     != -1) && (MVoices[index].note.key     != key))      return false;
+    return true;
+  }
+    
   //----------
 
   // 'handle..' -> 'prepare..'
@@ -154,9 +162,7 @@ public:
   //----------
 
   void handleNoteOn(const clap_event_note_t* event) {
-    
     //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    
     int32_t voice = findFreeVoice(SAT_VOICE_MANAGER_STEAL_VOICES);
     if (voice >= 0) {
       MVoices[voice].state        = SAT_VOICE_WAITING;
@@ -172,54 +178,51 @@ public:
   //----------
 
   void handleNoteOff(const clap_event_note_t* event) {
-
-    bool has_noteid = (event->note_id != -1);
-    bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
-
+    //bool has_noteid = (event->note_id != -1);
+    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
 
-      //if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
+        MVoices[voice].events.write(ve);
+      }
+
+      //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
       //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
       //  MVoices[voice].events.write(ve);
       //}
-
-      if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-        MVoices[voice].events.write(ve);
-      }
-      else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-        MVoices[voice].events.write(ve);
-      }
+      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
+      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
+      //  MVoices[voice].events.write(ve);
+      //}
 
       //else {
       //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
       //  MVoices[voice].events.write(ve);
       //}
-
     }
   }
 
   //----------
 
   void handleNoteChoke(const clap_event_note_t* event) {
-    bool has_noteid = (event->note_id != -1);
-    bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //bool has_noteid = (event->note_id != -1);
+    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
 
-      //if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
+        MVoices[voice].events.write(ve);
+      }
+
+      //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
       //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
       //  MVoices[voice].events.write(ve);
       //}
-
-      if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-        MVoices[voice].events.write(ve);
-      }
-      else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-        MVoices[voice].events.write(ve);
-      }
+      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
+      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
+      //  MVoices[voice].events.write(ve);
+      //}
 
       //else {
       //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
@@ -231,26 +234,24 @@ public:
   //----------
 
   void handleNoteExpression(const clap_event_note_expression_t* event) {
-    
     //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
-    
-    bool has_noteid = (event->note_id != -1);
-    bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //bool has_noteid = (event->note_id != -1);
+    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
 
-      //if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
+        MVoices[voice].events.write(ve);
+      }
+
+      //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
       //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
       //  MVoices[voice].events.write(ve);
       //}
-
-      if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-        MVoices[voice].events.write(ve);
-      }
-      else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-        MVoices[voice].events.write(ve);
-      }
+      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
+      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
+      //  MVoices[voice].events.write(ve);
+      //}
 
       //else {
       //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
@@ -262,32 +263,32 @@ public:
   //----------
 
   void handleParamValue(const clap_event_param_value_t* event) {
-    
     //SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
-    
-    bool has_noteid = (event->note_id != -1);
-    bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //bool has_noteid = (event->note_id != -1);
+    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
 
-      //if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-      //  MVoices[voice].events.write(ve);
-      //}
-
-      if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-        MVoices[voice].events.write(ve);
-      }
-      else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-        MVoices[voice].events.write(ve);
-      }
-
       #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
-      else {
+      
         SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
         MVoices[voice].events.write(ve);
-      }
+    
+      #else
+
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
+          MVoices[voice].events.write(ve);
+        }
+
+        //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
+        //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
+        //  MVoices[voice].events.write(ve);
+        //}
+        //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
+        //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
+        //  MVoices[voice].events.write(ve);
+        //}
+          
       #endif
 
     }
@@ -300,36 +301,36 @@ public:
   */
 
   void handleParamMod(const clap_event_param_mod_t* event) {
-    
     //SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
-    
-    bool has_noteid = (event->note_id != -1);
-    bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //bool has_noteid = (event->note_id != -1);
+    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
 
-      //if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
+      
+        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
+        MVoices[voice].events.write(ve);
+        
+      #else
+
+      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
+        MVoices[voice].events.write(ve);
+      }
+
+      //if (has_noteid) {
+      //  if (event->note_id == MVoices[voice].note.noteid) {
+      //    SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
+      //    MVoices[voice].events.write(ve);
+      //  }
+      //}
+      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
       //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
       //  MVoices[voice].events.write(ve);
       //}
-
-
-      if (has_noteid) {
-        if (event->note_id == MVoices[voice].note.noteid) {
-          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-          MVoices[voice].events.write(ve);
-        }
-      }
-      else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-        MVoices[voice].events.write(ve);
-      }
-
-      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
-      else {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-        MVoices[voice].events.write(ve);
-      }
+      
       #endif
+
 
     }
   }

@@ -38,6 +38,7 @@ private:
   double p_flt    = 0.0;
   double p_fr     = 1.0;
   double p_bw     = 0.5;
+  double p_fltamt = 0.0;
   
   double m_tun    = 0.0;
   double m_flt    = 0.0;
@@ -93,8 +94,10 @@ public:
         
         // envelopes
         
-        double oenv = MOscEnv.process();
-//        double fenv = MFltEnv.process() * 0.5;//f_env_amt;
+        double osc_env = MOscEnv.process();
+        
+        double flt_env = MFltEnv.process();//f_env_amt;
+        flt_env *= p_fltamt;
         
         //SAT_Print("voice stage: %i oenv %f\n",MOscEnv.getStage(),oenv);
 
@@ -109,7 +112,7 @@ public:
         // filter
         
         uint32_t  flt = SAT_ClampI( p_flt + m_flt, 0,4);
-        double    fr  = SAT_Clamp(  p_fr  + m_fr /*+ fenv*/,  0,1);
+        double    fr  = SAT_Clamp(  p_fr  + m_fr + flt_env,  0,1);
         double    bw  = SAT_Clamp(  p_bw  + m_bw,  0,1);
         //SAT_Print("flt %i fr %.2f bw %.2f\n",flt,fr,bw);
         //SAT_Print("flt %i p_fr %.2f m_fr %.2f fr %.2f\n",flt,p_fr,m_fr,fr);
@@ -118,7 +121,7 @@ public:
         MFilter.setBW(bw);
         v = MFilter.process(v);
         
-        *buffer++ = v * oenv * 0.25;  // !!!
+        *buffer++ = v * osc_env * 0.25;  // !!!
         
         // update
         
@@ -160,6 +163,9 @@ public:
     //phadd = 1.0 / SAT_HzToSamples(hz,srate);
     MKey = AKey;
     MVelocity = AVelocity;
+    //p_flt = MContext->process_context->parameters->getItem(6);
+    //p_fr  = MContext->process_context->parameters->getItem(7);
+    //p_bw  = MContext->process_context->parameters->getItem(8);
     m_flt     = 0;
     m_fr      = 0;
     m_bw      = 0;
@@ -209,7 +215,7 @@ public:
   void parameter(uint32_t AIndex, double AValue) {
     //SAT_Print("\n");
     switch (AIndex) {
-      case 0:   // waveform
+      //case 0:
       case 1:   p_tun = AValue;               break;
       case 2:   MOscEnv.setAttack(AValue*5);  break;
       case 3:   MOscEnv.setDecay(AValue*5);   break;
@@ -222,6 +228,8 @@ public:
       case 10:  MFltEnv.setDecay(AValue*5);   break;
       case 11:  MFltEnv.setSustain(AValue);   break;
       case 12:  MFltEnv.setRelease(AValue*5); break;
+      case 13:  p_fltamt = AValue;            break;
+      //case 14:
     }
   }
 

@@ -216,6 +216,16 @@ int main(int argc, char** argv) {
 #ifdef SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
 
   #include <sys/types.h>
+  
+  /*
+  // https://stackoverflow.com/questions/30621632/how-is-the-gnu-libc-so-both-a-shared-object-and-a-standalone-executable
+  char const __invoke_dynamic_linker__[] __attribute__ ((section (".interp")))
+  #ifdef __LP64__
+    = "/lib64/ld-linux-x86-64.so.2";
+  #else
+    = "/lib/ld-linux.so.2";
+  #endif  
+  */
 
   const char interp_section[] __attribute__((section(".interp"))) = "/lib64/ld-linux-x86-64.so.2";
 

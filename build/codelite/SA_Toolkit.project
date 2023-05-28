@@ -374,6 +374,7 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="utils">
+        <File Name="../../src/base/utils/sat_wrench.h"/>
         <File Name="../../src/base/utils/sat_tween_manager.h"/>
         <File Name="../../src/base/utils/sat_json.h"/>
         <File Name="../../src/base/utils/sat_tcc.h"/>
@@ -481,6 +482,25 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="extern">
+      <VirtualDirectory Name="signalsmith">
+        <VirtualDirectory Name="dsp">
+          <File Name="../../src/extern/signalsmith/dsp/windows.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/spectral.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/perf.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/mix.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/filters.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/fft.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/envelopes.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/delay.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/curves.h"/>
+          <File Name="../../src/extern/signalsmith/dsp/common.h"/>
+        </VirtualDirectory>
+        <File Name="../../src/extern/signalsmith/signalsmith-stretch.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="wrench">
+        <File Name="../../src/extern/wrench/wrench.h"/>
+        <File Name="../../src/extern/wrench/wrench.cpp" ExcludeProjConfig="win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exelib_debug;linux_exe_debug;"/>
+      </VirtualDirectory>
       <VirtualDirectory Name="reaper">
         <File Name="../../src/extern/reaper/video_processor.h"/>
         <File Name="../../src/extern/reaper/video_frame.h"/>

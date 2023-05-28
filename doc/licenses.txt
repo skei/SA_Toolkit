@@ -53,6 +53,11 @@ rigtorp
   https://github.com/rigtorp
   license: mit
 
+signalsmith
+
+  https://github.com/Signalsmith-Audio  
+  license: mit
+
 sogl
 
   https://github.com/tsherif/simple-opengl-loader
@@ -91,6 +96,11 @@ vst3
   a) steinberg sdk, proprietary/gpl3
   b) travesty, isc?
      https://github.com/falkTX/Carla/tree/main/source/includes/travesty
+
+wrench
+
+  https://github.com/jingoro2112/wrench  
+  license: mit
 
 xjson
 
