@@ -29,7 +29,11 @@
 #define EDITOR_WIDTH  225
 #define EDITOR_HEIGHT 145
 #define EDITOR_SCALE  3.0
-#define NUM_VOICES    32
+#define NUM_VOICES    64
+
+// 1024 / 64 = 16 mod events per block, per voice, per parameter
+// 16 * 32 = 512 events, per parameter
+// poly-mod a couple of parameters = 1024 events..
 
 typedef SAT_VoiceManager<sa_synth_voice,NUM_VOICES> sa_synth_voice_manager;
 
@@ -136,7 +140,7 @@ public: // clap
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(true);
-    MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_INTERLEAVED);
+    MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
     
     // editor
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);

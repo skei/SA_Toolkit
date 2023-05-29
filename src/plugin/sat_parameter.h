@@ -126,11 +126,6 @@ public:
   virtual bool                  isGuiModDirty()         { return MGuiModDirty; }
   virtual sat_param_t           getLastModulatedValue() { return MLastModulatedValue; }
 
-//virtual int32_t               getLastPainted()        { return MLastPainted; }
-//virtual int32_t               getLastModulated()      { return MLastModulated; }
-//virtual int32_t               getLastUpdated()        { return MLastUpdated; }
-//virtual sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
-
   uint32_t                      getModulationState()    { return MModulationState; }
   SAT_Color                     getModulationColor()    { return MModulationColor; }
 
@@ -142,6 +137,10 @@ public:
   uint32_t                      getAutomationState()    { return MAutomationState; }
   SAT_Color                     getAutomationColor()    { return MAutomationColor; }
 
+//virtual int32_t               getLastPainted()        { return MLastPainted; }
+//virtual int32_t               getLastModulated()      { return MLastModulated; }
+//virtual int32_t               getLastUpdated()        { return MLastUpdated; }
+//virtual sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
 
 //------------------------------
 public:
@@ -167,11 +166,11 @@ public:
   virtual void setValue(sat_param_t AValue)               { MValue = AValue; }
   virtual void setModulation(sat_param_t AValue)          { MModulation = AValue; }
 
-//  virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
-//  virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
-
   virtual void setGuiModDirty(bool ADirty=true)           { MGuiModDirty  = ADirty; }
   virtual void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
+
+//  virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
+//  virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
 
 //virtual void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
 //virtual void setLastModulated(uint32_t ALast)           { MLastModulated = ALast; }

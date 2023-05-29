@@ -96,6 +96,11 @@ public:
   }
   
   //----------
+  
+  void clearVoiceQueue() {
+    SAT_VoiceEvent event;
+    while (events.read(&event)) {}
+  }
 
   //double getVolume() {}
   //double getPanning() {}

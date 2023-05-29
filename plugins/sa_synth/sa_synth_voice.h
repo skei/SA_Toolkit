@@ -97,8 +97,6 @@ public:
         double osc_env = MOscEnv.process();
         double flt_env = MFltEnv.process() * p_fltamt;
         
-        //SAT_Print("voice stage: %i oenv %f\n",MOscEnv.getStage(),oenv);
-
         // osc
 
         ph = SAT_Fract(ph);
@@ -112,8 +110,6 @@ public:
         uint32_t  flt = SAT_ClampI( p_flt + m_flt, 0,4);
         double    fr  = SAT_Clamp(  p_fr  + m_fr + flt_env,  0,1);
         double    bw  = SAT_Clamp(  p_bw  + m_bw,  0,1);
-        //SAT_Print("flt %i fr %.2f bw %.2f\n",flt,fr,bw);
-        //SAT_Print("flt %i p_fr %.2f m_fr %.2f fr %.2f\n",flt,p_fr,m_fr,fr);
 
         MFilter.setMode(flt);
         MFilter.setFreq(fr);

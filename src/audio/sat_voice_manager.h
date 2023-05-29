@@ -148,12 +148,12 @@ public:
   //}
 
   bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
-//    SAT_Print("index %i noteid %i port %i channel %i key %i = %i,%i,%i,%i",index,noteid,port,channel,key, MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key);
+    //SAT_Print("index %i noteid %i port %i channel %i key %i = %i,%i,%i,%i",index,noteid,port,channel,key, MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key);
     if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   { /*SAT_DPrint(" -> false\n");*/ return false; }
     if ((port    != -1) && (MVoices[index].note.port    != port))     { /*SAT_DPrint(" -> false\n");*/ return false; }
     if ((channel != -1) && (MVoices[index].note.channel != channel))  { /*SAT_DPrint(" -> false\n");*/ return false; }
     if ((key     != -1) && (MVoices[index].note.key     != key))      { /*SAT_DPrint(" -> false\n");*/ return false; }
-//    SAT_DPrint(" -> true\n"); 
+    //SAT_DPrint(" -> true\n"); 
     return true;
   }
   
@@ -181,6 +181,7 @@ public:
       MVoices[voice].note.channel = event->channel;
       MVoices[voice].note.key     = event->key;
       MVoices[voice].note.noteid  = event->note_id;
+      MVoices[voice].clearVoiceQueue();
       SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_ON, event->header.time, event->key, event->velocity);
       MVoices[voice].events.write(ve);
     }
@@ -371,8 +372,6 @@ public:
     uint32_t num_released = 0;
     for (uint32_t i=0; i<COUNT; i++) {
       
-      //if ((MVoices[i].state != SAT_VOICE_OFF) && (MVoices[i].state != SAT_VOICE_FINISHED)) {
-        
       if ((MVoices[i].state == SAT_VOICE_WAITING)
        || (MVoices[i].state == SAT_VOICE_PLAYING)
        || (MVoices[i].state == SAT_VOICE_RELEASED)) {
@@ -387,8 +386,6 @@ public:
     MNumPlayingVoices = num_playing;
     MNumReleasedVoices = num_released;
     
-    //SAT_Print("active %i playing %i release %i\n",MNumActiveVoices,MNumPlayingVoices,MNumReleasedVoices);
-
     // process active voices
     if (MNumActiveVoices > 0) {
       // thread-pool..
@@ -404,18 +401,7 @@ public:
           processVoice(v);
         }
       }
-      
-//      // mix, (post-process)
-//
-//      for (uint32_t i=0; i<MNumActiveVoices; i++) {
-//        uint32_t voice = MActiveVoices[i];
-//        float* buffer = MVoiceBuffer;
-//        //buffer += (voice * SAT_PLUGIN_MAX_BLOCK_SIZE);
-//        uint32_t index = MVoices[voice].index;
-//        buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
-//        SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
-//      }
-
+      //mixActiveVoices();
     } // num voices > 0
   }
 
@@ -457,6 +443,12 @@ private:
     MVoices[i].process();
   };
 
+  //----------
+  
+  void clearVoiceQueue(uint32_t i) {
+    MVoices[i].clearVoiceQueue();
+  }
+  
   //----------
   
   int32_t findFreeVoice(bool AReleased=false) {

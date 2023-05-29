@@ -36,10 +36,10 @@ struct SAT_ParamQueueItem {
   };
 };
 
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ModFromHostToGuiQueue;
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK>  SAT_ParamFromHostToGuiQueue;
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToAudioQueue;
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>    SAT_ParamFromGuiToHostQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
 
 #define SAT_PLUGIN_DEFAULT_CONSTRUCTOR(PLUGIN)                                  \
   PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
@@ -2590,17 +2590,23 @@ public:
   //----------
 
   /*
-    TODO: don't send ALL mods to gui.. only last one in block
+    don't send ALL mods to gui.. only last one in block
     set flag (this modulator changed..) and check at end of process
   */
 
+  // call before processing all events
+  
   void clearModToGui() {
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
       MParameters[i]->setGuiModDirty(false);
     }
   }
+  
+  //----------
     
+  // call after processing all events
+  
   void queueModToGui() {
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
@@ -2611,31 +2617,19 @@ public:
     }
   }
 
+  //----------
+    
   void handleParamModEvent(const clap_event_param_mod_t* event) {
     //SAT_Assert(event);
     //SAT_Assert(!MIsEditorClosing);
     uint32_t  index   = event->param_id;
     double    value   = event->amount;
     MParameters[index]->setModulation(value);
-    
     if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
-        
-//        queueModFromHostToGui(index,value);
-
+        //queueModFromHostToGui(index,value);
         MParameters[index]->setGuiModDirty(true);
         MParameters[index]->setLastModulatedValue(value);
-
-        //uint32_t process_count = MProcessContext.counter;
-        //uint32_t last_modulated = MParameters[index]->getLastModulated();
-        //if (last_modulated == process_count) {
-        //}
-        //else {
-        //  MParameters[index]->setLastModulated(process_count);
-        //  MParameters[index]->setLastModulatedValue(value);
-        //}
-        //last_modulated = process_count;
-        
       }
     }
     handleParamMod(event);
@@ -2857,16 +2851,16 @@ public: // process events
     //SAT_PRINT;
     if (!in_events) return;
     //if (!out_events) return;
-    uint32_t prev_time = 0;
-    
+
     clearModToGui();
+    uint32_t prev_time = 0;
     
     uint32_t size = in_events->size(in_events);
     for (uint32_t i=0; i<size; i++) {
       const clap_event_header_t* header = in_events->get(in_events,i);
       if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
         if (header->time < prev_time) {
-          SAT_Print("Events not sorted! prev_time %i header->time %i (type %i)\n",prev_time,header->time,header->type);
+          SAT_Print("not sorted.. prev_time %i header->time %i header->type %i\n",prev_time,header->time,header->type);
         }
         handleEvent(header);
         prev_time = header->time;
@@ -2889,6 +2883,8 @@ public: // process events
     uint32_t current_time = 0;
     uint32_t current_event = 0;
 
+    clearModToGui();
+    
     while (remaining > 0) {
       if (current_event < num_events) {
         const clap_event_header_t* header = in_events->get(in_events,current_event);
@@ -2912,6 +2908,9 @@ public: // process events
       }
     }
     //SAT_Assert( events.read(&event) == false );
+    
+    queueModToGui();
+    
   }
 
   //----------
@@ -2928,6 +2927,9 @@ public: // process events
     uint32_t current_time = 0;
     uint32_t current_event = 0;
     uint32_t next_event_time = 0;
+    
+    clearModToGui();
+    
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t num_events = in_events->size(in_events);
     if (num_events > 0) {
@@ -2969,6 +2971,9 @@ public: // process events
         remaining -= SAT_AUDIO_QUANTIZED_SIZE;
       } while (remaining > 0);
     }
+    
+    queueModToGui();
+    
   }
 
 };
