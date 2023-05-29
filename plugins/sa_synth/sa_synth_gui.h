@@ -93,8 +93,8 @@ const char* sa_synth_flt_type_text[5] = {
     
     knob->setSnap(true);
     knob->setSnapPos(0.5);
-    knob->setSnapDist(0.1);
-    knob->setSnapSpeed(1.5);
+    //knob->setSnapDist(0.1);
+    //knob->setSnapSpeed(1.5);
     
     // adsr
 
@@ -188,6 +188,8 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextColor(0.6);
     knob->setValueSize(7);
     
+    // flt env amt
+    
     knob = new SAT_KnobWidget(SAT_Rect(80,35,20,20),"a",0);
     res_section->appendChildWidget(knob);
     AEditor->connect(knob,getParameter(13)); // p_fltamt
@@ -196,6 +198,11 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextSize(6);
     knob->setTextColor(0.6);
     knob->setValueSize(6);
+    
+    knob->setSnap(true);
+    knob->setSnapPos(0.5);
+    //knob->setSnapDist(0.1);
+    //knob->setSnapSpeed(1.5);
     
     // adsr
 

@@ -46,9 +46,11 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
   //if (strcmp(factory_id,CLAP_PLUGIN_INVALIDATION_FACTORY_ID) == 0) {
   //  return &SAT_CLAP_PLUGIN_INVALIDATION_FACTORY;
   //}
-  if (strcmp(factory_id,CLAP_EXT_ARA_FACTORY) == 0) {
-    return &SAT_CLAP_ARA_FACTORY;
-  }
+  #ifdef SAT_PLUGIN_USE_ARA_FACTORY
+    if (strcmp(factory_id,CLAP_EXT_ARA_FACTORY) == 0) {
+      return &SAT_CLAP_ARA_FACTORY;
+    }
+  #endif
   // nope..
   SAT_Log("CLAP: ENTRY.get_factory (factory_id %s) -> null (no factory found)\n",factory_id);
   return nullptr;

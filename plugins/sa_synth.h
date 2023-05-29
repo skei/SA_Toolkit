@@ -19,9 +19,6 @@
 #include "sa_synth/sa_synth_voice.h"
 //#include "sa_synth/sa_synth_widgets.h"
 
-//----------
-
-
 //----------------------------------------------------------------------
 //
 //
@@ -71,15 +68,12 @@ class sa_synth_plugin
 private:
 //------------------------------
 
-  //SAT_VoiceManager<sa_synth_voice,NUM_VOICES> MVoiceManager   = {};
-  
   sa_synth_voice_manager  MVoiceManager   = {};
   SAT_VoicesWidget*       MVoicesWidget   = nullptr;
-  
-//  SAT_WaveformWidget*                           MWaveformWidget = nullptr;
+  SAT_Wrench              MWrench         = {};
+//SAT_WaveformWidget*     MWaveformWidget = nullptr;
 
-  SAT_Wrench MWrench = {};
-  
+
 //------------------------------
 public:
 //------------------------------
@@ -87,7 +81,19 @@ public:
   SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_synth_plugin);
 
 //------------------------------
-public:
+public: // wrench
+//------------------------------
+
+  void test_wrench() {
+    MWrench.registerFunction("print",sat_wrench_print);
+    uint32_t len = 0;
+    uint8_t* bytecode = MWrench.compile(sat_wrench_source_code,&len);
+    if (bytecode) MWrench.run(bytecode,len);
+    MWrench.free_bytecode(bytecode);
+  }
+
+//------------------------------
+public: // clap
 //------------------------------
 
   bool init() final {
@@ -104,20 +110,20 @@ public:
     // parameters
     appendParameter(new SAT_TextParameter("wf",   0, 0, 4, sa_synth_osc_type_text ));     // 0
   //appendParameter(new SAT_IntParameter( "tu",   0, -12, 12 ));                          // 1
-    appendParameter(new SAT_Parameter(    "tu",   0, -2, 2 ));                            // 1
-    appendParameter(new SAT_Parameter(    "A",    0   ));                                 // 2
-    appendParameter(new SAT_Parameter(    "D",    0   ));                                 // 3
-    appendParameter(new SAT_Parameter(    "S",    1   ));                                 // 4
-    appendParameter(new SAT_Parameter(    "R",    0   ));                                 // 5
-    appendParameter(new SAT_TextParameter("flt",  0, 0, 4, sa_synth_flt_type_text ));     // 6
-    appendParameter(new SAT_Parameter(    "fr",   1   ));                                 // 7
-    appendParameter(new SAT_Parameter(    "bw",   1   ));                                 // 8
-    appendParameter(new SAT_Parameter(    "A",    0   ));                                 // 9
-    appendParameter(new SAT_Parameter(    "D",    0   ));                                 // 10
-    appendParameter(new SAT_Parameter(    "S",    1   ));                                 // 11
-    appendParameter(new SAT_Parameter(    "R",    0   ));                                 // 12
-    appendParameter(new SAT_Parameter(    "fa",   0   ));                                 // 13 flt env amt
-    appendParameter(new SAT_Parameter(    "vol",  0.5 ));                                 // 14
+    appendParameter(new SAT_Parameter(    "tu",   0, -2, 2  ));                            // 1
+    appendParameter(new SAT_Parameter(    "A",    0         ));                                 // 2
+    appendParameter(new SAT_Parameter(    "D",    0         ));                                 // 3
+    appendParameter(new SAT_Parameter(    "S",    1         ));                                 // 4
+    appendParameter(new SAT_Parameter(    "R",    0         ));                                 // 5
+    appendParameter(new SAT_TextParameter("flt",  0,  0, 4, sa_synth_flt_type_text ));     // 6
+    appendParameter(new SAT_Parameter(    "fr",   1         ));                                 // 7
+    appendParameter(new SAT_Parameter(    "bw",   1         ));                                 // 8
+    appendParameter(new SAT_Parameter(    "A",    0         ));                                 // 9
+    appendParameter(new SAT_Parameter(    "D",    0         ));                                 // 10
+    appendParameter(new SAT_Parameter(    "S",    1         ));                                 // 11
+    appendParameter(new SAT_Parameter(    "R",    0         ));                                 // 12
+    appendParameter(new SAT_Parameter(    "fa",   0, -1, 1  ));                                 // 13 flt env amt
+    appendParameter(new SAT_Parameter(    "vol",  0.5       ));                                 // 14
     
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID);
@@ -136,16 +142,8 @@ public:
     // editor
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     
-    // wrench
-    MWrench.registerFunction("print",wr_print);
-    uint32_t len = 0;
-    uint8_t* bytecode = MWrench.compile(wr_source_code,&len);
-    if (bytecode) {
-      SAT_PRINT;
-      MWrench.run(bytecode,len);
-    }
-    MWrench.free_bytecode(bytecode);
-
+    test_wrench();
+    
     return SAT_Plugin::init();
   }
 
@@ -330,58 +328,18 @@ public: // events
 public: // audio
 //------------------------------
 
-  // block (synth)
-
   void processAudio(SAT_ProcessContext* AContext) final {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     float** outputs = process->audio_outputs[0].data32;
-    
-    // process voices
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
-
-    // scale outputs
     sat_param_t scale = getParameterValue(14) + getModulationValue(14);   // Gain
     scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);
 
   }
-
-  //----------
-
-  // interleaved
-
-  /*
-  void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) final {
-    const clap_process_t* process = AContext->process;
-
-    // copy inputs to outputs
-    float* inputs[2];
-    float* outputs[2];
-    inputs[0]  = process->audio_inputs[0].data32[0] + offset;
-    inputs[1]  = process->audio_inputs[0].data32[1] + offset;
-    outputs[0] = process->audio_outputs[0].data32[0] + offset;
-    outputs[1] = process->audio_outputs[0].data32[1] + offset;
-    SAT_CopyStereoBuffer(outputs,inputs,length);
-
-    // scale outputs
-    sat_param_t scale = getParameterValue(2) + getModulationValue(2);
-    scale = SAT_Clamp(scale,0,1);
-    SAT_ScaleStereoBuffer(outputs,scale,length);
-  }
-  */
-
-  //----------
-
-  // quantized
-
-  /*
-  void processAudio(SAT_ProcessContext* AContext, uint32_t offset) final {
-    processAudio(AContext,offset,SAT_AUDIO_QUANTIZED_SIZE);
-  }
-  */
 
 };
 

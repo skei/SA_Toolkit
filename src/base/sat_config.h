@@ -223,7 +223,7 @@
   /*
   */
   
-  #define SAT_PLUGIN_USE_ARA_FACTORY
+  //#define SAT_PLUGIN_USE_ARA_FACTORY
   
   //----------
   

@@ -37,7 +37,7 @@ private:
   double p_tun    = 0.0;
   double p_flt    = 0.0;
   double p_fr     = 1.0;
-  double p_bw     = 0.5;
+  double p_bw     = 1.0;
   double p_fltamt = 0.0;
   
   double m_tun    = 0.0;
@@ -95,9 +95,7 @@ public:
         // envelopes
         
         double osc_env = MOscEnv.process();
-        
-        double flt_env = MFltEnv.process();//f_env_amt;
-        flt_env *= p_fltamt;
+        double flt_env = MFltEnv.process() * p_fltamt;
         
         //SAT_Print("voice stage: %i oenv %f\n",MOscEnv.getStage(),oenv);
 
@@ -116,6 +114,7 @@ public:
         double    bw  = SAT_Clamp(  p_bw  + m_bw,  0,1);
         //SAT_Print("flt %i fr %.2f bw %.2f\n",flt,fr,bw);
         //SAT_Print("flt %i p_fr %.2f m_fr %.2f fr %.2f\n",flt,p_fr,m_fr,fr);
+
         MFilter.setMode(flt);
         MFilter.setFreq(fr);
         MFilter.setBW(bw);
@@ -172,6 +171,7 @@ public:
     x_tuning  = 0.0;
     MOscEnv.noteOn();
     MFltEnv.noteOn();
+    
     return SAT_VOICE_PLAYING;
   }
 

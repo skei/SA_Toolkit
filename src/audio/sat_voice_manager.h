@@ -162,7 +162,7 @@ public:
   //----------
 
   void handleNoteOn(const clap_event_note_t* event) {
-    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
+    SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
     int32_t voice = findFreeVoice(SAT_VOICE_MANAGER_STEAL_VOICES);
     if (voice >= 0) {
       MVoices[voice].state        = SAT_VOICE_WAITING;
@@ -178,6 +178,7 @@ public:
   //----------
 
   void handleNoteOff(const clap_event_note_t* event) {
+    SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
     //bool has_noteid = (event->note_id != -1);
     //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -206,6 +207,7 @@ public:
   //----------
 
   void handleNoteChoke(const clap_event_note_t* event) {
+    SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
     //bool has_noteid = (event->note_id != -1);
     //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -234,7 +236,7 @@ public:
   //----------
 
   void handleNoteExpression(const clap_event_note_expression_t* event) {
-    //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
+    SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
     //bool has_noteid = (event->note_id != -1);
     //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
@@ -263,20 +265,20 @@ public:
   //----------
 
   void handleParamValue(const clap_event_param_value_t* event) {
-    //SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
+    SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
     //bool has_noteid = (event->note_id != -1);
     //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
 
-      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
-      
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-        MVoices[voice].events.write(ve);
-    
-      #else
+//      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
+//      
+//        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
+//        MVoices[voice].events.write(ve);
+//    
+//      #else
 
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
           MVoices[voice].events.write(ve);
         }
 
@@ -289,7 +291,7 @@ public:
         //  MVoices[voice].events.write(ve);
         //}
           
-      #endif
+//      #endif
 
     }
   }
@@ -301,17 +303,17 @@ public:
   */
 
   void handleParamMod(const clap_event_param_mod_t* event) {
-    //SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
+    SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
     //bool has_noteid = (event->note_id != -1);
     //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
     for (int32_t voice=0; voice<COUNT; voice++) {
 
-      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
-      
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-        MVoices[voice].events.write(ve);
-        
-      #else
+//      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
+//      
+//        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
+//        MVoices[voice].events.write(ve);
+//        
+//      #else
 
       if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
         SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
@@ -329,8 +331,7 @@ public:
       //  MVoices[voice].events.write(ve);
       //}
       
-      #endif
-
+//      #endif
 
     }
   }
@@ -339,45 +340,45 @@ public:
 
   void handleMidi(const clap_event_midi_t* event) {
     #ifdef SAT_VOICE_MANAGER_CONVERT_MIDI
-    uint8_t msg   = event->data[0] & 0xf0;
-    uint8_t chan  = event->data[0] & 0x0f;
-    uint8_t index = event->data[1]; // & 0x7f;
-    uint8_t val   = event->data[2]; // & 0x7f;
-    switch (msg) {
-      case SAT_MIDI_NOTE_OFF:
-        SAT_Print("MIDI NOTE OFF chan %i index %i val %i\n",chan,index,val);
-        //processNoteOff
-        break;
-      case SAT_MIDI_NOTE_ON:
-        SAT_Print("MIDI NOTE ON chan %i index %i val %i\n",chan,index,val);
-        //processNoteOn
-        break;
-      case SAT_MIDI_POLY_AFTERTOUCH:
-        SAT_Print("MIDI POLY AFTERTOUCH chan %i index %i val %i\n",chan,index,val);
-        //processNoteExpression
-        break;
-      case SAT_MIDI_CONTROL_CHANGE:
-        SAT_Print("MIDI CONTROL CHANGE chan %i index %i val %i\n",chan,index,val);
-        // 74 : processNoteExpression
-        // midi mapping
-        break;
-      case SAT_MIDI_PROGRAM_CHANGE:
-        SAT_Print("MIDI PROGRAM CHANGE chan %i index %i val %i\n",chan,index,val);
-        // ?
-        break;
-      case SAT_MIDI_CHANNEL_AFTERTOUCH:
-        SAT_Print("MIDI CHANNEL AFTERTOUCH chan %i index %i val %i\n",chan,index,val);
-        //processNoteExpression
-        break;
-      case SAT_MIDI_PITCHBEND:
-        SAT_Print("MIDI PITCHBEND chan %i index %i val %i\n",chan,index,val);
-        //processNoteExpression
-        break;
-      case SAT_MIDI_SYS:
-        SAT_Print("MIDI SYS chan %i index %i val %i\n",chan,index,val);
-        //processMidiSysex
-        break;
-    }
+      uint8_t msg   = event->data[0] & 0xf0;
+      uint8_t chan  = event->data[0] & 0x0f;
+      uint8_t index = event->data[1]; // & 0x7f;
+      uint8_t val   = event->data[2]; // & 0x7f;
+      switch (msg) {
+        case SAT_MIDI_NOTE_OFF:
+          SAT_Print("MIDI NOTE OFF chan %i index %i val %i\n",chan,index,val);
+          //processNoteOff
+          break;
+        case SAT_MIDI_NOTE_ON:
+          SAT_Print("MIDI NOTE ON chan %i index %i val %i\n",chan,index,val);
+          //processNoteOn
+          break;
+        case SAT_MIDI_POLY_AFTERTOUCH:
+          SAT_Print("MIDI POLY AFTERTOUCH chan %i index %i val %i\n",chan,index,val);
+          //processNoteExpression
+          break;
+        case SAT_MIDI_CONTROL_CHANGE:
+          SAT_Print("MIDI CONTROL CHANGE chan %i index %i val %i\n",chan,index,val);
+          // 74 : processNoteExpression
+          // midi mapping
+          break;
+        case SAT_MIDI_PROGRAM_CHANGE:
+          SAT_Print("MIDI PROGRAM CHANGE chan %i index %i val %i\n",chan,index,val);
+          // ?
+          break;
+        case SAT_MIDI_CHANNEL_AFTERTOUCH:
+          SAT_Print("MIDI CHANNEL AFTERTOUCH chan %i index %i val %i\n",chan,index,val);
+          //processNoteExpression
+          break;
+        case SAT_MIDI_PITCHBEND:
+          SAT_Print("MIDI PITCHBEND chan %i index %i val %i\n",chan,index,val);
+          //processNoteExpression
+          break;
+        case SAT_MIDI_SYS:
+          SAT_Print("MIDI SYS chan %i index %i val %i\n",chan,index,val);
+          //processMidiSysex
+          break;
+      }
     #endif
   }
 
@@ -441,13 +442,20 @@ public:
     uint32_t num_playing = 0;
     uint32_t num_released = 0;
     for (uint32_t i=0; i<COUNT; i++) {
-      if ((MVoices[i].state != SAT_VOICE_OFF) && (MVoices[i].state != SAT_VOICE_FINISHED)) {
+      
+      //if ((MVoices[i].state != SAT_VOICE_OFF) && (MVoices[i].state != SAT_VOICE_FINISHED)) {
+        
+      if ((MVoices[i].state == SAT_VOICE_WAITING)
+       || (MVoices[i].state == SAT_VOICE_PLAYING)
+       || (MVoices[i].state == SAT_VOICE_RELEASED)) {
+        
         MActiveVoices[MNumActiveVoices] = i;
         MNumActiveVoices += 1;
         if (MVoices[i].state == SAT_VOICE_PLAYING) num_playing += 1;
         if (MVoices[i].state == SAT_VOICE_RELEASED) num_released += 1;
       }
     }
+    
     MNumPlayingVoices = num_playing;
     MNumReleasedVoices = num_released;
     
@@ -510,11 +518,13 @@ private:
   //----------
 
   int32_t findFreeVoice(bool AReleased=false) {
+    
     for (uint32_t i=0; i<COUNT; i++) {
       if ((MVoices[i].state == SAT_VOICE_OFF) /*|| (MVoices[i].state == SAT_VOICE_FINISHED)*/) {
         return i;
       }
     }
+    
     if (AReleased) {
       int32_t lowest_index = -1;
       double  lowest_level = 666.0;
@@ -533,6 +543,7 @@ private:
         return lowest_index;
       }
     }
+    
     return -1;
   }
 
