@@ -47,8 +47,6 @@ public:
   uint32_t            event_mode  = SAT_PLUGIN_EVENT_MODE_BLOCK;
   SAT_VoiceEventQueue events      = {};
 
-//SAT_ParameterArray* parameters  = nullptr;
-
 //------------------------------
 public:
 //------------------------------
@@ -121,6 +119,7 @@ private:
         break;
       }
       //case CLAP_EVENT_NOTE_END:
+      //  break;
       case CLAP_EVENT_NOTE_EXPRESSION: {
         /*state =*/ voice.noteExpression(event.index,event.value);
         break;
@@ -139,6 +138,7 @@ private:
       //case CLAP_EVENT_MIDI:
       //case CLAP_EVENT_MIDI_SYSEX:
       //case CLAP_EVENT_MIDI2:
+      //  break;
     } // switch
   }
 
@@ -149,60 +149,60 @@ private:
     while (events.read(&event)) handleEvent(event);
     uint32_t length = context->process_context->voice_length;
     state = voice.process(state,0,length);
+    
+    SAT_Assert( events.read(&event) == false );
+    
   }
 
   //----------
 
   void handleInterleavedEvents() {
+    uint32_t event_count = 0;
     uint32_t current_time = 0;
     uint32_t remaining = context->process_context->voice_length;
     SAT_VoiceEvent event = {};
     while (remaining > 0) {
-      
       if (events.read(&event)) {
-        //SAT_Print("event\n");
-        
-        int32_t length = event.time - current_time;
-        
-        //if (length < 0) {
-        //  SAT_Print("length < 0\n");
-        //  length = 0;
-        //}
-        
+        int32_t length = event.time - current_time; // samples until next event
         //SAT_Assert(length >= 0);
         //SAT_Assert((current_time + length) <= context->process_context->voice_length);
-        
-        if (length > 0) {
+        if (length < 0) {
+          
+          SAT_Print("events not sorted! voice %i current_time %i, event.time %i type %i event_count %i\n",index,current_time,event.time,event.type,event_count);
+
+        }
+        //else if (length == 0) {
+        //}
+        else if (length > 0) {
           state = voice.process(state,current_time,length);
           remaining -= length;
           current_time += length;
         }
-        
         handleEvent(event);
-        
+        event_count += 1;
       } // event
       else {
-        
         // no more events
         int32_t length = remaining;
         state = voice.process(state,current_time,length);
         remaining -= length;
         current_time += length;
-        
       } // !event
     } // remaining > 0
     
-    SAT_Assert( events.read(&event) == false );
+//    SAT_Print("remaining %i current_time %i\n",remaining,current_time);
 
+    SAT_Assert( events.read(&event) == false );
+    
   }
 
   //----------
-
+  
   void handleQuantizedEvents() {
     uint32_t buffer_length = context->process_context->voice_length;
-    uint32_t        current_time  = 0;
-    uint32_t        remaining     = buffer_length;
-    uint32_t        next_event    = 0;
+    uint32_t current_time  = 0;
+    uint32_t remaining     = buffer_length;
+    uint32_t next_event    = 0;
     SAT_VoiceEvent  event         = {};
     if (events.read(&event)) {
       next_event = event.time;
@@ -235,7 +235,9 @@ private:
         remaining -= SAT_AUDIO_QUANTIZED_SIZE;
       } while (remaining > 0);
     }
-    //SAT_Assert( events.read(&event) == false );
+    
+    SAT_Assert( events.read(&event) == false );
+    
   }
 
   //----------

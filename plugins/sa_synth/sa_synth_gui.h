@@ -91,6 +91,8 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextColor(0.6);
     knob->setValueSize(7);
     
+    knob->setBipolar(true);
+    knob->setBipolarCenter(0.5);
     knob->setSnap(true);
     knob->setSnapPos(0.5);
     //knob->setSnapDist(0.1);
@@ -199,6 +201,8 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextColor(0.6);
     knob->setValueSize(6);
     
+    knob->setBipolar(true);
+    knob->setBipolarCenter(0.5);
     knob->setSnap(true);
     knob->setSnapPos(0.5);
     //knob->setSnapDist(0.1);

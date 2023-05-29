@@ -31,14 +31,16 @@ protected:
   SAT_Color MInteractiveArcValueColor = SAT_White;
   double    MArcThickness             = 8.0;
 
+  bool      MDrawModulation           = true;
   double    MModArcOffset             = 2.0;// 13.0;
   double    MModArcThickness          = 4.0;
-  //SAT_Color MModArcColor              = SAT_COLOR_LIGHT_RED;
+  SAT_Color MModArcColor              = SAT_Color(1,1,0,0.3);
 
   bool      MDrawMarker               = false;
   double    MMarkerValue              = 0.75;
   SAT_Color MMarkerColor              = SAT_White;
   double    MMarkerThickness          = 0.01;
+  
 
 //------------------------------
 public:
@@ -95,14 +97,17 @@ public:
       double S = getWindowScale();
       SAT_Rect mrect = getRect();
       SAT_Painter* painter = AContext->painter;
-
-      //SAT_Parameter* param = getParameter();
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
+
       double value = getValue();
-      //SAT_Print("value %f\n",value);
+      double modulation = getModulation();
+      
       if (param) {
         value = param->getNormalizedValue();//  normalizeValue(value);
+        modulation = param->getNormalizedModulation();
       }
+      
+      //SAT_Print("modulation %f\n",modulation);
 
       double thickness  = MArcThickness * S;
       //double bthick = MArcThickness * S * 0.5;
@@ -141,21 +146,20 @@ public:
       if (isBipolar()) {
         double bc = getBipolarCenter();
         if (value < bc) {
-          double a1 = 0.35 + (value      * 0.8);
-          double a2 = a1   + ((bc-value) * 0.8);
+          /*double*/ a1 = 0.35 + (value      * 0.8);
+          /*double*/ a2 = a1   + ((bc-value) * 0.8);
           painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
         }
         else if (value > bc) {
-          double a1 = 0.35 + (bc         * 0.8);
-          double a2 = a1   + ((value-bc) * 0.8);
+          /*double*/ a1 = 0.35 + (bc         * 0.8);
+          /*double*/ a2 = a1   + ((value-bc) * 0.8);
           painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
         }
       }
       else {
-        double a1 = 0.35 + (0.0   * 0.8);
-        double a2 = a1   + (value * 0.8);
+        /*double*/ a1 = 0.35 + (0.0   * 0.8);
+        /*double*/ a2 = a1   + (value * 0.8);
         painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
-
       }
 
       // draw modulation
@@ -163,8 +167,6 @@ public:
   //    if (MDrawModulation) {
   //      if (!isDisabled()) {
   //
-  //        painter->setLineWidth(MModArcThickness*S);
-  //        painter->setDrawColor(MModArcColor);
   //
   //        double modulation = MModulations[0];
   //
@@ -185,6 +187,61 @@ public:
   //
   //      }
   //    }
+  
+      if (MDrawModulation) {
+        
+        if (!isDisabled()) {
+
+          painter->setLineWidth(MModArcThickness*S);
+          painter->setDrawColor(MModArcColor);
+
+          double valmod = value + modulation;
+          
+          if (modulation < 0) {
+            if ((valmod) < 0) {
+              valmod = 0.0;
+              modulation = - value;
+            }
+            a1 = 0.35 + (valmod * 0.8);
+            a2 = a1 +   (-modulation * 0.8);
+            painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
+          }
+          else if (modulation > 0) {
+            if ((valmod) > 1) {
+              modulation = 1 - value;
+            }
+            a1 = 0.35 + (value      * 0.8);
+            a2 = a1 +   (modulation * 0.8);
+            painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
+          }
+          
+//          if (value < bc) {
+//            /*double*/ a1 = 0.35 + (value      * 0.8);
+//            /*double*/ a2 = a1   + ((bc-value) * 0.8);
+//            painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
+//          }
+//          else if (value > bc) {
+//            /*double*/ a1 = 0.35 + (bc         * 0.8);
+//            /*double*/ a2 = a1   + ((value-bc) * 0.8);
+//            painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
+//          }
+//
+
+        }
+      }
+  
+      //if (MDrawValueIndicator) {
+
+        double ms = MMarkerThickness * 0.5;
+        /*double*/ a1 = 0.35 + ((value - ms) * 0.8);
+        /*double*/ a2 = a1   + ((          ms + ms) * 0.8);
+
+        painter->setLineWidth(thickness);
+        color = SAT_White;
+        painter->setDrawColor(color);
+        painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
+
+      //}
 
       // draw indicator
 

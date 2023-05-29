@@ -281,17 +281,17 @@ public: // plugin
     //preProcessEvents(process->in_events,process->out_events);
     switch (MEventMode) {
       case SAT_PLUGIN_EVENT_MODE_BLOCK: {
-        processEvents(process->in_events,process->out_events);
+        processBlockEvents(process->in_events,process->out_events);
         processAudio(&MProcessContext);
         break;
       }
       case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
         SAT_PRINT;
-        processInterleaved(&MProcessContext);
+        processInterleavedEvents(&MProcessContext);
         break;
       }
       case SAT_PLUGIN_EVENT_MODE_QUANTIZED: {
-        processQuantized(&MProcessContext);
+        processQuantizedEvents(&MProcessContext);
         break;
       }
     }
@@ -1022,7 +1022,7 @@ public: // param indication
   // [main-thread]
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
-    SAT_Print("param_id %i has_mapping %i color %i.%i.%i label %s desc %s\n",param_id,has_mapping,color->red,color->green,color->blue,label,description);
+    //SAT_Print("param_id %i has_mapping %i color %i.%i.%i label %s desc %s\n",param_id,has_mapping,color->red,color->green,color->blue,label,description);
     SAT_Parameter* param = MParameters[param_id];
     param->setMappingIndication(has_mapping,color,label,description);
     SAT_Widget* widget = (SAT_Widget*)param->getWidget();
@@ -1048,7 +1048,7 @@ public: // param indication
   */
 
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
-    SAT_Print("param_id %i automation_state %i color %i.%i.%i\n",param_id,automation_state,color->red,color->green,color->blue);
+    //SAT_Print("param_id %i automation_state %i color %i.%i.%i\n",param_id,automation_state,color->red,color->green,color->blue);
     SAT_Parameter* param = MParameters[param_id];
     param->setAutomationIndication(automation_state,color);
     SAT_Widget* widget = (SAT_Widget*)param->getWidget();
@@ -1137,7 +1137,7 @@ public: // params
 
   void params_flush(const clap_input_events_t  *in, const clap_output_events_t *out) override {
     SAT_Print("\n");
-    processEvents(in,out);
+    processBlockEvents(in,out);
     //flushParamFromGuiToHost();
     //flushNoteEndFromProcessToHost();
   }
@@ -1351,7 +1351,7 @@ public: // state
 
   bool state_save(const clap_ostream_t *stream) override {
     SAT_PRINT;
-    uint32_t total = 0;
+    //uint32_t total = 0;
     uint32_t written = 0;
     uint32_t version = 0;
     uint32_t num_params = MParameters.size();
@@ -1361,14 +1361,14 @@ public: // state
       //SAT_Print("state_save: error writing version\n");
       return false;
     }
-    total += sizeof(uint32_t);
+    //total += sizeof(uint32_t);
     // num params
     written = stream->write(stream,&num_params,sizeof(uint32_t));
     if (written != sizeof(uint32_t)) {
       //SAT_Print("state_save: error writing parameter count\n");
       return false;
     }
-    total += sizeof(uint32_t);
+    //total += sizeof(uint32_t);
     // param values
     for (uint32_t i=0; i<num_params; i++) {
       double value = MParameters[i]->getValue();
@@ -1378,7 +1378,7 @@ public: // state
         //SAT_Print("state_load: error writing parameter %i\n",i);
         return false;
       }
-      total += sizeof(double);
+      //total += sizeof(double);
     }
     //SAT_Print("total: %i\n",total);
     return true;
@@ -1392,7 +1392,7 @@ public: // state
 
   bool state_load(const clap_istream_t *stream) override {
     SAT_PRINT;
-    uint32_t total = 0;
+    //uint32_t total = 0;
     uint32_t read = 0;
     uint32_t version = 0;
     uint32_t num_params = 0;
@@ -1402,7 +1402,7 @@ public: // state
       //SAT_Print("state_load: error reading version\n");
       return false;
     }
-    total += sizeof(uint32_t);
+    //total += sizeof(uint32_t);
     //TODO: check version
     // num params
     read = stream->read(stream,&num_params,sizeof(uint32_t));
@@ -1410,7 +1410,7 @@ public: // state
       //SAT_Print("state_load: error reading parameter count\n");
       return false;
     }
-    total += sizeof(uint32_t);
+    //total += sizeof(uint32_t);
     //TODO: check num params = marameters.size
     if (num_params != MParameters.size()) {
       //SAT_Print("state_load: wrong parameter count\n");
@@ -1424,8 +1424,10 @@ public: // state
         //SAT_Print("state_load: error reading parameter %i\n",i);
         return false;
       }
-      total += sizeof(double);
-      MParameters[i]->setValue(value);
+      //total += sizeof(double);
+      
+      MParameters[i]->setValue(value);    // !!!!!!!!!!!!!!!!!!!!
+      
       //MParameterValues[i] = value;
     }
 
@@ -2589,8 +2591,25 @@ public:
 
   /*
     TODO: don't send ALL mods to gui.. only last one in block
-    set flag (this modulator changed..) and check in at end of process
+    set flag (this modulator changed..) and check at end of process
   */
+
+  void clearModToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      MParameters[i]->setGuiModDirty(false);
+    }
+  }
+    
+  void queueModToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      if (MParameters[i]->isGuiModDirty()) {
+        double value = MParameters[i]->getLastModulatedValue();
+        queueModFromHostToGui(i,value);
+      }
+    }
+  }
 
   void handleParamModEvent(const clap_event_param_mod_t* event) {
     //SAT_Assert(event);
@@ -2599,18 +2618,29 @@ public:
     double    value   = event->amount;
     MParameters[index]->setModulation(value);
     
-//    uint32_t  process_count = MProcessContext.counter;
-//    MParameters[index]->setLastModulated(process_count);
-//    MParameters[index]->setLastModulatedValue(value);
-
     if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
-        queueModFromHostToGui(index,value);
+        
+//        queueModFromHostToGui(index,value);
+
+        MParameters[index]->setGuiModDirty(true);
+        MParameters[index]->setLastModulatedValue(value);
+
+        //uint32_t process_count = MProcessContext.counter;
+        //uint32_t last_modulated = MParameters[index]->getLastModulated();
+        //if (last_modulated == process_count) {
+        //}
+        //else {
+        //  MParameters[index]->setLastModulated(process_count);
+        //  MParameters[index]->setLastModulatedValue(value);
+        //}
+        //last_modulated = process_count;
+        
       }
     }
     handleParamMod(event);
   }
-
+  
   //----------
 
   void handleTransportEvent(const clap_event_transport_t* event) {
@@ -2823,22 +2853,35 @@ public: // process events
 
   // called from SAT_Plugin.process(), just before processAudio()
 
-  virtual void processEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  virtual void processBlockEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+    //SAT_PRINT;
     if (!in_events) return;
     //if (!out_events) return;
+    uint32_t prev_time = 0;
+    
+    clearModToGui();
+    
     uint32_t size = in_events->size(in_events);
     for (uint32_t i=0; i<size; i++) {
       const clap_event_header_t* header = in_events->get(in_events,i);
-      // test if clap space, etc?
-      handleEvent(header);
+      if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
+        if (header->time < prev_time) {
+          SAT_Print("Events not sorted! prev_time %i header->time %i (type %i)\n",prev_time,header->time,header->type);
+        }
+        handleEvent(header);
+        prev_time = header->time;
+      }
     }
+    
+    queueModToGui();
+        
   }
 
   //----------
 
   // processes events at their sample accurate place, and audio inbetween
 
-  virtual void processInterleaved(SAT_ProcessContext* AContext) {
+  virtual void processInterleavedEvents(SAT_ProcessContext* AContext) {
 
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t remaining = AContext->process->frames_count;
@@ -2878,7 +2921,7 @@ public: // process events
   // and then the audio)..
   // events could be processed up to (slicesize - 1) samples 'early'..
 
-  virtual void processQuantized(SAT_ProcessContext* AContext) {
+  virtual void processQuantizedEvents(SAT_ProcessContext* AContext) {
 
     uint32_t buffer_length = AContext->process->frames_count;
     uint32_t remaining = buffer_length;

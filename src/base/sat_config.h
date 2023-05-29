@@ -223,7 +223,7 @@
   /*
   */
   
-  //#define SAT_PLUGIN_USE_ARA_FACTORY
+  #define SAT_PLUGIN_USE_ARA_FACTORY
   
   //----------
   
@@ -231,7 +231,7 @@
     use preset discovery factory (clap)
   */
   
-  //#define SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
+  #define SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
   
   //----------
   

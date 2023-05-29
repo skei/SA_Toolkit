@@ -162,14 +162,33 @@ public:
     //phadd = 1.0 / SAT_HzToSamples(hz,srate);
     MKey = AKey;
     MVelocity = AVelocity;
-    //p_flt = MContext->process_context->parameters->getItem(6);
-    //p_fr  = MContext->process_context->parameters->getItem(7);
-    //p_bw  = MContext->process_context->parameters->getItem(8);
+    
+    SAT_ParameterArray* parameters = MContext->process_context->parameters;
+    
+    p_tun     = parameters->getItem(1)->getValue();
+    p_flt     = parameters->getItem(6)->getValue();
+    p_fr      = parameters->getItem(7)->getValue();
+    p_bw      = parameters->getItem(8)->getValue();
+    p_fltamt  = parameters->getItem(13)->getValue();
+    
     m_flt     = 0;
     m_fr      = 0;
     m_bw      = 0;
+    
     x_tuning  = 0.0;
+    
+    double a = parameters->getItem(2)->getValue();
+    double d = parameters->getItem(3)->getValue();
+    double s = parameters->getItem(4)->getValue();
+    double r = parameters->getItem(5)->getValue();
+    MOscEnv.setADSR(a*5,d*5,s*5,r*5);
     MOscEnv.noteOn();
+    
+    a = parameters->getItem(9)->getValue();
+    d = parameters->getItem(10)->getValue();
+    s = parameters->getItem(11)->getValue();
+    r = parameters->getItem(12)->getValue();
+    MFltEnv.setADSR(a*5,d*5,s*5,r*5);
     MFltEnv.noteOn();
     
     return SAT_VOICE_PLAYING;

@@ -148,11 +148,22 @@ public:
   //}
 
   bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
-    if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   return false;
-    if ((port    != -1) && (MVoices[index].note.port    != port))     return false;
-    if ((channel != -1) && (MVoices[index].note.channel != channel))  return false;
-    if ((key     != -1) && (MVoices[index].note.key     != key))      return false;
+//    SAT_Print("index %i noteid %i port %i channel %i key %i = %i,%i,%i,%i",index,noteid,port,channel,key, MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key);
+    if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   { /*SAT_DPrint(" -> false\n");*/ return false; }
+    if ((port    != -1) && (MVoices[index].note.port    != port))     { /*SAT_DPrint(" -> false\n");*/ return false; }
+    if ((channel != -1) && (MVoices[index].note.channel != channel))  { /*SAT_DPrint(" -> false\n");*/ return false; }
+    if ((key     != -1) && (MVoices[index].note.key     != key))      { /*SAT_DPrint(" -> false\n");*/ return false; }
+//    SAT_DPrint(" -> true\n"); 
     return true;
+  }
+  
+  bool isActive(uint32_t index) {
+    if ( (MVoices[index].state == SAT_VOICE_WAITING) 
+      || (MVoices[index].state == SAT_VOICE_PLAYING)
+      || (MVoices[index].state == SAT_VOICE_RELEASED)) {
+      return true;
+    }
+    return false;
   }
     
   //----------
@@ -162,7 +173,7 @@ public:
   //----------
 
   void handleNoteOn(const clap_event_note_t* event) {
-    SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
+    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
     int32_t voice = findFreeVoice(SAT_VOICE_MANAGER_STEAL_VOICES);
     if (voice >= 0) {
       MVoices[voice].state        = SAT_VOICE_WAITING;
@@ -170,7 +181,7 @@ public:
       MVoices[voice].note.channel = event->channel;
       MVoices[voice].note.key     = event->key;
       MVoices[voice].note.noteid  = event->note_id;
-      SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_ON, event->header.time, event->key,event->velocity);
+      SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_ON, event->header.time, event->key, event->velocity);
       MVoices[voice].events.write(ve);
     }
   }
@@ -178,121 +189,58 @@ public:
   //----------
 
   void handleNoteOff(const clap_event_note_t* event) {
-    SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    //bool has_noteid = (event->note_id != -1);
-    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
     for (int32_t voice=0; voice<COUNT; voice++) {
-
-      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-        MVoices[voice].events.write(ve);
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
+          MVoices[voice].events.write(ve);
+        }
       }
-
-      //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-      //  MVoices[voice].events.write(ve);
-      //}
-      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-      //  MVoices[voice].events.write(ve);
-      //}
-
-      //else {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-      //  MVoices[voice].events.write(ve);
-      //}
     }
   }
 
   //----------
 
   void handleNoteChoke(const clap_event_note_t* event) {
-    SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    //bool has_noteid = (event->note_id != -1);
-    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
     for (int32_t voice=0; voice<COUNT; voice++) {
-
-      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-        MVoices[voice].events.write(ve);
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
+          MVoices[voice].events.write(ve);
+        }
       }
-
-      //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-      //  MVoices[voice].events.write(ve);
-      //}
-      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-      //  MVoices[voice].events.write(ve);
-      //}
-
-      //else {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-      //  MVoices[voice].events.write(ve);
-      //}
     }
   }
 
   //----------
 
   void handleNoteExpression(const clap_event_note_expression_t* event) {
-    SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
-    //bool has_noteid = (event->note_id != -1);
-    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
-
-      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-        MVoices[voice].events.write(ve);
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
+          MVoices[voice].events.write(ve);
+        }
       }
-
-      //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-      //  MVoices[voice].events.write(ve);
-      //}
-      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-      //  MVoices[voice].events.write(ve);
-      //}
-
-      //else {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-      //  MVoices[voice].events.write(ve);
-      //}
     }
   }
 
   //----------
+  
+  //#ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
   void handleParamValue(const clap_event_param_value_t* event) {
-    SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
-    //bool has_noteid = (event->note_id != -1);
-    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
-
-//      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
-//      
-//        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-//        MVoices[voice].events.write(ve);
-//    
-//      #else
-
+      if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
           MVoices[voice].events.write(ve);
         }
-
-        //if (has_noteid && (event->note_id == MVoices[voice].note.noteid)) {
-        //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-        //  MVoices[voice].events.write(ve);
-        //}
-        //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-        //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-        //  MVoices[voice].events.write(ve);
-        //}
-          
-//      #endif
-
+      }
     }
   }
 
@@ -302,37 +250,17 @@ public:
     see param_value
   */
 
+  //#ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
+
   void handleParamMod(const clap_event_param_mod_t* event) {
-    SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
-    //bool has_noteid = (event->note_id != -1);
-    //bool has_pck = ((event->port_index != -1) && (event->channel != -1) && (event->key != -1));
+    //SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
     for (int32_t voice=0; voice<COUNT; voice++) {
-
-//      #ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
-//      
-//        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-//        MVoices[voice].events.write(ve);
-//        
-//      #else
-
-      if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-        SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-        MVoices[voice].events.write(ve);
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
+          MVoices[voice].events.write(ve);
+        }
       }
-
-      //if (has_noteid) {
-      //  if (event->note_id == MVoices[voice].note.noteid) {
-      //    SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-      //    MVoices[voice].events.write(ve);
-      //  }
-      //}
-      //else if (has_pck && ((event->port_index == MVoices[voice].note.port) && (event->channel == MVoices[voice].note.channel) && (event->key == MVoices[voice].note.key))) {
-      //  SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-      //  MVoices[voice].events.write(ve);
-      //}
-      
-//      #endif
-
     }
   }
 
@@ -473,20 +401,20 @@ public:
       if (!processed) {
         for (uint32_t i=0; i<MNumActiveVoices; i++) {
           uint32_t v = MActiveVoices[i];
-          process_voice(v);
+          processVoice(v);
         }
       }
       
-      // mix, (post-process)
-
-      for (uint32_t i=0; i<MNumActiveVoices; i++) {
-        uint32_t voice = MActiveVoices[i];
-        float* buffer = MVoiceBuffer;
-        //buffer += (voice * SAT_PLUGIN_MAX_BLOCK_SIZE);
-        uint32_t index = MVoices[voice].index;
-        buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
-        SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
-      }
+//      // mix, (post-process)
+//
+//      for (uint32_t i=0; i<MNumActiveVoices; i++) {
+//        uint32_t voice = MActiveVoices[i];
+//        float* buffer = MVoiceBuffer;
+//        //buffer += (voice * SAT_PLUGIN_MAX_BLOCK_SIZE);
+//        uint32_t index = MVoices[voice].index;
+//        buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
+//        SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
+//      }
 
     } // num voices > 0
   }
@@ -498,33 +426,45 @@ public:
   // called by host
   // separate thread for each task/voice
 
-  void thread_pool_exec(uint32_t AIndex) {
+  void threadPoolExec(uint32_t AIndex) {
     uint32_t v = MActiveVoices[AIndex];
-    process_voice(v);
+    processVoice(v);
   }
+  
+  //----------
 
+  void mixActiveVoices() {
+    float** output = MVoiceContext.process_context->voice_buffer;
+    uint32_t blocksize = MVoiceContext.process_context->voice_length;
+    for (uint32_t i=0; i<MNumActiveVoices; i++) {
+      uint32_t voice = MActiveVoices[i];
+      float* buffer = MVoiceBuffer;
+      uint32_t index = MVoices[voice].index;
+      buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
+      SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
+    }
+  }
+  
+  
 //------------------------------
-//public:
 private:
 //------------------------------
 
   // if threaded: separate threads for each voice
   // else:        one voice after another
 
-  void process_voice(uint32_t i) {
+  void processVoice(uint32_t i) {
     MVoices[i].process();
   };
 
   //----------
-
+  
   int32_t findFreeVoice(bool AReleased=false) {
-    
     for (uint32_t i=0; i<COUNT; i++) {
       if ((MVoices[i].state == SAT_VOICE_OFF) /*|| (MVoices[i].state == SAT_VOICE_FINISHED)*/) {
         return i;
       }
     }
-    
     if (AReleased) {
       int32_t lowest_index = -1;
       double  lowest_level = 666.0;
@@ -543,7 +483,6 @@ private:
         return lowest_index;
       }
     }
-    
     return -1;
   }
 

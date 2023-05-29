@@ -25,7 +25,7 @@ void clap_entry_deinit_callback(void) {
 
 const void* clap_entry_get_factory_callback(const char* factory_id) {
   
-  SAT_Print("factory_id: %s\n",factory_id);
+  //SAT_Print("factory_id: %s\n",factory_id);
   
   int32_t index = SAT_GLOBAL.REGISTRY.findFactory(factory_id);
   if (index > 0) {

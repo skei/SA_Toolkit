@@ -130,7 +130,7 @@ public:
   //----------
 
   void thread_pool_exec(uint32_t task_index) final {
-    MVoiceManager.thread_pool_exec(task_index);
+    MVoiceManager.threadPoolExec(task_index);
   }
 
   //----------

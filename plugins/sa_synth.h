@@ -98,7 +98,7 @@ public: // clap
 
   bool init() final {
     
-    SAT_Print("id: '%s'\n",sa_synth_descriptor.id);
+    //SAT_Print("id: '%s'\n",sa_synth_descriptor.id);
     
     // extensions
     registerAllExtensions();
@@ -109,21 +109,20 @@ public: // clap
     
     // parameters
     appendParameter(new SAT_TextParameter("wf",   0, 0, 4, sa_synth_osc_type_text ));     // 0
-  //appendParameter(new SAT_IntParameter( "tu",   0, -12, 12 ));                          // 1
-    appendParameter(new SAT_Parameter(    "tu",   0, -2, 2  ));                            // 1
-    appendParameter(new SAT_Parameter(    "A",    0         ));                                 // 2
-    appendParameter(new SAT_Parameter(    "D",    0         ));                                 // 3
-    appendParameter(new SAT_Parameter(    "S",    1         ));                                 // 4
-    appendParameter(new SAT_Parameter(    "R",    0         ));                                 // 5
-    appendParameter(new SAT_TextParameter("flt",  0,  0, 4, sa_synth_flt_type_text ));     // 6
-    appendParameter(new SAT_Parameter(    "fr",   1         ));                                 // 7
-    appendParameter(new SAT_Parameter(    "bw",   1         ));                                 // 8
-    appendParameter(new SAT_Parameter(    "A",    0         ));                                 // 9
-    appendParameter(new SAT_Parameter(    "D",    0         ));                                 // 10
-    appendParameter(new SAT_Parameter(    "S",    1         ));                                 // 11
-    appendParameter(new SAT_Parameter(    "R",    0         ));                                 // 12
-    appendParameter(new SAT_Parameter(    "fa",   0, -1, 1  ));                                 // 13 flt env amt
-    appendParameter(new SAT_Parameter(    "vol",  0.5       ));                                 // 14
+    appendParameter(new SAT_Parameter(    "tu",   0, -2, 2  ));                           // 1
+    appendParameter(new SAT_Parameter(    "A",    0         ));                           // 2
+    appendParameter(new SAT_Parameter(    "D",    0         ));                           // 3
+    appendParameter(new SAT_Parameter(    "S",    1         ));                           // 4
+    appendParameter(new SAT_Parameter(    "R",    0         ));                           // 5
+    appendParameter(new SAT_TextParameter("flt",  0,  0, 4, sa_synth_flt_type_text ));    // 6
+    appendParameter(new SAT_Parameter(    "fr",   1         ));                           // 7
+    appendParameter(new SAT_Parameter(    "bw",   1         ));                           // 8
+    appendParameter(new SAT_Parameter(    "A",    0         ));                           // 9
+    appendParameter(new SAT_Parameter(    "D",    0         ));                           // 10
+    appendParameter(new SAT_Parameter(    "S",    1         ));                           // 11
+    appendParameter(new SAT_Parameter(    "R",    0         ));                           // 12
+    appendParameter(new SAT_Parameter(    "fa",   0, -1, 1  ));                           // 13 flt env amt
+    appendParameter(new SAT_Parameter(    "vol",  0.5       ));                           // 14
     
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID);
@@ -150,7 +149,7 @@ public: // clap
   //----------
   
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    SAT_Print("sample_rate %.2f min_frames_count %i max_frames_count %i\n",sample_rate,min_frames_count,max_frames_count);
+    //SAT_Print("sample_rate %.2f min_frames_count %i max_frames_count %i\n",sample_rate,min_frames_count,max_frames_count);
     MVoiceManager.activate(sample_rate,min_frames_count,max_frames_count);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
@@ -158,13 +157,13 @@ public: // clap
   //----------
 
   void thread_pool_exec(uint32_t task_index) final {
-    MVoiceManager.thread_pool_exec(task_index);
+    MVoiceManager.threadPoolExec(task_index);
   }
 
   //----------
 
   bool voice_info_get(clap_voice_info_t *info) final {
-    SAT_Print("-> %i (CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES)\n",NUM_VOICES);
+    //SAT_Print("-> %i (CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES)\n",NUM_VOICES);
     info->voice_count     = NUM_VOICES;
     info->voice_capacity  = NUM_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
@@ -174,14 +173,14 @@ public: // clap
   //----------
   
   uint32_t remote_controls_count() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     return 1;
   }  
   
   //----------
   
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
-    SAT_PRINT;
+    //SAT_PRINT;
     switch (page_index) {
       case 0: {
         strcpy(page->section_name,"Section");
@@ -196,11 +195,9 @@ public: // clap
         page->param_ids[6] = 8;
         page->param_ids[7] = CLAP_INVALID_ID;
         page->is_for_preset = false;
-        SAT_PRINT;
         return true;
       }
     }
-    SAT_PRINT;
     return false;
   }  
   
@@ -208,7 +205,7 @@ public: // clap
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
     if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
-      SAT_Print("location '%s', load_key '%s'\n",location,load_key);
+      //SAT_Print("location '%s', load_key '%s'\n",location,load_key);
       if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
         loadPresetFromFile(location);
         SAT_Host* host = getHost();
@@ -225,12 +222,6 @@ public: // gui
 
   #include "sa_synth/sa_synth_gui.h"
   
-//  void timer_update(sa_tyr_voice_manager* voices) {
-  //update_voices_widget(&MVoiceManager);
-//  }
-
-  
-  
 //------------------------------
 public: // timer
 //------------------------------
@@ -238,13 +229,6 @@ public: // timer
   void do_editorListener_timer() final {
     SAT_Plugin::do_editorListener_timer();
     update_voices_widget(&MVoiceManager);
-//    //update voices widget.. (move to widget itself (+ register timer)
-//    // before or after sat_plugin:: ?
-//    for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
-//      uint32_t state = MVoiceManager.getVoiceState(voice);
-//      MVoicesWidget->setVoiceState(voice,state);
-//    }
-//    MVoicesWidget->parentRedraw();
   }
 
 //------------------------------
@@ -335,10 +319,12 @@ public: // audio
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
+    
+    MVoiceManager.mixActiveVoices();
+    
     sat_param_t scale = getParameterValue(14) + getModulationValue(14);   // Gain
     scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);
-
   }
 
 };

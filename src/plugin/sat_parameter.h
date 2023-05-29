@@ -59,11 +59,16 @@ protected:
   uint32_t          MAutomationState                = CLAP_PARAM_INDICATION_AUTOMATION_NONE;
   SAT_Color         MAutomationColor                = SAT_White;
   
+  bool                MGuiModDirty                  = false;
+  double              MLastModulatedValue           = 0.0;
+
 //int32_t           MLastPainted                    = -1;
-//int32_t           MLastUpdated                    = 0;
 //int32_t           MLastModulated                  = 0;
+//int32_t           MLastUpdated                    = 0;
 //double            MLastUpdatedValue               = 0.0;
-//double            MLastModulatedValue             = 0.0;
+
+
+
 
 //------------------------------
 public:
@@ -118,11 +123,13 @@ public:
   virtual sat_param_t           getValue()              { return MValue; }
   virtual sat_param_t           getModulation()         { return MModulation; }
 
+  virtual bool                  isGuiModDirty()         { return MGuiModDirty; }
+  virtual sat_param_t           getLastModulatedValue() { return MLastModulatedValue; }
+
 //virtual int32_t               getLastPainted()        { return MLastPainted; }
-//virtual int32_t               getLastUpdated()        { return MLastUpdated; }
 //virtual int32_t               getLastModulated()      { return MLastModulated; }
+//virtual int32_t               getLastUpdated()        { return MLastUpdated; }
 //virtual sat_param_t           getLastUpdatedValue()   { return MLastUpdated; }
-//virtual sat_param_t           getLastModulatedValue() { return MLastModulated; }
 
   uint32_t                      getModulationState()    { return MModulationState; }
   SAT_Color                     getModulationColor()    { return MModulationColor; }
@@ -163,11 +170,13 @@ public:
 //  virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }
 //  virtual void setSmoothFactor(sat_param_t AFactor)       { MSmoothFactor = AFactor; }
 
+  virtual void setGuiModDirty(bool ADirty=true)           { MGuiModDirty  = ADirty; }
+  virtual void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
+
 //virtual void setLastPainted(uint32_t ALast)             { MLastPainted = ALast; }
-//virtual void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
 //virtual void setLastModulated(uint32_t ALast)           { MLastModulated = ALast; }
+//virtual void setLastUpdated(uint32_t ALast)             { MLastUpdated = ALast; }
 //virtual void setLastUpdatedValue(sat_param_t AValue)    { MLastUpdatedValue = AValue; }
-//virtual void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
 
 //------------------------------
 public:
@@ -279,7 +288,7 @@ public:
   //----------
   
   virtual void setMappingIndication(bool has_mapping, const clap_color_t *color, const char *label, const char *description) {
-    SAT_Print("param %i has_mapping %i color %i.%i.%i label %s descr %s\n",MIndex,has_mapping,color->red,color->green,color->blue,label,description);
+    //SAT_Print("param %i has_mapping %i color %i.%i.%i label %s descr %s\n",MIndex,has_mapping,color->red,color->green,color->blue,label,description);
     MIsMapped = has_mapping;
     double r = (double)color->red   * SAT_INV255;
     double g = (double)color->green * SAT_INV255;
@@ -294,7 +303,7 @@ public:
   //----------
   
   virtual void setAutomationIndication(uint32_t automation_state, const clap_color_t *color) {
-    SAT_Print("param %i automation_state %i color %i.%i.%i\n",MIndex,automation_state,color->red,color->green,color->blue);
+    //SAT_Print("param %i automation_state %i color %i.%i.%i\n",MIndex,automation_state,color->red,color->green,color->blue);
     MAutomationState = automation_state;
     double r = (double)color->red   * SAT_INV255;
     double g = (double)color->green * SAT_INV255;
