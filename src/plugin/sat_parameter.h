@@ -59,7 +59,10 @@ protected:
   uint32_t          MAutomationState                = CLAP_PARAM_INDICATION_AUTOMATION_NONE;
   SAT_Color         MAutomationColor                = SAT_White;
   
-  bool                MGuiModDirty                  = false;
+  bool                MGuiAutomationDirty           = false;
+  bool                MGuiModulationDirty           = false;
+  
+  double              MLastAutomatedValue           = 0.0;
   double              MLastModulatedValue           = 0.0;
 
 //int32_t           MLastPainted                    = -1;
@@ -123,7 +126,10 @@ public:
   virtual sat_param_t           getValue()              { return MValue; }
   virtual sat_param_t           getModulation()         { return MModulation; }
 
-  virtual bool                  isGuiModDirty()         { return MGuiModDirty; }
+  virtual bool                  isGuiAutomationDirty()  { return MGuiAutomationDirty; }
+  virtual bool                  isGuiModulationDirty()  { return MGuiModulationDirty; }
+  
+  virtual sat_param_t           getLastAutomatedValue() { return MLastAutomatedValue; }
   virtual sat_param_t           getLastModulatedValue() { return MLastModulatedValue; }
 
   uint32_t                      getModulationState()    { return MModulationState; }
@@ -166,7 +172,10 @@ public:
   virtual void setValue(sat_param_t AValue)               { MValue = AValue; }
   virtual void setModulation(sat_param_t AValue)          { MModulation = AValue; }
 
-  virtual void setGuiModDirty(bool ADirty=true)           { MGuiModDirty  = ADirty; }
+  virtual void setGuiAutomationDirty(bool ADirty=true)    { MGuiAutomationDirty  = ADirty; }
+  virtual void setGuiModulationDirty(bool ADirty=true)    { MGuiModulationDirty  = ADirty; }
+  
+  virtual void setLastAutomatedValue(sat_param_t AValue)  { MLastAutomatedValue = AValue; }
   virtual void setLastModulatedValue(sat_param_t AValue)  { MLastModulatedValue = AValue; }
 
 //  virtual void setSmoothValue(sat_param_t AValue)         { MSmoothValue = AValue; }

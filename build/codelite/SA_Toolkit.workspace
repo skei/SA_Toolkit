@@ -18,7 +18,7 @@
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_plugin_debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="linux_plugin_release" Selected="yes">
+    <WorkspaceConfiguration Name="linux_plugin_release" Selected="no">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_plugin_release"/>
     </WorkspaceConfiguration>
@@ -38,7 +38,7 @@
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="win32_plugin_release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="linux_exelib_debug" Selected="no">
+    <WorkspaceConfiguration Name="linux_exelib_debug" Selected="yes">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exelib_debug"/>
     </WorkspaceConfiguration>

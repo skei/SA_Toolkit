@@ -22,33 +22,36 @@ class sa_synth_voice {
 private:
 //------------------------------
 
-  uint32_t            MIndex      = 0;
-  SAT_VoiceContext*   MContext    = nullptr;
-  //SAT_ParameterArray* MParameters = nullptr;
-  
-  SAT_SvfFilter         MFilter   = {};
-  SAT_Envelope<double>  MOscEnv   = {};
-  SAT_Envelope<double>  MFltEnv   = {};
+  uint32_t              MIndex      = 0;
+  SAT_VoiceContext*     MContext    = nullptr;
 
-  float             srate         = 0.0;
-  float             ph            = 0.0;
-  float             phadd         = 0.0;
-  
-  double p_tun    = 0.0;
-  double p_flt    = 0.0;
-  double p_fr     = 1.0;
-  double p_bw     = 1.0;
-  double p_fltamt = 0.0;
-  
-  double m_tun    = 0.0;
-  double m_flt    = 0.0;
-  double m_fr     = 0.0;
-  double m_bw     = 0.0;
+  // note
+  double                MKey        = 0;
+  double                MVelocity   = 0;
 
-  double x_tuning = 0.0;
+  // parameters
+  double                p_tun       = 0.0;
+  double                p_flt       = 0.0;
+  double                p_fr        = 1.0;
+  double                p_bw        = 1.0;
+  double                p_fltamt    = 0.0;
   
-  double MKey = 0;
-  double MVelocity = 0;
+  // modulation
+  double                m_tun       = 0.0;
+  double                m_flt       = 0.0;
+  double                m_fr        = 0.0;
+  double                m_bw        = 0.0;
+
+  // note expressions
+  double                x_tuning    = 0.0;
+  
+  // synth
+  float                 srate       = 0.0;
+  float                 ph          = 0.0;
+  float                 phadd       = 0.0;
+  SAT_SvfFilter         MFilter     = {};
+  SAT_Envelope<double>  MOscEnv     = {};
+  SAT_Envelope<double>  MFltEnv     = {};
   
 //------------------------------
 public:
@@ -107,9 +110,9 @@ public:
         
         // filter
         
-        uint32_t  flt = SAT_ClampI( p_flt + m_flt, 0,4);
-        double    fr  = SAT_Clamp(  p_fr  + m_fr + flt_env,  0,1);
-        double    bw  = SAT_Clamp(  p_bw  + m_bw,  0,1);
+        uint32_t  flt = SAT_ClampI( p_flt + m_flt,          0, 4 );
+        double    fr  = SAT_Clamp(  p_fr  + m_fr + flt_env, 0, 1 );
+        double    bw  = SAT_Clamp(  p_bw  + m_bw,           0, 1 );
 
         MFilter.setMode(flt);
         MFilter.setFreq(fr);

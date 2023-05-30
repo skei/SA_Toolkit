@@ -2505,6 +2505,55 @@ public: // note output ports
 public: // events
 //------------------------------
 
+  /*
+    don't send ALL param value/mods to gui.. only last one in block
+    set flag, and check at end of process
+  */
+
+  // call before processing all events
+  
+  void clearAutomationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      MParameters[i]->setGuiAutomationDirty(false);
+    }
+  }
+  
+  void clearModulationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      MParameters[i]->setGuiModulationDirty(false);
+    }
+  }
+  
+  //----------
+    
+  // call after processing all events
+  
+  void queueAutomationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      if (MParameters[i]->isGuiAutomationDirty()) {
+        double value = MParameters[i]->getLastAutomatedValue();
+        queueParamFromHostToGui(i,value);
+      }
+    }
+  }
+
+  void queueModulationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      if (MParameters[i]->isGuiModulationDirty()) {
+        double value = MParameters[i]->getLastModulatedValue();
+        queueModFromHostToGui(i,value);
+      }
+    }
+  }
+
+//------------------------------
+//
+//------------------------------
+
   virtual bool handleNoteOn(const clap_event_note_t* event) { return false; }
   virtual bool handleNoteOff(const clap_event_note_t* event) { return false; }
   virtual bool handleNoteChoke(const clap_event_note_t* event) { return false; }
@@ -2570,65 +2619,34 @@ public:
     handleNoteExpression(event);
   }
 
-  //----------
+//------------------------------
+//
+//------------------------------
 
   void handleParamValueEvent(const clap_event_param_value_t* event) {
-    uint32_t  index         = event->param_id;
-    double    value         = event->value;
+    uint32_t index = event->param_id;
+    double value = event->value;
     MParameters[index]->setValue(value);
-//    uint32_t  process_count = MProcessContext.counter;
-//    MParameters[index]->setLastUpdated(process_count);
-//    MParameters[index]->setLastUpdatedValue(value);
     if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
-        queueParamFromHostToGui(index,value);
+        //queueParamFromHostToGui(index,value);
+        MParameters[index]->setGuiAutomationDirty(true);
+        MParameters[index]->setLastAutomatedValue(value);
       }
     }
     handleParamValue(event);
   }
 
   //----------
-
-  /*
-    don't send ALL mods to gui.. only last one in block
-    set flag (this modulator changed..) and check at end of process
-  */
-
-  // call before processing all events
-  
-  void clearModToGui() {
-    uint32_t num = MParameters.size();
-    for (uint32_t i=0; i<num; i++) {
-      MParameters[i]->setGuiModDirty(false);
-    }
-  }
-  
-  //----------
-    
-  // call after processing all events
-  
-  void queueModToGui() {
-    uint32_t num = MParameters.size();
-    for (uint32_t i=0; i<num; i++) {
-      if (MParameters[i]->isGuiModDirty()) {
-        double value = MParameters[i]->getLastModulatedValue();
-        queueModFromHostToGui(i,value);
-      }
-    }
-  }
-
-  //----------
     
   void handleParamModEvent(const clap_event_param_mod_t* event) {
-    //SAT_Assert(event);
-    //SAT_Assert(!MIsEditorClosing);
-    uint32_t  index   = event->param_id;
-    double    value   = event->amount;
+    uint32_t index = event->param_id;
+    double value = event->amount;
     MParameters[index]->setModulation(value);
     if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
         //queueModFromHostToGui(index,value);
-        MParameters[index]->setGuiModDirty(true);
+        MParameters[index]->setGuiModulationDirty(true);
         MParameters[index]->setLastModulatedValue(value);
       }
     }
@@ -2852,9 +2870,10 @@ public: // process events
     if (!in_events) return;
     //if (!out_events) return;
 
-    clearModToGui();
-    uint32_t prev_time = 0;
+    clearAutomationToGui();
+    clearModulationToGui();
     
+    uint32_t prev_time = 0;
     uint32_t size = in_events->size(in_events);
     for (uint32_t i=0; i<size; i++) {
       const clap_event_header_t* header = in_events->get(in_events,i);
@@ -2867,7 +2886,8 @@ public: // process events
       }
     }
     
-    queueModToGui();
+    queueAutomationToGui();
+    queueModulationToGui();
         
   }
 
@@ -2883,13 +2903,16 @@ public: // process events
     uint32_t current_time = 0;
     uint32_t current_event = 0;
 
-    clearModToGui();
+    clearAutomationToGui();
+    clearModulationToGui();
     
     while (remaining > 0) {
       if (current_event < num_events) {
         const clap_event_header_t* header = in_events->get(in_events,current_event);
         current_event += 1;
         int32_t length = header->time - current_time;
+        
+        // if length > remaining ...
 
         //while (length > 0) {
         if (length > 0) {
@@ -2909,7 +2932,8 @@ public: // process events
     }
     //SAT_Assert( events.read(&event) == false );
     
-    queueModToGui();
+    queueAutomationToGui();
+    queueModulationToGui();
     
   }
 
@@ -2928,7 +2952,8 @@ public: // process events
     uint32_t current_event = 0;
     uint32_t next_event_time = 0;
     
-    clearModToGui();
+    clearAutomationToGui();
+    clearModulationToGui();
     
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t num_events = in_events->size(in_events);
@@ -2972,7 +2997,8 @@ public: // process events
       } while (remaining > 0);
     }
     
-    queueModToGui();
+    queueAutomationToGui();
+    queueModulationToGui();
     
   }
 

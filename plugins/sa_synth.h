@@ -2,9 +2,9 @@
 #define sa_synth_included
 //----------------------------------------------------------------------
 
-//#define SAT_PLUGIN_CLAP
-//#define SAT_PLUGIN_VST2
-//#define SAT_PLUGIN_VST3
+#define SAT_PLUGIN_CLAP
+#define SAT_PLUGIN_VST2
+#define SAT_PLUGIN_VST3
 
 //----------
 
