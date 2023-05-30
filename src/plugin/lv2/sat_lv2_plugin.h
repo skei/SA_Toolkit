@@ -3,7 +3,46 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
+#include "plugin/clap/sat_clap.h"
 #include "plugin/lv2/sat_lv2.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_Lv2Plugin {
+  
+//----------
+//------------------------------
+private:
+//------------------------------
+
+  LV2_Handle                      MHandle               = nullptr;
+  const clap_host_t*              MHost                 = nullptr;
+  const clap_plugin_t*            MPlugin               = nullptr;
+  const clap_plugin_descriptor_t* MDescriptor           = nullptr;
+  
+//------------------------------
+public:
+//------------------------------
+
+  LV2_Handle getHandle() {
+    return MHandle;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void lv2_connect_port(uint32_t port, void* data_location) {}
+  void lv2_activate() {}
+  void lv2_run(uint32_t sample_count) {}
+  void lv2_deactivate() {}
+  void lv2_cleanup() {}
+  
+};
 
 //----------------------------------------------------------------------
 #endif
