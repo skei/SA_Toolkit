@@ -60,13 +60,15 @@ class SAT_Plugin
 private:
 //------------------------------
   
-  // set in gui_create (false), gui_destroy (true)
-  // checked in handleParamValueEvent, handleParamModEvent
-  std::atomic<bool>                 MIsEditorClosing                              {false};
-  
-  const char*                       MPluginFormat                                 = "CLAP";
   SAT_Host*                         MHost                                         = nullptr;
   SAT_Editor*                       MEditor                                       = nullptr;
+
+  const char*                       MPluginFormat                                 = "CLAP";
+  uint32_t                          MInitialEditorWidth                           = 0;//512;
+  uint32_t                          MInitialEditorHeight                          = 0;//512;
+  double                            MInitialEditorScale                           = 2.0;
+  bool                              MProcessThreaded                              = false;
+  uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
   
   SAT_Dictionary<const void*>       MExtensions                                   = {};
   SAT_ParameterArray                MParameters                                   = {};
@@ -74,11 +76,8 @@ private:
   SAT_AudioPortArray                MAudioOutputPorts                             = {};
   SAT_NotePortArray                 MNoteInputPorts                               = {};
   SAT_NotePortArray                 MNoteOutputPorts                              = {};
-  uint32_t                          MInitialEditorWidth                           = 0;//512;
-  uint32_t                          MInitialEditorHeight                          = 0;//512;
-  double                            MInitialEditorScale                           = 2.0;
-
   SAT_ProcessContext                MProcessContext                               = {};
+
   bool                              MIsInitialized                                = false;
   bool                              MIsActivated                                  = false;
   bool                              MIsProcessing                                 = false;
@@ -90,9 +89,10 @@ private:
   SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
   SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
 
-  bool                              MProcessThreaded                              = false;
-  uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
-
+  // set in gui_create (false), gui_destroy (true)
+  // checked in handleParamValueEvent, handleParamModEvent
+  std::atomic<bool>                 MIsEditorClosing                              {false};
+  
   #ifdef SAT_DEBUG_WINDOW
   SAT_DebugWindow*                  MDebugWindow                                  = nullptr;
   #endif
@@ -177,11 +177,6 @@ public: // plugin
   /*
     https://isocpp.org/wiki/faq/freestore-mgmt#delete-this  
     "As long as you’re careful, it’s okay (not evil) for an object to commit suicide (delete this)"
-    
-    what if we have a destroy() in our own plugin, that calls this one (SAT_Plugin::destroy),
-    and then called 'delete this' there
-    and we could set that up as the default destructor (macro, like we do for the constructor)
-    (would it change anything?)
   */
 
   void destroy() override {

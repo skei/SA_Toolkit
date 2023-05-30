@@ -77,7 +77,6 @@ private:
   SAT_Wrench              MWrench         = {};
 //SAT_WaveformWidget*     MWaveformWidget = nullptr;
 
-
 //------------------------------
 public:
 //------------------------------

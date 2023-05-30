@@ -10,8 +10,16 @@
   #include "plugin/exe/sat_exe_entry.h"
 #endif
 
-#ifdef SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
+#ifdef SAT_PLUGIN_EXECUTABLE_LIBRARY
   #include "plugin/exe/sat_exe_entry.h"
+#endif
+
+#ifdef SAT_PLUGIN_LADSPA
+  #include "plugin/ladspa/sat_ladspa_entry.h"
+#endif
+
+#ifdef SAT_PLUGIN_LV2
+  #include "plugin/lv2/sat_lv2_entry.h"
 #endif
 
 #ifdef SAT_PLUGIN_VST2

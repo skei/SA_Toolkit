@@ -102,6 +102,7 @@
   
   //#define SAT_UNIT_TESTING
 
+
 //--------------------
 // debug
 //--------------------
@@ -198,6 +199,7 @@
 
   //#define SAT_DEBUG_WINDOW
 
+
 //----------------------------------------------------------------------
 //
 // plugin
@@ -217,7 +219,7 @@
   /*
   */
   
-  //#define SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY
+  //#define SAT_PLUGIN_EXECUTABLE_LIBRARY
   
   //----------
   
@@ -269,8 +271,6 @@
   */
 
   #define SAT_VOICE_MANAGER_CONVERT_MIDI
-  
-  
 
 
 //----------------------------------------------------------------------

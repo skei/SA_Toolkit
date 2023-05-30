@@ -235,6 +235,15 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="plugin">
+      <VirtualDirectory Name="lv2">
+        <File Name="../../src/plugin/lv2/sat_lv2_utils.h"/>
+        <File Name="../../src/plugin/lv2/sat_lv2_plugin.h"/>
+        <File Name="../../src/plugin/lv2/sat_lv2_host_implementation.h"/>
+        <File Name="../../src/plugin/lv2/sat_lv2_hosted_plugin.h"/>
+        <File Name="../../src/plugin/lv2/sat_lv2_factory.h"/>
+        <File Name="../../src/plugin/lv2/sat_lv2_entry.h"/>
+        <File Name="../../src/plugin/lv2/sat_lv2.h"/>
+      </VirtualDirectory>
       <File Name="../../src/plugin/sat_note_port.h"/>
       <File Name="../../src/plugin/sat_plugin.h"/>
       <File Name="../../src/plugin/sat_entry.h"/>
@@ -742,7 +751,7 @@
   <Dependencies Name="win32_exe_release"/>
   <Dependencies Name="win32_plugin_debug"/>
   <Dependencies Name="win32_plugin_release"/>
-  <Settings Type="Executable">
+  <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -877,7 +886,7 @@
         <IncludePath Value="."/>
         <Preprocessor Value="SAT_EXE"/>
         <Preprocessor Value="SAT_DEBUG"/>
-        <Preprocessor Value="SAT_PLUGIN_EXE_EXECUTABLE_LIBRARY"/>
+        <Preprocessor Value="SAT_PLUGIN_EXECUTABLE_LIBRARY"/>
       </Compiler>
       <Linker Options="-fPIE;-Wl,-e,exe_entry_point" Required="yes">
         <Library Value="pthread"/>
