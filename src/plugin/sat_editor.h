@@ -238,7 +238,7 @@ public: // clap
   //----------
 
   virtual bool get_size(uint32_t *width, uint32_t *height) {
-    //SAT_Print("-> %i,%i\n",MWidth,MHeight);
+    //SAT_Print("(%i,%i) -> %i,%i\n",*width,*height,MWidth,MHeight);
     *width = MWidth;
     *height = MHeight;
     //SAT_PRINT;
@@ -274,7 +274,7 @@ public: // clap
   */
   
   virtual bool adjust_size(uint32_t *width, uint32_t *height) {
-    //SAT_Print("(%i,%i)\n",*width,*height);
+    //SAT_Print("(%i,%i) -> %i,%i\n",*width,*height,*width,*height);
     return true;
   }
 

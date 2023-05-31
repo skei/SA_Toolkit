@@ -236,6 +236,7 @@
     </VirtualDirectory>
     <VirtualDirectory Name="plugin">
       <VirtualDirectory Name="lv2">
+        <File Name="../../src/plugin/lv2/sat_lv2_manifest.h"/>
         <File Name="../../src/plugin/lv2/sat_lv2_utils.h"/>
         <File Name="../../src/plugin/lv2/sat_lv2_plugin.h"/>
         <File Name="../../src/plugin/lv2/sat_lv2_host_implementation.h"/>

@@ -6,6 +6,47 @@
 #include "plugin/ladspa/sat_ladspa.h"
 
 //----------------------------------------------------------------------
+
+class SAT_LadspaPlugin {
+
+  LADSPA_Handle MHandle = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  LADSPA_Handle getHandle() {
+    return MHandle;
+  }
+
+  LADSPA_Handle ladspa_instantiate(unsigned long SampleRate) {
+    return nullptr;
+  }
+
+  void ladspa_connect_port(unsigned long Port, LADSPA_Data * DataLocation) {
+  }
+
+  void ladspa_activate() {
+  }
+
+  void ladspa_run(unsigned long SampleCount) {
+  }
+
+  void ladspa_run_adding(unsigned long SampleCount) {
+  }
+
+  void ladspa_set_run_adding_gain(LADSPA_Data Gain) {
+  }
+
+  void ladspa_deactivate() {
+  }
+
+  void ladspa_cleanup() {
+  }
+
+};
+
+//----------------------------------------------------------------------
 #endif
 
 

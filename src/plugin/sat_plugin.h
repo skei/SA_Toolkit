@@ -1345,7 +1345,7 @@ public: // state
   // [main-thread]
 
   bool state_save(const clap_ostream_t *stream) override {
-    SAT_PRINT;
+//    SAT_PRINT;
     //uint32_t total = 0;
     uint32_t written = 0;
     uint32_t version = 0;
@@ -1386,7 +1386,7 @@ public: // state
   // [main-thread]
 
   bool state_load(const clap_istream_t *stream) override {
-    SAT_PRINT;
+//    SAT_PRINT;
     //uint32_t total = 0;
     uint32_t read = 0;
     uint32_t version = 0;

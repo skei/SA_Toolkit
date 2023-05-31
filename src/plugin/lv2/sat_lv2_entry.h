@@ -3,7 +3,10 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
+//#include "plugin/sat_registry.h"
+#include "plugin/clap/sat_clap.h"
 #include "plugin/lv2/sat_lv2.h"
+#include "plugin/lv2/sat_lv2_manifest.h"
 #include "plugin/lv2/sat_lv2_plugin.h"
 #include "plugin/lv2/sat_lv2_utils.h"
 
@@ -19,8 +22,6 @@ class SAT_Lv2Entry {
 private:
 //------------------------------
 
-  // TODO: pointers, initialize when needed
-
 //DESCRIPTOR        MDescriptor                       = {};
   LV2_Descriptor    MLv2Descriptor                    = {0};
   LV2UI_Descriptor  MLv2UIDescriptor                  = {0};
@@ -35,9 +36,10 @@ public:
 //------------------------------
 
   SAT_Lv2Entry() {
-    //SAT_PRINT;
+    SAT_PRINT;
     setup_lv2_uri();
     setup_lv2_descriptor();
+
     #ifndef SAT_NO_GUI
       setup_lv2ui_uri();
       setup_lv2ui_descriptor();
@@ -50,7 +52,7 @@ public:
   //----------
 
   virtual ~SAT_Lv2Entry() {
-    //SAT_PRINT;
+    SAT_PRINT;
   }
 
 //------------------------------
@@ -58,7 +60,7 @@ public:
 //------------------------------
 
   const LV2_Descriptor* lv2_entrypoint(unsigned long Index) {
-    //SAT_Print("Index %i\n",Index);
+    SAT_Print("Index %i\n",Index);
     if (Index > 0) return nullptr;
     return &MLv2Descriptor;
   }
@@ -66,7 +68,7 @@ public:
   //----------
 
   const LV2UI_Descriptor* lv2ui_entrypoint(uint32_t index) {
-    //SAT_Print("index %i\n",index);
+    SAT_Print("index %i\n",index);
     if (index > 0) return nullptr;
     return &MLv2UIDescriptor;
   }
@@ -82,13 +84,10 @@ public:
 //------------------------------
 
   void export_ttl(void) {
-    //SAT_PRINT;
+    SAT_PRINT;
     #ifdef SAT_LV2_EXPORT_TTL
-    //SAT_Descriptor* descriptor = &MDescriptor;
-    //SAT_Descriptor* descriptor = _sat_create_descriptor(); // &MDescriptor;
-//    SAT_Descriptor* descriptor = sat_lv2_get_descriptor();
-//    SAT_Lv2WriteManifest(descriptor);
-    //delete descriptor;
+      SAT_Lv2Manifest manifest = {};
+      manifest.export_ttl();
     #endif
   }
 
@@ -96,9 +95,8 @@ public:
 private:
 //------------------------------
 
-  //void setup_lv2_uri() {
   void setup_lv2_uri() {
-    //SAT_PRINT;
+    SAT_PRINT;
     memset(MLv2Uri,0,SAT_LV2_MAX_URI_LENGTH);
     strcpy(MLv2Uri,"urn:");
 //    strcat(MLv2Uri,MDescriptor.getAuthor());
@@ -109,7 +107,7 @@ private:
   //----------
 
   void setup_lv2ui_uri() {
-    //SAT_PRINT;
+    SAT_PRINT;
     memset(MLv2UIUri,0,SAT_LV2_MAX_URI_LENGTH);
     strcpy(MLv2UIUri,"urn:");
 //    strcat(MLv2UIUri,MDescriptor.getAuthor());
@@ -121,7 +119,7 @@ private:
   //----------
 
   void setup_lv2_descriptor() {
-    //SAT_PRINT;
+    SAT_PRINT;
     memset(&MLv2Descriptor,0,sizeof(LV2_Descriptor));
     MLv2Descriptor.URI             = MLv2Uri;
     MLv2Descriptor.instantiate     = lv2_instantiate_callback;
@@ -136,7 +134,7 @@ private:
   //----------
 
   void setup_lv2ui_descriptor() {
-    //SAT_PRINT;
+    SAT_PRINT;
     memset(&MLv2UIDescriptor,0,sizeof(LV2UI_Descriptor));
     MLv2UIDescriptor.URI            = MLv2UIUri;
     MLv2UIDescriptor.instantiate    = lv2ui_instantiate_callback;
@@ -149,13 +147,15 @@ private:
   // extensions
   //------------------------------
 
-  static int lv2_ext_idle(LV2UI_Handle handle) {
+  static
+  int lv2_ext_idle(LV2UI_Handle handle) {
     //StuckUI* self = (StuckUI*)handle;
     //self->idle();
     return 0;
   }
 
-  static int lv2_ext_resize(LV2UI_Feature_Handle handle, int w, int h) {
+  static
+  int lv2_ext_resize(LV2UI_Feature_Handle handle, int w, int h) {
     //StuckUI* self = (StuckUI*)handle;
     //self->ui->size(w,h);
     return 0;
@@ -195,29 +195,17 @@ private: // lv2 callbacks
 
   //-----
 
-  /*
-    todo: new/separate descriptor per instance?
-    (so we don't need to keep the MDescriptor static..)
-    we could return a struct...
-
-    todo2: send the features pointer to the instance constructor, and
-    let it sort it out itself?
-
-  */
-
   static
   LV2_Handle lv2_instantiate_callback(const LV2_Descriptor* descriptor, double sample_rate, const char* bundle_path, const LV2_Feature* const* features) {
-    //SAT_Print("sample_rate %.2f bundle_path '%s' features %p\n",sample_rate,bundle_path,features);
-    //SAT_PrintFeatures(features);
-
+    SAT_Print("sample_rate %.2f bundle_path '%s' features %p\n",sample_rate,bundle_path,features);
+    SAT_Lv2PrintFeatures(features);
 //    SAT_Descriptor* desc = sat_lv2_get_descriptor();
-//    //SAT_Lv2Plugin* lv2_instance = new SAT_Lv2Plugin(desc);
+//    //SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin(desc);
 //    // !!!
 //    SAT_Instance* inst = new INSTANCE(desc);                             // who deletes this ???
     SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin();
-//    lv2_instance->lv2_setup(sample_rate,bundle_path,features);
-//    return (LV2_Handle)lv2_instance;
-
+//    lv2_plugin->lv2_setup(sample_rate,bundle_path,features);
+//    return (LV2_Handle)lv2_plugin;
     return lv2_plugin->getHandle();
   }
 
@@ -225,46 +213,46 @@ private: // lv2 callbacks
 
   static
   void lv2_connect_port_callback(LV2_Handle instance, uint32_t port, void* data_location) {
-    //SAT_Print("port %i data_location %p\n",port,data_location);
-    SAT_Lv2Plugin* lv2_instance = (SAT_Lv2Plugin*)instance;
-    if (lv2_instance) lv2_instance->lv2_connect_port(port,data_location);
+    SAT_Print("port %i data_location %p\n",port,data_location);
+    SAT_Lv2Plugin* lv2_plugin = (SAT_Lv2Plugin*)instance;
+    if (lv2_plugin) lv2_plugin->lv2_connect_port(port,data_location);
   }
 
   //----------
 
   static
   void lv2_activate_callback(LV2_Handle instance) {
-    //SAT_PRINT;
-    SAT_Lv2Plugin* lv2_instance = (SAT_Lv2Plugin*)instance;
-    if (lv2_instance) lv2_instance->lv2_activate();
+    SAT_PRINT;
+    SAT_Lv2Plugin* lv2_plugin = (SAT_Lv2Plugin*)instance;
+    if (lv2_plugin) lv2_plugin->lv2_activate();
   }
 
   //----------
 
   static
   void lv2_run_callback(LV2_Handle instance, uint32_t sample_count) {
-    //SAT_Print("sample_count %i\n",sample_count);
-    SAT_Lv2Plugin* lv2_instance = (SAT_Lv2Plugin*)instance;
-    if (lv2_instance) lv2_instance->lv2_run(sample_count);
+    SAT_Print("sample_count %i\n",sample_count);
+    SAT_Lv2Plugin* lv2_plugin = (SAT_Lv2Plugin*)instance;
+    if (lv2_plugin) lv2_plugin->lv2_run(sample_count);
   }
 
   //----------
 
   static
   void lv2_deactivate_callback(LV2_Handle instance) {
-    //SAT_PRINT;
-    SAT_Lv2Plugin* lv2_instance = (SAT_Lv2Plugin*)instance;
-    if (lv2_instance) lv2_instance->lv2_deactivate();
+    SAT_PRINT;
+    SAT_Lv2Plugin* lv2_plugin = (SAT_Lv2Plugin*)instance;
+    if (lv2_plugin) lv2_plugin->lv2_deactivate();
   }
 
   //----------
 
   static
   void lv2_cleanup_callback(LV2_Handle instance) {
-    //SAT_PRINT;
-    SAT_Lv2Plugin* lv2_instance = (SAT_Lv2Plugin*)instance;
-    if (lv2_instance) lv2_instance->lv2_cleanup();
-    delete lv2_instance;
+    SAT_PRINT;
+    SAT_Lv2Plugin* lv2_plugin = (SAT_Lv2Plugin*)instance;
+    if (lv2_plugin) lv2_plugin->lv2_cleanup();
+    delete lv2_plugin;
   }
 
   //----------
@@ -285,7 +273,7 @@ private: // lv2 callbacks
 
   static
   const void* lv2_extension_data_callback(const char* uri) {
-    //("uri %s\n",uri);
+    SAT_Print("uri %s\n",uri);
     return nullptr;
   }
 
@@ -303,7 +291,7 @@ private: // ui callbacks
     LV2UI_Widget*               widget,
     const LV2_Feature* const*   features) {
     /* --- */
-    //("\n");
+    //SAT_Print("\n");
 
 //    if (strcmp(plugin_uri, MLv2UIUri) != 0) {
 //      return nullptr;
@@ -342,19 +330,16 @@ private: // ui callbacks
 
   static
   void lv2ui_cleanup_callback(LV2UI_Handle ui) {
-    //("\n");
-
+    //SAT_Print("\n");
 //    StuckUI *self = (StuckUI*)ui;
 //    delete self;
-
   }
 
   //----------
 
   static
   void lv2ui_port_event_callback(LV2UI_Handle ui, uint32_t port_index, uint32_t buffer_size, uint32_t format, const void * buffer) {
-    //("\n");
-
+    //SAT_Print("\n");
 //    StuckUI *self = (StuckUI*)ui;
 //    if (!format) {
 //      float val = *(float*)buffer;
@@ -371,14 +356,13 @@ private: // ui callbacks
 //          break;
 //      }
 //    }
-
   }
 
   //----------
 
   static
   const void* lv2ui_extension_data_callback(const char* uri) {
-    //("uri %s\n",uri);
+    //SAT_Print("uri %s\n",uri);
     //if (!strcmp(uri, LV2_UI__idleInterface)) return &_lv2_idle_interface;
     //if (!strcmp(uri, LV2_UI__resize)) return &_lv2_resize;
     return nullptr;
@@ -398,9 +382,6 @@ private: // ui callbacks
 //TODO: move into SAT_GLOBAL.VST2 ??
 
 SAT_Lv2Entry GLOBAL_LV2_PLUGIN_ENTRY;
-
-//----------
-
 
 //----------------------------------------------------------------------
 //
@@ -441,26 +422,22 @@ void                    sat_lv2_export_ttl(void) asm             ("lv2_export_tt
 //----------
 
 //__attribute__((visibility("default")))
-
 __SAT_EXPORT
 const LV2_Descriptor* sat_lv2_entrypoint(unsigned long Index) {
-  //printf("LV2\n");
   SAT_Print("Index %i\n",Index);
   return GLOBAL_LV2_PLUGIN_ENTRY.lv2_entrypoint(Index);
 }
 
-/*__attribute__((visibility("default")))*/
+//__attribute__((visibility("default")))
 __SAT_EXPORT
 const LV2UI_Descriptor* sat_lv2ui_entrypoint(uint32_t index) {
-  printf("LV2UI\n");
-  /*SAT_Print("index %i\n",index);*/
+  SAT_Print("index %i\n",index);
   return GLOBAL_LV2_PLUGIN_ENTRY.lv2ui_entrypoint(index);
 }
 
 __attribute__((visibility("default")))
 void sat_lv2_export_ttl(void) {
-  printf("LV2 export_ttl\n");
-  /*SAT_PRINT;*/
+  SAT_PRINT;
   GLOBAL_LV2_PLUGIN_ENTRY.export_ttl();
 }
 
