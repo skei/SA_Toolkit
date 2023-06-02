@@ -87,6 +87,9 @@ public:
     SAT_PRINT;
     #ifdef SAT_LV2_EXPORT_TTL
       SAT_Lv2Manifest manifest = {};
+      //manifest.create_manifest_ttl();
+      //manifest.create_plugin_ttl();
+      //manifest.create_gui_ttl();
       manifest.export_ttl();
     #endif
   }
@@ -102,6 +105,7 @@ private:
 //    strcat(MLv2Uri,MDescriptor.getAuthor());
     strcat(MLv2Uri,"/");
 //    strcat(MLv2Uri,MDescriptor.getName());
+    SAT_Print("MLv2Uri: %s\n",MLv2Uri);
   }
 
   //----------
@@ -114,6 +118,7 @@ private:
     strcat(MLv2UIUri,"/");
 //    strcat(MLv2UIUri,MDescriptor.getName());
     strcat(MLv2UIUri,"_ui");
+    SAT_Print("MLv2UIUri: %s\n",MLv2UIUri);
   }
 
   //----------

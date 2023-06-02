@@ -51,6 +51,10 @@ public:
 //------------------------------
 
   void export_ttl() {
+    create_manifest_ttl();
+    create_plugin_ttl();
+    //create_gui_ttl();
+    //write_ttl();
   }
 
 //------------------------------
@@ -94,6 +98,7 @@ private:
       #endif
     }
     //delete host;
+    
     FILE* fp = nullptr;
     fp = fopen("manifest.ttl","w");
     if (fp) fprintf(fp,"%s",manifest_ttl);
@@ -120,11 +125,12 @@ private:
 
     SAT_HostImplementation* host = new SAT_HostImplementation();
     const clap_host_t* clap_host = host->getHost();
-
     uint32_t num_plugins = SAT_GLOBAL.REGISTRY.getNumDescriptors();
     for (uint32_t i=0; i<num_plugins; i++) {
       const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(i);
       const clap_plugin_t* clap_plugin = SAT_CreatePlugin(i,clap_descriptor,clap_host);
+      SAT_Plugin* plugin = (SAT_Plugin*)clap_plugin->plugin_data;
+      clap_plugin->init(clap_plugin);
       
       sprintf(temp,"<urn:%s>\n",clap_descriptor->id);
       strcat(plugin_ttl,temp);
@@ -138,96 +144,99 @@ private:
       // editor?
       #endif
 
-
       //----------
       // ports
       //----------
-
-//      uint32_t  numin     = descriptor->getNumInputs();
-//      uint32_t  numout    = descriptor->getNumOutputs();
-//      uint32_t  numpar    = clap_plugin->getNumParameters();
-//      uint32_t  numports  = numin + numout + numpar;
-
+      
+      uint32_t numin = 0;
+      if (plugin->getNumAudioInputPorts() > 0) {
+        numin = plugin->getAudioInputPort(0)->getInfo()->channel_count;
+      }
+      uint32_t numout = 0;
+      if (plugin->getNumAudioOutputPorts() > 0) {
+        numout = plugin->getAudioOutputPort(0)->getInfo()->channel_count;
+      }
+      uint32_t numpar = plugin->getNumParameters();
+      //SAT_Print("numin %i numout %i numpat %i\n",numin,numout,numpar);
+      uint32_t numports  = numin + numout + numpar;
 //      if (descriptor->canReceiveMidi()) { numports += 1; }
-
-//      uint32_t  i = 0;
-//      uint32_t  p = 0;
-//      char      symbol[64];
-//      char      name[64];
 
       // every port symbol must be unique and a valid C identifier
       // and the indices must start at 0 and be contiguous
 
-//      if (numports > 0) {
-//        strcat(plugin_ttl,"  lv2:port [\n");
+      uint32_t  p = 0;
+      char symbol[64];
+      char name[64];
+      
+      if (numports > 0) {
+        strcat(plugin_ttl,"  lv2:port [\n");
 
         //----------
         // audio inputs
         //----------
-        
 
-//         for (i=0; i<numin; i++) {
-//          sprintf(name,"Input %i",i);
-//          strcpy(symbol,name);
-//          //SAT_MakeValidSymbol(symbol);
-//          strcat(plugin_ttl,"    a lv2:AudioPort , lv2:InputPort ;\n");
-//          sprintf(temp,     "    lv2:index         %i ;\n",p);
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:symbol        \"%s\" ;\n",symbol);
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:name          \"%s\" ;\n",name);
-//          strcat(plugin_ttl,temp);
-//          p++;
-//          if (p < numports) strcat(plugin_ttl,"	] , [\n");
-//          else strcat(plugin_ttl," ] .\n");
-//        } // numin
+         for (uint32_t i=0; i<numin; i++) {
+          sprintf(name,"Input %i",i);
+          strcpy(symbol,name);
+          //SAT_MakeValidSymbol(symbol);
+          strcat(plugin_ttl,"    a lv2:AudioPort , lv2:InputPort ;\n");
+          sprintf(temp,     "    lv2:index         %i ;\n",p);
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:symbol        \"%s\" ;\n",symbol);
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:name          \"%s\" ;\n",name);
+          strcat(plugin_ttl,temp);
+          p++;
+          if (p < numports) strcat(plugin_ttl,"	] , [\n");
+          else strcat(plugin_ttl," ] .\n");
+        } // numin
 
         //----------
         // audio outputs
         //----------
 
-//        for (i=0; i<numout; i++) {
-//          sprintf(name,"Output %i",i);
-//          strcpy(symbol,name);
-//          //SAT_MakeValidSymbol(symbol);
-//          strcat(plugin_ttl,"    a lv2:AudioPort , lv2:OutputPort ;\n");
-//          sprintf(temp,     "    lv2:index         %i ;\n",p);
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:symbol        \"%s\" ;\n",symbol);
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:name          \"%s\" ;\n",name);
-//          strcat(plugin_ttl,temp);
-//          p++;
-//          if (p < numports) strcat(plugin_ttl,"  ] , [\n");
-//          else strcat(plugin_ttl," ] .\n");
-//        } // numout
+        for (i=0; i<numout; i++) {
+          sprintf(name,"Output %i",i);
+          strcpy(symbol,name);
+          //SAT_MakeValidSymbol(symbol);
+          strcat(plugin_ttl,"    a lv2:AudioPort , lv2:OutputPort ;\n");
+          sprintf(temp,     "    lv2:index         %i ;\n",p);
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:symbol        \"%s\" ;\n",symbol);
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:name          \"%s\" ;\n",name);
+          strcat(plugin_ttl,temp);
+          p++;
+          if (p < numports) strcat(plugin_ttl,"  ] , [\n");
+          else strcat(plugin_ttl," ] .\n");
+        } // numout
 
         //----------
         // parameters
         //----------
 
-//        for (i=0; i<numpar; i++) {
-//          SAT_Parameter* par = descriptor->getParameter(i);
-//          strcpy(name,par->getName());
-//          strcpy(symbol,name);
-//          //SAT_MakeValidSymbol(symbol);
-//          strcat(plugin_ttl,"    a lv2:InputPort , lv2:ControlPort ;\n");
-//          sprintf(temp,     "    lv2:index         %i ;\n",p);
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:symbol        \"%s\" ;\n",symbol);
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:name          \"%s\" ;\n",name);
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:default       %f ;\n",    par->getDefValue());
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:minimum       %f ;\n",    par->getMinValue());
-//          strcat(plugin_ttl,temp);
-//          sprintf(temp,     "    lv2:maximum       %f ;\n",    par->getMaxValue());
-//          strcat(plugin_ttl,temp);
-//          p++;
-//          if (p < numports) strcat(plugin_ttl," ] , [\n");
-//          else strcat(plugin_ttl," ] .\n");
-//        } // numpar
+        for (i=0; i<numpar; i++) {
+          SAT_Parameter* par = plugin->getParameter(i);
+          strcpy(name,par->getName());
+          strcpy(symbol,name);
+          //SAT_MakeValidSymbol(symbol);
+          strcat(plugin_ttl,"    a lv2:InputPort , lv2:ControlPort ;\n");
+          sprintf(temp,     "    lv2:index         %i ;\n",p);
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:symbol        \"%s\" ;\n",symbol);
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:name          \"%s\" ;\n",name);
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:default       %f ;\n",    par->getDefaultValue());
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:minimum       %f ;\n",    par->getMinValue());
+          strcat(plugin_ttl,temp);
+          sprintf(temp,     "    lv2:maximum       %f ;\n",    par->getMaxValue());
+          strcat(plugin_ttl,temp);
+          p++;
+          if (p < numports) strcat(plugin_ttl," ] , [\n");
+          else strcat(plugin_ttl," ] .\n");
+        } // numpar
 
         //----------
         // midi input
@@ -247,13 +256,12 @@ private:
 //          if (p < numports) strcat(plugin_ttl," ] , [\n");
 //          else strcat(plugin_ttl," ] .\n");
 //        } // midi in
-//
-//      } // ports
+
+      } // ports
 
       //----------
 
       strcat(plugin_ttl,"\n");
-      
       clap_plugin->destroy(clap_plugin);
     } // for all plugins
     delete host;
@@ -261,22 +269,19 @@ private:
     // write manifest.ttl
     FILE* fp = nullptr;
     fp = fopen("plugin.ttl","w");
-    if (fp) fprintf(fp,"%s",manifest_ttl);
+    if (fp) fprintf(fp,"%s",plugin_ttl);
     fclose(fp);
     
   }
-    
-
-
 
   //----------
   
-  void create_gui_ttl() {
-  }
+  //void create_gui_ttl() {
+  //}
 
   //----------
   
-  void write_ttl() {
+//  void write_ttl() {
 //    // write manifest.ttl
 //    FILE* fp = nullptr;
 //    fp = fopen("manifest.ttl","w");
@@ -291,7 +296,7 @@ private:
 //    fp = fopen(buffer,"w");
 //    if (fp) fprintf(fp,"%s",plugin_ttl);
 //    fclose(fp);
-  }
+//  }
 
 };
 

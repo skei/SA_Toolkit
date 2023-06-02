@@ -4,7 +4,7 @@
 
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_LADSPA
-#define SAT_PLUGIN_LV2
+//#define SAT_PLUGIN_LV2
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 

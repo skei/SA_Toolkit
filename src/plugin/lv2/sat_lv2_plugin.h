@@ -36,11 +36,20 @@ public:
 public:
 //------------------------------
 
-  void lv2_connect_port(uint32_t port, void* data_location) {}
-  void lv2_activate() {}
-  void lv2_run(uint32_t sample_count) {}
-  void lv2_deactivate() {}
-  void lv2_cleanup() {}
+  void lv2_connect_port(uint32_t port, void* data_location) {
+  }
+  
+  void lv2_activate() {
+  }
+  
+  void lv2_run(uint32_t sample_count) {
+  }
+  
+  void lv2_deactivate() {
+  }
+  
+  void lv2_cleanup() {
+  }
   
 };
 
