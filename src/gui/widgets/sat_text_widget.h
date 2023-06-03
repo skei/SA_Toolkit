@@ -119,6 +119,9 @@ public:
       double textsize = MTextSize * S;
       painter->setTextColor(MTextColor);
       painter->setTextSize(textsize); // try original..
+      
+      // if autosize is true, the text will be scaled up as much as
+      // possible to fit inside the rect..
 
       if (MAutoTextSize) {
         double bounds[4];

@@ -100,11 +100,13 @@ private:
 
   void setup_lv2_uri() {
     SAT_PRINT;
+    const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(0);
     memset(MLv2Uri,0,SAT_LV2_MAX_URI_LENGTH);
     strcpy(MLv2Uri,"urn:");
 //    strcat(MLv2Uri,MDescriptor.getAuthor());
-    strcat(MLv2Uri,"/");
+//    strcat(MLv2Uri,"/");
 //    strcat(MLv2Uri,MDescriptor.getName());
+    strcat(MLv2Uri,clap_descriptor->id);
     SAT_Print("MLv2Uri: %s\n",MLv2Uri);
   }
 
@@ -112,11 +114,13 @@ private:
 
   void setup_lv2ui_uri() {
     SAT_PRINT;
+    const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(0);
     memset(MLv2UIUri,0,SAT_LV2_MAX_URI_LENGTH);
     strcpy(MLv2UIUri,"urn:");
 //    strcat(MLv2UIUri,MDescriptor.getAuthor());
-    strcat(MLv2UIUri,"/");
+//    strcat(MLv2UIUri,"/");
 //    strcat(MLv2UIUri,MDescriptor.getName());
+    strcat(MLv2UIUri,clap_descriptor->id);
     strcat(MLv2UIUri,"_ui");
     SAT_Print("MLv2UIUri: %s\n",MLv2UIUri);
   }
@@ -298,35 +302,35 @@ private: // ui callbacks
     /* --- */
     //SAT_Print("\n");
 
-//    if (strcmp(plugin_uri, MLv2UIUri) != 0) {
-//      return nullptr;
-//    }
-//    StuckUI* self = new StuckUI();
-//    if(!self) return 0;
-//    LV2UI_Resize* resize = NULL;
-//    /* --- */
-//    self->controller = controller;
-//    self->write_function = write_function;
-//    /* --- */
-//    void* parentXwindow = 0;
-//    for (int i = 0; features[i]; ++i) {
-//      if (!strcmp(features[i]->URI, LV2_UI__parent)) {
-//        parentXwindow = features[i]->data;
-//      }
-//      else if (!strcmp(features[i]->URI, LV2_UI__resize)) {
-//        resize = (LV2UI_Resize*)features[i]->data;
-//      }
-//    }
-//    /* --- */
-//    self->ui = self->show();
-//    fl_open_display();
-//    // set host to change size of the window
-//    if (resize) {
-//       resize->ui_resize(resize->handle, self->ui->w(), self->ui->h());
-//    }
-//    fl_embed( self->ui,(Window)parentXwindow);
-//    *widget = (LV2UI_Widget)fl_xid(self->ui);
-//    return (LV2UI_Handle)self;
+    //if (strcmp(plugin_uri, MLv2UIUri) != 0) {
+    //  return nullptr;
+    //}
+    //StuckUI* self = new StuckUI();
+    //if(!self) return 0;
+    //LV2UI_Resize* resize = NULL;
+    ///* --- */
+    //self->controller = controller;
+    //self->write_function = write_function;
+    ///* --- */
+    //void* parentXwindow = 0;
+    //for (int i = 0; features[i]; ++i) {
+    //  if (!strcmp(features[i]->URI, LV2_UI__parent)) {
+    //    parentXwindow = features[i]->data;
+    //  }
+    //  else if (!strcmp(features[i]->URI, LV2_UI__resize)) {
+    //    resize = (LV2UI_Resize*)features[i]->data;
+    //  }
+    //}
+    ///* --- */
+    //self->ui = self->show();
+    //fl_open_display();
+    //// set host to change size of the window
+    //if (resize) {
+    //   resize->ui_resize(resize->handle, self->ui->w(), self->ui->h());
+    //}
+    //fl_embed( self->ui,(Window)parentXwindow);
+    //*widget = (LV2UI_Widget)fl_xid(self->ui);
+    //return (LV2UI_Handle)self;
 
     return nullptr;
   }
@@ -336,8 +340,8 @@ private: // ui callbacks
   static
   void lv2ui_cleanup_callback(LV2UI_Handle ui) {
     //SAT_Print("\n");
-//    StuckUI *self = (StuckUI*)ui;
-//    delete self;
+    //StuckUI *self = (StuckUI*)ui;
+    //delete self;
   }
 
   //----------
@@ -345,22 +349,22 @@ private: // ui callbacks
   static
   void lv2ui_port_event_callback(LV2UI_Handle ui, uint32_t port_index, uint32_t buffer_size, uint32_t format, const void * buffer) {
     //SAT_Print("\n");
-//    StuckUI *self = (StuckUI*)ui;
-//    if (!format) {
-//      float val = *(float*)buffer;
-//      switch(port_index) {
-//        case STICKIT:
-//          self->stickit->value((int)val);
-//          self->led->value((int)val);
-//          break;
-//        case DRONEGAIN:
-//          self->volume->value(val);
-//          break;
-//        case RELEASE:
-//          self->time->value(val);
-//          break;
-//      }
-//    }
+    //StuckUI *self = (StuckUI*)ui;
+    //if (!format) {
+    //  float val = *(float*)buffer;
+    //  switch(port_index) {
+    //    case STICKIT:
+    //      self->stickit->value((int)val);
+    //      self->led->value((int)val);
+    //      break;
+    //    case DRONEGAIN:
+    //      self->volume->value(val);
+    //      break;
+    //    case RELEASE:
+    //      self->time->value(val);
+    //      break;
+    //  }
+    //}
   }
 
   //----------
@@ -372,7 +376,7 @@ private: // ui callbacks
     //if (!strcmp(uri, LV2_UI__resize)) return &_lv2_resize;
     return nullptr;
   }
-
+  
   //----------
   
 };

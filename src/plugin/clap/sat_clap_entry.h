@@ -11,7 +11,7 @@
 
 bool clap_entry_init_callback(const char *plugin_path) {
   SAT_Log("CLAP: ENTRY.init (plugin_path %s)\n",plugin_path);
-  //SAT_GLOBAL_REGISTRY.setPath(plugin_path);
+  SAT_GLOBAL.setPluginPath(plugin_path);
   return true;
 }
 

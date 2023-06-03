@@ -427,6 +427,7 @@
       <File Name="../../src/gui/sat_opengl.h"/>
       <File Name="../../src/gui/sat_widget_listener.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_main_menu_widget.h"/>
         <File Name="../../src/gui/widgets/sat_dual_value_widget.h"/>
         <File Name="../../src/gui/widgets/sat_knob2_widget.h"/>
         <File Name="../../src/gui/widgets/sat_debug_observer_widget.h"/>

@@ -65,6 +65,13 @@ private:
 
   void create_manifest_ttl() {
     char temp[256] = {0};
+    
+    char filename[128] = {0};
+    SAT_GetLibFilename(filename);
+    SAT_StripFileExt(filename); // modifies filename
+    //strcat(filename,".ttl");
+    SAT_Print("%s\n",filename);
+    
     memset(manifest_ttl,0,SAT_LV2_MANIFEST_TTL_SIZE);
     strcat(manifest_ttl,"@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .\n");
     strcat(manifest_ttl,"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n");
@@ -81,9 +88,9 @@ private:
       sprintf(temp,"<urn:%s>\n",clap_descriptor->id); // "urn:skei.audio/test_plugin";
       strcat(manifest_ttl,temp);
       strcat(manifest_ttl,"  a lv2:Plugin ;\n"); // , lv2:InstrumentPlugin ;\n");
-      sprintf(temp,"  lv2:binary <%s.so>  ;\n",clap_descriptor->name); // TODO: this.filename?
+      sprintf(temp,"  lv2:binary <%s.so>  ;\n",filename);//clap_descriptor->name); // TODO: this.filename?
       strcat(manifest_ttl,temp);
-      sprintf(temp,"  rdfs:seeAlso <%s.ttl> .\n",clap_descriptor->name);
+      sprintf(temp,"  rdfs:seeAlso <%s.ttl> .\n",filename);//clap_descriptor->name);
       strcat(manifest_ttl,temp);
       strcat(manifest_ttl,"\n");
       //clap_plugin->destroy(clap_plugin);
@@ -266,9 +273,16 @@ private:
     } // for all plugins
     delete host;
     
+    char filename[SAT_MAX_NAME_LENGTH] = {0};
+    SAT_GetLibFilename(filename);
+    SAT_StripFileExt(filename); // modifies filename
+    strcat(filename,".ttl");
+    SAT_Print("%s\n",filename);
+    
     // write manifest.ttl
     FILE* fp = nullptr;
-    fp = fopen("plugin.ttl","w");
+    //fp = fopen("plugin.ttl","w");
+    fp = fopen(filename,"w");
     if (fp) fprintf(fp,"%s",plugin_ttl);
     fclose(fp);
     

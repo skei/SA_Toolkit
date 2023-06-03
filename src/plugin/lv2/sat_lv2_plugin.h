@@ -37,18 +37,23 @@ public:
 //------------------------------
 
   void lv2_connect_port(uint32_t port, void* data_location) {
+    SAT_PRINT;
   }
   
   void lv2_activate() {
+    SAT_PRINT;
   }
   
   void lv2_run(uint32_t sample_count) {
+    SAT_PRINT;
   }
   
   void lv2_deactivate() {
+    SAT_PRINT;
   }
   
   void lv2_cleanup() {
+    SAT_PRINT;
   }
   
 };
