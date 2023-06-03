@@ -126,6 +126,7 @@ public:
   virtual const char*         getHint()                         { return MHint; }
   virtual int32_t             getIndex()                        { return MIndex; }
   virtual SAT_Rect            getInitialRect()                  { return MInitialRect; }
+  virtual SAT_Rect            getInnerBorder()                   { return MInnerBorder; }
   virtual int32_t             getLastPainted()                  { return MLastPainted; }
   virtual SAT_WidgetListener* getListener()                     { return MListener; }
   virtual double              getModulation(uint32_t AIndex=0)  { return MModulations[AIndex]; }
@@ -500,6 +501,9 @@ public: // hierarchy
 
         // alignment
         
+        // remember, for scaling
+        SAT_Rect pre_layout_rect = layout_rect;
+        
         //SAT_Rect pre_layout_rect = layout_rect;
         uint32_t child_alignment = child->getAlignment();
         switch(child_alignment) {
@@ -740,11 +744,15 @@ public: // hierarchy
         
         // stretching
         
+        /*
+        oops.. layout_rect has probably already been changed if MFillLayout is true..
+        */
+        
         uint32_t child_stretching = child->getStretching();
-        if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( layout_rect.x );
-        if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( layout_rect.x2() );
-        if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( layout_rect.y );
-        if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( layout_rect.y2() );
+        if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( pre_layout_rect.x );
+        if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( pre_layout_rect.x2() );
+        if (child_stretching & SAT_WIDGET_STRETCH_TOP)       child->MRect.setY1( pre_layout_rect.y );
+        if (child_stretching & SAT_WIDGET_STRETCH_BOTTOM)    child->MRect.setY2( pre_layout_rect.y2() );
         
         // outer border (post)
         
@@ -927,8 +935,8 @@ public: // widget listener
 
   //----------
 
-  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex) override {
-    if (MListener) MListener->do_widgetListener_select(ASender,AIndex);
+  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex, int32_t ASubIndex=-1) override {
+    if (MListener) MListener->do_widgetListener_select(ASender,AIndex,ASubIndex);
   }
 
   //----------

@@ -73,7 +73,7 @@ public:
 public:
 //------------------------------
 
-//  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex) {
+//  void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex, int32_t ASubIndex) {
 //    if (ASender == MDemoButtons) {
 //      SAT_PRINT;
 //    }

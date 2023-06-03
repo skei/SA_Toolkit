@@ -36,12 +36,12 @@ public:
     
     #ifdef SAT_EXE
       SAT_GetExePath(binary_path);
-      DEBUG.print("exe path '%s'\n",binary_path);
+      //DEBUG.print("exe path '%s'\n",binary_path);
     #endif
     
     #ifdef SAT_PLUGIN
       SAT_GetLibPath(binary_path);
-      DEBUG.print("lib path '%s'\n",binary_path);
+      //DEBUG.print("lib path '%s'\n",binary_path);
     #endif
     
     initialize();

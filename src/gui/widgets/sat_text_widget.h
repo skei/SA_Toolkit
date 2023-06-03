@@ -30,8 +30,11 @@ private:
   //char      MText[256]        = {0};
   char      MText[1024]       = {0};
   
+  bool      MAutoSize         = false;
   bool      MAutoTextSize     = false;
   bool      MDrawParamText    = false;
+  
+  SAT_Rect    MAutoSizeBorder = SAT_Rect(0,0,0,0);
 
   bool      MDrawTextDropShadow   = false;
   double    MTextDropShadowSize   = 4.0;        //2.0;
@@ -68,6 +71,7 @@ public:
     strcpy(MText,AText);
   }
   
+  virtual void setAutoSize(bool AAuto=true)       { MAutoSize = AAuto; }
   virtual void setAutoTextSize(bool AAuto=true)   { MAutoTextSize = AAuto; }
 
   virtual void setDrawTextDropShadow(bool ADraw=true)     { MDrawTextDropShadow = ADraw; }
@@ -76,31 +80,54 @@ public:
   virtual void setTextDropShadowOffset(SAT_Point AOffset) { MTextDropShadowOffset = AOffset; }
 
   virtual const char* getText() { return MText; }
+  virtual double  getTextSize() { return MTextSize; }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void adjustTextWidth(SAT_Painter* APainter) {
-    //SAT_Window* window = (SAT_Window*)getOwner();
-    //if (window) {
-    //  SAT_Painter* painter = window->getPainter();
-    //  if (painter) {
-        const char* text = getText();
-        //SAT_Print("text: %s\n",text);
-        double bounds[4];
+//  void prepare(SAT_WidgetOwner* AOwner) override {
+//    SAT_PRINT;
+//    SAT_Window* window = (SAT_Window*)AOwner;
+//    SAT_Assert(window);
+//    SAT_Painter* painter = window->getPainter();
+//    SAT_Assert(painter);
+//
+//    double S = window->getScale();
+//    painter->setTextSize(MTextSize);
+//    
+//    double bounds[4];
+//    double advance = painter->getTextBounds(MText,bounds);
+//    SAT_Rect rect = getRect();
+//    rect.w = advance;//bounds[2];
+//    rect.h = bounds[3];
+//    rect.grow(MAutoSizeBorder);
+//    //setRect(rect);
+//    setRect(rect);
+//    //rect.scale(1.0 / S);
+//    setBasisRect(rect);
+//  }
+  
+  //----------
 
-//        if (APainter->getTextBounds(text,bounds)) {
-//          //textwidget->setWidth(bounds[2]);
-//          setWidth(bounds[2]);
-//        }
-
-        double advance = APainter->getTextBounds(text,bounds);
-        setWidth(advance);
-
-    //  }
-    //}
-  }
+//  virtual void adjustTextWidth(SAT_Painter* APainter) {
+//    //SAT_Window* window = (SAT_Window*)getOwner();
+//    //if (window) {
+//    //  SAT_Painter* painter = window->getPainter();
+//    //  if (painter) {
+//        const char* text = getText();
+//        //SAT_Print("text: %s\n",text);
+//        double bounds[4];
+//        //if (APainter->getTextBounds(text,bounds)) {
+//        //  //textwidget->setWidth(bounds[2]);
+//        //  setWidth(bounds[2]);
+//        //}
+//        double advance = APainter->getTextBounds(text,bounds);
+//        setWidth(advance);
+//
+//    //  }
+//    //}
+//  }
   
   //----------
 
