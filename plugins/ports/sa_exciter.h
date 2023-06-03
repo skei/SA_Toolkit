@@ -94,7 +94,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter( "Freq",   2000,  100, 18000 ));
     appendParameter(new SAT_Parameter( "Boost",  0,     0,   6     ));

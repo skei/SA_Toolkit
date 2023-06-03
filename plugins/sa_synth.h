@@ -321,12 +321,13 @@ public: // audio
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     float** outputs = process->audio_outputs[0].data32;
+    // voices
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
-    
+    // we could process the voice buffers individually...
     MVoiceManager.mixActiveVoices();
-    
+    // gain
     sat_param_t scale = getParameterValue(14) + getModulationValue(14);   // Gain
     scale = SAT_Clamp(scale,0,1);
     SAT_ScaleStereoBuffer(outputs,scale,length);

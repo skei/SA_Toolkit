@@ -468,7 +468,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     
     appendParameter( new SAT_Parameter(     "Roomsize", 0.56, 0.01, 2.0 ));

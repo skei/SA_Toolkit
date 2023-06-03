@@ -82,7 +82,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     
     appendParameter(new SAT_TextParameter( "Processing",  0,  0,   1, str_proc ));

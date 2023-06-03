@@ -1707,7 +1707,7 @@ public: // extensions
     #ifndef SAT_NO_GUI
       registerExtension(CLAP_EXT_GUI,                     &MGuiExt);
     #endif
-    //registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt);
+    //registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt); // -> synth
     registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                     &MStateExt);
   }
@@ -2324,7 +2324,7 @@ public: // audio input ports
 
   //----------
 
-  SAT_AudioPort* appendStereoInputPort() {
+  SAT_AudioPort* appendStereoAudioInputPort() {
     uint32_t index = MAudioInputPorts.size();
     SAT_AudioPort* port = new SAT_AudioPort(index,"Audio",CLAP_AUDIO_PORT_IS_MAIN,2,CLAP_PORT_STEREO,CLAP_INVALID_ID);
     MAudioInputPorts.append(port);

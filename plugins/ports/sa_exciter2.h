@@ -80,7 +80,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter( "Mix",   0,    0,    100   ));
     appendParameter(new SAT_Parameter( "Drive", 0,    0,    100   ));

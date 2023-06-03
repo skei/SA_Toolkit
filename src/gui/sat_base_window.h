@@ -2,9 +2,6 @@
 #define sat_base_window_included
 //----------------------------------------------------------------------
 
-// TODO
-#if 0
-
 #include "base/sat.h"
 
 //----------------------------------------------------------------------
@@ -49,6 +46,9 @@ public:
 public:
 //------------------------------
   
+  virtual uint32_t  getWidth() { return 0; }
+  virtual uint32_t  getHeight() { return 0; }
+
   virtual void      setPos(uint32_t AXpos, uint32_t AYpos) {}
   virtual void      setSize(uint32_t AWidth, uint32_t AHeight) {}
   virtual void      setTitle(const char* ATitle) {}
@@ -72,8 +72,6 @@ public:
   virtual void      releaseMouseCursor(void) {}
 
 };
-
-#endif // 0
 
 //----------------------------------------------------------------------
 #endif

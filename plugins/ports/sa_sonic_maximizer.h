@@ -103,7 +103,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter( "Low Cont",  1.0,   0.0, 10.0 ));
     appendParameter(new SAT_Parameter( "Process",   1.0,   0.0, 10.0 ));

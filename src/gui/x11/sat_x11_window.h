@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
+#include "gui/sat_base_window.h"
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
 
@@ -12,7 +13,8 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_X11Window {
+class SAT_X11Window
+: public SAT_BaseWindow {
 
 //------------------------------
 private:
@@ -60,7 +62,8 @@ protected:
 public:
 //------------------------------
 
-  SAT_X11Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
+  SAT_X11Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent)
+  : SAT_BaseWindow(AWidth,AHeight,AParent) {
 
     // x server connection
 
@@ -225,32 +228,41 @@ public:
   Display*      getX11Display() { return MDisplay;}
   xcb_window_t  getX11Window()  { return MWindow;}
   
-  virtual uint32_t getWidth() { return MWindowWidth; }
-  virtual uint32_t getHeight() { return MWindowWidth; }
+//------------------------------
+public:
+//------------------------------
+
+//  virtual void on_window_open() {}
+//  virtual void on_window_close() {}
+//  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
+//  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
+//  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
+//  virtual void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+//  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+//  virtual void on_window_client_message(uint32_t AData) {}
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void on_window_open() {}
-  virtual void on_window_close() {}
-  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
-  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_client_message(uint32_t AData) {}
+  uint32_t getWidth() override {
+    return MWindowWidth;
+  }
+  
+  //----------
 
-//------------------------------
-public:
-//------------------------------
+  uint32_t getHeight() override {
+    return MWindowWidth;
+  }
 
-  virtual void setPos(uint32_t AXpos, uint32_t AYpos) {
+  //----------
+
+  void setPos(uint32_t AXpos, uint32_t AYpos) override {
     MWindowXpos = AXpos;
     MWindowYpos = AYpos;
     uint32_t values[] = { AXpos, AYpos };
@@ -260,7 +272,7 @@ public:
 
   //----------
 
-  virtual void setSize(uint32_t AWidth, uint32_t AHeight) {
+  void setSize(uint32_t AWidth, uint32_t AHeight) override {
     MWindowWidth = AWidth;
     MWindowHeight = AHeight;
     //SAT_Print("MWindowWidth/Height %i,%i\n",MWindowWidth,MWindowHeight);
@@ -271,7 +283,7 @@ public:
 
   //----------
 
-  virtual void setTitle(const char* ATitle) {
+  void setTitle(const char* ATitle) override {
     xcb_change_property(
       MConnection,
       XCB_PROP_MODE_REPLACE,
@@ -287,7 +299,7 @@ public:
 
   //----------
 
-  virtual void show() {
+  void show() override {
     xcb_map_window(MConnection,MWindow);
     xcb_flush(MConnection);
     #ifdef SAT_X11_WAIT_FOR_MAPNOTIFY
@@ -300,7 +312,7 @@ public:
 
   //----------
 
-  virtual void hide() {
+  void hide() override {
     if (MIsEmbedded) stopEventThread();
     xcb_unmap_window(MConnection,MWindow);
     xcb_flush(MConnection);
@@ -312,7 +324,7 @@ public:
 public:
 //------------------------------
 
-  void reparent(intptr_t AParent) {
+  void reparent(intptr_t AParent) override {
     if (AParent != 0) {
       MIsEmbedded = true;
       xcb_reparent_window(MConnection,MWindow,AParent,0,0);
@@ -322,7 +334,7 @@ public:
 
   //----------
 
-  void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
+  void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     // x11 doesnæt like negative coords? (uint16_t)
     AXpos = SAT_ClampI(AXpos,0,MWindowWidth);
     AYpos = SAT_ClampI(AYpos,0,MWindowHeight);
@@ -345,7 +357,7 @@ public:
 
   //----------
 
-  void sendClientMessage(uint32_t AData, uint32_t AType) {
+  void sendClientMessage(uint32_t AData, uint32_t AType) override {
     memset(MClientMessageEventBuffer,0,sizeof(MClientMessageEventBuffer));
     MClientMessageEvent->window         = MWindow;
     MClientMessageEvent->response_type  = XCB_CLIENT_MESSAGE;
@@ -392,7 +404,7 @@ public:
 
   //----------
 
-  uint32_t eventLoop() {
+  uint32_t eventLoop() override {
     xcb_generic_event_t* event = getEvent(true);
     while (event) {
     //do {
@@ -423,14 +435,16 @@ public:
     return 0;
   }
 
-  void startEventThread() {
+  //----------
+
+  void startEventThread() override {
     MIsEventThreadActive = true;
     pthread_create(&MEventThread,nullptr,xcb_event_thread_callback,this);
   }
 
   //----------
 
-  void stopEventThread() {
+  void stopEventThread() override {
     void* ret;
     MIsEventThreadActive = false;
     sendClientMessage(SAT_WINDOW_THREAD_KILL,0);
@@ -439,23 +453,10 @@ public:
   }
 
 //------------------------------
-private:
+public:
 //------------------------------
 
-  //----------
-
-  //void beginPaint() {
-  //}
-
-  //----------
-
-  //void endPaint() {
-  //  xcb_flush(MConnection);
-  //}
-
-  //----------
-
-  void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor) {
+  void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor) override {
     // set color
     uint32_t mask = XCB_GC_FOREGROUND;
     uint32_t values[1];
@@ -474,7 +475,7 @@ private:
 
   //----------
 
-  void fill(uint32_t AColor) {
+  void fill(uint32_t AColor) override {
     fill(0,0,MWindowWidth,MWindowHeight,AColor);
   }
 
@@ -482,20 +483,20 @@ private:
 public: // mouse
 //------------------------------
 
-  void setMouseCursor(int32_t ACursor) {
+  void setMouseCursor(int32_t ACursor) override {
     setWMCursor(ACursor);
   }
 
   //----------
 
-  void setMouseCursorPos(int32_t AXpos, int32_t AYpos) {
+  void setMouseCursorPos(int32_t AXpos, int32_t AYpos) override {
     xcb_warp_pointer(MConnection,XCB_NONE,MWindow,0,0,0,0,AXpos,AYpos);
     xcb_flush(MConnection);
   }
 
   //----------
 
-  void hideMouseCursor(void) {
+  void hideMouseCursor(void) override {
     if (!MIsCursorHidden) {
       setXcbCursor(MHiddenCursor);
       MIsCursorHidden = true;
@@ -504,7 +505,7 @@ public: // mouse
 
   //----------
 
-  void showMouseCursor(void) {
+  void showMouseCursor(void) override {
     if (MIsCursorHidden) {
       setXcbCursor(MWindowCursor);
       MIsCursorHidden = false;
@@ -520,7 +521,7 @@ public: // mouse
     client.
   */
 
-  void grabMouseCursor(void) {
+  void grabMouseCursor(void) override {
     int32_t event_mask =
       XCB_EVENT_MASK_BUTTON_PRESS   |
       XCB_EVENT_MASK_BUTTON_RELEASE |
@@ -544,7 +545,7 @@ public: // mouse
 
   //----------
 
-  void releaseMouseCursor(void) {
+  void releaseMouseCursor(void) override {
     xcb_ungrab_pointer(MConnection,XCB_CURRENT_TIME);
     xcb_flush(MConnection);
   }

@@ -79,7 +79,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     
     appendParameter(new SAT_Parameter( "Rotate",   0, -180,  180 ));

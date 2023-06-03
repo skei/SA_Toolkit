@@ -113,7 +113,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     appendParameter( new SAT_Parameter( "Drive", 0,    0,   60    ));
     appendParameter( new SAT_Parameter( "Dist",  25,   0,   100   ));

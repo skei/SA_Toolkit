@@ -409,7 +409,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     
     appendParameter( new SAT_TextParameter( "Mode", 0,      0,   11, filter_types_txt ));

@@ -90,7 +90,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter( "Threshold", 0,   -30, 0 ));
     appendParameter(new SAT_Parameter( "Ceiling",  -0.1, -20, 0 ));

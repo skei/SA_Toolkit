@@ -73,7 +73,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter( "Pitch",     0,    -1, 1   ));
     appendParameter(new SAT_Parameter( "Window",    100,   1, 200 ));

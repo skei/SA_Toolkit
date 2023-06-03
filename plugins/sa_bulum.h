@@ -124,7 +124,7 @@ public: // plugin
 //------------------------------
 
   bool init() final {
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     registerDefaultExtensions();
     appendParameter(new SAT_Parameter(      "Master",              -6,   -60,  6                  ));

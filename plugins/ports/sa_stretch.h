@@ -69,7 +69,7 @@ public:
 
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     appendParameter( new SAT_Parameter(   "Factor", 1,   0,  8 ));
     appendParameter( new SAT_Parameter("Semitones", 0, -24, 24 ));

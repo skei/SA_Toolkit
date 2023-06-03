@@ -40,6 +40,7 @@
 
 #include "base/sat.h"
 #include "base/utils/sat_strutils.h"
+#include "gui/sat_base_window.h"
 #include "gui/win32/sat_win32.h"
 
 //----------------------------------------------------------------------
@@ -104,7 +105,8 @@ const char* sat_win32_cursors[] = {
 //
 //----------------------------------------------------------------------
 
-class SAT_Win32Window {
+class SAT_Win32Window
+: public SAT_BaseWindow {
 
   friend LRESULT CALLBACK sat_win32_eventproc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -149,7 +151,8 @@ protected:
 public:
 //------------------------------
 
-  SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent) {
+  SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent)
+  : SAT_BaseWindow(AWidth,AHeight,AParent) {
     MWindowXpos   = 0;
     MWindowYpos   = 0;
     MWindowWidth  = AWidth;
@@ -276,25 +279,25 @@ public:
 public:
 //------------------------------
 
-  virtual void on_window_open() {}
-  virtual void on_window_close() {}
-  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
-  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_key_press(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_key_release(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_client_message(uint32_t AData) {}
+//  virtual void on_window_open() {}
+//  virtual void on_window_close() {}
+//  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
+//  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
+//  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
+//  virtual void on_window_key_press(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_key_release(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
+//  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+//  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+//  virtual void on_window_client_message(uint32_t AData) {}
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void setPos(uint32_t AXpos, uint32_t AYpos) {
+  void setPos(uint32_t AXpos, uint32_t AYpos) override {
     MWindowXpos = AXpos;
     MWindowYpos = AYpos;
     SetWindowPos(MWindow,0,AXpos,AYpos,0,0,SWP_NOSIZE|SWP_NOACTIVATE|SWP_NOZORDER);
@@ -302,7 +305,7 @@ public:
 
   //----------
 
-  virtual void setSize(uint32_t AWidth, uint32_t AHeight) {
+  void setSize(uint32_t AWidth, uint32_t AHeight) override {
     MWindowWidth = AWidth;
     MWindowHeight = AHeight;
     MWindowWidth = AWidth;
@@ -312,21 +315,21 @@ public:
 
   //----------
 
-  //virtual void getSize(uint32_t* AWidth, uint32_t* AHeight) {
+  //void getSize(uint32_t* AWidth, uint32_t* AHeight) override {
   //  *AWidth = MWindowWidth;
   //  *AHeight = MWindowHeight;
   //}
 
   //----------
 
-  virtual void setTitle(const char* ATitle) {
+  void setTitle(const char* ATitle) override {
     MWindowTitle = ATitle;
     SetWindowText(MWindow, ATitle);
   }
 
   //----------
 
-  virtual void show() {
+  void show() override {
     on_window_open();
     ShowWindow(MWindow,SW_SHOW); // sende WM_SIZE
     //#ifdef SAT_GUI_IDLE_TIMER
@@ -336,7 +339,7 @@ public:
 
   //----------
 
-  virtual void hide() {
+  void hide() override {
     //#ifdef SAT_GUI_IDLE_TIMER
     //  stopTimer(SAT_GUI_IDLE_TIMER_ID);
     //#endif
@@ -393,7 +396,7 @@ public:
     WM_UPDATEUISTATE.
   */
 
-  virtual void reparent(intptr_t AParent) {
+  void reparent(intptr_t AParent) override {
     
     LONG_PTR style   = GetWindowLongPtr(MWindow,GWL_STYLE);
     LONG_PTR exstyle = GetWindowLongPtr(MWindow,GWL_EXSTYLE);
@@ -444,7 +447,7 @@ public:
     window's client area.
   */
 
-  virtual void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
+  void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     RECT R;
     R.left   = AXpos;
     R.top    = AYpos;
@@ -457,12 +460,12 @@ public:
 
   //----------
 
-  void sendClientMessage(uint32_t AData, uint32_t AType) {
+  void sendClientMessage(uint32_t AData, uint32_t AType) override {
   }
 
   //----------
 
-  virtual uint32_t eventLoop() {
+  uint32_t eventLoop() override {
     MSG msg;
     //while (GetMessage(&msg, MWindow,0,0)) {
     while (GetMessage(&msg, NULL, 0, 0)) {
@@ -475,7 +478,7 @@ public:
 
   //----------
 
-  //virtual void renderLoop(void) {
+  //void renderLoop(void) {
   //  MSG msg;
   //  while (true) {
   //    while (PeekMessage(&msg,nullptr,0,0,PM_REMOVE)) {
@@ -489,50 +492,50 @@ public:
 
   //----------
 
-  /*
-    The BeginPaint function prepares the specified window for painting and
-    fills a PAINTSTRUCT structure with information about the painting.
-
-    The BeginPaint function automatically sets the clipping region of the
-    device context to exclude any area outside the update region. The update
-    region is set by the InvalidateRect or InvalidateRgn function and by the
-    system after sizing, moving, creating, scrolling, or any other operation
-    that affects the client area.
-  */
-
-  virtual void beginPaint() {
-    MWinPaintDC = BeginPaint(MWindow,&MWinPaintStruct);
-  }
-
-  //----------
-
-  /*
-    The EndPaint function marks the end of painting in the specified window.
-    This function is required for each call to the BeginPaint function, but
-    only after painting is complete.
-
-    EndPaint releases the display device context that BeginPaint retrieved.
-  */
-
-  virtual void endPaint() {
-    //flush();
-    EndPaint(MWindow,&MWinPaintStruct);
-    //UpdateWindow(MWinHandle);
-    MWinPaintDC = nullptr;
-  }
+//  /*
+//    The BeginPaint function prepares the specified window for painting and
+//    fills a PAINTSTRUCT structure with information about the painting.
+//
+//    The BeginPaint function automatically sets the clipping region of the
+//    device context to exclude any area outside the update region. The update
+//    region is set by the InvalidateRect or InvalidateRgn function and by the
+//    system after sizing, moving, creating, scrolling, or any other operation
+//    that affects the client area.
+//  */
+//
+//  virtual void beginPaint() {
+//    MWinPaintDC = BeginPaint(MWindow,&MWinPaintStruct);
+//  }
+//
+//  //----------
+//
+//  /*
+//    The EndPaint function marks the end of painting in the specified window.
+//    This function is required for each call to the BeginPaint function, but
+//    only after painting is complete.
+//
+//    EndPaint releases the display device context that BeginPaint retrieved.
+//  */
+//
+//  virtual void endPaint() {
+//    //flush();
+//    EndPaint(MWindow,&MWinPaintStruct);
+//    //UpdateWindow(MWinHandle);
+//    MWinPaintDC = nullptr;
+//  }
 
 //------------------------------
 //private:
 //------------------------------
 
-  virtual void startEventThread() {
+  void startEventThread() override {
     //MIsEventThreadActive = true;
     SAT_PRINT;
   }
 
   //----------
 
-  virtual void stopEventThread() {
+  void stopEventThread() override {
     //MIsEventThreadActive = false;
     SAT_PRINT;
   }
@@ -541,7 +544,7 @@ public:
 
   // only valid inside begin/endPaint
 
-  virtual void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor) {
+  void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor) override {
     RECT R;
     R.left    = AXpos;
     R.top     = AYpos;
@@ -562,7 +565,7 @@ public:
 
   // only valid inside begin/endPaint
 
-  virtual void fill(uint32_t AColor) {
+  void fill(uint32_t AColor) override {
     fill(0,0,MWindowWidth,MWindowHeight,AColor);
   }
   
@@ -584,8 +587,8 @@ public:
 
   // only valid inside begin/endPaint
 
-  virtual void blit(int32_t ADstX, int32_t ADstY, void* AData, uint32_t AStride, int32_t ASrcW, int32_t ASrcH) {
-  }
+//  virtual void blit(int32_t ADstX, int32_t ADstY, void* AData, uint32_t AStride, int32_t ASrcW, int32_t ASrcH) {
+//  }
 
   //----------
 
@@ -671,7 +674,7 @@ public:
 public: // mouse
 //------------------------------
 
-  virtual void setMouseCursor(int32_t ACursor) {
+  void setMouseCursor(int32_t ACursor) override {
     
     //SAT_Print("cursor: %i\n",ACursor);
     
@@ -688,7 +691,7 @@ public: // mouse
   // Moves the cursor to the specified screen coordinates
   // will fire a WM_MOUSEMOVE event..
 
-  virtual void setMouseCursorPos(int32_t AXpos, int32_t AYpos) {
+  void setMouseCursorPos(int32_t AXpos, int32_t AYpos) override {
     POINT pos;
     pos.x = AXpos;
     pos.y = AYpos;
@@ -700,7 +703,7 @@ public: // mouse
 
   //----------
 
-  virtual void hideMouseCursor(void) {
+  void hideMouseCursor(void) override {
     if (!MIsCursorHidden) {
       MIsCursorHidden = true;
       ShowCursor(false);
@@ -709,7 +712,7 @@ public: // mouse
 
   //----------
 
-  virtual void showMouseCursor(void) {
+  void showMouseCursor(void) override {
     if (MIsCursorHidden) {
       MIsCursorHidden = false;
       ShowCursor(true);
@@ -718,13 +721,13 @@ public: // mouse
 
   //----------
 
-  virtual void grabMouseCursor(void) {
+  void grabMouseCursor(void) override {
     SetCapture(MWindow);
   }
 
   //----------
 
-  virtual void releaseMouseCursor(void) {
+  void releaseMouseCursor(void) override {
     ReleaseCapture();
   }
 
@@ -777,6 +780,42 @@ public: // mouse
     }
 
   */
+
+//------------------------------
+private:
+//------------------------------
+
+  /*
+    The BeginPaint function prepares the specified window for painting and
+    fills a PAINTSTRUCT structure with information about the painting.
+
+    The BeginPaint function automatically sets the clipping region of the
+    device context to exclude any area outside the update region. The update
+    region is set by the InvalidateRect or InvalidateRgn function and by the
+    system after sizing, moving, creating, scrolling, or any other operation
+    that affects the client area.
+  */
+
+  void beginPaint() {
+    MWinPaintDC = BeginPaint(MWindow,&MWinPaintStruct);
+  }
+
+  //----------
+
+  /*
+    The EndPaint function marks the end of painting in the specified window.
+    This function is required for each call to the BeginPaint function, but
+    only after painting is complete.
+
+    EndPaint releases the display device context that BeginPaint retrieved.
+  */
+
+  void endPaint() {
+    //flush();
+    EndPaint(MWindow,&MWinPaintStruct);
+    //UpdateWindow(MWinHandle);
+    MWinPaintDC = nullptr;
+  }
 
 //------------------------------
 private: // remap

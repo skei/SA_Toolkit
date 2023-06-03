@@ -119,7 +119,7 @@ public:
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
+    appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     
     appendParameter(new SAT_Parameter( "Dry",      0,   -48,   0 ));
