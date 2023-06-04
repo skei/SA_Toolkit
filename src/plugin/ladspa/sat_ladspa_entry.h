@@ -114,7 +114,7 @@ public:
     lad_descriptor->PortDescriptors     = MPorts.descriptors;
     lad_descriptor->PortNames           = (const char* const*)MPorts.names;
     lad_descriptor->PortRangeHints      = MPorts.rangeHints;
-    lad_descriptor->ImplementationData  = this;    //SAT_NULL;
+    lad_descriptor->ImplementationData  = this;
     lad_descriptor->instantiate         = ladspa_instantiate_callback;
     lad_descriptor->connect_port        = ladspa_connect_port_callback;
     lad_descriptor->activate            = ladspa_activate_callback;
@@ -138,19 +138,10 @@ public:
      Note that instance initialisation should generally occur in
      activate() rather than here. */
 
-  LADSPA_Handle ladspa_instantiate(unsigned long SampleRate) {
+  LADSPA_Handle ladspa_instantiate(const struct _LADSPA_Descriptor* Descriptor, unsigned long SampleRate) {
     SAT_PRINT;
-    return nullptr;
-    
-    SAT_LadspaPlugin* plugin = new SAT_LadspaPlugin();
+    SAT_LadspaPlugin* plugin = new SAT_LadspaPlugin(Descriptor,SampleRate);
     return plugin->getHandle();
-    
-    // instance deleted in ~SAT_LadspaPlugin()
-//    SAT_Instance* instance = new INSTANCE(MDescriptor);
-////    instance->on_open();
-    // ladspa_plugin deleted in ladspa_cleanup_callback()
-//    SAT_LadspaPlugin* ladspa_plugin = new SAT_LadspaPlugin(instance,SampleRate);
-//    return (LADSPA_Handle)ladspa_plugin;
   }
   
 //------------------------------

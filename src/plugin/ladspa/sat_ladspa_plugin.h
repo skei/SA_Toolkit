@@ -23,8 +23,12 @@ class SAT_LadspaPlugin {
 private:
 //------------------------------
 
-  LADSPA_Handle MHandle = nullptr;
+  LADSPA_Handle             MLadspaHandle     = nullptr;
+  const LADSPA_Descriptor*  MLadspaDescriptor = nullptr;
+  uint32_t                  MSampleRate       = 0.0f;
 
+  //const struct _LADSPA_Descriptor* MLadspaDescriptor;
+  
 //  KODE_Descriptor*    MDescriptor     = nullptr;
 //  KODE_Instance*      MInstance       = nullptr;
 //  //KODE_Editor*        MEditor         = nullptr;
@@ -36,16 +40,16 @@ private:
 //  uint32_t            MNumParameters  = 0;
 //  //float*              MHostValues     = nullptr;
 //  //float*              MProcessValues  = nullptr;
-//  float               MSampleRate     = 0.0f;
 //  KODE_ProcessContext MProcessContext = {};
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_LadspaPlugin() {
+  //SAT_LadspaPlugin(const struct _LADSPA_Descriptor* Descriptor) {
+  SAT_LadspaPlugin(const LADSPA_Descriptor* Descriptor, uint32_t ASampleRate) {
     SAT_PRINT;
-//    MDescriptor     = AInstance->getDescriptor();
+    MLadspaDescriptor     = Descriptor;
 //    MInstance       = AInstance;
 //    MSampleRate     = ASampleRate;
 //    MNumInputs      = MDescriptor->getNumInputs();
@@ -75,7 +79,7 @@ public:
   //----------
 
   LADSPA_Handle getHandle() {
-    return MHandle;
+    return MLadspaHandle;
   }
 
 //------------------------------
