@@ -233,11 +233,6 @@ private: // ladspa callbacks
 
   static
   LADSPA_Handle ladspa_instantiate_callback(const struct _LADSPA_Descriptor* Descriptor, unsigned long SampleRate) {
-    // deleted in SAT_LadspaEntry.ladspa_cleanup_callback()
-    
-//    const clap_plugin_t* clap_plugin = SAT_CreatePlugin(AIndex,clap_descriptor,clap_host);
-//    SAT_Plugin* plugin = (SAT_Plugin*)clap_plugin->plugin_data;
-    
     SAT_LadspaPlugin* plugin = new SAT_LadspaPlugin(Descriptor,SampleRate);
     plugin->ladspa_instantiate();
     return plugin;
@@ -248,7 +243,6 @@ private: // ladspa callbacks
 
   static
   void ladspa_connect_port_callback(LADSPA_Handle Instance, unsigned long Port, LADSPA_Data * DataLocation) {
-    //LADSPA_Trace("ladspa: ladspa_connect_port_callback\n");
     SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Instance;
     if (plugin) plugin->ladspa_connect_port(Port,DataLocation);
   }
@@ -257,7 +251,6 @@ private: // ladspa callbacks
 
   static
   void ladspa_activate_callback(LADSPA_Handle Instance) {
-    //LADSPA_Trace("ladspa: ladspa_activate_callback\n");
     SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Instance;
     if (plugin) plugin->ladspa_activate();
   }
@@ -266,7 +259,6 @@ private: // ladspa callbacks
 
   static
   void ladspa_run_callback(LADSPA_Handle Instance, unsigned long SampleCount) {
-    //LADSPA_Trace("ladspa: ladspa_run_callback\n");
     SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Instance;
     if (plugin) plugin->ladspa_run(SampleCount);
   }
@@ -275,7 +267,6 @@ private: // ladspa callbacks
 
   static
   void ladspa_run_adding_callback(LADSPA_Handle Instance, unsigned long SampleCount) {
-    //LADSPA_Trace("ladspa: ladspa_run_adding_callback\n");
     SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Instance;
     if (plugin) plugin->ladspa_run_adding(SampleCount);
   }
@@ -284,7 +275,6 @@ private: // ladspa callbacks
 
   static
   void ladspa_set_run_adding_gain_callback(LADSPA_Handle Instance, LADSPA_Data Gain) {
-    //LADSPA_Trace("ladspa: ladspa_set_run_adding_gain_callback\n");
     SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Instance;
     if (plugin) plugin->ladspa_set_run_adding_gain(Gain);
   }
@@ -293,7 +283,6 @@ private: // ladspa callbacks
 
   static
   void ladspa_deactivate_callback(LADSPA_Handle Instance) {
-    //LADSPA_Trace("ladspa: ladspa_deactivate_callback\n");
     SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Instance;
     if (plugin) plugin->ladspa_deactivate();
   }
@@ -302,11 +291,9 @@ private: // ladspa callbacks
 
   static
   void ladspa_cleanup_callback(LADSPA_Handle Instance) {
-    //LADSPA_Trace("ladspa: ladspa_cleanup_callback\n");
     SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Instance;
     if (plugin) plugin->ladspa_cleanup();
-    //LADSPA_Trace("ladspa: cleanup -> deleting instance\n");
-// !!!
+    //SAT_PRINT("ladspa: cleanup -> deleting instance\n");
     delete plugin;
   }
 

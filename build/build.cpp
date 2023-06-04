@@ -3,6 +3,16 @@
 
 
 
+//#define SAT_PLUGIN_CLAP
+#define SAT_PLUGIN_LADSPA
+//#define SAT_PLUGIN_LV2
+//#define SAT_PLUGIN_VST2
+//#define SAT_PLUGIN_VST3
+
+
+
+
+
 //----------------------------------------------------------------------
 //
 // test
@@ -94,10 +104,10 @@
 //#include "../plugins/sa_botage.h" // TODO
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
-//#include "../plugins/sa_gain.h"
+#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_stretch.h"
-#include "../plugins/sa_synth.h"
+//#include "../plugins/sa_synth.h"
 //#include "../plugins/sa_tyr.h" // TODO
 
 //----------

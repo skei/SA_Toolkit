@@ -2,14 +2,6 @@
 #define sa_synth_included
 //----------------------------------------------------------------------
 
-//#define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_LADSPA
-//#define SAT_PLUGIN_LV2
-//#define SAT_PLUGIN_VST2
-//#define SAT_PLUGIN_VST3
-
-//----------
-
 #include "base/sat.h"
 #include "base/utils/sat_wrench.h"
 #include "audio/sat_audio_math.h"
@@ -103,7 +95,7 @@ public: // clap
 
   bool init() final {
     
-    //SAT_Print("id: '%s'\n",sa_synth_descriptor.id);
+    SAT_Print("id: '%s'\n",sa_synth_descriptor.id);
     
     // extensions
     registerAllExtensions();

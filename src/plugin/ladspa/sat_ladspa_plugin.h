@@ -89,16 +89,28 @@ public:
     
     MHost = new SAT_HostImplementation();
     const clap_host_t* clap_host = MHost->getHost();
-    
     SAT_LadspaEntryData* entrydata = (SAT_LadspaEntryData*)MLadspaDescriptor->ImplementationData;
     uint32_t index = entrydata->index;
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host);
+    MClapPlugin->init(MClapPlugin);
     MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
+    SAT_Print("MPlugin %p\n",MPlugin);
     
     clap_audio_port_info_t info;
-    if (MPlugin->audio_ports_get(0,true,&info))  { MNumInputs = info.channel_count; }
-    if (MPlugin->audio_ports_get(0,false,&info)) { MNumOutputs = info.channel_count; }
+    
+    if (MPlugin->audio_ports_count(true) > 0) {
+      if (MPlugin->audio_ports_get(0,true,&info))  {
+        MNumInputs = info.channel_count;
+      }
+    }
+    
+    if (MPlugin->audio_ports_count(false) > 0) {
+      if (MPlugin->audio_ports_get(0,false,&info))  {
+        MNumOutputs = info.channel_count;
+      }
+    }
+
     MNumParameters = MPlugin->getNumParameters();
     
     MInputPtrs      = (float**)malloc(MNumInputs     * sizeof(float*));
