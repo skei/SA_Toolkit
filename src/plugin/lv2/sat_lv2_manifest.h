@@ -65,12 +65,15 @@ private:
 
   void create_manifest_ttl() {
     char temp[256] = {0};
+    char filename_buffer[200] = {0};
+    SAT_GetLibFilename(filename_buffer);
+
+    char* filename = SAT_StripPath(filename_buffer);
+    filename = SAT_StripFileExt(filename); // modifies filename
     
-    char filename[128] = {0};
-    SAT_GetLibFilename(filename);
-    SAT_StripFileExt(filename); // modifies filename
     //strcat(filename,".ttl");
     SAT_Print("%s\n",filename);
+
     
     memset(manifest_ttl,0,SAT_LV2_MANIFEST_TTL_SIZE);
     strcat(manifest_ttl,"@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .\n");

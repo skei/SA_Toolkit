@@ -28,6 +28,18 @@ private:
 public:
 //------------------------------
 
+  SAT_Lv2Plugin() {
+    SAT_PRINT;
+  }
+
+  ~SAT_Lv2Plugin() {
+    SAT_PRINT;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   LV2_Handle getHandle() {
     return MHandle;
   }
