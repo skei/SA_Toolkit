@@ -17,12 +17,6 @@
 
 //----------------------------------------------------------------------
 
-struct SAT_LadspaPorts {
-  int*                  descriptors  = nullptr;
-  char**                names        = nullptr;
-  char*                 namesBuffer  = nullptr;
-  LADSPA_PortRangeHint* rangeHints   = nullptr;
-};
 
 //----------------------------------------------------------------------
 //
@@ -36,6 +30,8 @@ class SAT_LadspaEntry {
 private:
 //------------------------------
 
+  //SAT_LadspaEntryData MEntryData;
+
   //LADSPA_Descriptor*    MLadspaDescriptor = {0};
 
 //  SAT_Descriptor*      MDescriptor       = nullptr;
@@ -46,7 +42,7 @@ private:
 //  //char*                 MPortNamesBuffer  = SAT_NULL;
 //  //LADSPA_PortRangeHint* MPortRangeHints   = SAT_NULL;
 
-  SAT_LadspaPorts   MPorts      = {0};
+  //SAT_LadspaPorts   MPorts      = {0};
   
 //  char              MName[SAT_PLUGIN_LADSPA_MAX_NAME_LENGTH] = {0};
 //  char              MLabel[SAT_PLUGIN_LADSPA_MAX_NAME_LENGTH] = {0};
@@ -70,7 +66,9 @@ public:
 //    if (MLabelBuffer)       free(MLabelBuffer);
 //    if (MMakerBuffer)       free(MMakerBuffer);
 //    if (MCopyrightBuffer)   free(MCopyrightBuffer);
-    cleanup_ports(&MPorts);
+
+//    cleanup_ports(&MPorts);
+    
 //    if (MLadspaDescriptor)  free(MLadspaDescriptor);
   }
 
@@ -79,29 +77,30 @@ public:
 //------------------------------
 
   /*
-    ? carla calles ladspa_descriptor a second time before deleting the first..
+    we need to know the number of parameters and audio input/output ports,
+    so we need to create a dummy plugin, read the info from there,
+    delete the dummy, and then continue.. :-/
   */
 
   const LADSPA_Descriptor* ladspa_entrypoint(unsigned long Index) {
     SAT_PRINT;
-    
     uint32_t clap_count = SAT_GLOBAL.REGISTRY.getNumDescriptors();
     if (Index >= clap_count) return nullptr;
     
-    LADSPA_Descriptor* lad_descriptor = (LADSPA_Descriptor*)malloc(sizeof(LADSPA_Descriptor));    // where is this free'd?
-    memset(lad_descriptor,0,sizeof(LADSPA_Descriptor));
+    SAT_LadspaEntryData* entrydata = (SAT_LadspaEntryData*)malloc(sizeof(SAT_LadspaEntryData)); // deleted in SAT_LadspaPlugin.ladspa_cleanup()
+    entrydata->index = Index;
     
+    LADSPA_Descriptor* lad_descriptor = (LADSPA_Descriptor*)malloc(sizeof(LADSPA_Descriptor)); // deleted in SAT_LadspaPlugin.ladspa_cleanup()
+    memset(lad_descriptor,0,sizeof(LADSPA_Descriptor));
+    entrydata->descriptor = lad_descriptor;
+
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(Index);
+
+    SAT_LadspaPorts* ports = (SAT_LadspaPorts*)malloc(sizeof(SAT_LadspaPorts)); // deleted in SAT_LadspaPlugin.ladspa_cleanup()
+    entrydata->ports = ports;
+    uint32_t numports = setup_ports(clap_descriptor,Index,ports);
     
     uint32_t unique_id = SAT_HashString(clap_descriptor->id);
-    
-    //strncpy(MName,       clap_descriptor->name,   SAT_PLUGIN_LADSPA_MAX_NAME_LENGTH-1);
-    //strncpy(MLabel,      clap_descriptor->name,   SAT_PLUGIN_LADSPA_MAX_NAME_LENGTH-1); // todo: make valid c symbol (see lv2)
-    //strncpy(MMaker,      clap_descriptor->vendor, SAT_PLUGIN_LADSPA_MAX_NAME_LENGTH-1);
-    //strncpy(MCopyright,  "",                      SAT_PLUGIN_LADSPA_MAX_NAME_LENGTH-1);
-    //SAT_MakeValidSymbol(MLabel);
-
-    uint32_t numports = setup_ports(clap_descriptor,Index,&MPorts);
 
     //SAT_Assert(port == numports);
     lad_descriptor->UniqueID            = unique_id;
@@ -111,10 +110,10 @@ public:
     lad_descriptor->Maker               = clap_descriptor->vendor;
     lad_descriptor->Copyright           = "";
     lad_descriptor->PortCount           = numports;
-    lad_descriptor->PortDescriptors     = MPorts.descriptors;
-    lad_descriptor->PortNames           = (const char* const*)MPorts.names;
-    lad_descriptor->PortRangeHints      = MPorts.rangeHints;
-    lad_descriptor->ImplementationData  = this;
+    lad_descriptor->PortDescriptors     = ports->descriptors;
+    lad_descriptor->PortNames           = (const char* const*)ports->names;
+    lad_descriptor->PortRangeHints      = ports->rangeHints;
+    lad_descriptor->ImplementationData  = entrydata;
     lad_descriptor->instantiate         = ladspa_instantiate_callback;
     lad_descriptor->connect_port        = ladspa_connect_port_callback;
     lad_descriptor->activate            = ladspa_activate_callback;
@@ -138,11 +137,13 @@ public:
      Note that instance initialisation should generally occur in
      activate() rather than here. */
 
-  LADSPA_Handle ladspa_instantiate(const struct _LADSPA_Descriptor* Descriptor, unsigned long SampleRate) {
-    SAT_PRINT;
-    SAT_LadspaPlugin* plugin = new SAT_LadspaPlugin(Descriptor,SampleRate);
-    return plugin->getHandle();
-  }
+//  LADSPA_Handle ladspa_instantiate(const struct _LADSPA_Descriptor* Descriptor, unsigned long SampleRate) {
+//    SAT_PRINT;
+//    // deleted in SAT_LadspaEntry.ladspa_cleanup_callback()
+//    SAT_LadspaPlugin* plugin = new SAT_LadspaPlugin(Descriptor,SampleRate);
+//    //return plugin->getHandle();
+//    return plugin->ladspa_instantiate(SampleRate);
+//  }
   
 //------------------------------
 public:
@@ -159,33 +160,23 @@ public:
     SAT_Plugin* plugin = (SAT_Plugin*)clap_plugin->plugin_data;
     clap_plugin->init(clap_plugin);
     
-    //uint32_t numin      = ADescriptor->getNumInputs();
-    //uint32_t numout     = ADescriptor->getNumOutputs();
-    //uint32_t numpar     = ADescriptor->getNumParameters();
-    //uint32_t numports   = numin + numout + numpar;
-
     uint32_t numin = 0;
-    if (plugin->getNumAudioInputPorts() > 0) {
-      numin = plugin->getAudioInputPort(0)->getInfo()->channel_count;
-    }
     uint32_t numout = 0;
-    if (plugin->getNumAudioOutputPorts() > 0) {
-      numout = plugin->getAudioOutputPort(0)->getInfo()->channel_count;
-    }
     uint32_t numpar = plugin->getNumParameters();
-    //SAT_Print("numin %i numout %i numpat %i\n",numin,numout,numpar);
-
-    uint32_t numports  = numin + numout + numpar;
-    if (SAT_ClapIsInstrument(clap_descriptor)) {
-      numports += 1;
-    }
+    if (plugin->getNumAudioInputPorts() > 0) { numin = plugin->getAudioInputPort(0)->getInfo()->channel_count; }
+    if (plugin->getNumAudioOutputPorts() > 0) { numout = plugin->getAudioOutputPort(0)->getInfo()->channel_count; }
+    uint32_t numports = numin + numout + numpar;
+    if (SAT_ClapIsInstrument(clap_descriptor)) { numports += 1; }
     
+    // deleted in SAT_LadspaPlugin.ladspa_cleanup()
     APorts->descriptors = (LADSPA_PortDescriptor*)malloc(numports * sizeof(LADSPA_PortDescriptor));
     APorts->names       = (char**)malloc(numports * sizeof(char*));
     APorts->namesBuffer = (char*)malloc(numports * SAT_PLUGIN_LADSPA_MAX_PORT_NAME_LENGTH);
     APorts->rangeHints  = (LADSPA_PortRangeHint*)malloc(numports * sizeof(LADSPA_PortRangeHint));
+    
     uint32_t i = 0;
     uint32_t port = 0;
+    
     for (i=0; i<numin; i++) {
       //const char* port_name = "Audio Input";
       APorts->descriptors[port] = LADSPA_PORT_AUDIO | LADSPA_PORT_INPUT;
@@ -198,6 +189,7 @@ public:
       //MPortRangeHints[port].UpperBound = 0;
       port++;
     }
+    
     for (i=0; i<numout; i++) {
       //const char* port_name = "Audio Output";
       APorts->descriptors[port] = LADSPA_PORT_AUDIO | LADSPA_PORT_OUTPUT;
@@ -210,6 +202,7 @@ public:
       //MPortRangeHints[port].UpperBound = 0;
       port++;
     }
+    
     for (i=0; i<numpar; i++) {
       SAT_Parameter* param = plugin->getParameter(i);
       APorts->descriptors[port] = LADSPA_PORT_CONTROL | LADSPA_PORT_INPUT;
@@ -234,27 +227,21 @@ public:
     return port;
   }
 
-  //----------
-
-  void cleanup_ports(SAT_LadspaPorts* APorts) {
-    SAT_PRINT;
-    if (APorts->descriptors)   free(APorts->descriptors);
-    if (APorts->names)         free(APorts->names);
-    if (APorts->namesBuffer)   free(APorts->namesBuffer);
-    if (APorts->rangeHints)    free(APorts->rangeHints);
-  }
-  
-
 //------------------------------
 private: // ladspa callbacks
 //------------------------------
 
   static
   LADSPA_Handle ladspa_instantiate_callback(const struct _LADSPA_Descriptor* Descriptor, unsigned long SampleRate) {
-    SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)Descriptor->ImplementationData;
-    LADSPA_Handle instance = nullptr;
-    if (plugin) instance = plugin->ladspa_instantiate(SampleRate);
-    return (LADSPA_Handle)instance;
+    // deleted in SAT_LadspaEntry.ladspa_cleanup_callback()
+    
+//    const clap_plugin_t* clap_plugin = SAT_CreatePlugin(AIndex,clap_descriptor,clap_host);
+//    SAT_Plugin* plugin = (SAT_Plugin*)clap_plugin->plugin_data;
+    
+    SAT_LadspaPlugin* plugin = new SAT_LadspaPlugin(Descriptor,SampleRate);
+    plugin->ladspa_instantiate();
+    return plugin;
+    
   }
 
   //----------

@@ -23,24 +23,27 @@ class SAT_LadspaPlugin {
 private:
 //------------------------------
 
-  LADSPA_Handle             MLadspaHandle     = nullptr;
+  SAT_Plugin*               MPlugin           = nullptr;
+  SAT_HostImplementation*   MHost             = nullptr;
+
+  const clap_plugin_t*      MClapPlugin       = nullptr;
+
   const LADSPA_Descriptor*  MLadspaDescriptor = nullptr;
   uint32_t                  MSampleRate       = 0.0f;
+  LADSPA_Handle             MLadspaHandle     = nullptr;
 
-  //const struct _LADSPA_Descriptor* MLadspaDescriptor;
+  float**                   MInputPtrs        = nullptr;
+  float**                   MOutputPtrs       = nullptr;
+  float**                   MParameterPtrs    = nullptr;
+
+  uint32_t                  MNumInputs        = 0;
+  uint32_t                  MNumOutputs       = 0;
+  uint32_t                  MNumParameters    = 0;
+
+  //float*                    MHostValues       = nullptr;
+  //float*                    MProcessValues    = nullptr;
   
-//  KODE_Descriptor*    MDescriptor     = nullptr;
-//  KODE_Instance*      MInstance       = nullptr;
-//  //KODE_Editor*        MEditor         = nullptr;
-//  float**             MInputPtrs      = nullptr;
-//  float**             MOutputPtrs     = nullptr;
-//  float**             MParameterPtrs  = nullptr;
-//  uint32_t            MNumInputs      = 0;
-//  uint32_t            MNumOutputs     = 0;
-//  uint32_t            MNumParameters  = 0;
-//  //float*              MHostValues     = nullptr;
-//  //float*              MProcessValues  = nullptr;
-//  KODE_ProcessContext MProcessContext = {};
+  SAT_ProcessContext       MProcessContext   = {};
 
 //------------------------------
 public:
@@ -48,32 +51,15 @@ public:
 
   //SAT_LadspaPlugin(const struct _LADSPA_Descriptor* Descriptor) {
   SAT_LadspaPlugin(const LADSPA_Descriptor* Descriptor, uint32_t ASampleRate) {
-    SAT_PRINT;
-    MLadspaDescriptor     = Descriptor;
-//    MInstance       = AInstance;
-//    MSampleRate     = ASampleRate;
-//    MNumInputs      = MDescriptor->getNumInputs();
-//    MNumOutputs     = MDescriptor->getNumOutputs();
-//    MNumParameters  = MDescriptor->getNumParameters();
-//    MInputPtrs      = (float**)malloc(MNumInputs     * sizeof(float*));
-//    MOutputPtrs     = (float**)malloc(MNumOutputs    * sizeof(float*));
-//    MParameterPtrs  = (float**)malloc(MNumParameters * sizeof(float*));
-//    //MHostValues     = (float*)malloc(MNumParameters * sizeof(float ));
-//    //MProcessValues  = (float*)malloc(MNumParameters * sizeof(float ));
-//    //instance->on_open();
-//    //MInstance->on_initialize(); // open?
+    SAT_Print("Descriptor %p ASampleRate %i\n",Descriptor,ASampleRate);
+    MLadspaDescriptor = Descriptor;
+    MSampleRate = ASampleRate;
   }
 
   //----------
 
   virtual ~SAT_LadspaPlugin() {
     SAT_PRINT;
-//    if (MInstance) delete MInstance;
-//    if (MInputPtrs)     free(MInputPtrs);
-//    if (MOutputPtrs)    free(MOutputPtrs);
-//    if (MParameterPtrs) free(MParameterPtrs);
-//    //if (MHostValues)    free(MHostValues);
-//    //if (MProcessValues) free(MProcessValues);
   }
   
   //----------
@@ -86,8 +72,45 @@ public:
 public:
 //------------------------------
 
-  LADSPA_Handle ladspa_instantiate(unsigned long SampleRate) {
-    return nullptr;
+  /*
+    This member is a function pointer that instantiates a plugin. A
+    handle is returned indicating the new plugin instance. The
+    instantiation function accepts a sample rate as a parameter. The
+    plugin descriptor from which this instantiate function was found
+    must also be passed. This function must return NULL if
+    instantiation fails.
+
+    Note that instance initialisation should generally occur in
+    activate() rather than here.
+  */
+
+  void ladspa_instantiate() {
+    SAT_PRINT;
+    
+    MHost = new SAT_HostImplementation();
+    const clap_host_t* clap_host = MHost->getHost();
+    
+    SAT_LadspaEntryData* entrydata = (SAT_LadspaEntryData*)MLadspaDescriptor->ImplementationData;
+    uint32_t index = entrydata->index;
+    const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
+    MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host);
+    MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
+    
+    clap_audio_port_info_t info;
+    if (MPlugin->audio_ports_get(0,true,&info))  { MNumInputs = info.channel_count; }
+    if (MPlugin->audio_ports_get(0,false,&info)) { MNumOutputs = info.channel_count; }
+    MNumParameters = MPlugin->getNumParameters();
+    
+    MInputPtrs      = (float**)malloc(MNumInputs     * sizeof(float*));
+    MOutputPtrs     = (float**)malloc(MNumOutputs    * sizeof(float*));
+    MParameterPtrs  = (float**)malloc(MNumParameters * sizeof(float*));
+    
+    //MHostValues     = (float*)malloc(MNumParameters * sizeof(float ));
+    //MProcessValues  = (float*)malloc(MNumParameters * sizeof(float ));
+    
+    //instance->on_open();
+    //MInstance->on_initialize(); // open?
+
   }
   
   //----------
@@ -124,23 +147,24 @@ public:
   //----------
 
   void ladspa_connect_port(unsigned long Port, LADSPA_Data * DataLocation) {
+    SAT_PRINT;
     //LADSPA_Trace("ladspa: connect_port Port:%i DataLocation:%p\n",Port,DataLocation);
     //if (Port < 0) return;
-//    if (Port < MNumInputs) {
-//      MInputPtrs[Port] = (float*)DataLocation;
-//      return;
-//    }
-//    Port -= MNumInputs;
-//    if (Port < MNumOutputs) {
-//      MOutputPtrs[Port] = (float*)DataLocation;
-//      return;
-//    }
-//    Port -= MNumOutputs;
-//    if (Port < MNumParameters) {
-//      MParameterPtrs[Port] = (float*)DataLocation;
-//      return;
-//    }
-//    Port -= MNumParameters;
+    if (Port < MNumInputs) {
+      MInputPtrs[Port] = (float*)DataLocation;
+      return;
+    }
+    Port -= MNumInputs;
+    if (Port < MNumOutputs) {
+      MOutputPtrs[Port] = (float*)DataLocation;
+      return;
+    }
+    Port -= MNumOutputs;
+    if (Port < MNumParameters) {
+      MParameterPtrs[Port] = (float*)DataLocation;
+      return;
+    }
+    Port -= MNumParameters;
   }
 
   //----------
@@ -168,12 +192,13 @@ public:
   */
 
   void ladspa_activate() {
-//    if (MInstance) {
-//      //MSampleRate = MPlugin->getSampleRate();
-//      //MInstance->on_stateChange(kps_initialize);
-//      //MInstance->on_initialize();
-//      //MInstance->on_activate();
-//    }
+    SAT_PRINT;
+    if (MPlugin) {
+      //MSampleRate = MPlugin->getSampleRate();
+      //MInstance->on_stateChange(kps_initialize);
+      //MInstance->on_initialize();
+      //MInstance->on_activate();
+    }
   }
 
   //----------
@@ -196,19 +221,23 @@ public:
   */
 
   void ladspa_run(unsigned long SampleCount) {
-//    if (MInstance) {
-//      for (uint32_t i=0; i<MNumParameters; i++) {
-//        float v = *MParameterPtrs[i];
-//        //MHostValues[i] = v;
-//        if (v != MInstance->getParameterValue(i)) {
-//          MInstance->setParameterValue(i,v); // almoste3qual
-//          KODE_Parameter* param = MDescriptor->getParameter(i);
-//          /*if (param)*/ v = param->from01(v);
-//          //MInstance->on_parameterChange(i,v);
-//        }
-//      }
-//      uint32_t num_in  = MDescriptor->getNumInputs();
-//      uint32_t num_out = MDescriptor->getNumOutputs();
+    SAT_PRINT;
+    if (MPlugin) {
+      
+      for (uint32_t i=0; i<MNumParameters; i++) {
+        float v = *MParameterPtrs[i];
+        //MHostValues[i] = v;
+        if (v != MPlugin->getParameterValue(i)) {
+          MPlugin->setParameterValue(i,v); // almostequal
+          SAT_Parameter* param = MPlugin->getParameter(i);
+          //v = param->denormalizeValue(v); // from01(v);
+          //MInstance->on_parameterChange(i,v);
+        }
+      }
+      
+      uint32_t num_in  = MNumInputs;//MDescriptor->getNumInputs();
+      uint32_t num_out = MNumOutputs;//MDescriptor->getNumOutputs();
+      
 //      for (uint32_t i=0; i<num_in; i++)  { MProcessContext.inputs[i]  = MInputPtrs[i]; }
 //      for (uint32_t i=0; i<num_out; i++) { MProcessContext.outputs[i] = MOutputPtrs[i]; }
 //      MProcessContext.playstate     = 0;//KODE_PLUGIN_PLAYSTATE_NONE;
@@ -222,7 +251,8 @@ public:
 //      MProcessContext.numsamples    = SampleCount;
 //      MProcessContext.samplerate    = MSampleRate;
 //      MInstance->on_plugin_process(&MProcessContext);
-//    }
+
+    }
   }
 
   //----------
@@ -244,6 +274,7 @@ public:
   */
 
   void ladspa_run_adding(unsigned long SampleCount) {
+    SAT_PRINT;
   }
 
   //----------
@@ -260,6 +291,7 @@ public:
   */
 
   void ladspa_set_run_adding_gain(LADSPA_Data Gain) {
+    SAT_PRINT;
   }
 
   //----------
@@ -281,10 +313,11 @@ public:
   */
 
   void ladspa_deactivate() {
-//    if (MInstance) {
-//      //MInstance->on_deactivate();
-//      //MInstance->on_stop();
-//    }
+    SAT_PRINT;
+    if (MPlugin) {
+      //MInstance->on_deactivate();
+      //MInstance->on_stop();
+    }
   }
 
   //----------
@@ -300,10 +333,37 @@ public:
   */
 
   void ladspa_cleanup() {
-//    if (MInstance) {
-//      //MInstance->on_terminate();
-//      //MInstance->on_close();
-//    }
+    SAT_PRINT;
+
+    //if (MInstance) {
+    //  //MInstance->on_terminate();
+    //  //MInstance->on_close();
+    //}
+
+    SAT_LadspaEntryData* entrydata = (SAT_LadspaEntryData*)MLadspaDescriptor->ImplementationData;
+    if (entrydata) {
+      if (entrydata->descriptor) free(entrydata->descriptor);
+      if (entrydata->ports) {
+        //cleanup_ports(&MPorts);
+        if (entrydata->ports->descriptors)   free(entrydata->ports->descriptors);
+        if (entrydata->ports->names)         free(entrydata->ports->names);
+        if (entrydata->ports->namesBuffer)   free(entrydata->ports->namesBuffer);
+        if (entrydata->ports->rangeHints)    free(entrydata->ports->rangeHints);
+        free(entrydata->ports);
+      }
+      free(entrydata);
+    }
+    
+    if (MClapPlugin) MClapPlugin->destroy(MClapPlugin);
+    if (MHost) delete MHost;
+    
+    if (MInputPtrs)     free(MInputPtrs);
+    if (MOutputPtrs)    free(MOutputPtrs);
+    if (MParameterPtrs) free(MParameterPtrs);
+    
+    //if (MHostValues)    free(MHostValues);
+    //if (MProcessValues) free(MProcessValues);
+
   }
 
   //----------

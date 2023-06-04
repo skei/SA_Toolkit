@@ -13,5 +13,23 @@
 #endif
 
 //----------------------------------------------------------------------
+
+struct SAT_LadspaPorts {
+  int*                  descriptors  = nullptr;
+  char**                names        = nullptr;
+  char*                 namesBuffer  = nullptr;
+  LADSPA_PortRangeHint* rangeHints   = nullptr;
+};
+
+//----------
+
+struct SAT_LadspaEntryData {
+  uint32_t            index;
+  LADSPA_Descriptor*  descriptor;
+  SAT_LadspaPorts*    ports;
+};
+
+
+//----------------------------------------------------------------------
 #endif
 
