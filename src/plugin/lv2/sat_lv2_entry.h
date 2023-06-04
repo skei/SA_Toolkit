@@ -431,7 +431,7 @@ SAT_Lv2Entry GLOBAL_LV2_PLUGIN_ENTRY;
 
 //----------------------------------------------------------------------
 
-const LV2_Descriptor*   sat_lv2_entrypoint(  uint32_t Index) asm ("lv2_descriptor");
+const LV2_Descriptor*   sat_lv2_entrypoint(uint32_t Index) asm ("lv2_descriptor");
 //const LV2UI_Descriptor* sat_lv2ui_entrypoint(uint32_t index) asm ("lv2ui_descriptor");
 void                    sat_lv2_export_ttl(void) asm             ("lv2_export_ttl");
 
@@ -439,7 +439,7 @@ void                    sat_lv2_export_ttl(void) asm             ("lv2_export_tt
 
 __SAT_EXPORT
 //__attribute__((visibility("default")))
-const LV2_Descriptor* sat_lv2_entrypoint(unsigned long Index) {
+const LV2_Descriptor* sat_lv2_entrypoint(uint32_t Index) {
   SAT_Print("Index %i\n",Index);
   return GLOBAL_LV2_PLUGIN_ENTRY.lv2_entrypoint(Index);
 }

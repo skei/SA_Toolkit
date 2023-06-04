@@ -755,7 +755,7 @@
   <Dependencies Name="win32_plugin_release"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
-      <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new" C_Options="" Assembler="">
+      <Compiler Options="-std=c++14;-Wl,--as-needed;-faligned-new;-fvisibility=hidden" C_Options="" Assembler="">
         <IncludePath Value="."/>
         <IncludePath Value="../../src"/>
         <IncludePath Value="../../src/extern/vst3/vst3sdk"/>
