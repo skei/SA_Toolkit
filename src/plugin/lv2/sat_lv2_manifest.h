@@ -166,7 +166,11 @@ private:
       uint32_t numpar = plugin->getNumParameters();
       //SAT_Print("numin %i numout %i numpat %i\n",numin,numout,numpar);
       uint32_t numports  = numin + numout + numpar;
-//      if (descriptor->canReceiveMidi()) { numports += 1; }
+      
+      //if (descriptor->canReceiveMidi()) {
+      if (SAT_ClapIsInstrument(clap_descriptor)) {
+        numports += 1;
+      }
 
       // every port symbol must be unique and a valid C identifier
       // and the indices must start at 0 and be contiguous
@@ -185,7 +189,7 @@ private:
          for (uint32_t i=0; i<numin; i++) {
           sprintf(name,"Input %i",i);
           strcpy(symbol,name);
-          //SAT_MakeValidSymbol(symbol);
+          SAT_MakeValidSymbol(symbol);
           strcat(plugin_ttl,"    a lv2:AudioPort , lv2:InputPort ;\n");
           sprintf(temp,     "    lv2:index         %i ;\n",p);
           strcat(plugin_ttl,temp);
@@ -205,7 +209,7 @@ private:
         for (i=0; i<numout; i++) {
           sprintf(name,"Output %i",i);
           strcpy(symbol,name);
-          //SAT_MakeValidSymbol(symbol);
+          SAT_MakeValidSymbol(symbol);
           strcat(plugin_ttl,"    a lv2:AudioPort , lv2:OutputPort ;\n");
           sprintf(temp,     "    lv2:index         %i ;\n",p);
           strcat(plugin_ttl,temp);
@@ -226,7 +230,7 @@ private:
           SAT_Parameter* par = plugin->getParameter(i);
           strcpy(name,par->getName());
           strcpy(symbol,name);
-          //SAT_MakeValidSymbol(symbol);
+          SAT_MakeValidSymbol(symbol);
           strcat(plugin_ttl,"    a lv2:InputPort , lv2:ControlPort ;\n");
           sprintf(temp,     "    lv2:index         %i ;\n",p);
           strcat(plugin_ttl,temp);
@@ -249,20 +253,21 @@ private:
         // midi input
         //----------
 
-//        if (descriptor->canReceiveMidi()) {
-//          //strcat(plugin_ttl,"    a lv2:InputPort , atom:AtomPort ;\n");
-//          strcat(plugin_ttl,"    a atom:AtomPort , lv2:InputPort ;\n");
-//          strcat(plugin_ttl,"    atom:bufferType   atom:Sequence ;\n");
-//          strcat(plugin_ttl,"    atom:supports     midi:MidiEvent ;\n");
-//          strcat(plugin_ttl,"    lv2:designation   lv2:control ;\n");
-//          sprintf(temp,     "    lv2:index         %i ;\n",p);
-//          strcat(plugin_ttl,temp);
-//          strcat(plugin_ttl,"    lv2:symbol        \"midi_in\" ;\n");
-//          strcat(plugin_ttl,"    lv2:name          \"Midi in\" ;\n");
-//          p++;
-//          if (p < numports) strcat(plugin_ttl," ] , [\n");
-//          else strcat(plugin_ttl," ] .\n");
-//        } // midi in
+        //if (descriptor->canReceiveMidi()) {
+        if (SAT_ClapIsInstrument(clap_descriptor)) {
+          //strcat(plugin_ttl,"    a lv2:InputPort , atom:AtomPort ;\n");
+          strcat(plugin_ttl,"    a atom:AtomPort , lv2:InputPort ;\n");
+          strcat(plugin_ttl,"    atom:bufferType   atom:Sequence ;\n");
+          strcat(plugin_ttl,"    atom:supports     midi:MidiEvent ;\n");
+          strcat(plugin_ttl,"    lv2:designation   lv2:control ;\n");
+          sprintf(temp,     "    lv2:index         %i ;\n",p);
+          strcat(plugin_ttl,temp);
+          strcat(plugin_ttl,"    lv2:symbol        \"midi_in\" ;\n");
+          strcat(plugin_ttl,"    lv2:name          \"Midi in\" ;\n");
+          p++;
+          if (p < numports) strcat(plugin_ttl," ] , [\n");
+          else strcat(plugin_ttl," ] .\n");
+        } // midi in
 
       } // ports
 
@@ -292,25 +297,6 @@ private:
   
   //void create_gui_ttl() {
   //}
-
-  //----------
-  
-//  void write_ttl() {
-//    // write manifest.ttl
-//    FILE* fp = nullptr;
-//    fp = fopen("manifest.ttl","w");
-//    if (fp) fprintf(fp,"%s",manifest_ttl);
-//    fclose(fp);
-//    
-//    // write [plugin].ttl
-//    char buffer[SAT_MAX_PATH_LENGTH] = {0};
-//    strcpy(buffer,clap_descriptor->name);
-//    SAT_MakeValidSymbol(buffer);
-//    strcat(buffer,".ttl");
-//    fp = fopen(buffer,"w");
-//    if (fp) fprintf(fp,"%s",plugin_ttl);
-//    fclose(fp);
-//  }
 
 };
 

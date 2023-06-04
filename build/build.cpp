@@ -15,7 +15,7 @@
 
 //#include "test/test2.h"
 //#include "test/test_minimal.h"
-#include "test/test_parameters.h"
+//#include "test/test_parameters.h"
 //#include "test/test_reaper_ext.h"
 //#include "test/test_standalone.h"
 
@@ -97,7 +97,7 @@
 //#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_stretch.h"
-//#include "../plugins/sa_synth.h"
+#include "../plugins/sa_synth.h"
 //#include "../plugins/sa_tyr.h" // TODO
 
 //----------

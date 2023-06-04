@@ -23,10 +23,12 @@ private:
 //------------------------------
 
 //DESCRIPTOR        MDescriptor                       = {};
+
   LV2_Descriptor    MLv2Descriptor                    = {0};
-  LV2UI_Descriptor  MLv2UIDescriptor                  = {0};
   char              MLv2Uri[SAT_LV2_MAX_URI_LENGTH]   = {0};
-  char              MLv2UIUri[SAT_LV2_MAX_URI_LENGTH] = {0};
+
+  //LV2UI_Descriptor  MLv2UIDescriptor                  = {0};
+  //char              MLv2UIUri[SAT_LV2_MAX_URI_LENGTH] = {0};
   
   //static LV2UI_Idle_Interface _lv2_idle_interface;
   //static LV2UI_Resize         _lv2_resize;
@@ -40,13 +42,14 @@ public:
     setup_lv2_uri();
     setup_lv2_descriptor();
 
-    #ifndef SAT_NO_GUI
-      setup_lv2ui_uri();
-      setup_lv2ui_descriptor();
-      //_lv2_idle_interface.idle = lv2_ext_idle;
-      //_lv2_resize.handle = nullptr;
-      //_lv2_resize.ui_resize = lv2_ext_resize;
-    #endif
+    //#ifndef SAT_NO_GUI
+    //  setup_lv2ui_uri();
+    //  setup_lv2ui_descriptor();
+    //  //_lv2_idle_interface.idle = lv2_ext_idle;
+    //  //_lv2_resize.handle = nullptr;
+    //  //_lv2_resize.ui_resize = lv2_ext_resize;
+    //#endif
+    
   }
 
   //----------
@@ -67,11 +70,11 @@ public:
 
   //----------
 
-  const LV2UI_Descriptor* lv2ui_entrypoint(uint32_t index) {
-    SAT_Print("index %i\n",index);
-    if (index > 0) return nullptr;
-    return &MLv2UIDescriptor;
-  }
+  //const LV2UI_Descriptor* lv2ui_entrypoint(uint32_t index) {
+  //  SAT_Print("index %i\n",index);
+  //  if (index > 0) return nullptr;
+  //  return &MLv2UIDescriptor;
+  //}
 
   //----------
 
@@ -112,18 +115,18 @@ private:
 
   //----------
 
-  void setup_lv2ui_uri() {
-    SAT_PRINT;
-    const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(0);
-    memset(MLv2UIUri,0,SAT_LV2_MAX_URI_LENGTH);
-    strcpy(MLv2UIUri,"urn:");
-//    strcat(MLv2UIUri,MDescriptor.getAuthor());
-//    strcat(MLv2UIUri,"/");
-//    strcat(MLv2UIUri,MDescriptor.getName());
-    strcat(MLv2UIUri,clap_descriptor->id);
-    strcat(MLv2UIUri,"_ui");
-    SAT_Print("MLv2UIUri: %s\n",MLv2UIUri);
-  }
+  //void setup_lv2ui_uri() {
+  //  SAT_PRINT;
+  //  const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(0);
+  //  memset(MLv2UIUri,0,SAT_LV2_MAX_URI_LENGTH);
+  //  strcpy(MLv2UIUri,"urn:");
+  //  //strcat(MLv2UIUri,MDescriptor.getAuthor());
+  //  //strcat(MLv2UIUri,"/");
+  //  //strcat(MLv2UIUri,MDescriptor.getName());
+  //  strcat(MLv2UIUri,clap_descriptor->id);
+  //  strcat(MLv2UIUri,"_ui");
+  //  SAT_Print("MLv2UIUri: %s\n",MLv2UIUri);
+  //}
 
   //----------
 
@@ -142,33 +145,33 @@ private:
 
   //----------
 
-  void setup_lv2ui_descriptor() {
-    SAT_PRINT;
-    memset(&MLv2UIDescriptor,0,sizeof(LV2UI_Descriptor));
-    MLv2UIDescriptor.URI            = MLv2UIUri;
-    MLv2UIDescriptor.instantiate    = lv2ui_instantiate_callback;
-    MLv2UIDescriptor.cleanup        = lv2ui_cleanup_callback;
-    MLv2UIDescriptor.port_event     = lv2ui_port_event_callback;
-    MLv2UIDescriptor.extension_data = lv2ui_extension_data_callback;
-  }
+  //void setup_lv2ui_descriptor() {
+  //  SAT_PRINT;
+  //  memset(&MLv2UIDescriptor,0,sizeof(LV2UI_Descriptor));
+  //  MLv2UIDescriptor.URI            = MLv2UIUri;
+  //  MLv2UIDescriptor.instantiate    = lv2ui_instantiate_callback;
+  //  MLv2UIDescriptor.cleanup        = lv2ui_cleanup_callback;
+  //  MLv2UIDescriptor.port_event     = lv2ui_port_event_callback;
+  //  MLv2UIDescriptor.extension_data = lv2ui_extension_data_callback;
+  //}
 
   //------------------------------
   // extensions
   //------------------------------
 
-  static
-  int lv2_ext_idle(LV2UI_Handle handle) {
-    //StuckUI* self = (StuckUI*)handle;
-    //self->idle();
-    return 0;
-  }
+  //static
+  //int lv2_ext_idle(LV2UI_Handle handle) {
+  //  //StuckUI* self = (StuckUI*)handle;
+  //  //self->idle();
+  //  return 0;
+  //}
 
-  static
-  int lv2_ext_resize(LV2UI_Feature_Handle handle, int w, int h) {
-    //StuckUI* self = (StuckUI*)handle;
-    //self->ui->size(w,h);
-    return 0;
-  }
+  //static
+  //int lv2_ext_resize(LV2UI_Feature_Handle handle, int w, int h) {
+  //  //StuckUI* self = (StuckUI*)handle;
+  //  //self->ui->size(w,h);
+  //  return 0;
+  //}
 
 //----------------------------------------------------------------------
 private: // lv2 callbacks
@@ -290,6 +293,8 @@ private: // lv2 callbacks
 private: // ui callbacks
 //----------------------------------------------------------------------
 
+  #if 0
+
   static
   LV2UI_Handle lv2ui_instantiate_callback(
     const LV2UI_Descriptor*     descriptor,
@@ -377,6 +382,8 @@ private: // ui callbacks
     return nullptr;
   }
   
+  #endif // 0
+  
   //----------
   
 };
@@ -425,26 +432,27 @@ SAT_Lv2Entry GLOBAL_LV2_PLUGIN_ENTRY;
 //----------------------------------------------------------------------
 
 const LV2_Descriptor*   sat_lv2_entrypoint(  uint32_t Index) asm ("lv2_descriptor");
-const LV2UI_Descriptor* sat_lv2ui_entrypoint(uint32_t index) asm ("lv2ui_descriptor");
+//const LV2UI_Descriptor* sat_lv2ui_entrypoint(uint32_t index) asm ("lv2ui_descriptor");
 void                    sat_lv2_export_ttl(void) asm             ("lv2_export_ttl");
 
 //----------
 
-//__attribute__((visibility("default")))
 __SAT_EXPORT
+//__attribute__((visibility("default")))
 const LV2_Descriptor* sat_lv2_entrypoint(unsigned long Index) {
   SAT_Print("Index %i\n",Index);
   return GLOBAL_LV2_PLUGIN_ENTRY.lv2_entrypoint(Index);
 }
 
-//__attribute__((visibility("default")))
-__SAT_EXPORT
-const LV2UI_Descriptor* sat_lv2ui_entrypoint(uint32_t index) {
-  SAT_Print("index %i\n",index);
-  return GLOBAL_LV2_PLUGIN_ENTRY.lv2ui_entrypoint(index);
-}
+//__SAT_EXPORT
+////__attribute__((visibility("default")))
+//const LV2UI_Descriptor* sat_lv2ui_entrypoint(uint32_t index) {
+//  SAT_Print("index %i\n",index);
+//  return GLOBAL_LV2_PLUGIN_ENTRY.lv2ui_entrypoint(index);
+//}
 
-__attribute__((visibility("default")))
+__SAT_EXPORT
+//__attribute__((visibility("default")))
 void sat_lv2_export_ttl(void) {
   SAT_PRINT;
   GLOBAL_LV2_PLUGIN_ENTRY.export_ttl();

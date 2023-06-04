@@ -6,6 +6,18 @@
 
 //----------------------------------------------------------------------
 
+bool SAT_ClapIsInstrument(const clap_plugin_descriptor_t* descriptor) {
+  const char* const* feature = descriptor->features;
+  uint32_t index = 0;
+  while (feature[index]) {
+    if (strcmp(feature[index], CLAP_PLUGIN_FEATURE_INSTRUMENT) == 0) return true;
+    index++;
+  }
+  return false;
+}
+
+//----------------------------------------------------------------------
+
   void SAT_LogClapHostInfo(SAT_ClapHost* AHost) {
 
     const clap_host_t* host = AHost->getHost();

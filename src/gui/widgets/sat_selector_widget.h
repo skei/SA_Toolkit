@@ -184,7 +184,7 @@ public: // menu listener
     {
       SAT_TextWidget* widget = (SAT_TextWidget*)MMenu->getChildWidget(AIndex);
       const char* text = widget->getText();
-      SAT_Print("%s\n",text);
+      SAT_Print("%s/%s\n",getName(),text);
     }
 
     SAT_Parameter* param = (SAT_Parameter*)getParameter();

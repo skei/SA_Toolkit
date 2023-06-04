@@ -75,16 +75,15 @@ private:
 
   //----------
 
-  bool isInstrument(const clap_plugin_descriptor_t* descriptor) {
-    const char* const* feature = descriptor->features;
-    uint32_t index = 0;
-    while (feature[index]) {
-      if (strcmp(feature[index], CLAP_PLUGIN_FEATURE_INSTRUMENT) == 0) return true;
-      index++;
-    }
-    return false;
-  }
-
+//  bool isInstrument(const clap_plugin_descriptor_t* descriptor) {
+//    const char* const* feature = descriptor->features;
+//    uint32_t index = 0;
+//    while (feature[index]) {
+//      if (strcmp(feature[index], CLAP_PLUGIN_FEATURE_INSTRUMENT) == 0) return true;
+//      index++;
+//    }
+//    return false;
+//  }
 
 //------------------------------
 public: // FUnknown
@@ -223,7 +222,7 @@ public: // IPluginFactory2
     strcpy(info->category,kVstAudioEffectClass);
     strcpy(info->name,descriptor->name);
     info->classFlags = 0;
-    if (isInstrument(descriptor)) strcpy(info->subCategories,Vst::PlugType::kInstrument);
+    if (SAT_ClapIsInstrument(descriptor)) strcpy(info->subCategories,Vst::PlugType::kInstrument);
     else strcpy(info->subCategories,Vst::PlugType::kFx);
     strcpy(info->vendor,descriptor->vendor);
     strcpy(info->version,descriptor->version);

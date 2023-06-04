@@ -24,7 +24,7 @@ private:
 
   bool      MDrawText         = true;
   SAT_Color MTextColor        = SAT_White;
-  double    MTextSize         = 9.0;
+  double    MTextSize         = 8.0;
   uint32_t  MTextAlignment    = SAT_TEXT_ALIGN_CENTER;
   SAT_Rect  MTextOffset       = {};
   //char      MText[256]        = {0};
