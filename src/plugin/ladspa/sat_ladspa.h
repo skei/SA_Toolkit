@@ -23,9 +23,10 @@ struct SAT_LadspaPorts {
 
 //----------
 
-struct SAT_LadspaEntryData {
+struct SAT_LadspaDescriptorInfo {
   uint32_t            index;
   LADSPA_Descriptor*  descriptor;
+  //uint32_t            num_ports;
   SAT_LadspaPorts*    ports;
 };
 

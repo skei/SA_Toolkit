@@ -40,20 +40,27 @@ private:
   uint32_t                  MNumOutputs       = 0;
   uint32_t                  MNumParameters    = 0;
 
+  SAT_ParameterArray*       MParameters       = nullptr;
+  clap_process_t            MProcess          = {};
+
+  uint32_t                  MNumEvents         = 0;
+  char                      MEvents[SAT_PLUGIN_LADSPA_MAX_EVENTS_PER_BLOCK * SAT_PLUGIN_LADSPA_MAX_EVENT_SIZE]  = {0};
+  
+  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_LADSPA_MAX_GUI_EVENTS> MHostParamQueue = {}; // gui -> host
+  double                    MQueuedHostParamValues[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK] = {0};
+
   //float*                    MHostValues       = nullptr;
   //float*                    MProcessValues    = nullptr;
-  
-  SAT_ProcessContext       MProcessContext   = {};
+  //SAT_ProcessContext        MProcessContext   = {};
+  //clap_input_events_t       MLadspaInputEvents
+  //clap_input_events_t       MLadspaOutputEvents
 
 //------------------------------
 public:
 //------------------------------
 
-  //SAT_LadspaPlugin(const struct _LADSPA_Descriptor* Descriptor) {
-  SAT_LadspaPlugin(const LADSPA_Descriptor* Descriptor, uint32_t ASampleRate) {
-    SAT_Print("Descriptor %p ASampleRate %i\n",Descriptor,ASampleRate);
-    MLadspaDescriptor = Descriptor;
-    MSampleRate = ASampleRate;
+  SAT_LadspaPlugin() {
+    SAT_PRINT;
   }
 
   //----------
@@ -84,18 +91,21 @@ public:
     activate() rather than here.
   */
 
-  void ladspa_instantiate() {
+  void ladspa_instantiate(const LADSPA_Descriptor* Descriptor, uint32_t ASampleRate) {
     SAT_PRINT;
     
+    MLadspaDescriptor = Descriptor;
+    MSampleRate = ASampleRate;
+
     MHost = new SAT_HostImplementation();
     const clap_host_t* clap_host = MHost->getHost();
-    SAT_LadspaEntryData* entrydata = (SAT_LadspaEntryData*)MLadspaDescriptor->ImplementationData;
-    uint32_t index = entrydata->index;
+    SAT_LadspaDescriptorInfo* descriptor_info = (SAT_LadspaDescriptorInfo*)MLadspaDescriptor->ImplementationData;
+    uint32_t index = descriptor_info->index;
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host);
     MClapPlugin->init(MClapPlugin);
     MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
-    SAT_Print("MPlugin %p\n",MPlugin);
+    //SAT_Print("MPlugin %p\n",MPlugin);
     
     clap_audio_port_info_t info;
     
@@ -119,7 +129,6 @@ public:
     
     //MHostValues     = (float*)malloc(MNumParameters * sizeof(float ));
     //MProcessValues  = (float*)malloc(MNumParameters * sizeof(float ));
-    
     //instance->on_open();
     //MInstance->on_initialize(); // open?
 
@@ -159,9 +168,8 @@ public:
   //----------
 
   void ladspa_connect_port(unsigned long Port, LADSPA_Data * DataLocation) {
-    SAT_PRINT;
-    //LADSPA_Trace("ladspa: connect_port Port:%i DataLocation:%p\n",Port,DataLocation);
-    //if (Port < 0) return;
+    //SAT_PRINT;
+    //SAT_Print("ladspa: connect_port Port:%i DataLocation:%p\n",Port,DataLocation);
     if (Port < MNumInputs) {
       MInputPtrs[Port] = (float*)DataLocation;
       return;
@@ -206,6 +214,7 @@ public:
   void ladspa_activate() {
     SAT_PRINT;
     if (MPlugin) {
+      MPlugin->activate(MSampleRate,0,1024);
       //MSampleRate = MPlugin->getSampleRate();
       //MInstance->on_stateChange(kps_initialize);
       //MInstance->on_initialize();
@@ -233,36 +242,69 @@ public:
   */
 
   void ladspa_run(unsigned long SampleCount) {
-    SAT_PRINT;
+    //SAT_PRINT;
     if (MPlugin) {
       
+      MNumEvents = 0;
       for (uint32_t i=0; i<MNumParameters; i++) {
         float v = *MParameterPtrs[i];
         //MHostValues[i] = v;
-        if (v != MPlugin->getParameterValue(i)) {
-          MPlugin->setParameterValue(i,v); // almostequal
-          SAT_Parameter* param = MPlugin->getParameter(i);
+        if (v != MPlugin->getParameterValue(i)) { // todo: almost_equal?
+          MPlugin->setParameterValue(i,v); 
+          //SAT_Parameter* param = MPlugin->getParameter(i);
           //v = param->denormalizeValue(v); // from01(v);
-          //MInstance->on_parameterChange(i,v);
+          MPlugin->setParameterValue(i,v);
+          uint32_t pos = SAT_PLUGIN_LADSPA_MAX_EVENT_SIZE * MNumEvents++;
+          clap_event_param_value_t* param_value_event = (clap_event_param_value_t*)&MEvents[pos];
+          memset(param_value_event,0,sizeof(clap_event_param_value_t));
+          param_value_event->header.size     = sizeof(clap_event_param_value_t);
+          param_value_event->header.time     = 0;
+          param_value_event->header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+          param_value_event->header.type     = CLAP_EVENT_PARAM_VALUE;
+          param_value_event->header.flags    = 0;
+          param_value_event->param_id        = i; //paramQueue->getParameterId();
+          param_value_event->note_id         = -1;
+          param_value_event->port_index      = 0;
+          param_value_event->channel         = 0;
+          param_value_event->key             = 0;
+          param_value_event->value           = v;
         }
       }
       
-      uint32_t num_in  = MNumInputs;//MDescriptor->getNumInputs();
-      uint32_t num_out = MNumOutputs;//MDescriptor->getNumOutputs();
+      clap_audio_buffer_t audio_inputs = {
+        .data32         = MInputPtrs,
+        .data64         = nullptr,
+        .channel_count  = MNumInputs,
+        .latency        = 0,
+        .constant_mask  = 0
+      };
       
-//      for (uint32_t i=0; i<num_in; i++)  { MProcessContext.inputs[i]  = MInputPtrs[i]; }
-//      for (uint32_t i=0; i<num_out; i++) { MProcessContext.outputs[i] = MOutputPtrs[i]; }
-//      MProcessContext.playstate     = 0;//KODE_PLUGIN_PLAYSTATE_NONE;
-//      MProcessContext.samplepos     = 0;
-//      MProcessContext.beatpos       = 0.0f;
-//      MProcessContext.tempo         = 0.0f;
-//      MProcessContext.timesignum    = 0;
-//      MProcessContext.timesigdenom  = 0;
-//      MProcessContext.numinputs     = num_in;
-//      MProcessContext.numoutputs    = num_out;
-//      MProcessContext.numsamples    = SampleCount;
-//      MProcessContext.samplerate    = MSampleRate;
-//      MInstance->on_plugin_process(&MProcessContext);
+      clap_audio_buffer_t audio_outputs = {
+        .data32         = MOutputPtrs,
+        .data64         = nullptr,
+        .channel_count  = MNumOutputs,
+        .latency        = 0,
+        .constant_mask  = 0
+      };
+
+      MProcess.frames_count         = SampleCount;
+      MProcess.transport            = nullptr;
+      MProcess.audio_inputs         = &audio_inputs;
+      MProcess.audio_outputs        = &audio_outputs;
+      MProcess.audio_inputs_count   = MNumInputs;
+      MProcess.audio_outputs_count  = MNumOutputs;
+      MProcess.in_events            = &MLadspaInputEvents;
+      MProcess.out_events           = &MLadspaOutputEvents;
+
+      //MProcessContext.process     = &MProcess;
+      //MProcessContext.samplerate  = 0.0;
+      //MProcessContext.minbufsize  = 0;
+      //MProcessContext.maxbufsize  = 0;
+      //MProcessContext.parameters  = MParameters;
+      //MProcessContext.counter     = 0;
+      
+      MPlugin->process(&MProcess);
+      MProcess.steady_time += SampleCount;
 
     }
   }
@@ -286,7 +328,7 @@ public:
   */
 
   void ladspa_run_adding(unsigned long SampleCount) {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   //----------
@@ -303,7 +345,7 @@ public:
   */
 
   void ladspa_set_run_adding_gain(LADSPA_Data Gain) {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   //----------
@@ -327,6 +369,7 @@ public:
   void ladspa_deactivate() {
     SAT_PRINT;
     if (MPlugin) {
+      MPlugin->deactivate();
       //MInstance->on_deactivate();
       //MInstance->on_stop();
     }
@@ -352,18 +395,18 @@ public:
     //  //MInstance->on_close();
     //}
 
-    SAT_LadspaEntryData* entrydata = (SAT_LadspaEntryData*)MLadspaDescriptor->ImplementationData;
-    if (entrydata) {
-      if (entrydata->descriptor) free(entrydata->descriptor);
-      if (entrydata->ports) {
+    SAT_LadspaDescriptorInfo* descriptor_info = (SAT_LadspaDescriptorInfo*)MLadspaDescriptor->ImplementationData;
+    if (descriptor_info) {
+      if (descriptor_info->descriptor) free(descriptor_info->descriptor);
+      if (descriptor_info->ports) {
         //cleanup_ports(&MPorts);
-        if (entrydata->ports->descriptors)   free(entrydata->ports->descriptors);
-        if (entrydata->ports->names)         free(entrydata->ports->names);
-        if (entrydata->ports->namesBuffer)   free(entrydata->ports->namesBuffer);
-        if (entrydata->ports->rangeHints)    free(entrydata->ports->rangeHints);
-        free(entrydata->ports);
+        if (descriptor_info->ports->descriptors)   free(descriptor_info->ports->descriptors);
+        if (descriptor_info->ports->names)         free(descriptor_info->ports->names);
+        if (descriptor_info->ports->namesBuffer)   free(descriptor_info->ports->namesBuffer);
+        if (descriptor_info->ports->rangeHints)    free(descriptor_info->ports->rangeHints);
+        free(descriptor_info->ports);
       }
-      free(entrydata);
+      free(descriptor_info);
     }
     
     if (MClapPlugin) MClapPlugin->destroy(MClapPlugin);
@@ -373,12 +416,160 @@ public:
     if (MOutputPtrs)    free(MOutputPtrs);
     if (MParameterPtrs) free(MParameterPtrs);
     
-    //if (MHostValues)    free(MHostValues);
-    //if (MProcessValues) free(MProcessValues);
+//    if (MHostValues)    free(MHostValues);
+//    if (MProcessValues) free(MProcessValues);
 
   }
 
+//------------------------------
+private: // in_events
+//------------------------------
+
+  uint32_t input_events_size() {
+    return MNumEvents;
+  }
+
   //----------
+
+  const clap_event_header_t* input_events_get(uint32_t index) {
+    uint32_t pos = SAT_PLUGIN_LADSPA_MAX_EVENT_SIZE * index;
+    return (const clap_event_header_t*)&MEvents[pos];
+  }
+
+  //----------
+
+  clap_input_events_t MLadspaInputEvents = {
+    this,
+    input_events_size_callback,
+    input_events_get_callback
+  };
+
+  //----------
+
+  static uint32_t input_events_size_callback(const struct clap_input_events *list) {
+    SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)list->ctx;
+    return plugin->input_events_size();
+  }
+
+  //----------
+
+  static const clap_event_header_t* input_events_get_callback(const struct clap_input_events *list, uint32_t index) {
+    SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)list->ctx;
+    return plugin->input_events_get(index);
+  }
+
+//------------------------------
+private: // out_events
+//------------------------------
+
+  bool output_events_try_push(const clap_event_header_t *event) {
+    if (event->space_id == CLAP_CORE_EVENT_SPACE_ID) {
+      switch (event->type) {
+        
+        case CLAP_EVENT_NOTE_ON:
+          //SAT_Print("TODO: send NOTE_ON to host\n");
+          return true;
+          
+        case CLAP_EVENT_NOTE_OFF:
+          //SAT_Print("TODO: send NOTE_OFF to host\n");
+          return true;
+          
+        case CLAP_EVENT_NOTE_CHOKE:
+          //SAT_Print("TODO: send NOTE_CHOKE to host\n");
+          return true;
+          
+        case CLAP_EVENT_NOTE_END: {
+          //SAT_Print("TODO: send NOTE_END to host\n");
+          return true;
+        }
+          
+        case CLAP_EVENT_NOTE_EXPRESSION:
+          //SAT_Print("TODO: send NOTE_EXPRESSION to host\n");
+          return true;
+          
+        case CLAP_EVENT_PARAM_GESTURE_BEGIN: {
+          //SAT_Print("TODO: send PARAM_GESTURE_BEGIN to host\n");
+          return true;
+        }
+          
+        case CLAP_EVENT_PARAM_GESTURE_END: {
+          //SAT_Print("TODO: send PARAM_GESTURE_END to host\n");
+          return true;
+        }
+
+        case CLAP_EVENT_PARAM_VALUE: {
+          //SAT_Print("queueing PARAM_VALUE (to host)\n");
+          //clap_event_param_value_t* param_value = (clap_event_param_value_t*)event;
+          //uint32_t index = param_value->param_id;
+          //double value = param_value->value;
+          //clap_param_info_t info;
+          //MPlugin->params_get_info(index,&info); // crash? (win32)
+          //double range = info.max_value - info.min_value;
+          //if (range > 0) {
+          //  value -= info.min_value;
+          //  value /= range;
+          //}
+          //queueHostParam(index,value);
+          return true;
+        }
+
+        case CLAP_EVENT_PARAM_MOD:
+          //SAT_Print("TODO: send PARAM_MOD to host\n");
+          return true;
+          
+        case CLAP_EVENT_TRANSPORT:
+          //SAT_Print("TODO: send TRANSPORT to host\n");
+          return true;
+          
+        case CLAP_EVENT_MIDI:
+          //SAT_Print("TODO: send MIDI to host\n");
+          return true;
+          
+        case CLAP_EVENT_MIDI_SYSEX:
+          //SAT_Print("TODO: send MIDI_SYSEX to host\n");
+          return true;
+          
+        case CLAP_EVENT_MIDI2:
+          //SAT_Print("TODO: send MIDI2 to host\n");
+          return true;
+          
+      } // switch
+    } // clap_space
+    return false;
+  }
+
+  //----------
+
+  clap_output_events_t MLadspaOutputEvents = {
+    this,
+    output_events_try_push_callback
+  };
+
+  //----------
+
+  static bool output_events_try_push_callback(const struct clap_output_events *list, const clap_event_header_t *event) {
+    SAT_LadspaPlugin* plugin = (SAT_LadspaPlugin*)list->ctx;
+    return plugin->output_events_try_push(event);
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+  void queueHostParam(uint32_t AIndex, double AValue) {
+    MQueuedHostParamValues[AIndex] = AValue;
+    MHostParamQueue.write(AIndex);
+  }
+
+  //----------
+
+  void flushHostParams() {
+    uint32_t index;
+    while (MHostParamQueue.read(&index)) {
+      double value = MQueuedHostParamValues[index];
+      SAT_Print("flush! %i = %.3f\n",index,value);
+    }
+  }
 
 };
 
