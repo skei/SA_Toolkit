@@ -75,12 +75,12 @@ private:
   clap_audio_buffer_t             MAudioInputs        = {};
   clap_audio_buffer_t             MAudioOutputs       = {};
   uint32_t                        MNumEvents          = 0;
-  char                            MEvents[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK * SAT_PLUGIN_VST3_MAX_EVENT_SIZE]  = {0};
+  char                            MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
   uint32_t                        MLastNoteId         = 0;
   SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS] = {};
   
-  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_VST3_MAX_GUI_EVENTS> MHostParamQueue = {}; // gui -> host
-  double  MQueuedHostParamValues[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK] = {0};
+  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
+  double  MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
 //------------------------------
 public:
@@ -111,7 +111,7 @@ private: // in_events
   //----------
 
   const clap_event_header_t* vst3_input_events_get(uint32_t index) {
-    uint32_t pos = SAT_PLUGIN_VST3_MAX_EVENT_SIZE * index;
+    uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * index;
     return (const clap_event_header_t*)&MEvents[pos];
   }
 
@@ -284,7 +284,7 @@ private:
                 double value = 0;
                 paramQueue->getPoint(j,offset,value);
                 value = info.min_value + ((info.max_value - info.min_value) * value);
-                uint32_t pos = SAT_PLUGIN_VST3_MAX_EVENT_SIZE * MNumEvents++;
+                uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
                 clap_event_param_value_t* param_value_event = (clap_event_param_value_t*)&MEvents[pos];
                 memset(param_value_event,0,sizeof(clap_event_param_value_t));
                 param_value_event->header.size     = sizeof(clap_event_param_value_t);
@@ -319,7 +319,7 @@ private:
         switch (event.type) {
 
           case Event::kNoteOnEvent: {
-            uint32_t pos = SAT_PLUGIN_VST3_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_t* note_event = (clap_event_note_t*)&MEvents[pos];
             memset(note_event,0,sizeof(clap_event_note_t));
             note_event->header.size     = sizeof(clap_event_note_t);
@@ -344,7 +344,7 @@ private:
           }
 
           case Event::kNoteOffEvent: {
-            uint32_t pos = SAT_PLUGIN_VST3_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_t* note_event = (clap_event_note_t*)&MEvents[pos];
             memset(note_event,0,sizeof(clap_event_note_t));
             note_event->header.size     = sizeof(clap_event_note_t);
@@ -370,7 +370,7 @@ private:
           }
 
           case Event::kPolyPressureEvent: {
-            uint32_t pos = SAT_PLUGIN_VST3_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_expression_t* note_expression_event = (clap_event_note_expression_t*)&MEvents[pos];
             memset(note_expression_event,0,sizeof(clap_event_note_expression_t));
             note_expression_event->header.size     = sizeof(clap_event_note_expression_t);
@@ -388,7 +388,7 @@ private:
           }
 
           case Event::kNoteExpressionValueEvent: {
-            uint32_t pos = SAT_PLUGIN_VST3_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_expression_t* note_expression_event = (clap_event_note_expression_t*)&MEvents[pos];
             memset(note_expression_event,0,sizeof(clap_event_note_expression_t));
             //uint32_t chan = (event.noteExpressionValue.noteId >> 8);
@@ -473,7 +473,7 @@ private:
   //----------
 
   void sortEvents() {
-    qsort(MEvents,MNumEvents,SAT_PLUGIN_VST3_MAX_EVENT_SIZE, compare_events);
+    qsort(MEvents,MNumEvents,SAT_PLUGIN_MAX_EVENT_SIZE, compare_events);
   }
 
 //------------------------------

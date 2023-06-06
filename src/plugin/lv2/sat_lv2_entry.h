@@ -106,9 +106,9 @@ private:
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(0);
     memset(MLv2Uri,0,SAT_LV2_MAX_URI_LENGTH);
     strcpy(MLv2Uri,"urn:");
-//    strcat(MLv2Uri,MDescriptor.getAuthor());
-//    strcat(MLv2Uri,"/");
-//    strcat(MLv2Uri,MDescriptor.getName());
+    //strcat(MLv2Uri,MDescriptor.getAuthor());
+    //strcat(MLv2Uri,"/");
+    //strcat(MLv2Uri,MDescriptor.getName());
     strcat(MLv2Uri,clap_descriptor->id);
     SAT_Print("MLv2Uri: %s\n",MLv2Uri);
   }
@@ -211,14 +211,22 @@ private: // lv2 callbacks
   LV2_Handle lv2_instantiate_callback(const LV2_Descriptor* descriptor, double sample_rate, const char* bundle_path, const LV2_Feature* const* features) {
     SAT_Print("sample_rate %.2f bundle_path '%s' features %p\n",sample_rate,bundle_path,features);
     SAT_Lv2PrintFeatures(features);
+    
 //    SAT_Descriptor* desc = sat_lv2_get_descriptor();
 //    //SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin(desc);
 //    // !!!
 //    SAT_Instance* inst = new INSTANCE(desc);                             // who deletes this ???
+
+    //SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin(descriptor,sample_rate,bundle_path,features);
+
     SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin();
+    return lv2_plugin->lv2_instantiate(descriptor,sample_rate,bundle_path,features);
+    
 //    lv2_plugin->lv2_setup(sample_rate,bundle_path,features);
 //    return (LV2_Handle)lv2_plugin;
-    return lv2_plugin->getHandle();
+
+    //return lv2_plugin->getHandle();
+    
   }
 
   //----------

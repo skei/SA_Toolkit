@@ -1,11 +1,18 @@
 [todo]
 
+----------------------------------------------------------------------
+contact
+----------------------------------------------------------------------
+
+Tor-Helge Skei
+https://github.com/skei
+tor.helge.skei@gmail.com
 
 ----------------------------------------------------------------------
 licenses
 ----------------------------------------------------------------------
 
-my code, wherever i am allowed to choose the license, it's mit
+my code, wherever i am allowed to choose the license, is mit.
 
 i have tried to keep track of where everything is from, by keeping
 comments in the source code itself, but there's some more substantial
@@ -107,11 +114,4 @@ xjson
   https://github.com/stbachmann/xjson
   license: zlib/libpng
 
-----------------------------------------------------------------------
-contact
-----------------------------------------------------------------------
-
-Tor-Helge Skei
-https://github.com/skei
-tor.helge.skei@gmail.com
 

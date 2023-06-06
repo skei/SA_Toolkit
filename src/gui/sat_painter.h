@@ -32,7 +32,7 @@
 
 //----------------------------------------------------------------------
 
-typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_SIZE> SAT_RectStack;
+typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_RectStack;
 
 //----------------------------------------------------------------------
 //

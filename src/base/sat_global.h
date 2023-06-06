@@ -20,13 +20,12 @@ class SAT_Global {
 public:
 //------------------------------
 
-  bool          isInitialized             = false;
-  char          binary_path[SAT_MAX_PATH_LENGTH] = {0};
-  char          plugin_path[SAT_MAX_PATH_LENGTH] = {0};
-
-  SAT_Debug     DEBUG                     = {};
-  SAT_LogFile   LOG                       = {};
-  SAT_Registry  REGISTRY                  = {};
+  bool          isInitialized                     = false;
+  char          binary_path[SAT_MAX_PATH_LENGTH]  = {0};
+  char          plugin_path[SAT_MAX_PATH_LENGTH]  = {0};
+  SAT_Debug     DEBUG                             = {};
+  SAT_LogFile   LOG                               = {};
+  SAT_Registry  REGISTRY                          = {};
   
 //------------------------------
 public:

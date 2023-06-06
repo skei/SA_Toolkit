@@ -18,14 +18,14 @@ class SAT_Lv2Manifest {
 private:
 //------------------------------
 
-  SAT_HostImplementation*         host            = nullptr;
-  
   //const clap_host_t*              clap_host       = nullptr;
   //const clap_plugin_descriptor_t* clap_descriptor = nullptr;
-  const clap_plugin_t*            clap_plugin     = nullptr;
+
+  SAT_HostImplementation* host          = nullptr;
+  const clap_plugin_t*    clap_plugin   = nullptr;
   
-  char* manifest_ttl  = (char*)malloc(SAT_LV2_MANIFEST_TTL_SIZE); // 64k
-  char* plugin_ttl    = (char*)malloc(SAT_LV2_PLUGIN_TTL_SIZE);   // 64k
+  char*                   manifest_ttl  = (char*)malloc(SAT_LV2_MANIFEST_TTL_SIZE); // 64k
+  char*                   plugin_ttl    = (char*)malloc(SAT_LV2_PLUGIN_TTL_SIZE);   // 64k*16
 
 //------------------------------
 public:
@@ -61,6 +61,11 @@ public:
 private:
 //------------------------------
 
+  /*
+    TODO:
+    all plugins..
+  */
+
   //----------
 
   void create_manifest_ttl() {
@@ -73,7 +78,6 @@ private:
     
     //strcat(filename,".ttl");
     SAT_Print("%s\n",filename);
-
     
     memset(manifest_ttl,0,SAT_LV2_MANIFEST_TTL_SIZE);
     strcat(manifest_ttl,"@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .\n");
@@ -277,6 +281,7 @@ private:
       //----------
 
       strcat(plugin_ttl,"\n");
+      
       clap_plugin->destroy(clap_plugin);
     } // for all plugins
     delete host;

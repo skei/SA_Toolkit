@@ -132,7 +132,7 @@ public: // clap
     const clap_plugin_t* clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
-    MVoiceManager.setProcessThreaded(true);
+    MVoiceManager.setProcessThreaded(false);//true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
     
     // editor

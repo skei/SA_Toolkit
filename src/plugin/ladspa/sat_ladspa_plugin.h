@@ -2,6 +2,8 @@
 #define sat_ladspa_plugin_included
 //----------------------------------------------------------------------
 
+// clap-as-ladspa
+
 #include "base/sat.h"
 #include "plugin/ladspa/sat_ladspa.h"
 
@@ -44,10 +46,10 @@ private:
   clap_process_t            MProcess          = {};
 
   uint32_t                  MNumEvents         = 0;
-  char                      MEvents[SAT_PLUGIN_LADSPA_MAX_EVENTS_PER_BLOCK * SAT_PLUGIN_LADSPA_MAX_EVENT_SIZE]  = {0};
+  char                      MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
   
-  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_LADSPA_MAX_GUI_EVENTS> MHostParamQueue = {}; // gui -> host
-  double                    MQueuedHostParamValues[SAT_PLUGIN_VST3_MAX_EVENTS_PER_BLOCK] = {0};
+  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
+  double                    MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
   //float*                    MHostValues       = nullptr;
   //float*                    MProcessValues    = nullptr;
@@ -254,7 +256,7 @@ public:
           //SAT_Parameter* param = MPlugin->getParameter(i);
           //v = param->denormalizeValue(v); // from01(v);
           MPlugin->setParameterValue(i,v);
-          uint32_t pos = SAT_PLUGIN_LADSPA_MAX_EVENT_SIZE * MNumEvents++;
+          uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
           clap_event_param_value_t* param_value_event = (clap_event_param_value_t*)&MEvents[pos];
           memset(param_value_event,0,sizeof(clap_event_param_value_t));
           param_value_event->header.size     = sizeof(clap_event_param_value_t);
@@ -416,8 +418,8 @@ public:
     if (MOutputPtrs)    free(MOutputPtrs);
     if (MParameterPtrs) free(MParameterPtrs);
     
-//    if (MHostValues)    free(MHostValues);
-//    if (MProcessValues) free(MProcessValues);
+    //if (MHostValues)    free(MHostValues);
+    //if (MProcessValues) free(MProcessValues);
 
   }
 
@@ -432,7 +434,7 @@ private: // in_events
   //----------
 
   const clap_event_header_t* input_events_get(uint32_t index) {
-    uint32_t pos = SAT_PLUGIN_LADSPA_MAX_EVENT_SIZE * index;
+    uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * index;
     return (const clap_event_header_t*)&MEvents[pos];
   }
 

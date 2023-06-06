@@ -2,6 +2,8 @@
 #define sat_ladspa_hosted_plugin_included
 //----------------------------------------------------------------------
 
+// ladspa-as-clap
+
 #include "base/sat.h"
 
 class SAT_LadspaHostedPlugin {
