@@ -10,10 +10,10 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "base/utils/sat_rgba.h"
 #include "base/utils/sat_integer_math.h"
 #include "base/utils/sat_random.h"
 #include "base/types/sat_color.h"
+#include "gfx/sat_rgba.h"
 
 //#include "gui/sat_paint_source.h"
 //#include "gui/sat_paint_target.h"

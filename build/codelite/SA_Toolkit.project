@@ -396,7 +396,6 @@
         <File Name="../../src/base/utils/sat_dmc.h"/>
         <File Name="../../src/base/utils/sat_strutils.h"/>
         <File Name="../../src/base/utils/sat_fast_math.h"/>
-        <File Name="../../src/base/utils/sat_rgba.h"/>
         <File Name="../../src/base/utils/sat_isaac.h"/>
         <File Name="../../src/base/utils/sat_neural.h"/>
         <File Name="../../src/base/utils/sat_vm.h"/>
@@ -740,6 +739,7 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="gfx">
+      <File Name="../../src/gfx/sat_rgba.h"/>
       <File Name="../../src/gfx/sat_bitmap.h"/>
     </VirtualDirectory>
   </VirtualDirectory>
