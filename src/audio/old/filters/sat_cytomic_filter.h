@@ -1,5 +1,5 @@
-#ifndef mip_cytomic_filter_included
-#define mip_cytomic_filter_included
+#ifndef sat_cytomic_filter_included
+#define sat_cytomic_filter_included
 //----------------------------------------------------------------------
 
 /*
@@ -18,7 +18,7 @@
 
 //----------------------------------------------------------------------
 
-enum MIP_CytomicFilterTypes {
+enum SAT_CytomicFilterTypes {
   _SVF_NONE       = 0,
   _SVF_LOWPASS    = 1,
   _SVF_BANDPASS   = 2,
@@ -33,7 +33,7 @@ enum MIP_CytomicFilterTypes {
 
 //----------------------------------------------------------------------
 
-class MIP_CytomicFilter {
+class SAT_CytomicFilter {
 
   private:
 
@@ -47,7 +47,7 @@ class MIP_CytomicFilter {
 
   public:
 
-    MIP_CytomicFilter() {
+    SAT_CytomicFilter() {
       _ic1eq = _ic2eq = _v1 = _v2 = _v3 = 0;
     }
 
@@ -69,9 +69,9 @@ class MIP_CytomicFilter {
         _A = _ASqrt = 1;
       }
 
-      void update(double cutoff, double q = 0.5, uint32_t type = kft_lowpass, double sampleRate = 44100) {
+      void update(double cutoff, double q = 0.5, uint32_t type = _SVF_LOWPASS, double sampleRate = 44100) {
         double g = tan((cutoff / sampleRate) * M_PI);
-        double k = computeK(q, type == kft_bell /*USE GAIN FOR BELL FILTER ONLY*/);
+        double k = computeK(q, type == _SVF_BELL /*USE GAIN FOR BELL FILTER ONLY*/);
         switch (type) {
           case _SVF_NONE:
             // nothing todo
@@ -131,7 +131,7 @@ class MIP_CytomicFilter {
             _m2 = 1-_A*_A;
             break;
           default:
-            MIP_Assert(false);
+            SAT_Assert(false);
         }
       }
 
@@ -177,7 +177,7 @@ class MIP_CytomicFilter {
                    resetState before changing the sample rate
     */
 
-    void updateCoefficients(double cutoff, double q = 0.5, uint32_t type = kft_lowpass, double sampleRate = 44100) {
+    void updateCoefficients(double cutoff, double q = 0.5, uint32_t type = _SVF_LOWPASS, double sampleRate = 44100) {
       _coef.update(cutoff,q,type,sampleRate);
     }
 

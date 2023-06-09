@@ -63,13 +63,6 @@ private:
   SAT_Host*                         MHost                                         = nullptr;
   SAT_Editor*                       MEditor                                       = nullptr;
 
-  const char*                       MPluginFormat                                 = "CLAP";
-  uint32_t                          MInitialEditorWidth                           = 0;//512;
-  uint32_t                          MInitialEditorHeight                          = 0;//512;
-  double                            MInitialEditorScale                           = 2.0;
-  bool                              MProcessThreaded                              = false;
-  uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
-  
   SAT_Dictionary<const void*>       MExtensions                                   = {};
   SAT_ParameterArray                MParameters                                   = {};
   SAT_AudioPortArray                MAudioInputPorts                              = {};
@@ -78,6 +71,13 @@ private:
   SAT_NotePortArray                 MNoteOutputPorts                              = {};
   SAT_ProcessContext                MProcessContext                               = {};
 
+  const char*                       MPluginFormat                                 = "CLAP";
+  uint32_t                          MInitialEditorWidth                           = 0;//512;
+  uint32_t                          MInitialEditorHeight                          = 0;//512;
+  double                            MInitialEditorScale                           = 2.0;
+  bool                              MProcessThreaded                              = false;
+  uint32_t                          MEventMode                                    = SAT_PLUGIN_EVENT_MODE_BLOCK;
+  
   bool                              MIsInitialized                                = false;
   bool                              MIsActivated                                  = false;
   bool                              MIsProcessing                                 = false;
@@ -1995,7 +1995,10 @@ public: // queues
       event.channel         = -1;
       event.key             = -1;
       event.value           = item.value;
-      handleParamValue(&event); // handleParamValueEvent ?
+      bool handled = handleParamValue(&event); // handleParamValueEvent ?
+      if (!handled) {
+        //TODO
+      }
     }
     //if (count > 0) { SAT_Print("flushParamFromGuiToAudio: %i events\n",count); }
   }
@@ -2574,27 +2577,33 @@ public:
   //----------
 
   void handleNoteOnEvent(const clap_event_note_t* event) {
-    /*bool handled =*/ handleNoteOn(event);
+    bool handled = handleNoteOn(event);
+    if (!handled) {
+      //TODO
+    }
   }
 
   //----------
 
   void handleNoteOffEvent(const clap_event_note_t* event) {
-    /*bool handled =*/ handleNoteOff(event);
-    //if (!handled) {
-    //  SAT_Note note;
-    //  note.port     = event->port_index;
-    //  note.channel  = event->channel;
-    //  note.key      = event->key;
-    //  note.noteid   = event->note_id;
-    //  queueNoteEndFromAudioToHost(note);
-    //}
+    bool handled = handleNoteOff(event);
+    if (!handled) {
+      //SAT_Note note;
+      //note.port     = event->port_index;
+      //note.channel  = event->channel;
+      //note.key      = event->key;
+      //note.noteid   = event->note_id;
+      //queueNoteEndFromAudioToHost(note);
+    }
   }
 
   //----------
 
   void handleNoteChokeEvent(const clap_event_note_t* event) {
-    handleNoteChoke(event);
+    bool handled = handleNoteChoke(event);
+    if (!handled) {
+      //TODO
+    }
   }
 
   //----------
@@ -2611,7 +2620,10 @@ public:
     //  case CLAP_NOTE_EXPRESSION_BRIGHTNESS: SAT_Print("NOTE BRIGHTNESS EXPRESSION %.3f\n",value); break; // 0..1
     //  case CLAP_NOTE_EXPRESSION_PRESSURE:   SAT_Print("NOTE PRESSURE EXPRESSION %.3f\n",value);   break; // 0..1
     //}
-    handleNoteExpression(event);
+    bool handled = handleNoteExpression(event);
+    if (!handled) {
+      //TODO
+    }
   }
 
 //------------------------------
@@ -2629,7 +2641,10 @@ public:
         MParameters[index]->setLastAutomatedValue(value);
       }
     }
-    handleParamValue(event);
+    bool handled = handleParamValue(event);
+    if (!handled) {
+      //TODO
+    }
   }
 
   //----------
@@ -2645,7 +2660,10 @@ public:
         MParameters[index]->setLastModulatedValue(value);
       }
     }
-    handleParamMod(event);
+    bool handled = handleParamMod(event);
+    if (!handled) {
+      //TODO
+    }
   }
   
   //----------
@@ -2767,7 +2785,10 @@ public:
   //----------
 
   void handleMidi2Event(const clap_event_midi2_t* event) {
-    handleMidi2(event);
+    bool handled = handleMidi2(event);
+    if (!handled) {
+      //TODO
+    }
   }
 
 //------------------------------
@@ -2887,6 +2908,11 @@ public: // process events
   }
 
   //----------
+  
+  /*
+    todo: check what would happen if we get events that aren't sorted..
+    ignored?
+  */
 
   // processes events at their sample accurate place, and audio inbetween
 

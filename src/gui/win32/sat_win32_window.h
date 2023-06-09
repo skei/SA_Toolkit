@@ -275,6 +275,25 @@ public:
 //  uint32_t  getScreenHeight()     { return MScreenHeight; }
 //  int32_t   getScreenDepth()      { return MScreenDepth; }
 
+  uint32_t getScreenWidth()   override { return MScreenWidth; }
+  uint32_t getScreenHeight()  override { return MScreenHeight; }
+  uint32_t getScreenDepth()   override { return MScreenDepth; }
+  
+  //----------
+  
+  uint32_t getWidth() override {
+    return MWindowWidth;
+  }
+  
+  //----------
+
+  uint32_t getHeight() override {
+    return MWindowWidth;
+  }
+  
+
+
+
 //------------------------------
 public:
 //------------------------------

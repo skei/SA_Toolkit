@@ -227,7 +227,13 @@ int main(int argc, char** argv) {
   #endif  
   */
 
-  const char interp_section[] __attribute__((section(".interp"))) = "/lib64/ld-linux-x86-64.so.2";
+  //const char interp_section[] __attribute__((section(".interp"))) = "/lib64/ld-linux-x86-64.so.2";
+  const char interp_section[] __attribute__((section(".interp")))
+  #ifdef __LP64__
+    = "/lib64/ld-linux-x86-64.so.2";
+  #else
+    = "/lib/ld-linux.so.2";
+  #endif
 
   extern "C" {
   

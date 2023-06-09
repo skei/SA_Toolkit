@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "base/utils/sat_wrench.h"
+//#include "base/utils/sat_wrench.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
 #include "audio/sat_voice_manager.h"
@@ -12,6 +12,8 @@
 
 #include "sa_synth/sa_synth_voice.h"
 //#include "sa_synth/sa_synth_widgets.h"
+
+#include "audio/sat_audio_dsp.h"
 
 //----------------------------------------------------------------------
 //
@@ -68,7 +70,8 @@ private:
 
   sa_synth_voice_manager  MVoiceManager   = {};
   SAT_VoicesWidget*       MVoicesWidget   = nullptr;
-  SAT_Wrench              MWrench         = {};
+  
+//SAT_Wrench              MWrench         = {};
 //SAT_WaveformWidget*     MWaveformWidget = nullptr;
 
 //------------------------------
@@ -82,11 +85,11 @@ public: // wrench
 //------------------------------
 
   void test_wrench() {
-    MWrench.registerFunction("print",sat_wrench_print);
-    uint32_t len = 0;
-    uint8_t* bytecode = MWrench.compile(sat_wrench_source_code,&len);
-    if (bytecode) MWrench.run(bytecode,len);
-    MWrench.free_bytecode(bytecode);
+    //MWrench.registerFunction("print",sat_wrench_print);
+    //uint32_t len = 0;
+    //uint8_t* bytecode = MWrench.compile(sat_wrench_source_code,&len);
+    //if (bytecode) MWrench.run(bytecode,len);
+    //MWrench.free_bytecode(bytecode);
   }
 
 //------------------------------
@@ -132,13 +135,13 @@ public: // clap
     const clap_plugin_t* clapplugin = getPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
-    MVoiceManager.setProcessThreaded(false);//true);
+    MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
     
     // editor
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     
-    test_wrench();
+    //test_wrench();
     
     return SAT_Plugin::init();
   }

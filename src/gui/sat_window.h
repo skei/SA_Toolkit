@@ -622,75 +622,69 @@ public: // window
     SAT_Assert(MWindowPainter);
     SAT_Assert(MIsPainting == false);
     MIsPainting = true;
-    
     MPaintContext.painter = MWindowPainter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     MOpenGL->makeCurrent();
     
-    #ifdef SAT_WINDOW_FUZZY_TEST_PAINT
-      int32_t rnd_ms = SAT_RandomRangeInt(1,SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS);
-      SAT_Print("makeCurrent.. sleep for %i ms\n",rnd_ms);
-      SAT_Sleep(rnd_ms > 0 ? rnd_ms : 1);
-    #endif
+    //#ifdef SAT_WINDOW_FUZZY_TEST_PAINT
+    //  int32_t rnd_ms = SAT_RandomRangeInt(1,SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS);
+    //  SAT_Print("makeCurrent.. sleep for %i ms\n",rnd_ms);
+    //  SAT_Sleep(rnd_ms > 0 ? rnd_ms : 1);
+    //#endif
     
     prepaint(&MPaintContext);
     
     /*
-      hmm... we should find a better way..
+      resize buffer if needed
     */    
 
     uint32_t width2  = SAT_NextPowerOfTwo(MWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(MHeight);
 
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
-      
-      //SAT_Print("resizing buffer.. %i,%i\n",width2,height2);
-      
       // if size has changed: create new buffer, copy old to new, delete old
       void* buffer = MWindowPainter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
-      
       // we don't need to copy the buffer if we're redrawing the entire thing anyway, do we?
       //copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-
       MWindowPainter->deleteRenderBuffer(MRenderBuffer);
-      
-      #ifdef SAT_WINDOW_FUZZY_TEST_PAINT
-        int32_t rnd_ms = SAT_RandomRangeInt(1,SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS);
-        SAT_Print("deleteRenderBuffer.. sleep for %i ms\n",rnd_ms);
-        SAT_Sleep(rnd_ms > 0 ? rnd_ms : 1);
-      #endif
-      
+      //#ifdef SAT_WINDOW_FUZZY_TEST_PAINT
+      //  int32_t rnd_ms = SAT_RandomRangeInt(1,SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS);
+      //  SAT_Print("deleteRenderBuffer.. sleep for %i ms\n",rnd_ms);
+      //  SAT_Sleep(rnd_ms > 0 ? rnd_ms : 1);
+      //#endif
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
       MBufferHeight = height2;
       
-      // paint dirty widgets to render buffer
+      /*
+        paint root widget to buffer
+        empty dirty widget queue
+      */
+      
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-      
       //prepaint(&MPaintContext);
-      
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
-
       while (MPaintDirtyWidgets.read(&widget)) {} // widget->on_widget_paint(&MPaintContext);
       //count = 1;
       if (MRootWidget) {
         MRootWidget->on_widget_paint(&MPaintContext);
         MRootWidget->setLastPainted(MPaintContext.counter); //paint_count);
       }
-
       MWindowPainter->endFrame();
       //postpaint(&MPaintContext);
       
     }
     else {
       
+      /*
+        paint dirty qidgets to buffer
+      */
+      
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-
       //prepaint(&MPaintContext);
-
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowPainter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
       SAT_Widget* widget;
@@ -712,20 +706,21 @@ public: // window
         }
       }
       MWindowPainter->endFrame();
-      
       //postpaint(&MPaintContext);
       
     }
     
+    /*
+      copy buffer to screen
+    */
+    
     copyBuffer(nullptr,0,0,MWindowWidth,MWindowHeight,MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
-    postpaint(&MPaintContext);    
 
+    postpaint(&MPaintContext);    
     MOpenGL->swapBuffers();
     MOpenGL->resetCurrent();
     MPaintContext.counter += 1;
-    
     MIsPainting = false;
-
   }
   
 //------------------------------
@@ -744,6 +739,7 @@ public: // timer
       if (MListener) MListener->do_windowListener_timer(this,AElapsed);
       // wudget timers
       for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(0,AElapsed);
+      
       //MTweens.process(elapsed,MScale);
       
       //bool has_rect = false;
@@ -752,22 +748,17 @@ public: // timer
       // and encompass all dirty widgets..
       // should we reduce this, to start at
       // upper left corner of upper-left-most widget?
-      
       SAT_Rect rect; // 0,0,0,0
-      
       // dirty widgets
       SAT_Widget* widget;
       while (MPendingDirtyWidgets.read(&widget)) {
         //SAT_Print("%s\n",widget->getName());
-        
         rect.combine(widget->getRect());
-
         //if (!has_rect) rect = widget->getRect();
         //else {
         //  rect.combine(widget->getRect());
         //  has_rect = true;
         //};
-
         if (!MPaintDirtyWidgets.write(widget)) {
           SAT_Print("couldn't write to MPaintDirtyWidgets queue\n");
         }

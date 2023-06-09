@@ -26,6 +26,10 @@ private:
   xcb_screen_t*               MScreen                       = nullptr;
   xcb_gcontext_t              MScreenGC                     = XCB_NONE;
   xcb_window_t                MWindow                       = XCB_NONE;
+  
+  uint32_t                    MScreenWidth                  = 0;
+  uint32_t                    MScreenHeight                 = 0;
+  uint32_t                    MScreenDepth                  = 0;
 
 //bool                        MIsEventThreadActive          = false;
   std::atomic<bool>           MIsEventThreadActive          {false};
@@ -88,9 +92,10 @@ public:
       }
     }
 
-    //MScreenWidth    = MScreen->width_in_pixels;
-    //MScreenHeight   = MScreen->height_in_pixels;
-    //MScreenDepth    = MScreen->root_depth;
+    MScreenWidth    = MScreen->width_in_pixels;
+    MScreenHeight   = MScreen->height_in_pixels;
+    MScreenDepth    = MScreen->root_depth;
+    
     //MScreenWindow   = MScreen->root;
     //MScreenColormap = MScreen->default_colormap;
     //MScreenVisual   = MScreen->root_visual;
@@ -232,23 +237,11 @@ public:
 public:
 //------------------------------
 
-//  virtual void on_window_open() {}
-//  virtual void on_window_close() {}
-//  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
-//  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
-//  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-//  virtual void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-//  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-//  virtual void on_window_client_message(uint32_t AData) {}
-
-//------------------------------
-public:
-//------------------------------
+  uint32_t getScreenWidth()   override { return MScreenWidth; }
+  uint32_t getScreenHeight()  override { return MScreenHeight; }
+  uint32_t getScreenDepth()   override { return MScreenDepth; }
+  
+  //----------
 
   uint32_t getWidth() override {
     return MWindowWidth;

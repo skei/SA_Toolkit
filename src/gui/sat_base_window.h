@@ -45,7 +45,17 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+
   
+//------------------------------
+public:
+//------------------------------
+  
+  virtual uint32_t  getScreenWidth()   { return 0; }
+  virtual uint32_t  getScreenHeight()  { return 0; }
+  virtual uint32_t  getScreenDepth()   { return 0; }
+
   virtual uint32_t  getWidth() { return 0; }
   virtual uint32_t  getHeight() { return 0; }
 

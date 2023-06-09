@@ -243,7 +243,7 @@ private: // ladspa callbacks
 //
 //----------------------------------------------------------------------
 
-SAT_LadspaEntry SAT_GOBAL_LADSPA_ENTRY = {};
+SAT_LadspaEntry SAT_GLOBAL_LADSPA_ENTRY = {};
 
 //----------------------------------------------------------------------
 //
@@ -289,7 +289,7 @@ const LADSPA_Descriptor* sat_ladspa_entrypoint(unsigned long Index) SAT_LADSPA_M
 __SAT_EXPORT
 const LADSPA_Descriptor* sat_ladspa_entrypoint(unsigned long Index) {
   SAT_Print("Index %i\n",Index);
-  return SAT_GOBAL_LADSPA_ENTRY.ladspa_entrypoint(Index);
+  return SAT_GLOBAL_LADSPA_ENTRY.ladspa_entrypoint(Index);
 }
 
 //----------------------------------------------------------------------

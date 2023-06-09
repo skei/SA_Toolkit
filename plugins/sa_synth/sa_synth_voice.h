@@ -5,6 +5,8 @@
 #include "base/sat.h"
 #include "audio/sat_voice_context.h"
 
+#include "audio/sat_audio_dsp.h"
+
 #include "audio/old/filters/sat_svf_filter.h"
 #include "audio/old/waveforms/sat_polyblep2_waveform.h"
 #include "audio/old/modulation/sat_envelope.h"
@@ -90,60 +92,42 @@ public:
     float* buffer = MContext->voice_buffer;
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     buffer += AOffset;
-    
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
-      
       for (uint32_t i=0; i<ALength; i++) {
-        
         // envelopes
-        
         double osc_env = MOscEnv.process();
         double flt_env = MFltEnv.process() * p_fltamt;
-        
         // osc
-
         ph = SAT_Fract(ph);
         //float v = sin(ph * SAT_PI2);
         //float v = MOsc1.process(ph,phadd);
         float v = (ph * 2.0) - 1.0;  // 0..1 -> -1..1
         v -= SAT_PolyBlepSawWaveform(ph,phadd);
-        
         // filter
-        
         uint32_t  flt = SAT_ClampI( p_flt + m_flt,          0, 4 );
         double    fr  = SAT_Clamp(  p_fr  + m_fr + flt_env, 0, 1 );
         double    bw  = SAT_Clamp(  p_bw  + m_bw,           0, 1 );
-
         MFilter.setMode(flt);
         MFilter.setFreq(fr);
         MFilter.setBW(bw);
         v = MFilter.process(v);
-        
         *buffer++ = v * osc_env * 0.25;  // !!!
-        
         // update
-        
         double tun = p_tun + m_tun;
         tun = SAT_Clamp(tun,-2,2);
         tun +=  x_tuning;
         float hz = SAT_NoteToHz(MKey + tun);
         phadd = 1.0 / SAT_HzToSamples(hz,srate);
         ph += phadd;
-        
       }
     } // playing
-    
     else {
       memset(buffer,0,ALength * sizeof(float));
     }
-
     //return AState;
-    
     uint32_t stage = MOscEnv.getStage();
     if (stage == SAT_ENVELOPE_FINISHED) return SAT_VOICE_FINISHED;
     else return AState;
-    
-    
   }
 
   //----------
