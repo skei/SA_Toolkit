@@ -44,11 +44,11 @@ private:
   clap_process_t                  MProcess          = {};
   SAT_ProcessContext              MProcessContext   = {0};
 
-  uint32_t                  MNumEvents         = 0;
-  char                      MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
+  uint32_t                        MNumEvents         = 0;
+  char                            MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
   
   SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
-  double                    MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
+  double                          MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
   //LV2_URID                        MMidiInputUrid          = 0;
   //const LV2_Atom_Sequence*        MAtomSequence           = nullptr;
@@ -82,6 +82,10 @@ public:
     return MHandle;
   }
 
+  const LV2_Descriptor* getDescriptor() {
+    return MDescriptor;
+  }
+
 //------------------------------
 public:
 //------------------------------
@@ -94,8 +98,8 @@ public:
 
   LV2_Handle lv2_instantiate(const LV2_Descriptor* descriptor, double sample_rate, const char* bundle_path, const LV2_Feature* const* features) {
     
-    MDescriptor  = descriptor;
-    MSampleRate     = sample_rate;
+    MDescriptor = descriptor;
+    MSampleRate = sample_rate;
     
     //LV2_URID_Map* urid_map = (LV2_URID_Map*)SAT_Lv2FindFeature(LV2_URID__map,features);
     //if (urid_map) {
@@ -104,9 +108,8 @@ public:
     //  }
     //}
     
-    
-//    MBundlePath     = bundle_path;
-//    MFeatures       = features;
+    //    MBundlePath     = bundle_path;
+    //    MFeatures       = features;
 
     MHost = new SAT_HostImplementation();
     const clap_host_t* clap_host = MHost->getHost();
@@ -247,6 +250,7 @@ public:
     //on_plugin_open();
     //on_plugin_activate();
     MPlugin->activate(MSampleRate,0,1024);
+    MPlugin->start_processing();
   }
   
   //----------
@@ -382,6 +386,7 @@ public:
 
   void lv2_deactivate() {
     SAT_PRINT;
+    MPlugin->stop_processing();
     MPlugin->deactivate();
   }
   

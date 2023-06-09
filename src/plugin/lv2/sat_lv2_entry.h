@@ -22,11 +22,10 @@ class SAT_Lv2Entry {
 private:
 //------------------------------
 
-//DESCRIPTOR        MDescriptor                       = {};
-
   LV2_Descriptor    MLv2Descriptor                    = {0};
   char              MLv2Uri[SAT_LV2_MAX_URI_LENGTH]   = {0};
 
+  //DESCRIPTOR        MDescriptor                       = {};
   //LV2UI_Descriptor  MLv2UIDescriptor                  = {0};
   //char              MLv2UIUri[SAT_LV2_MAX_URI_LENGTH] = {0};
   
@@ -39,16 +38,15 @@ public:
 
   SAT_Lv2Entry() {
     SAT_PRINT;
-    setup_lv2_uri();
-    setup_lv2_descriptor();
-
-    //#ifndef SAT_NO_GUI
-    //  setup_lv2ui_uri();
-    //  setup_lv2ui_descriptor();
-    //  //_lv2_idle_interface.idle = lv2_ext_idle;
-    //  //_lv2_resize.handle = nullptr;
-    //  //_lv2_resize.ui_resize = lv2_ext_resize;
-    //#endif
+//    setup_lv2_uri();
+//    setup_lv2_descriptor();
+//    //#ifndef SAT_NO_GUI
+//    //  setup_lv2ui_uri();
+//    //  setup_lv2ui_descriptor();
+//    //  //_lv2_idle_interface.idle = lv2_ext_idle;
+//    //  //_lv2_resize.handle = nullptr;
+//    //  //_lv2_resize.ui_resize = lv2_ext_resize;
+//    //#endif
     
   }
 
@@ -62,10 +60,51 @@ public:
 public:
 //------------------------------
 
+  // where is all of this free'd?
+  // (uri, descriptor)
+
   const LV2_Descriptor* lv2_entrypoint(unsigned long Index) {
     SAT_Print("Index %i\n",Index);
-    if (Index > 0) return nullptr;
-    return &MLv2Descriptor;
+    if (Index >= SAT_GLOBAL.REGISTRY.getNumDescriptors()) return nullptr;
+    
+    const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(Index);
+    
+//    setup_lv2_uri();
+
+
+    char* uri = (char*)malloc(SAT_LV2_MAX_URI_LENGTH);
+    memset(uri,0,SAT_LV2_MAX_URI_LENGTH);
+    strcpy(uri,"urn:");
+    strcat(uri,clap_descriptor->id);
+    //strcat(uri,":");
+    //char index_string[16] = {0};
+    //sprintf(index_string,"%i",(int)Index);
+    //strcat(uri,index_string);
+    //SAT_Print("MLv2Uri: %s\n",uri);
+
+//    setup_lv2_descriptor();
+
+    LV2_Descriptor* descriptor = (LV2_Descriptor*)malloc(sizeof(LV2_Descriptor));
+    memset(descriptor,0,sizeof(LV2_Descriptor));
+    descriptor->URI             = uri;
+    descriptor->instantiate     = lv2_instantiate_callback;
+    descriptor->connect_port    = lv2_connect_port_callback;
+    descriptor->activate        = lv2_activate_callback;
+    descriptor->run             = lv2_run_callback;
+    descriptor->deactivate      = lv2_deactivate_callback;
+    descriptor->cleanup         = lv2_cleanup_callback;
+    descriptor->extension_data  = lv2_extension_data_callback;
+    
+//    //#ifndef SAT_NO_GUI
+//    //  setup_lv2ui_uri();
+//    //  setup_lv2ui_descriptor();
+//    //  //_lv2_idle_interface.idle = lv2_ext_idle;
+//    //  //_lv2_resize.handle = nullptr;
+//    //  //_lv2_resize.ui_resize = lv2_ext_resize;
+//    //#endif
+    
+    return descriptor;
+    
   }
 
   //----------
@@ -101,17 +140,43 @@ public:
 private:
 //------------------------------
 
-  void setup_lv2_uri() {
-    SAT_PRINT;
-    const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(0);
-    memset(MLv2Uri,0,SAT_LV2_MAX_URI_LENGTH);
-    strcpy(MLv2Uri,"urn:");
-    //strcat(MLv2Uri,MDescriptor.getAuthor());
-    //strcat(MLv2Uri,"/");
-    //strcat(MLv2Uri,MDescriptor.getName());
-    strcat(MLv2Uri,clap_descriptor->id);
-    SAT_Print("MLv2Uri: %s\n",MLv2Uri);
-  }
+  /*
+    https://lv2plug.in/book/
+    LV2 makes use of URIs as globally-unique identifiers for resources.
+    For example, the ID of the plugin described here is <http://lv2plug.in/plugins/eg-amp>.
+    Note that URIs are only used as identifiers and don’t necessarily imply that something
+    can be accessed at that address on the web (though that may be the case).
+  */
+  
+  /*
+    https://www.ietf.org/rfc/rfc2396.txt  
+    A URN differs from a URL in that it's primary purpose is persistent
+    labeling of a resource with an identifier.  That identifier is drawn
+    from one of a set of defined namespaces, each of which has its own
+    set name structure and assignment procedures.  The "urn" scheme has
+    been reserved to establish the requirements for a standardized URN
+    namespace, as defined in "URN Syntax" [RFC2141] and its related
+    specifications.
+    Most of the examples in this specification demonstrate URL, since
+    they allow the most varied use of the syntax and often have a
+    hierarchical namespace.  A parser of the URI syntax is capable of
+    parsing both URL and URN references as a generic URI; once the scheme
+    is determined, the scheme-specific parsing can be performed on the
+    generic URI components.  In other words, the URI syntax is a superset
+    of the syntax of all URI schemes.  
+  */
+
+  //  void setup_lv2_uri() {
+  //    SAT_PRINT;
+  //    const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(0);
+  //    memset(MLv2Uri,0,SAT_LV2_MAX_URI_LENGTH);
+  //    strcpy(MLv2Uri,"urn:");
+  //    //strcat(MLv2Uri,MDescriptor.getAuthor());
+  //    //strcat(MLv2Uri,"/");
+  //    //strcat(MLv2Uri,MDescriptor.getName());
+  //    strcat(MLv2Uri,clap_descriptor->id);
+  //    SAT_Print("MLv2Uri: %s\n",MLv2Uri);
+  //  }
 
   //----------
 
@@ -130,18 +195,18 @@ private:
 
   //----------
 
-  void setup_lv2_descriptor() {
-    SAT_PRINT;
-    memset(&MLv2Descriptor,0,sizeof(LV2_Descriptor));
-    MLv2Descriptor.URI             = MLv2Uri;
-    MLv2Descriptor.instantiate     = lv2_instantiate_callback;
-    MLv2Descriptor.connect_port    = lv2_connect_port_callback;
-    MLv2Descriptor.activate        = lv2_activate_callback;
-    MLv2Descriptor.run             = lv2_run_callback;
-    MLv2Descriptor.deactivate      = lv2_deactivate_callback;
-    MLv2Descriptor.cleanup         = lv2_cleanup_callback;
-    MLv2Descriptor.extension_data  = lv2_extension_data_callback;
-  }
+  //  void setup_lv2_descriptor() {
+  //    SAT_PRINT;
+  //    memset(&MLv2Descriptor,0,sizeof(LV2_Descriptor));
+  //    MLv2Descriptor.URI             = MLv2Uri;
+  //    MLv2Descriptor.instantiate     = lv2_instantiate_callback;
+  //    MLv2Descriptor.connect_port    = lv2_connect_port_callback;
+  //    MLv2Descriptor.activate        = lv2_activate_callback;
+  //    MLv2Descriptor.run             = lv2_run_callback;
+  //    MLv2Descriptor.deactivate      = lv2_deactivate_callback;
+  //    MLv2Descriptor.cleanup         = lv2_cleanup_callback;
+  //    MLv2Descriptor.extension_data  = lv2_extension_data_callback;
+  //  }
 
   //----------
 
@@ -211,22 +276,8 @@ private: // lv2 callbacks
   LV2_Handle lv2_instantiate_callback(const LV2_Descriptor* descriptor, double sample_rate, const char* bundle_path, const LV2_Feature* const* features) {
     SAT_Print("sample_rate %.2f bundle_path '%s' features %p\n",sample_rate,bundle_path,features);
     SAT_Lv2PrintFeatures(features);
-    
-//    SAT_Descriptor* desc = sat_lv2_get_descriptor();
-//    //SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin(desc);
-//    // !!!
-//    SAT_Instance* inst = new INSTANCE(desc);                             // who deletes this ???
-
-    //SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin(descriptor,sample_rate,bundle_path,features);
-
     SAT_Lv2Plugin* lv2_plugin = new SAT_Lv2Plugin();
     return lv2_plugin->lv2_instantiate(descriptor,sample_rate,bundle_path,features);
-    
-//    lv2_plugin->lv2_setup(sample_rate,bundle_path,features);
-//    return (LV2_Handle)lv2_plugin;
-
-    //return lv2_plugin->getHandle();
-    
   }
 
   //----------
@@ -271,8 +322,14 @@ private: // lv2 callbacks
   void lv2_cleanup_callback(LV2_Handle instance) {
     SAT_PRINT;
     SAT_Lv2Plugin* lv2_plugin = (SAT_Lv2Plugin*)instance;
-    if (lv2_plugin) lv2_plugin->lv2_cleanup();
-    delete lv2_plugin;
+    if (lv2_plugin) {
+      lv2_plugin->lv2_cleanup();
+      const LV2_Descriptor* descriptor = lv2_plugin->getDescriptor();
+      const char* uri = descriptor->URI;
+      delete lv2_plugin;
+      free((void*)uri);
+      free((void*)descriptor);
+    }
   }
 
   //----------
@@ -402,9 +459,7 @@ private: // ui callbacks
 //
 //----------------------------------------------------------------------
 
-// ugh..
-//TODO: move into SAT_GLOBAL.VST2 ??
-
+//TODO: move into SAT_GLOBAL.LV2 ??
 SAT_Lv2Entry GLOBAL_LV2_PLUGIN_ENTRY;
 
 //----------------------------------------------------------------------
@@ -465,20 +520,6 @@ void sat_lv2_export_ttl(void) {
   SAT_PRINT;
   GLOBAL_LV2_PLUGIN_ENTRY.export_ttl();
 }
-
-// called from lv2_instantiate_callback()
-
-//SAT_Descriptor* sat_lv2_get_descriptor() {
-//  return GLOBAL_LV2_PLUGIN_ENTRY.getDescriptor();
-//}
-  
-//----------
-
-/*
-  - ?? (check this)
-    carla calls lv2_descriptor a second time before deleting the first
-*/
-
 
 //----------------------------------------------------------------------
 #endif

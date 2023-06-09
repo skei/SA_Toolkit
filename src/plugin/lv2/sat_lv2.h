@@ -35,8 +35,7 @@
 // ming2
 #ifdef SAT_WIN32
 
-  #error mingw.. lv2 headers.. :-(
-  
+  #error ...
   
 #endif
 
