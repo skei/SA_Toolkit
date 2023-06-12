@@ -52,16 +52,16 @@ public:
 public:
 //------------------------------
   
-  virtual uint32_t  getScreenWidth()   { return 0; }
-  virtual uint32_t  getScreenHeight()  { return 0; }
-  virtual uint32_t  getScreenDepth()   { return 0; }
-
+  virtual uint32_t  getScreenWidth() { return 0; }
+  virtual uint32_t  getScreenHeight() { return 0; }
+  virtual uint32_t  getScreenDepth() { return 0; }
   virtual uint32_t  getWidth() { return 0; }
   virtual uint32_t  getHeight() { return 0; }
 
   virtual void      setPos(uint32_t AXpos, uint32_t AYpos) {}
   virtual void      setSize(uint32_t AWidth, uint32_t AHeight) {}
   virtual void      setTitle(const char* ATitle) {}
+  
   virtual void      show() {}
   virtual void      hide() {}
   virtual void      reparent(intptr_t AParent) {}

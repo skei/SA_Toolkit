@@ -21,13 +21,14 @@
 
   //----------
   
-  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+  bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) final {
+    SAT_Window* window = AEditor->getWindow();
     //SAT_PRINT;
     
     // root
 
     SAT_PanelWidget* MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,EDITOR_WIDTH,EDITOR_HEIGHT) );
-    AWindow->appendRootWidget(MRootPanel);
+    window->appendRootWidget(MRootPanel);
     MRootPanel->setFillBackground(true);
     MRootPanel->setDrawBorder(false);
     //MRootPanel->setInnerBorder(SAT_Rect(5,5,5,5));
@@ -493,7 +494,7 @@
     
     test1_synth_widget* movable = new test1_synth_widget(SAT_Rect(415,305,145,115));
     MRootPanel->appendChildWidget(movable);
-    AWindow->registerTimerWidget(movable);
+    window->registerTimerWidget(movable);
     movable->setAlignment(SAT_WIDGET_ALIGN_PARENT );
     //movable->setBackgroundColor(SAT_Color(.5,.5,.5,0.01));
 

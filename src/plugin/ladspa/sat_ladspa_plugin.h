@@ -43,7 +43,7 @@ private:
   uint32_t                  MNumParameters    = 0;
 
   SAT_ParameterArray*       MParameters       = nullptr;
-  clap_process_t            MProcess          = {};
+  clap_process_t            MProcess          = {0};
 
   uint32_t                  MNumEvents         = 0;
   char                      MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
@@ -99,13 +99,15 @@ public:
     MLadspaDescriptor = Descriptor;
     MSampleRate = ASampleRate;
 
-    MHost = new SAT_HostImplementation();
+    MHost = new SAT_HostImplementation(); // deleted in ladspa_cleanup()
     const clap_host_t* clap_host = MHost->getHost();
     SAT_LadspaDescriptorInfo* descriptor_info = (SAT_LadspaDescriptorInfo*)MLadspaDescriptor->ImplementationData;
     uint32_t index = descriptor_info->index;
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
-    MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host);
+    
+    MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
     MClapPlugin->init(MClapPlugin);
+    
     MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
     //SAT_Print("MPlugin %p\n",MPlugin);
     
@@ -170,8 +172,7 @@ public:
   //----------
 
   void ladspa_connect_port(unsigned long Port, LADSPA_Data * DataLocation) {
-    //SAT_PRINT;
-    //SAT_Print("ladspa: connect_port Port:%i DataLocation:%p\n",Port,DataLocation);
+    //SAT_Print("Port:%i DataLocation:%p\n",Port,DataLocation);
     if (Port < MNumInputs) {
       MInputPtrs[Port] = (float*)DataLocation;
       return;
@@ -187,6 +188,7 @@ public:
       return;
     }
     Port -= MNumParameters;
+    //SAT_Assert
   }
 
   //----------
@@ -216,7 +218,7 @@ public:
   void ladspa_activate() {
     SAT_PRINT;
     if (MPlugin) {
-      MPlugin->activate(MSampleRate,0,1024);
+      MPlugin->activate(MSampleRate,0,4096);
       //MSampleRate = MPlugin->getSampleRate();
       //MInstance->on_stateChange(kps_initialize);
       //MInstance->on_initialize();
@@ -263,12 +265,12 @@ public:
           param_value_event->header.time     = 0;
           param_value_event->header.space_id = CLAP_CORE_EVENT_SPACE_ID;
           param_value_event->header.type     = CLAP_EVENT_PARAM_VALUE;
-          param_value_event->header.flags    = 0;
+          param_value_event->header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
           param_value_event->param_id        = i; //paramQueue->getParameterId();
           param_value_event->note_id         = -1;
-          param_value_event->port_index      = 0;
-          param_value_event->channel         = 0;
-          param_value_event->key             = 0;
+          param_value_event->port_index      = -1;
+          param_value_event->channel         = -1;
+          param_value_event->key             = -1;
           param_value_event->value           = v;
         }
       }

@@ -5,7 +5,7 @@
 
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_LADSPA
-#define SAT_PLUGIN_LV2
+//#define SAT_PLUGIN_LV2
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 
@@ -31,7 +31,7 @@
 //#include "test/test_parameters.h"
 //#include "test/test_reaper_ext.h"
 //#include "test/test_standalone.h"
-//#include "test/test_synth.h"
+#include "test/test_synth.h"
 
 
 
@@ -98,8 +98,7 @@
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_demo.h"
-//#include "../plugins/sa_filter.h"
-#include "../plugins/sa_gain.h"
+//#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_stretch.h"
 //#include "../plugins/sa_synth.h"

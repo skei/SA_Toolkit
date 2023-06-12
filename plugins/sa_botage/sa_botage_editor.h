@@ -130,12 +130,13 @@ public:
 public:
 //------------------------------
 
-  bool initEditorWindow(SAT_Window* AWindow, SAT_Plugin* APlugin) {
+  bool initEditorWindow(SAT_Window* AWindow/*, SAT_Plugin* APlugin*/) {
+    SAT_Window* window = AEditor->getWindow();
 
     // root
 
     MRootWidget = new SAT_PanelWidget(SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT));
-    AWindow->appendRootWidget(MRootWidget);
+    window->appendRootWidget(MRootWidget);
     MRootWidget->setFillBackground(true);
     MRootWidget->setBackgroundColor(BACKGROUNDCOLOR);
     MRootWidget->setDrawBorder(false);

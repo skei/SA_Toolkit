@@ -14,13 +14,15 @@
 #define SAT_NO_ENTRY
 
 // plugins
-#include "../test/test_synth.h"
+//#include "../plugins/sa_botage.h"
 #include "../plugins/sa_bulum.h"
 #include "../plugins/sa_cred.h"
+#include "../plugins/sa_demo.h"
 #include "../plugins/sa_gain.h"
 #include "../plugins/sa_pitch.h"
-#include "../plugins/sa_demo.h"
 #include "../plugins/sa_synth.h"
+//#include "../plugins/sa_tyr.h"
+#include "../test/test_synth.h"
 
 // ports
 #include "../plugins/ports/sa_compciter.h"
@@ -51,13 +53,15 @@ void SAT_Register(SAT_Registry* ARegistry) {
   
   // plugins
   
-  ARegistry->registerDescriptor(&sa_gain_descriptor);
-  ARegistry->registerDescriptor(&sa_demo_descriptor);
-  ARegistry->registerDescriptor(&test_synth_descriptor);
+//ARegistry->registerDescriptor(&sa_botage_descriptor);
   ARegistry->registerDescriptor(&sa_bulum_descriptor);
   ARegistry->registerDescriptor(&sa_cred_descriptor);
+  ARegistry->registerDescriptor(&sa_demo_descriptor);
+  ARegistry->registerDescriptor(&sa_gain_descriptor);
   ARegistry->registerDescriptor(&sa_pitch_descriptor);
   ARegistry->registerDescriptor(&sa_synth_descriptor);
+//ARegistry->registerDescriptor(&sa_tyr_descriptor);
+  ARegistry->registerDescriptor(&test_synth_descriptor);
   
   // ports
   
@@ -89,17 +93,16 @@ const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descrip
     
     // plugins
     
-    case 0:   plugin = new sa_gain_plugin(ADescriptor,AHost);               return plugin->getPlugin();
-    case 1:   plugin = new sa_demo_plugin(ADescriptor,AHost);               return plugin->getPlugin();
-    case 2:   plugin = new test_synth_plugin(ADescriptor,AHost);            return plugin->getPlugin();
-    case 3:   plugin = new sa_bulum_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-    case 4:   plugin = new sa_cred_plugin(ADescriptor,AHost);               return plugin->getPlugin();
-    case 5:   plugin = new sa_pitch_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-    case 6:   plugin = new sa_synth_plugin(ADescriptor,AHost);    return plugin->getPlugin();
+  //case:     plugin = new sa_botage_plugin(ADescriptor,AHost);             return plugin->getPlugin();
+    case 0:   plugin = new sa_bulum_plugin(ADescriptor,AHost);              return plugin->getPlugin();
+    case 1:   plugin = new sa_cred_plugin(ADescriptor,AHost);               return plugin->getPlugin();
+    case 2:   plugin = new sa_demo_plugin(ADescriptor,AHost);               return plugin->getPlugin();
+    case 3:   plugin = new sa_gain_plugin(ADescriptor,AHost);               return plugin->getPlugin();
+    case 4:   plugin = new sa_pitch_plugin(ADescriptor,AHost);              return plugin->getPlugin();
+    case 5:   plugin = new sa_synth_plugin(ADescriptor,AHost);              return plugin->getPlugin();
+  //case:     plugin = new sa_tyr_plugin(ADescriptor,AHost);                return plugin->getPlugin();
+    case 6:   plugin = new test_synth_plugin(ADescriptor,AHost);            return plugin->getPlugin();
 
-  //case :    plugin = new sa_botage_plugin(ADescriptor,AHost);             return plugin->getPlugin();
-  //case :    plugin = new sa_tyr_plugin(ADescriptor,AHost);                return plugin->getPlugin();
-    
     // ports
     
     case 7:   plugin = new sa_compciter_plugin(ADescriptor,AHost);          return plugin->getPlugin();

@@ -3,6 +3,15 @@
 //----------------------------------------------------------------------
 
 /*
+  TODO:
+    SAT_ImplementedWindow
+    SAT_OpenGLWindow
+    SAT_BufferedWindow
+    SAT_WidgetWindow  
+    SAT_Window
+*/
+
+/*
   to terrorize the gui system a little, we insert i sleep() for 1..50 ms
   every time we paint (on_window_paint), just after we make the opengl
   context current.. and also, every time we resize the fbo
@@ -680,7 +689,7 @@ public: // window
     else {
       
       /*
-        paint dirty qidgets to buffer
+        paint dirty widgets to buffer
       */
       
       MWindowPainter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
@@ -696,7 +705,7 @@ public: // window
           
           if (widget->getLastPainted() != MPaintContext.counter) { //paint_count) {
             SAT_Rect cliprect = calcClipRect(widget);
-            // if cliprect visible
+            // if cliprect visible?
             MWindowPainter->pushClip(cliprect);
             widget->on_widget_paint(&MPaintContext);
             MWindowPainter->popClip();

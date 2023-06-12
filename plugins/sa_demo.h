@@ -154,9 +154,10 @@ public:
 
   //----------
   
-  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+  bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) final {
+    SAT_Window* window = AEditor->getWindow();
     sa_demo_editor* editor = (sa_demo_editor*)AEditor;
-    editor->initialize(AWindow,getPluginFormat());
+    editor->initialize(window,getPluginFormat());
     return true;
   }
   

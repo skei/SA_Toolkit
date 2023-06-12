@@ -44,14 +44,15 @@ const char* sa_synth_flt_type_text[5] = {
 //
 //----------------------------------------------------------------------
   
-  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+  bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) final {
+    SAT_Window* window = AEditor->getWindow();
     
     SAT_KnobWidget* knob;
     
     // root
 
     SAT_PanelWidget* root = new SAT_PanelWidget( SAT_Rect(0,0,EDITOR_WIDTH,EDITOR_HEIGHT) );
-    AWindow->appendRootWidget(root);
+    window->appendRootWidget(root);
     root->setFillBackground(true);
     root->setDrawBorder(false);
     //root->setInnerBorder(SAT_Rect(5,5,5,5));

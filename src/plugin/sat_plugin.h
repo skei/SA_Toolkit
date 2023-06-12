@@ -322,15 +322,6 @@ public: // plugin
   }
 
 //------------------------------
-public: // host
-//------------------------------
-
-  // host.get_extension()
-  // host.request_restart()
-  // host.request_process()
-  // host.request_callback()
-
-//------------------------------
 public: // ambisonic (draft)
 //------------------------------
 
@@ -845,7 +836,7 @@ public: // gui
     if (result) {
       SAT_Window* win = MEditor->getWindow();
       win->setInitialSize(MInitialEditorWidth,MInitialEditorHeight);
-      initEditorWindow(MEditor,win);
+      initEditorWindow(MEditor);//,win);
       initEditorParameterValues();
     }
     return result;
@@ -1684,11 +1675,15 @@ public: // voice info
 
 
 
+
+
 //------------------------------------------------------------
 //
 //
 //
 //------------------------------------------------------------
+
+
 
 
 
@@ -1775,10 +1770,11 @@ public: // editor
   // called from SAT_Plugin.gui_set_parent()
   // see also gui_create (calculating default editor size if not defined)
 
-  virtual bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
-    double width  = AWindow->getInitialWidth();
+  virtual bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) {
+    SAT_Window* window = AEditor->getWindow();
+    double width  = window->getInitialWidth();
     SAT_PanelWidget* root = new SAT_PanelWidget(0);
-    AWindow->appendRootWidget(root);
+    window->appendRootWidget(root);
     root->setFillBackground(false);
     const clap_plugin_descriptor_t* descriptor = getDescriptor();
     const char* format = getPluginFormat();

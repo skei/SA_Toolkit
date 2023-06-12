@@ -109,13 +109,14 @@ public:
 
   //----------
 
-  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+  bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) final {
+    //SAT_Window* window = AEditor->getWindow();
     //SAT_PRINT;
 //    SAT_PanelWidget* MRootPanel = new SAT_PanelWidget( SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,SA_BOTAGE_EDITOR_HEIGHT) );
 //    AWindow->appendRootWidget(MRootPanel);
     
     sa_botage_editor* ed = (sa_botage_editor*)AEditor;
-    return ed->initEditorWindow(AWindow,this);
+    return ed->initEditorWindow(this);
   }
 
   //----------

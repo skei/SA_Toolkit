@@ -68,9 +68,10 @@ public:
     return SAT_Plugin::init();
   }
   
-  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+  bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) final {
+    SAT_Window* window = AEditor->getWindow();
     SAT_PanelWidget* panel = new SAT_PanelWidget(0);
-    AWindow->appendRootWidget(panel);
+    window->appendRootWidget(panel);
     SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,50,200,20),"Gain",0.5);
     panel->appendChildWidget(slider);
     AEditor->connect( slider, getParameter(0) );

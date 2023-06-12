@@ -44,8 +44,9 @@ public:
     appendParameter(new SAT_Parameter("Param1",0.3))->setFlag(CLAP_PARAM_IS_MODULATABLE);
     return SAT_Plugin::init();
   }
-  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-    AEditor->connect(AWindow->appendRootWidget(new SAT_PanelWidget(0))->appendChildWidget(new SAT_SliderWidget(SAT_Rect(50,50,200,20),"Gain",0.5)), getParameter(0));
+  bool initEditorWindow(SAT_Editor* AEditor) final { //, SAT_Window* AWindow) final {
+    SAT_Window* window = AEditor->getWindow();
+    AEditor->connect(window->appendRootWidget(new SAT_PanelWidget(0))->appendChildWidget(new SAT_SliderWidget(SAT_Rect(50,50,200,20),"Gain",0.5)), getParameter(0));
     return true;
   }
   void processAudio(SAT_ProcessContext* AContext) final {
@@ -159,7 +160,7 @@ public:
     return SAT_Plugin::init();
   }
   
-//  bool initEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+//  bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) final {
 //    SAT_PanelWidget* panel = new SAT_PanelWidget(0);
 //    AWindow->appendRootWidget(panel);
 //    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,50,400,20),"Gain",0.5);

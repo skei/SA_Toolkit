@@ -7,6 +7,7 @@
 #include "base/sat.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/lv2/sat_lv2.h"
+#include "plugin/lv2/sat_lv2_utils.h"
 
 //----------------------------------------------------------------------
 //
@@ -28,36 +29,24 @@ private:
   
   const clap_host_t*              MClapHost       = nullptr;
   const clap_plugin_t*            MClapPlugin     = nullptr;
-  //const clap_plugin_descriptor_t* MClapDescriptor = nullptr;
+  clap_process_t                  MProcess        = {0};
 
   SAT_HostImplementation*         MHost           = nullptr;
   SAT_Plugin*                     MPlugin         = nullptr;
   
-  uint32_t                        MNumInputs        = 0;
-  uint32_t                        MNumOutputs       = 0;
-  uint32_t                        MNumParameters    = 0;
-
-  float**                         MInputPtrs        = nullptr;
-  float**                         MOutputPtrs       = nullptr;
-  float**                         MParameterPtrs    = nullptr;
-
-  clap_process_t                  MProcess          = {};
-  SAT_ProcessContext              MProcessContext   = {0};
-
-  uint32_t                        MNumEvents         = 0;
+  uint32_t                        MNumEvents      = 0;
   char                            MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
-  
-  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
-  double                          MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
-  //LV2_URID                        MMidiInputUrid          = 0;
-  //const LV2_Atom_Sequence*        MAtomSequence           = nullptr;
-  //float*                          MParameterValues        = nullptr;
-  //float*                          MHostValues             = nullptr;
-  //float*                          MProcessValues          = nullptr;
-  //float*                          MEditorParameterValues  = nullptr;
-  //float*                          MHostParameterValues    = nullptr;
-  //SAT_Lv2UpdateQueue              MHostParameterQueue;
+  uint32_t                        MNumInputs      = 0;
+  uint32_t                        MNumOutputs     = 0;
+  uint32_t                        MNumParameters  = 0;
+
+  float**                         MInputPtrs      = nullptr;
+  float**                         MOutputPtrs     = nullptr;
+  float**                         MParameterPtrs  = nullptr;
+  
+  LV2_URID                        MMidiInputUrid  = 0;
+  const LV2_Atom_Sequence*        MAtomSequence   = nullptr;
   
 //------------------------------
 public:
@@ -97,19 +86,11 @@ public:
   */
 
   LV2_Handle lv2_instantiate(const LV2_Descriptor* descriptor, double sample_rate, const char* bundle_path, const LV2_Feature* const* features) {
-    
+    SAT_Print("sample_rate %.2f bundle_path '%s' features %p\n",sample_rate,bundle_path,features);
     MDescriptor = descriptor;
     MSampleRate = sample_rate;
-    
-    //LV2_URID_Map* urid_map = (LV2_URID_Map*)SAT_Lv2FindFeature(LV2_URID__map,features);
-    //if (urid_map) {
-    //  if (MDescriptor->canReceiveMidi()) {
-    //    MMidiInputUrid = SAT_Lv2MapUrid(LV2_MIDI__MidiEvent,urid_map);
-    //  }
-    //}
-    
-    //    MBundlePath     = bundle_path;
-    //    MFeatures       = features;
+    MBundlePath = bundle_path;
+    MFeatures = features;
 
     MHost = new SAT_HostImplementation();
     const clap_host_t* clap_host = MHost->getHost();
@@ -145,59 +126,50 @@ public:
     MOutputPtrs     = (float**)malloc(MNumOutputs    * sizeof(float*));
     MParameterPtrs  = (float**)malloc(MNumParameters * sizeof(float*));
 
-    //LV2_URID_Map* urid_map = (LV2_URID_Map*)sat_lv2_find_feature(LV2_URID__map,features);
-    //if (urid_map) {
-    //  if (MDescriptor->canReceiveMidi()) {
-    //    MMidiInputUrid = sat_lv2_map_urid(LV2_MIDI__MidiEvent,urid_map);
-    //  }
-    //}
-
+    LV2_URID_Map* urid_map = (LV2_URID_Map*)SAT_Lv2FindFeature(LV2_URID__map,features);
+    if (urid_map) {
+      MMidiInputUrid = SAT_Lv2MapUrid(LV2_MIDI__MidiEvent,urid_map);
+    }
+    
     return MHandle;
   }
 
   //----------
 
   /*
-     Connect a port on a plugin instance to a memory location.
-
-     Plugin writers should be aware that the host may elect to use the same
-     buffer for more than one port and even use the same buffer for both
-     input and output (see lv2:inPlaceBroken in lv2.ttl).
-
-     If the plugin has the feature lv2:hardRTCapable then there are various
-     things that the plugin MUST NOT do within the connect_port() function;
-     see lv2core.ttl for details.
-
-     connect_port() MUST be called at least once for each port before run()
-     is called, unless that port is lv2:connectionOptional. The plugin must
-     pay careful attention to the block size passed to run() since the block
-     allocated may only just be large enough to contain the data, and is not
-     guaranteed to remain constant between run() calls.
-
-     connect_port() may be called more than once for a plugin instance to
-     allow the host to change the buffers that the plugin is reading or
-     writing. These calls may be made before or after activate() or
-     deactivate() calls.
-
-     @param instance Plugin instance containing the port.
-
-     @param port Index of the port to connect. The host MUST NOT try to
-     connect a port index that is not defined in the plugin's RDF data. If
-     it does, the plugin's behaviour is undefined (a crash is likely).
-
-     @param data_location Pointer to data of the type defined by the port
-     type in the plugin's RDF data (for example, an array of float for an
-     lv2:AudioPort). This pointer must be stored by the plugin instance and
-     used to read/write data when run() is called. Data present at the time
-     of the connect_port() call MUST NOT be considered meaningful.
+    Connect a port on a plugin instance to a memory location.
+    Plugin writers should be aware that the host may elect to use the same
+    buffer for more than one port and even use the same buffer for both
+    input and output (see lv2:inPlaceBroken in lv2.ttl).
+    If the plugin has the feature lv2:hardRTCapable then there are various
+    things that the plugin MUST NOT do within the connect_port() function;
+    see lv2core.ttl for details.
+    connect_port() MUST be called at least once for each port before run()
+    is called, unless that port is lv2:connectionOptional. The plugin must
+    pay careful attention to the block size passed to run() since the block
+    allocated may only just be large enough to contain the data, and is not
+    guaranteed to remain constant between run() calls.
+    connect_port() may be called more than once for a plugin instance to
+    allow the host to change the buffers that the plugin is reading or
+    writing. These calls may be made before or after activate() or
+    deactivate() calls.
+    @param instance Plugin instance containing the port.
+    @param port Index of the port to connect. The host MUST NOT try to
+    connect a port index that is not defined in the plugin's RDF data. If
+    it does, the plugin's behaviour is undefined (a crash is likely).
+    @param data_location Pointer to data of the type defined by the port
+    type in the plugin's RDF data (for example, an array of float for an
+    lv2:AudioPort). This pointer must be stored by the plugin instance and
+    used to read/write data when run() is called. Data present at the time
+    of the connect_port() call MUST NOT be considered meaningful.
   */
 
   // we assume the ports are in this order:
   // inputs, outputs, parameters, midi_in
 
   void lv2_connect_port(uint32_t port, void* data_location) {
-    SAT_PRINT;
-    //SAT_Print("lv2_connect_port: port %i data_location 0x%x\n",port,data_location);
+    //SAT_Print("port %i data_location %p\n",port,data_location);
+    
     if (port < MNumInputs) {
       MInputPtrs[port] = (float*)data_location;
       return;
@@ -214,41 +186,36 @@ public:
     }
     port -= MNumParameters;
 
-//    if (MDescriptor->canReceiveMidi()) {
-//      MAtomSequence = (const LV2_Atom_Sequence*)data_location;
-//      port -= 1;
-//    }
+    //if (MDescriptor->canReceiveMidi()) {
+      MAtomSequence = (const LV2_Atom_Sequence*)data_location;
+      port -= 1;
+    //}
 
   }
   
   //----------
 
   /*
-     Initialise a plugin instance and activate it for use.
-
-     This is separated from instantiate() to aid real-time support and so
-     that hosts can reinitialise a plugin instance by calling deactivate()
-     and then activate(). In this case the plugin instance MUST reset all
-     state information dependent on the history of the plugin instance except
-     for any data locations provided by connect_port(). If there is nothing
-     for activate() to do then this field may be NULL.
-
-     When present, hosts MUST call this function once before run() is called
-     for the first time. This call SHOULD be made as close to the run() call
-     as possible and indicates to real-time plugins that they are now live,
-     however plugins MUST NOT rely on a prompt call to run() after
-     activate().
-
-     The host MUST NOT call activate() again until deactivate() has been
-     called first. If a host calls activate(), it MUST call deactivate() at
-     some point in the future. Note that connect_port() may be called before
-     or after activate().
+    Initialise a plugin instance and activate it for use.
+    This is separated from instantiate() to aid real-time support and so
+    that hosts can reinitialise a plugin instance by calling deactivate()
+    and then activate(). In this case the plugin instance MUST reset all
+    state information dependent on the history of the plugin instance except
+    for any data locations provided by connect_port(). If there is nothing
+    for activate() to do then this field may be NULL.
+    When present, hosts MUST call this function once before run() is called
+    for the first time. This call SHOULD be made as close to the run() call
+    as possible and indicates to real-time plugins that they are now live,
+    however plugins MUST NOT rely on a prompt call to run() after
+    activate().
+    The host MUST NOT call activate() again until deactivate() has been
+    called first. If a host calls activate(), it MUST call deactivate() at
+    some point in the future. Note that connect_port() may be called before
+    or after activate().
   */
 
   void lv2_activate() {
     SAT_PRINT;
-    //on_plugin_open();
-    //on_plugin_activate();
     MPlugin->activate(MSampleRate,0,1024);
     MPlugin->start_processing();
   }
@@ -256,32 +223,29 @@ public:
   //----------
 
   /*
-     Run a plugin instance for a block.
-
-     Note that if an activate() function exists then it must be called before
-     run(). If deactivate() is called for a plugin instance then run() may
-     not be called until activate() has been called again.
-
-     If the plugin has the feature lv2:hardRTCapable then there are various
-     things that the plugin MUST NOT do within the run() function (see
-     lv2core.ttl for details).
-
-     As a special case, when `sample_count` is 0, the plugin should update
-     any output ports that represent a single instant in time (for example,
-     control ports, but not audio ports). This is particularly useful for
-     latent plugins, which should update their latency output port so hosts
-     can pre-roll plugins to compute latency. Plugins MUST NOT crash when
-     `sample_count` is 0.
-
-     @param instance Instance to be run.
-
-     @param sample_count The block size (in samples) for which the plugin
-     instance must run.
+    Run a plugin instance for a block.
+    Note that if an activate() function exists then it must be called before
+    run(). If deactivate() is called for a plugin instance then run() may
+    not be called until activate() has been called again.
+    If the plugin has the feature lv2:hardRTCapable then there are various
+    things that the plugin MUST NOT do within the run() function (see
+    lv2core.ttl for details).
+    As a special case, when `sample_count` is 0, the plugin should update
+    any output ports that represent a single instant in time (for example,
+    control ports, but not audio ports). This is particularly useful for
+    latent plugins, which should update their latency output port so hosts
+    can pre-roll plugins to compute latency. Plugins MUST NOT crash when
+    `sample_count` is 0.
+    @param instance Instance to be run.
+    @param sample_count The block size (in samples) for which the plugin
+    instance must run.
   */
 
   void lv2_run(uint32_t sample_count) {
-    SAT_PRINT;
     //SAT_Print("lv2_run: %i\n",sample_count);
+    
+    // todo: convert to events + sort (params/midi)..
+    // (see vst3)
 
     // parameters
 
@@ -292,96 +256,98 @@ public:
       //  MProcessValues[i] = v;
       if (v != MPlugin->getParameterValue(i)) { // todo: almost_equal?
         MPlugin->setParameterValue(i,v); 
-        // to/from01 ??
-        //SAT_Parameter* param = MPlugin->getParameter(i);
-        //if (param) v = param->from01(v);
-        //MInstance->on_plugin_parameter(i,v);
+        clap_event_param_value_t event;
+        event.header.size     = sizeof(clap_event_param_value_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_VALUE;
+        event.header.flags    = 0;
+        event.param_id        = i;
+        event.cookie          = nullptr;
+        event.note_id         = -1;
+        event.port_index      = -1;
+        event.channel         = 1;
+        event.key             = -1;
+        event.value           = v;
+        MPlugin->handleParamValueEvent(&event);
       }
     }
     
     // midi
     
     //if (MDescriptor->canReceiveMidi()) {
-    //  uint32_t offset = 0;
-    //  LV2_ATOM_SEQUENCE_FOREACH(MAtomSequence, ev) {
-    //    if (ev->body.type == MMidiInputUrid) {
-    //      const uint8_t* const msg = (const uint8_t*)(ev + 1);
-    //      offset = (uint32_t)ev->time.frames;
-    //      MInstance->on_plugin_midi(offset,msg[0],msg[1],msg[2]);
-    //    }
-    //  }
+    uint32_t offset = 0;
+    LV2_ATOM_SEQUENCE_FOREACH(MAtomSequence, ev) {
+      if (ev->body.type == MMidiInputUrid) {
+        const uint8_t* const msg = (const uint8_t*)(ev + 1);
+        SAT_Print("midi %02x.%02x.%02x\n",msg[0],msg[1],msg[2]);
+        offset = (uint32_t)ev->time.frames;
+        clap_event_midi_t event;
+        event.header.size     = sizeof(clap_event_midi_t);
+        event.header.time     = offset;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_MIDI;
+        event.header.flags    = 0;
+        event.port_index      = -1;
+        event.data[0]         = msg[0];
+        event.data[1]         = msg[1];
+        event.data[2]         = msg[2];
+        MPlugin->handleMidiEvent(&event);
+      }
+    }
     //}
     
-    //MProcessContext.numinputs = MDescriptor->getNumInputs();
-    //MProcessContext.numoutputs = MDescriptor->getNumOutputs();
-    //for (uint32_t i=0; i<MProcessContext.numinputs; i++)  { MProcessContext.inputs[i]  = MInputPtrs[i]; }
-    //for (uint32_t i=0; i<MProcessContext.numoutputs; i++) { MProcessContext.outputs[i] = MOutputPtrs[i]; }
-    //MProcessContext.numsamples  = sample_count;
-    //MProcessContext.samplerate  = MSampleRate;
-    ////context.offset      = 0;
-    ////context.oversample  = 1;
+    if (sample_count > 0) {
+    
+      clap_audio_buffer_t audio_inputs = {
+        .data32         = MInputPtrs,
+        .data64         = nullptr,
+        .channel_count  = MNumInputs,
+        .latency        = 0,
+        .constant_mask  = 0
+      };
+      
+      clap_audio_buffer_t audio_outputs = {
+        .data32         = MOutputPtrs,
+        .data64         = nullptr,
+        .channel_count  = MNumOutputs,
+        .latency        = 0,
+        .constant_mask  = 0
+      };
 
-    //MInstance->on_plugin_process(&MProcessContext);
+      MProcess.frames_count         = sample_count;
+      MProcess.transport            = nullptr;
+      MProcess.audio_inputs         = &audio_inputs;
+      MProcess.audio_outputs        = &audio_outputs;
+      MProcess.audio_inputs_count   = MNumInputs;
+      MProcess.audio_outputs_count  = MNumOutputs;
+      MProcess.in_events            = &MLadspaInputEvents;
+      MProcess.out_events           = &MLadspaOutputEvents;
+      MPlugin->process(&MProcess);
+      MProcess.steady_time         += sample_count;
     
-    clap_audio_buffer_t audio_inputs = {
-      .data32         = MInputPtrs,
-      .data64         = nullptr,
-      .channel_count  = MNumInputs,
-      .latency        = 0,
-      .constant_mask  = 0
-    };
+    }
     
-    clap_audio_buffer_t audio_outputs = {
-      .data32         = MOutputPtrs,
-      .data64         = nullptr,
-      .channel_count  = MNumOutputs,
-      .latency        = 0,
-      .constant_mask  = 0
-    };
-
-    MProcess.frames_count         = sample_count;
-    MProcess.transport            = nullptr;
-    MProcess.audio_inputs         = &audio_inputs;
-    MProcess.audio_outputs        = &audio_outputs;
-    MProcess.audio_inputs_count   = MNumInputs;
-    MProcess.audio_outputs_count  = MNumOutputs;
-    
-    //MProcess.in_events            = &MLadspaInputEvents;
-    //MProcess.out_events           = &MLadspaOutputEvents;
-
-    //MProcessContext.process       = &MProcess;
-    //MProcessContext.samplerate    = 0.0;
-    //MProcessContext.minbufsize    = 0;
-    //MProcessContext.maxbufsize    = 0;
-    //MProcessContext.parameters    = MParameters;
-    //MProcessContext.counter       = 0;
-    
-    MPlugin->process(&MProcess);
-    MProcess.steady_time += sample_count;
-    
-    //todo: flush midi
+    //todo: flush midi (midiout)
     
   }
   
   //----------
 
   /*
-     Deactivate a plugin instance (counterpart to activate()).
-
-     Hosts MUST deactivate all activated instances after they have been run()
-     for the last time. This call SHOULD be made as close to the last run()
-     call as possible and indicates to real-time plugins that they are no
-     longer live, however plugins MUST NOT rely on prompt deactivation. If
-     there is nothing for deactivate() to do then this field may be NULL
-
-     Deactivation is not similar to pausing since the plugin instance will be
-     reinitialised by activate(). However, deactivate() itself MUST NOT fully
-     reset plugin state. For example, the host may deactivate a plugin, then
-     store its state (using some extension to do so).
-
-     Hosts MUST NOT call deactivate() unless activate() was previously
-     called. Note that connect_port() may be called before or after
-     deactivate().
+    Deactivate a plugin instance (counterpart to activate()).
+    Hosts MUST deactivate all activated instances after they have been run()
+    for the last time. This call SHOULD be made as close to the last run()
+    call as possible and indicates to real-time plugins that they are no
+    longer live, however plugins MUST NOT rely on prompt deactivation. If
+    there is nothing for deactivate() to do then this field may be NULL
+    Deactivation is not similar to pausing since the plugin instance will be
+    reinitialised by activate(). However, deactivate() itself MUST NOT fully
+    reset plugin state. For example, the host may deactivate a plugin, then
+    store its state (using some extension to do so).
+    Hosts MUST NOT call deactivate() unless activate() was previously
+    called. Note that connect_port() may be called before or after
+    deactivate().
   */
 
   void lv2_deactivate() {
@@ -393,31 +359,22 @@ public:
   //----------
 
   /*
-     Clean up a plugin instance (counterpart to instantiate()).
-
-     Once an instance of a plugin has been finished with it must be deleted
-     using this function. The instance handle passed ceases to be valid after
-     this call.
-
-     If activate() was called for a plugin instance then a corresponding call
-     to deactivate() MUST be made before cleanup() is called. Hosts MUST NOT
-     call cleanup() unless instantiate() was previously called.
+    Clean up a plugin instance (counterpart to instantiate()).
+    Once an instance of a plugin has been finished with it must be deleted
+    using this function. The instance handle passed ceases to be valid after
+    this call.
+    If activate() was called for a plugin instance then a corresponding call
+    to deactivate() MUST be made before cleanup() is called. Hosts MUST NOT
+    call cleanup() unless instantiate() was previously called.
   */
 
   void lv2_cleanup() {
     SAT_PRINT;
-
     if (MClapPlugin) MClapPlugin->destroy(MClapPlugin);
     if (MHost) delete MHost;
-    
     if (MInputPtrs) free(MInputPtrs);
     if (MOutputPtrs) free(MOutputPtrs);
     if (MParameterPtrs) free(MParameterPtrs);
-
-    //if (MParameterValues) free(MParameterValues);
-    //if (MHostValues) free(MHostValues);
-    //if (MProcessValues) free(MProcessValues);
-    
   }
   
 //------------------------------
@@ -425,12 +382,14 @@ private: // in_events
 //------------------------------
 
   uint32_t input_events_size() {
+    SAT_Print("-> %i\n",MNumEvents);
     return MNumEvents;
   }
 
   //----------
 
   const clap_event_header_t* input_events_get(uint32_t index) {
+    SAT_Print("index %i\n",index);
     uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * index;
     return (const clap_event_header_t*)&MEvents[pos];
   }
@@ -462,6 +421,7 @@ private: // out_events
 //------------------------------
 
   bool output_events_try_push(const clap_event_header_t *event) {
+    SAT_PRINT;
     if (event->space_id == CLAP_CORE_EVENT_SPACE_ID) {
       switch (event->type) {
         
@@ -555,20 +515,22 @@ private: // out_events
 private:
 //------------------------------
 
-  void queueHostParam(uint32_t AIndex, double AValue) {
-    MQueuedHostParamValues[AIndex] = AValue;
-    MHostParamQueue.write(AIndex);
-  }
+  //void queueHostParam(uint32_t AIndex, double AValue) {
+  //  SAT_Print("AIndex %i AValue %f\n",AIndex,AValue);
+  //  MQueuedHostParamValues[AIndex] = AValue;
+  //  MHostParamQueue.write(AIndex);
+  //}
 
   //----------
 
-  void flushHostParams() {
-    uint32_t index;
-    while (MHostParamQueue.read(&index)) {
-      double value = MQueuedHostParamValues[index];
-      SAT_Print("flush! %i = %.3f\n",index,value);
-    }
-  }
+  //void flushHostParams() {
+  //  SAT_PRINT;
+  //  uint32_t index;
+  //  while (MHostParamQueue.read(&index)) {
+  //    double value = MQueuedHostParamValues[index];
+  //    SAT_Print("flush! %i = %.3f\n",index,value);
+  //  }
+  //}
 
 };
 

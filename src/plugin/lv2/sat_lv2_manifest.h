@@ -172,12 +172,12 @@ private:
       }
       uint32_t numpar = plugin->getNumParameters();
       //SAT_Print("numin %i numout %i numpat %i\n",numin,numout,numpar);
+      
       uint32_t numports  = numin + numout + numpar;
       
-      //if (descriptor->canReceiveMidi()) {
-      if (SAT_ClapIsInstrument(clap_descriptor)) {
+      //if (SAT_ClapIsInstrument(clap_descriptor)) {
         numports += 1;
-      }
+      //}
 
       // every port symbol must be unique and a valid C identifier
       // and the indices must start at 0 and be contiguous
@@ -260,8 +260,7 @@ private:
         // midi input
         //----------
 
-        //if (descriptor->canReceiveMidi()) {
-        if (SAT_ClapIsInstrument(clap_descriptor)) {
+        //if (SAT_ClapIsInstrument(clap_descriptor)) {
           //strcat(plugin_ttl,"    a lv2:InputPort , atom:AtomPort ;\n");
           strcat(plugin_ttl,"    a atom:AtomPort , lv2:InputPort ;\n");
           strcat(plugin_ttl,"    atom:bufferType   atom:Sequence ;\n");
@@ -274,7 +273,7 @@ private:
           p++;
           if (p < numports) strcat(plugin_ttl," ] , [\n");
           else strcat(plugin_ttl," ] .\n");
-        } // midi in
+        //} // midi in
 
       } // ports
 
