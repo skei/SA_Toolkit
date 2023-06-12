@@ -23,9 +23,11 @@ void SAT_Lv2PrintFeatures(const LV2_Feature* const* features) {
 //----------
 
 void* SAT_Lv2FindFeature(const char* name, const LV2_Feature* const* features) {
-  for (int i=0; features[i]; ++i) {
-    if (!strcmp(features[i]->URI, name)) {
-      return features[i]->data;
+  for (uint32_t i=0; features[i]; ++i) {
+    if (strcmp(features[i]->URI, name) == 0) {
+      void* data = features[i]->data;
+      SAT_Print("found it! features[%i] == %s. data %p\n",i,features[i]->URI,name,data);
+      return data;
     }
   }
   return nullptr;
