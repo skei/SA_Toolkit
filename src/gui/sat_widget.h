@@ -67,6 +67,7 @@ private:
   const char*           MName                               = "";
   const char*           MHint                               = "";
   int32_t               MMouseCursor                        = 0;
+  uint32_t              MSelectedValue                      = 0;
   double                MValues[SAT_WIDGET_MAX_VALUES]      = {0};
   double                MModulations[SAT_WIDGET_MAX_VALUES] = {0};
   void*                 MParameters[SAT_WIDGET_MAX_VALUES]  = {0};    // connected parameters
@@ -126,7 +127,7 @@ public:
   virtual const char*         getHint()                         { return MHint; }
   virtual int32_t             getIndex()                        { return MIndex; }
   virtual SAT_Rect            getInitialRect()                  { return MInitialRect; }
-  virtual SAT_Rect            getInnerBorder()                   { return MInnerBorder; }
+  virtual SAT_Rect            getInnerBorder()                  { return MInnerBorder; }
   virtual int32_t             getLastPainted()                  { return MLastPainted; }
   virtual SAT_WidgetListener* getListener()                     { return MListener; }
   virtual double              getModulation(uint32_t AIndex=0)  { return MModulations[AIndex]; }
@@ -137,6 +138,8 @@ public:
   virtual SAT_WidgetOwner*    getOwner()                        { return MOwner; }
   virtual SAT_Widget*         getParentWidget()                 { return MParentWidget; }
   virtual SAT_Rect            getRect()                         { return MRect; }
+  virtual double              getSelectedValue()                { return MValues[MSelectedValue]; }
+  virtual uint32_t            getSelectedValueIndex()           { return MSelectedValue; }
   virtual uint32_t            getStretching()                   { return MStretching; }
   virtual double              getValue(uint32_t AIndex=0)       { return MValues[AIndex]; }
   virtual double              getWidth()                        { return MRect.w; }
@@ -224,6 +227,10 @@ public:
     MMaxHeight = AMaxH;
   }
   
+  virtual void selectValueIndex(uint32_t AIndex) {
+    MSelectedValue = AIndex;
+  }
+
 //------------------------------
 public: // hierarchy
 //------------------------------

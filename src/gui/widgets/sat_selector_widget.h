@@ -32,6 +32,8 @@ private:
   uint32_t          MDropDownDirection  = SAT_DIRECTION_DOWN;
   
   bool              MAutoSizeMenu       = false;
+  
+  uint32_t MSelected = 0;
 
 //------------------------------
 public:
@@ -65,6 +67,10 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  virtual SAT_MenuWidget* getMenuWidget() { return MMenu; }
+
+
 
   virtual void setDrawSelectedText(bool ADraw) {
     MDrawSelectedText = ADraw;
@@ -157,6 +163,8 @@ public: // widget
     }
   }
   
+  //----------
+  
   void setValue(double value, uint32_t index=0) override {
     //SAT_Print("value %f\n",value);
     SAT_ValueWidget::setValue(value,index);
@@ -181,16 +189,26 @@ public: // menu listener
   void do_menu_select(int32_t AIndex) override {
     
     // test/debug
-    {
-      SAT_TextWidget* widget = (SAT_TextWidget*)MMenu->getChildWidget(AIndex);
-      const char* text = widget->getText();
-      SAT_Print("%s/%s\n",getName(),text);
-    }
+    //{
+    //  SAT_TextWidget* widget = (SAT_TextWidget*)MMenu->getChildWidget(AIndex);
+    //  const char* text = widget->getText();
+    //  SAT_Print("%s/%s\n",getName(),text);
+    //}
 
     SAT_Parameter* param = (SAT_Parameter*)getParameter();
     if (param) {
       double value = param->normalizeValue(AIndex);
       setValue(value);
+      do_widgetListener_update(this,0);
+    }
+    else {
+      SAT_MenuWidget* menuwidget = getMenuWidget();
+      uint32_t num = menuwidget->getNumChildWidgets();
+      if (num > 0) {
+        double v = (double)AIndex / (double)(num - 1);
+        //SAT_Print("AIndex %i num %i -> v %f\n",AIndex,num,v);
+        setValue(v);
+      }
       do_widgetListener_update(this,0);
     }
     

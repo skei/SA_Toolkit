@@ -137,6 +137,8 @@ public:
       MClickedYpos  = AYpos;
       MClickedYpos  = AYpos;
       
+      //findClosestValue(AXpos,AYpos);
+      
       //if (MHoverLeftEdge) {
       //}
       //else if (MHoverRightEdge) {
@@ -144,10 +146,9 @@ public:
       //else {
         
         double value = getValue();
-        
-//        SAT_Parameter* param = (SAT_Parameter*)getConnection();
-//        if (param) value = param->normalizeValue(value);
-        
+        //double value = getSelectedValue();
+        //SAT_Parameter* param = (SAT_Parameter*)getConnection();
+        //if (param) value = param->normalizeValue(value);
         //SAT_Print("%f\n",value);
         MDragValue = value;
         

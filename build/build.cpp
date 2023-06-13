@@ -99,9 +99,10 @@
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_demo.h"
 //#include "../plugins/sa_gain.h"
+#include "../plugins/sa_host.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_stretch.h"
-#include "../plugins/sa_synth.h"
+//#include "../plugins/sa_synth.h"
 //#include "../plugins/sa_tyr.h"        // TODO
 
 

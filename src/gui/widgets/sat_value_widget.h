@@ -60,28 +60,25 @@ public:
 public:
 //------------------------------
 
-  virtual SAT_Color   getDisabledColor()  { return MDisabledColor; }
-  virtual double      getDisabledAlpha()  { return MDisabledAlpha; }
-  virtual bool        getDrawModulation() { return MDrawModulation; }
-  virtual bool        getDrawValue()      { return MDrawValue; }
-  virtual bool        isInteracting()     { return MIsInteracting; }
-  //virtual SAT_Rect    getValueOffset()    { return MValueOffset; }
-  //virtual char*       getValueText()      { return MValueText; }
+  virtual SAT_Color getDisabledColor()  { return MDisabledColor; }
+  virtual double    getDisabledAlpha()  { return MDisabledAlpha; }
+  virtual bool      getDrawModulation() { return MDrawModulation; }
+  virtual bool      getDrawValue()      { return MDrawValue; }
+//virtual SAT_Rect    getValueOffset()    { return MValueOffset; }
+//virtual char*       getValueText()      { return MValueText; }
+  virtual bool      isInteracting()     { return MIsInteracting; }
 
-  virtual void        setIsInteracting(bool AState=true) { MIsInteracting = AState; }
-  virtual void        setDrawValue(bool ADraw=true)      { MDrawValue = ADraw; }
-  virtual void        setValueColor(SAT_Color AColor)    { MValueColor = AColor; }
-  virtual void        setValueSize(double ASize)         { MValueSize = ASize; }
-  virtual void        setValueAlignment(uint32_t AAlign) { MValueAlignment = AAlign; }
-  virtual void        setValueOffset(SAT_Rect AOffset)   { MValueOffset = AOffset; }
-  virtual void        setDrawModulation(bool ADraw=true) { MDrawModulation = ADraw; }
-  
-  virtual void setDrawValueDropShadow(bool ADraw=true)     { MDrawValueDropShadow = ADraw; }
-  virtual void setValueDropShadowSize(double ASize)        { MValueDropShadowSize = ASize; }
-  virtual void setValueDropShadowColor(SAT_Color AColor)   { MValueDropShadowColor  = AColor; }
-  virtual void setValueDropShadowOffset(SAT_Point AOffset) { MValueDropShadowOffset = AOffset; }
-
-  
+  virtual void      setIsInteracting(bool AState=true)          { MIsInteracting = AState; }
+  virtual void      setDrawValue(bool ADraw=true)               { MDrawValue = ADraw; }
+  virtual void      setValueColor(SAT_Color AColor)             { MValueColor = AColor; }
+  virtual void      setValueSize(double ASize)                  { MValueSize = ASize; }
+  virtual void      setValueAlignment(uint32_t AAlign)          { MValueAlignment = AAlign; }
+  virtual void      setValueOffset(SAT_Rect AOffset)            { MValueOffset = AOffset; }
+  virtual void      setDrawModulation(bool ADraw=true)          { MDrawModulation = ADraw; }
+  virtual void      setDrawValueDropShadow(bool ADraw=true)     { MDrawValueDropShadow = ADraw; }
+  virtual void      setValueDropShadowSize(double ASize)        { MValueDropShadowSize = ASize; }
+  virtual void      setValueDropShadowColor(SAT_Color AColor)   { MValueDropShadowColor  = AColor; }
+  virtual void      setValueDropShadowOffset(SAT_Point AOffset) { MValueDropShadowOffset = AOffset; }
 
 //------------------------------
 public:
@@ -110,6 +107,7 @@ public:
       }
       else {
         double v = getValue();
+        //double v = getSelectedValue();
         sprintf(MValueText,"%.2f",v);
       }
       

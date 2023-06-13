@@ -202,6 +202,9 @@ public:
   //SAT_TweenManager* getTweens()         { return &MTweens; }
   
   SAT_OpenGL*       getOpenGL()         { return MOpenGL; }
+  
+  SAT_WindowListener* getListener() { return MListener; }
+  void setListener(SAT_WindowListener* AListener) { MListener = AListener; }
 
 //------------------------------
 public:

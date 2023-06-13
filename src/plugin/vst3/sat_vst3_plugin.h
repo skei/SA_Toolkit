@@ -76,6 +76,7 @@ private:
   clap_audio_buffer_t             MAudioOutputs       = {};
   uint32_t                        MNumEvents          = 0;
   char                            MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
+  
   uint32_t                        MLastNoteId         = 0;
   SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS] = {};
   
