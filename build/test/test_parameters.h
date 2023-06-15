@@ -1,6 +1,5 @@
 
 #include "base/sat.h"
-#include "base/utils/sat_tcc.h"
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_utils.h"
 #include "gui/sat_widgets.h"
@@ -33,6 +32,10 @@ class myPlugin
 : public SAT_Plugin {
   
 //------------------------------
+private:
+//------------------------------
+
+//------------------------------
 public:
 //------------------------------
 
@@ -54,6 +57,7 @@ public:
     appendParameter(param2);
     
     setInitialEditorSize(1024,768,1.333);
+    
     return SAT_Plugin::init();
   }
   
