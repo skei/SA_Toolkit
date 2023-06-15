@@ -1808,7 +1808,7 @@ public: // editor listener
 
   // window -> editor -> this
 
-  void do_editorListener_timer() override {
+  void do_editorListener_timer(SAT_Window* ASender, double AElapsed) override {
     //SAT_PRINT;
     flushModFromHostToGui();
     flushParamFromHostToGui();

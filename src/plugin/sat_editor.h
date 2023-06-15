@@ -168,7 +168,7 @@ public: // window listener
 
   void do_windowListener_timer(SAT_Window* ASender, double AElapsed) override { // final
     //SAT_PRINT;
-    if (MListener) MListener->do_editorListener_timer();
+    if (MListener) MListener->do_editorListener_timer(ASender,AElapsed);
     //on_window_timer();
   }
 

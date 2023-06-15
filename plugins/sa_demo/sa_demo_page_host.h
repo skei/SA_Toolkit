@@ -196,18 +196,18 @@ public:
 
       if (AHost->ext.track_info) {
         textbox->appendLine(CLAP_EXT_TRACK_INFO);
-        clap_track_info_t info;
-        AHost->ext.track_info->get(host,&info);
-        //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME)      textbox->appendLine("    CLAP_TRACK_INFO_HAS_TRACK_NAME\n");
-        //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR)     textbox->appendLine("    CLAP_TRACK_INFO_HAS_TRACK_COLOR\n");
-        //if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL)   textbox->appendLine("    CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL\n");
-        //if (info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK) textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK\n");
-        //if (info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)          textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_BUS\n");
-        //if (info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)       textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_MASTER\n");
-        
-        // gcc doesn't like this too much.. todo: snprintf?
-        sprintf(track_info_buffer,"    name: '%s' color %i,%i,%i chan: %i port '%s'",info.name,info.color.red,info.color.green,info.color.blue,info.audio_channel_count,info.audio_port_type);
-        textbox->appendLine(track_info_buffer);
+//        clap_track_info_t info;
+//        AHost->ext.track_info->get(host,&info);
+//        //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME)      textbox->appendLine("    CLAP_TRACK_INFO_HAS_TRACK_NAME\n");
+//        //if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR)     textbox->appendLine("    CLAP_TRACK_INFO_HAS_TRACK_COLOR\n");
+//        //if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL)   textbox->appendLine("    CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL\n");
+//        //if (info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK) textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK\n");
+//        //if (info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)          textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_BUS\n");
+//        //if (info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)       textbox->appendLine("    CLAP_TRACK_INFO_IS_FOR_MASTER\n");
+//        
+//        // gcc doesn't like this too much.. todo: snprintf?
+//        sprintf(track_info_buffer,"    name: '%s' color %i,%i,%i chan: %i port '%s'",info.name,info.color.red,info.color.green,info.color.blue,info.audio_channel_count,info.audio_port_type);
+//        textbox->appendLine(track_info_buffer);
       }
 
       if (AHost->ext.transport_control) {
@@ -241,13 +241,24 @@ public:
   }
     
   //----------
-  
-  
-  
-  //----------
 
   virtual ~sa_demo_page_host() {
   }
+  
+//------------------------------
+public:
+//------------------------------
+
+//  void on_widget_prepare() override {
+//    SAT_Window* window = (SAT_Window*)getOwner();
+//    window->registerTimerWidget(this);
+//  }
+//  
+//  //----------
+//
+//  void on_widget_timer(uint32_t AId, double ADelta) override {
+//    SAT_PanelWidget::on_widget_timer(AId,ADelta);
+//  }
 
 };
 

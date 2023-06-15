@@ -18,18 +18,18 @@ class SAT_ValueWidget
 private:
 //------------------------------
 
-  bool      MDrawValue      = true;
-  SAT_Color MValueColor     = SAT_White;
-  double    MValueSize      = 9;
-  uint32_t  MValueAlignment = SAT_TEXT_ALIGN_RIGHT;
-  SAT_Rect  MValueOffset    = {0,0,0,0};
-  char      MValueText[256] = {0};
+  bool      MDrawValue              = true;
+  SAT_Color MValueColor             = SAT_White;
+  double    MValueSize              = 9;
+  uint32_t  MValueAlignment         = SAT_TEXT_ALIGN_RIGHT;
+  SAT_Rect  MValueOffset            = {0,0,0,0};
+  char      MValueText[256]         = {0};
 
-  SAT_Color MDisabledColor  = SAT_Grey;
-  double    MDisabledAlpha  = 0.5;
+  SAT_Color MDisabledColor          = SAT_Grey;
+  double    MDisabledAlpha          = 0.5;
 
-  bool      MDrawModulation = true;
-  bool      MIsInteracting  = false;
+  bool      MDrawModulation         = true;
+  bool      MIsInteracting          = false;
 
   bool      MDrawValueDropShadow    = false;
   double    MValueDropShadowSize    = 4.0;
@@ -52,6 +52,8 @@ public:
     setTextOffset(SAT_Rect(5,0,0,0));
     setValueOffset(SAT_Rect(0,0,5,0));
   }
+  
+  //----------
 
   virtual ~SAT_ValueWidget() {
   }
@@ -64,8 +66,8 @@ public:
   virtual double    getDisabledAlpha()  { return MDisabledAlpha; }
   virtual bool      getDrawModulation() { return MDrawModulation; }
   virtual bool      getDrawValue()      { return MDrawValue; }
-//virtual SAT_Rect    getValueOffset()    { return MValueOffset; }
-//virtual char*       getValueText()      { return MValueText; }
+//virtual SAT_Rect  getValueOffset()    { return MValueOffset; }
+//virtual char*     getValueText()      { return MValueText; }
   virtual bool      isInteracting()     { return MIsInteracting; }
 
   virtual void      setIsInteracting(bool AState=true)          { MIsInteracting = AState; }
@@ -139,7 +141,6 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    //SAT_PRINT;
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawText(AContext);

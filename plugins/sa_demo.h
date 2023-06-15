@@ -2,12 +2,6 @@
 #define sa_demo_included
 //----------------------------------------------------------------------
 
-//#define SAT_PLUGIN_CLAP
-//#define SAT_PLUGIN_VST3
-//#define SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
-//#define SAT_DEBUG_WINDOW
-//#define SAT_DEBUG_OBSERVER
-
 #define PLUGIN_NAME   "sa_demo"
 #define EDITOR_WIDTH  800
 #define EDITOR_HEIGHT 600
@@ -165,17 +159,14 @@ public:
 public:
 //------------------------------
 
-  void do_editorListener_timer() final {
-    SAT_Plugin::do_editorListener_timer();
-    //update voices widget.. (move to widget itself (+ register timer)
-    // before or after sat_plugin:: ?
-    /*
-    for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
-      uint32_t state = MVoiceManager.getVoiceState(voice);
-      MVoicesWidget->setVoiceState(voice,state);
+  void do_editorListener_timer(SAT_Window* ASender, double AElapsed) final {
+    SAT_Plugin::do_editorListener_timer(ASender,AElapsed);
+    //SAT_Editor* editor = getEditor();
+    sa_demo_editor* editor = (sa_demo_editor*)getEditor();
+    if (editor) {
+      //editor->setProcessCounter(0);
+      //editor->setProcessSteadyTime(0);
     }
-    MVoicesWidget->parentRedraw();
-    */
   }
 
 //------------------------------

@@ -18,37 +18,39 @@ class SAT_PanelWidget
 protected:
 //------------------------------
 
-  bool      MFillBackground       = true;
-  SAT_Color MBackgroundColor      = SAT_DarkGrey;
+  bool      MFillBackground             = true;
+  SAT_Color MBackgroundColor            = SAT_DarkGrey;
   
-  bool      MFillGradient         = false;
-  SAT_Color MGradientColor1       = SAT_LightGrey;
-  SAT_Color MGradientColor2       = SAT_DarkGrey;
+  bool      MFillGradient               = false;
+  SAT_Color MGradientColor1             = SAT_LightGrey;
+  SAT_Color MGradientColor2             = SAT_DarkGrey;
+  double    MGradientFactor1            = 0.2;
+  double    MGradientFactor2            = 0.2;
   
-  bool      MDrawBorder           = true;
-  SAT_Color MBorderColor          = SAT_DarkerGrey;
-  double    MBorderWidth          = 1.0;
+  bool      MDrawBorder                 = true;
+  SAT_Color MBorderColor                = SAT_DarkerGrey;
+  double    MBorderWidth                = 1.0;
   
-  bool      MRoundedCorners       = false;
-  double    MTLCorner             = 0.0;
-  double    MTRCorner             = 0.0;
-  double    MBRCorner             = 0.0;
-  double    MBLCorner             = 0.0;
+  bool      MRoundedCorners             = false;
+  double    MTLCorner                   = 0.0;
+  double    MTRCorner                   = 0.0;
+  double    MBRCorner                   = 0.0;
+  double    MBLCorner                   = 0.0;
   
-  bool      MDrawDropShadow       = false;
-  double    MDropShadowFeather    = 10.0;
-  double    MDropShadowCorner     = 0.0;
-  double    MDropShadowXOffset    = 0.0;
-  double    MDropShadowYOffset    = 0.0;
-  SAT_Color MDropShadowIColor     = SAT_DarkestGrey;
-  SAT_Color MDropShadowOColor     = SAT_DarkGrey;
-  bool      MDropShadowInner      = false;
+  bool      MDrawDropShadow             = false;
+  double    MDropShadowFeather          = 10.0;
+  double    MDropShadowCorner           = 0.0;
+  double    MDropShadowXOffset          = 0.0;
+  double    MDropShadowYOffset          = 0.0;
+  SAT_Color MDropShadowIColor           = SAT_DarkestGrey;
+  SAT_Color MDropShadowOColor           = SAT_DarkGrey;
+  bool      MDropShadowInner            = false;
 
-  double    MDropShadowXOffsetTMP = 0.0;
-  double    MDropShadowYOffsetTMP = 0.0;
+  double    MDropShadowXOffsetTMP       = 0.0;
+  double    MDropShadowYOffsetTMP       = 0.0;
   
-  SAT_Rect  MMappedIndicatorOffset     = SAT_Rect();
-  SAT_Rect  MAutomationIndicatorOffset = SAT_Rect();
+  SAT_Rect  MMappedIndicatorOffset      = SAT_Rect();
+  SAT_Rect  MAutomationIndicatorOffset  = SAT_Rect();
   
 //------------------------------
 public:
@@ -66,15 +68,63 @@ public:
 public:
 //------------------------------
 
-  virtual void setFillBackground(bool AFill=true)                       { MFillBackground = AFill; }
-  virtual void setBackgroundColor(SAT_Color AColor)                     { MBackgroundColor = AColor; }
+  // background
 
-  virtual void setFillGradient(bool AGradient=true)                     { MFillGradient = AGradient; }
-  virtual void setGradientColors(SAT_Color AColor1, SAT_Color AColor2)  { MGradientColor1 = AColor1; MGradientColor2 = AColor2; }
+  virtual void setFillBackground(bool AFill=true) {
+    MFillBackground = AFill;
+  }
+  
+  virtual void setBackgroundColor(SAT_Color AColor) {
+    MBackgroundColor = AColor;
+  }
+  
+  // gradient
 
-  virtual void setDrawBorder(bool ADraw=true)                           { MDrawBorder = ADraw; }
-  virtual void setBorderColor(SAT_Color AColor)                         { MBorderColor = AColor; }
-  virtual void setBorderWidth(double AWidth)                            { MBorderWidth = AWidth; }
+  virtual void setFillGradient(bool AGradient=true) {
+    MFillGradient = AGradient;
+  }
+  
+  virtual void setGradientColors(SAT_Color AColor1, SAT_Color AColor2) {
+    MGradientColor1 = AColor1;
+    MGradientColor2 = AColor2;
+  }
+  
+  virtual void setGradientFactors(double AFactor1, double AFactor2) {
+    MGradientFactor1 = AFactor1;
+    MGradientFactor2 = AFactor2;
+  }
+  
+  virtual void setGradientColors(SAT_Color AColor, double AFactor1, double AFactor2) {
+    MGradientFactor1 = AFactor1;
+    MGradientFactor2 = AFactor2;
+    MGradientColor1 = AColor;
+    MGradientColor2 = AColor;
+    MGradientColor1.blend(SAT_White,AFactor1);
+    MGradientColor2.blend(SAT_Black,AFactor2);
+  }
+  
+  virtual void setGradientColors(SAT_Color AColor) {
+    MGradientColor1 = AColor;
+    MGradientColor2 = AColor;
+    MGradientColor1.blend(SAT_White,MGradientFactor1);
+    MGradientColor2.blend(SAT_Black,MGradientFactor2);
+  }
+  
+  // border
+
+  virtual void setDrawBorder(bool ADraw=true) {
+    MDrawBorder = ADraw;
+  }
+  
+  virtual void setBorderColor(SAT_Color AColor) {
+    MBorderColor = AColor;
+  }
+  
+  virtual void setBorderWidth(double AWidth) {
+    MBorderWidth = AWidth;
+  }
+  
+  // rounded corners
 
   virtual void setRoundedCorners(bool ARounded=true) {
     MRoundedCorners = ARounded;
@@ -101,10 +151,20 @@ public:
     MBLCorner = bottom_left;
     MDropShadowCorner = top_left;
   }
+  
+  // drop shadow
 
-  virtual void setDrawDropShadow(bool ADraw=true) { MDrawDropShadow = ADraw; }
-  virtual void setDropShadowFeather(double AValue) { MDropShadowFeather = AValue; }
-  virtual void setDropShadowCorner(double AValue) { MDropShadowCorner = AValue; }
+  virtual void setDrawDropShadow(bool ADraw=true) {
+    MDrawDropShadow = ADraw;
+  }
+  
+  virtual void setDropShadowFeather(double AValue) {
+    MDropShadowFeather = AValue;
+  }
+  
+  virtual void setDropShadowCorner(double AValue) {
+    MDropShadowCorner = AValue;
+  }
   
   virtual void setDropShadowOffset(double x, double y) {
     MDropShadowXOffset = x;

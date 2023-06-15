@@ -131,7 +131,7 @@ public:
 //------------------------------
 
   bool initEditorWindow(SAT_Window* AWindow/*, SAT_Plugin* APlugin*/) {
-    SAT_Window* window = AEditor->getWindow();
+    SAT_Window* window = AWindow; // !!
 
     // root
 
@@ -144,8 +144,8 @@ public:
 
     // header
     
-    const char* format = APlugin->getPluginFormat();
-    SAT_PluginHeaderWidget* plugin_header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,40),"botage",format);
+    //const char* format = APlugin->getPluginFormat();
+    SAT_PluginHeaderWidget* plugin_header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,SA_BOTAGE_EDITOR_WIDTH,40),"botage",""/*format*/);
     MRootWidget->appendChildWidget(plugin_header);
     
     // footer
@@ -515,13 +515,13 @@ public:
 
   //----------
 
-  void do_windowListener_set_hint(SAT_Widget* AWidget, const char* AHint) override {
+//  void do_windowListener_set_hint(SAT_Widget* AWidget, const char* AHint) override {
 //    if (strcmp(AHint,MHintWidget->getText()) != 0) {
 //      MHintWidget->setText(AHint);
 //      MHintWidget->redraw();
 //    }
-    SAT_Editor::do_windowListener_set_hint(AWidget,AHint);
-  }
+//    SAT_Editor::do_windowListener_set_hint(AWidget,AHint);
+//  }
 
 //------------------------------
 public:

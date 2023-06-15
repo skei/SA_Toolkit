@@ -2,13 +2,6 @@
 #define test_synth_included
 //----------------------------------------------------------------------
 
-//#define SAT_PLUGIN_CLAP
-//#define SAT_PLUGIN_VST2
-//#define SAT_PLUGIN_VST3
-//#define SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
-
-//----------
-
 #include "base/sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
@@ -163,8 +156,8 @@ public:
 public:
 //------------------------------
 
-  void do_editorListener_timer() final {
-    SAT_Plugin::do_editorListener_timer();
+  void do_editorListener_timer(SAT_Window* ASender, double AElapsed) final {
+    SAT_Plugin::do_editorListener_timer(ASender,AElapsed);
     //update voices widget.. (move to widget itself (+ register timer)
     // before or after sat_plugin:: ?
     for (uint32_t voice=0; voice<NUM_VOICES; voice++) {

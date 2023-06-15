@@ -84,8 +84,8 @@ struct SAT_ClapPluginExtensions {
 
 struct SAT_ClapHostExtensions {
   const clap_host_ambisonic_t*                ambisonic               = nullptr; // draft
-  const clap_host_audio_ports_config_t*       audio_ports_config      = nullptr;
   const clap_host_audio_ports_t*              audio_ports             = nullptr;
+  const clap_host_audio_ports_config_t*       audio_ports_config      = nullptr;
   const clap_host_check_for_update_t*         check_for_update        = nullptr; // draft
   const clap_host_context_menu_t*             context_menu            = nullptr; // draft
   const clap_host_cv_t*                       cv                      = nullptr; // draft

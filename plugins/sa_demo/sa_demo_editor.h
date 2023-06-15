@@ -46,7 +46,7 @@ private:
   SAT_PanelWidget*        MLeftColumn   = nullptr;
   SAT_PagesWidget*        MDemoPages    = nullptr;
   SAT_ButtonRowWidget*    MDemoButtons  = nullptr;
-
+  
 //------------------------------
 public:
 //------------------------------
@@ -92,7 +92,11 @@ public:
   
   //----------
   
-//  void do_windowListener_timer(SAT_Window* AWindow, double AElapsed) {
+  void do_windowListener_timer(SAT_Window* AWindow, double AElapsed) override {
+    SAT_Editor::do_windowListener_timer(AWindow,AElapsed);
+  }
+
+  //  void do_windowListener_timer(SAT_Window* AWindow, double AElapsed) {
 //    if (MHost->ext.track_info) {
 //      SAT_Print("track info!\n");
 //      char buf1[512] = {0};
@@ -241,6 +245,15 @@ public:
     return true;
   }
   
+//------------------------------
+public:
+//------------------------------
+
+//  void setProcessCounter(uint32_t process_counter) {
+//  }
+//  
+//  void setProcessSteadyTime(uint32_t steady_time) {
+//  }
   
 };
 

@@ -226,8 +226,8 @@ public: // gui
 public: // timer
 //------------------------------
 
-  void do_editorListener_timer() final {
-    SAT_Plugin::do_editorListener_timer();
+  void do_editorListener_timer(SAT_Window* ASender, double AElapsed) final {
+    SAT_Plugin::do_editorListener_timer(ASender,AElapsed);
     update_voices_widget(&MVoiceManager);
   }
 

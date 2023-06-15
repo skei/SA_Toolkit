@@ -1,5 +1,6 @@
 
 #include "base/sat.h"
+#include "base/utils/sat_tcc.h"
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_utils.h"
 #include "gui/sat_widgets.h"
@@ -52,7 +53,7 @@ public:
     SAT_Parameter* param2 = new SAT_Parameter("Param2", 0.75);
     appendParameter(param2);
     
-    setInitialEditorSize(600,400,2.0);
+    setInitialEditorSize(1024,768,1.333);
     return SAT_Plugin::init();
   }
   
@@ -63,36 +64,8 @@ public:
     SAT_PanelWidget* panel = new SAT_PanelWidget(0);
     window->appendRootWidget(panel);
     
-    SAT_MenuWidget* file_menu = new SAT_MenuWidget(SAT_Rect(60,55));
-      file_menu->setInnerBorder(SAT_Rect(5,5,5,5));
-      file_menu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Open"));
-      file_menu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Close"));
-      file_menu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Exit"));
-    
-    SAT_MenuWidget* edit_menu = new SAT_MenuWidget(SAT_Rect(60,55));
-      edit_menu->setInnerBorder(SAT_Rect(5,5,5,5));
-      edit_menu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Cut"));
-      edit_menu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Copy"));
-      edit_menu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Paste"));
-    
-    SAT_SelectorWidget* file_selector = new SAT_SelectorWidget(SAT_Rect(100,100,50,15),"File",file_menu);
-    panel->appendChildWidget(file_selector);
-    file_selector->setName("File");
-    file_selector->setDrawSelectedText(false);
-    file_selector->setDrawArrow(false);
-    file_selector->setTextSize(8);
-    //file_selector->setAutoSizeMenu(true);
-    
-    SAT_SelectorWidget* edit_selector = new SAT_SelectorWidget(SAT_Rect(150,100,50,15),"Edit",edit_menu);
-    panel->appendChildWidget(edit_selector);
-    edit_selector->setName("Edit");
-    edit_selector->setDrawSelectedText(false);
-    edit_selector->setDrawArrow(false);
-    edit_selector->setTextSize(8);
-    //edit_selector->setAutoSizeMenu(true);
-    
-    panel->appendChildWidget(file_menu);
-    panel->appendChildWidget(edit_menu);
+    panel->setFillGradient(true);
+    panel->setGradientColors(SAT_Green,0.2,0.2);
     
     return true;
   }

@@ -22,26 +22,22 @@ class SAT_TextWidget
 private:
 //------------------------------
 
-  bool      MDrawText         = true;
-  SAT_Color MTextColor        = SAT_White;
-  double    MTextSize         = 8.0;
-  uint32_t  MTextAlignment    = SAT_TEXT_ALIGN_CENTER;
-  SAT_Rect  MTextOffset       = {};
-  
-//  //char      MText[256]        = {0};
-//  char      MText[1024]       = {0};
+  bool        MDrawText             = true;
+  SAT_Color   MTextColor            = SAT_White;
+  double      MTextSize             = 8.0;
+  uint32_t    MTextAlignment        = SAT_TEXT_ALIGN_CENTER;
+  SAT_Rect    MTextOffset           = {};
   const char* MText = nullptr;
   
-  bool      MAutoSize         = false;
-  bool      MAutoTextSize     = false;
-  bool      MDrawParamText    = false;
-  
-  SAT_Rect    MAutoSizeBorder = SAT_Rect(0,0,0,0);
+  bool        MAutoSize             = false;
+  SAT_Rect    MAutoSizeBorder       = SAT_Rect(0,0,0,0);
+  bool        MAutoTextSize         = false;
+  bool        MDrawParamText        = false;
 
-  bool      MDrawTextDropShadow   = false;
-  double    MTextDropShadowSize   = 4.0;        //2.0;
-  SAT_Color MTextDropShadowColor  = SAT_Black;  //SAT_Color(0,0,0,0.75);
-  SAT_Point MTextDropShadowOffset = {2,2};      //{2,2};
+  bool        MDrawTextDropShadow   = false;
+  double      MTextDropShadowSize   = 4.0;
+  SAT_Color   MTextDropShadowColor  = SAT_Black;
+  SAT_Point   MTextDropShadowOffset = {2,2};
 
 //------------------------------
 public:
@@ -49,14 +45,12 @@ public:
 
   SAT_TextWidget(SAT_Rect ARect, const char* AText)
   : SAT_PanelWidget(ARect) {
-  //: SAT_MovableWidget(ARect) {
     setName("SAT_TextWidget");
-    
-    //strcpy(MText,AText);
     MText = AText;
-    
     setFillBackground(true);
   }
+  
+  //----------
 
   virtual ~SAT_TextWidget() {
   }
@@ -65,28 +59,25 @@ public:
 public:
 //------------------------------
 
-  virtual void setDrawText(bool ADraw=true)       { MDrawText = ADraw; }
-  virtual void setTextColor(SAT_Color AColor)     { MTextColor = AColor; }
-  virtual void setTextSize(double ASize)          { MTextSize = ASize; }
-  virtual void setTextAlignment(uint32_t AAlign)  { MTextAlignment = AAlign; }
-  virtual void setTextOffset(SAT_Rect AOffset)    { MTextOffset = AOffset; }
+  virtual void setDrawText(bool ADraw=true)               { MDrawText = ADraw; }
+  virtual void setTextColor(SAT_Color AColor)             { MTextColor = AColor; }
+  virtual void setTextSize(double ASize)                  { MTextSize = ASize; }
+  virtual void setTextAlignment(uint32_t AAlign)          { MTextAlignment = AAlign; }
+  virtual void setTextOffset(SAT_Rect AOffset)            { MTextOffset = AOffset; }
+  virtual void setText(const char* AText)                 { MText = AText; }
   
-  virtual void setText(const char* AText) {
-    //SAT_Print("%s\n",AText);
-    //strcpy(MText,AText);
-    MText = AText;
-  }
-  
-  virtual void setAutoSize(bool AAuto=true)       { MAutoSize = AAuto; }
-  virtual void setAutoTextSize(bool AAuto=true)   { MAutoTextSize = AAuto; }
+  virtual void setAutoSize(bool AAuto=true)               { MAutoSize = AAuto; }
+  virtual void setAutoTextSize(bool AAuto=true)           { MAutoTextSize = AAuto; }
 
   virtual void setDrawTextDropShadow(bool ADraw=true)     { MDrawTextDropShadow = ADraw; }
   virtual void setTextDropShadowSize(double ASize)        { MTextDropShadowSize = ASize; }
   virtual void setTextDropShadowColor(SAT_Color AColor)   { MTextDropShadowColor  = AColor; }
   virtual void setTextDropShadowOffset(SAT_Point AOffset) { MTextDropShadowOffset = AOffset; }
+  
+  //----------
 
-  virtual const char* getText() { return MText; }
-  virtual double  getTextSize() { return MTextSize; }
+  virtual const char* getText()     { return MText; }
+  virtual double      getTextSize() { return MTextSize; }
 
 //------------------------------
 public:
@@ -220,6 +211,7 @@ public:
     drawText(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
+    drawHostIndicators(AContext);
   }
 
 };

@@ -19,6 +19,7 @@
   // For PLUGIN kind, the location must be null.
 
   // filled in by clap_preset_discovery_provider_init_callback()
+  //TODO: SAT_GLOBAL.REGISTRY.getPresetPath
   char location_string[SAT_MAX_PATH_LENGTH] = {0};
   
   //----------
@@ -76,6 +77,7 @@
       return false;
     }
 
+    //TODO: SAT_GLOBAL.REGISTRY.getPresetPath
     SAT_GetHomePath(location_string);
     strcat(location_string,".skei.audio/");
     
