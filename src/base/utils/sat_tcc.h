@@ -22,7 +22,8 @@ file:///usr/share/doc/tcc/tcc-doc.html
 //#include <stdlib.h>
 //#include <stdio.h>
 //#include <memory.h>
-#include <libtcc.h>
+
+#include "extern/libtcc.h"
 
 /*
   /usr/lib/x86_64-linux-gnu/tcc/include
