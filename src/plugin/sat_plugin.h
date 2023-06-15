@@ -697,7 +697,9 @@ public: // gui
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
     
+    // wft is this?
     // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
+    
     if ((MInitialEditorWidth <= 0) || (MInitialEditorHeight <= 0)) {
       uint32_t num = MParameters.size();
       double w =  300 +             // slider width
@@ -710,6 +712,7 @@ public: // gui
       double s =  2.0;
       setInitialEditorSize(w,h,s);
     }
+
     uint32_t w = (double)MInitialEditorWidth * MInitialEditorScale;
     uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
     MEditor = createEditor(this,w,h);//MInitialEditorWidth,MInitialEditorHeight);
@@ -1794,10 +1797,12 @@ public: // editor
       double y = 10 + (i * 20);
       double w = width - 20;
       double h = 20;
-      SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(x,y,w,h),"slider",0.0);
+      SAT_Parameter* parameter = getParameter(i);
+      const char* name = parameter->getName();
+      SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(x,y,w,h),/*"slider"*/name,0.0);
       panel->appendChildWidget(slider);
       slider->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
-      AEditor->connect(slider,getParameter(i));
+      AEditor->connect(slider,parameter/*getParameter(i)*/);
     }
     return true;
   }
