@@ -3,11 +3,11 @@
 
 
 
-#define SAT_PLUGIN_CLAP
-#define SAT_PLUGIN_LADSPA
+//#define SAT_PLUGIN_CLAP
+//#define SAT_PLUGIN_LADSPA
 //#define SAT_PLUGIN_LV2
 //#define SAT_PLUGIN_VST2
-#define SAT_PLUGIN_VST3
+//#define SAT_PLUGIN_VST3
 
 //#define SAT_PLUGIN_ALL
 
@@ -27,6 +27,7 @@
 
 
 //#include "test/test2.h"
+#include "test/test_jit.h"
 //#include "test/test_minimal.h"
 //#include "test/test_parameters.h"
 //#include "test/test_reaper_ext.h"
@@ -121,7 +122,7 @@
 
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_plugins.h"
-#include "../plugins/sa_everything.h"
+//#include "../plugins/sa_everything.h"
 
 
 

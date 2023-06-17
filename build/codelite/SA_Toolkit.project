@@ -93,6 +93,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="build">
     <VirtualDirectory Name="test">
+      <File Name="../test/test_jit.h"/>
       <File Name="../test/test_parameters.h"/>
       <File Name="../test/test_synth_voice.h"/>
       <File Name="../test/test2.h"/>
@@ -390,6 +391,7 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="utils">
+        <File Name="../../src/base/utils/sat_4th.h"/>
         <File Name="../../src/base/utils/sat_wrench.h"/>
         <File Name="../../src/base/utils/sat_tween_manager.h"/>
         <File Name="../../src/base/utils/sat_json.h"/>

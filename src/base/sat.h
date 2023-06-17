@@ -12,6 +12,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <malloc.h>
+#include <sys/mman.h>
+
 //----------------------------------------------------------------------
 
 #ifdef __gnu_linux__

@@ -5,6 +5,10 @@
 #include "gui/sat_widgets.h"
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
@@ -35,12 +39,22 @@ class myPlugin
 private:
 //------------------------------
 
+
 //------------------------------
 public:
 //------------------------------
 
   SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin)
   
+//------------------------------
+public:
+//------------------------------
+
+  static
+  void tcc_error(void* opaque, const char* msg) {
+    printf("[TCC:ERR] %s\n", msg);
+  }
+
 //------------------------------
 public:
 //------------------------------
