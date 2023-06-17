@@ -77,6 +77,10 @@ const char* SAT_VMOpcodeNames[SAT_VM_NUM_OPCODES] = {
 };
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 class SAT_VMCompiler {
 
@@ -273,7 +277,7 @@ private:
 private:
 //------------------------------
 
-  // ( call, ) return
+  // ( name <code> )
 
   bool encode_newword(const char* token) {
     if ((strcmp(token,"(") == 0)) {
@@ -298,7 +302,7 @@ private:
 
   //----------
 
-  // &
+  // & name
 
   bool encode_newlabel(const char* token) {
     if ((strcmp(token,"&") == 0)) {
@@ -318,7 +322,7 @@ private:
 
   //----------
 
-  // %
+  // % name
 
   bool encode_newvar(const char* token) {
     if ((strcmp(token,"%") == 0)) {
@@ -338,7 +342,7 @@ private:
 
   //----------
 
-  // ? : ;
+  // cond ? if-true : if-false ;
 
   bool encode_conditional(const char* token) {
     if ((strcmp(token,"?") == 0) ) { // if
@@ -389,8 +393,8 @@ private:
 
   //----------
 
-  // <- push
-  // -> pop
+  // <- name (push)
+  // -> name (pop)
 
   bool encode_var(const char* token) {
     if ((strcmp(token,"->") == 0)) {

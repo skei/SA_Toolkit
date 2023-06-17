@@ -391,6 +391,7 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="utils">
+        <File Name="../../src/base/utils/sat_jit.h"/>
         <File Name="../../src/base/utils/sat_4th.h"/>
         <File Name="../../src/base/utils/sat_wrench.h"/>
         <File Name="../../src/base/utils/sat_tween_manager.h"/>

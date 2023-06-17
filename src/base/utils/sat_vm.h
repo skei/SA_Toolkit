@@ -169,10 +169,6 @@ public:
       #define VM_POP_call   MIP = MCallStack.pop()
       #define VM_PUSH(x)    MDataStack.push((SAT_VMValue)x)
       #define VM_POP        MDataStack.pop()
-      #define VM_DROP       MDataStack.drop()
-      #define VM_DUP        MDataStack.dup()
-      #define VM_DUP2       MDataStack.dup2()
-      #define VM_POS(x)     MCodeSegment[x]
 
       MIP = &MCodeSegment[APosition];
       VM_NEXT;
@@ -196,107 +192,96 @@ public:
         VM_PUSH( MRegisters[VM_NEXT_cell] );
         VM_NEXT;
 
-      _op_popr: // pop register
-        {
-          SAT_VMValue reg = (SAT_VMValue)VM_NEXT_cell;
-          MRegisters[reg] = (SAT_VMValue)VM_POP;
+      _op_popr: { // pop register
+        SAT_VMValue reg = (SAT_VMValue)VM_NEXT_cell;
+        MRegisters[reg] = (SAT_VMValue)VM_POP;
         VM_NEXT;
-        }
+      }
 
-      _op_pushd: // push from data
-        {
-          SAT_VMValue *dp = (SAT_VMValue*)VM_NEXT_cell;
-          VM_PUSH(*dp);
-        }
+      _op_pushd: { // push from data
+        SAT_VMValue *dp = (SAT_VMValue*)VM_NEXT_cell;
+        VM_PUSH(*dp);
         VM_NEXT;
+      }
 
-      _op_popd: // pop to data
-        {
-          SAT_VMValue *dp = (SAT_VMValue*)VM_NEXT_cell;
-          *dp = (SAT_VMValue)VM_POP;
-        }
+      _op_popd: { // pop to data
+        SAT_VMValue *dp = (SAT_VMValue*)VM_NEXT_cell;
+        *dp = (SAT_VMValue)VM_POP;
         VM_NEXT;
+      }
 
       _op_drop:
-        VM_DROP;
+        MDataStack.drop();
         VM_NEXT;
 
       _op_dup:
-        VM_DUP;
+        MDataStack.dup();
         VM_NEXT;
 
       _op_dup2:
-        VM_DUP2;
+        MDataStack.dup2();
         VM_NEXT;
 
       //----- branching -----
 
-      _op_call: // call (gosub)
-        {
-          SAT_VMValue *ip = (SAT_VMValue*)VM_NEXT_cell;
-          VM_PUSH_call;
-          MIP = ip;
-        }
+      _op_call: { // call (gosub)
+        SAT_VMValue *ip = (SAT_VMValue*)VM_NEXT_cell;
+        VM_PUSH_call;
+        MIP = ip;
         VM_NEXT;
+      }
 
       _op_ret: // return
         VM_POP_call;
         VM_NEXT;
 
-      _op_jmp: // unconditional jump (goto)
-        {
-          SAT_VMValue *ip = (SAT_VMValue*)VM_NEXT_cell;
-          MIP = ip;
-        }
+      _op_jmp: { // unconditional jump (goto)
+        SAT_VMValue *ip = (SAT_VMValue*)VM_NEXT_cell;
+        MIP = ip;
         VM_NEXT;
+      }
 
-      _op_jz: // jump if zero
-        {
-          SAT_VMValue* ip = (SAT_VMValue*)VM_NEXT_cell;
-          if ((SAT_VMValue)VM_POP == 0 ) MIP = ip;
-        }
+      _op_jz: { // jump if zero
+        SAT_VMValue* ip = (SAT_VMValue*)VM_NEXT_cell;
+        if ((SAT_VMValue)VM_POP == 0 ) MIP = ip;
         VM_NEXT;
+      }
 
-      _op_jnz: // jump if not zero
-        {
-          SAT_VMValue* ip = (SAT_VMValue*)VM_NEXT_cell;
-          if ((SAT_VMValue)VM_POP != 0) MIP = ip;
-        }
+      _op_jnz: { // jump if not zero
+        SAT_VMValue* ip = (SAT_VMValue*)VM_NEXT_cell;
+        if ((SAT_VMValue)VM_POP != 0) MIP = ip;
         VM_NEXT;
+      }
 
       //----- conditional -----
 
-      _op_eq: // equal
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 == v1));
-        }
+      _op_eq: { // equal
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 == v1));
         VM_NEXT;
+      }
 
-      _op_gr: // greater
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 > v1));
-        }
+      _op_gr: { // greater
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 > v1));
         VM_NEXT;
+      }
 
-      _op_le: // less
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 < v1));
-        }
+      _op_le: { // less
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 < v1));
         VM_NEXT;
+      }
 
-      _op_ne: // not equal
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 != v1));
-        }
+      _op_ne: { // not equal
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 != v1));
         VM_NEXT;
+      }
 
       //_op_feq: {
       //}
@@ -312,37 +297,33 @@ public:
 
       //----- math -----
 
-      _op_add: // s += s2
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 + v1));
-        }
+      _op_add: { // s += s2
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 + v1));
         VM_NEXT;
+      }
 
-      _op_sub: // s -= s2
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 - v1));
-        }
+      _op_sub: { // s -= s2
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 - v1));
         VM_NEXT;
+      }
 
-      _op_mul: // s *= s2
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 * v1));
-        }
+      _op_mul: { // s *= s2
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 * v1));
         VM_NEXT;
+      }
 
-      _op_div: // s /= s2
-        {
-          SAT_VMValue v1 = (SAT_VMValue)VM_POP;
-          SAT_VMValue v2 = (SAT_VMValue)VM_POP;
-          VM_PUSH((v2 / v1));
-        }
+      _op_div: { // s /= s2
+        SAT_VMValue v1 = (SAT_VMValue)VM_POP;
+        SAT_VMValue v2 = (SAT_VMValue)VM_POP;
+        VM_PUSH((v2 / v1));
         VM_NEXT;
+      }
 
       //_op_fadd: {
       //  }
@@ -356,41 +337,35 @@ public:
       //_op_fdiv: {
       //  }
 
-      _op_inc: // s += 1
-        {
-          SAT_VMValue* top = (SAT_VMValue*)MDataStack.getTop();
-          *top += 1;
-        }
+      _op_inc: { // s += 1
+        SAT_VMValue* top = (SAT_VMValue*)MDataStack.getTop();
+        *top += 1;
         VM_NEXT;
+      }
 
-      _op_dec: // s -= 1
-        {
-          SAT_VMValue* top = (SAT_VMValue*)MDataStack.getTop();
-          *top -= 1;
-        }
+      _op_dec: { // s -= 1
+        SAT_VMValue* top = (SAT_VMValue*)MDataStack.getTop();
+        *top -= 1;
         VM_NEXT;
+      }
 
       //----- io -----
 
-      _op_print: // print (int)
-        {
-          SAT_VMValue v = (SAT_VMValue)VM_POP;
-          //printf("%i\n",(int)v);
-          SAT_DPrint("%i\n",(int)v);
-        }
+      _op_print: { // print (int)
+        SAT_VMValue v = (SAT_VMValue)VM_POP;
+        //printf("%i\n",(int)v);
+        SAT_DPrint("%i\n",(int)v);
         VM_NEXT;
+      }
 
       //----- external -----
 
-      // call external
-
-      _op_ext: // call external
-        {
-          SAT_VMValue external = (SAT_VMValue)VM_POP;
-          MExternals[external](this);
-        }
+      _op_ext: { // call external
+        SAT_VMValue external = (SAT_VMValue)VM_POP;
+        MExternals[external](this);
         VM_NEXT;
-
+      }
+      
       //------------------------------
 
       #undef VM_NEXT
@@ -399,10 +374,6 @@ public:
       #undef VM_POP_call
       #undef VM_PUSH
       #undef VM_POP
-      #undef VM_DROP
-      #undef VM_DUP
-      #undef VM_DUP2
-      #undef VM_POS
 
     } // execute
 
