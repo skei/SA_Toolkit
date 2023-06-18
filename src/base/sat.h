@@ -13,7 +13,7 @@
 #include <time.h>
 
 #include <malloc.h>
-#include <sys/mman.h>
+//#include <sys/mman.h> // -> sat_linux.h
 
 //----------------------------------------------------------------------
 

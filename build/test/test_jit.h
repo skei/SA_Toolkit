@@ -11,10 +11,10 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t myDescriptor = {
+const clap_plugin_descriptor_t test_jit_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/myPlugin/0.0.1",
-  .name         = "myPlugin",
+  .id           = "me/test_jit",
+  .name         = "test_jit",
   .vendor       = "skei.audio",
   .url          = "",
   .manual_url   = "",
@@ -33,7 +33,7 @@ const clap_plugin_descriptor_t myDescriptor = {
 //
 //----------------------------------------------------------------------
 
-class myPlugin
+class test_jit_plugin
 : public SAT_Plugin {
   
 //------------------------------
@@ -45,7 +45,7 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin)
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(test_jit_plugin)
   
 //------------------------------
 public:
@@ -74,7 +74,7 @@ public:
     SAT_Parameter* param2 = new SAT_Parameter("Param2", 0.75);
     appendParameter(param2);
     
-    setInitialEditorSize(1024,768,1.333);
+    setInitialEditorSize(600,400,1.333);
     
     return SAT_Plugin::init();
   }
@@ -119,5 +119,7 @@ public:
 //
 //----------------------------------------------------------------------
 
-#include "plugin/sat_entry.h"
-SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
+#ifndef SAT_NO_ENTRY
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(test_jit_descriptor,test_jit_plugin)
+#endif

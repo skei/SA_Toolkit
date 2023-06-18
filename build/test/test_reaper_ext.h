@@ -1,7 +1,6 @@
 #include "base/sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/clap/sat_clap.h"
-#include "plugin/sat_entry.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
 #include "gui/sat_widgets.h"
@@ -22,30 +21,30 @@ typedef struct reaper_plugin_info_t {
 
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t myDescriptor = {
+const clap_plugin_descriptor_t test_reaper_ext_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/myPlugin/0",
-  .name         = "myPlugin",
-  .vendor       = "skei.audio",
-  .url          = "",
+  .id           = SAT_VENDOR "/test_reaper_ext",
+  .name         = "test_reaper_ext",
+  .vendor       = SAT_VENDOR,
+  .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
-  .version      = "0",
-  .description  = "a nice plugin",
+  .version      = SAT_VERSION,
+  .description  = "",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
 
-class myPlugin
+class test_reaper_ext_plugin
 : public SAT_Plugin {
   
 public:
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin)
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(test_reaper_ext_plugin)
 
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioInputPort();
+    appendStereoAudioOutputPort();
     setInitialEditorSize(300,120,3.0);
     SAT_Parameter* param = new SAT_Parameter("Param1", 0.3);
     param->setFlag(CLAP_PARAM_IS_MODULATABLE);
@@ -90,4 +89,7 @@ public:
   
 };
 
-SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
+#ifndef SAT_NO_ENTRY
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(test_reaper_ext_descriptor,test_reaper_ext_plugin)
+#endif
