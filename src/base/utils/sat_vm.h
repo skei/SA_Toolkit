@@ -184,7 +184,7 @@ public:
 
       //----- stack -----
 
-      _op_push: // psh const
+      _op_push: // push const
         VM_PUSH(VM_NEXT_cell);
         VM_NEXT;
 

@@ -13,12 +13,16 @@
 //
 //----------------------------------------------------------------------
 
-#define ENABLE_DEBUG_PRINT
+//#define ENABLE_DEBUG_PRINT
 
 //----------
 
 #define SAT_JIT_MAX_REGS    4
 #define SAT_JIT_MAX_LABELS  5
+
+//----------
+
+typedef void (*SAT_JitEntryPoint)(void);
 
 //------------------------------
 //
@@ -75,13 +79,16 @@ enum {
   SAT_JIT_X86_JNZ = 0x75,
   };
 
-
 //------------------------------
 //
 //------------------------------
 
-typedef void (*SAT_JitEntryPoint)(void);
-
+struct SAT_JitOpDef {
+  const char* name;
+  uint32_t    args_num;
+  const char* args_spec;
+};
+  
 //----------
 
 union SAT_JitOpcode {
@@ -94,20 +101,37 @@ union SAT_JitOpcode {
   uint64_t raw;
 };
 
-//----------
+//------------------------------
+//
+//------------------------------
 
-struct SAT_JitBytecode {
-  SAT_JitOpcode* opcodes;
+/*
+  i immediate
+  l label
+  r register
+  c condition
+*/
+
+const SAT_JitOpDef op_defs[SAT_JIT_OP__MAX] = {
+  { .name = /*"OP_*/"EOF",     .args_num = 0,  .args_spec = ""   },
+  { .name = /*"OP_*/"MARK",    .args_num = 1,  .args_spec = "i"  },
+  { .name = /*"OP_*/"LABEL",   .args_num = 1,  .args_spec = "l"  },
+  { .name = /*"OP_*/"BRANCH",  .args_num = 2,  .args_spec = "cl" },
+  { .name = /*"OP_*/"EXIT",    .args_num = 1,  .args_spec = "i"  },
+  { .name = /*"OP_*/"CMP",     .args_num = 2,  .args_spec = "rr" },
+  { .name = /*"OP_*/"LOADI",   .args_num = 2,  .args_spec = "ri" },
+  { .name = /*"OP_*/"LOAD",    .args_num = 2,  .args_spec = "rr" },
+  { .name = /*"OP_*/"STORE",   .args_num = 2,  .args_spec = "rr" },
+  { .name = /*"OP_*/"ADD",     .args_num = 2,  .args_spec = "rr" },
+  { .name = /*"OP_*/"SUB",     .args_num = 2,  .args_spec = "rr" }
 };
 
 //----------
 
-struct SAT_JitCompiledCode {
-  SAT_JitBytecode*  bytecode;
-  uint32_t          alloc_len;
-  SAT_JitEntryPoint entry;
-  void*             compiled_code;
-  uint32_t          compiled_code_len;
+const char* SAT_JitCondNames[SAT_JIT_BC__MAX] = {
+  "BC_ALWAYS",
+  "BC_EQUAL",
+  "BC_NOTEQUAL",
 };
 
 //----------------------------------------------------------------------
@@ -122,35 +146,10 @@ class SAT_Jit {
 private:
 //------------------------------
 
-  struct SAT_JitOpDef {
-    const char* name;
-    uint32_t    args_num;
-    const char* args_spec;
-  };
-  
-  //----------
-  
-  const SAT_JitOpDef op_defs[SAT_JIT_OP__MAX] = {
-    { .name = "OP_EOF",     .args_num = 0,  .args_spec = ""   },
-    { .name = "OP_MARK",    .args_num = 1,  .args_spec = "i"  },
-    { .name = "OP_LABEL",   .args_num = 1,  .args_spec = "l"  },
-    { .name = "OP_BRANCH",  .args_num = 2,  .args_spec = "cl" },
-    { .name = "OP_EXIT",    .args_num = 1,  .args_spec = "i"  },
-    { .name = "OP_CMP",     .args_num = 2,  .args_spec = "rr" },
-    { .name = "OP_LOADI",   .args_num = 2,  .args_spec = "ri" },
-    { .name = "OP_LOAD",    .args_num = 2,  .args_spec = "rr" },
-    { .name = "OP_STORE",   .args_num = 2,  .args_spec = "rr" },
-    { .name = "OP_ADD",     .args_num = 2,  .args_spec = "rr" },
-    { .name = "OP_SUB",     .args_num = 2,  .args_spec = "rr" }
-  };
-
-  //----------
-  
-  const char* SAT_JitCondNames[SAT_JIT_BC__MAX] = {
-    "BC_ALWAYS",
-    "BC_EQUAL",
-    "BC_NOTEQUAL",
-  };
+  uint32_t          m_alloc_size          = 0;
+  uint32_t          m_compiled_code_size  = 0;
+  void*             m_compiled_code       = nullptr;
+  SAT_JitEntryPoint m_entrypoint          = nullptr;
 
 //------------------------------
 public:
@@ -162,10 +161,27 @@ public:
   //----------
 
   ~SAT_Jit() {
+    if (m_compiled_code) free(m_compiled_code);
+//  if (m_Sourcecode) free(m_Sourcecode);
+//  if (m_Opcodes) delete[] m_Opcodes;
+//  // delete words
+//  // delete labels
   }
 
 //------------------------------
 public:
+//------------------------------
+
+  void* getCompiledCode() {
+    return m_compiled_code;
+  }
+  
+  uint32_t getCompiledCodeSize() {
+    return m_compiled_code_size;
+  }
+
+//------------------------------
+public: // interpreter
 //------------------------------
 
   // Get total instruction length (in number of qwords)
@@ -184,7 +200,7 @@ public:
 
   // Get the value of an argument from encoded instruction
  
-  uint64_t getArg(SAT_JitOpcode *opcode, uint32_t arg) {
+  uint64_t getOpcodeArg(SAT_JitOpcode *opcode, uint32_t arg) {
     assert(arg < 3);
     if (!(opcode->args_map & (1 << arg))) {
       // Operand is encoded with instruction
@@ -209,10 +225,10 @@ public:
     if (opcode->op == SAT_JIT_OP_MARK) {
       SAT_DPrint("  >>> ");
     } else {
-      SAT_DPrint("  %-9s", op_def->name+3);
+      SAT_DPrint("  %-9s", op_def->name/*+3*/);
     }
     for (uint32_t j = 0; j < op_def->args_num; j++) {
-      uint64_t operand_value = getArg(opcode, j);
+      uint64_t operand_value = getOpcodeArg(opcode, j);
       if (j > 0) {
         SAT_DPrint(", ");
       }
@@ -230,10 +246,10 @@ public:
   
   //----------
 
-   void printOpcodes(SAT_JitBytecode *bytecode) {
-    SAT_DPrint("> Code at %p\n", (void*)bytecode);
+   void printOpcodes(SAT_JitOpcode* opcodes) {
+    SAT_DPrint("> Code at %p\n", (void*)opcodes);
     for (uint32_t i = 0; true; ) {
-      SAT_JitOpcode *opcode = &bytecode->opcodes[i];
+      SAT_JitOpcode *opcode = &opcodes[i];
       if (opcode->op == SAT_JIT_END_OF_CODE) {
         break;
       }
@@ -246,28 +262,28 @@ public:
 public: // interpreter
 //------------------------------
 
-  void interpret(SAT_JitBytecode *bytecode) {
+  void interpret(SAT_JitOpcode* opcodes) {
     uint64_t regs[SAT_JIT_MAX_REGS];
     uint64_t labels[SAT_JIT_MAX_LABELS];
     uint64_t cmp_values[2];
     bool run = true;
-    SAT_DPrint("> Interpreting Code at %p\n", (void*)bytecode);
+    SAT_DPrint("> Interpreting Code at %p\n", (void*)opcodes);
     memset(regs, 0, sizeof(regs));
     
     // Do a quick first pass to find labels
     for (uint32_t i = 0; true; ) {
-      SAT_JitOpcode *opcode = &bytecode->opcodes[i];
+      SAT_JitOpcode *opcode = &opcodes[i];
       if (opcode->op == SAT_JIT_END_OF_CODE) {
         break;
       }
       if (opcode->op == SAT_JIT_OP_LABEL) {
-        labels[getArg(opcode, 0)] = i;
+        labels[getOpcodeArg(opcode, 0)] = i;
       }
       i += getOpcodeLength(opcode);
     }
     
     for (uint32_t i = 0; run; ) {
-      SAT_JitOpcode *opcode = &bytecode->opcodes[i];
+      SAT_JitOpcode *opcode = &opcodes[i];
       bool set_pc = false;
       if (opcode->op == SAT_JIT_END_OF_CODE) {
         break;
@@ -285,8 +301,8 @@ public: // interpreter
           // Note: we already grabbed these in the first pass, so just ignore.
           break;
         case SAT_JIT_OP_BRANCH: {
-          uint32_t target = labels[getArg(opcode, 1)];
-          switch (getArg(opcode, 0)) {
+          uint32_t target = labels[getOpcodeArg(opcode, 1)];
+          switch (getOpcodeArg(opcode, 0)) {
           case SAT_JIT_BC_ALWAYS:
             i = target;
             set_pc = true;
@@ -310,23 +326,23 @@ public: // interpreter
           run = false;
           break;
         case SAT_JIT_OP_CMP:
-          cmp_values[0] = regs[getArg(opcode, 0)];
-          cmp_values[1] = regs[getArg(opcode, 1)];
+          cmp_values[0] = regs[getOpcodeArg(opcode, 0)];
+          cmp_values[1] = regs[getOpcodeArg(opcode, 1)];
           break;
         case SAT_JIT_OP_LOADI:
-          regs[getArg(opcode, 0)] = getArg(opcode, 1);
+          regs[getOpcodeArg(opcode, 0)] = getOpcodeArg(opcode, 1);
           break;
         case SAT_JIT_OP_LOAD:
-          regs[getArg(opcode, 0)] = *(uint64_t*)regs[getArg(opcode, 1)];
+          regs[getOpcodeArg(opcode, 0)] = *(uint64_t*)regs[getOpcodeArg(opcode, 1)];
           break;
         case SAT_JIT_OP_STORE:
-           *(uint64_t*)regs[getArg(opcode, 0)] = regs[getArg(opcode, 1)];
+           *(uint64_t*)regs[getOpcodeArg(opcode, 0)] = regs[getOpcodeArg(opcode, 1)];
           break;
         case SAT_JIT_OP_ADD:
-          regs[getArg(opcode, 0)] += regs[getArg(opcode, 1)];
+          regs[getOpcodeArg(opcode, 0)] += regs[getOpcodeArg(opcode, 1)];
           break;
         case SAT_JIT_OP_SUB:
-          regs[getArg(opcode, 0)] -= regs[getArg(opcode, 1)];
+          regs[getOpcodeArg(opcode, 0)] -= regs[getOpcodeArg(opcode, 1)];
           break;
         default:
           // Not supported yet!
@@ -427,30 +443,31 @@ public: // compiler
 
   // Compile bytecode to x86-64
    
-  SAT_JitCompiledCode* compile(SAT_JitBytecode* bytecode) {
-    SAT_DPrint("> Compiling Code at %p to x86-64\n", (void*)bytecode);
-    SAT_JitCompiledCode *compiled_code = (SAT_JitCompiledCode *)malloc(sizeof(SAT_JitCompiledCode));
-    assert(compiled_code != NULL);
-    
+  bool compile(SAT_JitOpcode* opcodes) {
+    SAT_DPrint("> Compiling Code at %p to x86-64\n", (void*)opcodes);
+
     // Allocate guest memory aligned on a page boundary
     long pagesize = sysconf(_SC_PAGE_SIZE);
-    //SAT_DPrint("pagesize %i\n",pagesize);
     assert(pagesize != -1);
-    compiled_code->alloc_len = pagesize;
-    compiled_code->bytecode = bytecode;
-    compiled_code->compiled_code = memalign(pagesize, compiled_code->alloc_len);
-    assert(compiled_code->compiled_code != NULL);
+
+    m_alloc_size = pagesize;
+    m_compiled_code = memalign(pagesize, 4096/*m_alloc_size*/);
+    assert(m_compiled_code != NULL);
     
-    uint8_t *b = (uint8_t *)compiled_code->compiled_code;
     uint32_t n = 0;
+    uint8_t *b = (uint8_t *)m_compiled_code;
+
     int labels[SAT_JIT_MAX_LABELS];
+    
     // Save values of gpregs
     n += x86_enc_push(&b[n], SAT_JIT_X86_REG_RAX);
     n += x86_enc_push(&b[n], SAT_JIT_X86_REG_RBX);
     n += x86_enc_push(&b[n], SAT_JIT_X86_REG_RCX);
     n += x86_enc_push(&b[n], SAT_JIT_X86_REG_RDX);
+    
     for (uint32_t i = 0; true; ) {
-      SAT_JitOpcode *opcode = &bytecode->opcodes[i];
+
+      SAT_JitOpcode *opcode = &opcodes[i];
       if (opcode->op == SAT_JIT_END_OF_CODE) {
         break;
       }
@@ -464,12 +481,12 @@ public: // compiler
           break;
         case SAT_JIT_OP_LABEL:
           // FIXME: Check for overflow
-          labels[getArg(opcode, 0)] = n;
+          labels[getOpcodeArg(opcode, 0)] = n;
           break;
         case SAT_JIT_OP_BRANCH: {
           // FIXME: Does not yet support forward jumps! Add fix-up table
-          int target = labels[getArg(opcode, 1)] - n;
-          switch (getArg(opcode, 0)) {
+          int target = labels[getOpcodeArg(opcode, 1)] - n;
+          switch (getOpcodeArg(opcode, 0)) {
             case SAT_JIT_BC_ALWAYS:
               n += x86_enc_jmp(&b[n], SAT_JIT_X86_JMP, target);
               break;
@@ -493,36 +510,36 @@ public: // compiler
           n += x86_enc_ret(&b[n]);
           break;
         case SAT_JIT_OP_CMP: {
-          int reg1 = getArg(opcode, 0);
-          int reg2 = getArg(opcode, 1);
+          int reg1 = getOpcodeArg(opcode, 0);
+          int reg2 = getOpcodeArg(opcode, 1);
           assert(reg1 < 4 && reg2 < 4); // Don't support other regs yet!
           n += x86_enc_alu(&b[n], SAT_JIT_X86_OP_CMP, SAT_JIT_X86_REG_RAX+reg1, SAT_JIT_X86_REG_RAX+reg2);
           break;        
         }
         case SAT_JIT_OP_LOADI: {
-          int dest = getArg(opcode, 0);
-          uint64_t value = getArg(opcode, 1);
+          int dest = getOpcodeArg(opcode, 0);
+          uint64_t value = getOpcodeArg(opcode, 1);
           assert(dest < 4); // Don't support other regs yet!
           n += x86_enc_movri(&b[n], SAT_JIT_X86_REG_RAX+dest, value);
           break;
         }
         case SAT_JIT_OP_ADD: {
-          int reg1 = getArg(opcode, 0);
-          int reg2 = getArg(opcode, 1);
+          int reg1 = getOpcodeArg(opcode, 0);
+          int reg2 = getOpcodeArg(opcode, 1);
           assert(reg1 < 4 && reg2 < 4); // Don't support other regs yet!
           n += x86_enc_alu(&b[n], SAT_JIT_X86_OP_ADD, SAT_JIT_X86_REG_RAX+reg1, SAT_JIT_X86_REG_RAX+reg2);
           break;
         }
         case SAT_JIT_OP_LOAD: {
-          int dest = getArg(opcode, 0);
-          int src = getArg(opcode, 1);
+          int dest = getOpcodeArg(opcode, 0);
+          int src = getOpcodeArg(opcode, 1);
           assert(dest < 4 && src < 4); // Don't support other regs yet!
           n += x86_enc_movrm(&b[n], SAT_JIT_X86_REG_RAX+dest, SAT_JIT_X86_REG_RAX+src);
           break;
         }
         case SAT_JIT_OP_STORE: {
-          int dest = getArg(opcode, 0);
-          int src = getArg(opcode, 1);
+          int dest = getOpcodeArg(opcode, 0);
+          int src = getOpcodeArg(opcode, 1);
           assert(dest < 4 && src < 4); // Don't support other regs yet!
           n += x86_enc_movmr(&b[n], SAT_JIT_X86_REG_RAX+dest, SAT_JIT_X86_REG_RAX+src);
           break;
@@ -531,36 +548,38 @@ public: // compiler
           // Not supported yet!
           assert(0);
       } // switch
+      
       i += getOpcodeLength(opcode);
+      
     } // for
+    
     SAT_DPrint("> Done\n");
-    compiled_code->compiled_code_len = n;
-    compiled_code->entry = (SAT_JitEntryPoint)compiled_code->compiled_code;
-    int status = mprotect(b, compiled_code->alloc_len, PROT_EXEC | PROT_READ);
-    //SAT_DPrint("mprotect status %i\n",status);
+    m_compiled_code_size = n;
+    m_entrypoint = (SAT_JitEntryPoint)m_compiled_code;
+    int status = mprotect(b, m_alloc_size, PROT_EXEC | PROT_READ);
     assert(status != -1);
-    return compiled_code;
+    return m_compiled_code;
   }
   
   //----------
 
   // Execute the compiled code
    
-  void execute(SAT_JitCompiledCode *compiled_code) {
-    SAT_DPrint("> Executing x86-64 code at %p\n", (void*)compiled_code);
-    compiled_code->entry();
+  void execute() {
+    SAT_DPrint("> Executing x86-64 code at %p\n", (void*)m_compiled_code);
+    m_entrypoint();
     SAT_DPrint("> Done\n");
   }
 
 };
 
-//------------------------------
+//----------------------------------------------------------------------
 //
 // JIT Test
 //
-//------------------------------
+//----------------------------------------------------------------------
 
-int jit_magic_value = 0xCACACACA;
+int test_jit_magic_value = 0xCACACACA;
 
 //----------
 
@@ -583,17 +602,18 @@ int jit_magic_value = 0xCACACACA;
   EXIT     0                    // exit
 */
 
-SAT_JitOpcode test_jit_code[] = {
+SAT_JitOpcode test_jit_opcodes[] = {
+//        8                              8            16,16             64
   { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 0, 1 }},
   { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 1, 5 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 3    }}, { .raw = (uint64_t)&jit_magic_value },
+  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 3    }}, { .raw = (uint64_t)&test_jit_magic_value },
   { .op = SAT_JIT_OP_LOAD,   .args_map = 0, .args = { 3, 3 }},
   { .op = SAT_JIT_OP_LABEL,  .args_map = 0, .args = { 0    }},
   { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 3, 0 }},
   { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 2, 0 }},
   { .op = SAT_JIT_OP_CMP,    .args_map = 0, .args = { 1, 2 }},
   { .op = SAT_JIT_OP_BRANCH, .args_map = 0, .args = { SAT_JIT_BC_NOTEQUAL, 0 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 0    }}, { .raw = (uint64_t)&jit_magic_value },
+  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 0    }}, { .raw = (uint64_t)&test_jit_magic_value },
   { .op = SAT_JIT_OP_STORE,  .args_map = 0, .args = { 0, 3 }},
   { .op = SAT_JIT_OP_EXIT                                   },
   { .op = SAT_JIT_END_OF_CODE                               }
@@ -601,13 +621,15 @@ SAT_JitOpcode test_jit_code[] = {
 
 //----------
 
-SAT_JitBytecode test_jit_bytecode = {
-  .opcodes = test_jit_code,
-};
+//SAT_JitBytecode test_jit_bytecode = {
+//  .opcodes = test_jit_code,
+//};
   
-//------------------------------
+//----------------------------------------------------------------------
 //
-//------------------------------
+//
+//
+//----------------------------------------------------------------------
 
 #define ENABLE_PPRINT
 #define ENABLE_INTERPRETER
@@ -622,41 +644,45 @@ void test_jit() {
   SAT_Jit JIT = {};
 
   #ifdef ENABLE_PPRINT
-    JIT.printOpcodes(&test_jit_bytecode);
+    JIT.printOpcodes(test_jit_opcodes);
   #endif
 
   #ifdef ENABLE_BYTECODE_DUMP
-    uint32_t len = 0;
-    for (len = 0; true; ) {
-      SAT_JitOpcode *opcode = &test_jit_bytecode.opcodes[len];
-      len += JIT.getOpcodeLength(opcode);
+    // count size
+    uint32_t num = 0;
+    for (num = 0; true; ) {
+      SAT_JitOpcode* opcode = &test_jit_opcodes[num];
+      num += JIT.getOpcodeLength(opcode);
       if (opcode->op == SAT_JIT_END_OF_CODE) {
         break;
       }
     }
+    // write to file
     FILE* bf = fopen("bytecode.bin", "wb");
-    fwrite(test_jit_bytecode.opcodes, 1, len*8, bf);
+    fwrite(test_jit_opcodes, 1, num*8, bf);
     fclose(bf);
   #endif
 
   #ifdef ENABLE_INTERPRETER
-    jit_magic_value = 0xDEADC0D9;
-    SAT_DPrint("Magic value before is %x\n", jit_magic_value);
-    JIT.interpret(&test_jit_bytecode);
-    SAT_DPrint("Magic value after is %x\n", jit_magic_value);
+    test_jit_magic_value = 0xDEADC0D9;
+    SAT_DPrint("Magic value before is %x\n", test_jit_magic_value);
+    JIT.interpret(test_jit_opcodes);
+    SAT_DPrint("Magic value after is %x\n", test_jit_magic_value);
   #endif
 
   #ifdef ENABLE_JIT
-    SAT_JitCompiledCode *compiled_code = JIT.compile(&test_jit_bytecode);
+    JIT.compile(test_jit_opcodes);
+    void* code = JIT.getCompiledCode();
+    uint32_t codesize = JIT.getCompiledCodeSize();
     #ifdef ENABLE_COMPILED_DUMP
       FILE* cf = fopen("executable.bin", "wb");
-      fwrite(compiled_code->compiled_code, 1, compiled_code->compiled_code_len, cf);
+      fwrite(code, 1, codesize, cf);
       fclose(cf);
     #endif
-    jit_magic_value = 0xDEADC0D9;
-    SAT_DPrint("Magic value before is %x\n", jit_magic_value);
-    JIT.execute(compiled_code);
-    SAT_DPrint("Magic value after is %x\n", jit_magic_value);
+    test_jit_magic_value = 0xDEADBEEA;
+    SAT_DPrint("Magic value before is %x\n", test_jit_magic_value);
+    JIT.execute();
+    SAT_DPrint("Magic value after is %x\n", test_jit_magic_value);
   #endif
   
 }

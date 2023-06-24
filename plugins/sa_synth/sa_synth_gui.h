@@ -291,6 +291,10 @@ const char* sa_synth_flt_type_text[5] = {
 //    }
 
   void update_voices_widget(sa_synth_voice_manager* AVoiceManager) {
+    
+    //SAT_DPrint("playing %i released %i max %i\n",AVoiceManager->getNumPlayingVoices(),AVoiceManager->getNumReleasedVoices(),NUM_VOICES);
+    //TODO: update gui text widgets..
+    
     for (uint32_t voice=0; voice<NUM_VOICES; voice++) {
       uint32_t state = AVoiceManager->getVoiceState(voice);
       MVoicesWidget->setVoiceState(voice,state);

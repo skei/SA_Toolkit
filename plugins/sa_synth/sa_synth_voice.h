@@ -90,7 +90,7 @@ public:
   uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
     //SAT_ParameterArray* parameters = MContext->process_context->parameters;
     float* buffer = MContext->voice_buffer;
-    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
+    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE); // dynamic, current max buffer size (from plugin.activate)?
     buffer += AOffset;
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {

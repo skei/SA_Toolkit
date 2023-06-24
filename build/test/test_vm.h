@@ -1,6 +1,5 @@
 
 #include "base/sat.h"
-#include "base/utils/sat_jit.h"
 #include "base/utils/sat_vm.h"
 #include "base/utils/sat_vm_compiler.h"
 #include "plugin/sat_plugin.h"
@@ -13,10 +12,10 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t test_jit_descriptor = {
+const clap_plugin_descriptor_t test_vm_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/test_jit",
-  .name         = "test_jit",
+  .id           = "me/test_vm",
+  .name         = "test_vm",
   .vendor       = "skei.audio",
   .url          = "",
   .manual_url   = "",
@@ -35,7 +34,7 @@ const clap_plugin_descriptor_t test_jit_descriptor = {
 //
 //----------------------------------------------------------------------
 
-class test_jit_plugin
+class test_vm_plugin
 : public SAT_Plugin {
   
 //------------------------------
@@ -47,7 +46,7 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(test_jit_plugin)
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(test_vm_plugin)
   
 //------------------------------
 public:
@@ -64,7 +63,7 @@ public:
 
   bool init() final {
     
-    test_jit();
+    //test_vm();
     
     registerDefaultExtensions();    
     appendStereoAudioInputPort();
@@ -89,7 +88,7 @@ public:
     window->appendRootWidget(panel);
     
     panel->setFillGradient(true);
-    panel->setGradientColors(SAT_Green,0.2,0.2);
+    panel->setGradientColors(SAT_DarkLime,0.2,0.2);
     
     return true;
   }
@@ -123,5 +122,5 @@ public:
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(test_jit_descriptor,test_jit_plugin)
+  SAT_PLUGIN_ENTRY(test_vm_descriptor,test_vm_plugin)
 #endif

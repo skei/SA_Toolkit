@@ -33,45 +33,41 @@ class SAT_Parameter {
 protected:
 //------------------------------
 
-  clap_param_info_t MInfo                           = {0};
+  clap_param_info_t MInfo                           = {0};        // clap info
 
-  int32_t           MIndex                          = -1;
-  void*             MWidget                         = nullptr;
-  uint32_t          MWidgetIndex                    = 0;
+  int32_t           MIndex                          = -1;         // indec (plugin parameters)
+  void*             MWidget                         = nullptr;    // connected widget
+  uint32_t          MWidgetIndex                    = 0;          // 'sub' control of widget it is connected to
   
-  sat_param_t       MValue                          = 0.0;
-  sat_param_t       MModulation                     = 0.0;
+  sat_param_t       MValue                          = 0.0;        // current parameter value (clap-space)
+  sat_param_t       MModulation                     = 0.0;        // current modulation value (added (and clamped) to parameter value)
   
+  uint32_t          MNumDigits                      = 2;          // num digits to display (gui)
+  char              MValueText[SAT_MAX_NAME_LENGTH] = {0};        // text version of value (for gui display)
+
+  bool              MIsMapped                       = false;      // is parameter mapped to a remote control?  (from clap host)
+  SAT_Color         MMappedColor                    = SAT_White;  // mapped color
+  const char*       MMappedLabel                    = "";         // label
+  const char*       MMappedDesc                     = "";         // description
+  
+  uint32_t          MAutomationState                = CLAP_PARAM_INDICATION_AUTOMATION_NONE;  // parameter automation state (from clap host)
+  SAT_Color         MAutomationColor                = SAT_White;  // color
+  
+  uint32_t          MModulationState                = 0;          // same as automation, but for modulation
+  SAT_Color         MModulationColor                = SAT_White;  //
+
+  bool              MGuiAutomationDirty             = false;      // do we need to redraw the parameter, because the value is 'dirty'?
+  bool              MGuiModulationDirty             = false;      // --"-- modulation --"--
+  
+  double            MLastAutomatedValue             = 0.0;        // last automation value received (for gui painting)
+  double            MLastModulatedValue             = 0.0;        // last modulation value received (for gui painting)
+
 //  sat_param_t       MSmoothValue                    = 0.0;
 //  sat_param_t       MSmoothFactor                   = 1.0;
-
-  uint32_t          MNumDigits                      = 2;
-  char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
-
-  uint32_t          MModulationState                = 0;
-  SAT_Color         MModulationColor                = SAT_White;
-
-  bool              MIsMapped                       = false;
-  SAT_Color         MMappedColor                    = SAT_White;
-  const char*       MMappedLabel                    = "";
-  const char*       MMappedDesc                     = "";
-  
-  uint32_t          MAutomationState                = CLAP_PARAM_INDICATION_AUTOMATION_NONE;
-  SAT_Color         MAutomationColor                = SAT_White;
-  
-  bool                MGuiAutomationDirty           = false;
-  bool                MGuiModulationDirty           = false;
-  
-  double              MLastAutomatedValue           = 0.0;
-  double              MLastModulatedValue           = 0.0;
-
-//int32_t           MLastPainted                    = -1;
-//int32_t           MLastModulated                  = 0;
-//int32_t           MLastUpdated                    = 0;
-//double            MLastUpdatedValue               = 0.0;
-
-
-
+//  int32_t           MLastPainted                    = -1;
+//  int32_t           MLastModulated                  = 0;
+//  int32_t           MLastUpdated                    = 0;
+//  double            MLastUpdatedValue               = 0.0;
 
 //------------------------------
 public:

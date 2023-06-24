@@ -25,7 +25,7 @@
 #define EDITOR_WIDTH  225
 #define EDITOR_HEIGHT 145
 #define EDITOR_SCALE  3.0
-#define NUM_VOICES    64
+#define NUM_VOICES    256
 
 // 1024 / 64 = 16 mod events per block, per voice, per parameter
 // 16 * 32 = 512 events, per parameter

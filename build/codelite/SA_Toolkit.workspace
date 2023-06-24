@@ -42,5 +42,9 @@
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exelib_debug"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_exelib_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_exelib_release"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
