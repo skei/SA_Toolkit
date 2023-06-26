@@ -8,12 +8,11 @@
 #include "audio/sat_audio_utils.h"
 #include "audio/sat_voice_manager.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/ladspa/sat_ladspa_hosted_plugin.h"
 #include "gui/sat_widgets.h"
 
 #include "sa_synth/sa_synth_voice.h"
-//#include "sa_synth/sa_synth_widgets.h"
 
-#include "audio/sat_audio_dsp.h"
 
 //----------------------------------------------------------------------
 //
