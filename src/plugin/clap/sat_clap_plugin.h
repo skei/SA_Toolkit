@@ -15,7 +15,7 @@
 
 class SAT_ClapPlugin {
 
-  friend class SAT_Plugin;
+  //friend class SAT_Plugin;
 
 //------------------------------
 public:

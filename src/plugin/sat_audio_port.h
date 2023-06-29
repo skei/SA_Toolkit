@@ -40,6 +40,11 @@ public:
 
   //----------
 
+  //SAT_AudioPort(clap_audio_port_info_t* info) {
+  //}
+
+  //----------
+
   SAT_AudioPort(clap_id id, const char* name, uint32_t flags, uint32_t channel_count, const char* port_type, clap_id in_place_pair) {
     MInfo.id            = id;
     strcpy(MInfo.name,name);

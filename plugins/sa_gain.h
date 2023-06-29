@@ -47,7 +47,7 @@ public:
     registerDefaultExtensions();    
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
-    setInitialEditorSize(300,160,3.0);
+//    setInitialEditorSize(300,160,3.0);
     SAT_Parameter* param = new SAT_Parameter("Gain", 0.5);
     param->setFlag(CLAP_PARAM_IS_MODULATABLE);
     appendParameter(param);
@@ -56,22 +56,22 @@ public:
   
   //----------
 
-  bool initEditorWindow(SAT_Editor* AEditor/*, SAT_Window* AWindow*/) final {
-    SAT_Window* window = AEditor->getWindow();
-    // background panel
-    SAT_PanelWidget* panel = new SAT_PanelWidget(0);
-    window->appendRootWidget(panel);
-    // header
-    const char* plugin_format = getPluginFormat();
-    SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,200,40),"gain",plugin_format);
-    panel->appendChildWidget(header);
-    // slider
-    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,50,200,20),"Gain",0.5);
-    panel->appendChildWidget(slider);
-    // connect
-    AEditor->connect( slider, getParameter(0) );
-    return true;
-  }
+//  bool initEditorWindow(SAT_Editor* AEditor) final {
+//    SAT_Window* window = AEditor->getWindow();
+//    // background panel
+//    SAT_PanelWidget* panel = new SAT_PanelWidget(0);
+//    window->appendRootWidget(panel);
+//    // header
+//    const char* plugin_format = getPluginFormat();
+//    SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,200,40),"gain",plugin_format);
+//    panel->appendChildWidget(header);
+//    // slider
+//    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,50,200,20),"Gain",0.5);
+//    panel->appendChildWidget(slider);
+//    // connect
+//    AEditor->connect( slider, getParameter(0) );
+//    return true;
+//  }
 
   //----------
 

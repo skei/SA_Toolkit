@@ -4,6 +4,7 @@
 
 //#define SAT_PLUGIN_EXECUTABLE_LIBRARY
 
+#include "base/utils/sat_arguments.h"
 #include "plugin/sat_host_implementation.h"
 #include "plugin/clap/sat_clap_entry.h"
 
@@ -164,8 +165,47 @@ void handle_plugin(const clap_plugin_t* plugin) {
 //
 //----------------------------------------------------------------------
 
+
 int main(int argc, char** argv) {
-  uint32_t plugin_index = 0;
+  
+  int32_t plugin_index = 0;
+  
+  SAT_Arguments args;
+  args.init(argc,argv);
+  
+  // list plugins
+  
+  if (args.hasOption("-l")) {
+    // list plugins
+    const clap_plugin_entry_t* entry = &clap_entry;
+    if (!entry) { SAT_Print("! ERROR: clap_entry is null\n"); }
+    else {
+      const clap_plugin_factory_t* factory = (const clap_plugin_factory_t*)entry->get_factory(CLAP_PLUGIN_FACTORY_ID);
+      if (!factory) { SAT_Print("! ERROR: Couldn't get factory from entry\n"); }
+      else {
+        uint32_t count = factory->get_plugin_count(factory);
+        SAT_Print("Num plugins: %i\n",count);
+        for (uint32_t i=0; i<count; i++) {
+          const clap_plugin_descriptor_t* descriptor = factory->get_plugin_descriptor(factory,i);
+          if (!descriptor) { SAT_Print("! ERROR: Couldn't get descriptor %i from factory\n",i); }
+          else {
+            SAT_Print("%i. %s\n",i,descriptor->name);
+          }
+        }
+      }
+    }
+    return 0;
+  }
+  
+  // select plugins
+
+  if (args.hasOption("-i")) {
+    plugin_index = args.getArgInt("-i");
+    SAT_Print("index %i\n",plugin_index);
+  }
+  
+  // instantiate
+
   SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
   const clap_host_t* host = hostimpl->getHost();
   if (!host) { SAT_Print("! ERROR: Couldn't create exe host implementation\n"); }
@@ -199,6 +239,7 @@ int main(int argc, char** argv) {
     } // entry
     delete hostimpl;
   }
+  
   return 0;
 }
 

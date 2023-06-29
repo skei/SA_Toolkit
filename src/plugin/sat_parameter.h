@@ -409,6 +409,10 @@ public:
     strcpy(display,MText[index]);
     return true;
   }
+  
+  // todo: textToValue..
+  // type "lowpassp" to get lowpass..
+  // (search in string list)
 
 };
 

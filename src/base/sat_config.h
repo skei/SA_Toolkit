@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 
-#define SAT_VERSION                             "0.4.1"
+#define SAT_VERSION                             "0.5.0"
 #define SAT_VENDOR                              "skei.audio"
 #define SAT_URL                                 "https://github.com/skei/SA_Toolkit"
 

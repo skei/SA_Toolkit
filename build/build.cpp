@@ -1,16 +1,11 @@
 
-
-
-
+//#define SAT_PLUGIN_ALL
 
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_LADSPA
 //#define SAT_PLUGIN_LV2
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
-
-//#define SAT_PLUGIN_ALL
-
 
 
 
@@ -104,7 +99,7 @@
 //#include "../plugins/sa_host.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_stretch.h"
-#include "../plugins/sa_synth.h"
+//#include "../plugins/sa_synth.h"
 //#include "../plugins/sa_tyr.h"        // TODO
 
 
@@ -123,7 +118,7 @@
 
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_plugins.h"
-//#include "../plugins/sa_everything.h"
+#include "../plugins/sa_everything.h"
 
 
 

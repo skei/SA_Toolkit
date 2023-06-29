@@ -1,8 +1,8 @@
 
 #include "base/sat.h"
 #include "base/utils/sat_jit.h"
-#include "base/utils/sat_vm.h"
-#include "base/utils/sat_vm_compiler.h"
+//#include "base/utils/sat_vm.h"
+//#include "base/utils/sat_vm_compiler.h"
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_utils.h"
 #include "gui/sat_widgets.h"

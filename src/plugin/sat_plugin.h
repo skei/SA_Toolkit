@@ -2233,6 +2233,11 @@ public: // parameters
   
   //----------
   
+  //bool savePresetToFile(const char* APath) {
+  //}
+  
+  //----------
+  
   bool loadPresetFromFile(const char* APath) {
     char line_buffer[256] = {0};
     SAT_File file = {};
