@@ -99,7 +99,7 @@
 //#include "../plugins/sa_host.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_stretch.h"
-//#include "../plugins/sa_synth.h"
+#include "../plugins/sa_synth.h"
 //#include "../plugins/sa_tyr.h"        // TODO
 
 
@@ -118,7 +118,7 @@
 
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_plugins.h"
-#include "../plugins/sa_everything.h"
+//#include "../plugins/sa_everything.h"
 
 
 
