@@ -1,5 +1,5 @@
 just completely wiped my system disk, and reinstalled linux..
-and durring re-installation of my development setup, i wrote down the dependencies i had to install before i compiled correctly:
+and during re-installation of my development setup, i wrote down the dependencies i had to install before i compiled correctly:
 
 libx11-dev
 libx11-xcb-dev
