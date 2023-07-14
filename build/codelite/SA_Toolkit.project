@@ -84,6 +84,7 @@
     <File Name="../../tools/bin2h.c" ExcludeProjConfig="linux_exelib_release;win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;linux_exelib_debug;"/>
   </VirtualDirectory>
   <VirtualDirectory Name="doc">
+    <File Name="../../doc/deps.txt"/>
     <File Name="../../doc/licenses.txt"/>
     <File Name="../../doc/notes.txt"/>
     <File Name="../../doc/makedocs.sh"/>
@@ -300,6 +301,9 @@
         </VirtualDirectory>
       </VirtualDirectory>
       <VirtualDirectory Name="exe">
+        <File Name="../../src/plugin/exe/sat_exelib.h"/>
+        <File Name="../../src/plugin/exe/sat_exe_host_implementation.h"/>
+        <File Name="../../src/plugin/exe/sat_exe_window.h"/>
         <File Name="../../src/plugin/exe/sat_exe_entry.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="vst3">

@@ -297,6 +297,10 @@ public: // clap
   }
 
   //----------
+  
+  /*
+    what if we already are parented?
+  */
 
   virtual bool set_parent(const clap_window_t *window) {
     //SAT_Print("\n");

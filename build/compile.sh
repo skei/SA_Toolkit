@@ -121,5 +121,6 @@ OUTPUT_DIR=${OUTPUT%$OUTPUT_FILE}
 #
 #------------------------------
 
-g++ $INPUT -o ../bin/$OUTPUT $FLAGS $INC $LIB
+#g++ $INPUT -o ../bin/$OUTPUT $FLAGS $INC $LIB
+echo $INPUT -o ../bin/$OUTPUT $FLAGS $INC $LIB
 

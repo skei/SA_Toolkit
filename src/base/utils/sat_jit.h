@@ -266,7 +266,7 @@ public: // interpreter
   void interpret(SAT_JitOpcode* opcodes) {
     uint64_t regs[SAT_JIT_MAX_REGS];
     uint64_t labels[SAT_JIT_MAX_LABELS];
-    uint64_t cmp_values[2];
+    uint64_t cmp_values[2] = {0};
     bool run = true;
     SAT_DPrint("> Interpreting Code at %p\n", (void*)opcodes);
     memset(regs, 0, sizeof(regs));
@@ -558,7 +558,7 @@ public: // compiler
     SAT_DPrint("> Done\n");
     m_compiled_code_size = n;
     m_entrypoint = (SAT_JitEntryPoint)m_compiled_code;
-    int status = mprotect(b, m_allocated_size, PROT_EXEC | PROT_READ);
+    /*int status =*/ mprotect(b, m_allocated_size, PROT_EXEC | PROT_READ);
     assert(status != -1);
     return m_compiled_code;
   }
