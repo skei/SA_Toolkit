@@ -146,9 +146,10 @@ class SAT_Jit {
 private:
 //------------------------------
 
-  uint32_t          m_alloc_size          = 0;
-  uint32_t          m_compiled_code_size  = 0;
+  //__SAT_ALIGNED(SAT_ALIGNMENT_CACHE);
   void*             m_compiled_code       = nullptr;
+  uint32_t          m_compiled_code_size  = 0;
+  uint32_t          m_allocated_size      = 0;
   SAT_JitEntryPoint m_entrypoint          = nullptr;
 
 //------------------------------
@@ -319,7 +320,8 @@ public: // interpreter
               set_pc = true;
             }
             break;
-          default: assert(0);
+          default:
+            assert(0);
           }}
           break;
         case SAT_JIT_OP_EXIT:
@@ -450,8 +452,8 @@ public: // compiler
     long pagesize = sysconf(_SC_PAGE_SIZE);
     assert(pagesize != -1);
 
-    m_alloc_size = pagesize;
-    m_compiled_code = memalign(pagesize, 4096/*m_alloc_size*/);
+    m_allocated_size = pagesize;
+    m_compiled_code = memalign(pagesize, 4096/*m_allocated_size*/);
     assert(m_compiled_code != NULL);
     
     uint32_t n = 0;
@@ -556,7 +558,7 @@ public: // compiler
     SAT_DPrint("> Done\n");
     m_compiled_code_size = n;
     m_entrypoint = (SAT_JitEntryPoint)m_compiled_code;
-    int status = mprotect(b, m_alloc_size, PROT_EXEC | PROT_READ);
+    int status = mprotect(b, m_allocated_size, PROT_EXEC | PROT_READ);
     assert(status != -1);
     return m_compiled_code;
   }
@@ -626,10 +628,6 @@ SAT_JitOpcode test_jit_opcodes[] = {
 //};
   
 //----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
 
 #define ENABLE_PPRINT
 #define ENABLE_INTERPRETER
@@ -639,9 +637,9 @@ SAT_JitOpcode test_jit_opcodes[] = {
 
 //----------
 
-void test_jit() {
+SAT_Jit JIT = {};
 
-  SAT_Jit JIT = {};
+void test_jit() {
 
   #ifdef ENABLE_PPRINT
     JIT.printOpcodes(test_jit_opcodes);

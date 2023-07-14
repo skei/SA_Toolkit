@@ -27,12 +27,7 @@
 //#include "test/test_parameters.h"
 //#include "test/test_reaper_ext.h"
 //#include "test/test_standalone.h"
-//#include "test/test_synth.h"            // ***
-//#include "test/test_vm.h"
-
-
-
-
+#include "test/test_synth.h"
 
 //----------------------------------------------------------------------
 //

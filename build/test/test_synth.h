@@ -259,6 +259,7 @@ public:
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
+    MVoiceManager.mixActiveVoices();
 
     // scale outputs
     sat_param_t scale = getParameterValue(2) + getModulationValue(2);

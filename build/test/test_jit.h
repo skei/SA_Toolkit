@@ -53,15 +53,6 @@ public:
 public:
 //------------------------------
 
-  static
-  void tcc_error(void* opaque, const char* msg) {
-    printf("[TCC:ERR] %s\n", msg);
-  }
-
-//------------------------------
-public:
-//------------------------------
-
   bool init() final {
     
     test_jit();

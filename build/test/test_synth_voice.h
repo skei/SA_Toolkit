@@ -45,8 +45,10 @@ public:
   //----------
 
   uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
+      
     float* buffer = MContext->voice_buffer;
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
+    
     buffer += AOffset;
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
@@ -58,6 +60,7 @@ public:
       }
     } // playing
     else {
+      // if the voice are off, waiting, or finished
       memset(buffer,0,ALength * sizeof(float));
     }
     return AState;
