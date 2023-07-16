@@ -559,7 +559,7 @@ public: // compiler
     m_compiled_code_size = n;
     m_entrypoint = (SAT_JitEntryPoint)m_compiled_code;
     /*int status =*/ mprotect(b, m_allocated_size, PROT_EXEC | PROT_READ);
-    assert(status != -1);
+    //assert(status != -1);
     return m_compiled_code;
   }
   

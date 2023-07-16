@@ -1,4 +1,12 @@
 
+// nc -U -l -k /tmp/sat.socket
+
+//----------------------------------------------------------------------
+
+
+
+
+
 //#define SAT_PLUGIN_ALL
 
 //#define SAT_PLUGIN_CLAP
@@ -27,7 +35,7 @@
 //#include "test/test_parameters.h"
 //#include "test/test_reaper_ext.h"
 //#include "test/test_standalone.h"
-#include "test/test_synth.h"
+//#include "test/test_synth.h"
 
 //----------------------------------------------------------------------
 //
@@ -90,6 +98,7 @@
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_demo.h"
+#include "../plugins/sa_demo2.h"
 //#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_host.h"
 //#include "../plugins/sa_pitch.h"

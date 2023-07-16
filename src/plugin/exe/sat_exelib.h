@@ -88,8 +88,11 @@
     __attribute__((force_align_arg_pointer))
     void exe_entry_point() {
       SAT_Print("* entry_point()\n");
+      
+      // todo: read these from environment variables or something?
       int argc = 0;
       const char* argv[] = { "", 0 };
+      
       SAT_Print("> argc %i argv %s\n",argc,argv[0]);
       SAT_Print("calling __libc_start_main..\n");
     

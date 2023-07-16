@@ -27,7 +27,8 @@ private:
   double      MTextSize             = 8.0;
   uint32_t    MTextAlignment        = SAT_TEXT_ALIGN_CENTER;
   SAT_Rect    MTextOffset           = {};
-  const char* MText = nullptr;
+//  const char* MText                 = nullptr;
+  char        MText[1024]           = {0};
   
   bool        MAutoSize             = false;
   SAT_Rect    MAutoSizeBorder       = SAT_Rect(0,0,0,0);
@@ -46,7 +47,8 @@ public:
   SAT_TextWidget(SAT_Rect ARect, const char* AText)
   : SAT_PanelWidget(ARect) {
     setName("SAT_TextWidget");
-    MText = AText;
+    //MText = AText;
+    setText(AText);
     setFillBackground(true);
   }
   
@@ -64,7 +66,9 @@ public:
   virtual void setTextSize(double ASize)                  { MTextSize = ASize; }
   virtual void setTextAlignment(uint32_t AAlign)          { MTextAlignment = AAlign; }
   virtual void setTextOffset(SAT_Rect AOffset)            { MTextOffset = AOffset; }
-  virtual void setText(const char* AText)                 { MText = AText; }
+  
+  //virtual void setText(const char* AText)                 { MText = AText; }
+  virtual void setText(const char* AText)                 { strcpy(MText,AText); }
   
   virtual void setAutoSize(bool AAuto=true)               { MAutoSize = AAuto; }
   virtual void setAutoTextSize(bool AAuto=true)           { MAutoTextSize = AAuto; }
