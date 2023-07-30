@@ -265,49 +265,52 @@ SAT_Print_ SAT_GLOBAL_PRINT = {};
 
 //----------
 
-#ifdef SAT_DEBUG
+void SAT_NoPrint(const char*,...) {}
 
-  #ifdef SAT_PRINT_PRETTY_FUNCTION
+#ifdef SAT_PRINT_PRETTY_FUNCTION
 
-    #define SAT_Print \
-      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
-      SAT_GLOBAL_PRINT.print
+  #define SAT_Print \
+    SAT_GLOBAL_PRINT.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
+    SAT_GLOBAL_PRINT.print
 
-    #define SAT_DPrint \
-      SAT_GLOBAL_PRINT.clear_prefix(); \
-      SAT_GLOBAL_PRINT.print
+  #define SAT_DPrint \
+    SAT_GLOBAL_PRINT.clear_prefix(); \
+    SAT_GLOBAL_PRINT.print
 
-    #define SAT_PRINT \
-      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
-      SAT_GLOBAL_PRINT.print("\n")
+  #define SAT_PRINT \
+    SAT_GLOBAL_PRINT.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
+    SAT_GLOBAL_PRINT.print("\n")
 
+#else // !pretty
 
-  #else // !pretty
+  #define SAT_Print \
+    SAT_GLOBAL_PRINT.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+    SAT_GLOBAL_PRINT.print
 
-    #define SAT_Print \
-      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
-      SAT_GLOBAL_PRINT.print
+  #define SAT_DPrint \
+    SAT_GLOBAL_PRINT.clear_prefix(); \
+    SAT_GLOBAL_PRINT.print
 
-    #define SAT_DPrint \
-      SAT_GLOBAL_PRINT.clear_prefix(); \
-      SAT_GLOBAL_PRINT.print
-
-    #define SAT_PRINT \
-      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
-      SAT_GLOBAL_PRINT.print("\n")
-      
-  #endif // pretty
+  #define SAT_PRINT \
+    SAT_GLOBAL_PRINT.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+    SAT_GLOBAL_PRINT.print("\n")
+    
+#endif // pretty
   
 //----------
 
-#else // ! debug
+#ifndef SAT_DEBUG
+//#ifndef SAT_PRINT_ALWAYS
 
-  void SAT_NoPrint(const char*,...) {}
-
+  #undef SAT_Print
+  #undef SAT_DPrint
+  #undef SAT_PRINT
+  
   #define SAT_Print   SAT_NoPrint
   #define SAT_DPrint  SAT_NoPrint
   #define SAT_PRINT   {}
-
+  
+//#endif // print always
 #endif // debug
 
 //----------------------------------------------------------------------

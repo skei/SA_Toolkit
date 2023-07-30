@@ -327,7 +327,6 @@
         <File Name="../../src/base/debug/sat_debug_breakpoint.h"/>
         <File Name="../../src/base/debug/sat_debug_assert.h"/>
         <File Name="../../src/base/debug/sat_debug_window.h"/>
-        <File Name="../../src/base/debug/sat_debug_print.h"/>
         <File Name="../../src/base/debug/sat_debug_observer.h"/>
         <File Name="../../src/base/debug/sat_debug_memtrace.h"/>
         <File Name="../../src/base/debug/sat_debug_crash_handler.h"/>

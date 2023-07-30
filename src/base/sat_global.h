@@ -2,6 +2,11 @@
 #define sat_global_included
 //----------------------------------------------------------------------
 
+/*
+  TODO: move EVERYTHING global/static into this..
+  (except debugging.. and printing..)
+*/
+
 #include "base/sat.h"
 //#include "base/sat_debug.h"
 #include "base/system/sat_paths.h"
