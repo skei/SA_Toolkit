@@ -35,7 +35,7 @@
 //#include "test/test_parameters.h"
 //#include "test/test_reaper_ext.h"
 //#include "test/test_standalone.h"
-#include "test/test_synth.h"
+//#include "test/test_synth.h"
 
 //----------------------------------------------------------------------
 //
@@ -77,6 +77,7 @@
 //#include "../plugins/ports/sa_saturation.h"
 //#include "../plugins/ports/sa_small_room_reverb.h"
 //#include "../plugins/ports/sa_sonic_maximizer.h"
+#include "../plugins/ports/sa_stretch.h"
 //#include "../plugins/ports/sa_tilteq.h"
 //#include "../plugins/ports/sa_transient_killer.h"
 
