@@ -29,7 +29,7 @@
 
 
 
-#include "test/test2.h"
+//#include "test/test2.h"
 //#include "test/test_jit.h"
 //#include "test/test_minimal.h"
 //#include "test/test_parameters.h"
@@ -122,7 +122,7 @@
 
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_plugins.h"
-//#include "../plugins/sa_everything.h"
+#include "../plugins/sa_everything.h"
 
 
 

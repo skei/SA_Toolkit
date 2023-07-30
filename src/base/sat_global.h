@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "base/sat_debug.h"
+//#include "base/sat_debug.h"
 #include "base/system/sat_paths.h"
 #include "base/utils/sat_log_file.h"
 #include "plugin/sat_registry.h"
@@ -20,29 +20,24 @@ class SAT_Global {
 public:
 //------------------------------
 
-  bool          isInitialized                     = false;
   char          binary_path[SAT_MAX_PATH_LENGTH]  = {0};
   char          plugin_path[SAT_MAX_PATH_LENGTH]  = {0};
-  SAT_Debug     DEBUG                             = {};
-  SAT_LogFile   LOG                               = {};
   SAT_Registry  REGISTRY                          = {};
+  SAT_LogFile   LOG                               = {};
   
 //------------------------------
 public:
 //------------------------------
 
   SAT_Global() {
-    
-    #ifdef SAT_EXE
-      SAT_GetExePath(binary_path);
-      //DEBUG.print("exe path '%s'\n",binary_path);
-    #endif
-    
-    #ifdef SAT_PLUGIN
-      SAT_GetLibPath(binary_path);
-      //DEBUG.print("lib path '%s'\n",binary_path);
-    #endif
-    
+//    #ifdef SAT_EXE
+//      SAT_GetExePath(binary_path);
+//      //DEBUG.print("exe path '%s'\n",binary_path);
+//    #endif
+//    #ifdef SAT_PLUGIN
+//      SAT_GetLibPath(binary_path);
+//      //DEBUG.print("lib path '%s'\n",binary_path);
+//    #endif
     initialize();
   }
 
@@ -57,25 +52,17 @@ public:
 //------------------------------
 
   void initialize() {
-    if (!isInitialized) {
-      //LOG.print("SAT_GLOBAL.initialize\n");
-      DEBUG.initialize();
-      LOG.initialize();
-      REGISTRY.initialize();
-      isInitialized = true;
-    }
+    //LOG.print("SAT_GLOBAL.initialize\n");
+    LOG.initialize();
+    REGISTRY.initialize();
   }
 
   //----------
 
   void cleanup() {
     //LOG.print("SAT_GLOBAL.cleanup\n");
-    if (isInitialized) {
-      DEBUG.cleanup();
-      LOG.cleanup();
-      REGISTRY.cleanup();
-      isInitialized = false;
-    }
+    LOG.cleanup();
+    REGISTRY.cleanup();
   }
   
   //----------
@@ -107,6 +94,8 @@ public:
 //----------------------------------------------------------------------
 
 SAT_Global SAT_GLOBAL = {};
+
+#define SAT_Log SAT_GLOBAL.LOG.print
 
 //----------------------------------------------------------------------
 #endif

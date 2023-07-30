@@ -2,6 +2,8 @@
 #define sat_debug_window_included
 //----------------------------------------------------------------------
 
+#ifdef SAT_DEBUG_WINDOW
+
 #include "base/sat.h"
 #include "gui/sat_window.h"
 #include "gui/sat_widgets.h"
@@ -81,6 +83,8 @@ public:
   }
   
 };
+
+#endif // SAT_DEBUG_WINDOW
 
 //----------------------------------------------------------------------
 #endif

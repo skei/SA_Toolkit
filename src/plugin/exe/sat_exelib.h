@@ -2,9 +2,13 @@
 #define sat_exelib_included
 //----------------------------------------------------------------------
 
-  //-rdynamic
-  //-Wl,-Bsymbolic
-  //-Wl,-e,exe_entry_point
+/*
+  ugh..
+  crashes with optimization settings above -O0
+*/
+
+
+
 
 #ifndef SAT_WIN32
 #ifdef SAT_PLUGIN_EXECUTABLE_LIBRARY
@@ -85,6 +89,7 @@
     // entry_point
     //------------------------------
 
+    __attribute__ ((visibility ("default")))
     __attribute__((force_align_arg_pointer))
     void exe_entry_point() {
       SAT_Print("* entry_point()\n");

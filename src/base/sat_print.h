@@ -2,11 +2,14 @@
 #define sat_print_included
 //----------------------------------------------------------------------
 
+
+//----------------------------------------------------------------------
+
 #include "base/sat.h"
 
 //------------------------------
 
-#ifdef SAT_DEBUG_PRINT_SOCKET
+#ifdef SAT_PRINT_SOCKET
   #ifdef SAT_LINUX
     #include <sys/socket.h>
     #include <sys/un.h>
@@ -22,11 +25,11 @@
 
 //----------
 
-#ifdef SAT_DEBUG_PRINT_THREAD
+#ifdef SAT_PRINT_THREAD
   #ifdef SAT_LINUX
-    //#include <sys/syscall.h>
-    //#include <sys/unistd.h>
-    //#define gettid() syscall(SYS_gettid)
+    #include <sys/syscall.h>
+    #include <sys/unistd.h>
+    #define gettid() syscall(SYS_gettid)
   #endif
   #ifdef SAT_WIN32
     #include <processthreadsapi.h>
@@ -35,7 +38,7 @@
 
 //----------
 
-#ifdef SAT_DEBUG_PRINT_TIME
+#ifdef SAT_PRINT_TIME
   #include <sys/time.h> // gettimeofday
 #endif
 
@@ -45,7 +48,7 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_Print2 {
+class SAT_Print_ {
   
 //------------------------------
 private:
@@ -56,7 +59,7 @@ private:
   char MPrefixBuffer[256] = {0};
   char MPrintBuffer[256]  = {0};
   
-  #ifdef SAT_DEBUG_PRINT_SOCKET
+  #ifdef SAT_PRINT_SOCKET
     #ifdef SAT_WIN32
       SOCKET  MSocketHandle = 0;
       WSADATA MWsadata      = {};
@@ -66,7 +69,7 @@ private:
     #endif
   #endif
 
-  #ifdef SAT_DEBUG_PRINT_TIME
+  #ifdef SAT_PRINT_TIME
     double MStartTime = 0.0;
   #endif
   
@@ -75,19 +78,19 @@ private:
 public:
 //------------------------------
 
-  SAT_Print2() {
-    #ifdef SAT_DEBUG_PRINT_SOCKET
+  SAT_Print_() {
+    #ifdef SAT_PRINT_SOCKET
       setup_socket();
     #endif
-    #ifdef SAT_DEBUG_PRINT_TIME
+    #ifdef SAT_PRINT_TIME
       time_start();
     #endif
   }
   
   //----------
   
-  ~SAT_Print2() {
-    #ifdef SAT_DEBUG_PRINT_SOCKET
+  ~SAT_Print_() {
+    #ifdef SAT_PRINT_SOCKET
       cleanup_socket();
     #endif
   }
@@ -102,7 +105,7 @@ public: // print
     va_start(args,format);
     vsprintf(MPrintBuffer,format,args);
 
-    #ifdef SAT_DEBUG_PRINT_SOCKET
+    #ifdef SAT_PRINT_SOCKET
       print_socket("%s%s",MPrefixBuffer,MPrintBuffer);
     #else
       printf("%s%s",MPrefixBuffer,MPrintBuffer);
@@ -119,13 +122,13 @@ public: // print
     __SAT_UNUSED char buffer[256];
     strcpy(MPrefixBuffer,"[");
 
-    #ifdef SAT_DEBUG_PRINT_TIME
+    #ifdef SAT_PRINT_TIME
       double time = time_elapsed();
       sprintf(buffer, SAT_TERM_FG_RED "%.6f" SAT_TERM_RESET ":",time);
       strcat(MPrefixBuffer,buffer);
     #endif
 
-    #ifdef SAT_DEBUG_PRINT_THREAD
+    #ifdef SAT_PRINT_THREAD
       #ifdef SAT_LINUX
         uint32_t thread_id = gettid();
       #endif
@@ -175,7 +178,7 @@ private:
 private: // socket
 //------------------------------
 
-  #ifdef SAT_DEBUG_PRINT_SOCKET
+  #ifdef SAT_PRINT_SOCKET
 
     void setup_socket() {
       #ifdef SAT_LINUX
@@ -230,7 +233,7 @@ private: // socket
 private: // time
 //------------------------------
 
-  #ifdef SAT_DEBUG_PRINT_TIME
+  #ifdef SAT_PRINT_TIME
 
     void time_start() {
       struct timeval time;
@@ -251,6 +254,61 @@ private: // time
 #endif // print_time
 
 };
+
+//----------------------------------------------------------------------
+//
+// TODO: -> SAT_GLOBAL.PRINT
+//
+//----------------------------------------------------------------------
+
+SAT_Print_ SAT_GLOBAL_PRINT = {};
+
+//----------
+
+#ifdef SAT_DEBUG
+
+  #ifdef SAT_PRINT_PRETTY_FUNCTION
+
+    #define SAT_Print \
+      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL_PRINT.print
+
+    #define SAT_DPrint \
+      SAT_GLOBAL_PRINT.clear_prefix(); \
+      SAT_GLOBAL_PRINT.print
+
+    #define SAT_PRINT \
+      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL_PRINT.print("\n")
+
+
+  #else // !pretty
+
+    #define SAT_Print \
+      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL_PRINT.print
+
+    #define SAT_DPrint \
+      SAT_GLOBAL_PRINT.clear_prefix(); \
+      SAT_GLOBAL_PRINT.print
+
+    #define SAT_PRINT \
+      SAT_GLOBAL_PRINT.set_prefix( __FILE__, __FUNCTION__, __LINE__ ); \
+      SAT_GLOBAL_PRINT.print("\n")
+      
+  #endif // pretty
+  
+//----------
+
+#else // ! debug
+
+  void SAT_NoPrint(const char*,...) {}
+
+  #define SAT_Print   SAT_NoPrint
+  #define SAT_DPrint  SAT_NoPrint
+  #define SAT_PRINT   {}
+
+#endif // debug
 
 //----------------------------------------------------------------------
 #endif

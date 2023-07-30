@@ -165,11 +165,23 @@
   //----------
   
   /*
+    opens a debug window
+  */
+
+  //#define SAT_DEBUG_WINDOW
+
+
+//--------------------
+// print
+//--------------------
+
+
+  /*
     'init', or
     'virtual bool test1_synth_plugin::init()'
   */
   
-  //#define SAT_DEBUG_PRINT_PRETTY_FUNCTION
+  //#define SAT_PRINT_PRETTY_FUNCTION
   
   //----------
 
@@ -180,7 +192,7 @@
     automatically undefined if compiling as exe
   */
 
-  //#define SAT_DEBUG_PRINT_SOCKET
+  //#define SAT_PRINT_SOCKET
 
   //----------
 
@@ -188,7 +200,7 @@
     print thread id (in SAT_Print)
   */
 
-  #define SAT_DEBUG_PRINT_THREAD
+  #define SAT_PRINT_THREAD
 
   //----------
 
@@ -196,16 +208,7 @@
     print time (in SAT_Print)
   */
 
-  #define SAT_DEBUG_PRINT_TIME
-
-  //----------
-
-  /*
-    opens a debug window
-  */
-
-  //#define SAT_DEBUG_WINDOW
-
+  #define SAT_PRINT_TIME
 
 //----------------------------------------------------------------------
 //
@@ -352,7 +355,7 @@
 #ifdef SAT_EXE
   #define SAT_PLUGIN_EXE
   //#define  SAT_DEBUG_MEMTRACE
-  #undef SAT_DEBUG_PRINT_SOCKET
+  #undef SAT_PRINT_SOCKET
 #endif
 
 //----------
@@ -360,13 +363,13 @@
 #ifdef SAT_PLUGIN
   #undef SAT_PLUGIN_EXE
   //#undef  SAT_DEBUG_MEMTRACE
-  #define SAT_DEBUG_PRINT_SOCKET
+  #define SAT_PRINT_SOCKET
 #endif
 
 //----------
 
 #ifdef SAT_WIN32
-  #undef SAT_DEBUG_PRINT_SOCKET
+  #undef SAT_PRINT_SOCKET
 #endif
 
 //--------------------

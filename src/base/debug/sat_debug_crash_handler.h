@@ -2,37 +2,43 @@
 #define sat_debug_crash_handler_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+/*
+  crash handler:
+  compile with: -g -rdynamic
+  // https://lasr.cs.ucla.edu/vahab/resources/signals.html
+  // The only two signals for which a handler cannot be defined are SIGKILL and SIGSTOP.
+*/
 
-#ifdef SAT_LINUX
+#ifdef SAT_DEBUG_CRASH_HANDLER
+
+  #ifndef SAT_LINUX
+    #error only linux supported..
+  #endif
+
+  //----------
+
   #include <signal.h>
-#endif
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
+  #include "base/sat.h"
+  #include "base/debug/sat_debug_call_stack.h"
+  #include "base/debug/sat_debug_observer.h"
 
-//void sat_crash_handler_callback2(int sig);
+  //----------
 
-void sat_crash_handler_callback2(int sig) {
-  //SAT_GLOBAL.DEBUG.crashHandler(sig);
-}
+  void sat_crash_handler_callback_(int sig);
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
+  //----------------------------------------------------------------------
+  //
+  //
+  //
+  //----------------------------------------------------------------------
 
-class SAT_CrashHandler {
+  class SAT_CrashHandler {
 
-//------------------------------
-private:
-//------------------------------
+  //------------------------------
+  private:
+  //------------------------------
 
-  #ifdef SAT_DEBUG_CRASH_HANDLER
     const char* MSignalNames[32] = {
       "(kill(pid,0))",
       "SIGHUP (Hangup)",
@@ -67,30 +73,29 @@ private:
       "SIGUSR1 (User-defined signal 1)",
       "SIGUSR2 (User-defined signal 2)"
     };
-  #endif
-  
-//------------------------------
-public:
-//------------------------------
+    
+  //------------------------------
+  public:
+  //------------------------------
 
-  SAT_CrashHandler() {
-  }
-  
-  //----------
+    SAT_CrashHandler() {
+      initCrashHandlers();
+    }
+    
+    //----------
 
-  ~SAT_CrashHandler() {
-  }
+    ~SAT_CrashHandler() {
+      cleanupCrashHandlers();
+    }
 
-//------------------------------
-public: // crash handler
-//------------------------------
-
-  #ifdef SAT_DEBUG_CRASH_HANDLER
+  //------------------------------
+  public: // crash handler
+  //------------------------------
 
     void initCrashHandler(int sig) {
       #ifdef SAT_LINUX
         //signal(SIGSEGV,sat_crash_handler_callback);
-        signal(sig,sat_crash_handler_callback2);
+        signal(sig,sat_crash_handler_callback_);
       #endif
     }
 
@@ -106,30 +111,53 @@ public: // crash handler
       #endif
       return true;
     }
+
+    //----------
+    
+    bool cleanupCrashHandlers() {
+      return true;
+    }
+    
     //----------
     
     void crashHandler(int sig) {
       #ifdef SAT_LINUX
-//        print("\nCRASH!\n");
-//        print("  %i : %s\n",sig,MSignalNames[sig]);
+        SAT_DPrint("\nCRASH!\n");
+        SAT_DPrint("  %i : %s\n",sig,MSignalNames[sig]);
         //SAT_GLOBAL_WATCHES.printWatches("watched:");
         //SAT_DumpCallStack;
         //SAT_DumpCallStackSkip(0); // 2
-//        print_callstack();
-//        #ifdef SAT_DEBUG_OBSERVER
-//          print_observers();
-//        #endif
-//        print("\n");
+        SAT_PrintCallStack();
+        #ifdef SAT_DEBUG_OBSERVER
+        SAT_PrintObservers();
+        #endif
+        SAT_DPrint("\n");
         exit(1); //_exit(1);
       #endif
     }  
 
-  #endif // crash handler
-  
-};
+  //------------------------------
+  private:
+  //------------------------------
 
-//----------------------------------------------------------------------
+  };
 
+  //----------------------------------------------------------------------
+  //
+  // TODO: -> SAT_GLOBAL.DEBUG
+  //
+  //----------------------------------------------------------------------
+
+  SAT_CrashHandler SAT_GLOBAL_CRASH_HANDLER = {};
+
+  //----------
+
+  void sat_crash_handler_callback_(int sig) {
+    //SAT_GLOBAL.DEBUG.crashHandler(sig);
+    SAT_GLOBAL_CRASH_HANDLER.crashHandler(sig);
+  }
+
+#endif // SAT_DEBUG_CRASH_HANDLER
 
 //----------------------------------------------------------------------
 #endif

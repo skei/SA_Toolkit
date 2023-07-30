@@ -322,9 +322,10 @@
     </VirtualDirectory>
     <VirtualDirectory Name="base">
       <File Name="../../src/base/sat_print.h"/>
-      <File Name="../../src/base/sat_global_utils.h"/>
       <File Name="../../src/base/sat_test.h"/>
       <VirtualDirectory Name="debug">
+        <File Name="../../src/base/debug/sat_debug_breakpoint.h"/>
+        <File Name="../../src/base/debug/sat_debug_assert.h"/>
         <File Name="../../src/base/debug/sat_debug_window.h"/>
         <File Name="../../src/base/debug/sat_debug_print.h"/>
         <File Name="../../src/base/debug/sat_debug_observer.h"/>
@@ -895,7 +896,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="linux_exelib_debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O0;-Wall;-fPIC;-g;-rdynamic;-Wl,-Bsymbolic;-Wl,-e,exe_entry_point;-Wl,--export-all-symbols;" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O0;-Wall;-fPIC;-rdynamic;-Wl,-Bsymbolic;-Wl,-e,exe_entry_point;-Wl,--export-all-symbols" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="SAT_EXE"/>
         <Preprocessor Value="SAT_DEBUG"/>
@@ -955,7 +956,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="linux_exelib_release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O3;-Wall;-ffast-math;-fPIC;-rdynamic;-Wl,-Bsymbolic;-Wl,-e,exe_entry_point;-Wl,--export-all-symbols" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-Wall;-O0;-ffast-math;-fPIC;-rdynamic;-Wl,-e,exe_entry_point" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="SAT_EXE"/>
         <Preprocessor Value="SAT_PLUGIN_EXECUTABLE_LIBRARY"/>
@@ -990,7 +991,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug_linux.so</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_linux.so</Command>
         <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">

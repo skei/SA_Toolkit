@@ -46,8 +46,9 @@
 
 //----------------------------------------------------------------------
 
+#include "base/sat_print.h"
+#include "base/sat_debug.h"
 #include "base/sat_global.h"
-#include "base/sat_global_utils.h"
 
 //----------------------------------------------------------------------
 //
@@ -59,7 +60,7 @@
 
 //#ifdef SAT_PLUGIN
 //  #ifdef SAT_LINUX
-//    #define SAT_DEBUG_PRINT_SOCKET
+//    #define SAT_PRINT_SOCKET
 //  #endif
 //#endif
 
