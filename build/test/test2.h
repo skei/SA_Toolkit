@@ -2,6 +2,14 @@
 #include "gui/sat_window.h"
 #include "gui/sat_widgets.h"
 
+//#include "base/sat_print.h"
+//#include "base/debug/sat_debug_call_stack.h"
+//#include "base/debug/sat_debug_crash_handler.h"
+//#include "base/debug/sat_debug_memtrace.h"
+//#include "base/debug/sat_debug_observer.h"
+//#include "base/debug/sat_debug_print.h"
+//#include "base/debug/sat_debug_window.h"
+
 //----------------------------------------------------------------------
 
 

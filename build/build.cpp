@@ -29,7 +29,7 @@
 
 
 
-//#include "test/test2.h"
+#include "test/test2.h"
 //#include "test/test_jit.h"
 //#include "test/test_minimal.h"
 //#include "test/test_parameters.h"
@@ -98,7 +98,7 @@
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_demo.h"
-#include "../plugins/sa_demo2.h"
+//#include "../plugins/sa_demo2.h"
 //#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_host.h"
 //#include "../plugins/sa_pitch.h"

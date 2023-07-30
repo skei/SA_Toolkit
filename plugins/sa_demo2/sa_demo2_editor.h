@@ -14,11 +14,16 @@
 
 //----------------------------------------------------------------------
 
-#define SA_DEMO2_NUM_DEMO_BUTTONS 2
+#define SA_DEMO2_NUM_DEMO_BUTTONS 7
 
 const char* sa_demo2_demo_buttons_txt[SA_DEMO2_NUM_DEMO_BUTTONS] = {
-  "home",
-  "host"
+  "start",
+  "host",
+  "audio",
+  "parameters",
+  "voices",
+  "widgets",
+  "layout"
 };
 
 //----------------------------------------------------------------------
@@ -34,13 +39,15 @@ private:
   SAT_Host*             MHost         = nullptr;
   SAT_Plugin*           MPlugin       = nullptr;
   
-  SAT_PanelWidget*      MRoot         = nullptr;
-  SAT_PanelWidget*      MRootPanel    = nullptr;
-  SAT_PanelWidget*      MCenterPanel  = nullptr;
-  SAT_PanelWidget*      MInnerPanel   = nullptr;
+  SAT_PanelWidget*      MRoot             = nullptr;
+  SAT_PanelWidget*      MRootPanel        = nullptr;
+  SAT_PanelWidget*      MMainPanel        = nullptr;
+  SAT_PanelWidget*      MLeftPanel        = nullptr;
+  SAT_PanelWidget*      MRightTopPanel    = nullptr;
+  SAT_PanelWidget*      MRightBottomPanel = nullptr;
   
-  SAT_TextBoxWidget*    MTextOutput   = nullptr;
-  SAT_ButtonRowWidget*  MDemoButtons  = nullptr;
+  SAT_TextBoxWidget*    MTextOutput       = nullptr;
+  SAT_ButtonRowWidget*  MLeftMenu         = nullptr;
 
 //  SAT_PluginHeaderWidget* MPluginHeader = nullptr;
 //  SAT_PluginFooterWidget* MPluginFooter = nullptr;
@@ -116,53 +123,84 @@ public:
       SAT_Widget* aspect_rect = new SAT_Widget(SAT_Rect(0,0,EDITOR_WIDTH-10,EDITOR_HEIGHT-70)); // -header/footer/border
       MRoot->appendChildWidget(aspect_rect);
 
-        MCenterPanel = new SAT_PanelWidget(0);
-        aspect_rect->appendChildWidget(MCenterPanel);
-        //MCenterPanel->setLayout(SAT_WIDGET_ALIGN_FILL,SAT_WIDGET_STRETCH_ALL);
-        MCenterPanel->setAlignment(SAT_WIDGET_ALIGN_FILL);
-        MCenterPanel->setInnerBorder(SAT_Rect(10,10,5,5));
-        MCenterPanel->setSpacing(SAT_Point(5,5));
-        MCenterPanel->setFillBackground(false);
-        MCenterPanel->setDrawBorder(false);
-        MCenterPanel->setRoundedCorners(true);
-        MCenterPanel->setCornerSize(5);
-        MCenterPanel->setDrawDropShadow(true);
-        MCenterPanel->setDropShadowInner(true);
-        MCenterPanel->setDropShadowColors(SAT_Grey,SAT_Color(0,0,0,0.5));
-        MCenterPanel->setDropShadowCorner(5);
-        MCenterPanel->setDropShadowFeather(5);
+        MMainPanel = new SAT_PanelWidget(0);
+        aspect_rect->appendChildWidget(MMainPanel);
+        //MMainPanel->setLayout(SAT_WIDGET_ALIGN_FILL,SAT_WIDGET_STRETCH_ALL);
+        MMainPanel->setAlignment(SAT_WIDGET_ALIGN_FILL);
+        MMainPanel->setInnerBorder(SAT_Rect(10,10,5,5));
+        MMainPanel->setSpacing(SAT_Point(5,5));
+        MMainPanel->setFillBackground(false);
+        MMainPanel->setDrawBorder(false);
+        MMainPanel->setRoundedCorners(true);
+        MMainPanel->setCornerSize(5);
+        MMainPanel->setDrawDropShadow(true);
+        MMainPanel->setDropShadowInner(true);
+        MMainPanel->setDropShadowColors(SAT_Grey,SAT_Color(0,0,0,0.5));
+        MMainPanel->setDropShadowCorner(5);
+        MMainPanel->setDropShadowFeather(5);
     
-          MInnerPanel = new SAT_PanelWidget(150);
-          MCenterPanel->appendChildWidget(MInnerPanel);
-          MInnerPanel->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
-          MInnerPanel->setInnerBorder(SAT_Rect(5,5,10,5));
-          MInnerPanel->setFillBackground(true);
-          MInnerPanel->setBackgroundColor(SAT_DarkGrey);
-          MInnerPanel->setDrawBorder(true);
-          MInnerPanel->setRoundedCorners(true);
-          MInnerPanel->setCornerSize(5);
-          MInnerPanel->setDrawDropShadow(true);
-          MInnerPanel->setDropShadowColors(SAT_Color(0,0,0,0.5),SAT_Grey);
-          MInnerPanel->setDropShadowCorner(5);
-          MInnerPanel->setDropShadowFeather(5);
-          MInnerPanel->setDropShadowOffset(3,3);
+          MLeftPanel = new SAT_PanelWidget(100);
+          MMainPanel->appendChildWidget(MLeftPanel);
+          MLeftPanel->setLayout(SAT_WIDGET_ALIGN_LEFT,SAT_WIDGET_STRETCH_VERTICAL);
+          MLeftPanel->setInnerBorder(SAT_Rect(5,5,10,5));
+          MLeftPanel->setFillBackground(true);
+          MLeftPanel->setBackgroundColor(SAT_DarkGrey);
+          MLeftPanel->setDrawBorder(true);
+          MLeftPanel->setRoundedCorners(true);
+          MLeftPanel->setCornerSize(5);
+          MLeftPanel->setDrawDropShadow(true);
+          MLeftPanel->setDropShadowColors(SAT_Color(0,0,0,0.5),SAT_Grey);
+          MLeftPanel->setDropShadowCorner(5);
+          MLeftPanel->setDropShadowFeather(5);
+          MLeftPanel->setDropShadowOffset(3,3);
           
-            MDemoButtons = new SAT_ButtonRowWidget(SAT_Rect(15*SA_DEMO2_NUM_DEMO_BUTTONS),SA_DEMO2_NUM_DEMO_BUTTONS,sa_demo2_demo_buttons_txt,SAT_BUTTON_ROW_SINGLE,SAT_BUTTON_ROW_VERT);
-            MInnerPanel->appendChildWidget(MDemoButtons);
-            MDemoButtons->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
-            MDemoButtons->setCellFillBackground(true);
-            MDemoButtons->setCellBackgroundColor(SAT_DarkGrey);
-            MDemoButtons->setCellDrawBorder(false);
-            MDemoButtons->selectButton(0);
+            MLeftMenu = new SAT_ButtonRowWidget(SAT_Rect(15*SA_DEMO2_NUM_DEMO_BUTTONS),SA_DEMO2_NUM_DEMO_BUTTONS,sa_demo2_demo_buttons_txt,SAT_BUTTON_ROW_SINGLE,SAT_BUTTON_ROW_VERT);
+            MLeftPanel->appendChildWidget(MLeftMenu);
+            MLeftMenu->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
+            MLeftMenu->setCellFillBackground(true);
+            MLeftMenu->setCellBackgroundColor(SAT_DarkGrey);
+            MLeftMenu->setCellDrawBorder(false);
+            MLeftMenu->selectButton(0);
+
+          MRightBottomPanel = new SAT_PanelWidget(100);
+          MMainPanel->appendChildWidget(MRightBottomPanel);
+          MRightBottomPanel->setLayout(SAT_WIDGET_ALIGN_BOTTOM,SAT_WIDGET_STRETCH_HORIZONTAL);
+          MRightBottomPanel->setInnerBorder(SAT_Rect(5,5,10,10));
+          MRightBottomPanel->setFillBackground(true);
+          MRightBottomPanel->setBackgroundColor(SAT_DarkGrey);
+          MRightBottomPanel->setDrawBorder(true);
+          MRightBottomPanel->setRoundedCorners(true);
+          MRightBottomPanel->setCornerSize(5);
+          MRightBottomPanel->setDrawDropShadow(true);
+          MRightBottomPanel->setDropShadowColors(SAT_Color(0,0,0,0.5),SAT_Grey);
+          MRightBottomPanel->setDropShadowCorner(5);
+          MRightBottomPanel->setDropShadowFeather(5);
+          MRightBottomPanel->setDropShadowOffset(3,3);
             
-          MTextOutput = new SAT_TextBoxWidget(150);
-          MCenterPanel->appendChildWidget(MTextOutput);
-          MTextOutput->setLayout(SAT_WIDGET_ALIGN_BOTTOM_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
-          MTextOutput->setOuterBorder(SAT_Rect(0,0,5,5));    
-          MTextOutput->getContentWidget()->setFillBackground(true);
-          MTextOutput->getContentWidget()->setBackgroundColor(SAT_Grey);
-          MTextOutput->getContentWidget()->setInnerBorder(SAT_Rect(5,5,5,5));
-          MTextOutput->appendLine("OK");
+            MTextOutput = new SAT_TextBoxWidget(0);
+            MRightBottomPanel->appendChildWidget(MTextOutput);
+            MTextOutput->setLayout(SAT_WIDGET_ALIGN_FILL,SAT_WIDGET_STRETCH_ALL);
+            //MTextOutput->setOuterBorder(SAT_Rect(0,0,5,5));    
+            MTextOutput->setDrawBorder(false);
+            MTextOutput->getContentWidget()->setFillBackground(true);
+            MTextOutput->getContentWidget()->setBackgroundColor(SAT_DarkGrey);
+            MTextOutput->getContentWidget()->setInnerBorder(SAT_Rect(5,5,5,5));
+            MTextOutput->appendLine("OK");
+
+          MRightTopPanel = new SAT_PanelWidget(150);
+          MMainPanel->appendChildWidget(MRightTopPanel);
+          MRightTopPanel->setLayout(SAT_WIDGET_ALIGN_FILL,SAT_WIDGET_STRETCH_ALL);
+          MRightTopPanel->setInnerBorder(SAT_Rect(5,5,10,10));
+          MRightTopPanel->setFillBackground(true);
+          MRightTopPanel->setBackgroundColor(SAT_DarkGrey);
+          MRightTopPanel->setDrawBorder(true);
+          MRightTopPanel->setRoundedCorners(true);
+          MRightTopPanel->setCornerSize(5);
+          MRightTopPanel->setDrawDropShadow(true);
+          MRightTopPanel->setDropShadowColors(SAT_Color(0,0,0,0.5),SAT_Grey);
+          MRightTopPanel->setDropShadowCorner(5);
+          MRightTopPanel->setDropShadowFeather(5);
+          MRightTopPanel->setDropShadowOffset(3,3);
     
     return true;
   }

@@ -33,9 +33,9 @@ void handle_editor(const clap_plugin_t* plugin) {
     gui->set_scale(plugin,1.0);
     gui->get_size(plugin,&width,&height);
     
-    //SAT_Print("creating host window\n");
+    //printf("creating host window\n");
     SAT_ExeWindow* window = new SAT_ExeWindow(width,height,0,plugin,gui);
-    //SAT_Print("host window created\n");
+    //printf("host window created\n");
     
     #ifdef SAT_LINUX
       xcb_window_t x11window = window->getX11Window();
@@ -111,23 +111,30 @@ int main(int argc, char** argv) {
   SAT_Arguments args;
   args.init(argc,argv);
   
+  if (args.hasOption("-?") || args.hasOption("-h")) {
+    printf("PLUGIN.EXE <optioins>\n");
+    printf("  -l          list plugins\n");
+    printf("  -i <index>  select plugin index (default 0)\n");
+    return 0;
+  }
+
   // list plugins
   
   if (args.hasOption("-l")) {
     // list plugins
     const clap_plugin_entry_t* entry = &clap_entry;
-    if (!entry) { SAT_Print("! ERROR: clap_entry is null\n"); }
+    if (!entry) { printf("! ERROR: clap_entry is null\n"); }
     else {
       const clap_plugin_factory_t* factory = (const clap_plugin_factory_t*)entry->get_factory(CLAP_PLUGIN_FACTORY_ID);
-      if (!factory) { SAT_Print("! ERROR: Couldn't get factory from entry\n"); }
+      if (!factory) { printf("! ERROR: Couldn't get factory from entry\n"); }
       else {
         uint32_t count = factory->get_plugin_count(factory);
-        SAT_Print("Num plugins: %i\n",count);
+        printf("Num plugins: %i\n",count);
         for (uint32_t i=0; i<count; i++) {
           const clap_plugin_descriptor_t* descriptor = factory->get_plugin_descriptor(factory,i);
-          if (!descriptor) { SAT_Print("! ERROR: Couldn't get descriptor %i from factory\n",i); }
+          if (!descriptor) { printf("! ERROR: Couldn't get descriptor %i from factory\n",i); }
           else {
-            SAT_Print("%i. %s\n",i,descriptor->name);
+            printf("%i. %s\n",i,descriptor->name);
           }
         }
       }
@@ -139,33 +146,33 @@ int main(int argc, char** argv) {
 
   if (args.hasOption("-i")) {
     plugin_index = args.getArgInt("-i");
-    SAT_Print("index %i\n",plugin_index);
+    printf("index %i\n",plugin_index);
   }
   
   // instantiate
 
   SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
   const clap_host_t* host = hostimpl->getHost();
-  if (!host) { SAT_Print("! ERROR: Couldn't create exe host implementation\n"); }
+  if (!host) { printf("! ERROR: Couldn't create exe host implementation\n"); }
   else {
     const clap_plugin_entry_t* entry = &clap_entry;
-    if (!entry) { SAT_Print("! ERROR: clap_entry is null\n"); }
+    if (!entry) { printf("! ERROR: clap_entry is null\n"); }
     else {
       //uint32_t count = entry->init(plugin_path);
       const clap_plugin_factory_t* factory = (const clap_plugin_factory_t*)entry->get_factory(CLAP_PLUGIN_FACTORY_ID);
-      if (!factory) { SAT_Print("! ERROR: Couldn't get factory from entry\n"); }
+      if (!factory) { printf("! ERROR: Couldn't get factory from entry\n"); }
       else {
         uint32_t count = factory->get_plugin_count(factory);
-        if (count == 0) { SAT_Print("! ERROR: Plugin count is 0\n"); }
+        if (count == 0) { printf("! ERROR: Plugin count is 0\n"); }
         else {
           const clap_plugin_descriptor_t* descriptor = factory->get_plugin_descriptor(factory,plugin_index);
-          if (!descriptor) { SAT_Print("! ERROR: Couldn't get descriptor from factory\n"); }
+          if (!descriptor) { printf("! ERROR: Couldn't get descriptor from factory\n"); }
           else {
             const char* plugin_id = descriptor->id;
-            if (!plugin_id) { SAT_Print("! ERROR: plugin_id is null\n"); }
+            if (!plugin_id) { printf("! ERROR: plugin_id is null\n"); }
             else {
               const clap_plugin_t* plugin = factory->create_plugin(factory,host,plugin_id);
-              if (!plugin) { SAT_Print("! ERROR: Couldn't create plugin from factory\n"); }
+              if (!plugin) { printf("! ERROR: Couldn't create plugin from factory\n"); }
               else { 
                 handle_plugin(plugin);
               } // plugin
