@@ -1,3 +1,5 @@
+
+/*
 #include "plugin/sat_plugin.h"
 const clap_plugin_descriptor_t myDescriptor = { CLAP_VERSION, "minimal", "minimal", SAT_VENDOR, "", "", "", SAT_VERSION, "", (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr } };
 class myPlugin : public SAT_Plugin {
@@ -17,25 +19,22 @@ public:
 };
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
-
-
+*/
 
 //----------------------------------------------------------------------
 //
+//
+//
 //----------------------------------------------------------------------
 
-
-
-/*
-
-#include "base/sat.h"
+//#include "base/sat.h"
 #include "plugin/sat_plugin.h"
-#include "audio/sat_audio_utils.h"
+//#include "audio/sat_audio_utils.h"
 //#include "gui/sat_widgets.h"
 
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/myPlugin/0.0.1",
+  .id           = "me/myPlugin",
   .name         = "myPlugin",
   .vendor       = "skei.audio",
   .url          = "",
@@ -55,23 +54,24 @@ public:
 
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioInputPort();
+    appendStereoAudioOutputPort();
     SAT_Parameter* param = new SAT_Parameter("Param1", 0.3);
     param->setFlag(CLAP_PARAM_IS_MODULATABLE);
     appendParameter(param);
-//    setInitialEditorSize(500,120,1.0);
+    //setInitialEditorSize(500,120,1.0);
     return SAT_Plugin::init();
   }
   
-//  bool initEditorWindow(SAT_Editor* AEditor) final {
-//    SAT_PanelWidget* panel = new SAT_PanelWidget(0);
-//    AWindow->appendRootWidget(panel);
-//    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,50,400,20),"Gain",0.5);
-//    panel->appendChildWidget(slider);
-//    AEditor->connect( slider, getParameter(0) );
-//    return true;
-//  }
+  //bool initEditorWindow(SAT_Editor* AEditor) final {
+  //  SAT_PanelWidget* panel = new SAT_PanelWidget(0);
+  //  SAT_Window* window = AEditor->getWindow();
+  //  window->appendRootWidget(panel);
+  //  SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(50,50,400,20),"Gain",0.5);
+  //  panel->appendChildWidget(slider);
+  //  AEditor->connect( slider, getParameter(0) );
+  //  return true;
+  //}
 
   void processAudio(SAT_ProcessContext* AContext) final {
     float** inputs = AContext->process->audio_inputs[0].data32;
@@ -87,7 +87,4 @@ public:
 
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
-
-*/
-
 

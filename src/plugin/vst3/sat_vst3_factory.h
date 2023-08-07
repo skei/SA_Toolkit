@@ -141,7 +141,7 @@ public: // IPluginFactory
   //----------
 
 
-  int32   PLUGIN_API countClasses() override {
+  int32 PLUGIN_API countClasses() override {
     SAT_Print("SAT_Vst3Factory.countClasses\n");
     return SAT_GLOBAL.REGISTRY.getNumDescriptors();
   }
@@ -154,20 +154,17 @@ public: // IPluginFactory
     const char* long_id = getLongId(descriptor);
     memcpy(info->cid,long_id,16);
     info->cardinality = PClassInfo::kManyInstances;
+    //TODO: if (SAT_ClapIsInstrument(descriptor)) .. ??
     strncpy(info->category,kVstAudioEffectClass,PClassInfo::kCategorySize);
     
-  // ugly, ugly..
-  
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wstringop-truncation"
-    
-    strncpy(info->name,descriptor->name,PClassInfo::kNameSize);
-
-  #pragma GCC diagnostic pop
+    // ugly, ugly..
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstringop-truncation"
+      strncpy(info->name,descriptor->name,PClassInfo::kNameSize);
+    #pragma GCC diagnostic pop
 
     return kResultOk;
   }
-
 
   //----------
 

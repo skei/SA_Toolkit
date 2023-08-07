@@ -79,6 +79,9 @@ public:
   }
 
   //----------
+  
+  // TODO: rename to getVoiceLevel()
+  // couod be based on time
 
   sat_sample_t getEnvLevel() {
     //return 0.0;
@@ -147,7 +150,6 @@ public:
     MVelocity = AVelocity;
     
     SAT_ParameterArray* parameters = MContext->process_context->parameters;
-    
     p_tun     = parameters->getItem(1)->getValue();
     p_flt     = parameters->getItem(6)->getValue();
     p_fr      = parameters->getItem(7)->getValue();
@@ -157,7 +159,6 @@ public:
     m_flt     = 0;
     m_fr      = 0;
     m_bw      = 0;
-    
     x_tuning  = 0.0;
     
     double a = parameters->getItem(2)->getValue();

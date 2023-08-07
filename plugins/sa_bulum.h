@@ -96,21 +96,21 @@ private:
   bool      need_precalc        = true;
   bool      need_recalc         = false;
 
-  float     master      = 0.0;
-  int32_t   numgrains   = 0;
-  int32_t   buffersize  = 0;
-  bool      freeze      = false;
-  float     graindist   = 0.0;
-  float     grainsize   = 0.0;
-  float     graindur    = 0.0;
-  float     grainpitch  = 1.0;
-  float     grainenv    = 0.0;
-  float     startjit    = 0.0;
-  float     pitchjit    = 0.0;
-  float     sizejit     = 0.0;
-  float     durjit      = 0.0;
-  int32_t   index       = 0;
-  float     countdown   = 0.0;
+  float     master              = 0.0;
+  int32_t   numgrains           = 0;
+  int32_t   buffersize          = 0;
+  bool      freeze              = false;
+  float     graindist           = 0.0;
+  float     grainsize           = 0.0;
+  float     graindur            = 0.0;
+  float     grainpitch          = 1.0;
+  float     grainenv            = 0.0;
+  float     startjit            = 0.0;
+  float     pitchjit            = 0.0;
+  float     sizejit             = 0.0;
+  float     durjit              = 0.0;
+  int32_t   index               = 0;
+  float     countdown           = 0.0;
 
 
 //------------------------------
@@ -127,19 +127,19 @@ public: // plugin
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     registerDefaultExtensions();
-    appendParameter(new SAT_Parameter(      "Master",              -6,   -60,  6                  ));
-    appendParameter(new SAT_IntParameter(   "Number of grains",     10,   1,   MAX_GRAINS         ));
-    appendParameter(new SAT_Parameter(      "Buffer size",          1000, 1,   1000               ));
-    appendParameter(new SAT_TextParameter(  "Freeze",               0,    0,   1,     freeze_txt  ));
-    appendParameter(new SAT_Parameter(      "Grain distance",       20,   0,   100                ));
-    appendParameter(new SAT_Parameter(      "Grain size",           30,   1,   100                ));
-    appendParameter(new SAT_Parameter(      "Grain duration",       300,  1,   1000               ));
-    appendParameter(new SAT_Parameter(      "Grain pitch",          1,    0,   4                  ));
-    appendParameter(new SAT_Parameter(      "Grain envelope",       0,    0,   1                  ));
-    appendParameter(new SAT_Parameter(      "Distance jitter",      0.2,  0,   1                  ));
-    appendParameter(new SAT_Parameter(      "Pitch jitter",         0.2,  0,   1                  ));
-    appendParameter(new SAT_Parameter(      "Size jitter",          0.2,  0,   1                  ));
-    appendParameter(new SAT_Parameter(      "Duration jitter",      0.2,  0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Master",            -6,   -60,  6                  ));
+    appendParameter(new SAT_IntParameter(   "Number of grains",   10,   1,   MAX_GRAINS         ));
+    appendParameter(new SAT_Parameter(      "Buffer size",        1000, 1,   1000               ));
+    appendParameter(new SAT_TextParameter(  "Freeze",             0,    0,   1,     freeze_txt  ));
+    appendParameter(new SAT_Parameter(      "Grain distance",     20,   0,   100                ));
+    appendParameter(new SAT_Parameter(      "Grain size",         30,   1,   100                ));
+    appendParameter(new SAT_Parameter(      "Grain duration",     300,  1,   1000               ));
+    appendParameter(new SAT_Parameter(      "Grain pitch",        1,    0,   4                  ));
+    appendParameter(new SAT_Parameter(      "Grain envelope",     0,    0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Distance jitter",    0.2,  0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Pitch jitter",       0.2,  0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Size jitter",        0.2,  0,   1                  ));
+    appendParameter(new SAT_Parameter(      "Duration jitter",    0.2,  0,   1                  ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
     bool result = SAT_Plugin::init();
     if (result) {
@@ -312,10 +312,8 @@ private:
 //----------------------------------------------------------------------
 
 #ifndef SAT_NO_ENTRY
-
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_bulum_descriptor,sa_bulum_plugin);
-  
 #endif
 
 //----------

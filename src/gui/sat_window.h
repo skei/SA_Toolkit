@@ -11,6 +11,9 @@
     SAT_Window
 */
 
+// on_window_timer
+// do_timerListener_callback
+
 /*
   to terrorize the gui system a little, we insert i sleep() for 1..50 ms
   every time we paint (on_window_paint), just after we make the opengl
@@ -86,8 +89,10 @@ private:
   SAT_WidgetArray     MTimerWidgets           = {};
   SAT_WidgetArray     MPrePaintWidgets        = {};
   SAT_WidgetArray     MPostPaintWidgets       = {};
-  
-  void*               MBuffer                 = nullptr; // fbo
+  SAT_WidgetQueue     MPendingDirtyWidgets    = {};
+  SAT_WidgetQueue     MPaintDirtyWidgets      = {};
+
+  //void*               MBuffer                 = nullptr; // fbo
   uint32_t            MBufferWidth            = 0;
   uint32_t            MBufferHeight           = 0;
 
@@ -98,9 +103,6 @@ private:
   double              MScale                  = 1.0;
   //bool              MAutoScaleWidgets       = true;
   
-  SAT_WidgetQueue     MPendingDirtyWidgets    = {};
-  SAT_WidgetQueue     MPaintDirtyWidgets      = {};
-
   SAT_Widget*         MRootWidget             = nullptr;
   SAT_Widget*         MHoverWidget            = nullptr;
   SAT_Widget*         MMouseCapturedWidget    = nullptr;
@@ -190,20 +192,18 @@ public:
 public:
 //------------------------------
 
-  SAT_Widget*       getRootWidget()     { return MRootWidget; }
-  SAT_Painter*      getPainter()        { return MWindowPainter; }
-  SAT_PaintContext* getPaintContext()   { return &MPaintContext; }
-  double            getScale()          { return MScale; }
-  uint32_t          getWidth()          { return MWidth; }
-  uint32_t          getHeight()         { return MHeight; }
-  double            getInitialWidth()   { return MInitialWidth; }
-  double            getInitialHeight()  { return MInitialHeight; }
-  
-  //SAT_TweenManager* getTweens()         { return &MTweens; }
-  
-  SAT_OpenGL*       getOpenGL()         { return MOpenGL; }
-  
-  SAT_WindowListener* getListener() { return MListener; }
+  SAT_Widget*         getRootWidget()     { return MRootWidget; }
+  SAT_Painter*        getPainter()        { return MWindowPainter; }
+  SAT_PaintContext*   getPaintContext()   { return &MPaintContext; }
+  double              getScale()          { return MScale; }
+  uint32_t            getWidth()          { return MWidth; }
+  uint32_t            getHeight()         { return MHeight; }
+  double              getInitialWidth()   { return MInitialWidth; }
+  double              getInitialHeight()  { return MInitialHeight; }
+//SAT_TweenManager*   getTweens()         { return &MTweens; }
+  SAT_OpenGL*         getOpenGL()         { return MOpenGL; }
+  SAT_WindowListener* getListener()       { return MListener; }
+
   void setListener(SAT_WindowListener* AListener) { MListener = AListener; }
 
 //------------------------------
@@ -311,14 +311,21 @@ public:
   }
 
 
-  void appendPrePaint(SAT_Widget* AWidget) {
+  virtual void appendPrePaint(SAT_Widget* AWidget) {
     MPrePaintWidgets.append(AWidget);
   }
 
-  void appendPostPaint(SAT_Widget* AWidget) {
+  virtual void appendPostPaint(SAT_Widget* AWidget) {
     MPostPaintWidgets.append(AWidget);
   }
 
+  //----------
+
+  virtual void resize(uint32_t AWidth, uint32_t AHeight) {
+    setSize(AWidth,AHeight);            // resizes window, but widgets are still 1:1, 320,100
+    on_window_resize(AWidth,AHeight);   // rescales widgets, but window is still 320,100
+  }
+  
 //------------------------------
 public: // capture
 //------------------------------
@@ -739,6 +746,8 @@ public: // window
 public: // timer
 //------------------------------
 
+  // called from do_timerListener_callback
+  
   virtual void on_window_timer(SAT_Timer* ATimer, double AElapsed) {
     if (!ATimer->isRunning()) return;
     if (MIsPainting) {

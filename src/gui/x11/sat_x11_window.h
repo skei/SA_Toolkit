@@ -48,7 +48,7 @@ private:
   xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
   xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
   xcb_cursor_t                MWindowCursor                 = XCB_NONE;
-  bool                        MIsCursorHidden               = false;          // TODO: std::atomic<bool> {false};
+  bool                        MIsCursorHidden               = false;          // TODO (?): std::atomic<bool> {false};
 
 //------------------------------
 protected:

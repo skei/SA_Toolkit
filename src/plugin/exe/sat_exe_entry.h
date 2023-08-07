@@ -78,6 +78,7 @@ void handle_plugin(const clap_plugin_t* plugin) {
   plugin->init(plugin);
   plugin->activate(plugin,44100,128,128);
   plugin->start_processing(plugin);
+  
   //clap_process_t process = {0};
   //process.audio_inputs        = nullptr;
   //process.audio_inputs_count  = 0;
@@ -89,7 +90,9 @@ void handle_plugin(const clap_plugin_t* plugin) {
   //process.steady_time         = 0;
   //process.transport           = nullptr;
   //plugin->process(plugin,&process); // will probably crash..
+  
   handle_editor(plugin);
+  
   plugin->stop_processing(plugin);
   plugin->deactivate(plugin);
   plugin->destroy(plugin);
@@ -158,7 +161,9 @@ int main(int argc, char** argv) {
     const clap_plugin_entry_t* entry = &clap_entry;
     if (!entry) { printf("! ERROR: clap_entry is null\n"); }
     else {
+      
       //uint32_t count = entry->init(plugin_path);
+      
       const clap_plugin_factory_t* factory = (const clap_plugin_factory_t*)entry->get_factory(CLAP_PLUGIN_FACTORY_ID);
       if (!factory) { printf("! ERROR: Couldn't get factory from entry\n"); }
       else {
@@ -180,7 +185,7 @@ int main(int argc, char** argv) {
           } // descriptor
         } // count
       } // factory
-      entry->deinit();
+      entry->deinit(); // entry->init() called?
     } // entry
     delete hostimpl;
   }

@@ -2246,7 +2246,6 @@ public: // parameters
       return false;
     }
     
-    
     if (file.open(APath,SAT_FILE_READ_TEXT)) {
       for (uint32_t i=0; i<5; i++) file.readLine(line_buffer,256); // skip metadata
       

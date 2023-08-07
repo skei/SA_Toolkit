@@ -3,16 +3,13 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-//#include "base/utils/sat_wrench.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
 #include "audio/sat_voice_manager.h"
 #include "plugin/sat_plugin.h"
-#include "plugin/ladspa/sat_ladspa_hosted_plugin.h"
 #include "gui/sat_widgets.h"
 
 #include "sa_synth/sa_synth_voice.h"
-
 
 //----------------------------------------------------------------------
 //
@@ -25,10 +22,6 @@
 #define EDITOR_HEIGHT 145
 #define EDITOR_SCALE  3.0
 #define NUM_VOICES    256
-
-// 1024 / 64 = 16 mod events per block, per voice, per parameter
-// 16 * 32 = 512 events, per parameter
-// poly-mod a couple of parameters = 1024 events..
 
 typedef SAT_VoiceManager<sa_synth_voice,NUM_VOICES> sa_synth_voice_manager;
 
@@ -80,18 +73,6 @@ public:
   SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_synth_plugin);
 
 //------------------------------
-public: // wrench
-//------------------------------
-
-  void test_wrench() {
-    //MWrench.registerFunction("print",sat_wrench_print);
-    //uint32_t len = 0;
-    //uint8_t* bytecode = MWrench.compile(sat_wrench_source_code,&len);
-    //if (bytecode) MWrench.run(bytecode,len);
-    //MWrench.free_bytecode(bytecode);
-  }
-
-//------------------------------
 public: // clap
 //------------------------------
 
@@ -100,6 +81,7 @@ public: // clap
     SAT_Print("id: '%s'\n",sa_synth_descriptor.id);
     
     // extensions
+    // TODO: not all!
     registerAllExtensions();
     
     // ports
@@ -184,7 +166,7 @@ public: // clap
       case 0: {
         strcpy(page->section_name,"Section");
         page->page_id = 0;
-        strcpy(page->page_name,"Parameters");
+        strcpy(page->page_name,"SA_Synth parameters");
         page->param_ids[0] = 0;
         page->param_ids[1] = 1;
         page->param_ids[2] = CLAP_INVALID_ID;

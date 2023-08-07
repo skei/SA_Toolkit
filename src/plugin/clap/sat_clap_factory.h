@@ -11,6 +11,9 @@
 
 #include "plugin/clap/factory/sat_clap_plugin_factory.h"
 
+//#ifdef SAT_PLUGIN_USE_ARA_FACTORY
+//#endif
+
 #ifdef SAT_PLUGIN_USE_INVALIDATION_FACTORY
   #include "plugin/clap/factory/sat_clap_invalidation_factory.h"
 #endif

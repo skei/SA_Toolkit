@@ -5,18 +5,17 @@
 //----------------------------------------------------------------------
 
 int main() {
-  
-  SAT_Print("Hello world\n");
-  
-  SAT_Window* window = new SAT_Window(640,480,0,nullptr);
+  SAT_Window* window = new SAT_Window(320,100,0,nullptr);
   
   SAT_PanelWidget* panel = new SAT_PanelWidget(0);
   window->appendRootWidget(panel);
   
-  SAT_SliderWidget* slider = new SAT_SliderWidget( SAT_Rect(10,10,300,30), "Slider", 0.25 );
-  panel->appendChildWidget(slider);
-  slider->setTextSize(16);
-  slider->setValueSize(16);
+    SAT_SliderWidget* slider = new SAT_SliderWidget( SAT_Rect(10,10,300,25), "Slider", 0.25 );
+    panel->appendChildWidget(slider);
+    slider->setNumValues(2);
+    slider->setValue(0.75,1);
+  
+  window->resize(960,300);
   
   window->show();
   window->eventLoop();

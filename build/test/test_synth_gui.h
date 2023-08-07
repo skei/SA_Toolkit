@@ -158,10 +158,16 @@
     dragval->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     dragval->setTextSize(7);
     dragval->setValueSize(7);
+    
     dragval->setSnap(true);
     dragval->setSnapPos(0.5);
+    
+    dragval->setQuantize(true);
+    dragval->setQuantizeSteps(5);
+    
     dragval->setAutoHideCursor(false);
     dragval->setAutoLockCursor(true);
+    
     dragval->setRoundedCorners(true);
     dragval->setCornerSize(2);
     dragval->setDrawBorder(true);

@@ -194,7 +194,9 @@ private: // plugin
     plug->on_main_thread();
   }
 
+//----------
 protected:
+//----------
 
   //const
   clap_plugin_t MPlugin = {
@@ -232,9 +234,9 @@ private: // draft: ambisonic
     return plug->ambisonic_get_info(is_input,port_index,info);
   }
   
-  
-
+//----------
 protected:
+//----------
 
   const
   clap_plugin_ambisonic_t MAmbisonicExt = {
@@ -257,7 +259,9 @@ private: // ext: audio ports
     return plug->audio_ports_get(index,is_input,info);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_audio_ports_t MAudioPortsExt = {
@@ -283,7 +287,9 @@ private: // ext: audio ports activation
     return plug->audio_ports_activation_set_active(is_input,port_index,is_active);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_audio_ports_activation_t MAudioPortsActivationExt = {
@@ -313,7 +319,9 @@ private: // ext: audio ports config
     return plug->audio_ports_config_select(config_id);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_audio_ports_config_t MAudioPortsConfigExt = {
@@ -332,7 +340,9 @@ private: // draft: check for update
     plug->check_for_updates_check(include_preview);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_check_for_update_t MCheckForUpdateExt = {
@@ -355,7 +365,9 @@ private: // draft: configurable audio ports
     return plug->configurable_audio_ports_request_configuration(requests,request_count);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_configurable_audio_ports_t MConfigurableAudioPortsExt = {
@@ -379,7 +391,9 @@ private: // draft context-menu
     return plug->context_menu_perform(target,action_id);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_context_menu_t MContextMenuExt = {
@@ -397,7 +411,9 @@ private: // draft: cv
     return plug->cv_get_channel_type(is_input,port_index,channel_index,channel_type);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_cv_t MCVExt = {
@@ -420,8 +436,9 @@ private: // draft: extensible audio ports
     return plug->extensible_audio_ports_remove_port(is_input,index);
    }
    
-
+//----------
 protected:
+//----------
 
   const
   clap_plugin_extensible_audio_ports_t MExtensibleAudioPortsExt = {
@@ -524,7 +541,9 @@ private: // ext: gui
     return plug->gui_hide();
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_gui_t MGuiExt = {
@@ -555,7 +574,9 @@ private: // ext: latency
     return plug->latency_get();
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_latency_t MLatencyExt = {
@@ -578,7 +599,9 @@ private: // draft: midi mappings
     return plug->midi_mappings_get(index,mapping);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_midi_mappings_t MMidiMappingsExt = {
@@ -602,7 +625,9 @@ private: // ext: note names
     return plug->note_name_get(index,note_name);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_note_name MNoteNameExt = {
@@ -626,7 +651,9 @@ private: // ext: note ports
     return plug->note_ports_get(index,is_input,info);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_note_ports_t MNotePortsExt = {
@@ -654,7 +681,9 @@ private: // draft: param indication
     plug->param_indication_set_automation(param_id,automation_state,color);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_param_indication_t MParamIndicationExt = {
@@ -702,7 +731,9 @@ private: // ext params
     plug->params_flush(in,out);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_params_t MParamsExt = {
@@ -724,7 +755,9 @@ private: // ext: posix fd support
     plug->posix_fd_support_on_fd(fd,flags);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_posix_fd_support_t MPosixFdSupportExt = {
@@ -741,7 +774,9 @@ private: // draft: preset load
     return plug->preset_load_from_location(location_kind,location,load_key);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_preset_load_t MPresetLoadExt = {
@@ -765,7 +800,9 @@ private: // draft: remote controls
     return plug->remote_controls_get(page_index,page);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_remote_controls_t MRemoteControlsExt = {
@@ -789,7 +826,9 @@ private: // ext: render
     return plug->render_set(mode);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_render_t MRenderExt = {
@@ -825,7 +864,9 @@ private: // draft: resource-directory
     return plug->resource_directory_get_file_path(index,path,path_size);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_resource_directory_t MResourceDirectoryExt = {
@@ -851,7 +892,9 @@ private: // ext: state
     return plug->state_load(stream);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_state_t MStateExt = {
@@ -875,7 +918,9 @@ private: // draft: state-context
     return plug->state_context_load(stream,context_type);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_state_context_t MStateContextExt = {
@@ -899,7 +944,9 @@ private: // draft: surround
     plug->surround_changed();
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_surround_t MSurroundExt = {
@@ -917,7 +964,9 @@ private: // ext: tail
     return plug->tail_get();
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_tail_t MTailExt = {
@@ -934,7 +983,9 @@ private: // ext: thread pool
     plug->thread_pool_exec(task_index);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_thread_pool_t MThreadPoolExt = {
@@ -951,7 +1002,9 @@ private: // ext: timer support
     plug->timer_support_on_timer(timer_id);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_timer_support_t MTimerSupportExt = {
@@ -968,7 +1021,9 @@ private: // draft: track info
     plug->track_info_changed();
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_track_info_t MTrackInfoExt = {
@@ -992,7 +1047,9 @@ private: // draft: triggers
     return plug->triggers_get_info(index,trigger_info);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_triggers_t MTriggersExt = {
@@ -1010,7 +1067,9 @@ private: // draft: tuning
     plug->tuning_changed();
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_tuning_t MTuningExt = {
@@ -1027,7 +1086,9 @@ private: // voice info
     return plug->voice_info_get(info);
   }
 
+//----------
 protected:
+//----------
 
   const
   clap_plugin_voice_info_t MVoiceInfoExt = {

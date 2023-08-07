@@ -111,11 +111,11 @@ const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descrip
   //case:     plugin = new sa_tyr_plugin(ADescriptor,AHost);                return plugin->getPlugin();
     case 7:   plugin = new test_synth_plugin(ADescriptor,AHost);            return plugin->getPlugin();
     case 8:   plugin = new test_jit_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-    case 9:   plugin = new test_reaper_ext_plugin(ADescriptor,AHost);        return plugin->getPlugin();
+    case 9:   plugin = new test_reaper_ext_plugin(ADescriptor,AHost);       return plugin->getPlugin();
 
     // ports
     
-    case 10:   plugin = new sa_compciter_plugin(ADescriptor,AHost);          return plugin->getPlugin();
+    case 10:  plugin = new sa_compciter_plugin(ADescriptor,AHost);          return plugin->getPlugin();
     case 11:  plugin = new sa_event_horizon_plugin(ADescriptor,AHost);      return plugin->getPlugin();
     case 12:  plugin = new sa_exciter_plugin(ADescriptor,AHost);            return plugin->getPlugin();
     case 13:  plugin = new sa_exciter2_plugin(ADescriptor,AHost);           return plugin->getPlugin();

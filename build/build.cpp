@@ -1,12 +1,6 @@
 
 // nc -U -l -k /tmp/sat.socket
 
-//----------------------------------------------------------------------
-
-
-
-
-
 //#define SAT_PLUGIN_ALL
 
 //#define SAT_PLUGIN_CLAP
@@ -36,6 +30,10 @@
 //#include "test/test_reaper_ext.h"
 //#include "test/test_standalone.h"
 //#include "test/test_synth.h"
+
+
+
+
 
 //----------------------------------------------------------------------
 //
@@ -77,7 +75,7 @@
 //#include "../plugins/ports/sa_saturation.h"
 //#include "../plugins/ports/sa_small_room_reverb.h"
 //#include "../plugins/ports/sa_sonic_maximizer.h"
-#include "../plugins/ports/sa_stretch.h"
+//#include "../plugins/ports/sa_stretch.h"
 //#include "../plugins/ports/sa_tilteq.h"
 //#include "../plugins/ports/sa_transient_killer.h"
 
@@ -123,7 +121,7 @@
 
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_plugins.h"
-//#include "../plugins/sa_everything.h"
+#include "../plugins/sa_everything.h"
 
 
 

@@ -404,6 +404,22 @@
   #define SAT_PLUGIN_DEFINED
 #endif
 
+#ifdef SAT_PLUGIN_LADSPA
+  #define SAT_PLUGIN_DEFINED
+#endif
+
+#ifdef SAT_PLUGIN_LV2
+  #define SAT_PLUGIN_DEFINED
+#endif
+
+#ifdef SAT_PLUGIN_VST2
+  #define SAT_PLUGIN_DEFINED
+#endif
+
+#ifdef SAT_PLUGIN_VST3
+  #define SAT_PLUGIN_DEFINED
+#endif
+
 //----------
 
 #ifndef SAT_PLUGIN_DEFINED

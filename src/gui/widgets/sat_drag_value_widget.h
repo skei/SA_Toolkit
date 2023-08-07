@@ -32,11 +32,14 @@ private:
   double    MShiftSensitivity = 0.1;
   bool      MAutoHideCursor   = true;
   bool      MAutoLockCursor   = true;
+
   bool      MSnap             = false;
   double    MSnapPos          = 0.5;
   double    MSnapDist         = 0.1;
   double    MSnapSpeed        = 1.5;
+
   bool      MQuantize         = false;
+  uint32_t  MQuantizeSteps    = 1;
 
   bool      MBipolar          = false;
   double    MBipolarCenter    = 0.5;
@@ -47,6 +50,9 @@ private:
   //bool      MIsDraggingRight  = false;
   //bool      MHoverLeftEdge    = false;
   //bool      MHoverRightEdge   = false;
+  
+  uint32_t  MNumValues        = 1;
+  double    MHoverDistance    = 0.1;
 
 //------------------------------
 public:
@@ -95,13 +101,17 @@ public:
   virtual void    setSnapPos(double APos)             { MSnapPos = APos; }
   virtual void    setSnapDist(double ADist)           { MSnapDist = ADist; }
   virtual void    setSnapSpeed(double ASpeed)         { MSnapSpeed = ASpeed; }
+
   virtual void    setQuantize(bool AQuant)            { MQuantize = AQuant; }
+  virtual void    setQuantizeSteps(uint32_t ASteps)   { MQuantizeSteps = ASteps; }
 
   virtual void    setBipolar(bool ABipolar)           { MBipolar = ABipolar; }
   virtual void    setBipolarCenter(double APos)       { MBipolarCenter = APos; }
   virtual bool    isBipolar()                         { return MBipolar; }
   virtual double  getBipolarCenter()                  { return MBipolarCenter; }
 
+  virtual void    setNumValues(uint32_t ANum)         { MNumValues = ANum; }
+  virtual void    setHoverDistance(double ADist)      { MHoverDistance = ADist; }
 
 //------------------------------
 private:
@@ -121,6 +131,45 @@ private:
     }
     return value;
   }
+  
+  //----------
+
+  double quantizeValue(double AValue) {
+    if (MQuantizeSteps > 1) {
+      double qs = (double)(MQuantizeSteps + 1);
+      double v = AValue * qs;
+      return SAT_Trunc(v) / qs;
+    }
+    return AValue;
+  }
+  
+  //----------
+  
+  
+  // find closest (from mouse cursor) value
+  
+  int32_t findClosestValue(double AXpos, double AYpos) {
+    double S = getWindowScale();
+    SAT_Rect mrect = getRect();
+    if (!mrect.contains(AXpos,AYpos)) return 0;
+    double hoverdist = MHoverDistance * S;
+    double range = mrect.w;
+    double min_dist = range;
+    int32_t index = -1;
+    for (uint32_t i=0; i<MNumValues; i++) {
+      double v = getValue(i);
+      double x = mrect.x + (v * range);
+      double dist = abs(x - AXpos);
+      if (dist < hoverdist) {
+        if (dist < min_dist) {
+          min_dist = dist;
+          index = i;
+        }
+      }
+    }
+    return index;
+  }
+  
 
 //------------------------------
 public:
@@ -136,8 +185,12 @@ public:
       MIsDragging   = true;
       MClickedYpos  = AYpos;
       MClickedYpos  = AYpos;
-      
-      //findClosestValue(AXpos,AYpos);
+
+      //
+
+      int32_t index = findClosestValue(AXpos,AYpos);
+      if (index >= 0) {
+      }
       
       //if (MHoverLeftEdge) {
       //}
@@ -211,9 +264,15 @@ public:
           break;
       }
       MDragValue = SAT_Clamp(value,0,1);
+      
+      if (MQuantize && !(AState & SAT_STATE_SHIFT)) {
+        value = quantizeValue(value);
+      }
+      
       if (MSnap && !(AState & SAT_STATE_SHIFT)) {
         value = snapValue(value);
       }
+      
       value = SAT_Clamp(value,0,1);
       setValue(value);
 
