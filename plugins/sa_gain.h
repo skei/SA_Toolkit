@@ -74,18 +74,25 @@ public:
 //  }
 
   //----------
-
-  void processAudio(SAT_ProcessContext* AContext) final {
-    float** inputs = AContext->process->audio_inputs[0].data32;
-    float** outputs = AContext->process->audio_outputs[0].data32;
-    uint32_t length = AContext->process->frames_count;
-    // process
-    SAT_CopyStereoBuffer(outputs,inputs,length);
-    // gain
+  
+  void processSample(float* spl0, float* spl1) final {
     double scale = getParameterValue(0) + getModulationValue(0);
     scale = SAT_Clamp(scale,0,1);
-    SAT_ScaleStereoBuffer(outputs,scale,length);
+    *spl0 *= scale;
+    *spl1 *= scale;
   }
+
+//  void processAudio(SAT_ProcessContext* AContext) final {
+//    float** inputs = AContext->process->audio_inputs[0].data32;
+//    float** outputs = AContext->process->audio_outputs[0].data32;
+//    uint32_t length = AContext->process->frames_count;
+//    // process
+//    SAT_CopyStereoBuffer(outputs,inputs,length);
+//    // gain
+//    double scale = getParameterValue(0) + getModulationValue(0);
+//    scale = SAT_Clamp(scale,0,1);
+//    SAT_ScaleStereoBuffer(outputs,scale,length);
+//  }
   
 };
 

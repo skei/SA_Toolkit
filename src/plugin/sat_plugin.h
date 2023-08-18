@@ -2850,13 +2850,32 @@ public:
 public: // process audio
 //------------------------------
 
+  virtual void processSample(float* spl0, float* spl1) {
+  }
+  
+  //----------
+
   virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     if ((MAudioInputPorts.size() > 0) && (MAudioOutputPorts.size() > 0)) {
-      float** inputs = process->audio_inputs[0].data32;
-      float** outputs = process->audio_outputs[0].data32;
-      SAT_CopyStereoBuffer(outputs,inputs,length);
+      
+      //float** inputs = process->audio_inputs[0].data32;
+      //float** outputs = process->audio_outputs[0].data32;
+      //SAT_CopyStereoBuffer(outputs,inputs,length);
+      
+      float* input0 = process->audio_inputs[0].data32[0];
+      float* input1 = process->audio_inputs[0].data32[1];
+      float* output0 = process->audio_outputs[0].data32[0];
+      float* output1 = process->audio_outputs[0].data32[1];
+      for (uint32_t i=0; i<length; i++) {
+        float spl0 = *input0++;
+        float spl1 = *input1++;
+        processSample(&spl0,&spl1);
+        *output0++ = spl0;
+        *output1++ = spl1;
+      }
+      
     }
   }
 
@@ -2877,14 +2896,27 @@ public: // process audio
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) {
     const clap_process_t* process = AContext->process;
-    //uint32_t length = process->frames_count;
-    float* inputs[2];
-    float* outputs[2];
-    inputs[0]  = process->audio_inputs[0].data32[0] + offset;
-    inputs[1]  = process->audio_inputs[0].data32[1] + offset;
-    outputs[0] = process->audio_outputs[0].data32[0] + offset;
-    outputs[1] = process->audio_outputs[0].data32[1] + offset;
-    SAT_CopyStereoBuffer(outputs,inputs,length);
+
+    //float* inputs[2];
+    //float* outputs[2];
+    //inputs[0]  = process->audio_inputs[0].data32[0] + offset;
+    //inputs[1]  = process->audio_inputs[0].data32[1] + offset;
+    //outputs[0] = process->audio_outputs[0].data32[0] + offset;
+    //outputs[1] = process->audio_outputs[0].data32[1] + offset;
+    //SAT_CopyStereoBuffer(outputs,inputs,length);
+
+    float* input0 = process->audio_inputs[0].data32[0];
+    float* input1 = process->audio_inputs[0].data32[1];
+    float* output0 = process->audio_outputs[0].data32[0];
+    float* output1 = process->audio_outputs[0].data32[1];
+    for (uint32_t i=0; i<length; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+      processSample(&spl0,&spl1);
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }
+
   }
 
   //----------
