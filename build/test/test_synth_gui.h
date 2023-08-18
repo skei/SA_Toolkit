@@ -110,7 +110,7 @@
 
     //val->setPostLayoutOffset(SAT_Rect(10,0,0,0));
     
-    SAT_GroupBoxWidget* groupbox1 = new SAT_GroupBoxWidget(100,true);
+    SAT_GroupBoxWidget* groupbox1 = new SAT_GroupBoxWidget(100,20,true);
     left_column->appendChildWidget(groupbox1);
     groupbox1->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     
@@ -119,7 +119,7 @@
       grpage1->setBackgroundColor(SAT_Color(0.40,0.35,0.35));
       grpage1->setLayout(SAT_WIDGET_ALIGN_NONE,SAT_WIDGET_STRETCH_ALL);
       
-    SAT_GroupBoxWidget* groupbox2 = new SAT_GroupBoxWidget(100,true);
+    SAT_GroupBoxWidget* groupbox2 = new SAT_GroupBoxWidget(100,20,true);
     left_column->appendChildWidget(groupbox2);
     groupbox2->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     
@@ -136,7 +136,7 @@
           k->setArcThickness(4);
         }
 
-    SAT_GroupBoxWidget* groupbox3 = new SAT_GroupBoxWidget(100,false);
+    SAT_GroupBoxWidget* groupbox3 = new SAT_GroupBoxWidget(100,20,false);
     left_column->appendChildWidget(groupbox3);
     groupbox3->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
     
@@ -215,7 +215,7 @@
     //button1->setAlignment(SAT_EDGE_LEFT);
     //button2->setAnchors(SAT_EDGE_BOTTOM);
     
-    SAT_TabsWidget* tabs = new SAT_TabsWidget(100,3);
+    SAT_TabsWidget* tabs = new SAT_TabsWidget(100,3,20);
     left_column->appendChildWidget(tabs);
     tabs->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
 

@@ -63,13 +63,13 @@ public:
       
       SAT_ButtonWidget* button1 = new SAT_ButtonWidget(15);
       left_panel->appendChildWidget(button1);
-      button1->setText("Button (on)","Button (off)");
+      button1->setTexts("Button (on)","Button (off)");
       button1->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
       
       SAT_ButtonWidget* button2 = new SAT_ButtonWidget(15);
       left_panel->appendChildWidget(button2);
       button2->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
-      button2->setText("Button (on)","Button (off)");
+      button2->setTexts("Button (on)","Button (off)");
       button2->setIsToggle(true);
       
       SAT_ButtonRowWidget* buttonrow1 = new SAT_ButtonRowWidget(15,5,buttonrow_text,SAT_BUTTON_ROW_SINGLE,false);
