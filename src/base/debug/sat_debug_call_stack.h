@@ -10,6 +10,10 @@
   (linker flag, not a compiler flag. You might need to try -Wl,--export-dynamic)
 */
 
+#ifdef SAT_WIN32
+  #undef SAT_DEBUG_CALL_STACK
+#endif
+
 #ifdef SAT_DEBUG_CALL_STACK
 
   #ifndef SAT_LINUX

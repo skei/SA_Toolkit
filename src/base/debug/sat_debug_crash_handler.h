@@ -9,6 +9,10 @@
   // The only two signals for which a handler cannot be defined are SIGKILL and SIGSTOP.
 */
 
+#ifdef SAT_WIN32
+  #undef SAT_DEBUG_CRASH_HANDLER
+#endif
+
 #ifdef SAT_DEBUG_CRASH_HANDLER
 
   #ifndef SAT_LINUX
