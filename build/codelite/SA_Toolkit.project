@@ -4,6 +4,41 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <VirtualDirectory Name="sa_botage">
+      <File Name="../../plugins/sa_botage/sa_botage_seq_page.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_perf_page.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_prob_page.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_widgets.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_parameters.h"/>
+      <File Name="../../plugins/sa_botage/sa_botage_gui.h"/>
+    </VirtualDirectory>
+    <File Name="../../plugins/sa_tyr.h"/>
+    <File Name="../../plugins/sa_botage.h"/>
+    <VirtualDirectory Name="backup">
+      <File Name="../../plugins/backup/sa_tyr.h"/>
+      <File Name="../../plugins/backup/sa_botage.h"/>
+      <VirtualDirectory Name="sa_tyr">
+        <File Name="../../plugins/backup/sa_tyr/sa_tyr_widgets.h"/>
+        <File Name="../../plugins/backup/sa_tyr/sa_tyr_voice.h"/>
+        <File Name="../../plugins/backup/sa_tyr/sa_tyr_res.h"/>
+        <File Name="../../plugins/backup/sa_tyr/sa_tyr_parameters.h"/>
+        <File Name="../../plugins/backup/sa_tyr/sa_tyr_osc.h"/>
+        <File Name="../../plugins/backup/sa_tyr/sa_tyr_editor.h"/>
+        <File Name="../../plugins/backup/sa_tyr/issues.txt"/>
+        <File Name="../../plugins/backup/sa_tyr/history.txt"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="sa_botage">
+        <File Name="../../plugins/backup/sa_botage/sa_botage_widgets.h"/>
+        <File Name="../../plugins/backup/sa_botage/sa_botage_processor.h"/>
+        <File Name="../../plugins/backup/sa_botage/sa_botage_parameters.h"/>
+        <File Name="../../plugins/backup/sa_botage/sa_botage_editor_page_seq.h"/>
+        <File Name="../../plugins/backup/sa_botage/sa_botage_editor_page_prob.h"/>
+        <File Name="../../plugins/backup/sa_botage/sa_botage_editor_page_perf.h"/>
+        <File Name="../../plugins/backup/sa_botage/sa_botage_editor.h"/>
+        <File Name="../../plugins/backup/sa_botage/issues.txt"/>
+        <File Name="../../plugins/backup/sa_botage/history.txt"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
     <VirtualDirectory Name="sa_demo2">
       <File Name="../../plugins/sa_demo2/sa_demo2_voice.h"/>
       <File Name="../../plugins/sa_demo2/sa_demo2_editor.h"/>
@@ -35,23 +70,6 @@
       <File Name="../../plugins/sa_demo/sa_demo_voice.h"/>
     </VirtualDirectory>
     <File Name="../../plugins/sa_demo.h"/>
-    <VirtualDirectory Name="sa_tyr">
-      <File Name="../../plugins/sa_tyr/sa_tyr_widgets.h"/>
-      <File Name="../../plugins/sa_tyr/sa_tyr_voice.h"/>
-      <File Name="../../plugins/sa_tyr/sa_tyr_res.h"/>
-      <File Name="../../plugins/sa_tyr/sa_tyr_parameters.h"/>
-      <File Name="../../plugins/sa_tyr/sa_tyr_osc.h"/>
-      <File Name="../../plugins/sa_tyr/sa_tyr_editor.h"/>
-    </VirtualDirectory>
-    <VirtualDirectory Name="sa_botage">
-      <File Name="../../plugins/sa_botage/sa_botage_widgets.h"/>
-      <File Name="../../plugins/sa_botage/sa_botage_processor.h"/>
-      <File Name="../../plugins/sa_botage/sa_botage_parameters.h"/>
-      <File Name="../../plugins/sa_botage/sa_botage_editor_page_seq.h"/>
-      <File Name="../../plugins/sa_botage/sa_botage_editor_page_prob.h"/>
-      <File Name="../../plugins/sa_botage/sa_botage_editor_page_perf.h"/>
-      <File Name="../../plugins/sa_botage/sa_botage_editor.h"/>
-    </VirtualDirectory>
     <VirtualDirectory Name="templates">
       <File Name="../../plugins/templates/effect.h"/>
     </VirtualDirectory>
@@ -76,15 +94,12 @@
       <File Name="../../plugins/ports/sa_exciter.h"/>
       <File Name="../../plugins/ports/sa_compciter.h"/>
     </VirtualDirectory>
-    <File Name="../../plugins/sa_tyr.h"/>
     <File Name="../../plugins/sa_pitch.h"/>
     <File Name="../../plugins/sa_gain.h"/>
     <File Name="../../plugins/sa_cred.h"/>
     <File Name="../../plugins/sa_bulum.h"/>
-    <File Name="../../plugins/sa_botage.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="tools">
-    <File Name="../../tools/dump_ttl.sh"/>
     <File Name="../../tools/dump_ttl.c" ExcludeProjConfig="linux_exelib_release;win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;linux_exelib_debug;"/>
     <File Name="../../tools/bin2h.c" ExcludeProjConfig="linux_exelib_release;win32_plugin_debug;win32_exe_release;win32_exe_debug;win32_plugin_release;linux_plugin_release;linux_plugin_debug;linux_exe_release;linux_exe_debug;linux_exelib_debug;"/>
   </VirtualDirectory>
@@ -99,6 +114,7 @@
   </VirtualDirectory>
   <VirtualDirectory Name="build">
     <VirtualDirectory Name="test">
+      <File Name="../test/test1.h"/>
       <File Name="../test/test_jit.h"/>
       <File Name="../test/test_parameters.h"/>
       <File Name="../test/test_synth_voice.h"/>
@@ -437,11 +453,12 @@
       <File Name="../../src/gui/sat_opengl.h"/>
       <File Name="../../src/gui/sat_widget_listener.h"/>
       <VirtualDirectory Name="widgets">
+        <File Name="../../src/gui/widgets/sat_dual_slider_widget.h"/>
+        <File Name="../../src/gui/widgets/sat_dual_value_widget._h"/>
+        <File Name="../../src/gui/widgets/sat_dual_slider_widget._h"/>
         <File Name="../../src/gui/widgets/sat_main_menu_widget.h"/>
-        <File Name="../../src/gui/widgets/sat_dual_value_widget.h"/>
         <File Name="../../src/gui/widgets/sat_knob2_widget.h"/>
         <File Name="../../src/gui/widgets/sat_debug_observer_widget.h"/>
-        <File Name="../../src/gui/widgets/sat_dual_slider_widget.h"/>
         <File Name="../../src/gui/widgets/sat_range_bar_widget.h"/>
         <File Name="../../src/gui/widgets/sat_shader_widget.h"/>
         <File Name="../../src/gui/widgets/sat_freq_resp_widget.h"/>
@@ -930,7 +947,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug_linux.so</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug_linux.clap</Command>
         <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
@@ -990,7 +1007,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_linux.so</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_linux.clap</Command>
         <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
@@ -1049,7 +1066,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug_linux.so</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_debug_linux.clap</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1107,7 +1124,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_linux.so</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).so ../../bin/$(ProjectName)_linux.clap</Command>
         <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
@@ -1227,7 +1244,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="win32_plugin_debug" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="win32_plugin_debug" CompilerType="" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;-static;-fPIC;-Wl,-Bsymbolic;-Wl,--export-all-symbols;-static-libstdc++;-static-libgcc" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="SAT_PLUGIN"/>
@@ -1252,7 +1269,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).dll ../../bin/$(ProjectName)_debug_win32.dll</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).dll ../../bin/$(ProjectName)_debug_win32.clap</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1275,7 +1292,7 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="win32_plugin_release" CompilerType="mingw" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="win32_plugin_release" CompilerType="" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O3;-ffast-math;-Wall;-static;-fPIC;-static-libstdc++;-static-libgcc" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
@@ -1300,7 +1317,7 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).dll ../../bin/$(ProjectName)_win32.dll</Command>
+        <Command Enabled="yes">cp $(WorkspacePath)/build-$(WorkspaceConfiguration)/lib/$(ProjectName).dll ../../bin/$(ProjectName)_win32.clap</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

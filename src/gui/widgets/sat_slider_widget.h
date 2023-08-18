@@ -19,6 +19,10 @@ class SAT_SliderWidget
 private:
 //------------------------------
 
+//------------------------------
+protected:
+//------------------------------
+
   bool      MDrawSliderBar      = true;
   SAT_Color MSliderBarColor     = SAT_Grey;
   uint32_t  MSliderBarDirection = SAT_DIRECTION_LEFT;
@@ -40,6 +44,7 @@ public:
   SAT_SliderWidget(SAT_Rect ARect, const char* AText, double AValue)
   : SAT_DragValueWidget(ARect,AText,AValue) {
     setName("SAT_SliderWidget");
+    //setNumValues(1);
   }
 
   virtual ~SAT_SliderWidget() {

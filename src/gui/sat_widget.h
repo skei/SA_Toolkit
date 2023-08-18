@@ -138,6 +138,7 @@ public:
   virtual SAT_WidgetOwner*    getOwner()                        { return MOwner; }
   virtual SAT_Widget*         getParentWidget()                 { return MParentWidget; }
   virtual SAT_Rect            getRect()                         { return MRect; }
+  virtual double              getSelectedModulation()           { return MModulations[MSelectedValue]; }
   virtual double              getSelectedValue()                { return MValues[MSelectedValue]; }
   virtual uint32_t            getSelectedValueIndex()           { return MSelectedValue; }
   virtual uint32_t            getStretching()                   { return MStretching; }
@@ -227,7 +228,15 @@ public:
     MMaxHeight = AMaxH;
   }
   
-  virtual void selectValueIndex(uint32_t AIndex) {
+  virtual void setSelectedModulation(double AValue) {
+    MModulations[MSelectedValue] = AValue;
+  }
+
+  virtual void setSelectedValue(double AValue) {
+    MValues[MSelectedValue] = AValue;
+  }
+
+  virtual void selectValue(uint32_t AIndex) {
     MSelectedValue = AIndex;
   }
 
@@ -591,6 +600,9 @@ public: // hierarchy
             break;
           }
           
+          //case SAT_WIDGET_ALIGN_LEFT_FILL: {
+          //}
+
           case SAT_WIDGET_ALIGN_LEFT_TOP: {
             child->MRect.x = layout_rect.x;
             child->MRect.y = layout_rect.y;
@@ -633,6 +645,9 @@ public: // hierarchy
             break;
           }
           
+          //case SAT_WIDGET_ALIGN_RIGHT_FILL: {
+          //}
+
           case SAT_WIDGET_ALIGN_RIGHT_TOP: {
             child->MRect.x = layout_rect.x2() - child->MRect.w;
             child->MRect.y = layout_rect.y;
@@ -672,6 +687,9 @@ public: // hierarchy
             break;
           }
           
+          //case SAT_WIDGET_ALIGN_TOP_FILL: {
+          //}
+
           case SAT_WIDGET_ALIGN_TOP_LEFT: {
             child->MRect.x = layout_rect.x;
             child->MRect.y = layout_rect.y;
@@ -713,6 +731,9 @@ public: // hierarchy
             break;
           }
           
+          //case SAT_WIDGET_ALIGN_BOTTOM_FILL: {
+          //}
+
           case SAT_WIDGET_ALIGN_BOTTOM_LEFT: {
             child->MRect.x = layout_rect.x;
             child->MRect.y = layout_rect.y2() - child->MRect.h;

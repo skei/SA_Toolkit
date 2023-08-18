@@ -95,6 +95,12 @@
 #define SAT_CORNER_LOWER_RIGHT                  0x04
 #define SAT_CORNER_LOWER_LEFT                   0x08
 
+#define SAT_CORNER_UPPER                        (SAT_CORNER_UPPER_LEFT  | SAT_CORNER_UPPER_RIGHT)
+#define SAT_CORNER_LOWER                        (SAT_CORNER_LOWER_LEFT  | SAT_CORNER_LOWER_RIGHT)
+#define SAT_CORNER_LEFT                         (SAT_CORNER_UPPER_LEFT  | SAT_CORNER_LOWER_LEFT)
+#define SAT_CORNER_RIGHT                        (SAT_CORNER_UPPER_RIGHT | SAT_CORNER_LOWER_RIGHT)
+#define SAT_CORNER_ALL                          (SAT_CORNER_UPPER       | SAT_CORNER_LOWER)
+
 #define SAT_CURSOR_LOCK                        -4
 #define SAT_CURSOR_UNLOCK                      -3
 #define SAT_CURSOR_SHOW                        -2
@@ -346,18 +352,22 @@
 #define SAT_WIDGET_ALIGN_VFILL                  8
 
 #define SAT_WIDGET_ALIGN_LEFT                   9
+//#define SAT_WIDGET_ALIGN_LEFT_FILL
 #define SAT_WIDGET_ALIGN_LEFT_TOP               10
 #define SAT_WIDGET_ALIGN_LEFT_CENTER            11
 #define SAT_WIDGET_ALIGN_LEFT_BOTTOM            12
 #define SAT_WIDGET_ALIGN_RIGHT                  13
+//#define SAT_WIDGET_ALIGN_RIGHT_FILL
 #define SAT_WIDGET_ALIGN_RIGHT_TOP              14
 #define SAT_WIDGET_ALIGN_RIGHT_CENTER           15
 #define SAT_WIDGET_ALIGN_RIGHT_BOTTOM           16
 #define SAT_WIDGET_ALIGN_TOP                    17
+//#define SAT_WIDGET_ALIGN_TOP_FILL
 #define SAT_WIDGET_ALIGN_TOP_LEFT               18
 #define SAT_WIDGET_ALIGN_TOP_CENTER             19
 #define SAT_WIDGET_ALIGN_TOP_RIGHT              20
 #define SAT_WIDGET_ALIGN_BOTTOM                 21
+//#define SAT_WIDGET_ALIGN_BOTTOM_FILL
 #define SAT_WIDGET_ALIGN_BOTTOM_LEFT            22
 #define SAT_WIDGET_ALIGN_BOTTOM_CENTER          23
 #define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           24

@@ -337,6 +337,21 @@ public:
   }
 
   //----------
+  
+  SAT_IntParameter(clap_param_info_t* info)
+  : SAT_Parameter(info) {
+    setFlag(CLAP_PARAM_IS_STEPPED);
+    //MInfo.id             = info->id;
+    //MInfo.flags          = info->flags;
+    //MInfo.cookie         = this;
+    //strcpy(MInfo.name,info->name);
+    //strcpy(MInfo.module,info->module);
+    //MInfo.default_value  = info->default_value;
+    //MInfo.min_value      = info->min_value;
+    //MInfo.max_value      = info->max_value;
+  }
+  
+  //----------
 
   virtual ~SAT_IntParameter() {
   }

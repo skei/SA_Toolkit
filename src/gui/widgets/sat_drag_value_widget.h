@@ -25,6 +25,13 @@ private:
   double    MClickedYpos      = 0.0;
   double    MPreviousXpos     = 0.0;
   double    MPreviousYpos     = 0.0;
+  bool      MWaitingForDrag   = false;
+
+  //bool      MIsDraggingLeft   = false;
+  //bool      MIsDraggingRight  = false;
+  //bool      MHoverLeftEdge    = false;
+  //bool      MHoverRightEdge   = false;
+  
   double    MDragValue        = 0.0;
 
   uint32_t  MDragDirection    = SAT_DIRECTION_UP;
@@ -44,15 +51,8 @@ private:
   bool      MBipolar          = false;
   double    MBipolarCenter    = 0.5;
   
-  bool      MWaitingForDrag   = false;
-
-  //bool      MIsDraggingLeft   = false;
-  //bool      MIsDraggingRight  = false;
-  //bool      MHoverLeftEdge    = false;
-  //bool      MHoverRightEdge   = false;
-  
-  uint32_t  MNumValues        = 1;
-  double    MHoverDistance    = 0.1;
+  uint32_t  MNumValues        = 0; //1; = 0 = whole widget can be dragged, 1=closest..
+  double    MHoverDistance    = 0.01;
 
 //------------------------------
 public:
@@ -149,25 +149,36 @@ private:
   // find closest (from mouse cursor) value
   
   int32_t findClosestValue(double AXpos, double AYpos) {
-    double S = getWindowScale();
-    SAT_Rect mrect = getRect();
-    if (!mrect.contains(AXpos,AYpos)) return 0;
-    double hoverdist = MHoverDistance * S;
-    double range = mrect.w;
-    double min_dist = range;
-    int32_t index = -1;
-    for (uint32_t i=0; i<MNumValues; i++) {
-      double v = getValue(i);
-      double x = mrect.x + (v * range);
-      double dist = abs(x - AXpos);
-      if (dist < hoverdist) {
-        if (dist < min_dist) {
-          min_dist = dist;
-          index = i;
+    if (MNumValues == 0) {
+      return 0;
+    }
+    else {
+      double S = getWindowScale();
+      SAT_Rect mrect = getRect();
+      if (!mrect.contains(AXpos,AYpos)) return -2;
+      double hoverdist = MHoverDistance * S;
+      double range = mrect.w;
+      if (range <= 0.0) return -2;
+      double min_dist = range;
+      int32_t index = -1;
+      for (uint32_t i=0; i<MNumValues; i++) {
+        
+        double v = getValue(i);
+        //double v = getSelectedValue(i);
+        
+        //double x  = mrect.x + (v * range);
+        double mx = (AXpos - mrect.x) / range;
+        double dist = abs(mx - v);
+        //SAT_Print("i %i v %.3f x %.3f mx %.3f dist %.3f\n",i,v,x,mx,dist);
+        if (dist < hoverdist) {
+          if (dist < min_dist) {
+            min_dist = dist;
+            index = i;
+          }
         }
       }
+      return index;
     }
-    return index;
   }
   
 
@@ -182,38 +193,24 @@ public:
 
   void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
-      MIsDragging   = true;
+      
+      //MIsDragging   = true;
       MClickedYpos  = AYpos;
       MClickedYpos  = AYpos;
-
-      //
 
       int32_t index = findClosestValue(AXpos,AYpos);
-      if (index >= 0) {
-      }
+      if (index < 0) return;
+      selectValue(index);
       
-      //if (MHoverLeftEdge) {
-      //}
-      //else if (MHoverRightEdge) {
-      //}
-      //else {
-        
-        double value = getValue();
-        //double value = getSelectedValue();
-        //SAT_Parameter* param = (SAT_Parameter*)getConnection();
-        //if (param) value = param->normalizeValue(value);
-        //SAT_Print("%f\n",value);
-        MDragValue = value;
-        
-        //SAT_Print("%f\n",MDragValue);
-        
-        //if (MSnap) MDragValue = snapValue(MDragValue);
-        MPreviousXpos = AXpos;
-        MPreviousYpos = AYpos;
-        MWaitingForDrag = true;
-        //if (MAutoHideCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_HIDE);
-        //if (MAutoLockCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
-      //}
+//      double value = getValue();
+      double value = getSelectedValue();
+      
+      MDragValue = value;
+      //if (MSnap) MDragValue = snapValue(MDragValue);
+      
+      MPreviousXpos = AXpos;
+      MPreviousYpos = AYpos;
+      MWaitingForDrag = true;
     }
   }
 
@@ -236,6 +233,7 @@ public:
     
     if (MWaitingForDrag) {
       MWaitingForDrag = false;
+      MIsDragging = true;
       if (MAutoHideCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_HIDE);
       if (MAutoLockCursor) do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
     }
@@ -274,22 +272,52 @@ public:
       }
       
       value = SAT_Clamp(value,0,1);
-      setValue(value);
-
-      do_widgetListener_update(this,0);
-      do_widgetListener_redraw(this,0);
+      
+//      setValue(value);
+      int32_t index = getSelectedValueIndex();
+      //setSelectedValue(value);
+      setValue(value,index);
+      
+      do_widgetListener_update(this,0,index);
+      do_widgetListener_redraw(this,0,index);
     }
     
-    //else {
-    //  // check if hover left/right edge?
-    //  MHoverLeftEdge = false;
-    //  MHoverRightEdge = false;
-    //  // if...
-    //}
+    else {
+      int32_t index = findClosestValue(AXpos,AYpos);
+      //SAT_Print("closest: %i\n",index);
+      if (index >= 0) do_widgetListener_set_cursor(this,getMouseCursor());
+      else do_widgetListener_set_cursor(this,SAT_CURSOR_DEFAULT);
+    }
     
     MPreviousXpos = AXpos;
     MPreviousYpos = AYpos;
   }
+  
+  //----------
+  
+  void on_widget_mouse_enter(SAT_BaseWidget* AFrom, double AXpos, double AYpos, uint32_t ATimestamp) override {
+    if (MNumValues > 1) {
+      int32_t index = findClosestValue(AXpos,AYpos);
+      //SAT_Print("closest: %i\n",index);
+      if (index >= 0) do_widgetListener_set_cursor(this,getMouseCursor());
+      else do_widgetListener_set_cursor(this,SAT_CURSOR_DEFAULT);
+    }
+    else {
+      SAT_ValueWidget::on_widget_mouse_enter(AFrom,AXpos,AYpos,ATimestamp);
+    }
+  }
+
+  //----------
+  
+  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATimestamp) override {
+    if (MNumValues > 1) {
+      do_widgetListener_set_cursor(this,SAT_CURSOR_DEFAULT);
+    }
+    else {
+      SAT_ValueWidget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATimestamp);
+    }
+  }
+  
 
 };
 

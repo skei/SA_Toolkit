@@ -23,6 +23,7 @@
 
 
 
+//#include "test/test1.h"
 //#include "test/test2.h"
 //#include "test/test_jit.h"
 //#include "test/test_minimal.h"
@@ -61,7 +62,7 @@
 
 
 
-//#include "../plugins/ports/sa_compciter.h"
+#include "../plugins/ports/sa_compciter.h"
 //#include "../plugins/ports/sa_event_horizon.h"
 //#include "../plugins/ports/sa_exciter.h"
 //#include "../plugins/ports/sa_exciter2.h"
@@ -93,7 +94,6 @@
 
 
 
-//#include "../plugins/sa_botage.h"     // TODO
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_demo.h"
@@ -101,10 +101,10 @@
 //#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_host.h"
 //#include "../plugins/sa_pitch.h"
-//#include "../plugins/sa_stretch.h"
 //#include "../plugins/sa_synth.h"
-//#include "../plugins/sa_tyr.h"        // TODO
 
+//#include "../plugins/sa_botage.h"
+//#include "../plugins/sa_tyr.h"
 
 
 
@@ -121,7 +121,7 @@
 
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_plugins.h"
-#include "../plugins/sa_everything.h"
+//#include "../plugins/sa_everything.h"
 
 
 

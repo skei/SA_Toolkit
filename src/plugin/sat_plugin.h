@@ -2105,10 +2105,34 @@ public: // parameters
 //------------------------------
 
   SAT_Parameter* appendParameter(SAT_Parameter* AParameter) {
+    SAT_Assert(AParameter);
     uint32_t index = MParameters.size();
     AParameter->setIndex(index);
     MParameters.append(AParameter);
     return AParameter;
+  }
+
+  //----------
+
+  SAT_Parameter* appendParameter(clap_param_info_t* param_info) {
+    SAT_Assert(param_info);
+    if (param_info->flags & CLAP_PARAM_IS_STEPPED) {
+      SAT_IntParameter* param = new SAT_IntParameter(param_info);
+      return appendParameter(param);
+    }
+    else {
+      SAT_Parameter* param = new SAT_Parameter(param_info);
+      return appendParameter(param);
+    }
+  }
+  
+  //----------
+
+  void appendParameters(uint32_t num, clap_param_info_t* param_infos) {
+    for (uint32_t i=0; i<num; i++) {
+      clap_param_info_t* param_info = &param_infos[i];
+      appendParameter(param_info);
+    }
   }
 
   //----------
@@ -2136,7 +2160,14 @@ public: // parameters
         return i;
       }
     }
+    return -1;
   }
+
+  //SAT_Parameter* findParameter_(const char* AName, const char* AModule=nullptr) {
+  //  int32_t index = findParameter(AName,AModule);
+  //  if (index >= 0) return MParameters[index];
+  //  else return nullptr;
+  //}
 
   //----------
 

@@ -194,7 +194,7 @@
     //slider->setModulation(0.25);
     slider->setDrawModulation(true);
     slider->setModulationColor( SAT_Color(1,1,1,0.25) );
-    slider->setDragDirection(SAT_DIRECTION_RIGHT);
+//    slider->setDragDirection(SAT_DIRECTION_RIGHT);
     
     SAT_DualSliderWidget* dualslider = new SAT_DualSliderWidget(20,"Dual", 0.2, 0.8);
     left_column->appendChildWidget(dualslider);

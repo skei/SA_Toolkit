@@ -92,9 +92,9 @@ public:
       left_panel->appendChildWidget(slider1);
       slider1->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
       
-      SAT_DualSliderWidget* dualslider1 = new SAT_DualSliderWidget(15,"DualSlider",0.2,0.8);
-      left_panel->appendChildWidget(dualslider1);
-      dualslider1->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
+      //SAT_DualSliderWidget* dualslider1 = new SAT_DualSliderWidget(15,"DualSlider",0.2,0.8);
+      //left_panel->appendChildWidget(dualslider1);
+      //dualslider1->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
       
       SAT_ScrollBarWidget* scrollbar1 = new SAT_ScrollBarWidget(15);
       left_panel->appendChildWidget(scrollbar1);

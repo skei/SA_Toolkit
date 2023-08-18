@@ -177,12 +177,13 @@ public: // window listener
   void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
     if (MListener) {
       SAT_Parameter* param = (SAT_Parameter*)ASender->getParameter(AIndex);
-      double value = ASender->getValue(AIndex); // 0..1
-      //uint32_t parm_index = ASender->getConnectionIndex();
       if (param) {
+        double value = ASender->getValue(AIndex); // 0..1
+        //uint32_t parm_index = ASender->getConnectionIndex();
         uint32_t param_index = param->getIndex();
-        // parameters are in clap-space, widgets are 0..1
-        //SAT_Print("AIndex %i param_index %i value %f\n",AIndex,param_index,value);
+        
+//        SAT_Print("AIndex %i param_index %i value %f\n",AIndex,param_index,value);
+        
         MListener->do_editorListener_parameter_update(param_index,value);
       }
     }

@@ -335,7 +335,7 @@ public:
         painter->fillRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
       }
       if (MCellDrawBorder) {
-        painter->setDrawColor( SAT_Color(0.25) );
+        painter->setDrawColor( MCellBorderColor );
         painter->setLineWidth( 1.0 * S );
         painter->drawRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
       }
@@ -347,7 +347,7 @@ public:
         painter->fillRect(ARect.x,ARect.y,ARect.w,ARect.h);
       }
       if (MCellDrawBorder) {
-        painter->setDrawColor( SAT_Color(0.25) );
+        painter->setDrawColor( MCellBorderColor );
         painter->setLineWidth( 1.0 * S );
         painter->drawRect(ARect.x,ARect.y,ARect.w,ARect.h);
       }

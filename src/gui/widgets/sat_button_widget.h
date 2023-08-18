@@ -50,19 +50,38 @@ public:
 public:
 //------------------------------
 
-
-//------------------------------
-public:
-//------------------------------
-
   virtual void setIsToggle(bool AState) {
     MIsToggle = AState;
   }
 
-  virtual void setText(const char* AOnText, const char* AOffText) {
+  virtual void setTexts(const char* AOnText, const char* AOffText) {
     strcpy(MOnText,AOnText);
     strcpy(MOffText,AOffText);
   }
+  
+  virtual void setTextColors(SAT_Color AOnColor, SAT_Color AOffColor) {
+    MOnTextColor = AOnColor;
+    MOffTextColor = AOffColor;
+  }
+
+  virtual void setBackgroundColors(SAT_Color AOnColor, SAT_Color AOffColor) {
+    MOnBackgroundColor = AOnColor;
+    MOffBackgroundColor = AOffColor;
+  }
+
+//------------------------------
+
+//  void setText(const char* AText) override {
+//    setText(AText,AText);
+//  }
+//  
+//  void setTextColor(SAT_Color AColor) override {
+//    setTextColors(AColor,AColor);
+//  }
+//
+//  void setBackgroundColor(SAT_Color AColor) override {
+//    setBackgroundColors(AColor,AColor);
+//  }
 
 //------------------------------
 public:

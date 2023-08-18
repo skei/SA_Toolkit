@@ -28,20 +28,18 @@ private:
 public:
 //------------------------------
 
-  #define HEADER_HEIGHT 20
-
-  SAT_GroupBoxWidget(SAT_Rect ARect, bool AClosed=false)
+  SAT_GroupBoxWidget(SAT_Rect ARect, uint32_t AHeaderHeight, bool AClosed)
   : SAT_Widget(ARect) {
     setName("SAT_GroupBoxWidget");
     //MHint("groupbox");
     //setCursor(SAT_CURSOR_);
     //setAutoClip(true);
 
-    MTitleBar = new SAT_ButtonWidget( SAT_Rect(0,HEADER_HEIGHT) );
+    MTitleBar = new SAT_ButtonWidget( SAT_Rect(0,AHeaderHeight) );
     MTitleBar->setAlignment(SAT_WIDGET_ALIGN_TOP);
     MTitleBar->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
     MTitleBar->setIsToggle(true);
-    MTitleBar->setText("Open","Closed");
+    MTitleBar->setTexts("Open","Closed");
     MTitleBar->setFillBackground(true);
     //MTitleBar->setFillGradient(true);
     MTitleBar->setDrawBorder(true);
@@ -108,14 +106,16 @@ public:
 public:
 //------------------------------
 
-  SAT_ButtonWidget* getTitleBar(void) {
+  SAT_ButtonWidget* getTitleBar() {
     return MTitleBar;
   }
 
-  //----------
-
-  SAT_PanelWidget* getContainer(void) {
+  SAT_PanelWidget* getContainer() {
     return MContainer;
+  }
+
+  SAT_SymbolWidget* getSymbol() {
+    return MTitleBarSymbol;
   }
 
   //----------

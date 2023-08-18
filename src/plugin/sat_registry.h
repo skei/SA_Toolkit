@@ -161,11 +161,15 @@ public: // preset discovery providers
 
 #define SAT_PLUGIN_ENTRY(DESC,PLUG)                                                                                               \
                                                                                                                                   \
+  /* #include "plugin/sat_entry.h" */                                                                                             \
+                                                                                                                                  \
   void SAT_Register(SAT_Registry* ARegistry) {                                                                                    \
     uint32_t index = ARegistry->getNumDescriptors();                                                                              \
     SAT_Log("SAT_Register -> id %s index %i\n",DESC.id,index);                                                                    \
     ARegistry->registerDescriptor(&DESC);                                                                                         \
   }                                                                                                                               \
+                                                                                                                                  \
+  /* ----- */                                                                                                                     \
                                                                                                                                   \
   const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) { \
     SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);                                                                              \

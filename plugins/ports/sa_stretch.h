@@ -12,7 +12,7 @@
 #include "plugin/sat_plugin.h"
 #include "gui/sat_widgets.h"
 
-// gcc complained, so i had to add this
+// gcc complained about Complex
 #define prev_complex Complex
 #undef Complex
 

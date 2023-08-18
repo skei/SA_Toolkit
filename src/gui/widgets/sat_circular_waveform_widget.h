@@ -181,11 +181,9 @@ private:
 
   void drawSegment(SAT_Painter* APainter, double cx, double cy, double r, double v1, double v2) {
     if (v2 > 0.0) {
-      double a1 = v1 + 0.75 + v2;
-      double a2 = v2;
-      a1 *= SAT_PI2;
-      a2 *= SAT_PI2;
-      APainter->drawArc(cx,cy,r,a1,a2);
+      double a1 = 0.75 + v1;
+      double a2 = a1 + v2;
+      APainter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
     }
   }
 
@@ -197,8 +195,8 @@ public:
     MNumWaveformLineCoords = ANum;
     if (MNumWaveformLineCoords > 0) {
       double size = SAT_Min(ARect.w,ARect.h) * 0.5;
-      double center_x = ARect.x + size;
-      double center_y = ARect.y + size;
+      double center_x = /*ARect.x +*/ size;
+      double center_y = /*ARect.y +*/ size;
       double angle = -0.25; // start at 12 o'clock
       double angle_add = 1.0f / (double)MNumWaveformLineCoords;
       for (uint32_t i=0; i<MNumWaveformLineCoords; i++) {
@@ -225,7 +223,7 @@ public:
   }
 
   //----------
-
+  
   virtual void drawAreas(SAT_PaintContext* AContext) {
     //if (MNumAreas > 0) {
       SAT_Painter* painter = AContext->painter;
@@ -237,9 +235,11 @@ public:
       double ro = size * MOuterRadius;
       double rw = ro - ri;
       double r  = ri + (rw * 0.5);
+
       painter->setLineWidth(rw);
       painter->setDrawColor( MWaveformBackgroundColor );
       drawSegment(painter,cx,cy,r,0,SAT_PI2);
+
       painter->setLineWidth(rw);
       //for (uint32_t i=0; i<MNumAreas; i++) {
       for (uint32_t i=0; i<MAX_WAVEFORM_AREAS; i++) {

@@ -1,5 +1,6 @@
 
-/*
+#if 0
+
 #include "plugin/sat_plugin.h"
 const clap_plugin_descriptor_t myDescriptor = { CLAP_VERSION, "minimal", "minimal", SAT_VENDOR, "", "", "", SAT_VERSION, "", (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr } };
 class myPlugin : public SAT_Plugin {
@@ -19,7 +20,8 @@ public:
 };
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin)
-*/
+
+#endif // 0
 
 //----------------------------------------------------------------------
 //

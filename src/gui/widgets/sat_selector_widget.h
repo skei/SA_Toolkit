@@ -39,13 +39,16 @@ private:
 public:
 //------------------------------
 
-  SAT_SelectorWidget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu)
+  SAT_SelectorWidget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu, SAT_MenuListener* AListener=nullptr)
   //: SAT_TextWidget(ARect,AText) {
   : SAT_ValueWidget(ARect,AText,0) {
     setName("SAT_SelectorWidget");
     setCursor(SAT_CURSOR_FINGER);
     MMenu = AMenu;
-    MMenu->setMenuListener(this);
+    
+    if (AListener) MMenu->setMenuListener(AListener);
+    else MMenu->setMenuListener(this);
+    
     setInnerBorder(SAT_Rect(2,2));
     setDrawValue(false);
     setTextSize(6);
@@ -68,9 +71,9 @@ public:
 public:
 //------------------------------
 
-  virtual SAT_MenuWidget* getMenuWidget() { return MMenu; }
-
-
+  virtual SAT_MenuWidget* getMenuWidget() {
+    return MMenu;
+  }
 
   virtual void setDrawSelectedText(bool ADraw) {
     MDrawSelectedText = ADraw;

@@ -39,7 +39,6 @@
 #define freqHP_p2   (-SAT_PI2 * freqHP)
 #define freqLP_p2   ( SAT_PI2 * freqLP)
 
-
 //----------------------------------------------------------------------
 //
 //
@@ -75,33 +74,33 @@ class sa_compciter_plugin
 private:
 //------------------------------
 
-  bool  need_recalc           = true;
-  float MSampleRate           = 0.0;
+  bool  need_recalc = true;
+  float MSampleRate = 0.0;
   
-  float threshDB  = 0;
-  float thresh    = 0;
-  float ratio     = 0;
-  float release   = 0;
-  float t0        = 0;
-  float t1        = 0;
-  float blp       = 0;
-  float alp       = 0;
-  float wet       = 0;
-  float dry       = 0;
+  float threshDB    = 0;
+  float thresh      = 0;
+  float ratio       = 0;
+  float release     = 0;
+  float t0          = 0;
+  float t1          = 0;
+  float blp         = 0;
+  float alp         = 0;
+  float wet         = 0;
+  float dry         = 0;
 
-  float t00       = 0;
-  float t01       = 0;
-  float t10       = 0;
-  float t11       = 0;
-  float t20       = 0;
-  float t21       = 0;
+  float t00         = 0;
+  float t01         = 0;
+  float t10         = 0;
+  float t11         = 0;
+  float t20         = 0;
+  float t21         = 0;
 
   // @init
 
-  float gain      = 1.0f;
-  float seekgain  = 1.0f;
-  float c         = 8.65617025;
-  float dc        = 10^-30;
+  float gain        = 1.0f;
+  float seekgain    = 1.0f;
+  float c           = 8.65617025;
+  float dc          = 10^-30;
 
 //------------------------------
 public:

@@ -31,12 +31,12 @@ protected:
 public:
 //------------------------------
 
-  SAT_TabsWidget(SAT_Rect ARect, uint32_t ANum=MAX_PAGES)
+  SAT_TabsWidget(SAT_Rect ARect, uint32_t ANum,uint32_t AHeaderHeight)
   : SAT_Widget(ARect) {
     setName("SAT_TabsWidget");
     //Layout.spacing = 5;
     
-    MHeader = new SAT_ButtonRowWidget(SAT_Rect(20),ANum);
+    MHeader = new SAT_ButtonRowWidget(SAT_Rect(AHeaderHeight),ANum);
     //Layout.alignment = SAT_WIDGET_ALIGN_FILL_TOP;
     MHeader->setAlignment(SAT_WIDGET_ALIGN_TOP);
     MHeader->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
@@ -63,9 +63,9 @@ public:
 public:
 //------------------------------
 
-  virtual SAT_Widget* getHeader(void)    { return MHeader; }
-  virtual SAT_Widget* getPages(void)     { return MPages; }
-  virtual int32_t     getNumPages(void)  { return MNumPages; }
+  virtual SAT_ButtonRowWidget*  getHeader(void)    { return MHeader; }
+  virtual SAT_PagesWidget*      getPages(void)     { return MPages; }
+  virtual int32_t               getNumPages(void)  { return MNumPages; }
 
   //----------
 

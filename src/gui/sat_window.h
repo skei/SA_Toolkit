@@ -819,7 +819,9 @@ public: // widget listener
 //------------------------------
 
   void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
-    //SAT_Print("AIndex %i\n",AIndex);
+    
+//    SAT_Print("AIndex %i\n",AIndex);
+    
     if (MListener) MListener->do_windowListener_update_widget(ASender,AMode,AIndex);
   }
 

@@ -30,6 +30,8 @@ protected:
   bool      MDrawBorder                 = true;
   SAT_Color MBorderColor                = SAT_DarkerGrey;
   double    MBorderWidth                = 1.0;
+  uint32_t  MBorderEdges                = SAT_EDGE_ALL;
+  uint32_t  MBorderCorners              = SAT_CORNER_NONE;
   
   bool      MRoundedCorners             = false;
   double    MTLCorner                   = 0.0;
@@ -122,6 +124,14 @@ public:
   
   virtual void setBorderWidth(double AWidth) {
     MBorderWidth = AWidth;
+  }
+  
+  virtual void setBorderEdges(uint32_t AEdges) {
+    MBorderEdges = AEdges;
+  }
+  
+  virtual void setBorderCorners(uint32_t ACorners) {
+    MBorderCorners = ACorners;
   }
   
   // rounded corners
@@ -304,7 +314,11 @@ public:
         painter->drawRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
       }
       else {
-        painter->drawRect(mrect.x,mrect.y,mrect.w,mrect.h);
+        //painter->drawRect(mrect.x,mrect.y,mrect.w,mrect.h);
+        if (MBorderEdges & SAT_EDGE_TOP)    painter->drawLine( mrect.x,    mrect.y,    mrect.x2(), mrect.y    );
+        if (MBorderEdges & SAT_EDGE_BOTTOM) painter->drawLine( mrect.x,    mrect.y2(), mrect.x2(), mrect.y2() );
+        if (MBorderEdges & SAT_EDGE_LEFT)   painter->drawLine( mrect.x,    mrect.y,    mrect.x,    mrect.y2() );
+        if (MBorderEdges & SAT_EDGE_RIGHT)  painter->drawLine( mrect.x2(), mrect.y,    mrect.x2(), mrect.y2() );
       }
       
       

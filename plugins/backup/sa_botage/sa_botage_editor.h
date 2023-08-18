@@ -52,6 +52,8 @@ class sa_botage_editor
 private:
 //------------------------------
 
+  SAT_ParameterArray*         MParameters       = nullptr;
+
   SAT_PanelWidget*            MRootWidget       = nullptr;
   SAT_CircularWaveformWidget* MWaveformWidget   = nullptr;
   SAT_DragValueWidget*        MNumBeatsWidget   = nullptr;
@@ -116,8 +118,9 @@ public:
 //------------------------------
 
   //sa_botage_editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, SAT_ParameterArray* AParameters, const clap_plugin_descriptor_t* descriptor)
-  sa_botage_editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight)
+  sa_botage_editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, SAT_ParameterArray* AParameters)
   : SAT_Editor(AListener,AWidth,AHeight) { // ,AParameters) {
+    MParameters = AParameters;
   }
 
   //----------
@@ -264,7 +267,7 @@ public:
     //MNumBeatsWidget->setInteractiveValueColor(SAT_White);
 
     //connect( MNumBeatsWidget, AParameters->getItem(PAR_NUM_BEATS) );
-    connect( MNumBeatsWidget, APlugin->getParameter(PAR_NUM_BEATS) );
+//    connect( MNumBeatsWidget, MParameters[PAR_NUM_BEATS] );
 
     // slices
 
@@ -279,7 +282,7 @@ public:
     //MNumSlicesWidget->setHint("Number of slices per beat");
     //MNumSlicesWidget->setInteractiveValueColor(SAT_COLOR_WHITE);
 
-    connect( MNumSlicesWidget, APlugin->getParameter(PAR_NUM_SLICES) );
+//    connect( MNumSlicesWidget, MParameters[PAR_NUM_SLICES] );
 
     // loop env
 
@@ -309,7 +312,7 @@ public:
     env1a_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
     //env1a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env1a_slider, APlugin->getParameter(PAR_LOOP_ENV_ATTACK) );
+//    connect( env1a_slider, APlugin->getParameter(PAR_LOOP_ENV_ATTACK) );
 
     SAT_SliderWidget* env1d_slider = new SAT_SliderWidget( SAT_Rect(10+60,306,50,16), "Loop End", 0.9 );
     MRootWidget->appendChildWidget(env1d_slider);
@@ -321,7 +324,7 @@ public:
     env1d_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
     //env1d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env1d_slider, APlugin->getParameter(PAR_LOOP_ENV_DECAY) );
+//    connect( env1d_slider, APlugin->getParameter(PAR_LOOP_ENV_DECAY) );
 
     // slice env
 
@@ -351,7 +354,7 @@ public:
     env2a_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
     //env2a_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env2a_slider, APlugin->getParameter(PAR_SLICE_ENV_ATTACK) );
+//    connect( env2a_slider, APlugin->getParameter(PAR_SLICE_ENV_ATTACK) );
 
     SAT_SliderWidget* env2d_slider = new SAT_SliderWidget( SAT_Rect(130+60,306,50,16), "Slice End", 0.9 );
     MRootWidget->appendChildWidget(env2d_slider);
@@ -363,7 +366,7 @@ public:
     env2d_slider->setSliderBarColor( SAT_Color(0.0, 0.7, 0.7) );
     //env2d_slider->setInteractiveSliderColor( SAT_Color(0.0, 0.9, 0.9) );
 
-    connect( env2d_slider, APlugin->getParameter(PAR_SLICE_ENV_DECAY) );
+//    connect( env2d_slider, APlugin->getParameter(PAR_SLICE_ENV_DECAY) );
 
     // footer
 

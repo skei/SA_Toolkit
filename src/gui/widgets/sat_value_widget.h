@@ -100,7 +100,8 @@ public:
       if (mrect.h <= 0.0) return;
       SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
-        double pv = getValue();
+        //double pv = getValue();
+        double pv = getSelectedValue();
         double dpv = param->denormalizeValue(pv);
         //double wv = param->getValue();
         //double dwv = param->denormalizeValue(wv);
@@ -108,8 +109,8 @@ public:
         param->valueToText(dpv,MValueText,255);
       }
       else {
-        double v = getValue();
-        //double v = getSelectedValue();
+        //double v = getValue();
+        double v = getSelectedValue();
         sprintf(MValueText,"%.2f",v);
       }
       
