@@ -98,6 +98,19 @@ public:
   }
 
   //----------
+  
+  SAT_Parameter(clap_id id, const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags) {
+    MInfo.id             = id;
+    MInfo.flags          = flags;
+    MInfo.cookie         = this;
+    strcpy(MInfo.name,name);
+    strcpy(MInfo.module,module);
+    MInfo.default_value  = defval;
+    MInfo.min_value      = minval;
+    MInfo.max_value      = maxval;
+  }
+
+  //----------
 
   virtual ~SAT_Parameter() {
   }
