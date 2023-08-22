@@ -99,6 +99,8 @@ public:
 
   //----------
   
+  // id = index
+  
   SAT_Parameter(clap_id id, const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags) {
     MInfo.id             = id;
     MInfo.flags          = flags;
@@ -354,14 +356,13 @@ public:
   SAT_IntParameter(clap_param_info_t* info)
   : SAT_Parameter(info) {
     setFlag(CLAP_PARAM_IS_STEPPED);
-    //MInfo.id             = info->id;
-    //MInfo.flags          = info->flags;
-    //MInfo.cookie         = this;
-    //strcpy(MInfo.name,info->name);
-    //strcpy(MInfo.module,info->module);
-    //MInfo.default_value  = info->default_value;
-    //MInfo.min_value      = info->min_value;
-    //MInfo.max_value      = info->max_value;
+  }
+  
+  //----------
+  
+  SAT_IntParameter(clap_id id, const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags)
+  : SAT_Parameter(id,name,module,defval,minval,maxval,flags) {
+    //setFlag(CLAP_PARAM_IS_STEPPED);
   }
   
   //----------
@@ -424,8 +425,23 @@ public:
   }
 
   //----------
+  
+  SAT_TextParameter(clap_id id, const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags)
+  : SAT_IntParameter(id,name,module,defval,minval,maxval,flags) {
+    // see setText()
+  }
+  
+  //----------
 
   virtual ~SAT_TextParameter() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void setText(const char** AText) {
+    MText = AText;
   }
 
 //------------------------------

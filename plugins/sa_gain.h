@@ -48,9 +48,7 @@ public:
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
 //    setInitialEditorSize(300,160,3.0);
-    SAT_Parameter* param = new SAT_Parameter("Gain", 0.5);
-    param->setFlag(CLAP_PARAM_IS_MODULATABLE);
-    appendParameter(param);
+    appendParameter( new SAT_Parameter(0,"Gain","", 0.5, 0,2, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE) );
     return SAT_Plugin::init();
   }
   
@@ -75,13 +73,6 @@ public:
 
   //----------
   
-  void processSample(float* spl0, float* spl1) final {
-    double scale = getParameterValue(0) + getModulationValue(0);
-    scale = SAT_Clamp(scale,0,1);
-    *spl0 *= scale;
-    *spl1 *= scale;
-  }
-
 //  void processAudio(SAT_ProcessContext* AContext) final {
 //    float** inputs = AContext->process->audio_inputs[0].data32;
 //    float** outputs = AContext->process->audio_outputs[0].data32;
@@ -93,6 +84,15 @@ public:
 //    scale = SAT_Clamp(scale,0,1);
 //    SAT_ScaleStereoBuffer(outputs,scale,length);
 //  }
+  
+  //----------
+  
+  void processSample(float* spl0, float* spl1) final {
+    double gain = getParameterValue(0) + getModulationValue(0);
+    gain = SAT_Clamp(gain,0,2);
+    *spl0 *= gain;
+    *spl1 *= gain;
+  }
   
 };
 

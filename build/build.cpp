@@ -1,7 +1,7 @@
 
 // nc -U -l -k /tmp/sat.socket
 
-#define SAT_PLUGIN_ALL
+//#define SAT_PLUGIN_ALL
 
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_LADSPA
