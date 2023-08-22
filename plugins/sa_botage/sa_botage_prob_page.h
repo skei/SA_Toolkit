@@ -16,10 +16,82 @@ class sa_botage_prob_page_widget
 , public SAT_MenuListener {
 
 //------------------------------
-private:
+public:
 //------------------------------
 
   //SAT_MenuWidget* fx_type_menu = nullptr;
+  
+    sa_botage_knob2_widget*       range_length_prob     = nullptr;
+    sa_botage_text2_widget*       range_length_text     = nullptr;
+    sa_botage_dualslider_widget*  range_length_minmax   = nullptr;
+    
+    sa_botage_knob2_widget*       range_speed_prob      = nullptr;
+    sa_botage_text2_widget*       range_speed_text      = nullptr;
+    sa_botage_dualslider_widget*  range_speed_minmax    = nullptr;
+    
+    sa_botage_knob2_widget*       range_offset_prob     = nullptr;
+    sa_botage_text2_widget*       range_offset_text     = nullptr;
+    sa_botage_dualslider_widget*  range_offset_minmax   = nullptr;
+    
+    sa_botage_knob2_widget*       range_reverse_prob    = nullptr;
+    sa_botage_text2_widget*       range_reverse_text    = nullptr;
+    
+    sa_botage_knob2_widget*       range_fx_prob         = nullptr;
+    sa_botage_text2_widget*       range_fx_text         = nullptr;
+    sa_botage_dualslider_widget*  range_fx_minmax       = nullptr;
+    
+    // loop
+    
+    sa_botage_knob2_widget*       loop_length_prob      = nullptr;
+    sa_botage_text2_widget*       loop_length_text      = nullptr;
+    sa_botage_dualslider_widget*  loop_length_minmax    = nullptr;
+    
+    sa_botage_knob2_widget*       loop_speed_prob       = nullptr;
+    sa_botage_text2_widget*       loop_speed_text       = nullptr;
+    sa_botage_dualslider_widget*  loop_speed_minmax     = nullptr;
+    
+    sa_botage_knob2_widget*       loop_offset_prob      = nullptr;
+    sa_botage_text2_widget*       loop_offset_text      = nullptr;
+    sa_botage_dualslider_widget*  loop_offset_minmax    = nullptr;
+    
+    sa_botage_knob2_widget*       loop_reverse_prob     = nullptr;
+    sa_botage_text2_widget*       loop_reverse_text     = nullptr;
+    
+    sa_botage_knob2_widget*       loop_fx_prob          = nullptr;
+    sa_botage_text2_widget*       loop_fx_text          = nullptr;
+    sa_botage_dualslider_widget*  loop_fx_minmax        = nullptr;
+    
+    // fx
+    
+    sa_botage_knob2_widget*       fx1_prob              = nullptr;
+    sa_botage_selector_widget*    fx1_type              = nullptr;
+    sa_botage_knob1_widget*       fx1_arg1              = nullptr;
+    sa_botage_knob1_widget*       fx1_arg2              = nullptr;
+    sa_botage_knob1_widget*       fx1_arg3              = nullptr;
+
+    sa_botage_knob2_widget*       fx2_prob              = nullptr;
+    sa_botage_selector_widget*    fx2_type              = nullptr;
+    sa_botage_knob1_widget*       fx2_arg1              = nullptr;
+    sa_botage_knob1_widget*       fx2_arg2              = nullptr;
+    sa_botage_knob1_widget*       fx2_arg3              = nullptr;
+
+    sa_botage_knob2_widget*       fx3_prob              = nullptr;
+    sa_botage_selector_widget*    fx3_type              = nullptr;
+    sa_botage_knob1_widget*       fx3_arg1              = nullptr;
+    sa_botage_knob1_widget*       fx3_arg2              = nullptr;
+    sa_botage_knob1_widget*       fx3_arg3              = nullptr;
+
+    sa_botage_knob2_widget*       fx4_prob              = nullptr;
+    sa_botage_selector_widget*    fx4_type              = nullptr;
+    sa_botage_knob1_widget*       fx4_arg1              = nullptr;
+    sa_botage_knob1_widget*       fx4_arg2              = nullptr;
+    sa_botage_knob1_widget*       fx4_arg3              = nullptr;
+
+    sa_botage_knob2_widget*       fx5_prob              = nullptr;
+    sa_botage_selector_widget*    fx5_type              = nullptr;
+    sa_botage_knob1_widget*       fx5_arg1              = nullptr;
+    sa_botage_knob1_widget*       fx5_arg2              = nullptr;
+    sa_botage_knob1_widget*       fx5_arg3              = nullptr;
 
 //------------------------------
 public:
@@ -43,77 +115,77 @@ public:
     
     // range
     
-    sa_botage_knob2_widget*       range_length_prob     = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+10,      40, 40 ), "%",0.0);
-    sa_botage_text2_widget*       range_length_text     = new sa_botage_text2_widget(       SAT_Rect( 55,     20+10,      95, 18 ), "Length");
-    sa_botage_dualslider_widget*  range_length_minmax   = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+32,      95, 18 ),"minmax",0.25,0.75);
+    range_length_prob     = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+10,      40, 40 ), "%", 0.0 );
+    range_length_text     = new sa_botage_text2_widget(       SAT_Rect( 55,     20+10,      95, 18 ), "Length" );
+    range_length_minmax   = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+32,      95, 18 ), "minmax", 0.25, 0.75 );
     
-    sa_botage_knob2_widget*       range_speed_prob      = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+50+10,   40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       range_speed_text      = new sa_botage_text2_widget(       SAT_Rect( 55,     20+50+10,   95, 18 ), "Speed");
-    sa_botage_dualslider_widget*  range_speed_minmax    = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+50+32,   95, 18 ),"minmax",0.25,0.75);
+    range_speed_prob      = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+50+10,   40, 40 ), "%", 0.0 );
+    range_speed_text      = new sa_botage_text2_widget(       SAT_Rect( 55,     20+50+10,   95, 18 ), "Speed" );
+    range_speed_minmax    = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+50+32,   95, 18 ), "minmax", 0.25, 0.75 );
     
-    sa_botage_knob2_widget*       range_offset_prob     = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+100+10,  40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       range_offset_text     = new sa_botage_text2_widget(       SAT_Rect( 55,     20+100+10,  95, 18 ),"Offset");
-    sa_botage_dualslider_widget*  range_offset_minmax   = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+100+32,  95, 18 ),"minmax",0.25,0.75);
+    range_offset_prob     = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+100+10,  40, 40 ), "%", 0.0 );
+    range_offset_text     = new sa_botage_text2_widget(       SAT_Rect( 55,     20+100+10,  95, 18 ), "Offset" );
+    range_offset_minmax   = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+100+32,  95, 18 ), "minmax", 0.25, 0.75 );
     
-    sa_botage_knob2_widget*       range_reverse_prob    = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+150+10,  40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       range_reverse_text    = new sa_botage_text2_widget(       SAT_Rect( 55,     20+150+10,  95, 18 ),"Reverse");
+    range_reverse_prob    = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+150+10,  40, 40 ), "%", 0.0 );
+    range_reverse_text    = new sa_botage_text2_widget(       SAT_Rect( 55,     20+150+10,  95, 18 ), "Reverse" );
     
-    sa_botage_knob2_widget*       range_fx_prob         = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+200+10,  40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       range_fx_text         = new sa_botage_text2_widget(       SAT_Rect( 55,     20+200+10,  95, 18 ),"FX");
-    sa_botage_dualslider_widget*  range_fx_minmax       = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+200+32,  95, 18 ),"minmax",0.25,0.75);
+    range_fx_prob         = new sa_botage_knob2_widget(       SAT_Rect( 10,     20+200+10,  40, 40 ), "%", 0.0 );
+    range_fx_text         = new sa_botage_text2_widget(       SAT_Rect( 55,     20+200+10,  95, 18 ), "FX" );
+    range_fx_minmax       = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+200+32,  95, 18 ), "minmax", 0.25, 0.75 );
     
     // loop
     
-    sa_botage_knob2_widget*       loop_length_prob      = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+10,      40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       loop_length_text      = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+10,      95, 18 ),"Length");
-    sa_botage_dualslider_widget*  loop_length_minmax    = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+32,      95, 18 ),"minmax",0.25,0.75);
+    loop_length_prob      = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+10,      40, 40 ), "%", 0.0 );
+    loop_length_text      = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+10,      95, 18 ), "Length" );
+    loop_length_minmax    = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+32,      95, 18 ), "minmax", 0.25, 0.75 );
     
-    sa_botage_knob2_widget*       loop_speed_prob       = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+50+10,   40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       loop_speed_text       = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+50+10,   95, 18 ),"Speed");
-    sa_botage_dualslider_widget*  loop_speed_minmax     = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+50+32,   95, 18 ),"minmax",0.25,0.75);
+    loop_speed_prob       = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+50+10,   40, 40 ), "%", 0.0 );
+    loop_speed_text       = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+50+10,   95, 18 ), "Speed" );
+    loop_speed_minmax     = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+50+32,   95, 18 ), "minmax", 0.25, 0.75 );
     
-    sa_botage_knob2_widget*       loop_offset_prob      = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+100+10,  40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       loop_offset_text      = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+100+10,  95, 18 ),"Offset");
-    sa_botage_dualslider_widget*  loop_offset_minmax    = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+100+32,  95, 18 ),"minmax",0.25,0.75);
+    loop_offset_prob      = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+100+10,  40, 40 ), "%", 0.0 );
+    loop_offset_text      = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+100+10,  95, 18 ), "Offset" );
+    loop_offset_minmax    = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+100+32,  95, 18 ), "minmax", 0.25, 0.75 );
     
-    sa_botage_knob2_widget*       loop_reverse_prob     = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+150+10,  40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       loop_reverse_text     = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+150+10,  95, 18 ),"Reverse");
+    loop_reverse_prob     = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+150+10,  40, 40 ), "%", 0.0 );
+    loop_reverse_text     = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+150+10,  95, 18 ), "Reverse" );
     
-    sa_botage_knob2_widget*       loop_fx_prob          = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+200+10,  40, 40 ),"%",0.0);
-    sa_botage_text2_widget*       loop_fx_text          = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+200+10,  95, 18 ),"FX");
-    sa_botage_dualslider_widget*  loop_fx_minmax        = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+200+32,  95, 18 ),"minmax",0.25,0.75);
+    loop_fx_prob          = new sa_botage_knob2_widget(       SAT_Rect( 150+10, 20+200+10,  40, 40 ), "%", 0.0 );
+    loop_fx_text          = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+200+10,  95, 18 ), "FX" );
+    loop_fx_minmax        = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+200+32,  95, 18 ), "minmax", 0.25, 0.75 );
     
     // fx
     
-    sa_botage_knob2_widget*       fx1_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+10,      40, 40 ),"%",0.0);
-    sa_botage_selector_widget*    fx1_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+10,      95, 18 ),"FX1",fx_menu,this);
-    sa_botage_knob1_widget*       fx1_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+32,      18, 18 ),"fx1 arg1");
-    sa_botage_knob1_widget*       fx1_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+32,      18, 18 ),"fx1 arg2");
-    sa_botage_knob1_widget*       fx1_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+32,      18, 18 ),"fx1 arg3");
+    fx1_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+10,      40, 40 ), "%", 0.0 );
+    fx1_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+10,      95, 18 ), "FX1", fx_menu, this);
+    fx1_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+32,      18, 18 ), "fx1 arg1" );
+    fx1_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+32,      18, 18 ), "fx1 arg2" );
+    fx1_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+32,      18, 18 ), "fx1 arg3" );
 
-    sa_botage_knob2_widget*       fx2_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+50+10,   40, 40 ),"%",0.0);
-    sa_botage_selector_widget*    fx2_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+50+10,   95, 18 ),"FX2",fx_menu,this);
-    sa_botage_knob1_widget*       fx2_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+50+32,   18, 18 ),"fx2 arg1");
-    sa_botage_knob1_widget*       fx2_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+50+32,   18, 18 ),"fx2 arg2");
-    sa_botage_knob1_widget*       fx2_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+50+32,   18, 18 ),"fx2 arg3");
+    fx2_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+50+10,   40, 40 ), "%", 0.0 );
+    fx2_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+50+10,   95, 18 ), "FX2", fx_menu, this);
+    fx2_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+50+32,   18, 18 ), "fx2 arg1" );
+    fx2_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+50+32,   18, 18 ), "fx2 arg2"  );
+    fx2_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+50+32,   18, 18 ), "fx2 arg3" );
 
-    sa_botage_knob2_widget*       fx3_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+100+10,  40, 40 ),"%",0.0);
-    sa_botage_selector_widget*    fx3_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+100+10,  95, 18 ),"FX3",fx_menu,this);
-    sa_botage_knob1_widget*       fx3_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+100+32,  18, 18 ),"fx3 arg1");
-    sa_botage_knob1_widget*       fx3_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+100+32,  18, 18 ),"fx3 arg2");
-    sa_botage_knob1_widget*       fx3_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+100+32,  18, 18 ),"fx3 arg3");
+    fx3_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+100+10,  40, 40 ), "%", 0.0 );
+    fx3_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+100+10,  95, 18 ), "FX3", fx_menu, this);
+    fx3_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+100+32,  18, 18 ), "fx3 arg1" );
+    fx3_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+100+32,  18, 18 ), "fx3 arg2" );
+    fx3_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+100+32,  18, 18 ), "fx3 arg3" );
 
-    sa_botage_knob2_widget*       fx4_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+150+10,  40, 40 ),"%",0.0);
-    sa_botage_selector_widget*    fx4_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+150+10,  95, 18 ),"FX4",fx_menu,this);
-    sa_botage_knob1_widget*       fx4_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+150+32,  18, 18 ),"fx4 arg1");
-    sa_botage_knob1_widget*       fx4_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+150+32,  18, 18 ),"fx4 arg2");
-    sa_botage_knob1_widget*       fx4_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+150+32,  18, 18 ),"fx4 arg3");
+    fx4_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+150+10,  40, 40 ), "%", 0.0 );
+    fx4_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+150+10,  95, 18 ), "FX4", fx_menu, this);
+    fx4_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+150+32,  18, 18 ), "fx4 arg1" );
+    fx4_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+150+32,  18, 18 ), "fx4 arg2" );
+    fx4_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+150+32,  18, 18 ), "fx4 arg3" );
 
-    sa_botage_knob2_widget*       fx5_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+200+10,  40, 40 ),"%",0.0);
-    sa_botage_selector_widget*    fx5_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+200+10,  95, 18 ),"FX5",fx_menu,this);
-    sa_botage_knob1_widget*       fx5_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+200+32,  18, 18 ),"fx5 arg1");
-    sa_botage_knob1_widget*       fx5_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+200+32,  18, 18 ),"fx5 arg2");
-    sa_botage_knob1_widget*       fx5_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+200+32,  18, 18 ),"fx5 arg3");
+    fx5_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+200+10,  40, 40 ), "%", 0.0 );
+    fx5_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+200+10,  95, 18 ), "FX5", fx_menu, this);
+    fx5_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+200+32,  18, 18 ), "fx5 arg1" );
+    fx5_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+200+32,  18, 18 ), "fx5 arg2" );
+    fx5_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+200+32,  18, 18 ), "fx5 arg3" );
 
     // range
     
