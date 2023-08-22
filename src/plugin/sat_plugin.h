@@ -1705,7 +1705,6 @@ public: // extensions
     #ifndef SAT_NO_GUI
       registerExtension(CLAP_EXT_GUI,                     &MGuiExt);
     #endif
-    //registerExtension(CLAP_EXT_NOTE_PORTS,                &MNotePortsExt); // -> synth
     registerExtension(CLAP_EXT_PARAMS,                    &MParamsExt);
     registerExtension(CLAP_EXT_STATE,                     &MStateExt);
   }
@@ -1756,6 +1755,12 @@ public: // extensions
     registerExtension(CLAP_EXT_TUNING,                    &MTuningExt);
     registerExtension(CLAP_EXT_VOICE_INFO,                &MVoiceInfoExt);
   }
+  
+  //----------
+  
+  //void registerAllDraftExtensions() {
+  //}
+  
 
 //------------------------------
 public: // editor
@@ -1866,7 +1871,6 @@ public: // queues
       //SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
       SAT_Print("queueParamFromHostToGui: couldn't write to queue\n");
     }
-
   }
 
   //----------
@@ -2854,6 +2858,8 @@ public: // process audio
   }
   
   //----------
+  
+  // -> processAudioBlock ?
 
   virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;
@@ -2881,6 +2887,8 @@ public: // process audio
 
   //----------
 
+  // -> processAudioInterleaved ?
+  
   /*
     if MEventMode is SAT_PLUGIN_EVENT_MODE_BLOCK (the default)
     handleEvents will first be called, and then this, to habndle the
@@ -2920,6 +2928,8 @@ public: // process audio
   }
 
   //----------
+
+  // -> processAudioQuantized ?
 
   // called from QUANTIZED, when we know the (const) slice size
   // (SAT_AUDIO_QUANTIZED_SIZE), and hope the optimizer will run

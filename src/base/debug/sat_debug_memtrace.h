@@ -169,8 +169,6 @@
     return 1;
   }
 
-  //----------
-
   void* operator  new       (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL_MEMTRACE.malloc(size, file, line, 1); }
   void* operator  new[]     (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL_MEMTRACE.malloc(size, file, line, 1); }
   void  operator  delete    (void* ptr)                                               { return SAT_GLOBAL_MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }

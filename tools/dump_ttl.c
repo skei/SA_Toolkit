@@ -27,7 +27,9 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  dlerror();  // Clear any existing error
+  // Clear any existing error
+  dlerror();
+  
   *(void **)(&lv2_dumpttl) = dlsym(handle,"lv2_export_ttl");
   if ((error = dlerror()) != NULL) {
     printf("%s\n", error);

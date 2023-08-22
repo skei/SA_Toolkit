@@ -135,6 +135,10 @@ public:
   void blend(SAT_Color color) {
     blend(color,color.a);
   }
+  
+  //----------
+  
+  // todo: clamp, min/max?, ..
 
 };
 

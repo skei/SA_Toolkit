@@ -131,10 +131,15 @@
         //SAT_GLOBAL_WATCHES.printWatches("watched:");
         //SAT_DumpCallStack;
         //SAT_DumpCallStackSkip(0); // 2
+       
+        //#ifdef sat_debug_call_stack_included
         SAT_PrintCallStack();
+        
         #ifdef SAT_DEBUG_OBSERVER
+        //#ifdef sat_debug_observer_included
         SAT_PrintObservers();
         #endif
+        
         SAT_DPrint("\n");
         exit(1); //_exit(1);
       #endif
