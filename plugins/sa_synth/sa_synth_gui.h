@@ -80,6 +80,8 @@ const char* sa_synth_flt_type_text[5] = {
     knob->setTextSize(10);
     knob->setTextColor(0.6);
     knob->setValueSize(8);
+    //knob->setQuantize(true);
+    //knob->setQuantizeSteps(5);
     
     // tuning
     

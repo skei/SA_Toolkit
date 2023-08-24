@@ -27,12 +27,13 @@
 
 //----------------------------------------------------------------------
 
+// 128 bit
 struct SAT_ParamQueueItem {
   uint32_t    type;
   uint32_t    index;
   union {
     double    value;
-    SAT_Note  note;
+    SAT_Note  note;   // 64bit
   };
 };
 

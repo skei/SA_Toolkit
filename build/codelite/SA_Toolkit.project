@@ -4,6 +4,7 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <File Name="../../plugins/sa_interceptor.h"/>
     <VirtualDirectory Name="sa_botage">
       <File Name="../../plugins/sa_botage/sa_botage_seq_page.h"/>
       <File Name="../../plugins/sa_botage/sa_botage_perf_page.h"/>
