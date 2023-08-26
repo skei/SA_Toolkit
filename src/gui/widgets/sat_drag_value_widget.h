@@ -112,6 +112,12 @@ public:
 
   virtual void    setNumValues(uint32_t ANum)         { MNumValues = ANum; }
   virtual void    setHoverDistance(double ADist)      { MHoverDistance = ADist; }
+  
+//------------------------------
+public:
+//------------------------------
+
+  virtual uint32_t  getNumValues()  { return MNumValues; }
 
 //------------------------------
 private:
@@ -147,6 +153,8 @@ private:
   
   
   // find closest (from mouse cursor) value
+  // if two values are identical, will fid the first one..
+  // todo: check if we're on the left or right side if values are equal (or similar)
   
   int32_t findClosestValue(double AXpos, double AYpos) {
     if (MNumValues == 0) {
@@ -239,7 +247,13 @@ public:
     }
     
     else if (MIsDragging) {
+
+      int32_t index = getSelectedValueIndex();
       double value = MDragValue;
+      
+      int32_t index2 = 1 - index;
+      double value2 = getValue(index2);
+      
       double sens = MDragSensitivity;
       if (AState & SAT_STATE_CTRL) sens *= MShiftSensitivity;
       double diff = 0;
@@ -261,26 +275,52 @@ public:
           value -= (diff * sens);
           break;
       }
+
       MDragValue = SAT_Clamp(value,0,1);
       
-      if (MQuantize && !(AState & SAT_STATE_SHIFT)) {
-        value = quantizeValue(value);
-      }
-      
-      if (MSnap && !(AState & SAT_STATE_SHIFT)) {
-        value = snapValue(value);
-      }
-      
+      if (MQuantize && !(AState & SAT_STATE_SHIFT)) value = quantizeValue(value);
+      if (MSnap && !(AState & SAT_STATE_SHIFT)) value = snapValue(value);
       value = SAT_Clamp(value,0,1);
       
-//      setValue(value);
-      int32_t index = getSelectedValueIndex();
+      if (MNumValues == 2) {
+        
+      if (index == 0) {
+        if (value > value2) {
+          if (AState & SAT_STATE_ALT) {
+            // push
+            setValue(value,index2);
+            do_widgetListener_update(this,0,index2);
+            do_widgetListener_redraw(this,0,index2);
+          }
+          else {
+            // stop
+            value = value2;
+          }
+        }
+      }
+      else if (index == 1) {
+        if (value < value2) {
+          if (AState & SAT_STATE_ALT) {
+            // push
+            setValue(value,index2);
+            do_widgetListener_update(this,0,index2);
+            do_widgetListener_redraw(this,0,index2);
+          }
+          else {
+            // stop
+            value = value2;
+          }
+        }
+      }
+      
+      } // numparams > 0
+      
       //setSelectedValue(value);
       setValue(value,index);
-      
       do_widgetListener_update(this,0,index);
       do_widgetListener_redraw(this,0,index);
-    }
+      
+    } // dragging
     
     else {
       int32_t index = findClosestValue(AXpos,AYpos);
