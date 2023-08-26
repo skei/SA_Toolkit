@@ -5,7 +5,8 @@
 #include "base/sat.h"
 #include "audio/sat_voice_context.h"
 
-#include "audio/sat_audio_dsp.h"
+//#include "audio/sat_audio_dsp.h"
+#include "audio/sat_audio_math.h"
 
 #include "audio/old/filters/sat_svf_filter.h"
 #include "audio/old/waveforms/sat_polyblep2_waveform.h"

@@ -202,7 +202,7 @@ public:
         painter->setFillColor(MSliderEdgeColor);
         painter->fillRect(x1,mrect.y,MSliderEdgeWidth*S,mrect.h);
         painter->fillRect(x2,mrect.y,MSliderEdgeWidth*S,mrect.h);
-      } // edge
+      } // draw edge
 
       // modulation
 
@@ -264,9 +264,9 @@ public:
           painter->fillRect(m2x,mrect.y,m2w,mrect.h);
         }
 
-      }
+      } // draw mod
 
-    }
+    } // draw bar
 
   }
   

@@ -6,7 +6,7 @@
   </WorkspaceParserPaths>
   <Project Name="SA_Toolkit" Path="SA_Toolkit.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="linux_exe_release" Selected="no">
+    <WorkspaceConfiguration Name="linux_exe_release" Selected="yes">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exe_release"/>
     </WorkspaceConfiguration>
@@ -14,7 +14,7 @@
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_exe_debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="yes">
+    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="no">
       <Environment/>
       <Project Name="SA_Toolkit" ConfigName="linux_plugin_debug"/>
     </WorkspaceConfiguration>

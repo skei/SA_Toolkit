@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
-#include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
 #include "audio/sat_voice_manager.h"
 #include "plugin/sat_plugin.h"
@@ -82,7 +81,12 @@ public: // clap
     
     // extensions
     // TODO: not all!
+    
     registerAllExtensions();
+    //registerDefaultSynthExtensions();
+    //registerExtension(CLAP_EXT_PARAM_INDICATION,&MParamIndicationExt);
+    //registerExtension(CLAP_EXT_PRESET_LOAD,&MPresetLoadExt);
+    //registerExtension(CLAP_EXT_REMOTE_CONTROLS,&MRemoteControlsExt);
     
     // ports
     appendClapNoteInputPort();
@@ -153,14 +157,14 @@ public: // clap
 
   //----------
   
-  uint32_t remote_controls_count() override {
+  uint32_t remote_controls_count() final {
     //SAT_PRINT;
     return 1;
   }  
   
   //----------
   
-  bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
+  bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) final {
     //SAT_PRINT;
     switch (page_index) {
       case 0: {
@@ -184,15 +188,13 @@ public: // clap
   
   //----------
 
-  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
+  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
     if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
       //SAT_Print("location '%s', load_key '%s'\n",location,load_key);
-      if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
-        loadPresetFromFile(location);
-        SAT_Host* host = getHost();
-        if (host) host->preset_load_loaded(location_kind,location,load_key);
-        return true;
-      }
+      loadPresetFromFile(location);
+      SAT_Host* host = getHost();
+      if (host) host->preset_load_loaded(location_kind,location,load_key);
+      return true;
     }
     return false;
   }
