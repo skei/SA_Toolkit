@@ -41,8 +41,11 @@ class SAT_Vst3Plugin
 , public IEditController
 , public IEditController2
 , public IPlugView
-#ifndef SAT_WIN32
+#ifdef SAT_LINUX
 , public ITimerHandler
+#endif
+#ifdef SAT_WIN32
+, public SAT_TimerListener
 #endif
 /*, public SAT_WindowListener*/ {
 
@@ -58,9 +61,16 @@ private:
   IPlugFrame*                     MPlugFrame          = nullptr;
   IHostApplication*               MHostApp            = nullptr;
   ParameterInfo*                  MParamInfos         = nullptr;
+  
   #ifdef SAT_LINUX
     IRunLoop*                     MRunLoop            = nullptr;
   #endif
+  
+  #ifdef SAT_WIN32
+    SAT_Timer*                    MTimer              = nullptr;
+  #endif
+  
+
   uint32_t                        MIoMode             = 0;
   char                            MHostName[129]      = {0};
   bool                            MIsProcessing       = false;
@@ -192,7 +202,6 @@ private: // out_events
           //SAT_Print("MPlugin %p\n",MPlugin);
           //SAT_Print("\n");
           
-// crash? (win32)
           MPlugin->params_get_info(index,&info);
           
           double range = info.max_value - info.min_value;
@@ -2316,10 +2325,16 @@ public: // IPlugView
         gui->set_size(plugin,width,height);
         gui->set_parent(plugin,&clap_window);
         gui->show(plugin);
-
+        
         #ifdef SAT_LINUX
           MRunLoop->registerTimer(this,SAT_PLUGIN_VST3_TIMER_MS);
         #endif
+        
+        #ifdef SAT_WIN32
+          MTimer = new SAT_Timer(this);
+          MTimer->start(SAT_PLUGIN_VST3_TIMER_MS,(HWND)parent,false);
+        #endif
+        
         // why not windows ???
       }
     }
@@ -2345,7 +2360,12 @@ public: // IPlugView
       #ifdef SAT_LINUX
         MRunLoop->unregisterTimer(this);
       #endif
-      // why not windows ???
+      
+      #ifdef SAT_WIN32
+        MTimer->stop();
+        delete MTimer;
+      #endif
+      
     }
     return kResultOk;
   }
@@ -2399,11 +2419,15 @@ public: // IPlugView
     Note that if the Plug-in requests a resize (IPlugFrame::resizeView())
     onSize has to be called afterward.
   */
+  
+  /*
+    note to self: window isn't necessarily open!
+  */
 
   tresult PLUGIN_API onSize(ViewRect* newSize) override {
     
     SAT_PRINT;
-    SAT_Assert(newSize);
+    //SAT_Assert(newSize);
     
     //MEditorWidth = newSize->getWidth();
     //MEditorHeight = newSize->getHeight();
@@ -2411,18 +2435,12 @@ public: // IPlugView
     
     uint32_t w = newSize->getWidth();
     uint32_t h = newSize->getHeight();
-    SAT_Print("w %i h %i\n",w,h);
-    SAT_Print("MPlugin %p\n",MPlugin);
+    //SAT_Print("w %i h %i\n",w,h);
+    //SAT_Print("MPlugin %p\n",MPlugin);
     
-    // crashes...
-    /*
-      is the editor created yet?
-    */
-    
-    
+    // crashed
     if (MPlugin) MPlugin->gui_set_size(w,h);
-    
-    SAT_PRINT; // not printed!!
+    //SAT_PRINT; // not printed
     
     return kResultOk;
   }
@@ -2494,10 +2512,6 @@ public: // ITimerHandler
 
   #ifdef SAT_LINUX
     void onTimer() override {
-      
-// !!!
-    SAT_PRINT;
-    
       //MPlugin->on_updateEditor(MEditor);
       //MPlugin->flushParamsToHost();
       //SAT_PRINT;
@@ -2505,9 +2519,21 @@ public: // ITimerHandler
     }
   #endif
 
+//------------------------------
+public: // SAT_TimerListener
+//------------------------------
+
   #ifdef SAT_WIN32
-    //void onTimer() override {
-    //}
+  
+    // eehh, what thread is this called from,
+    // and what thread should we call flush from?
+    // let's utry this, and see how it goes..
+  
+    void do_timerListener_callback(SAT_Timer* ATimer) override {
+      SAT_Print("\n***\n");
+      flushHostParams();
+    }
+
   #endif
 
 //

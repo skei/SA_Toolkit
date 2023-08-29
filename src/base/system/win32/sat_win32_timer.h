@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------
 
 class SAT_Timer;
+
 class SAT_TimerListener {
   public:
     virtual void do_timerListener_callback(SAT_Timer* ATimer) {}
@@ -56,7 +57,8 @@ private:
 
 private:
 
-  bool                MRunning        = false;
+  //bool                MRunning        = false;
+  std::atomic<bool>   MRunning {false};
   SAT_TimerListener*  MTimerListener  = nullptr;
   HWND                MWinHandle      = NULL;
 

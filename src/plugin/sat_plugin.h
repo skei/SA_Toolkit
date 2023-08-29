@@ -734,6 +734,9 @@ public: // gui
     MIsEditorClosing = true;
     MEditor->destroy();
     delete MEditor;
+    
+    MEditor = nullptr; // for later if/assert(MEditor)
+    
     //SAT_Print("MEditor: %p\n");
     //MEditor = (SAT_Editor*)0xdeadbeef;
     //SAT_Print("MEditor: %p\n");
@@ -824,7 +827,6 @@ public: // gui
     
     // asserts in vst3/win32/reaper...
     //SAT_Assert(MEditor);
-    
     if (MEditor) return MEditor->set_size(width,height);
     else return false;
   }
