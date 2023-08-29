@@ -35,12 +35,12 @@ public:
 //------------------------------
 
   const
-  clap_plugin_t* getPlugin() {
+  clap_plugin_t* getClapPlugin() {
     return &MPlugin;
   }
 
   const
-  clap_plugin_descriptor_t* getDescriptor() {
+  clap_plugin_descriptor_t* getClapDescriptor() {
     return MPlugin.desc;
   }
 

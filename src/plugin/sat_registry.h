@@ -175,7 +175,7 @@ public: // preset discovery providers
     SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);                                                                              \
     if (AIndex == 0) {                                                                                                            \
       SAT_Plugin* plugin = new PLUG(ADescriptor,AHost);                                                                           \
-      return plugin->getPlugin();                                                                                                 \
+      return plugin->getClapPlugin();                                                                                             \
     }                                                                                                                             \
     return nullptr;                                                                                                               \
   }

@@ -100,7 +100,7 @@ public:
   SAT_Vst3Plugin(SAT_ClapPlugin* APlugin) {
     SAT_PRINT;
     MPlugin     = APlugin;
-    MDescriptor = MPlugin->getDescriptor();
+    MDescriptor = MPlugin->getClapDescriptor();
     MRefCount   = 1;
     setupParameterInfo();
   }
@@ -2276,27 +2276,18 @@ public: // IPlugView
 
   tresult PLUGIN_API attached(void* parent, FIDString type) override {
     SAT_PRINT;
-
-    SAT_PRINT;
-
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
-    const clap_plugin_t* plugin = MPlugin->getPlugin();
-
-    SAT_PRINT;
+    const clap_plugin_t* plugin = MPlugin->getClapPlugin();
 
     #ifdef SAT_LINUX
     if (gui && gui->is_api_supported(plugin,CLAP_WINDOW_API_X11,false)) {
       if (gui->create(plugin,CLAP_WINDOW_API_X11,false)) {
     #endif
 
-    SAT_PRINT;
-
     #ifdef SAT_WIN32
     if (gui && gui->is_api_supported(plugin,CLAP_WINDOW_API_WIN32,false)) {
       if (gui->create(plugin,CLAP_WINDOW_API_WIN32,false)) {
     #endif
-
-    SAT_PRINT;
 
         gui->set_scale(plugin,1.0);
         uint32_t width = 0;
@@ -2310,6 +2301,7 @@ public: // IPlugView
           r.bottom  = height;
           MPlugFrame->resizeView(this,&r);
         }
+
         clap_window_t clap_window = {};
 
         #ifdef SAT_LINUX
@@ -2332,12 +2324,13 @@ public: // IPlugView
         
         #ifdef SAT_WIN32
           MTimer = new SAT_Timer(this);
+          SAT_Assert(MTimer);
           MTimer->start(SAT_PLUGIN_VST3_TIMER_MS,(HWND)parent,false);
         #endif
         
-        // why not windows ???
       }
     }
+    
     return kResultOk;
     //return kResultFalse;
   }
@@ -2352,7 +2345,7 @@ public: // IPlugView
   tresult PLUGIN_API removed() override {
     SAT_PRINT;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
-    const clap_plugin_t* plugin = MPlugin->getPlugin();
+    const clap_plugin_t* plugin = MPlugin->getClapPlugin();
     if (gui) {
       gui->hide(plugin);
       gui->destroy(plugin);
@@ -2361,9 +2354,11 @@ public: // IPlugView
         MRunLoop->unregisterTimer(this);
       #endif
       
+      // could there be timer events 'in transit'?
       #ifdef SAT_WIN32
         MTimer->stop();
         delete MTimer;
+        MTimer = nullptr;
       #endif
       
     }
@@ -2402,7 +2397,7 @@ public: // IPlugView
     uint32_t width = 0;
     uint32_t height = 0;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
-    const clap_plugin_t* plugin = MPlugin->getPlugin();
+    const clap_plugin_t* plugin = MPlugin->getClapPlugin();
     //SAT_Editor* editor = MPlugin->getEditor();
     gui->get_size(plugin,&width,&height);
     size->left    = 0;
@@ -2502,7 +2497,6 @@ public: // ITimerHandler
 //------------------------------
 
   // tid = same as setComponentHandler..
-  // ui
 
   /*
     will be called afte we register the timer:
@@ -2523,11 +2517,16 @@ public: // ITimerHandler
 public: // SAT_TimerListener
 //------------------------------
 
+  /*
+    there's no ITimerHandler in vst3 for win32?
+    so we need to set up our own..
+  */
+
   #ifdef SAT_WIN32
   
     // eehh, what thread is this called from,
     // and what thread should we call flush from?
-    // let's utry this, and see how it goes..
+    // let's try this, and see how it goes..
   
     void do_timerListener_callback(SAT_Timer* ATimer) override {
       SAT_Print("\n***\n");

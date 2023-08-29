@@ -32,7 +32,7 @@ public:
 public:
 //------------------------------
 
-  const clap_host_t* getHost() {
+  const clap_host_t* getClapHost() {
     return &MHost;
   }
 

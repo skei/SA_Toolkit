@@ -138,7 +138,7 @@ private:
     strcat(plugin_ttl,"\n");
 
     SAT_HostImplementation* host = new SAT_HostImplementation();
-    const clap_host_t* clap_host = host->getHost();
+    const clap_host_t* clap_host = host->getClapHost();
     uint32_t num_plugins = SAT_GLOBAL.REGISTRY.getNumDescriptors();
     for (uint32_t i=0; i<num_plugins; i++) {
       const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(i);

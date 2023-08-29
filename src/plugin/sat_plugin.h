@@ -1792,7 +1792,7 @@ public: // editor
     SAT_PanelWidget* root = new SAT_PanelWidget(0);
     window->appendRootWidget(root);
     root->setFillBackground(false);
-    const clap_plugin_descriptor_t* descriptor = getDescriptor();
+    const clap_plugin_descriptor_t* descriptor = getClapDescriptor();
     const char* format = getPluginFormat();
     const char* name = descriptor->name;
     SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(SAT_Rect(0,0,width,40),name,format);

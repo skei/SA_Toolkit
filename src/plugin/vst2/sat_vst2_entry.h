@@ -90,7 +90,7 @@ public:
 
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);        // deleted in SAT_Vst2Plugin destructor
-    const clap_host_t* claphost = vst2_host->getHost();
+    const clap_host_t* claphost = vst2_host->getClapHost();
     const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,claphost);              // destroy() called in SAT_Vst2Plugin destructor
     SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
     plugin->setPluginFormat("VST2");

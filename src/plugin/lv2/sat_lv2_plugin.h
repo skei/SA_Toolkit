@@ -98,7 +98,7 @@ public:
     MFeatures = features;
 
     MHost = new SAT_HostImplementation();
-    const clap_host_t* clap_host = MHost->getHost();
+    const clap_host_t* clap_host = MHost->getClapHost();
     
     char plugin_id_buffer[SAT_MAX_NAME_LENGTH];
     strcpy(plugin_id_buffer,descriptor->URI);

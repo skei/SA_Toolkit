@@ -100,7 +100,7 @@ public:
     MSampleRate = ASampleRate;
 
     MHost = new SAT_HostImplementation(); // deleted in ladspa_cleanup()
-    const clap_host_t* clap_host = MHost->getHost();
+    const clap_host_t* clap_host = MHost->getClapHost();
     SAT_LadspaDescriptorInfo* descriptor_info = (SAT_LadspaDescriptorInfo*)MLadspaDescriptor->ImplementationData;
     uint32_t index = descriptor_info->index;
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
