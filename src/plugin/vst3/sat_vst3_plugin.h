@@ -88,6 +88,7 @@ public:
 //------------------------------
 
   SAT_Vst3Plugin(SAT_ClapPlugin* APlugin) {
+    SAT_PRINT;
     MPlugin     = APlugin;
     MDescriptor = MPlugin->getDescriptor();
     MRefCount   = 1;
@@ -97,6 +98,7 @@ public:
   //----------
 
   virtual ~SAT_Vst3Plugin() {
+    SAT_PRINT;
     if (MPlugin) delete MPlugin;
     if (MParamInfos) free(MParamInfos);
   }
@@ -112,6 +114,7 @@ private: // in_events
   //----------
 
   const clap_event_header_t* vst3_input_events_get(uint32_t index) {
+    SAT_Print("index %i\n",index);
     uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * index;
     return (const clap_event_header_t*)&MEvents[pos];
   }
@@ -188,7 +191,10 @@ private: // out_events
           //SAT_Print("&info %p\n",&info);
           //SAT_Print("MPlugin %p\n",MPlugin);
           //SAT_Print("\n");
-          MPlugin->params_get_info(index,&info); // crash? (win32)
+          
+// crash? (win32)
+          MPlugin->params_get_info(index,&info);
+          
           double range = info.max_value - info.min_value;
           if (range > 0) {
             value -= info.min_value;
@@ -233,6 +239,7 @@ private: // out_events
   //----------
 
   static bool vst3_output_events_try_push_callback(const struct clap_output_events *list, const clap_event_header_t *event) {
+    SAT_PRINT;
     SAT_Vst3Plugin* plugin = (SAT_Vst3Plugin*)list->ctx;
     return plugin->vst3_output_events_try_push(event);
   }
@@ -556,6 +563,7 @@ private:
   */
 
   void setupParameterInfo() {
+    SAT_PRINT;
     if (!MParamInfos) {
       uint32_t num = MPlugin->params_count();
       MParamInfos = (ParameterInfo*)malloc( num * sizeof(ParameterInfo) );
@@ -590,6 +598,7 @@ public: // FUnknown
   */
 
   uint32 PLUGIN_API addRef() override {
+    SAT_PRINT;
     MRefCount++;
     return MRefCount;
   }
@@ -603,6 +612,7 @@ public: // FUnknown
   */
 
   uint32 PLUGIN_API release() override {
+    SAT_PRINT;
     uint32_t r = --MRefCount;
     if (r == 0) {
       SAT_Print("deleting\n");
@@ -630,6 +640,11 @@ public: // FUnknown
   */
 
   tresult PLUGIN_API queryInterface(const TUID _iid, void** obj) override {
+    
+    SAT_Print("_iid ");
+    VST3_PrintIID(_iid);
+    SAT_DPrint("\n");
+    
     *obj = nullptr;
     if ( FUnknownPrivate::iidEqual(IAudioProcessor_iid,_iid) ) {
       *obj = (IAudioProcessor*)this;
@@ -718,6 +733,7 @@ public: // IPluginBase
   */
 
   tresult PLUGIN_API initialize(FUnknown* context) override {
+    SAT_PRINT;
     MHostApp = (IHostApplication*)context;
     //context->queryInterface(IHostApplication_iid, (void**)&MHostApp);
     if (MHostApp) {
@@ -740,6 +756,7 @@ public: // IPluginBase
   */
 
   tresult PLUGIN_API terminate() override {
+    SAT_PRINT;
     //MPlugin->on_plugin_deinit();
     return kResultOk;
   }
@@ -761,6 +778,11 @@ public: // IComponent
   */
 
   tresult PLUGIN_API getControllerClassId(TUID classId) override {
+    
+    SAT_Print("classId ");
+    VST3_PrintIID(classId);
+    SAT_DPrint("\n");
+    
     getEditorId(MDescriptor);
     memcpy(classId,MEditorId,16);
     return kResultOk;
@@ -774,6 +796,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API setIoMode(IoMode mode) override {
+    SAT_Print("mode %i\n",mode);
     //switch (mode) {
     //  case kSimple:             VST3_Trace("(kSimple)\n"); break;
     //  case kAdvanced:           VST3_Trace("(kAdvanced)\n"); break;
@@ -802,6 +825,7 @@ public: // IComponent
   */
 
   int32 PLUGIN_API getBusCount(MediaType type, BusDirection dir) override {
+    SAT_Print("type %i dir %i\n",type,dir);
     if (type == kAudio) {
       //if (dir == kInput) return MDescriptor->getNumAudioInputs();
       //else if (dir == kOutput) return MDescriptor->getNumAudioOutputs();
@@ -838,6 +862,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API getBusInfo(MediaType type, BusDirection dir, int32 index, BusInfo& bus) override {
+    SAT_Print("type %i dir %i index %i\n",type,dir,index);
     if (type == kAudio) {
       bus.mediaType = kAudio;
       if (dir == kInput) {
@@ -896,6 +921,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API getRoutingInfo(RoutingInfo& inInfo, RoutingInfo& outInfo) override {
+    SAT_PRINT;
     outInfo.mediaType = inInfo.mediaType; // MediaTypes::kAudio;
     outInfo.busIndex  = inInfo.busIndex;  // 0;
     outInfo.channel   = -1;
@@ -912,6 +938,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API activateBus(MediaType type, BusDirection dir, int32 index, TBool state) override {
+    SAT_Print("type %i dir %i index %i\n",type,dir,index);
     return kResultOk;
   }
 
@@ -922,6 +949,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API setActive(TBool state) override {
+    SAT_Print("state %i\n",state);
     if (state) MPlugin->activate(MSampleRate,0,MBlockSize);
     else MPlugin->deactivate();
     return kResultOk;
@@ -1000,6 +1028,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API setState(IBStream* state) override {
+    SAT_PRINT;
     //uint32_t version = 0;
     //uint32_t mode = 0;
     //int32_t size = 0;
@@ -1046,6 +1075,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API getState(IBStream* state) override {
+    SAT_PRINT;
     //uint32_t  version = MDescriptor->getVersion();
     //uint32_t  mode    = 0;
     //void*     ptr     = nullptr;
@@ -1088,6 +1118,7 @@ public: // IAudioProcessor
   //const SpeakerArrangement kStereo = kSpeakerL | kSpeakerR;
 
   tresult PLUGIN_API setBusArrangements(SpeakerArrangement* inputs, int32 numIns, SpeakerArrangement* outputs, int32 numOuts) override {
+    SAT_PRINT;
     //if ((numIns == 2) && (*inputs == kStereo)) {}
     if ((numIns == 2) && (numOuts == 2)) return kResultTrue;
     return kResultFalse;
@@ -1102,6 +1133,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API getBusArrangement(BusDirection dir, int32 index, SpeakerArrangement& arr) override {
+    SAT_PRINT;
     //if ((dir==kOutput) && (index==0)) {
     //  arr = Steinberg::Vst::kSpeakerL | Steinberg::Vst::kSpeakerR;
     //  return kResultOk;
@@ -1137,6 +1169,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API canProcessSampleSize(int32 symbolicSampleSize) override {
+    SAT_PRINT;
     if (symbolicSampleSize==kSample32) {
       return kResultTrue;
     }
@@ -1187,6 +1220,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API setupProcessing(ProcessSetup& setup) override {
+    SAT_PRINT;
     MProcessMode  = setup.processMode;         // kRealtime, kPrefetch, kOffline
     MSampleSize   = setup.symbolicSampleSize; // kSample32, kSample64
     MBlockSize    = setup.maxSamplesPerBlock;
@@ -1208,6 +1242,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API setProcessing(TBool state) override {
+    SAT_PRINT;
     MIsProcessing = state;
     return kResultOk;
   }
@@ -1359,6 +1394,9 @@ public: // IAudioProcessor
   // assume only 1 input/output bus..
 
   tresult PLUGIN_API process(ProcessData& data) override {
+
+    //SAT_PRINT;
+    
     MNumEvents = 0;
     prepareEvents(data);
     prepareParameters(data);
@@ -1503,6 +1541,7 @@ public: // INoteExpressionController
   // Returns number of supported note change types for event bus index and channel.
 
   int32 PLUGIN_API getNoteExpressionCount(int32 busIndex, int16 channel) override {
+    SAT_PRINT;
     //if (busIndex==0) return 1;
     return 2;
   }
@@ -1512,6 +1551,7 @@ public: // INoteExpressionController
   //flags: NoteExpressionTypeInfo::kIsBipolar, kIsOneShot, kIsAbsolute, kAssociatedParameterIDValid
 
   tresult PLUGIN_API getNoteExpressionInfo(int32 busIndex, int16 channel, int32 noteExpressionIndex, NoteExpressionTypeInfo& info) override {
+    SAT_PRINT;
     //if (busIndex==0) {
       switch(noteExpressionIndex) {
         case 0:
@@ -1548,6 +1588,7 @@ public: // INoteExpressionController
   // Gets a user readable representation of the normalized note change value.
 
   tresult PLUGIN_API getNoteExpressionStringByValue(int32 busIndex, int16 channel, NoteExpressionTypeID id, NoteExpressionValue valueNormalized, String128 string) override {
+    SAT_PRINT;
     char temp[100];
     //SAT_FloatToString(temp,valueNormalized);
     sprintf(temp,"%.3f",valueNormalized);
@@ -1560,6 +1601,7 @@ public: // INoteExpressionController
   // Converts the user readable representation to the normalized note change value.
 
   tresult PLUGIN_API getNoteExpressionValueByString(int32 busIndex, int16 channel, NoteExpressionTypeID id, const TChar* string, NoteExpressionValue& valueNormalized) override{
+    SAT_PRINT;
     char temp[129];
     VST3_Utf16ToChar(string,temp);
     //float res = SAT_StringToFloat(temp);
@@ -1587,6 +1629,7 @@ public: // IKeyswitchController
   // Returns number of supported key switches for event bus index and channel.
 
   int32 PLUGIN_API getKeyswitchCount(int32 busIndex, int16 channel) override {
+    SAT_PRINT;
     return 0;
   }
 
@@ -1608,6 +1651,7 @@ public: // IKeyswitchController
   // Returns key switch info.
 
   tresult PLUGIN_API getKeyswitchInfo(int32 busIndex, int16 channel, int32 keySwitchIndex, KeyswitchInfo& info) override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
@@ -1638,6 +1682,7 @@ public: // IConnectionPoint
   */
 
   tresult PLUGIN_API connect(IConnectionPoint* other) override {
+    SAT_PRINT;
     //IMessage* msg;
     //msg->setMessageID("test");
     //other->notify(msg);
@@ -1649,6 +1694,7 @@ public: // IConnectionPoint
   //Disconnects a given connection point from this.
 
   tresult PLUGIN_API disconnect(IConnectionPoint* other)  override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
@@ -1667,6 +1713,7 @@ public: // IConnectionPoint
   */
 
   tresult PLUGIN_API notify(IMessage* message) override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
@@ -1689,6 +1736,7 @@ public: // IUnitInfo
   // Returns the flat count of units.
 
   int32 PLUGIN_API getUnitCount() override {
+    SAT_PRINT;
     return 1;
   }
 
@@ -1706,6 +1754,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getUnitInfo(int32 unitIndex, UnitInfo& info) override {
+    SAT_PRINT;
     if (unitIndex==0) {
       info.id = kRootUnitId; //0;
       info.parentUnitId = kNoParentUnitId;
@@ -1721,6 +1770,7 @@ public: // IUnitInfo
   // Gets the count of Program List.
 
   int32 PLUGIN_API getProgramListCount() override {
+    SAT_PRINT;
     return 0; // 1
   }
 
@@ -1737,6 +1787,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getProgramListInfo(int32 listIndex, ProgramListInfo& info) override {
+    SAT_PRINT;
     if (listIndex == 0) {
       info.id = 0;
       VST3_CharToUtf16("program",info.name);
@@ -1751,6 +1802,7 @@ public: // IUnitInfo
   // Gets for a given program list ID and program index its program name.
 
   tresult PLUGIN_API getProgramName(ProgramListID listId, int32 programIndex, String128 name) override {
+    SAT_PRINT;
     if ((listId == 0) && (programIndex == 0)) {
       VST3_CharToUtf16("program",name);
       return kResultOk;
@@ -1767,6 +1819,7 @@ public: // IUnitInfo
 
   //CString attributeId, String128 attributeValue) {
   tresult PLUGIN_API getProgramInfo(ProgramListID listId, int32 programIndex, Steinberg::Vst::CString attributeId, String128 attributeValue) override {
+    SAT_PRINT;
     ////attributeId = "";
     //if ((listId == 0) && (programIndex == 0) /* attributeId */) {
     //  char_to_utf16("",attributeValue);
@@ -1780,6 +1833,7 @@ public: // IUnitInfo
   // Returns kResultTrue if the given program index of a given program list ID supports PitchNames.
 
   tresult PLUGIN_API hasProgramPitchNames(ProgramListID listId, int32 programIndex) override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
@@ -1792,6 +1846,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getProgramPitchName(ProgramListID listId, int32 programIndex, int16 midiPitch, String128 name) override {
+    SAT_PRINT;
     //char_to_utf16("pitch",name);
     return kResultFalse;
   }
@@ -1801,6 +1856,7 @@ public: // IUnitInfo
   // Gets the current selected unit.
 
   UnitID PLUGIN_API getSelectedUnit() override {
+    SAT_PRINT;
     return 0;
   }
 
@@ -1809,6 +1865,7 @@ public: // IUnitInfo
   // Sets a new selected unit.
 
   tresult PLUGIN_API selectUnit(UnitID unitId) override {
+    SAT_PRINT;
     return kResultOk;
   }
 
@@ -1822,6 +1879,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getUnitByBus(MediaType type, BusDirection dir, int32 busIndex, int32 channel, UnitID& unitId) override {
+    SAT_PRINT;
     unitId = 0;
     return kResultOk;//False;
   }
@@ -1837,6 +1895,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API setUnitProgramData(int32 listOrUnitId, int32 programIndex, IBStream* data) override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
@@ -1859,6 +1918,7 @@ public: // IEditController
   */
 
   tresult PLUGIN_API setComponentState(IBStream* state) override {
+    SAT_PRINT;
     /*
     // we receive the current state of the component (processor part)
     if (state == nullptr) return kResultFalse;
@@ -1904,6 +1964,7 @@ public: // IEditController
 
   //tresult PLUGIN_API setState(IBStream* state) {
   tresult PLUGIN_API setEditorState(IBStream* state) override {
+    SAT_PRINT;
     return kResultOk;
   }
 
@@ -1911,6 +1972,7 @@ public: // IEditController
 
   //tresult PLUGIN_API getState(IBStream* state) {
   tresult PLUGIN_API getEditorState(IBStream* state) override {
+    SAT_PRINT;
     return kResultOk;
   }
 
@@ -1921,6 +1983,7 @@ public: // IEditController
   */
 
   int32 PLUGIN_API getParameterCount() override {
+    SAT_PRINT;
     return MPlugin->params_count();
     //return 0;
   }
@@ -1928,6 +1991,7 @@ public: // IEditController
   //----------
 
   tresult PLUGIN_API getParameterInfo(int32 paramIndex, ParameterInfo& info) override {
+    SAT_PRINT;
     if (paramIndex < 0) return kResultFalse;
 
     int32_t num_params = MPlugin->params_count();
@@ -1983,6 +2047,7 @@ public: // IEditController
   //----------
 
   tresult PLUGIN_API getParamValueByString(ParamID id, TChar* string, ParamValue& valueNormalized) override {
+    SAT_PRINT;
     if (id < MPlugin->params_count()) {
       //SAT_Parameter* param = MDescriptor->getParameter(id);
       char temp[129];
@@ -2001,6 +2066,7 @@ public: // IEditController
   //----------
 
   ParamValue PLUGIN_API normalizedParamToPlain(ParamID id, ParamValue valueNormalized) override {
+    SAT_PRINT;
     if (id < MPlugin->params_count()) {
       //SAT_Parameter* param = MDescriptor->getParameter(id);
       //float v = param->from01(valueNormalized);
@@ -2015,6 +2081,7 @@ public: // IEditController
   //----------
 
   ParamValue PLUGIN_API plainParamToNormalized(ParamID id, ParamValue plainValue) override {
+    SAT_PRINT;
     if (id < MPlugin->params_count()) {
       //SAT_Parameter* param = MDescriptor->getParameter(id);
       //float v = param->to01(plainValue);
@@ -2029,6 +2096,7 @@ public: // IEditController
   //----------
 
   ParamValue PLUGIN_API getParamNormalized(ParamID id) override {
+    SAT_PRINT;
     if (id < MPlugin->params_count()) {
       //float v = MPlugin->getParamValue(id);
       SAT_Plugin* plugin = (SAT_Plugin*)MPlugin;
@@ -2100,6 +2168,7 @@ public: // IEditController
   */
 
   tresult PLUGIN_API setComponentHandler(IComponentHandler* handler) override {
+    SAT_PRINT;
     MComponentHandler = handler;
     //handler->queryInterface(IComponentHandler2::iid,(void**)&MComponentHandler2);
     //SAT_Vst3Host* host = (SAT_Vst3Host*)MPlugin->getHost();
@@ -2117,6 +2186,7 @@ public: // IEditController
   */
 
   IPlugView* PLUGIN_API createView(FIDString name) override {
+    SAT_PRINT;
     //if (MDescriptor->hasEditor()) {
       if (name && (strcmp(name,ViewType::kEditor) == 0)) {
         addRef();
@@ -2131,18 +2201,21 @@ public: // IEditController2
 //------------------------------
 
   tresult PLUGIN_API setKnobMode(KnobMode mode) override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
   //----------
 
   tresult PLUGIN_API openHelp(TBool onlyCheck) override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
   //----------
 
   tresult PLUGIN_API openAboutBox(TBool onlyCheck) override {
+    SAT_PRINT;
     return kResultFalse;
   }
 
@@ -2151,6 +2224,7 @@ public: // IPlugView
 //------------------------------
 
   const char* getEditorId(const clap_plugin_descriptor_t* descriptor) {
+    SAT_PRINT;
     uint32_t* id = (uint32_t*)MEditorId;
     id[0] = SAT_MAGIC_EDITOR;
     id[1] = SAT_HashString(descriptor->name);
@@ -2162,6 +2236,7 @@ public: // IPlugView
   //--------------------
 
   tresult PLUGIN_API isPlatformTypeSupported(FIDString type) override {
+    SAT_PRINT;
     // "X11EmbedWindowID"
 
     #ifdef SAT_LINUX
@@ -2191,6 +2266,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API attached(void* parent, FIDString type) override {
+    SAT_PRINT;
 
     SAT_PRINT;
 
@@ -2259,6 +2335,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API removed() override {
+    SAT_PRINT;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
     const clap_plugin_t* plugin = MPlugin->getPlugin();
     if (gui) {
@@ -2276,18 +2353,21 @@ public: // IPlugView
   //----------
 
   tresult PLUGIN_API onWheel(float distance) override {
+    SAT_PRINT;
     return kResultOk;
   }
 
   //----------
 
   tresult PLUGIN_API onKeyDown(char16 key, int16 keyCode, int16 modifiers) override {
+    SAT_PRINT;
     return kResultOk;
   }
 
   //----------
 
   tresult PLUGIN_API onKeyUp(char16 key, int16 keyCode, int16 modifiers) override {
+    SAT_PRINT;
     return kResultOk;
   }
 
@@ -2298,6 +2378,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API getSize(ViewRect* size) override {
+    SAT_PRINT;
     uint32_t width = 0;
     uint32_t height = 0;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
@@ -2320,12 +2401,29 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API onSize(ViewRect* newSize) override {
+    
+    SAT_PRINT;
+    SAT_Assert(newSize);
+    
     //MEditorWidth = newSize->getWidth();
     //MEditorHeight = newSize->getHeight();
     //TODO: resize/redraw editor
+    
     uint32_t w = newSize->getWidth();
     uint32_t h = newSize->getHeight();
+    SAT_Print("w %i h %i\n",w,h);
+    SAT_Print("MPlugin %p\n",MPlugin);
+    
+    // crashes...
+    /*
+      is the editor created yet?
+    */
+    
+    
     if (MPlugin) MPlugin->gui_set_size(w,h);
+    
+    SAT_PRINT; // not printed!!
+    
     return kResultOk;
   }
 
@@ -2336,6 +2434,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API onFocus(TBool state) override {
+    SAT_PRINT;
     return kResultOk;
   }
 
@@ -2347,6 +2446,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API setFrame(IPlugFrame* frame) override {
+    SAT_PRINT;
     MPlugFrame = frame;
     #ifdef SAT_LINUX
       //tresult res =
@@ -2362,6 +2462,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API canResize() override {
+    SAT_PRINT;
     if (MPlugin->get_extension(CLAP_EXT_GUI)) return kResultTrue;
     else return kResultFalse;
   }
@@ -2374,6 +2475,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API checkSizeConstraint(ViewRect* rect) override {
+    SAT_PRINT;
     return kResultOk;//False;
   }
 
@@ -2382,15 +2484,20 @@ public: // ITimerHandler
 //------------------------------
 
   // tid = same as setComponentHandler..
+  // ui
 
   /*
-    will be called afte we regisdter the timer:
-      MRunLoop->registerTimer(this,SAT_PLUGIN_VST3_TIMER_MS);
+    will be called afte we register the timer:
+    MRunLoop->registerTimer(this,SAT_PLUGIN_VST3_TIMER_MS);
     (in IEditView.attached)
   */
 
   #ifdef SAT_LINUX
     void onTimer() override {
+      
+// !!!
+    SAT_PRINT;
+    
       //MPlugin->on_updateEditor(MEditor);
       //MPlugin->flushParamsToHost();
       //SAT_PRINT;
