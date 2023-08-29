@@ -33,13 +33,13 @@ public:
 //------------------------------
 
   SAT_Vst2Entry() {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
   //----------
 
   ~SAT_Vst2Entry() {
-    //SAT_Print("\n");
+    SAT_Print("\n");
   }
 
 //------------------------------

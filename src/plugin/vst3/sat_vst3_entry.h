@@ -22,10 +22,14 @@ bool vst3_module_exit(void) asm ("ModuleExit");
 //
 //----------------------------------------------------------------------
 
+// host deletes it?
+// or else it leaks..
+// shouldn't we just have a global/static factory, and return a ptr to this?
+
 //__EXPORT
 __attribute__ ((visibility ("default")))
 IPluginFactory* PLUGIN_API sat_vst3_entry() {
-  SAT_Print("GetPluginFactory\n");
+  SAT_PRINT;
   return new SAT_Vst3Factory();
 }
 
@@ -37,7 +41,7 @@ IPluginFactory* PLUGIN_API sat_vst3_entry() {
 //__EXPORT
 __attribute__ ((visibility ("default")))
 bool vst3_module_entry(void* sharedLibraryHandle)  {
-  SAT_Print("ModuleEntry\n");
+  SAT_PRINT;
   //if (++counter == 1) {
   //  moduleHandle = sharedLibraryHandle;
   //  return true;
@@ -50,7 +54,7 @@ bool vst3_module_entry(void* sharedLibraryHandle)  {
 //__EXPORT
 __attribute__ ((visibility ("default")))
 bool vst3_module_exit(void) {
-  SAT_Print("ModuleExit\n");
+  SAT_PRINT;
   //if (--counter == 0) {
   //  moduleHandle = nullptr;
   //  return true;

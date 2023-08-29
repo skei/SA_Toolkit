@@ -1,13 +1,13 @@
 
 // nc -U -l -k /tmp/sat.socket
 
-#define SAT_PLUGIN_ALL
+//#define SAT_PLUGIN_ALL
 
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_LADSPA
 //#define SAT_PLUGIN_LV2
 //#define SAT_PLUGIN_VST2
-//#define SAT_PLUGIN_VST3
+#define SAT_PLUGIN_VST3
 
 
 
@@ -98,11 +98,11 @@
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_demo.h"
 //#include "../plugins/sa_demo2.h"
-#include "../plugins/sa_gain.h"
+//#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_host.h"
 //#include "../plugins/sa_interceptor.h"
 //#include "../plugins/sa_pitch.h"
-//#include "../plugins/sa_synth.h"
+#include "../plugins/sa_synth.h"
 
 //#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_tyr.h"

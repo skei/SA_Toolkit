@@ -30,6 +30,7 @@ private:
 
   uint32_t    MRefCount       = 1;
   FUnknown*   MHostContext    = nullptr;
+  
   char        MPluginId[16]   = {0};
   char        MEditorId[16]   = {0};
 
@@ -38,14 +39,14 @@ public:
 //------------------------------
 
   SAT_Vst3Factory() {
-    SAT_Print("SAT_Vst3Factory\n");
+    SAT_PRINT;
     MRefCount = 1;
   }
 
   //----------
 
   virtual ~SAT_Vst3Factory() {
-    SAT_Print("~SAT_Vst3Factory\n");
+    SAT_PRINT;
   }
 
 //------------------------------
@@ -90,7 +91,7 @@ public: // FUnknown
 //------------------------------
 
   uint32 PLUGIN_API addRef() override {
-    SAT_Print("SAT_Vst3Factory.addRef\n");
+    SAT_PRINT;
     MRefCount++;
     return MRefCount;
   }
@@ -98,7 +99,7 @@ public: // FUnknown
   //----------
 
   uint32 PLUGIN_API release() override {
-    SAT_Print("SAT_Vst3Factory.release\n");
+    SAT_PRINT;
     uint32_t r = --MRefCount;
     if (r == 0) {
       SAT_Print("deleting\n");
@@ -110,7 +111,9 @@ public: // FUnknown
   //----------
 
   tresult PLUGIN_API queryInterface(const TUID _iid, void** obj) override {
-    SAT_Print("SAT_Vst3Factory.queryInterface\n");
+    SAT_Print("_iid: ");
+    VST3_PrintIID(_iid);
+    SAT_DPrint("\n");
     if (VST3_iidEqual(_iid,IPluginFactory2_iid)) {
       *obj = (IPluginFactory2*)this;
       addRef();
@@ -130,7 +133,7 @@ public: // IPluginFactory
 //------------------------------
 
   tresult PLUGIN_API getFactoryInfo(PFactoryInfo* info) override {
-    SAT_Print("SAT_Vst3Factory.getFactoryInfo\n");
+    SAT_PRINT;
     strcpy(info->vendor,"<factory author>");
     strcpy(info->url,   "<factory url>"   );
     strcpy(info->email, "<factory email>" );
@@ -142,14 +145,14 @@ public: // IPluginFactory
 
 
   int32 PLUGIN_API countClasses() override {
-    SAT_Print("SAT_Vst3Factory.countClasses\n");
+    SAT_PRINT;
     return SAT_GLOBAL.REGISTRY.getNumDescriptors();
   }
 
   //----------
   
   tresult PLUGIN_API getClassInfo(int32 index, PClassInfo* info) override {
-    SAT_Print("SAT_Vst3Factory.getClassInfo\n");
+    SAT_Print("index %i\n",index);
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     const char* long_id = getLongId(descriptor);
     memcpy(info->cid,long_id,16);
@@ -169,6 +172,11 @@ public: // IPluginFactory
   //----------
 
   tresult PLUGIN_API createInstance(FIDString cid, FIDString _iid, void** obj) override {
+    
+    SAT_Print("cid ");    VST3_PrintIID(cid);
+    SAT_DPrint(" _iid "); VST3_PrintIID(_iid);
+    SAT_DPrint("\n");
+    
     int32_t index = findPluginIndex(cid);
     if (index < 0) return kNotImplemented;
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
@@ -211,7 +219,7 @@ public: // IPluginFactory2
 //------------------------------
 
   tresult PLUGIN_API getClassInfo2(int32 index, PClassInfo2* info) override {
-    SAT_Print("Vst3Entry.getClassInfo2\n");
+    SAT_Print("index %i\n",index);
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     const char* long_id = getLongId(descriptor);
     memcpy(info->cid,long_id,16);
@@ -232,14 +240,14 @@ public: // IPluginFactory2
   //--------------------
 
   tresult PLUGIN_API getClassInfoUnicode(int32 index, PClassInfoW* info) override {
-    SAT_Print("Vst3Entry.getClassInfoUnicode\n");
+    SAT_Print("index %i\n",index);
     return kResultFalse;
   }
 
   //----------
 
   tresult PLUGIN_API setHostContext(FUnknown* context) override {
-    SAT_Print("Vst3Entry.setHostContext\n");
+    SAT_PRINT;
     MHostContext = context;
     return kResultOk;
   }

@@ -821,7 +821,12 @@ public: // gui
 
   bool gui_set_size(uint32_t width, uint32_t height) override {
     //SAT_Print("\n");
-    return MEditor->set_size(width,height);
+    
+    // asserts in vst3/win32/reaper...
+    //SAT_Assert(MEditor);
+    
+    if (MEditor) return MEditor->set_size(width,height);
+    else return false;
   }
 
   //----------

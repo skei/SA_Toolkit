@@ -82,11 +82,11 @@ public: // clap
     // extensions
     // TODO: not all!
     
-    registerAllExtensions();
-    //registerDefaultSynthExtensions();
-    //registerExtension(CLAP_EXT_PARAM_INDICATION,&MParamIndicationExt);
+    //registerAllExtensions();
+    registerDefaultSynthExtensions();
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS,&MRemoteControlsExt);
+    registerExtension(CLAP_EXT_PARAM_INDICATION,&MParamIndicationExt);
     //registerExtension(CLAP_EXT_PRESET_LOAD,&MPresetLoadExt);
-    //registerExtension(CLAP_EXT_REMOTE_CONTROLS,&MRemoteControlsExt);
     
     // ports
     appendClapNoteInputPort();
