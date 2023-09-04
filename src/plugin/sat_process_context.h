@@ -35,7 +35,7 @@ struct SAT_ProcessContext {
 //clap_sectime          loop_end_seconds    = 0;
 
 //uint32_t              oversampling        = 1;        // oversampling for current block
-  float**               voice_buffer        = nullptr;  // voice/output buffer
+  float**               voice_buffer        = nullptr;  // voice/output buffer (final mixed output)
   uint32_t              voice_length        = 0;        // length
 
 

@@ -1021,8 +1021,9 @@ private:
           //  }
           //}
 
-          // double-check (in case we have closed the window before processing
-          // all events in queue??
+          // double-check (in case we have closed the window before processing all events in queue?
+          // ??? is this needed, or did i pit it here for some debugging purposes?
+          // ugh..
           if (window->MIsEventThreadActive) {
             
             if (!window->processEvent(event)) {
@@ -1032,10 +1033,10 @@ private:
               return nullptr;
             }
             
-          } // active
+          } // active #2
 
         } // event
-      } // while
+      } // while active #1
       //window->xcb_event_thread_stop_callback(window);
       //LOG.print("XCB Returning from event thread\n");
       return nullptr;

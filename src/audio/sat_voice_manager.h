@@ -405,7 +405,9 @@ public:
           processVoice(v);
         }
       }
+      
       //mixActiveVoices();
+      
     } // num voices > 0
   }
 

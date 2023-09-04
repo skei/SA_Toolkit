@@ -468,11 +468,6 @@ public: // hierarchy
     SAT_Rect layout_rect = parent_rect;
     MContentRect = parent_rect;
     
-    //    SAT_Rect outerborder = MOuterBorder;
-    //    outerborder.scale(S);
-    //    parent_rect.shrink(outerborder);
-    //    layout_rect.shrink(outerborder);
-    
     // inner border
     
     SAT_Rect innerborder = MInnerBorder;
@@ -481,13 +476,14 @@ public: // hierarchy
     //parent_rect.shrink(innerborder);
     
     //
-
+    
     SAT_Point spacing = MSpacing;
     spacing.scale(S);
 
     for (uint32_t i=0; i<MChildWidgets.size(); i++) {
       SAT_Widget* child = MChildWidgets[i];
       
+      // menuitems, tabs, etc, might be invisible..
       //if (child->isVisible()) {
 
         SAT_Rect child_basisrect = child->getBasisRect();
@@ -501,7 +497,8 @@ public: // hierarchy
         child->MRect.w = child_basisrect.w;
         child->MRect.h = child_basisrect.h;
         
-        // negative = percent
+        // negative = percentage of parent
+        // or should it be % of layout? (it changes)..
         
         SAT_Rect child_initialrect = child->getInitialRect();
         if (child_initialrect.x < 0) child->MRect.x = (fabs(child_initialrect.x) * 0.01) * parent_rect.w;
@@ -765,10 +762,6 @@ public: // hierarchy
         
         // stretching
         
-        /*
-        oops.. layout_rect has probably already been changed if MFillLayout is true..
-        */
-        
         uint32_t child_stretching = child->getStretching();
         if (child_stretching & SAT_WIDGET_STRETCH_LEFT)      child->MRect.setX1( pre_layout_rect.x );
         if (child_stretching & SAT_WIDGET_STRETCH_RIGHT)     child->MRect.setX2( pre_layout_rect.x2() );
@@ -787,11 +780,13 @@ public: // hierarchy
         if ((child->MMinHeight >= 0) && (child->MRect.h < (child->MMinHeight * S))) child->MRect.h = (child->MMinHeight * S);
         if ((child->MMaxWidth  >= 0) && (child->MRect.w > (child->MMaxWidth  * S))) child->MRect.w = (child->MMaxWidth  * S);
         if ((child->MMaxHeight >= 0) && (child->MRect.h > (child->MMaxHeight * S))) child->MRect.h = (child->MMaxHeight * S);
-
-        // recursive
+        
+        // content rect contains all children
 
         MContentRect.combine(child->MRect);
         
+        // recursive
+
         child->realignChildWidgets();
       
       //} // visible
@@ -847,48 +842,48 @@ public: // (shortcuts)
 public: // base widget
 //------------------------------
 
-  void on_widget_prepare() override {
-  }
+  //void on_widget_prepare() override {
+  //}
   
-  void on_widget_cleanup() override {
-  }
+  //void on_widget_cleanup() override {
+  //}
   
-  void on_widget_move(double AXpos, double AYpos) override {
-  }
+  //void on_widget_move(double AXpos, double AYpos) override {
+  //}
   
-  void on_widget_resize(double AWidth, double AHeight) override {
-  }
+  //void on_widget_resize(double AWidth, double AHeight) override {
+  //}
   
-  void on_widget_prepaint(SAT_PaintContext* AContext) override {
-  }
+  //void on_widget_prepaint(SAT_PaintContext* AContext) override {
+  //}
   
   void on_widget_paint(SAT_PaintContext* AContext) override {
     if (isVisible()) paintChildWidgets(AContext);
   }
   
-  void on_widget_postpaint(SAT_PaintContext* AContext) override {
-  }
+  //void on_widget_postpaint(SAT_PaintContext* AContext) override {
+  //}
   
-  void on_widget_timer(uint32_t AId, double ADelta) override {
-  }
+  //void on_widget_timer(uint32_t AId, double ADelta) override {
+  //}
 
-  void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
-  }
+  //void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
+  //}
 
-  void on_widget_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
-  }
+  //void on_widget_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimestamp) override {
+  //}
 
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
-  }
+  //void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
+  //}
 
-  void on_widget_mouse_dblclick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
-  }
+  //void on_widget_mouse_dblclick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
+  //}
 
-  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
-  }
+  //void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
+  //}
 
-  void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATimestamp) override {
-  }
+  //void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATimestamp) override {
+  //}
 
   void on_widget_mouse_enter(SAT_BaseWidget* AFrom, double AXpos, double AYpos, uint32_t ATimestamp) override {
     if (isActive() && isVisible()) {
@@ -904,23 +899,23 @@ public: // base widget
     }
   }
 
-  void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AValue) override {
-    //switch (AType) {
-    //  case SAT_WIDGET_TWEEN_RECT/*666*/: {
-    //  //SAT_Print("id %i count %i data[0] %.2f data[1] %.2f data[2] %.2f data[3] %.2f\n",AId,ACount,AData[0],AData[1],AData[2],AData[3]);
-    //    double S = getWindowScale();
-    //    SAT_Rect R = { AData[0], AData[1], AData[2], AData[3] };
-    //    setBasisRect(R);
-    //    SAT_Rect R2 = R;
-    //    R2.scale(S);
-    //    setRect(R2);
-    //    //R.scale(1.0 / S);
-    //    //do_widgetListener_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
-    //    parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
-    //    break;
-    //  }
-    //}
-  }
+  //void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AValue) override {
+  //  //switch (AType) {
+  //  //  case SAT_WIDGET_TWEEN_RECT/*666*/: {
+  //  //  //SAT_Print("id %i count %i data[0] %.2f data[1] %.2f data[2] %.2f data[3] %.2f\n",AId,ACount,AData[0],AData[1],AData[2],AData[3]);
+  //  //    double S = getWindowScale();
+  //  //    SAT_Rect R = { AData[0], AData[1], AData[2], AData[3] };
+  //  //    setBasisRect(R);
+  //  //    SAT_Rect R2 = R;
+  //  //    R2.scale(S);
+  //  //    setRect(R2);
+  //  //    //R.scale(1.0 / S);
+  //  //    //do_widgetListener_notify(this,SAT_WIDGET_NOTIFY_MOVED,0);
+  //  //    parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
+  //  //    break;
+  //  //  }
+  //  //}
+  //}
 
 //------------------------------
 public: // widget listener
@@ -989,27 +984,11 @@ public: // widget listener
     double S = getWindowScale();
     mrect.w += ADeltaX;
     mrect.h += ADeltaY;
-    
     if ((MMinWidth  >= 0) && (mrect.w < (MMinWidth  * S))) return;//mrect.w = (MMinWidth  * S);
     if ((MMinHeight >= 0) && (mrect.h < (MMinHeight * S))) return;//mrect.h = (MMinHeight * S);
     if ((MMaxWidth  >= 0) && (mrect.w > (MMaxWidth  * S))) return;//mrect.w = (MMaxWidth  * S);
     if ((MMaxHeight >= 0) && (mrect.h > (MMaxHeight * S))) return;//mrect.h = (MMaxHeight * S);
-    
-    // identical to setRectndBasis ?
-    
-//    setRect(mrect);
-//    mrect.scale(1.0/S);
-//    setBasisRect(mrect);
-
-//  virtual void setRectAndBasis(SAT_Rect ARect) {
-//    double S = getWindowScale();
-//    setRect(ARect);
-//    ARect.scale(1.0 / S);
-//    setBasisRect(ARect);
-//  }
-    
     setRectAndBasis(mrect);
-    
     //realignChildWidgets(true);
     //parentRedraw();
   }

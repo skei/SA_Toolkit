@@ -17,6 +17,45 @@
 
 //----------------------------------------------------------------------
 
+/*
+
+// test
+
+// linux (gcc)
+#ifdef __gnu_linux__
+  #warning __gnu_linux__
+#endif
+
+// windows (mingw)
+#ifdef _WIN32
+  #warning _WIN32
+#endif
+
+// windows (mingw), linux (gcc)
+#ifdef __GNUC__
+  #warning __GNUC__
+#endif
+
+// windows (mingw)
+#ifdef __MINGW32__
+  #warning __MINGW32__
+#endif
+
+//
+
+// not..
+#ifdef __CYGWIN__
+  #warning __CYGWIN__
+#endif
+
+#ifdef MINGW_ENABLED
+  #warning MINGW_ENABLED
+#endif
+
+*/
+
+//----------------------------------------------------------------------
+
 #ifdef __gnu_linux__
   #define SAT_LINUX
 #endif
