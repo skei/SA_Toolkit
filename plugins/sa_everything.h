@@ -104,37 +104,37 @@ const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descrip
     // plugins
     
   //case:     plugin = new sa_botage_plugin(ADescriptor,AHost);             return plugin->getPlugin();
-    case 0:   plugin = new sa_bulum_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-    case 1:   plugin = new sa_cred_plugin(ADescriptor,AHost);               return plugin->getPlugin();
-    case 2:   plugin = new sa_demo_plugin(ADescriptor,AHost);               return plugin->getPlugin();
-    case 3:   plugin = new sa_demo2_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-    case 4:   plugin = new sa_gain_plugin(ADescriptor,AHost);               return plugin->getPlugin();
-    case 5:   plugin = new sa_pitch_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-    case 6:   plugin = new sa_synth_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-  //case:     plugin = new sa_tyr_plugin(ADescriptor,AHost);                return plugin->getPlugin();
-    case 7:   plugin = new test_synth_plugin(ADescriptor,AHost);            return plugin->getPlugin();
-    case 8:   plugin = new test_jit_plugin(ADescriptor,AHost);              return plugin->getPlugin();
-    case 9:   plugin = new test_reaper_ext_plugin(ADescriptor,AHost);       return plugin->getPlugin();
+    case 0:   plugin = new sa_bulum_plugin(ADescriptor,AHost);              return plugin->getClapPlugin();
+    case 1:   plugin = new sa_cred_plugin(ADescriptor,AHost);               return plugin->getClapPlugin();
+    case 2:   plugin = new sa_demo_plugin(ADescriptor,AHost);               return plugin->getClapPlugin();
+    case 3:   plugin = new sa_demo2_plugin(ADescriptor,AHost);              return plugin->getClapPlugin();
+    case 4:   plugin = new sa_gain_plugin(ADescriptor,AHost);               return plugin->getClapPlugin();
+    case 5:   plugin = new sa_pitch_plugin(ADescriptor,AHost);              return plugin->getClapPlugin();
+    case 6:   plugin = new sa_synth_plugin(ADescriptor,AHost);              return plugin->getClapPlugin();
+  //case:     plugin = new sa_tyr_plugin(ADescriptor,AHost);                return plugin->getClapPlugin();
+    case 7:   plugin = new test_synth_plugin(ADescriptor,AHost);            return plugin->getClapPlugin();
+    case 8:   plugin = new test_jit_plugin(ADescriptor,AHost);              return plugin->getClapPlugin();
+    case 9:   plugin = new test_reaper_ext_plugin(ADescriptor,AHost);       return plugin->getClapPlugin();
 
     // ports
     
-    case 10:  plugin = new sa_compciter_plugin(ADescriptor,AHost);          return plugin->getPlugin();
-    case 11:  plugin = new sa_event_horizon_plugin(ADescriptor,AHost);      return plugin->getPlugin();
-    case 12:  plugin = new sa_exciter_plugin(ADescriptor,AHost);            return plugin->getPlugin();
-    case 13:  plugin = new sa_exciter2_plugin(ADescriptor,AHost);           return plugin->getPlugin();
-    case 14:  plugin = new sa_freeverb_plugin(ADescriptor,AHost);           return plugin->getPlugin();
-    case 15:  plugin = new sa_hall_reverb_plugin(ADescriptor,AHost);        return plugin->getPlugin();
-    case 16:  plugin = new sa_hrtf_plugin(ADescriptor,AHost);               return plugin->getPlugin();
-    case 17:  plugin = new sa_iirfilter_plugin(ADescriptor,AHost);          return plugin->getPlugin();
-    case 18:  plugin = new sa_large_room_reverb_plugin(ADescriptor,AHost);  return plugin->getPlugin();
-    case 19:  plugin = new sa_limiter_plugin(ADescriptor,AHost);            return plugin->getPlugin();
-    case 20:  plugin = new sa_phaser_plugin(ADescriptor,AHost);             return plugin->getPlugin();
-    case 21:  plugin = new sa_saturation_plugin(ADescriptor,AHost);         return plugin->getPlugin();
-    case 22:  plugin = new sa_small_room_reverb_plugin(ADescriptor,AHost);  return plugin->getPlugin();
-    case 23:  plugin = new sa_sonic_maximizer_plugin(ADescriptor,AHost);    return plugin->getPlugin();
-    case 24:  plugin = new sa_stretch_plugin(ADescriptor,AHost);            return plugin->getPlugin();
-    case 25:  plugin = new sa_tilteq_plugin(ADescriptor,AHost);             return plugin->getPlugin();
-    case 26:  plugin = new sa_transient_killer_plugin(ADescriptor,AHost);   return plugin->getPlugin();
+    case 10:  plugin = new sa_compciter_plugin(ADescriptor,AHost);          return plugin->getClapPlugin();
+    case 11:  plugin = new sa_event_horizon_plugin(ADescriptor,AHost);      return plugin->getClapPlugin();
+    case 12:  plugin = new sa_exciter_plugin(ADescriptor,AHost);            return plugin->getClapPlugin();
+    case 13:  plugin = new sa_exciter2_plugin(ADescriptor,AHost);           return plugin->getClapPlugin();
+    case 14:  plugin = new sa_freeverb_plugin(ADescriptor,AHost);           return plugin->getClapPlugin();
+    case 15:  plugin = new sa_hall_reverb_plugin(ADescriptor,AHost);        return plugin->getClapPlugin();
+    case 16:  plugin = new sa_hrtf_plugin(ADescriptor,AHost);               return plugin->getClapPlugin();
+    case 17:  plugin = new sa_iirfilter_plugin(ADescriptor,AHost);          return plugin->getClapPlugin();
+    case 18:  plugin = new sa_large_room_reverb_plugin(ADescriptor,AHost);  return plugin->getClapPlugin();
+    case 19:  plugin = new sa_limiter_plugin(ADescriptor,AHost);            return plugin->getClapPlugin();
+    case 20:  plugin = new sa_phaser_plugin(ADescriptor,AHost);             return plugin->getClapPlugin();
+    case 21:  plugin = new sa_saturation_plugin(ADescriptor,AHost);         return plugin->getClapPlugin();
+    case 22:  plugin = new sa_small_room_reverb_plugin(ADescriptor,AHost);  return plugin->getClapPlugin();
+    case 23:  plugin = new sa_sonic_maximizer_plugin(ADescriptor,AHost);    return plugin->getClapPlugin();
+    case 24:  plugin = new sa_stretch_plugin(ADescriptor,AHost);            return plugin->getClapPlugin();
+    case 25:  plugin = new sa_tilteq_plugin(ADescriptor,AHost);             return plugin->getClapPlugin();
+    case 26:  plugin = new sa_transient_killer_plugin(ADescriptor,AHost);   return plugin->getClapPlugin();
     
   }
   return nullptr;

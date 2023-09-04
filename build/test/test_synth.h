@@ -95,7 +95,7 @@ public:
     
     // voice manager
     SAT_Host* host = getHost();
-    const clap_plugin_t* clapplugin = getPlugin();
+    const clap_plugin_t* clapplugin = getClapPlugin();
     const clap_host_t* claphost = host->getHost();
     MVoiceManager.init(clapplugin,claphost);
     MVoiceManager.setProcessThreaded(true);
