@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
   // instantiate
 
   SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
-  const clap_host_t* host = hostimpl->getHost();
+  const clap_host_t* host = hostimpl->getClapHost();
   if (!host) { printf("! ERROR: Couldn't create exe host implementation\n"); }
   else {
     const clap_plugin_entry_t* entry = &clap_entry;
