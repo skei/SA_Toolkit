@@ -87,7 +87,7 @@ public:
   //----------
 
   SAT_Parameter(clap_param_info_t* info) {
-    MInfo.id             = info->id;
+    MInfo.id             = 0;//info->id;
     MInfo.flags          = info->flags;
     MInfo.cookie         = this;
     strcpy(MInfo.name,info->name);
@@ -101,8 +101,8 @@ public:
   
   // id = index
   
-  SAT_Parameter(clap_id id, const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags) {
-    MInfo.id             = id;
+  SAT_Parameter(/*clap_id id,*/ const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags) {
+    MInfo.id             = 0;//id;
     MInfo.flags          = flags;
     MInfo.cookie         = this;
     strcpy(MInfo.name,name);
@@ -360,8 +360,8 @@ public:
   
   //----------
   
-  SAT_IntParameter(clap_id id, const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags)
-  : SAT_Parameter(id,name,module,defval,minval,maxval,flags) {
+  SAT_IntParameter(/*clap_id id,*/ const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags)
+  : SAT_Parameter(/*id,*/name,module,defval,minval,maxval,flags) {
     //setFlag(CLAP_PARAM_IS_STEPPED);
   }
   
@@ -426,8 +426,8 @@ public:
 
   //----------
   
-  SAT_TextParameter(clap_id id, const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags)
-  : SAT_IntParameter(id,name,module,defval,minval,maxval,flags) {
+  SAT_TextParameter(/*clap_id id,*/ const char* name, const char* module, double defval, double minval, double maxval, clap_param_info_flags flags)
+  : SAT_IntParameter(/*id,*/name,module,defval,minval,maxval,flags) {
     // see setText()
   }
   

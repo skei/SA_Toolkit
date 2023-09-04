@@ -94,7 +94,7 @@ public:
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
     setInitialEditorSize(300,160,1.0);
-    appendParameter( new SAT_Parameter(0,"Gain","", 0.5, 0,2, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE) );
+    appendParameter( new SAT_Parameter("Gain","", 0.5, 0,2, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE) );
     return SAT_Plugin::init();
   }
     
