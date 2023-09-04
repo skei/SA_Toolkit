@@ -9,23 +9,22 @@ sketch, temporary:
 the final bits and pieces is slowly being added..
 whenever i (or potential contributors/collaborators) need it
 
-* (download the toolkit, and have your fist plugin up and running in a host within minutes)
+* (download the toolkit, and have your first plugin up and running in a host within minutes)
 * internal plugin format: clap (always present)
 * clap-as-xxx wrappers: vst2, vst3, lv2, ladspa, exe
 * xxx-as-clap: ladspa only at the moment, other formats planned
 * linux (main target) + windows
 * standalone executable: internal host + plugin(s)
 * simple, readable, "old-school" c++
-* fast compilation
-* headers-only
-* lock/wait free
-* no external dependencies (except a few system libs: x11, opengl, etc)
+* no external dependencies (except a few system libs: x11/glx, gdi32/wgl, etc)
 * no setup, initialization, configuration, linking, makefile/cmake mess
 * compile one .cpp file, with one gcc/mingw command, resulting in one tiny binary file
 * fluid and responsive, scalable, gpu accelerated gui
 * advanced (?) hierarchial widget system
 * tons of debugging helpers and tools
 * lots of other helpful things, not directly plugin related, like compression, encryption, jit, vm, scripting, interpolation, easing, math approximations, etc, etc..
+* headers-only
+* lock/wait free
 
 some previews: https://www.youtube.com/@torhelgeskei
 see also: https://discord.gg/KMNea8P6Pe
