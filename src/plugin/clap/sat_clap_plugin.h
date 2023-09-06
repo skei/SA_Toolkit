@@ -18,10 +18,17 @@ class SAT_ClapPlugin {
   //friend class SAT_Plugin;
 
 //------------------------------
+private:
+//------------------------------
+
+  const clap_host_t* MClapHost = nullptr;
+
+//------------------------------
 public:
 //------------------------------
 
-  SAT_ClapPlugin(const clap_plugin_descriptor_t* ADescriptor) {
+  SAT_ClapPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
+    MClapHost = AHost;
     MPlugin.desc = ADescriptor;
   }
 
@@ -37,6 +44,11 @@ public:
   const
   clap_plugin_t* getClapPlugin() {
     return &MPlugin;
+  }
+
+  const
+  clap_host_t* getClapHost() {
+    return MClapHost;
   }
 
   const

@@ -377,6 +377,7 @@
         <File Name="../../src/base/types/sat_rect.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="system">
+        <File Name="../../src/base/system/sat_library.h"/>
         <File Name="../../src/base/system/sat_simd.h"/>
         <File Name="../../src/base/system/sat_shm.h"/>
         <File Name="../../src/base/system/sat_memory.h"/>

@@ -300,7 +300,7 @@ void SAT_NoPrint(const char*,...) {}
 //----------
 
 #ifndef SAT_DEBUG
-//#ifndef SAT_PRINT_ALWAYS
+#ifndef SAT_PRINT_ALWAYS
 
   #undef SAT_Print
   #undef SAT_DPrint
@@ -310,7 +310,7 @@ void SAT_NoPrint(const char*,...) {}
   #define SAT_DPrint  SAT_NoPrint
   #define SAT_PRINT   {}
   
-//#endif // print always
+#endif // print always
 #endif // debug
 
 //----------------------------------------------------------------------

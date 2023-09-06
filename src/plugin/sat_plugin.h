@@ -103,7 +103,7 @@ public:
 //------------------------------
 
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
-  : SAT_ClapPlugin(ADescriptor) {
+  : SAT_ClapPlugin(ADescriptor,AHost) {
     //SAT_PRINT;
     MHost = new SAT_Host(AHost);
     SAT_LogClapHostInfo(MHost);
@@ -2862,6 +2862,9 @@ public:
 public: // process audio
 //------------------------------
 
+  //virtual void processSample(float** spl) {
+  //}
+    
   virtual void processSample(float* spl0, float* spl1) {
   }
   

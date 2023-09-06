@@ -140,6 +140,35 @@ const char* SAT_JitCondNames[SAT_JIT_BC__MAX] = {
 //
 //----------------------------------------------------------------------
 
+//static
+//uint32_t test_jit_magic_value = 0xCACACACA;
+//  
+////----------
+//
+//static
+//SAT_JitOpcode test_jit_opcodes[] = {
+////        8                              8            16,16             64
+//  { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 0, 1 }},
+//  { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 1, 5 }},
+//  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 3    }}, { .raw = (uint64_t)&test_jit_magic_value },
+//  { .op = SAT_JIT_OP_LOAD,   .args_map = 0, .args = { 3, 3 }},
+//  { .op = SAT_JIT_OP_LABEL,  .args_map = 0, .args = { 0    }},
+//  { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 3, 0 }},
+//  { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 2, 0 }},
+//  { .op = SAT_JIT_OP_CMP,    .args_map = 0, .args = { 1, 2 }},
+//  { .op = SAT_JIT_OP_BRANCH, .args_map = 0, .args = { SAT_JIT_BC_NOTEQUAL, 0 }},
+//  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 0    }}, { .raw = (uint64_t)&test_jit_magic_value },
+//  { .op = SAT_JIT_OP_STORE,  .args_map = 0, .args = { 0, 3 }},
+//  { .op = SAT_JIT_OP_EXIT                                   },
+//  { .op = SAT_JIT_END_OF_CODE                               }
+//};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
 class SAT_Jit {
 
 //------------------------------
@@ -162,7 +191,13 @@ public:
   //----------
 
   ~SAT_Jit() {
-    if (m_compiled_code) free(m_compiled_code);
+    
+    if (m_compiled_code) {
+      //SAT_Print("m_compiled_code: %p\n",m_compiled_code);
+      free(m_compiled_code); // crashes!
+      //SAT_Print("free'd\n");
+    }
+    
 //  if (m_Sourcecode) free(m_Sourcecode);
 //  if (m_Opcodes) delete[] m_Opcodes;
 //  // delete words
@@ -451,10 +486,12 @@ public: // compiler
     // Allocate guest memory aligned on a page boundary
     long pagesize = sysconf(_SC_PAGE_SIZE);
     assert(pagesize != -1);
+    
+    // void *memalign(size_t alignment, size_t size);    
 
-    m_allocated_size = pagesize;
+    m_allocated_size = 4096;//pagesize;
     m_compiled_code = memalign(pagesize, 4096/*m_allocated_size*/);
-    assert(m_compiled_code != NULL);
+    assert(m_compiled_code);
     
     uint32_t n = 0;
     uint8_t *b = (uint8_t *)m_compiled_code;
@@ -581,7 +618,6 @@ public: // compiler
 //
 //----------------------------------------------------------------------
 
-int test_jit_magic_value = 0xCACACACA;
 
 //----------
 
@@ -604,22 +640,6 @@ int test_jit_magic_value = 0xCACACACA;
   EXIT     0                    // exit
 */
 
-SAT_JitOpcode test_jit_opcodes[] = {
-//        8                              8            16,16             64
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 0, 1 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 1, 5 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 3    }}, { .raw = (uint64_t)&test_jit_magic_value },
-  { .op = SAT_JIT_OP_LOAD,   .args_map = 0, .args = { 3, 3 }},
-  { .op = SAT_JIT_OP_LABEL,  .args_map = 0, .args = { 0    }},
-  { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 3, 0 }},
-  { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 2, 0 }},
-  { .op = SAT_JIT_OP_CMP,    .args_map = 0, .args = { 1, 2 }},
-  { .op = SAT_JIT_OP_BRANCH, .args_map = 0, .args = { SAT_JIT_BC_NOTEQUAL, 0 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 0    }}, { .raw = (uint64_t)&test_jit_magic_value },
-  { .op = SAT_JIT_OP_STORE,  .args_map = 0, .args = { 0, 3 }},
-  { .op = SAT_JIT_OP_EXIT                                   },
-  { .op = SAT_JIT_END_OF_CODE                               }
-};
 
 //----------
 
@@ -629,71 +649,7 @@ SAT_JitOpcode test_jit_opcodes[] = {
   
 //----------------------------------------------------------------------
 
-#define ENABLE_PPRINT
-#define ENABLE_INTERPRETER
-#define ENABLE_JIT
-#define ENABLE_BYTECODE_DUMP
-#define ENABLE_COMPILED_DUMP
-
-//----------
-
-SAT_Jit JIT = {};
-
-void test_jit() {
-
-  #ifdef ENABLE_PPRINT
-    JIT.printOpcodes(test_jit_opcodes);
-  #endif
-
-  #ifdef ENABLE_BYTECODE_DUMP
-    // count size
-    uint32_t num = 0;
-    for (num = 0; true; ) {
-      SAT_JitOpcode* opcode = &test_jit_opcodes[num];
-      num += JIT.getOpcodeLength(opcode);
-      if (opcode->op == SAT_JIT_END_OF_CODE) {
-        break;
-      }
-    }
-    // write to file
-    FILE* bf = fopen("bytecode.bin", "wb");
-    fwrite(test_jit_opcodes, 1, num*8, bf);
-    fclose(bf);
-  #endif
-
-  #ifdef ENABLE_INTERPRETER
-    test_jit_magic_value = 0xDEADC0D9;
-    SAT_DPrint("Magic value before is %x\n", test_jit_magic_value);
-    JIT.interpret(test_jit_opcodes);
-    SAT_DPrint("Magic value after is %x\n", test_jit_magic_value);
-  #endif
-
-  #ifdef ENABLE_JIT
-    JIT.compile(test_jit_opcodes);
-    void* code = JIT.getCompiledCode();
-    uint32_t codesize = JIT.getCompiledCodeSize();
-    #ifdef ENABLE_COMPILED_DUMP
-      FILE* cf = fopen("executable.bin", "wb");
-      fwrite(code, 1, codesize, cf);
-      fclose(cf);
-    #endif
-    test_jit_magic_value = 0xDEADBEEA;
-    SAT_DPrint("Magic value before is %x\n", test_jit_magic_value);
-    JIT.execute();
-    SAT_DPrint("Magic value after is %x\n", test_jit_magic_value);
-  #endif
-  
-}
-
-//----------
-
-#undef ENABLE_PPRINT
-#undef ENABLE_INTERPRETER
-#undef ENABLE_JIT
-#undef ENABLE_BYTECODE_DUMP
-#undef ENABLE_COMPILED_DUMP
-
-#undef ENABLE_DEBUG_PRINT
+//#undef ENABLE_DEBUG_PRINT
 
 //----------------------------------------------------------------------
 #endif

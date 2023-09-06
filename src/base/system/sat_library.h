@@ -1,5 +1,5 @@
-#ifndef sat_lock_included
-#define sat_lock_included
+#ifndef sat_library_included
+#define sat_library_included
 //----------------------------------------------------------------------
 
 #include "base/sat.h"
@@ -7,11 +7,11 @@
 //----------
 
 #ifdef SAT_LINUX
-  #include "base/system/linux/sat_linux_lock.h"
+  #include "base/system/linux/sat_linux_library.h"
 #endif
 
 #ifdef SAT_WIN32
-  #include "base/system/win32/sat_win32_lock.h"
+  #include "base/system/win32/sat_win32_library.h"
 #endif
 
 //----------------------------------------------------------------------

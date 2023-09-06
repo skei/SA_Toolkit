@@ -152,6 +152,13 @@ int main(int argc, char** argv) {
     printf("index %i\n",plugin_index);
   }
   
+  //
+  
+  char basepath[SAT_MAX_PATH_LENGTH] = {0};
+  SAT_GetBaseFilename(basepath);
+  //SAT_Print("basepath: %s\n",basepath);
+  SAT_GLOBAL.setPluginPath(basepath);
+
   // instantiate
 
   SAT_ExeHostImplementation* hostimpl = new SAT_ExeHostImplementation(argc,argv);
