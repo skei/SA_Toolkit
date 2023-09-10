@@ -14,7 +14,7 @@
 //
 //----------------------------------------------------------------------
 
-#define NUM_CLAP_PLUGIN_EXTENSIONS 29
+#define NUM_CLAP_PLUGIN_EXTENSIONS 30
 
 const char* SAT_ClapPluginExtensionIds[NUM_CLAP_PLUGIN_EXTENSIONS] = {
     CLAP_EXT_AMBISONIC,
@@ -23,6 +23,7 @@ const char* SAT_ClapPluginExtensionIds[NUM_CLAP_PLUGIN_EXTENSIONS] = {
     CLAP_EXT_AUDIO_PORTS,
     CLAP_EXT_CHECK_FOR_UPDATE,
     CLAP_EXT_CONTEXT_MENU,
+    CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,
     CLAP_EXT_CV,
     CLAP_EXT_GUI,
     CLAP_EXT_LATENCY,
@@ -49,35 +50,37 @@ const char* SAT_ClapPluginExtensionIds[NUM_CLAP_PLUGIN_EXTENSIONS] = {
 };
 
 struct SAT_ClapPluginExtensions {
-  const clap_plugin_ambisonic_t*              ambisonic               = nullptr; // draft
-  const clap_plugin_audio_ports_activation_t* audio_ports_activation  = nullptr; // draft
-  const clap_plugin_audio_ports_config_t*     audio_ports_config      = nullptr;
-  const clap_plugin_audio_ports_t*            audio_ports             = nullptr;
-  const clap_plugin_check_for_update_t*       check_for_update        = nullptr; // draft
-  const clap_plugin_context_menu_t*           context_menu            = nullptr; // draft
-  const clap_plugin_cv_t*                     cv                      = nullptr; // draft
-  const clap_plugin_gui_t*                    gui                     = nullptr;
-  const clap_plugin_latency_t*                latency                 = nullptr;
-  const clap_plugin_midi_mappings_t*          midi_mappings           = nullptr; // draft
-  const clap_plugin_note_name_t*              note_name               = nullptr;
-  const clap_plugin_note_ports_t*             note_ports              = nullptr;
-  const clap_plugin_param_indication_t*       param_indication        = nullptr; // draft
-  const clap_plugin_params_t*                 params                  = nullptr;
-  const clap_plugin_posix_fd_support_t*       posix_fd_support        = nullptr;
-  const clap_plugin_preset_load_t*            preset_load             = nullptr; // draft
-  const clap_plugin_remote_controls_t*        remote_controls         = nullptr; // draft
-  const clap_plugin_render_t*                 render                  = nullptr;
-  const clap_plugin_resource_directory_t*     resource_directory      = nullptr; // draft
-  const clap_plugin_state_t*                  state                   = nullptr;
-  const clap_plugin_state_context_t*          state_context           = nullptr; // draft
-  const clap_plugin_surround_t*               surround                = nullptr; // draft
-  const clap_plugin_tail_t*                   tail                    = nullptr;
-  const clap_plugin_thread_pool_t*            thread_pool             = nullptr;
-  const clap_plugin_timer_support_t*          timer_support           = nullptr;
-  const clap_plugin_track_info_t*             track_info              = nullptr; // draft
-  const clap_plugin_voice_info_t*             voice_info              = nullptr;
-  const clap_plugin_triggers_t*               triggers                = nullptr; // draft
-  const clap_plugin_tuning_t*                 tuning                  = nullptr; // draft
+  const clap_plugin_ambisonic_t*                ambisonic                 = nullptr; // draft
+  const clap_plugin_audio_ports_activation_t*   audio_ports_activation    = nullptr; // draft
+  const clap_plugin_audio_ports_config_t*       audio_ports_config        = nullptr;
+  const clap_plugin_audio_ports_t*              audio_ports               = nullptr;
+  const clap_plugin_check_for_update_t*         check_for_update          = nullptr; // draft
+  const clap_plugin_configurable_audio_ports_t* configurable_audio_ports  = nullptr; // draft
+  const clap_plugin_context_menu_t*             context_menu              = nullptr; // draft
+  const clap_plugin_cv_t*                       cv                        = nullptr; // draft
+  const clap_plugin_extensible_audio_ports_t*   extensible_audio_ports    = nullptr; // draft
+  const clap_plugin_gui_t*                      gui                       = nullptr;
+  const clap_plugin_latency_t*                  latency                   = nullptr;
+  const clap_plugin_midi_mappings_t*            midi_mappings             = nullptr; // draft
+  const clap_plugin_note_name_t*                note_name                 = nullptr;
+  const clap_plugin_note_ports_t*               note_ports                = nullptr;
+  const clap_plugin_param_indication_t*         param_indication          = nullptr; // draft
+  const clap_plugin_params_t*                   params                    = nullptr;
+  const clap_plugin_posix_fd_support_t*         posix_fd_support          = nullptr;
+  const clap_plugin_preset_load_t*              preset_load               = nullptr; // draft
+  const clap_plugin_remote_controls_t*          remote_controls           = nullptr; // draft
+  const clap_plugin_render_t*                   render                    = nullptr;
+  const clap_plugin_resource_directory_t*       resource_directory        = nullptr; // draft
+  const clap_plugin_state_t*                    state                     = nullptr;
+  const clap_plugin_state_context_t*            state_context             = nullptr; // draft
+  const clap_plugin_surround_t*                 surround                  = nullptr; // draft
+  const clap_plugin_tail_t*                     tail                      = nullptr;
+  const clap_plugin_thread_pool_t*              thread_pool               = nullptr;
+  const clap_plugin_timer_support_t*            timer_support             = nullptr;
+  const clap_plugin_track_info_t*               track_info                = nullptr; // draft
+  const clap_plugin_voice_info_t*               voice_info                = nullptr;
+  const clap_plugin_triggers_t*                 triggers                  = nullptr; // draft
+  const clap_plugin_tuning_t*                   tuning                    = nullptr; // draft
 };
 
 //----------
