@@ -2,11 +2,9 @@
 #define sat_config_included
 //----------------------------------------------------------------------
 
-
 #define SAT_VERSION                             "0.5.0"
 #define SAT_VENDOR                              "skei.audio"
 #define SAT_URL                                 "https://github.com/skei/SA_Toolkit"
-
 
 #define SAT_AUDIO_QUANTIZED_SIZE                32
 #define SAT_DEBUG_MAX_OBSERVABLES               64
@@ -110,9 +108,9 @@
   //#define SAT_UNIT_TESTING
 
 
-//--------------------
+//------------------------------
 // debug
-//--------------------
+//------------------------------
 
 
   /*
@@ -171,9 +169,9 @@
   //#define SAT_DEBUG_WINDOW
 
 
-//--------------------
+//------------------------------
 // print
-//--------------------
+//------------------------------
 
 
   /*
@@ -350,9 +348,9 @@
 
 // HACK? FIXME
 
-//--------------------
+//------------------------------
 // base
-//--------------------
+//------------------------------
 
 #ifdef SAT_EXE
   #define SAT_PLUGIN_EXE
@@ -374,9 +372,9 @@
   #undef SAT_PRINT_SOCKET
 #endif
 
-//--------------------
+//------------------------------
 // plugin
-//--------------------
+//------------------------------
 
 /*
   if no plugin format is specificed, we use CLAP for plugins, and EXE for standalone
@@ -431,9 +429,9 @@
   #endif
 #endif
 
-//--------------------
+//------------------------------
 // gui
-//--------------------
+//------------------------------
 
 
 

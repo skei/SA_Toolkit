@@ -58,6 +58,7 @@ public:
       appendChildWidget(MArrow);
       MArrow->setAlignment(SAT_WIDGET_ALIGN_RIGHT_BOTTOM);
       MArrow->setColor(SAT_DarkerGrey);
+      MArrow->setActive(false);
     }
     
   }

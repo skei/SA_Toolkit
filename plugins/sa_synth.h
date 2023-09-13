@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------
 
 #define PLUGIN_NAME   "sa_synth"
-#define EDITOR_WIDTH  225
+#define EDITOR_WIDTH  335
 #define EDITOR_HEIGHT 145
 #define EDITOR_SCALE  3.0
 #define NUM_VOICES    256
