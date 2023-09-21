@@ -1,40 +1,10 @@
 
 #include "base/sat.h"
-#include "base/utils/sat_jit.h"
-//#include "base/utils/sat_vm.h"
-//#include "base/utils/sat_vm_compiler.h"
+//#include "base/utils/sat_jit.h"
+#include "base/utils/sat_jit2.h"
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_utils.h"
 #include "gui/sat_widgets.h"
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-static
-uint32_t test_jit_magic_value = 0xCACACACA;
-  
-//----------
-
-static
-SAT_JitOpcode test_jit_opcodes[] = {
-//        8                              8            16,16             64
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 0, 1 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 1, 5 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 3    }}, { .raw = (uint64_t)&test_jit_magic_value },
-  { .op = SAT_JIT_OP_LOAD,   .args_map = 0, .args = { 3, 3 }},
-  { .op = SAT_JIT_OP_LABEL,  .args_map = 0, .args = { 0    }},
-  { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 3, 0 }},
-  { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 2, 0 }},
-  { .op = SAT_JIT_OP_CMP,    .args_map = 0, .args = { 1, 2 }},
-  { .op = SAT_JIT_OP_BRANCH, .args_map = 0, .args = { SAT_JIT_BC_NOTEQUAL, 0 }},
-  { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 0    }}, { .raw = (uint64_t)&test_jit_magic_value },
-  { .op = SAT_JIT_OP_STORE,  .args_map = 0, .args = { 0, 3 }},
-  { .op = SAT_JIT_OP_EXIT                                   },
-  { .op = SAT_JIT_END_OF_CODE                               }
-};
 
 //----------------------------------------------------------------------
 //
@@ -71,7 +41,31 @@ class test_jit_plugin
 private:
 //------------------------------
 
-  SAT_Jit JIT = {};
+  //SAT_Jit JIT = {};
+  SAT_Jit2 JIT = {};
+
+  //----------
+
+//  uint32_t test_jit_magic_value = 0xCACACACA;
+//    
+//  SAT_JitOpcode test_jit_opcodes[15] = {
+//  //        8                              8            16,16             64
+//    { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 0, 1 }},
+//    { .op = SAT_JIT_OP_LOADI,  .args_map = 0, .args = { 1, 5 }},
+//    { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 3    }}, { .raw = (uint64_t)&test_jit_magic_value },
+//    { .op = SAT_JIT_OP_LOAD,   .args_map = 0, .args = { 3, 3 }},
+//    { .op = SAT_JIT_OP_LABEL,  .args_map = 0, .args = { 0    }},
+//    { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 3, 0 }},
+//    { .op = SAT_JIT_OP_ADD,    .args_map = 0, .args = { 2, 0 }},
+//    { .op = SAT_JIT_OP_CMP,    .args_map = 0, .args = { 1, 2 }},
+//    { .op = SAT_JIT_OP_BRANCH, .args_map = 0, .args = { SAT_JIT_BC_NOTEQUAL, 0 }},
+//    { .op = SAT_JIT_OP_LOADI,  .args_map = 2, .args = { 0    }}, { .raw = (uint64_t)&test_jit_magic_value },
+//    { .op = SAT_JIT_OP_STORE,  .args_map = 0, .args = { 0, 3 }},
+//    { .op = SAT_JIT_OP_EXIT                                   },
+//    { .op = SAT_JIT_END_OF_CODE                               }
+//  };
+
+  const char* source_code = "exit";
 
 //------------------------------
 public:
@@ -85,7 +79,7 @@ public:
 
   bool init() final {
     
-    test_jit();
+    test_jit2();
     
     registerDefaultExtensions();    
     appendStereoAudioInputPort();
@@ -137,21 +131,37 @@ public:
 //------------------------------
 private:
 //------------------------------
+
+  void test_jit2() {
+    JIT.load_src(source_code,strlen(source_code));
+    JIT.tokenize();
+    JIT.compile();
+    JIT.execute();
+    JIT.unload_src();
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+  /*
   
   #define ENABLE_PPRINT
   #define ENABLE_INTERPRETER
   #define ENABLE_JIT
-//  #define ENABLE_BYTECODE_DUMP
-//  #define ENABLE_COMPILED_DUMP
+  #define ENABLE_BYTECODE_DUMP
+  #define ENABLE_COMPILED_DUMP
 
   //----------
 
   void test_jit() {
-    
+    char path[SAT_MAX_PATH_LENGTH] = {0};
+    char basepath[SAT_MAX_PATH_LENGTH] = {0};
+    SAT_GetBasePath(basepath);
+    SAT_Print("basepath %s\n",basepath);
     #ifdef ENABLE_PPRINT
       JIT.printOpcodes(test_jit_opcodes);
-    #endif
-
+    #endif // ENABLE_PPRINT
     #ifdef ENABLE_BYTECODE_DUMP
       // count size
       uint32_t num = 0;
@@ -163,33 +173,38 @@ private:
         }
       }
       // write to file
-      FILE* bf = fopen("bytecode.bin", "wb");
+      //FILE* bf = fopen("bytecode.bin", "wb");
+      strcpy(path,basepath);
+      strcat(path,"bytecode.bin");
+      SAT_Print("%s\n",path);
+      FILE* bf = fopen(path, "wb");
       fwrite(test_jit_opcodes, 1, num*8, bf);
       fclose(bf);
-    #endif
-
+    #endif // ENABLE_BYTECODE_DUMP
     #ifdef ENABLE_INTERPRETER
       test_jit_magic_value = 0xDEADC0D9;
       SAT_DPrint("Magic value before is %x\n", test_jit_magic_value);
       JIT.interpret(test_jit_opcodes);
       SAT_DPrint("Magic value after is %x\n", test_jit_magic_value);
-    #endif
-
+    #endif // ENABLE_INTERPRETER
     #ifdef ENABLE_JIT
       JIT.compile(test_jit_opcodes);
       #ifdef ENABLE_COMPILED_DUMP
         void* code = JIT.getCompiledCode();
         uint32_t codesize = JIT.getCompiledCodeSize();
-        FILE* cf = fopen("executable.bin", "wb");
+        //FILE* cf = fopen("executable.bin", "wb");
+        strcpy(path,basepath);
+        strcat(path,"executable.bin");
+        SAT_Print("%s\n",path);
+        FILE* cf = fopen(path, "wb");
         fwrite(code, 1, codesize, cf);
         fclose(cf);
-      #endif
+      #endif // ENABLE_COMPILED_DUMP
       test_jit_magic_value = 0xDEADBEEA;
       SAT_DPrint("Magic value before is %x\n", test_jit_magic_value);
       JIT.execute();
       SAT_DPrint("Magic value after is %x\n", test_jit_magic_value);
-    #endif
-    
+    #endif //ENABLE_JIT
   }
 
   //----------
@@ -199,6 +214,8 @@ private:
   #undef ENABLE_JIT
   #undef ENABLE_BYTECODE_DUMP
   #undef ENABLE_COMPILED_DUMP
+  
+  */
 
 };
 

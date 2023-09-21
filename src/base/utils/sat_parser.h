@@ -13,7 +13,7 @@ class SAT_Parser {
   private:
     uint32_t          MBufLen;
     char*             MBuffer;
-    SAT_CharPtrArray MTokens;
+    SAT_CharPtrArray  MTokens;
 
   public:
 
@@ -53,6 +53,7 @@ class SAT_Parser {
     // todo: tokenize()
 
     void tokenize(const char* ASource, uint32_t ALength) {
+      MTokens.clear(false);
       bool quotes = false;
       if (MBuffer) free(MBuffer);
       //MBufLen = 0;

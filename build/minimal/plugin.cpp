@@ -9,8 +9,8 @@ public:
   SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin)
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioInputPort();
+    appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter("Gain",0.5))->setFlag(CLAP_PARAM_IS_MODULATABLE);
     return SAT_Plugin::init();
   }
@@ -39,8 +39,8 @@ public:
   SAT_PLUGIN_DEFAULT_CONSTRUCTOR(myPlugin)
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoInputPort();
-    appendStereoOutputPort();
+    appendStereoAudioInputPort();
+    appendStereoAudioOutputPort();
     setInitialEditorSize(300,120,3);
     appendParameter(new SAT_Parameter("Param1",0.3))->setFlag(CLAP_PARAM_IS_MODULATABLE);
     return SAT_Plugin::init();

@@ -179,6 +179,7 @@ private:
   void*             m_compiled_code       = nullptr;
   uint32_t          m_compiled_code_size  = 0;
   uint32_t          m_allocated_size      = 0;
+  long              m_allocated_alignment = 0;
   SAT_JitEntryPoint m_entrypoint          = nullptr;
 
 //------------------------------
@@ -191,13 +192,13 @@ public:
   //----------
 
   ~SAT_Jit() {
-    
     if (m_compiled_code) {
-      //SAT_Print("m_compiled_code: %p\n",m_compiled_code);
+      SAT_Print("m_compiled_code: %p\n",m_compiled_code);
+      int res = mprotect(m_compiled_code,m_allocated_size, PROT_READ | PROT_WRITE);
+      SAT_Print("res %i\n",res);
       free(m_compiled_code); // crashes!
       //SAT_Print("free'd\n");
     }
-    
 //  if (m_Sourcecode) free(m_Sourcecode);
 //  if (m_Opcodes) delete[] m_Opcodes;
 //  // delete words
@@ -211,6 +212,8 @@ public:
   void* getCompiledCode() {
     return m_compiled_code;
   }
+  
+  //----------
   
   uint32_t getCompiledCodeSize() {
     return m_compiled_code_size;
@@ -485,13 +488,26 @@ public: // compiler
 
     // Allocate guest memory aligned on a page boundary
     long pagesize = sysconf(_SC_PAGE_SIZE);
+    SAT_Print("pagesize: %i\n",pagesize);
     assert(pagesize != -1);
     
     // void *memalign(size_t alignment, size_t size);    
+    //m_compiled_code = memalign(pagesize, 4096/*m_allocated_size*/);
 
-    m_allocated_size = 4096;//pagesize;
-    m_compiled_code = memalign(pagesize, 4096/*m_allocated_size*/);
-    assert(m_compiled_code);
+    m_allocated_alignment = pagesize;
+    m_allocated_size      = 4096;
+    
+    /*
+      The function posix_memalign() allocates size bytes and places the address of the allocated
+      memory in *memptr. The address of the allocated memory will be a multiple of alignment, which
+      must be a power of two and a multiple of sizeof(void *). If size is 0, then posix_memalign()
+      returns either NULL, or a unique pointer value that can later be successfully passed to free    
+      returns zero on success, or one of the error values listed in the next section on failure.
+    */
+    
+    int res = posix_memalign(&m_compiled_code, m_allocated_alignment, m_allocated_size);
+    SAT_Print("posix_memalign ptr %08p returned %i\n",m_compiled_code,res);
+    SAT_Assert(m_compiled_code);
     
     uint32_t n = 0;
     uint8_t *b = (uint8_t *)m_compiled_code;
@@ -595,7 +611,21 @@ public: // compiler
     SAT_DPrint("> Done\n");
     m_compiled_code_size = n;
     m_entrypoint = (SAT_JitEntryPoint)m_compiled_code;
-    /*int status =*/ mprotect(b, m_allocated_size, PROT_EXEC | PROT_READ);
+    
+    /*
+      mprotect() changes the access protections for the calling
+      process's memory pages containing any part of the address range
+      in the interval [addr, addr+len-1].  addr must be aligned to a
+      page boundary.
+      If the calling process tries to access memory in a manner that
+      violates the protections, then the kernel generates a SIGSEGV
+      signal for the process.
+      PROT_READ : The memory can be read.
+      PROT_EXEC : The memory can be executed.      
+    */
+    
+    res = mprotect(b,m_allocated_size,PROT_EXEC | PROT_READ);
+    SAT_Print("mprotect returned %i\n",res);
     //assert(status != -1);
     return m_compiled_code;
   }

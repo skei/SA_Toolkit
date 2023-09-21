@@ -9,6 +9,12 @@
 
 //----------------------------------------------------------------------
 
+#define SA_HOST_EDITOR_WIDTH  256
+#define SA_HOST_EDITOR_HEIGHT 256
+#define SA_HOST_EDITOR_SCALE  1.3
+
+//----------------------------------------------------------------------
+
 class sa_host_editor
 : public SAT_Editor
 /*, public SAT_WidgetListener*/ {
@@ -19,6 +25,8 @@ private:
 
   SAT_Host*           MHost           = nullptr;
   SAT_Plugin*         MPlugin         = nullptr;
+  
+  SAT_MainMenuWidget* MMainMenu       = nullptr;
   
   SAT_MenuWidget*     MFileMenu       = nullptr;
   SAT_MenuWidget*     MHostMenu       = nullptr;
@@ -65,6 +73,7 @@ public:
         SAT_Print("file/%i\n",i);
       }
     }
+    
     else if (ASender == MHostSelector) {
       uint32_t num = MHostMenu->getNumChildWidgets();
       if (num > 0) {
@@ -89,74 +98,92 @@ public:
     
     //----------
     
-    MFileMenu   = new SAT_MenuWidget(SAT_Rect(60, (3*15)+10 ));
-    MHostMenu   = new SAT_MenuWidget(SAT_Rect(60, (3*15)+10 ));
-    MPluginMenu = new SAT_MenuWidget(SAT_Rect(60, (3*15)+10 ));
-    MSetupMenu  = new SAT_MenuWidget(SAT_Rect(60, (4*15)+10 ));
+//    // 'manual' mainmenu
+//    MFileMenu   = new SAT_MenuWidget(SAT_Rect(60, (3*15)+10 ));
+//    MHostMenu   = new SAT_MenuWidget(SAT_Rect(60, (3*15)+10 ));
+//    MPluginMenu = new SAT_MenuWidget(SAT_Rect(60, (3*15)+10 ));
+//    MSetupMenu  = new SAT_MenuWidget(SAT_Rect(60, (4*15)+10 ));
+//    
+//    MFileMenu->setInnerBorder(SAT_Rect(5,5,5,5));
+//    MFileMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Load"));
+//    MFileMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Save"));
+//    MFileMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Exit"));
+//    
+//    MHostMenu->setInnerBorder(SAT_Rect(5,5,5,5));
+//    MHostMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"..."));
+//    MHostMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"..."));
+//    MHostMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),".."));
+//    
+//    MPluginMenu->setInnerBorder(SAT_Rect(5,5,5,5));
+//    MPluginMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Load plugin"));
+//    MPluginMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Open editor"));
+//    MPluginMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Load preset"));
+//
+//    MSetupMenu->setInnerBorder(SAT_Rect(5,5,5,5));
+//    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Audio"));
+//    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Midi"));
+//    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Paths"));
+//    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Options"));
+//
+//    //----------
+//    
+//    MFileSelector   = new SAT_SelectorWidget(SAT_Rect(  0,0, 40,15), "File",   MFileMenu  );
+//    MHostSelector   = new SAT_SelectorWidget(SAT_Rect( 40,0, 40,15), "Host",   MHostMenu  );
+//    MPluginSelector = new SAT_SelectorWidget(SAT_Rect( 80,0, 40,15), "Plugin", MPluginMenu);
+//    MSetupSelector  = new SAT_SelectorWidget(SAT_Rect(120,0, 40,15), "Setup",  MSetupMenu );
+//
+//    panel->appendChildWidget(MFileSelector);
+//    panel->appendChildWidget(MHostSelector);
+//    panel->appendChildWidget(MPluginSelector);
+//    panel->appendChildWidget(MSetupSelector);
+//
+//    MFileSelector->setName("File");
+//    MFileSelector->setDrawSelectedText(false);
+//    MFileSelector->setDrawArrow(false);
+//    MFileSelector->setTextSize(8);
+//    //MFileSelector->setAutoSizeMenu(true);
+//    
+//    MHostSelector->setName("Host");
+//    MHostSelector->setDrawSelectedText(false);
+//    MHostSelector->setDrawArrow(false);
+//    MHostSelector->setTextSize(8);
+//    //MHostSelector->setAutoSizeMenu(true);
+//    
+//    MPluginSelector->setName("Plugin");
+//    MPluginSelector->setDrawSelectedText(false);
+//    MPluginSelector->setDrawArrow(false);
+//    MPluginSelector->setTextSize(8);
+//    //MPluginSelector->setAutoSizeMenu(true);
+//    
+//    MSetupSelector->setName("Setup");
+//    MSetupSelector->setDrawSelectedText(false);
+//    MSetupSelector->setDrawArrow(false);
+//    MSetupSelector->setTextSize(8);
+//    //MSetupSelector->setAutoSizeMenu(true);
+//    
+//    //----------
+//    
+//    panel->appendChildWidget(MFileMenu);
+//    panel->appendChildWidget(MHostMenu);
+//    panel->appendChildWidget(MPluginMenu);
+//    panel->appendChildWidget(MSetupMenu);
     
-    MFileMenu->setInnerBorder(SAT_Rect(5,5,5,5));
-    MFileMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Load"));
-    MFileMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Save"));
-    MFileMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Exit"));
-    
-    MHostMenu->setInnerBorder(SAT_Rect(5,5,5,5));
-    MHostMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"..."));
-    MHostMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"..."));
-    MHostMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),".."));
-    
-    MPluginMenu->setInnerBorder(SAT_Rect(5,5,5,5));
-    MPluginMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Load plugin"));
-    MPluginMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Open editor"));
-    MPluginMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Load preset"));
-
-    MSetupMenu->setInnerBorder(SAT_Rect(5,5,5,5));
-    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Audio"));
-    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Midi"));
-    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Paths"));
-    MSetupMenu->appendChildWidget( new SAT_MenuItemWidget(SAT_Rect(15),"Options"));
-
     //----------
     
-    MFileSelector   = new SAT_SelectorWidget(SAT_Rect(  0,0, 40,15), "File",   MFileMenu  );
-    MHostSelector   = new SAT_SelectorWidget(SAT_Rect( 40,0, 40,15), "Host",   MHostMenu  );
-    MPluginSelector = new SAT_SelectorWidget(SAT_Rect( 80,0, 40,15), "Plugin", MPluginMenu);
-    MSetupSelector  = new SAT_SelectorWidget(SAT_Rect(120,0, 40,15), "Setup",  MSetupMenu );
-
-    panel->appendChildWidget(MFileSelector);
-    panel->appendChildWidget(MHostSelector);
-    panel->appendChildWidget(MPluginSelector);
-    panel->appendChildWidget(MSetupSelector);
-
-    MFileSelector->setName("File");
-    MFileSelector->setDrawSelectedText(false);
-    MFileSelector->setDrawArrow(false);
-    MFileSelector->setTextSize(8);
-    //MFileSelector->setAutoSizeMenu(true);
+    MMainMenu   = new SAT_MainMenuWidget(SAT_Rect(15));
+    panel->appendChildWidget(MMainMenu);
     
-    MHostSelector->setName("Host");
-    MHostSelector->setDrawSelectedText(false);
-    MHostSelector->setDrawArrow(false);
-    MHostSelector->setTextSize(8);
-    //MHostSelector->setAutoSizeMenu(true);
-    
-    MPluginSelector->setName("Plugin");
-    MPluginSelector->setDrawSelectedText(false);
-    MPluginSelector->setDrawArrow(false);
-    MPluginSelector->setTextSize(8);
-    //MPluginSelector->setAutoSizeMenu(true);
-    
-    MSetupSelector->setName("Setup");
-    MSetupSelector->setDrawSelectedText(false);
-    MSetupSelector->setDrawArrow(false);
-    MSetupSelector->setTextSize(8);
-    //MSetupSelector->setAutoSizeMenu(true);
-    
-    //----------
-    
-    panel->appendChildWidget(MFileMenu);
-    panel->appendChildWidget(MHostMenu);
-    panel->appendChildWidget(MPluginMenu);
-    panel->appendChildWidget(MSetupMenu);
+    MMainMenu->appendMenu("File");
+    MMainMenu->appendSubMenu(0,"Load");
+    MMainMenu->appendSubMenu(0,"Save");
+    MMainMenu->appendSubMenu(0,"Exit");
+    MMainMenu->appendMenu("Host");
+    MMainMenu->appendMenu("Plugin");
+//    MMainMenu->appendSubMenu(2,"Load plugin");
+//    MMainMenu->appendSubMenu(2,"Open editor");
+//    MMainMenu->appendSubMenu(2,"Load preset");
+//    MMainMenu->appendSubMenu(2,"Save preset");
+    MMainMenu->appendMenu("Setup");
     
     return true;
   }  

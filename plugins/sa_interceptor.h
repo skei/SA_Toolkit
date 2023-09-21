@@ -68,25 +68,21 @@ public:
   sa_interceptor_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
     SAT_Print("\n");
-    uint32_t index = 0; // !!!
-    if (loadInterceptedPlugin()) {
-      if (createInterceptedPlugin(index)) {
-        // yes
-      }
-    }
   }
 
   //----------
 
   virtual ~sa_interceptor_plugin() {
     SAT_Print("\n");
-    destroyInterceptedPlugin();
-    unloadInterceptedPlugin();
   }
   
 //------------------------------
 public:
 //------------------------------
+
+  /*
+    remove '_interceptor' from plugin name/path
+  */
 
   bool loadInterceptedPlugin() {
     SAT_Print("\n");
@@ -103,7 +99,22 @@ public:
       return false;
     }
     SAT_Print("'%s' loaded\n",MInterceptedPluginPath);
+    
+    MInterceptedEntry = (const clap_plugin_entry_t*)MLibrary.getLibSymbol("clap_entry");
+    if (!MInterceptedEntry) {
+      SAT_Print("! ERROR: clap_entry is null\n");
+      return false;
+    }
+
+    //uint32_t count = entry->init(plugin_path);
+    MInterceptedFactory = (const clap_plugin_factory_t*)MInterceptedEntry->get_factory(CLAP_PLUGIN_FACTORY_ID);
+    if (!MInterceptedFactory) {
+      SAT_Print("! ERROR: Couldn't get factory from entry\n");
+      return false;
+    }
+    
     return true;
+    
   }
   
   //----------
@@ -119,22 +130,24 @@ public:
   bool createInterceptedPlugin(uint32_t AIndex) {
     SAT_Print("\n");
     
-//    const clap_host_t* host = getClapHost();                    // host of interceptor plugin
-//    MInterceptorHost = new sa_interceptor_host(host);           // host we give to intercepted plugin
-
+    //const clap_host_t* host = getClapHost();                    // host of interceptor plugin
+    //MInterceptorHost = new sa_interceptor_host(host);           // host we give to intercepted plugin
+    
     MInterceptorHost = new sa_interceptor_host(getClapHost());
     const clap_host_t* host = MInterceptorHost->getClapHost();
     
-    //if (!host) { SAT_Print("! ERROR: Couldn't create host\n"); return false; }
-    //else {
-      //MInterceptedEntry = &clap_entry;
-      MInterceptedEntry = (const clap_plugin_entry_t*)MLibrary.getLibSymbol("clap_entry");
-      if (!MInterceptedEntry) { SAT_Print("! ERROR: clap_entry is null\n"); return false; }
-      else {
-        //uint32_t count = entry->init(plugin_path);
-        MInterceptedFactory = (const clap_plugin_factory_t*)MInterceptedEntry->get_factory(CLAP_PLUGIN_FACTORY_ID);
-        if (!MInterceptedFactory) { SAT_Print("! ERROR: Couldn't get factory from entry\n"); return false; }
-        else {
+//    //if (!host) { SAT_Print("! ERROR: Couldn't create host\n"); return false; }
+//    //else {
+
+//      //MInterceptedEntry = &clap_entry;
+//      MInterceptedEntry = (const clap_plugin_entry_t*)MLibrary.getLibSymbol("clap_entry");
+//      if (!MInterceptedEntry) { SAT_Print("! ERROR: clap_entry is null\n"); return false; }
+//      else {
+//        //uint32_t count = entry->init(plugin_path);
+//        MInterceptedFactory = (const clap_plugin_factory_t*)MInterceptedEntry->get_factory(CLAP_PLUGIN_FACTORY_ID);
+//        if (!MInterceptedFactory) { SAT_Print("! ERROR: Couldn't get factory from entry\n"); return false; }
+//        else {
+    
           uint32_t count = MInterceptedFactory->get_plugin_count(MInterceptedFactory);
           if (count == 0) { SAT_Print("! ERROR: Plugin count is 0\n"); return false; }
           else {
@@ -154,18 +167,21 @@ public:
               } // plugin_id
             } // descriptor
           } // count
-        } // factory
-      } // entry
-      //delete hostimpl;
-    //}
+          
+//        } // factory
+//      } // entry
+//      //delete hostimpl;
+
+//    //}
+
     return true;
   }
   
   //----------
     
-  void destroyInterceptedPlugin() {
+  void deleteInterceptedPlugin() {
     SAT_Print("\n");
-    MInterceptedPlugin->destroy(MInterceptedPlugin);
+    //MInterceptedPlugin->destroy(MInterceptedPlugin);
     delete MInterceptedPlugin;
     delete MInterceptorHost;
     MInterceptedEntry->deinit(); // entry->init() called?
@@ -214,46 +230,70 @@ public:
     SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
     bool result = MInterceptedPlugin->init(MInterceptedPlugin);
+    
+    uint32_t index = 0; // !!!
+    if (loadInterceptedPlugin()) {
+      if (createInterceptedPlugin(index)) {
+        // yes
+      }
+    }
+    
     initExtensions();
     return result;
   }
+    
+  //----------
     
   void destroy() final {
     SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
     MInterceptedPlugin->destroy(MInterceptedPlugin);
+    deleteInterceptedPlugin();
+    unloadInterceptedPlugin();
   }
 
+  //----------
+    
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
     SAT_Print(": sample_rate %.2f min_frames_count %i max_frames_count %i\n",sample_rate,min_frames_count,max_frames_count);
     SAT_Assert(MInterceptedPlugin);
     return MInterceptedPlugin->activate(MInterceptedPlugin,sample_rate,min_frames_count,max_frames_count);
   }
 
+  //----------
+    
   void deactivate() final {
     SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
     MInterceptedPlugin->deactivate(MInterceptedPlugin);
   }
 
+  //----------
+    
   bool start_processing() final {
     SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
     return MInterceptedPlugin->start_processing(MInterceptedPlugin);
   }
 
+  //----------
+    
   void stop_processing() final {
     SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
     MInterceptedPlugin->stop_processing(MInterceptedPlugin);
   }
 
+  //----------
+    
   void reset() final {
     SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
     MInterceptedPlugin->reset(MInterceptedPlugin);
   }
 
+  //----------
+    
   clap_process_status process(const clap_process_t* process) final {
     //SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
@@ -262,15 +302,19 @@ public:
     return result;
   }
 
+  //----------
+    
   const void* get_extension(const char *id) final {
     //SAT_Print("id: %s\n",id);
     SAT_Print(" id: %s -> ",id);
     SAT_Assert(MInterceptedPlugin);
-    const void* ext = MInterceptedPlugin->get_extension(MInterceptedPlugin,id);
-    SAT_DPrint("%s\n",ext?"true":"false");
-    return  ext;
+    const void* extension = MInterceptedPlugin->get_extension(MInterceptedPlugin,id);
+    SAT_DPrint("%s\n",extension ? "true" : "false");
+    return extension;
   }
 
+  //----------
+    
   void on_main_thread() final {
     SAT_Print("\n");
     SAT_Assert(MInterceptedPlugin);
@@ -281,7 +325,7 @@ public:
 public:
 //------------------------------
 
-  bool ambisonic_get_info(bool is_input,  uint32_t port_index, clap_ambisonic_info_t *info) final {
+  bool ambisonic_get_info(bool is_input, uint32_t port_index, clap_ambisonic_info_t *info) final {
     SAT_PRINT;
     return ext.ambisonic->get_info(MInterceptedPlugin,is_input,port_index,info);
   }

@@ -86,9 +86,9 @@ public:
 
   const void* get_extension(const char *extension_id) final {
     SAT_Print("extension_id: %s ",extension_id);
-    const void* ext = MInterceptedHost->get_extension(MInterceptedHost,extension_id);
-    SAT_DPrint("%s\n",ext?"true":"false");
-    return ext;
+    const void* extension = MInterceptedHost->get_extension(MInterceptedHost,extension_id);
+    SAT_DPrint("%s\n",extension ? "true" : "false");
+    return extension;
   }
 
   void request_restart() final {
