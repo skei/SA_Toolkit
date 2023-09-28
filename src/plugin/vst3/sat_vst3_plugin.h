@@ -488,6 +488,10 @@ private:
   }
 
   //----------
+  
+  /*
+    does qsort allocate memory?
+  */
 
   void sortEvents() {
     qsort(MEvents,MNumEvents,SAT_PLUGIN_MAX_EVENT_SIZE, compare_events);
