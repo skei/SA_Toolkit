@@ -4,12 +4,15 @@
 //#define SAT_PLUGIN_ALL
 
 //#define SAT_PLUGIN_CLAP
+//#define SAT_PLUGIN_EXE
 //#define SAT_PLUGIN_LADSPA
 //#define SAT_PLUGIN_LV2
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 
 //#define SAT_PRINT_ALWAYS
+
+
 
 
 
@@ -24,7 +27,7 @@
 
 
 //#include "test/test1.h"
-//#include "test/test2.h"
+#include "test/test2.h"
 //#include "test/test_jit.h"
 //#include "test/test_minimal.h"
 //#include "test/test_parameters.h"
@@ -98,7 +101,7 @@
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_demo.h"
 //#include "../plugins/sa_demo2.h"
-#include "../plugins/sa_gain.h"
+//#include "../plugins/sa_gain.h"
 //#include "../plugins/sa_host.h"             // **********
 //#include "../plugins/sa_interceptor.h"
 //#include "../plugins/sa_pitch.h"

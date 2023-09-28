@@ -444,6 +444,9 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="gui">
+      <VirtualDirectory Name="wayland">
+        <File Name="../../src/gui/wayland/sat_wayland.h"/>
+      </VirtualDirectory>
       <File Name="../../src/gui/sat_base_painter.h"/>
       <File Name="../../src/gui/sat_base_window.h"/>
       <File Name="../../src/gui/sat_base_widget.h"/>
@@ -818,6 +821,7 @@
         <Library Value="GL"/>
         <Library Value="GLX"/>
         <Library Value="GLU"/>
+        <Library Value="wayland-client"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -877,6 +881,7 @@
         <Library Value="GL"/>
         <Library Value="GLX"/>
         <Library Value="GLU"/>
+        <Library Value="wayland-client"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -937,6 +942,7 @@
         <Library Value="GL"/>
         <Library Value="GLX"/>
         <Library Value="GLU"/>
+        <Library Value="wayland-client"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -997,6 +1003,7 @@
         <Library Value="GL"/>
         <Library Value="GLX"/>
         <Library Value="GLU"/>
+        <Library Value="wayland-client"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -1056,6 +1063,7 @@
         <Library Value="GL"/>
         <Library Value="GLX"/>
         <Library Value="GLU"/>
+        <Library Value="wayland-client"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -1114,6 +1122,7 @@
         <Library Value="GL"/>
         <Library Value="GLX"/>
         <Library Value="GLU"/>
+        <Library Value="wayland-client"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).so" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
