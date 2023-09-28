@@ -6,6 +6,7 @@
 
 //----------------------------------------------------------------------
 
+/*
 int test_window() {
   SAT_Window* window = new SAT_Window(320,100,0,nullptr);
   SAT_PanelWidget* panel = new SAT_PanelWidget(0);
@@ -21,14 +22,15 @@ int test_window() {
   delete window;
   return 0;
 }
+*/
 
 //----------------------------------------------------------------------
 
 int test_wayland() {
   SAT_WaylandWindow wayland;
-  wayland.connect();
+  wayland.setup();
   //
-  wayland.disconnect();
+  wayland.cleanup();
   return 0;
 }
 
