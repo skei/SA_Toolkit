@@ -142,8 +142,8 @@ private:
 
   double quantizeValue(double AValue) {
     if (MQuantizeSteps > 1) {
-      double qs = (double)(MQuantizeSteps + 1);
-      double v = AValue * qs;
+      double qs = (double)(MQuantizeSteps - 1);//+ 1);
+      double v = AValue * (double)MQuantizeSteps;// * qs;
       return SAT_Trunc(v) / qs;
     }
     return AValue;

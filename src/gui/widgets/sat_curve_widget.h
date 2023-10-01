@@ -43,6 +43,7 @@ public:
 //------------------------------
 
   virtual void setCurveColor(SAT_Color AColor)    { MCurveColor = AColor; }
+  virtual void setCurveWidth(double AWidth)       { MCurveWidth = AWidth; }
   virtual void setInteractColor(SAT_Color AColor) { MInteractColor = AColor; }
   
   virtual void drawCurve(SAT_PaintContext* AContext) {

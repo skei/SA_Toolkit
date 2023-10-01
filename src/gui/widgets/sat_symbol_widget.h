@@ -45,6 +45,7 @@ public:
 public:
 //------------------------------
 
+  virtual void setDrawSymbol(bool ADraw)          { MDrawSymbol = ADraw; }
   virtual void setSymbol(uint32_t ASymbol)        { MSymbol = ASymbol; }
   virtual void setColor(SAT_Color AColor)         { MColor = AColor; }
   virtual void setPenWidth(double AWidth)         { MPenWidth = AWidth; }
@@ -102,6 +103,8 @@ public:
           break;
         }
         
+        //case SAT_SYMBOL_TRI_UP:
+        
         case SAT_SYMBOL_TRI_DOWN: {
           double coords[] = {
             mrect.x,                    mrect.y,
@@ -115,6 +118,10 @@ public:
           break;
         }
         
+        //case SAT_SYMBOL_TRI_LEFT:
+        //case SAT_SYMBOL_TRI_RIGHT:
+        
+        //case SAT_SYMBOL_FILLED_TRI_UP:
         case SAT_SYMBOL_FILLED_TRI_DOWN: {
           double coords[] = {
             mrect.x,                    mrect.y,
@@ -127,6 +134,76 @@ public:
           painter->fillLineStrip(4,coords);
           break;
         }
+        
+        //case SAT_SYMBOL_FILLED_TRI_LEFT:
+        //case SAT_SYMBOL_FILLED_TRI_RIGHT:
+        
+        case SAT_SYMBOL_SINE: {
+          double x1 = mrect.x;
+          double y1 = mrect.y;
+          double x2 = mrect.x2(); 
+          double y2 = mrect.y2();
+          double xm = (x1 + x2) * 0.5;
+          double ym = (y1 + y2) * 0.5;
+          painter->setDrawColor(MColor);
+          painter->setLineWidth(MPenWidth * S);
+          painter->drawCurveBezier(x1,ym,xm,ym,x1,y1-(mrect.h / 6.0),xm,y1-(mrect.h / 6.0));
+          painter->drawCurveBezier(xm,ym,x2,ym,xm,y2+(mrect.h / 6.0),x2,y2+(mrect.h / 6.0));
+          break;
+        }
+
+        case SAT_SYMBOL_SAW: {
+          double x1 = mrect.x;
+          double y1 = mrect.y;
+          double x2 = mrect.x2(); 
+          double y2 = mrect.y2();
+          double xm = (x1 + x2) * 0.5;
+          double ym = (y1 + y2) * 0.5;
+          painter->setDrawColor(MColor);
+          painter->setLineWidth(MPenWidth * S);
+          painter->drawLine(x1,ym,xm,y1);
+          painter->drawLine(xm,y1,xm,y2);
+          painter->drawLine(xm,y2,x2,ym);
+          break;
+        }
+
+        case SAT_SYMBOL_SQUARE: {
+          double x1 = mrect.x;
+          double y1 = mrect.y;
+          double x2 = mrect.x2(); 
+          double y2 = mrect.y2();
+          double xm = (x1 + x2) * 0.5;
+          double ym = (y1 + y2) * 0.5;
+          painter->setDrawColor(MColor);
+          painter->setLineWidth(MPenWidth * S);
+          painter->drawLine(x1,ym,x1,y1);
+          painter->drawLine(x1,y1,xm,y1);
+          painter->drawLine(xm,y1,xm,y2);
+          painter->drawLine(xm,y2,x2,y2);
+          painter->drawLine(x2,y2,x2,ym);
+          break;
+        }
+
+        case SAT_SYMBOL_TRI: {
+          double x1 = mrect.x;
+          double x2 = x1 + (mrect.w * 0.333);
+          double x3 = x1 + (mrect.w * 0.666);
+          double x4 = mrect.x2(); 
+          double y1 = mrect.y;
+          double y2 = mrect.y2();
+          double ym = (y1 + y2) * 0.5;
+          painter->setDrawColor(MColor);
+          painter->setLineWidth(MPenWidth * S);
+          painter->drawLine(x1,ym,x2,y1);
+          painter->drawLine(x2,y1,x3,y2);
+          painter->drawLine(x3,y2,x4,ym);
+          break;
+        }
+
+        case SAT_SYMBOL_NOISE: {
+          break;
+        }
+
         
       }
       //painter->setTextColor(MTextColor);

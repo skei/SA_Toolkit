@@ -71,14 +71,12 @@ public:
       MTitleBar->setValue(0);
       MContainer->setActive(false);
       MContainer->setVisible(false);
-      
       //SAT_Rect r = getRect();
       //r.h = MClosedSize;
       //setRect(r);
       //setBasisRect(r);
       setHeight(MClosedSize);
       setBasisHeight(MClosedSize);
-
     }
     else {
       MTitleBar->setValue(1);
@@ -90,7 +88,6 @@ public:
       //setBasisRect(r);
       setHeight(MOpenSize);
       setBasisHeight(MOpenSize);
-      
     }
 
   }
@@ -180,6 +177,7 @@ public:
   void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode=0, uint32_t AIndex=0) override {
     if (ASender == MTitleBar) {
       if (MClosable) {
+        SAT_Widget::do_widgetListener_update(this,AMode,AIndex);
         if (MTitleBar->getValue() >= 0.5f) open();
         else close();
       }
@@ -190,11 +188,14 @@ public:
   }
   
   //----------
+  
+  // redrawing the button click resulted in redraw bugs..
+  // it will be redrawn as part of the entire groupbox..
 
   void do_widgetListener_redraw(SAT_Widget* ASender, uint32_t AMode=0, uint32_t AIndex=0) override {
     if (ASender == MTitleBar) {
-      // redrawing the button click resulted in redraw bugs..
-      // it will be redrawn as part of the entire groupbox..
+//      SAT_Print("\n");
+//      SAT_Widget::do_widgetListener_redraw(this,AMode,AIndex);
     }
     else {
       SAT_Widget::do_widgetListener_redraw(ASender,AMode,AIndex);

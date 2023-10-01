@@ -222,6 +222,12 @@
 #define SAT_SYMBOL_TRI_RIGHT                    11
 #define SAT_SYMBOL_FILLED_TRI_RIGHT             12
 
+#define SAT_SYMBOL_SINE                         13
+#define SAT_SYMBOL_SAW                          14
+#define SAT_SYMBOL_SQUARE                       15
+#define SAT_SYMBOL_TRI                          16
+#define SAT_SYMBOL_NOISE                        17
+
 //#define SAT_TEXT_ALIGN_NONE                     0
 #define SAT_TEXT_ALIGN_CENTER                   0
 #define SAT_TEXT_ALIGN_LEFT                     0x01

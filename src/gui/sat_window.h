@@ -45,8 +45,13 @@
 //----------------------------------------------------------------------
 
 #ifdef SAT_LINUX
-  #include "gui/x11/sat_x11_window.h"
-  typedef SAT_X11Window SAT_ImplementedWindow;
+  #ifdef SAT_LINUX_WAYLAND
+    #include "gui/wayland/sat_wayland_window.h"
+    typedef SAT_WaylandWindow SAT_ImplementedWindow;
+  #else
+    #include "gui/x11/sat_x11_window.h"
+    typedef SAT_X11Window SAT_ImplementedWindow;
+  #endif
 #endif
 
 #ifdef SAT_WIN32

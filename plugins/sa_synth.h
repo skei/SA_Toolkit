@@ -17,9 +17,9 @@
 //----------------------------------------------------------------------
 
 #define PLUGIN_NAME   "sa_synth"
-#define EDITOR_WIDTH  335
-#define EDITOR_HEIGHT 145
-#define EDITOR_SCALE  3.0
+#define EDITOR_WIDTH  320
+#define EDITOR_HEIGHT 150
+#define EDITOR_SCALE  2.0
 #define NUM_VOICES    256
 
 typedef SAT_VoiceManager<sa_synth_voice,NUM_VOICES> sa_synth_voice_manager;
@@ -92,28 +92,29 @@ public: // clap
     appendClapNoteInputPort();
     appendStereoAudioOutputPort();
     
-    // parameters
-    appendParameter(new SAT_TextParameter("wf",   0, 0, 4, sa_synth_osc_type_text ));     // 0
-    appendParameter(new SAT_Parameter(    "tu",   0, -2, 2  ));                           // 1
-    appendParameter(new SAT_Parameter(    "A",    0         ));                           // 2
-    appendParameter(new SAT_Parameter(    "D",    0         ));                           // 3
-    appendParameter(new SAT_Parameter(    "S",    1         ));                           // 4
-    appendParameter(new SAT_Parameter(    "R",    0         ));                           // 5
-    appendParameter(new SAT_TextParameter("flt",  0,  0, 4, sa_synth_flt_type_text ));    // 6
-    appendParameter(new SAT_Parameter(    "fr",   1         ));                           // 7
-    appendParameter(new SAT_Parameter(    "bw",   1         ));                           // 8
-    appendParameter(new SAT_Parameter(    "A",    0         ));                           // 9
-    appendParameter(new SAT_Parameter(    "D",    0         ));                           // 10
-    appendParameter(new SAT_Parameter(    "S",    1         ));                           // 11
-    appendParameter(new SAT_Parameter(    "R",    0         ));                           // 12
-    appendParameter(new SAT_Parameter(    "fa",   0, -1, 1  ));                           // 13 flt env amt
-    appendParameter(new SAT_Parameter(    "vol",  0.5       ));                           // 14
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID);
-    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_PORT);
-    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_CHANNEL);
-    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_KEY);
+//    // parameters
+//    appendParameter(new SAT_TextParameter("wf",   0, 0, 4, sa_synth_osc_type_text ));     // 0
+//    appendParameter(new SAT_Parameter(    "wf",   0,  0, 4  ));     // 0
+//    appendParameter(new SAT_Parameter(    "tu",   0, -2, 2  ));                           // 1
+//    appendParameter(new SAT_Parameter(    "A",    0         ));                           // 2
+//    appendParameter(new SAT_Parameter(    "D",    0         ));                           // 3
+//    appendParameter(new SAT_Parameter(    "S",    1         ));                           // 4
+//    appendParameter(new SAT_Parameter(    "R",    0         ));                           // 5
+//    appendParameter(new SAT_TextParameter("flt",  0,  0, 4, sa_synth_flt_type_text ));    // 6
+//    appendParameter(new SAT_Parameter(    "fr",   1         ));                           // 7
+//    appendParameter(new SAT_Parameter(    "bw",   1         ));                           // 8
+//    appendParameter(new SAT_Parameter(    "A",    0         ));                           // 9
+//    appendParameter(new SAT_Parameter(    "D",    0         ));                           // 10
+//    appendParameter(new SAT_Parameter(    "S",    1         ));                           // 11
+//    appendParameter(new SAT_Parameter(    "R",    0         ));                           // 12
+//    appendParameter(new SAT_Parameter(    "fa",   0, -1, 1  ));                           // 13 flt env amt
+//    appendParameter(new SAT_Parameter(    "vol",  0.5       ));                           // 14
+//    
+//    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+//    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID);
+//    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_PORT);
+//    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_CHANNEL);
+//    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE_PER_KEY);
     
     // voice manager
     SAT_Host* host = getHost();

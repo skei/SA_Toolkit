@@ -445,6 +445,8 @@
     </VirtualDirectory>
     <VirtualDirectory Name="gui">
       <VirtualDirectory Name="wayland">
+        <File Name="../../src/gui/wayland/sat_wayland_egl.h"/>
+        <File Name="../../src/gui/wayland/sat_wayland_window.h"/>
         <File Name="../../src/gui/wayland/sat_wayland.h"/>
       </VirtualDirectory>
       <File Name="../../src/gui/sat_base_painter.h"/>

@@ -82,6 +82,9 @@ public:
 
   virtual const char* getText()     { return MText; }
   virtual double      getTextSize() { return MTextSize; }
+  
+  virtual SAT_Color   getTextColor()        { return MTextColor; }
+  virtual SAT_Color   getBackgroundColor()  { return MBackgroundColor; }
 
 //------------------------------
 public:
