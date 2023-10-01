@@ -102,7 +102,7 @@
 //#include "../plugins/sa_demo.h"
 //#include "../plugins/sa_demo2.h"
 //#include "../plugins/sa_gain.h"
-//#include "../plugins/sa_host.h"             // **********
+//#include "../plugins/sa_host.h"
 //#include "../plugins/sa_interceptor.h"
 //#include "../plugins/sa_pitch.h"
 #include "../plugins/sa_synth.h"

@@ -2,6 +2,8 @@
 #define sat_wayland_opengl_included
 //----------------------------------------------------------------------
 
+#if 0
+
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 //#include <wayland-egl.h>
@@ -78,6 +80,8 @@ public: // extensions
   }
   
 };
+
+#endif // 0
 
 //----------------------------------------------------------------------
 #endif
