@@ -2,30 +2,6 @@
 #define sat_window_included
 //----------------------------------------------------------------------
 
-/*
-  TODO:
-    SAT_ImplementedWindow
-    SAT_OpenGLWindow
-    SAT_BufferedWindow
-    SAT_WidgetWindow  
-    SAT_Window
-*/
-
-// on_window_timer
-// do_timerListener_callback
-
-/*
-  to terrorize the gui system a little, we insert i sleep() for 1..50 ms
-  every time we paint (on_window_paint), just after we make the opengl
-  context current.. and also, every time we resize the fbo
-  (just after deleting the old one)
-*/
-
-//#define SAT_WINDOW_FUZZY_TEST_PAINT
-//#define SAT_WINDOW_FUZZY_TEST_PAINT_MAX_MS 50
-
-//----------
-
 #include "base/sat.h"
 #include "base/system/sat_timer.h"
 #include "gui/sat_widget.h"
@@ -147,9 +123,12 @@ public:
     MListener       = AListener;
     // opengl
     #ifdef SAT_LINUX
-      Display* display = getX11Display();
-      xcb_window_t window = getX11Window();
-      MOpenGL = new SAT_OpenGL(display,window);
+      //#ifdef SAT_LINUX_WAYLAND
+      //#else
+        Display* display = getX11Display();
+        xcb_window_t window = getX11Window();
+        MOpenGL = new SAT_OpenGL(display,window);
+      //#endif
     #endif
     #ifdef SAT_WIN32
       HWND window = getWin32Window();

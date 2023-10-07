@@ -609,8 +609,10 @@ private:
     MWMDeleteWindowAtom = close_reply->atom;
     xcb_change_property(MConnection, XCB_PROP_MODE_REPLACE, MWindow, MWMProtocolsAtom, 4, 32, 1, &MWMDeleteWindowAtom);
     //xcb_flush(MConnection);
+    
     free(protocol_reply); // note malloc'ed ??
     free(close_reply);
+    
   }
 
   //----------
@@ -790,6 +792,8 @@ private:
   // returns false if we received MWMDeleteWindowAtom
   // -> we are done (quit)
   // frees AEvent
+  // (we didn't allocate AEvent (it's coming from the event handler - xcb_wait_for_event)
+  // so we call the 'non-intercepted' free, to avoid pestering our memleak detector)
 
   bool processEvent(xcb_generic_event_t* AEvent) {
     switch (AEvent->response_type & ~0x80) {
@@ -975,15 +979,21 @@ private:
 
         if (data == SAT_WINDOW_THREAD_KILL) {
           //SAT_Print("SAT_WINDOW_THREAD_KILL\n");
-          free(AEvent); // not malloc'ed
+          
+          //real_free(AEvent); // not malloc'ed
+          ::free(AEvent); // not malloc'ed
           return false; // we re finished
+          
         }
 
         //if (type == MWMProtocolsAtom) {
           if (data == MWMDeleteWindowAtom) {
             //SAT_Print("MWMDeleteWindowAtom\n");
-            free(AEvent); // not malloc'ed
+            
+            //real_free(AEvent); // not malloc'ed
+            ::free(AEvent); // not malloc'ed
             return false; // we re finished
+            
           }
         //}
 
@@ -992,8 +1002,10 @@ private:
 
     }
 
-    free(AEvent);
+    //real_free(AEvent);
+    ::free(AEvent);
     return true; // we are still alive
+    
   }
 
   //----------

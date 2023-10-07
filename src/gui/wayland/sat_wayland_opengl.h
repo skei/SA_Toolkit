@@ -2,8 +2,6 @@
 #define sat_wayland_opengl_included
 //----------------------------------------------------------------------
 
-#if 0
-
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 //#include <wayland-egl.h>
@@ -17,16 +15,16 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_WaylandEGL {
+class SAT_WaylandOpenGL {
   
 //------------------------------
 public:
 //------------------------------
 
-  SAT_WaylandEGL() {
+  SAT_WaylandOpenGL() {
   }
   
-  virtual ~SAT_WaylandEGL() {
+  virtual ~SAT_WaylandOpenGL() {
   }
 
 //------------------------------
@@ -80,8 +78,6 @@ public: // extensions
   }
   
 };
-
-#endif // 0
 
 //----------------------------------------------------------------------
 #endif

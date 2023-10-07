@@ -5,7 +5,7 @@
 #include "base/sat.h"
 #include "gui/sat_base_window.h"
 #include "gui/wayland/sat_wayland.h"
-#include "gui/wayland/sat_wayland_egl.h"
+#include "gui/wayland/sat_wayland_opengl.h"
 
 //----------------------------------------------------------------------
 //
@@ -26,6 +26,13 @@ private:
   struct wl_surface*        MSurface      = nullptr;
   struct wl_shell*          MShell        = nullptr;
   struct wl_shell_surface*  MShellSurface = nullptr;
+  
+//------------------------------
+public:
+//------------------------------
+
+  uint32_t                  MWidth        = 0;
+  uint32_t                  MHeight       = 0;
 
 //------------------------------
 public:
@@ -51,13 +58,13 @@ public:
   //----------
 
   uint32_t getWidth() override {
-    return 0;
+    return MWidth;
   }
   
   //----------
 
   uint32_t getHeight() override {
-    return 0;
+    return MHeight;
   }
 
   //----------
@@ -105,6 +112,12 @@ public:
   //----------
 
   uint32_t eventLoop() override {
+//    while (wl_display_dispatch(MDisplay) != -1) {
+//    // This space deliberately left blank
+//    }
+
+//    wl_display_dispatch(MDisplay);
+//    wl_display_roundtrip(MDisplay);
     return 0;
   }
 
@@ -211,17 +224,6 @@ public:
   }
   
   //----------
-
-  void eventLoop() {
-
-//    while (wl_display_dispatch(MDisplay) != -1) {
-//    // This space deliberately left blank
-//    }
-
-//    wl_display_dispatch(MDisplay);
-//    wl_display_roundtrip(MDisplay);
-
-  }
 
 //------------------------------
 private:
