@@ -17,42 +17,37 @@
 
 //----------------------------------------------------------------------
 
-/*
-
-// test
+// testing:
 
 // linux (gcc)
-#ifdef __gnu_linux__
-  #warning __gnu_linux__
-#endif
-
+//#ifdef __gnu_linux__
+//  #warning __gnu_linux__
+//#endif
+//
+// linux (gcc), windows (mingw), 
+//#ifdef __GNUC__
+//  #warning __GNUC__
+//#endif
+//
 // windows (mingw)
-#ifdef _WIN32
-  #warning _WIN32
-#endif
-
-// windows (mingw), linux (gcc)
-#ifdef __GNUC__
-  #warning __GNUC__
-#endif
-
+//#ifdef _WIN32
+//  #warning _WIN32
+//#endif
+//
 // windows (mingw)
-#ifdef __MINGW32__
-  #warning __MINGW32__
-#endif
+//#ifdef __MINGW32__
+//  #warning __MINGW32__
+//#endif
 
 //
 
-// not..
-#ifdef __CYGWIN__
-  #warning __CYGWIN__
-#endif
-
-#ifdef MINGW_ENABLED
-  #warning MINGW_ENABLED
-#endif
-
-*/
+// nothing printed (gcc/mingw)
+//#ifdef __CYGWIN__
+//  #warning __CYGWIN__
+//#endif
+//#ifdef MINGW_ENABLED
+//  #warning MINGW_ENABLED
+//#endif
 
 //----------------------------------------------------------------------
 

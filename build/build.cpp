@@ -27,7 +27,7 @@
 
 
 //#include "test/test1.h"
-//#include "test/test2.h"
+#include "test/test2.h"
 //#include "test/test_jit.h"
 //#include "test/test_minimal.h"
 //#include "test/test_parameters.h"
@@ -105,7 +105,7 @@
 //#include "../plugins/sa_host.h"
 //#include "../plugins/sa_interceptor.h"
 //#include "../plugins/sa_pitch.h"
-#include "../plugins/sa_synth.h"
+//#include "../plugins/sa_synth.h"
 
 //#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_tyr.h"

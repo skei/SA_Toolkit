@@ -104,15 +104,17 @@
             else {
               SAT_DPrint("Mismatch! new (%s/%i) free (%s/%i)\n",MMemTraceNodes[i].file,MMemTraceNodes[i].line,strip_path(file),line);
             }
+            SAT_PrintCallStack();
           }
           // remove node
           MMemTraceNodes.remove(i);
         }
       }
       // not found
-      if (!found) {
-        SAT_DPrint("Error! allocation %p not found (%s/%i)\n",ptr,strip_path(file),line);
-      }
+      // x11, nanovg prints a lot of these.. :-/
+//      if (!found) {
+//        SAT_DPrint("Error! allocation %p not found (%s/%i)\n",ptr,strip_path(file),line);
+//      }
       // delete memory
       ::free(ptr);
     }
@@ -181,6 +183,13 @@
 
   #define new           new(__FILE__, __LINE__)
   #define delete        if (sat_memtrace_prefix(__FILE__, __LINE__)) delete
+
+//#else // ! SAT_DEBUG_MEMTRACE
+//
+//  #define real_malloc   malloc
+//  #define real_calloc   calloc
+//  #define real_realloc  realloc
+//  #define real_free     free
 
 #endif // SAT_DEBUG_MEMTRACE
 

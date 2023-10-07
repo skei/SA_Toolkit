@@ -48,7 +48,7 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_Print_ {
+class SAT_GlobalPrint {
   
 //------------------------------
 private:
@@ -78,7 +78,7 @@ private:
 public:
 //------------------------------
 
-  SAT_Print_() {
+  SAT_GlobalPrint() {
     #ifdef SAT_PRINT_SOCKET
       setup_socket();
     #endif
@@ -89,7 +89,7 @@ public:
   
   //----------
   
-  ~SAT_Print_() {
+  ~SAT_GlobalPrint() {
     #ifdef SAT_PRINT_SOCKET
       cleanup_socket();
     #endif
@@ -261,7 +261,7 @@ private: // time
 //
 //----------------------------------------------------------------------
 
-SAT_Print_ SAT_GLOBAL_PRINT = {};
+SAT_GlobalPrint SAT_GLOBAL_PRINT = {};
 
 //----------
 

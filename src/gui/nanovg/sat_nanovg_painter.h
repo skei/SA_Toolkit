@@ -93,6 +93,7 @@ public:
       nvgDeleteGL2(MContext);
     #endif
     // delete fonts?
+    // (nvgCreateFontMem in constructor)
   }
 
 //------------------------------

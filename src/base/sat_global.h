@@ -25,10 +25,18 @@ class SAT_Global {
 public:
 //------------------------------
 
-  char          binary_path[SAT_MAX_PATH_LENGTH]  = {0};
-  char          plugin_path[SAT_MAX_PATH_LENGTH]  = {0};
-  SAT_Registry  REGISTRY                          = {};
-  SAT_LogFile   LOG                               = {};
+  char              binary_path[SAT_MAX_PATH_LENGTH]  = {0};
+  char              plugin_path[SAT_MAX_PATH_LENGTH]  = {0};
+  
+  SAT_Registry      REGISTRY                          = {};
+  SAT_LogFile       LOG                               = {};
+
+  //SAT_GlobalPrint   PRINT                             = {}
+  //SAT_UnitTest      TEST                              = {};
+  //SAT_CallStack     CALLSTACK                         = {};
+  //SAT_CrashHandler  CRASH_HANDLER                     = {};
+  //SAT_MemTrace      MEMTRACE                          = {};
+  //SAT_Observer      OBSERVER                          = {};
   
 //------------------------------
 public:

@@ -265,6 +265,7 @@
       </VirtualDirectory>
     </VirtualDirectory>
     <VirtualDirectory Name="plugin">
+      <File Name="../../src/plugin/sat_parameter_manager.h"/>
       <VirtualDirectory Name="lv2">
         <File Name="../../src/plugin/lv2/sat_lv2_ui.h"/>
         <File Name="../../src/plugin/lv2/sat_lv2_manifest.h"/>
@@ -445,7 +446,7 @@
     </VirtualDirectory>
     <VirtualDirectory Name="gui">
       <VirtualDirectory Name="wayland">
-        <File Name="../../src/gui/wayland/sat_wayland_egl.h"/>
+        <File Name="../../src/gui/wayland/sat_wayland_opengl.h"/>
         <File Name="../../src/gui/wayland/sat_wayland_window.h"/>
         <File Name="../../src/gui/wayland/sat_wayland.h"/>
       </VirtualDirectory>

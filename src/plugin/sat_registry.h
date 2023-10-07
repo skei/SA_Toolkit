@@ -174,7 +174,7 @@ public: // preset discovery providers
   const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) { \
     SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);                                                                              \
     if (AIndex == 0) {                                                                                                            \
-      SAT_Plugin* plugin = new PLUG(ADescriptor,AHost);                                                                           \
+      SAT_Plugin* plugin = new PLUG(ADescriptor,AHost); /* deleted in: ... */                                                     \
       return plugin->getClapPlugin();                                                                                             \
     }                                                                                                                             \
     return nullptr;                                                                                                               \
