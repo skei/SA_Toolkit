@@ -10,6 +10,7 @@
 //----------------------------------------------------------------------
 
 #include "plugin/sat_note.h"
+#include "audio/sat_audio_utils.h"
 #include "audio/sat_voice.h"
 
 //----------
@@ -468,7 +469,7 @@ private:
       double  lowest_level = 666.0;
       for (uint32_t i=0; i<COUNT; i++) {
         if (MVoices[i].state == SAT_VOICE_RELEASED) {
-          float env_level = MVoices[i].getEnvLevel();
+          float env_level = MVoices[i].getVoiceLevel();
           if (env_level < lowest_level) {
             lowest_index = i;
             lowest_level = env_level;

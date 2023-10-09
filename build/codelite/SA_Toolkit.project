@@ -4,6 +4,7 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <File Name="../../plugins/sa_synth.h"/>
     <File Name="../../plugins/sa_gain.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="tools">
@@ -20,19 +21,6 @@
     <File Name="../../doc/compiling.txt"/>
   </VirtualDirectory>
   <VirtualDirectory Name="build">
-    <VirtualDirectory Name="test">
-      <File Name="../test/test1.h"/>
-      <File Name="../test/test_jit.h"/>
-      <File Name="../test/test_parameters.h"/>
-      <File Name="../test/test_synth_voice.h"/>
-      <File Name="../test/test2.h"/>
-      <File Name="../test/test_reaper_ext.h"/>
-      <File Name="../test/test_minimal.h"/>
-      <File Name="../test/test_standalone.h"/>
-      <File Name="../test/test_synth_widgets.h"/>
-      <File Name="../test/test_synth_gui.h"/>
-      <File Name="../test/test_synth.h"/>
-    </VirtualDirectory>
     <File Name="../build.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="data">

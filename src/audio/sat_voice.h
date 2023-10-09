@@ -91,8 +91,8 @@ public:
 
   //----------
 
-  sat_sample_t getEnvLevel() {
-    return voice.getEnvLevel();
+  sat_sample_t getVoiceLevel() {
+    return voice.getVoiceLevel();
   }
   
   //----------

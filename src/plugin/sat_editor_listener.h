@@ -2,6 +2,8 @@
 #define sat_editor_listener_included
 //----------------------------------------------------------------------
 
+// listener = usually SAT_Plugin
+
 #include "plugin/sat_parameter.h"
 #include "gui/sat_window.h"
 

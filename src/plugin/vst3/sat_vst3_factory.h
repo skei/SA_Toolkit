@@ -160,7 +160,7 @@ public: // IPluginFactory
     //TODO: if (SAT_ClapIsInstrument(descriptor)) .. ??
     strncpy(info->category,kVstAudioEffectClass,PClassInfo::kCategorySize);
     
-    // ugly, ugly..
+    // ugly..
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wstringop-truncation"
       strncpy(info->name,descriptor->name,PClassInfo::kNameSize);

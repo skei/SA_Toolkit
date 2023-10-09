@@ -83,7 +83,7 @@ public:
 
   //----------
 
-  double    getLevel()                { return MVoice.getEnvLevel(); }
+  double    getLevel()                { return MVoice.getVoiceLevel(); }
 
   uint32_t  getState()                { return MState; }
   void      setState(uint32_t AState) { MState = AState; }

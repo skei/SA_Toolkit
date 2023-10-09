@@ -60,7 +60,7 @@ public:
 public:
 //------------------------------
 
-  virtual bool                init() { return false; }
+  virtual bool                init() { return false; };
   virtual void                destroy() {}
   virtual bool                activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) { return false; }
   virtual void                deactivate() {}

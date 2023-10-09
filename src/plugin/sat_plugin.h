@@ -106,7 +106,8 @@ public:
   : SAT_ClapPlugin(ADescriptor,AHost) {
     //SAT_PRINT;
     MHost = new SAT_Host(AHost);
-    SAT_LogClapHostInfo(MHost);
+//    MProcessContext.parameters = &MParameters;
+    //SAT_LogClapHostInfo(MHost);
   }
 
   //----------
@@ -2876,11 +2877,9 @@ public: // process audio
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     if ((MAudioInputPorts.size() > 0) && (MAudioOutputPorts.size() > 0)) {
-      
       //float** inputs = process->audio_inputs[0].data32;
       //float** outputs = process->audio_outputs[0].data32;
       //SAT_CopyStereoBuffer(outputs,inputs,length);
-      
       float* input0 = process->audio_inputs[0].data32[0];
       float* input1 = process->audio_inputs[0].data32[1];
       float* output0 = process->audio_outputs[0].data32[0];
@@ -2902,7 +2901,7 @@ public: // process audio
   
   /*
     if MEventMode is SAT_PLUGIN_EVENT_MODE_BLOCK (the default)
-    handleEvents will first be called, and then this, to habndle the
+    handleEvents will first be called, and then this, to handle the
     entire audio block in one go..
 
     if SAT_PLUGIN_EVENT_MODE_INTERLEAVED or SAT_PLUGIN_EVENT_MODE_QUANTIZED
@@ -2915,7 +2914,6 @@ public: // process audio
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t offset, uint32_t length) {
     const clap_process_t* process = AContext->process;
-
     //float* inputs[2];
     //float* outputs[2];
     //inputs[0]  = process->audio_inputs[0].data32[0] + offset;
@@ -2923,11 +2921,10 @@ public: // process audio
     //outputs[0] = process->audio_outputs[0].data32[0] + offset;
     //outputs[1] = process->audio_outputs[0].data32[1] + offset;
     //SAT_CopyStereoBuffer(outputs,inputs,length);
-
-    float* input0 = process->audio_inputs[0].data32[0];
-    float* input1 = process->audio_inputs[0].data32[1];
-    float* output0 = process->audio_outputs[0].data32[0];
-    float* output1 = process->audio_outputs[0].data32[1];
+    float* input0  = process->audio_inputs[0].data32[0]  + offset;
+    float* input1  = process->audio_inputs[0].data32[1]  + offset;
+    float* output0 = process->audio_outputs[0].data32[0] + offset;
+    float* output1 = process->audio_outputs[0].data32[1] + offset;
     for (uint32_t i=0; i<length; i++) {
       float spl0 = *input0++;
       float spl1 = *input1++;
@@ -2974,26 +2971,22 @@ public: // process events
     //SAT_PRINT;
     if (!in_events) return;
     //if (!out_events) return;
-
     clearAutomationToGui();
     clearModulationToGui();
-    
     uint32_t prev_time = 0;
     uint32_t size = in_events->size(in_events);
     for (uint32_t i=0; i<size; i++) {
       const clap_event_header_t* header = in_events->get(in_events,i);
       if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
         if (header->time < prev_time) {
-          SAT_Print("not sorted.. prev_time %i header->time %i header->type %i\n",prev_time,header->time,header->type);
+          SAT_Print("huh? not sorted? prev_time %i header->time %i header->type %i\n",prev_time,header->time,header->type);
         }
         handleEvent(header);
         prev_time = header->time;
       }
     }
-    
     queueAutomationToGui();
     queueModulationToGui();
-        
   }
 
   //----------
@@ -3006,24 +2999,19 @@ public: // process events
   // processes events at their sample accurate place, and audio inbetween
 
   virtual void processInterleavedEvents(SAT_ProcessContext* AContext) {
-
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t remaining = AContext->process->frames_count;
     uint32_t num_events = in_events->size(in_events);
     uint32_t current_time = 0;
     uint32_t current_event = 0;
-
     clearAutomationToGui();
     clearModulationToGui();
-    
     while (remaining > 0) {
       if (current_event < num_events) {
         const clap_event_header_t* header = in_events->get(in_events,current_event);
         current_event += 1;
         int32_t length = header->time - current_time;
-        
         // if length > remaining ...
-
         //while (length > 0) {
         if (length > 0) {
           processAudio(AContext,current_time,length);
@@ -3041,30 +3029,27 @@ public: // process events
       }
     }
     //SAT_Assert( events.read(&event) == false );
-    
     queueAutomationToGui();
     queueModulationToGui();
-    
   }
 
   //----------
-
+  
+  
+  
   // split audio block in smaller, regular sizes, and quantize events
   // (process all events 'belonging' to the slice, at the atart ot the slice,
   // and then the audio)..
   // events could be processed up to (slicesize - 1) samples 'early'..
 
   virtual void processQuantizedEvents(SAT_ProcessContext* AContext) {
-
     uint32_t buffer_length = AContext->process->frames_count;
     uint32_t remaining = buffer_length;
     uint32_t current_time = 0;
     uint32_t current_event = 0;
     uint32_t next_event_time = 0;
-    
     clearAutomationToGui();
     clearModulationToGui();
-    
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t num_events = in_events->size(in_events);
     if (num_events > 0) {
@@ -3106,12 +3091,9 @@ public: // process events
         remaining -= SAT_AUDIO_QUANTIZED_SIZE;
       } while (remaining > 0);
     }
-    
     queueAutomationToGui();
     queueModulationToGui();
-    
   }
-
 };
 
 //----------------------------------------------------------------------

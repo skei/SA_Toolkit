@@ -18,14 +18,14 @@
 //
 //----------------------------------------------------------------------
 
-//#include "test/test1.h"
-//#include "test/test2.h"
-//#include "test/test_jit.h"
-//#include "test/test_minimal.h"
-//#include "test/test_parameters.h"
-//#include "test/test_reaper_ext.h"
-//#include "test/test_standalone.h"
-//#include "test/test_synth.h"
+//#include "../../SA_Toolkit_backup/test/test1.h"
+//#include "../../SA_Toolkit_backup/test/test2.h"
+//#include "../../SA_Toolkit_backup/test/test_jit.h"
+//#include "../../SA_Toolkit_backup/test/test_minimal.h"
+//#include "../../SA_Toolkit_backup/test/test_parameters.h"
+//#include "../../SA_Toolkit_backup/test/test_reaper_ext.h"
+//#include "../../SA_Toolkit_backup/test/test_standalone.h"
+//#include "../../SA_Toolkit_backup/test/test_synth.h"
 
 //----------------------------------------------------------------------
 //
@@ -58,6 +58,9 @@
 //----------------------------------------------------------------------
 
 //#include "../plugins/sa_gain.h"
+#include "../plugins/sa_synth.h"
+
+//----------
 
 //#include "../../SA_Plugins/sa_botage.h"
 //#include "../../SA_Plugins/sa_bulum.h"
@@ -78,7 +81,15 @@
 
 //#include "../../SA_Plugins/sa_ports.h"
 //#include "../../SA_Plugins/sa_plugins.h"
-#include "../../SA_Plugins/sa_everything.h"
+//#include "../../SA_Plugins/sa_everything.h"
+
+
+
+
+
+
+
+
 
 
 

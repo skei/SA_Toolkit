@@ -4,6 +4,7 @@
 
 #include "base/sat.h"
 #include "plugin/clap/sat_clap.h"
+#include "plugin/sat_process_context.h"
 
 //----------------------------------------------------------------------
 //

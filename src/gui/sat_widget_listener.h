@@ -2,6 +2,8 @@
 #define sat_widget_listener_included
 //----------------------------------------------------------------------
 
+// listener = usually SAT_Widget, or SAT_Window
+
 class SAT_Widget;
 
 class SAT_WidgetListener {

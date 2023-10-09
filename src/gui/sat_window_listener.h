@@ -2,6 +2,10 @@
 #define sat_window_listener_included
 //----------------------------------------------------------------------
 
+// listener = usually SAT_Editor
+
+//----------
+
 class SAT_Window;
 
 class SAT_WindowListener {

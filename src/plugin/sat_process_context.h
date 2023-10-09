@@ -18,8 +18,9 @@ struct SAT_ProcessContext {
   double                samplerate          = 0.0;        // sampolerate (activate)
   uint32_t              minbufsize          = 0;          // minimum bolck size (activate)
   uint32_t              maxbufsize          = 0;          // maximum block size (activate)
-  SAT_ParameterArray*   parameters          = {};         // plugin parameters
   uint32_t              counter             = 0;          // ever-increasing counter (each process call)
+  
+  SAT_ParameterArray*   parameters          = {};         // plugin parameters
 
 //bool                  has_tempo           = false;
 //double                tempo               = 0.0;        // in bpm
