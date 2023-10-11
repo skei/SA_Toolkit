@@ -33,13 +33,6 @@ private:
 
   bool              MIsCurrent        = false;
 
-//  Display*          MDisplay          = None;
-//  GLXContext        MContext          = nullptr;
-//  GLXFBConfig       MFBConfig         = nullptr;
-//  uint32_t          MWidth            = 0;
-//  uint32_t          MHeight           = 0;
-//  GLXDrawable       MDrawable         = GLX_NONE;
-
 //------------------------------
 public:
 //------------------------------
@@ -80,7 +73,7 @@ public:
     printf("EGL has %d configs\n",count);
 
     EGLint config_attribs[] = {
-      EGL_SURFACE_TYPE,     EGL_WINDOW_BIT,
+      EGL_SURFACE_TYPE,     EGL_WINDOW_BIT, // EGL_PIXMAP_BIT
       EGL_RED_SIZE,         8,
       EGL_GREEN_SIZE,       8,
       EGL_BLUE_SIZE,        8,
@@ -93,11 +86,11 @@ public:
       EGL_NONE
     };
 
-    EGLConfig* configs = (void**)calloc(count, sizeof *configs);
-    EGLint n;
-    eglChooseConfig(egl_display,config_attribs,configs,count,&n);
+    EGLConfig* configs = (void**)calloc(count,sizeof *configs);
+    EGLint num;
+    eglChooseConfig(egl_display,config_attribs,configs,count,&num);
 
-    for (int i=0; i<n; i++) {
+    for (int i=0; i<num; i++) {
       EGLint size;
       eglGetConfigAttrib(egl_display,configs[i],EGL_BUFFER_SIZE,&size);
       printf("Buffer size for config %d is %d\n",i,size);

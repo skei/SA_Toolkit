@@ -74,7 +74,7 @@
 //------------------------------
 
 //#define SAT_NO_AUTODELETE
-#define SAT_NO_TESTS
+//#define SAT_NO_TESTS
 
 //------------------------------
 // plugin
