@@ -5,17 +5,21 @@
 #include "base/sat_log.h"
 #include "base/sat_registry.h"
 #include "base/sat_test.h"
+#include "base/sat_print.h"
 
 class SAT_Global {
 
 public:
 
-  char          binary_path[SAT_MAX_PATH_LENGTH]  = {0};  // our binary
-  char          plugin_path[SAT_MAX_PATH_LENGTH]  = {0};  // path received from host
-
   SAT_Log       LOG       = {};
   SAT_Registry  REGISTRY  = {};
   SAT_Test      TEST      = {};
+  SAT_Print     PRINT     = {};
+
+  char          binary_path[SAT_MAX_PATH_LENGTH]  = {0};  // our binary
+  char          plugin_path[SAT_MAX_PATH_LENGTH]  = {0};  // path received from host
+
+  // HINSTANCE
   
 public:
 
@@ -74,6 +78,12 @@ public:
     return plugin_path;
   }
   
+//------------------------------
+public:
+//------------------------------
+
+
+
 };
 
 //----------------------------------------------------------------------

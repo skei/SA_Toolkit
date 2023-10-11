@@ -4,6 +4,7 @@
 
 #include "sat.h"
 #include "gui/base/sat_base_window.h"
+#include "gui/sat_renderer_owner.h"
 
 //----------------------------------------------------------------------
 //
@@ -12,11 +13,14 @@
 //----------------------------------------------------------------------
 
 class SAT_X11Window
-: public SAT_BaseWindow {
+: public SAT_RendererOwner
+, public SAT_BaseWindow {
 
 //------------------------------
 private:
 //------------------------------
+
+  Display*  MDisplay = nullptr;
 
 //------------------------------
 public:
@@ -32,7 +36,15 @@ public:
   }
 
 //------------------------------
-public:
+public: // SAT_RenderContext
+//------------------------------
+
+  Display* getX11Display() override {
+    return MDisplay;
+  }
+
+//------------------------------
+public: // SAT_BaseWindow
 //------------------------------
 
   void open() override {
@@ -117,6 +129,12 @@ public:
   
   void sendUserMessage(intptr_t AMessage) override {
   }
+
+//------------------------------
+private:
+//------------------------------
+
+  //...
 
 //------------------------------
 private:

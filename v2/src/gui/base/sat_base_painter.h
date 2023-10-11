@@ -13,7 +13,7 @@ class SAT_BasePainter {
 public:
 //------------------------------
 
-  SAT_BasePainter(SAT_BaseRenderer* ARenderer) {
+  SAT_BasePainter() {
   }
 
   //----------

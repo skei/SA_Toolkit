@@ -30,13 +30,6 @@ public:
 public:
 //------------------------------
 
-  //void beginRendering() {}
-  //void endRendering() {}
-  //void makeCurrent() {}
-  //void resetCurrent() {}
-  //void enableVSync() {}
-  //void disableVSync() {}
-  //void swapBuffers() {}
 
 };
 

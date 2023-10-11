@@ -7,17 +7,17 @@
 
 //----------------------------------------------------------------------
 
-#if defined(SAT_LINUX)
+//#if defined(SAT_LINUX)
 
   #include "gui/nanovg/sat_nanovg_painter.h"
   typedef SAT_NanoVGPainter SAT_ImplementedPainter;
 
-#elif defined(SAT_WIN32)
-
-  #include "gui/nanovg/sat_nanovg_painter.h"
-  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
-
-#endif
+//#elif defined(SAT_WIN32)
+//
+//  #include "gui/nanovg/sat_nanovg_painter.h"
+//  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
+//
+//#endif
 
 //----------------------------------------------------------------------
 //
@@ -27,6 +27,20 @@
 
 class SAT_Painter
 : public SAT_ImplementedPainter {
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_Painter()
+  : SAT_ImplementedPainter() {
+  }
+
+  //----------
+
+  virtual ~SAT_Painter() {
+  }
+
 };
 
 //----------------------------------------------------------------------

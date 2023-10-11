@@ -10,15 +10,19 @@
 #if defined(SAT_LINUX)
 
   //#if defined(SAT_RENDERER_GL)
+  //
   //  #include "gui/x11/sat_x11_gl_renderer.h"
   //  typedef SAT_X11GLRenderer SAT_ImplementedRenderer;
+  //
   //#elif defined(SAT_RENDERER_GLES)
 
     #include "gui/x11/sat_x11_gles_renderer.h"
     typedef SAT_X11GLESRenderer SAT_ImplementedRenderer;
 
   //#else
+  //
   //  #error No RENDERER type defined
+  //
   //#endif
 
 #elif defined(SAT_WIN32)

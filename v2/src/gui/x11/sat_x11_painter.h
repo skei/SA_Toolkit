@@ -18,8 +18,8 @@ class SAT_X11Painter
 public:
 //------------------------------
 
-  SAT_X11Painter(SAT_BaseRenderer* ARenderer)
-  : SAT_BasePainter(ARenderer) {
+  SAT_X11Painter()
+  : SAT_BasePainter() {
   }
 
   //----------

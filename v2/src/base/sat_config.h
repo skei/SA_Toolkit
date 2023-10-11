@@ -74,7 +74,7 @@
 //------------------------------
 
 //#define SAT_NO_AUTODELETE
-//#define SAT_NO_TESTS
+#define SAT_NO_TESTS
 
 //------------------------------
 // plugin
@@ -181,6 +181,7 @@
 
 #if defined (SAT_LINUX)
 
+  #define SAT_GUI_X11
   //#define SAT_WINDOW_X11
   //#define SAT_RENDERER_GL
   //#define SAT_PAINTER_NANOVG
@@ -188,6 +189,7 @@
 
 #elif defined (SAT_WIN32)
 
+  #define SAT_GUI_WIN32
   //#define SAT_WINDOW_WIN32
   //#define SAT_RENDERER_GL
   //#define SAT_PAINTER_NANOVG

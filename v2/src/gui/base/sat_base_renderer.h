@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/sat_renderer_owner.h"
 
 //----------------------------------------------------------------------
 
@@ -24,7 +25,7 @@ public:
 public:
 //------------------------------
 
-  virtual void initialize() {}
+  virtual bool initialize(SAT_RendererOwner* AOwner) { return false; }
   virtual void cleanup() {}
 
   virtual void beginRendering() {}

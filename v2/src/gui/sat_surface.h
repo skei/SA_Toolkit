@@ -27,6 +27,20 @@
 
 class SAT_Surface
 : public SAT_ImplementedSurface {
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_Surface()
+  : SAT_ImplementedSurface() {
+  }
+
+  //----------
+
+  virtual ~SAT_Surface() {
+  }
+
 };
 
 //----------------------------------------------------------------------

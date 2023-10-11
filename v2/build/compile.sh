@@ -51,6 +51,7 @@ LIB=""
 LIB+=" -ldl -lrt"
 LIB+=" -lX11 -lX11-xcb -lxcb -lxcb-util -lxcb-image -lxcb-cursor -lxkbcommon -lxcb-keysyms"
 LIB+=" -lGL -lGLU -lGLX"
+LIB+=" -lEGL"
 
 #----------------------------------------------------------------------
 #
