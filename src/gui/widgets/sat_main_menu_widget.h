@@ -15,6 +15,26 @@
 #define SAT_WIDGET_MAIN_MENU_MAX_MENUS    32
 #define SAT_WIDGET_MAIN_MENU_MAX_SUBMENUS 32
 
+//typedef SAT_Array<SAT_SelectorWidget*>  SAT_SelectorArray;
+
+struct SAT_MenuItem;
+typedef SAT_Array<SAT_MenuItem*> SAT_MenuItems;
+
+//
+  
+struct SAT_MenuItem {
+  SAT_Widget*   owner     = nullptr;
+  const char*   text      = "";
+  SAT_MenuItems subitems  = {};
+  ~SAT_MenuItem() {
+    #ifndef SAT_NO_AUTODELETE
+      for (uint32_t i=0; i<subitems.size(); i++) {
+        delete subitems[i];
+      }
+    #endif
+  }
+};
+
 //----------------------------------------------------------------------
 //
 //
@@ -30,6 +50,8 @@ class SAT_MainMenuWidget
 private:
 //------------------------------
 
+  SAT_MenuItems MMenuItems = {};
+
 //------------------------------
 public:
 //------------------------------
@@ -40,6 +62,7 @@ public:
     setDrawBorder(false);
     setFillBackground(true);
     setBackgroundColor(0.35);
+    setLayout(SAT_WIDGET_ALIGN_TOP_LEFT,SAT_WIDGET_STRETCH_HORIZONTAL);
   }
 
   //----------
@@ -51,15 +74,23 @@ public:
 public:
 //------------------------------
 
-  virtual uint32_t appendMenu(const char* AName) {
-    uint32_t index = 0;
+  virtual uint32_t appendMenu(const char* AText) {
+    uint32_t index = MMenuItems.size();
+    SAT_MenuItem* item = new SAT_MenuItem();
+    item->owner = this;
+    item->text = AText;
+    MMenuItems.append(item);
     return index;
   }
 
   //----------
   
-  virtual uint32_t appendSubMenu(uint32_t AIndex, const char* AName) {
-    uint32_t index = 0;
+  virtual uint32_t appendSubMenu(uint32_t AIndex, const char* AText) {
+    uint32_t index = MMenuItems[AIndex]->subitems.size();
+    SAT_MenuItem* item = new SAT_MenuItem();
+    item->owner = this;
+    item->text = AText;
+    MMenuItems[AIndex]->subitems.append(item);
     return index;
   }
 
@@ -70,37 +101,67 @@ public:
     just before realignChildWidgets
   */
 
-  void prepare(SAT_WidgetOwner* AOwner) override {
-    SAT_PanelWidget::prepare(AOwner);
-//    SAT_Window* window = (SAT_Window*)AOwner;
-//    SAT_Assert(window);
-//    SAT_Painter* painter = window->getPainter();
-//    SAT_Assert(painter);
-//    double x = 0.0;
-//    double y = 0.0;
-//    double w = 0.0;
-//    double h = getHeight();
-//    uint32_t num_menus = MMenus.size();
-//    for (uint32_t i=0; i<num_menus; i++) {
-//      const char* text = MMenus[i];
-//      SAT_Print("text %s\n",text);
-//      double bounds[4];
-//      if (painter->getTextBounds(text,bounds)) {
-//        double width = bounds[2] - bounds[0];
-//        SAT_Print("width %f\n",width);
-//        uint32_t num_submenus = MSubMenus[i].size();
-//        SAT_Print("num_submenus %i\n",num_submenus);
-//        SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(x,y+h,w,h));
-//        w += width;
-//        SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(x,y,w,h),text,menu);
-//        appendChildWidget(selector);
-//        //if (width > 0) width /= S;
-//        //...
-//      }
-//      else {
-//        // error..
-//      }
-//    }
+  //void prepare(SAT_WidgetOwner* AOwner) override {
+  void on_widget_prepare() override {
+    //SAT_WidgetOwner* AOwner = getOwner();
+    SAT_Window* window = (SAT_Window*)getOwner();
+    SAT_Widget* root = window->getRootWidget();
+    
+    //SAT_PanelWidget::prepare(AOwner);
+
+    //SAT_Window* window = (SAT_Window*)AOwner;
+    //SAT_Assert(window);
+    
+    SAT_Painter* painter = window->getPainter();
+    SAT_Assert(painter);
+    
+    double x = 0.0;
+    double y = 0.0;
+    double w = 0.0;
+    double h = getHeight();
+    
+    //int font = painter->getDefaultFont();
+    //painter->selectFont(font);
+    
+    double textsize = 12;//getTextSize();
+    double S = 1.0;//getWindowScale();
+    painter->setTextSize( textsize * S );;
+    
+    uint32_t num_menus = MMenuItems.size();
+    for (uint32_t i=0; i<num_menus; i++) {
+      const char* text = MMenuItems[i]->text;
+      double bounds[4];
+      w = painter->getTextBounds(text,bounds);
+
+      SAT_MenuWidget* menu = new SAT_MenuWidget(SAT_Rect(x,y+h,150,75));
+
+      uint32_t num_submenus = MMenuItems[i]->subitems.size();
+      for (uint32_t j=0; j<num_submenus; j++) {
+        const char* subtext = MMenuItems[i]->subitems[j]->text;
+        SAT_Print("%i.%i: %s\n",i,j,subtext);
+        SAT_MenuItemWidget* submenu = new SAT_MenuItemWidget(j*10,subtext);
+        submenu->setLayout(SAT_WIDGET_ALIGN_TOP,SAT_WIDGET_STRETCH_HORIZONTAL);
+        
+        menu->appendChildWidget(submenu);
+      }
+      
+      SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(x,y,w,h),text,menu);
+      selector->setDrawArrow(false);
+      selector->setDrawBorder(false);
+      selector->setFillBackground(false);
+      selector->setTextSize(10);
+      //selector->setIsDropDown(true);
+      selector->setDrawSelectedText(false);
+
+      appendChildWidget(selector);
+      root->appendChildWidget(menu);  // !!!
+
+      x += w;
+
+    }
+
+    //SAT_PanelWidget::prepare(AOwner);
+    
   }
   
 };

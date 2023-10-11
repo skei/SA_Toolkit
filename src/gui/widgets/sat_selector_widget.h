@@ -33,7 +33,7 @@ private:
   
   bool              MAutoSizeMenu       = false;
   
-  uint32_t MSelected = 0;
+  uint32_t          MSelected           = 0;
 
 //------------------------------
 public:
@@ -51,7 +51,7 @@ public:
     
     setInnerBorder(SAT_Rect(2,2));
     setDrawValue(false);
-    setTextSize(6);
+    //setTextSize(6);
     
     if (MDrawArrow) {
       MArrow = new SAT_SymbolWidget(SAT_Rect(7,6),SAT_SYMBOL_FILLED_TRI_DOWN);
@@ -81,14 +81,14 @@ public:
   }
   
   virtual void setDrawArrow(bool ADraw) {
-    MDrawSelectedText = ADraw;
+    //MDrawSelectedText = ADraw;
     MArrow->setActive(ADraw);
     MArrow->setVisible(ADraw);
   }
   
-  virtual void setIsDropDown(bool ADropDown=true) { MIsDropDown = ADropDown; }
-  virtual void setDropDownDirection(uint32_t ADirection) { MDropDownDirection = ADirection; }
-  virtual void setAutoSizeMenu(bool AAutoSize=true) { MAutoSizeMenu = AAutoSize; }
+  virtual void setIsDropDown(bool ADropDown=true)         { MIsDropDown = ADropDown; }
+  virtual void setDropDownDirection(uint32_t ADirection)  { MDropDownDirection = ADirection; }
+  virtual void setAutoSizeMenu(bool AAutoSize=true)       { MAutoSizeMenu = AAutoSize; }
 
 //------------------------------
 public: // widget

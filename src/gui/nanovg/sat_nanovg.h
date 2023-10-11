@@ -7,8 +7,12 @@
 //----------
 
 #ifdef SAT_LINUX
+  #ifdef SAT_USE_GLES
+    #include "gui/x11/sat_x11_gles.h"
+  #else // x11
   //#include "gui/x11/sat_x11.h"
-  #include "gui/x11/sat_x11_opengl.h"
+    #include "gui/x11/sat_x11_opengl.h"
+  #endif
 #endif
 
 #ifdef SAT_WIN32
@@ -18,10 +22,18 @@
 
 //----------
 
-#if SAT_OPENGL_MAJOR >= 3
-  #define NANOVG_GL3_IMPLEMENTATION
-#else
-  #define NANOVG_GL2_IMPLEMENTATION
+#ifdef SAT_USE_GLES
+  #if SAT_OPENGL_MAJOR >= 3
+    #define NANOVG_GLES3_IMPLEMENTATION
+  #else
+    #define NANOVG_GLES2_IMPLEMENTATION
+  #endif
+#else // x11
+  #if SAT_OPENGL_MAJOR >= 3
+    #define NANOVG_GL3_IMPLEMENTATION
+  #else
+    #define NANOVG_GL2_IMPLEMENTATION
+  #endif
 #endif
 
 //----------

@@ -68,10 +68,18 @@ public:
   : SAT_BasePainter(/*AOpenGL*/) {
     MOpenGL = AOpenGL;
     //MOpenGL->makeCurrent();
-    #if SAT_OPENGL_MAJOR >= 3
-      MContext = nvgCreateGL3(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
-    #else
-      MContext = nvgCreateGL2(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
+    #ifdef SAT_USE_GLES
+      #if SAT_OPENGL_MAJOR >= 3
+        MContext = nvgCreateGLES3(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
+      #else
+        MContext = nvgCreateGLES2(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
+      #endif
+    #else // x11
+      #if SAT_OPENGL_MAJOR >= 3
+        MContext = nvgCreateGL3(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
+      #else
+        MContext = nvgCreateGL2(NVG_ANTIALIAS);// | NVG_STENCIL_STROKES); // NVG_DEBUG
+      #endif
     #endif
     MDefaultFont = nvgCreateFontMem(MContext,"Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size,0);
     MHeaderFont = nvgCreateFontMem(MContext,"Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size,0);
@@ -87,10 +95,18 @@ public:
   */
 
   virtual ~SAT_NanoVGPainter() {
-    #if SAT_OPENGL_MAJOR >= 3
-      nvgDeleteGL3(MContext);
+    #ifdef SAT_USE_GLES
+      #if SAT_OPENGL_MAJOR >= 3
+        nvgDeleteGLES3(MContext);
+      #else
+        nvgDeleteGLES2(MContext);
+      #endif
     #else
-      nvgDeleteGL2(MContext);
+      #if SAT_OPENGL_MAJOR >= 3
+        nvgDeleteGL3(MContext);
+      #else
+        nvgDeleteGL2(MContext);
+      #endif
     #endif
     // delete fonts?
     // (nvgCreateFontMem in constructor)

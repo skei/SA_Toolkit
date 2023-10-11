@@ -7,9 +7,9 @@
 //----------------------------------------------------------------------
 
 #ifdef SAT_LINUX
-  #ifdef SAT_LINUX_WAYLAND
-    #include "gui/wayland/sat_wayland_opengl.h"
-    typedef SAT_WaylandOpenGL SAT_ImplementedOpenGL;
+  #ifdef SAT_USE_GLES
+    #include "gui/x11/sat_x11_gles.h"
+    typedef SAT_X11GLES SAT_ImplementedOpenGL;
   #else
     #include "gui/x11/sat_x11_opengl.h"
     typedef SAT_X11OpenGL SAT_ImplementedOpenGL;
@@ -40,19 +40,19 @@ public:
 
   #ifdef SAT_LINUX
 
-    #ifdef SAT_LINUX_WAYLAND
+    #ifdef SAT_USE_GLES
 
-      SAT_OpenGL()
-      : SAT_WaylandOpenGL() {
+      SAT_OpenGL(Display* display)
+      : SAT_ImplementedOpenGL(display) {
       }
 
       virtual ~SAT_OpenGL() {
       }
 
-    #else
-    
+    #else // glx
+      
       SAT_OpenGL(Display* display, xcb_window_t window)
-      : SAT_X11OpenGL(display,window) {
+      : SAT_ImplementedOpenGL(display,window) {
       }
 
       virtual ~SAT_OpenGL() {
@@ -67,7 +67,7 @@ public:
   #ifdef SAT_WIN32
 
     SAT_OpenGL(HWND window)
-    : SAT_Win32OpenGL(window) {
+    : SAT_ImplementedOpenGL(window) {
     }
 
     virtual ~SAT_OpenGL() {

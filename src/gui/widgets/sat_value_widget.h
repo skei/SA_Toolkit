@@ -89,6 +89,7 @@ public:
   virtual void drawValue(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawValue) {
+      // if MOwner == null, this will return 1.0
       double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);

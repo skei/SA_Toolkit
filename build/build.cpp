@@ -18,14 +18,14 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../../SA_Toolkit_backup/test/test1.h"
-//#include "../../SA_Toolkit_backup/test/test2.h"
-//#include "../../SA_Toolkit_backup/test/test_jit.h"
-//#include "../../SA_Toolkit_backup/test/test_minimal.h"
-//#include "../../SA_Toolkit_backup/test/test_parameters.h"
-//#include "../../SA_Toolkit_backup/test/test_reaper_ext.h"
-//#include "../../SA_Toolkit_backup/test/test_standalone.h"
-//#include "../../SA_Toolkit_backup/test/test_synth.h"
+#include "../../SA_Plugins/test/test1.h"
+//#include "../../SA_Plugins/test/test2.h"
+//#include "../../SA_Plugins/test/test_jit.h"
+//#include "../../SA_Plugins/test/test_minimal.h"
+//#include "../../SA_Plugins/test/test_parameters.h"
+//#include "../../SA_Plugins/test/test_reaper_ext.h"
+//#include "../../SA_Plugins/test/test_standalone.h"
+//#include "../../SA_Plugins/test/test_synth.h"
 
 //----------------------------------------------------------------------
 //
@@ -58,7 +58,7 @@
 //----------------------------------------------------------------------
 
 //#include "../plugins/sa_gain.h"
-#include "../plugins/sa_synth.h"
+//#include "../plugins/sa_synth.h"
 
 //----------
 

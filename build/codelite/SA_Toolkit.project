@@ -4,6 +4,57 @@
     <Plugin Name="CppCheck"/>
   </Plugins>
   <VirtualDirectory Name="plugins">
+    <VirtualDirectory Name="SA_Plugins">
+      <VirtualDirectory Name="test">
+        <File Name="../../../SA_Plugins/test/test_synth_widgets.h"/>
+        <File Name="../../../SA_Plugins/test/test_synth_voice.h"/>
+        <File Name="../../../SA_Plugins/test/test_synth_gui.h"/>
+        <File Name="../../../SA_Plugins/test/test_synth.h"/>
+        <File Name="../../../SA_Plugins/test/test_standalone.h"/>
+        <File Name="../../../SA_Plugins/test/test_reaper_ext.h"/>
+        <File Name="../../../SA_Plugins/test/test_parameters.h"/>
+        <File Name="../../../SA_Plugins/test/test_minimal.h"/>
+        <File Name="../../../SA_Plugins/test/test_jit.h"/>
+        <File Name="../../../SA_Plugins/test/test2.h"/>
+        <File Name="../../../SA_Plugins/test/test1.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="templates">
+        <File Name="../../../SA_Plugins/templates/effect.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="ports">
+        <File Name="../../../SA_Plugins/ports/sa_transient_killer.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_tilteq.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_stretch.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_sonic_maximizer.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_small_room_reverb.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_saturation.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_phaser.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_limiter.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_large_room_reverb.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_iirfilter.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_hrtf.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_hall_reverb.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_freeverb.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_exciter2.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_exciter.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_event_horizon.h"/>
+        <File Name="../../../SA_Plugins/ports/sa_compciter.h"/>
+      </VirtualDirectory>
+      <File Name="../../../SA_Plugins/sa_tyr.h"/>
+      <File Name="../../../SA_Plugins/sa_synth.h"/>
+      <File Name="../../../SA_Plugins/sa_ports.h"/>
+      <File Name="../../../SA_Plugins/sa_plugins.h"/>
+      <File Name="../../../SA_Plugins/sa_pitch.h"/>
+      <File Name="../../../SA_Plugins/sa_interceptor_host.h"/>
+      <File Name="../../../SA_Plugins/sa_interceptor.h"/>
+      <File Name="../../../SA_Plugins/sa_host.h"/>
+      <File Name="../../../SA_Plugins/sa_everything.h"/>
+      <File Name="../../../SA_Plugins/sa_demo2.h"/>
+      <File Name="../../../SA_Plugins/sa_demo.h"/>
+      <File Name="../../../SA_Plugins/sa_cred.h"/>
+      <File Name="../../../SA_Plugins/sa_bulum.h"/>
+      <File Name="../../../SA_Plugins/sa_botage.h"/>
+    </VirtualDirectory>
     <File Name="../../plugins/sa_synth.h"/>
     <File Name="../../plugins/sa_gain.h"/>
   </VirtualDirectory>
@@ -415,6 +466,7 @@
         <File Name="../../src/gui/win32/sat_win32_window.h"/>
       </VirtualDirectory>
       <VirtualDirectory Name="x11">
+        <File Name="../../src/gui/x11/sat_x11_gles.h"/>
         <File Name="../../src/gui/x11/sat_x11_window.h"/>
         <File Name="../../src/gui/x11/sat_x11.h"/>
         <File Name="../../src/gui/x11/sat_x11_utils.h"/>

@@ -123,12 +123,14 @@ public:
     MListener       = AListener;
     // opengl
     #ifdef SAT_LINUX
-      //#ifdef SAT_LINUX_WAYLAND
-      //#else
+      #ifdef SAT_USE_GLES
+        Display* display = getX11Display();
+        MOpenGL = new SAT_OpenGL(display);
+      #else
         Display* display = getX11Display();
         xcb_window_t window = getX11Window();
         MOpenGL = new SAT_OpenGL(display,window);
-      //#endif
+      #endif
     #endif
     #ifdef SAT_WIN32
       HWND window = getWin32Window();

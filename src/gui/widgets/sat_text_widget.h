@@ -138,7 +138,11 @@ public:
   virtual void drawText(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     if (MDrawText) {
+      
+      // if MOwner == null, this will return 1.0
       double S = getWindowScale();
+      
+      //SAT_Print("S %f\n",S);
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
@@ -148,8 +152,9 @@ public:
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       double textsize = MTextSize * S;
-      painter->setTextColor(MTextColor);
-      painter->setTextSize(textsize); // try original..
+
+//      painter->setTextColor(MTextColor);
+//      painter->setTextSize(textsize); // try original..
       
       // if autosize is true, the text will be scaled up as much as
       // possible to fit inside the rect..
@@ -168,11 +173,15 @@ public:
           if (wratio < hratio) textsize *= wratio;
           else textsize *= hratio;
           //SAT_Print("mrect.w %.2f mrect.h %.2f wratio %.2f hratio %.2f\n",mrect.w,mrect.h,wratio,hratio);
-          painter->setTextSize(textsize);
+//          painter->setTextSize(textsize);
         //}
       }
       
+//      SAT_Print("textsize %f winscale %f\n",textsize,S); // prints textsize: 8, winscale: 1.0
+//      SAT_Print("textsize %f winscale %f owner %p\n",textsize,S,getOwner()); // prints textsize: 8, winscale: 1.0
+      
       const char* text = MText;
+      painter->setTextSize(textsize);
       
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
