@@ -2,19 +2,18 @@
 #define sat_egl_renderer_included
 //----------------------------------------------------------------------
 
-// TODO: redo this..
-
 #include "sat.h"
-//#include "extern/glad/glad.h"
 #include "gui/base/sat_base_renderer.h"
-#include "gui/egl/sat_egl.h"
 #include "gui/x11/sat_x11.h"
+#include "gui/egl/sat_egl.h"
 
+//#include <X11/Xlib.h>
+//#include <GL/gl.h>
+//#include <GL/glx.h>
 //#include <EGL/egl.h>
 //#include <EGL/eglext.h>
 //#include <EGL/eglplatform.h>
 //#include <GLES2/gl2.h>
-//#include <X11/Xlib.h>
 
 //----------------------------------------------------------------------
 //
@@ -40,14 +39,16 @@ private:
 public:
 //------------------------------
 
-  SAT_EGLRenderer(SAT_RendererOwner* AOwner) {
+  SAT_EGLRenderer(SAT_RendererOwner* AOwner)
+  : SAT_BaseRenderer(AOwner) {
+
     Display* display = AOwner->getX11Display();
 
     //egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     egl_display = eglGetDisplay((EGLNativeDisplayType)display);
     if (egl_display == EGL_NO_DISPLAY) {
       printf("Can't create egl display\n");
-      return false;
+      //return false;
     } else {
       printf("Created egl display\n");
     }
@@ -55,7 +56,7 @@ public:
     EGLint major, minor;
     if (eglInitialize(egl_display,&major,&minor) != EGL_TRUE) {
       printf("Can't initialise egl display\n");
-      return false;
+      //return false;
     }
     printf("EGL major: %d, minor %d\n",major,minor);
 
@@ -92,7 +93,7 @@ public:
       break;
     }
     egl_context = eglCreateContext(egl_display,egl_config,EGL_NO_CONTEXT,context_attribs);
-    return true;
+    //return true;
 
     // egl_window = wl_egl_window_create(MSurface,AWidth,AHeight);
     // if (MEGLWindow == EGL_NO_SURFACE) {
@@ -117,7 +118,7 @@ public:
     eglDestroyContext(egl_display,egl_context);
     // eglChooseConfig
     // initialize
-    // GetDisplay
+    eglTerminate(egl_display); // undo eglInitialize
   }
 
 //------------------------------
@@ -132,57 +133,91 @@ public:
 public:
 //------------------------------
 
-  void beginRendering() override {
+  //bool setSurface(SAT_BaseSurface* ASurface) override {
+  //  return true;
+  //}
+
+  //----------
+
+  bool beginRendering() override {
     makeCurrent();
+    return true;
   }
 
   //----------
 
-  void beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+  bool beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     makeCurrent();
     setViewport(0,0,AWidth,AHeight);
+    return true;
   }
 
   //----------
 
-  void endRendering() override {
+  bool endRendering() override {
     swapBuffers();
     resetCurrent();
+    return true;
   }
 
-//------------------------------
+  //----------
 
-//------------------------------
-
-  void setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+  bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     //glViewport(AXpos,AYpos,AWidth,AHeight);
+    return true;
   }
 
-  void makeCurrent() override {
+  bool makeCurrent() override {
     MIsCurrent = true;
-    //eglMakeCurrent(egl_display,egl_surface);
+//    eglMakeCurrent(egl_display,egl_surface,egl_surface,egl_context);
+    return true;
   }
 
   //----------
 
-  void resetCurrent() override {
+  // To release the current context without assigning a new one, set context to EGL_NO_CONTEXT
+  // and set draw and read to EGL_NO_SURFACE . The currently bound context for the client API
+  // specified by the current rendering API is flushed and marked as no longer current,
+  // and there will be no current context for that client API after eglMakeCurrent returns.  
+
+  bool resetCurrent() override {
     MIsCurrent = false;
+    eglMakeCurrent(egl_display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);
+    return true;
   }
 
   //----------
 
-  void swapBuffers() override {
-    //eglSwapBuffers(egl_display,egl_surface);
+  bool swapBuffers() override {
+//    eglSwapBuffers(egl_display,egl_surface);
+    return true;
   }
 
   //----------
 
-  void enableVSync() override {
+  bool enableVSync() override {
+    return true;
   }
 
   //----------
 
-  void disableVSync() override {
+  bool disableVSync() override {
+    return true;
+  }
+
+//------------------------------
+private: // extensions
+//------------------------------
+
+  bool isExtensionSupported(const char *extList, const char *extension) {
+    return false;
+  }
+
+  bool loadExtensions() {
+    return false;
+  }
+
+  void unloadExtensions() {
   }
 
 };

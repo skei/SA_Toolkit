@@ -27,7 +27,8 @@
 
 class SAT_WaylandWindow
 : public SAT_RendererOwner,
-//: public SAT_SurfaceOwner,
+  public SAT_PainterOwner,
+//public SAT_SurfaceOwner,
   public SAT_BaseWindow {
 
 //------------------------------
@@ -64,9 +65,9 @@ public:
 
     MDisplay = wl_display_connect(NULL);
     if (MDisplay == NULL) {
-      fprintf(stderr, "Can't connect to display\n");
+      printf("WL: Can't connect to display\n");
     }
-    printf("connected to display\n");
+    printf("WL: connected to display\n");
 
     // The registry objects exist on the server.
     // The client often needs to get handles to these, as proxy objects.
@@ -98,9 +99,9 @@ public:
     // Compositors and clients should not implement this interface.    
 
     if (MCompositor == NULL || MShell == NULL) {
-      printf("Can't find compositor or shell\n");
+      printf("WL: Can't find compositor or shell\n");
     } else {
-      printf("Found compositor and shell\n");
+      printf("WL: Found compositor and shell\n");
     }
 
     // "A surface is a rectangular area that is displayed on the screen.
@@ -110,10 +111,10 @@ public:
 
     MSurface = wl_compositor_create_surface(MCompositor);
     if (MSurface == NULL) {
-      printf("Can't create surface\n");
+      printf("WL: Can't create surface\n");
       //return false;
     } else {
-      printf("Created surface\n");
+      printf("WL: Created surface\n");
     }
 
     // Surfaces can exist on many different devices, and there can be different Wayland servers for each.
@@ -145,10 +146,10 @@ public:
 
     struct wl_egl_window* egl_window = wl_egl_window_create(MSurface,AWidth,AHeight);
     if (egl_window == EGL_NO_SURFACE) {
-      printf("Can't create egl window\n");
+      printf("WL: Can't create egl window\n");
       //return false;
     } else {
-      fprintf(stderr, "Created egl window\n");
+      fprintf(stderr, "WL: Created egl window\n");
     }
 
 //    MRenderer = new SAT_EGLRenderer();
@@ -192,7 +193,7 @@ public:
   virtual ~SAT_WaylandWindow() {
     //...
     wl_display_disconnect(MDisplay);
-    printf("disconnected from display\n");
+    printf("WL: disconnected from display\n");
   }
 
 //------------------------------
@@ -200,11 +201,16 @@ public: // SAT_RendererOwner
 //------------------------------
 
   Display*    getX11Display() override { return MX11Display;  }
+  
 //EGLDisplay  getEGLDisplay() override { return MDisplay; }
 //EGLConfig   getEGLConfig()  override { return MConfig; }
 //EGLContext  getEGLContext() override { return MContext; }
 
-// //------------------------------
+//------------------------------
+public: // SAT_PainterOwner
+//------------------------------
+
+//------------------------------
 // public: // SAT_SurfaceOwner
 // //------------------------------
 
@@ -243,12 +249,12 @@ public: // SAT_BaseWindow
 
   //----------
   
-  void setMousePos() override {
+  void setMousePos(int32_t AXpos, int32_t AYpos) override {
   }
 
   //----------
   
-  void setMouseCursor() override {
+  void setMouseCursor(int32_t ACursor) override {
   }
 
   //----------
@@ -263,10 +269,11 @@ public: // SAT_BaseWindow
 
   //----------
   
-  void eventLoop() override {
+  uint32_t eventLoop() override {
     while (wl_display_dispatch(MDisplay) != -1) {
       ;
     }
+    return 0;
   }
 
   //----------
@@ -301,7 +308,7 @@ public: // SAT_BaseWindow
 
   //----------
   
-  void sendUserMessage(intptr_t AMessage) override {
+  void sendClientMessage(uint32_t AData, uint32_t AType) override {
   }
 
 //------------------------------
@@ -309,7 +316,7 @@ private: // registry
 //------------------------------
 
   void globalRegistryHandler(struct wl_registry* registry, uint32_t id, const char* interface, uint32_t version) {
-    printf("Got a registry event for %s id %d\n",interface,id);
+    printf("WL: Got a registry event for %s id %d\n",interface,id);
     if (strcmp(interface,"wl_compositor") == 0) {
       MCompositor = (struct wl_compositor*)wl_registry_bind(registry,id,&wl_compositor_interface,1);
     }
@@ -321,7 +328,7 @@ private: // registry
   //----------
 
   void globalRegistryRemover(struct wl_registry* registry, uint32_t id) {
-    printf("Got a registry losing event for %d\n", id);
+    printf("WL: Got a registry losing event for %d\n", id);
   }
 
   //------------------------------

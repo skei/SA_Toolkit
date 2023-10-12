@@ -15,17 +15,10 @@
 //----------------------------------------------------------------------
 
 class SAT_X11Window
-: public SAT_RendererOwner
+: public SAT_SurfaceOwner
+, public SAT_RendererOwner
 , public SAT_PainterOwner
-, public SAT_SurfaceOwner
 , public SAT_BaseWindow {
-
-//------------------------------
-private:
-//------------------------------
-
-  // Display*      MDisplay  = nullptr;
-  // xcb_window_t  MWindow   = 0;
 
 //------------------------------
 private:
@@ -65,13 +58,13 @@ private:
 protected:
 //------------------------------
 
-   int32_t                    MWindowXpos           = 0;
-   int32_t                    MWindowYpos           = 0;
-  uint32_t                    MWindowWidth          = 0;
-  uint32_t                    MWindowHeight         = 0;
+   int32_t                    MWindowXpos                   = 0;
+   int32_t                    MWindowYpos                   = 0;
+  uint32_t                    MWindowWidth                  = 0;
+  uint32_t                    MWindowHeight                 = 0;
 
-  //uint32_t                    MPreviousWindowWidth  = 0;
-  //uint32_t                    MPreviousWindowHeight = 0;
+//uint32_t                    MPreviousWindowWidth          = 0;
+//uint32_t                    MPreviousWindowHeight         = 0;
 
 //------------------------------
 public:
@@ -146,7 +139,7 @@ public:
       XCB_CW_EVENT_MASK     |
       XCB_CW_COLORMAP;
     uint32_t window_mask_values[4] = {
-      XCB_NONE,                           // shouldn't this be XCB_BACK_PIXMAP_NONE ??
+      XCB_NONE,                           // should this be XCB_BACK_PIXMAP_NONE ?
       0,
       event_mask,
       MScreen->default_colormap
@@ -248,7 +241,7 @@ public:
   uint32_t getHeight()        override { return MWindowWidth; }
 
 //------------------------------
-public: // SAT_RendererOwner
+public: // SAT_...RendererOwner
 //------------------------------
 
   Display*      getX11Display() override { return MDisplay; }
@@ -670,7 +663,7 @@ private:
   void setWMCursor(uint32_t ACursor) {
     xcb_cursor_context_t *ctx;
     if (xcb_cursor_context_new(MConnection, MScreen, &ctx) >= 0) {
-      const char* name = SAT_XCB_WM_CURSORS[ACursor];
+      const char* name = SAT_X11_WM_CURSORS[ACursor];
       xcb_cursor_t cursor = xcb_cursor_load_cursor(ctx, name);
       if (cursor != XCB_CURSOR_NONE) {
         xcb_change_window_attributes(MConnection, MWindow, XCB_CW_CURSOR, &cursor);

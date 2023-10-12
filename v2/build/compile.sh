@@ -49,9 +49,9 @@ INC+=" -I../src"
 
 LIB=""
 LIB+=" -ldl -lrt"
-LIB+=" -lX11 -lX11-xcb -lxcb -lxcb-util -lxcb-image -lxcb-cursor -lxkbcommon -lxcb-keysyms"
-LIB+=" -lGL -lGLU -lGLX"
-LIB+=" -lEGL"
+#LIB+=" -lX11 -lX11-xcb -lxcb -lxcb-util -lxcb-image -lxcb-cursor -lxkbcommon -lxcb-keysyms"
+#LIB+=" -lGL -lGLU -lGLX -lEGL"
+#LIB+=" -lwayland-client -lwayland-egl"
 
 #----------------------------------------------------------------------
 #
@@ -138,6 +138,10 @@ OUTPUT_DIR=${OUTPUT%$OUTPUT_FILE}
 # -f format
 #------------------------------
 
+#if [ "$FORMAT" = "" ]; then
+#  FORMAT="CLAP"
+#fi
+
 case $FORMAT in
   "ALL")
     #echo "format = all"
@@ -196,10 +200,6 @@ esac
 
 #----------
 
-#if [ "$FORMAT" = "" ]; then
-#  FORMAT="CLAP"
-#fi
-
 if $LIBRARY
   then
     #echo "library"
@@ -223,6 +223,10 @@ case $GUI in
     ;;
   "WAYLAND")
     #echo "gui = win32"
+    LIB+=" -lX11"
+    LIB+=" -lGL"
+    LIB+=" -lEGL"
+    LIB+=" -lwayland-client -lwayland-egl"
     FLAGS+=" -DSAT_GUI_WAYLAND"
     ;;
   "WIN32")
@@ -231,6 +235,11 @@ case $GUI in
     ;;
   "X11")
     #echo "gui = x11"
+    LIB+=" -lX11 -lX11-xcb"
+    LIB+=" -lxcb -lxcb-util -lxcb-image -lxcb-cursor -lxcb-keysyms"
+    LIB+=" -lxkbcommon"
+    LIB+=" -lGL"
+    LIB+=" -lGLX"
     FLAGS+=" -DSAT_GUI_X11"
     ;;
   *)

@@ -1,5 +1,5 @@
 
-// /DISKS/sda2/Code/SAT2/build/compile.sh -i build.cpp -o build.exe -f exe
+// ./compile.sh -i build.cpp -o build.exe -f exe -g x11 -d
 // nc -U -l -k /tmp/sat.socket
 
 //----------
@@ -13,6 +13,7 @@ int main() {
 
   SAT_Window* window = new SAT_Window(640,480);
   window->open();
+
   window->eventLoop();
   window->close();
   delete window;

@@ -14,22 +14,16 @@
 #include <xcb/xcb_keysyms.h>
 #include <xkbcommon/xkbcommon.h>
 
-  //#ifdef __clang__
-  //  #pragma clang diagnostic push
-  //  #pragma clang diagnostic ignored "-Wkeyword-macro"
-  //#endif
-  #define explicit explicit_
-  //#ifdef __clang__
-  //  #pragma clang diagnostic pop
-  //#endif
+// TODO: #ifdef explicit, save/restore prev?
+#define explicit explicit_
   #include <xcb/xkb.h>
-  #undef explicit
+#undef explicit
 
-#ifdef SAT_USE_XRENDER
-  //#include <X11/extensions/Xrender.h>
-  #include <xcb/render.h>
-  #include <xcb/xcb_renderutil.h>
-#endif
+// #ifdef SAT_USE_XRENDER
+//   //#include <X11/extensions/Xrender.h>
+//   #include <xcb/render.h>
+//   #include <xcb/xcb_renderutil.h>
+// #endif
 
 //----------------------------------------------------------------------
 //
@@ -56,7 +50,7 @@ bool sat_xlib_is_initialized = sat_initialize_xlib();
 
 // https://tronche.com/gui/x/xlib/appendix/b/
 
-const char* SAT_XCB_WM_CURSORS[/*SAT_CURSOR_COUNT*/] = {
+const char* SAT_X11_WM_CURSORS[/*SAT_CURSOR_COUNT*/] = {
 
   "left_ptr",             // SAT_CURSOR_DEFAULT
   "left_ptr",             // SAT_CURSOR_ARROW
@@ -97,7 +91,6 @@ const char* SAT_XCB_WM_CURSORS[/*SAT_CURSOR_COUNT*/] = {
   "pirate"                // SAT_CURSOR_X
 
 };
-
 
 //----------------------------------------------------------------------
 #endif

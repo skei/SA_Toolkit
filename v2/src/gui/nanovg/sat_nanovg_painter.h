@@ -4,12 +4,9 @@
 
 #include "sat.h"
 #include "gui/base/sat_base_painter.h"
-
-// #include "base/sat.h"
-// #include "gui/sat_base_painter.h"
-// #include "gui/sat_opengl.h"
 #include "gui/nanovg/sat_nanovg.h"
-// #include "gui/nanovg/sat_nanovg_utils.h"
+
+// #include "gui/sat_opengl.h"
 
 // #include "../data/fonts/Roboto/Roboto-Regular.h"
 // #include "../data/fonts/Manjari/Manjari-Thin.h"
@@ -28,8 +25,6 @@ class SAT_NanoVGPainter
 //------------------------------
 private:
 //------------------------------
-
-//  SAT_OpenGL* MOpenGL               = nullptr;
 
   NVGcontext* MContext              = nullptr;
   int         MDefaultFont          = -1;
@@ -61,11 +56,9 @@ public:
 
   // assumes opengl context already made current
 
-  SAT_NanoVGPainter(SAT_PainterOwner* AOwner)
-  : SAT_BasePainter(AOwner) {
-//    MOpenGL = AOpenGL;
-    //MOpenGL->makeCurrent();
-
+  SAT_NanoVGPainter(SAT_PainterOwner* AOwner, SAT_BaseRenderer* ARenderer)
+  : SAT_BasePainter(AOwner,ARenderer) {
+    //ARenderer->makeCurrent();
     // NVG_ANTIALIAS, NVG_STENCIL_STROKES, NVG_DEBUG
 
     #if defined(SAT_GUI_WAYLAND)
@@ -81,8 +74,7 @@ public:
 //    nvgFontFaceId(MContext,MDefaultFont);
 //    nvgFontSize(MContext,MTextSize);
 
-    //MOpenGL->resetCurrent();
-
+    //ARenderer->resetCurrent();
   }
 
   //----------

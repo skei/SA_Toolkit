@@ -27,19 +27,16 @@
 
 //----------------------------------------------------------------------
 
-
 #include "sat.h"
 #include "gui/base/sat_base_renderer.h"
 #include "gui/x11/sat_x11.h"
-#include "gui/glx/sat_glx.h"
 
 #define SOGL_MAJOR_VERSION SAT_RENDERER_MAJOR_VERSION
 #define SOGL_MINOR_VERSION SAT_RENDERER_MINOR_VERSION
 #define SOGL_IMPLEMENTATION_X11
 #include "extern/sogl/simple-opengl-loader.h"
 
-#include <GL/gl.h>
-#include <GL/glx.h>
+#include "gui/glx/sat_glx.h"
 
 //----------
 
@@ -156,9 +153,11 @@ public:
     //
     //}
 
-    disableVSync(MDisplay,MDrawable);
+    disableVSync();//(MDisplay,MDrawable);
+
     //resetCurrent();
     //makeCurrent(0);
+    
     MIsCurrent = true;
   }
 
@@ -180,32 +179,42 @@ public:
 public:
 //------------------------------
 
-  void beginRendering() override {
-//    makeCurrent();
+  //virtual bool setSurface(SAT_BaseSurface* ASurface) override {
+  //  return true;
+  //}
+
+  //----------
+
+  bool beginRendering() override {
+    makeCurrent();
+    return true;
   }
 
   //----------
 
-  void beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-//    makeCurrent();
-//    setViewport(0,0,AWidth,AHeight);
-//    //setClip(SAT_DRect(AXpos,AYpos,AWidth,AHeight));
+  bool beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+    makeCurrent();
+    setViewport(0,0,AWidth,AHeight);
+    //setClip(SAT_DRect(AXpos,AYpos,AWidth,AHeight));
+    return true;
   }
 
   //----------
 
-  void endRendering() override {
-//    swapBuffers();
-//    //resetClip();
-//    resetCurrent();
+  bool endRendering() override {
+    swapBuffers();
+    //resetClip();
+    resetCurrent();
+    return true;
   }
 
 //------------------------------
 private:
 //------------------------------
 
-  void setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
-//    glViewport(AXpos,AYpos,AWidth,AHeight);
+  bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+    glViewport(AXpos,AYpos,AWidth,AHeight);
+    return true;
   }
 
   //----------
@@ -235,7 +244,7 @@ private:
   */
 
   //bool makeCurrent(uint32_t AMode) {
-  bool makeCurrent() {
+  bool makeCurrent() override {
     //SAT_Print("MIsCurrent %i -> 1\n",MIsCurrent);
     //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
     //MPrevContext = glXGetCurrentContext();
@@ -258,7 +267,7 @@ private:
   //TODO: restore prev context?
 
   //bool resetCurrent(uint32_t AMode) {
-  bool resetCurrent() {
+  bool resetCurrent() override {
     //SAT_Print("MIsCurrent %i -> 0\n",MIsCurrent);
     //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
     bool res = glXMakeContextCurrent(MDisplay,0,0,0);
@@ -273,17 +282,18 @@ private:
 
   //----------
 
-  void swapBuffers() {
+  bool swapBuffers() override {
     glXSwapBuffers(MDisplay,MDrawable);
+    return true;
   }
 
   //----------
 
-  void disableVSync(Display* ADisplay, GLXDrawable ADrawable) {
-    const char* glXExtensions = glXQueryExtensionsString(ADisplay,DefaultScreen(ADisplay));
+  bool disableVSync(/*Display* ADisplay, GLXDrawable ADrawable*/) override {
+    const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
     if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
       glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
-      glXSwapIntervalEXT(ADisplay,ADrawable,0);
+      glXSwapIntervalEXT(MDisplay,MDrawable,0);
     }
     //} else if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
     //  glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
@@ -316,12 +326,14 @@ private:
     //    #endif
     //  }
     //}
+    return true;
   }
 
   //----------
 
-  void enableVSync() {
+  bool enableVSync() override {
     // TODO
+    return true;
   }
 
 //------------------------------
@@ -356,14 +368,14 @@ private:
   GLXContext createContext(GLXFBConfig fbconfig) {
     GLXContext context = glXCreateNewContext(MDisplay,fbconfig,GLX_RGBA_TYPE,nullptr,True);
     //SAT_Assert(context);
-//    loadExtensions();
+    loadExtensions();
     return context;
   }
 
   //----------
 
   void destroyContext() {
-//    unloadExtensions();
+    unloadExtensions();
     glXDestroyContext(MDisplay,MContext);
   }
 
@@ -457,23 +469,24 @@ private: // extensions
   // make context current before calling this
 
   bool loadExtensions() {
-    // int result = sogl_loadOpenGL();
-    // if (!result) {
-    //   SAT_Print("sogl_loadOpenGL() failed\n");
-    //   const char** failures = sogl_getFailures();
-    //   while (*failures) {
-    //     SAT_DPrint("> %s\n",*failures);
-    //     failures++;
-    //   }
-    //   return false;
-    // }
+    printf("loading extensions..\n");
+    int result = sogl_loadOpenGL();
+    if (!result) {
+      printf("sogl_loadOpenGL() failed\n");
+      const char** failures = sogl_getFailures();
+      while (*failures) {
+        printf("> %s\n",*failures);
+        failures++;
+      }
+      return false;
+    }
     return true;
   }
 
   //----------
 
   void unloadExtensions() {
-    // sogl_cleanup();
+    sogl_cleanup();
   }
 
 

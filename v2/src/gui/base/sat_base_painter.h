@@ -14,7 +14,7 @@ class SAT_BasePainter {
 public:
 //------------------------------
 
-  SAT_BasePainter(SAT_PainterOwner* AOwner) {
+  SAT_BasePainter(SAT_PainterOwner* AOwner, SAT_BaseRenderer* ARenderer) {
   }
 
   //----------

@@ -40,8 +40,8 @@ class SAT_Painter
 public:
 //------------------------------
 
-  SAT_Painter(SAT_PainterOwner* AOwner)
-  : SAT_ImplementedPainter(AOwner) {
+  SAT_Painter(SAT_PainterOwner* AOwner, SAT_BaseRenderer* ARenderer)
+  : SAT_ImplementedPainter(AOwner,ARenderer) {
   }
 
   //----------
