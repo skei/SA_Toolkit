@@ -30,9 +30,9 @@ private:
 //------------------------------
 
   EGLDisplay  egl_display = nullptr;
-  EGLConfig   egl_conf    = nullptr;
-  EGLSurface  egl_surface = nullptr;
+  EGLConfig   egl_config    = nullptr;
   EGLContext  egl_context = nullptr;
+//EGLSurface  egl_surface = nullptr;
   
   bool        MIsCurrent  = false;
 
@@ -52,10 +52,19 @@ public:
 public:
 //------------------------------
 
+  EGLDisplay  getEGLDisplay() { return egl_display; }
+  EGLConfig   getEGLConfig()  { return egl_config; }
+  EGLContext  getEGLContext() { return egl_context; }
+
+//------------------------------
+public:
+//------------------------------
+
   bool initialize(SAT_RendererOwner* AOwner) override {
 
     Display* display = AOwner->getX11Display();
 
+    //egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     egl_display = eglGetDisplay((EGLNativeDisplayType)display);
     if (egl_display == EGL_NO_DISPLAY) {
       printf("Can't create egl display\n");
@@ -100,11 +109,28 @@ public:
       eglGetConfigAttrib(egl_display,configs[i],EGL_RED_SIZE,&size);
       printf("Red size for config %d is %d\n",i,size);
       // just choose the first one
-      egl_conf = configs[i];
+      egl_config = configs[i];
       break;
     }
-    egl_context = eglCreateContext(egl_display,egl_conf,EGL_NO_CONTEXT,context_attribs);
+    egl_context = eglCreateContext(egl_display,egl_config,EGL_NO_CONTEXT,context_attribs);
     return true;
+
+    // egl_window = wl_egl_window_create(MSurface,AWidth,AHeight);
+    // if (MEGLWindow == EGL_NO_SURFACE) {
+    //   printf("Can't create egl window\n");
+    //   exit(1);
+    // } else {
+    //   fprintf(stderr, "Created egl window\n");
+    // }
+
+    // egl_surface = eglCreateWindowSurface(egl_display,egl_config,egl_window,NULL);
+    
+    // if (eglMakeCurrent(egl_display,egl_surface,egl_surface,egl_context)) {
+    //   fprintf(stderr, "Made current\n");
+    // } else {
+    //   fprintf(stderr, "Made current failed\n");
+    // }
+
   }
 
   //----------
@@ -146,6 +172,7 @@ public:
 
   void makeCurrent() override {
     MIsCurrent = true;
+    //eglMakeCurrent(egl_display,egl_surface);
   }
 
   //----------
@@ -157,6 +184,7 @@ public:
   //----------
 
   void swapBuffers() override {
+    //eglSwapBuffers(egl_display,egl_surface);
   }
 
   //----------

@@ -7,17 +7,25 @@
 
 //----------------------------------------------------------------------
 
-//#if defined(SAT_LINUX)
+#if defined(SAT_GUI_NOGUI)
+  ;
 
+#elif defined(SAT_GUI_WAYLAND)
   #include "gui/nanovg/sat_nanovg_painter.h"
   typedef SAT_NanoVGPainter SAT_ImplementedPainter;
 
-//#elif defined(SAT_WIN32)
-//
-//  #include "gui/nanovg/sat_nanovg_painter.h"
-//  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
-//
-//#endif
+#elif defined(SAT_GUI_X11)
+  #include "gui/nanovg/sat_nanovg_painter.h"
+  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
+
+#elif defined(SAT_GUI_WIN32)
+  #include "gui/nanovg/sat_nanovg_painter.h"
+  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
+
+#else
+  #error GUI type not defined
+
+#endif
 
 //----------------------------------------------------------------------
 //

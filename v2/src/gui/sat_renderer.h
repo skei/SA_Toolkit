@@ -7,18 +7,23 @@
 
 //----------------------------------------------------------------------
 
-#if defined(SAT_LINUX)
+#if defined(SAT_GUI_NOGUI)
+  ;
 
-  //#include "gui/glx/sat_glx_renderer.h"
-  //typedef SAT_GLXRenderer SAT_ImplementedRenderer;
-
+#elif defined(SAT_GUI_WAYLAND)
   #include "gui/egl/sat_egl_renderer.h"
   typedef SAT_EGLRenderer SAT_ImplementedRenderer;
 
-#elif defined(SAT_WIN32)
-
+#elif defined(SAT_GUI_WIN32)
   #include "gui/wgl/sat_wgl_renderer.h"
   typedef SAT_WGLRenderer SAT_ImplementedRenderer;
+
+#elif defined(SAT_GUI_X11)
+  #include "gui/glx/sat_glx_renderer.h"
+  typedef SAT_GLXRenderer SAT_ImplementedRenderer;
+
+#else
+  #error GUI type not defined
 
 #endif
 

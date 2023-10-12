@@ -11,6 +11,7 @@
 #include "gui/wayland/sat_wayland.h"
 #include "gui/sat_renderer.h"
 #include "gui/sat_renderer_owner.h"
+#include "gui/sat_surface_owner.h"
 //#include "gui/egl/sat_egl_renderer.h"
 
 // #include <EGL/egl.h>
@@ -26,11 +27,14 @@
 
 class SAT_WaylandWindow
 : public SAT_RendererOwner,
+//: public SAT_SurfaceOwner,
   public SAT_BaseWindow {
 
 //------------------------------
 private:
 //------------------------------
+
+  Display*                  MX11Display = nullptr;
 
   struct wl_display*        MDisplay      = nullptr;
   struct wl_compositor*     MCompositor   = nullptr;
@@ -39,186 +43,176 @@ private:
   struct wl_shell*          MShell        = nullptr;
   struct wl_shell_surface*  MShellSurface = nullptr;
 
-  struct wl_egl_window*     egl_window    = nullptr;
-
-  SAT_Renderer*             MRenderer       = nullptr;
-  //SAT_EGLRenderer*          MRenderer       = nullptr;
-
-  //EGLDisplay                egl_display   = nullptr;
-  //EGLConfig                 egl_conf      = nullptr;
-  //EGLSurface                egl_surface   = nullptr;
-  //EGLContext                egl_context   = nullptr;
-
+  SAT_EGLRenderer*          MRenderer     = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_WaylandWindow()
-  : SAT_BaseWindow() {
+  SAT_WaylandWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
+  : SAT_BaseWindow(AWidth,AHeight,AParent) {
+
+    MX11Display = XOpenDisplay(nullptr);
+
+    //get_server_references();
+
+    // wl_display_connect
+    // connects to a Wayland socket that was previously opened by a Wayland server.
+    // The name argument specifies the name of the socket or NULL to use the default (which is "wayland-0").
+    // returns a new display context object or NULL on failure. errno is set correspondingly.
+    // see also: wl_display_disconnect
+
+    MDisplay = wl_display_connect(NULL);
+    if (MDisplay == NULL) {
+      fprintf(stderr, "Can't connect to display\n");
+    }
+    printf("connected to display\n");
+
+    // The registry objects exist on the server.
+    // The client often needs to get handles to these, as proxy objects.
+    // The first handle is to the registry itself, which is done by a dedicated call, wl_display_get_registry.
+    // Two listeners are added to this by the call wl_registry_add_listener.
+    // The listeners are functions, one for new proxy objects and the other to remove proxy objects.
+    // They are both wrapped up in a struct of type wl_registry_listener which actually contains both functions.
+
+    struct wl_registry *registry = wl_display_get_registry(MDisplay);
+    wl_registry_add_listener(registry,&registry_listener,this);
+
+    // There isn't much that a client can do until it gets hold of proxies for important things like the compositor.
+    // Consequently it makes sense to make a blocking round-trip call to get the registry objects.
+
+    wl_display_dispatch(MDisplay);
+    wl_display_roundtrip(MDisplay);
+
+    // wl_compositor
+    // The wl_compositor global is the Wayland compositor's, er, compositor.
+    // Through this interface, you may send the server your windows for presentation,
+    // to be composited with the other windows being shown alongside it.
+    // The compositor has two jobs: the creation of surfaces and regions.
+
+    // wl_shell
+    // This interface is implemented by servers that provide desktop-style user interfaces.
+    // It allows clients to associate a wl_shell_surface with a basic surface.
+    // Note! This protocol is deprecated and not intended for production use.
+    // For desktop-style user interfaces, use xdg_shell.
+    // Compositors and clients should not implement this interface.    
+
+    if (MCompositor == NULL || MShell == NULL) {
+      printf("Can't find compositor or shell\n");
+    } else {
+      printf("Found compositor and shell\n");
+    }
+
+    // "A surface is a rectangular area that is displayed on the screen.
+    // It has a location, size and pixel contents." (Wayland specification).
+    // So to draw anything, we need a Wayland surface to draw into.
+    // We build a surface using a compositor by the call to wl_compositor_create_surface.
+
+    MSurface = wl_compositor_create_surface(MCompositor);
+    if (MSurface == NULL) {
+      printf("Can't create surface\n");
+      //return false;
+    } else {
+      printf("Created surface\n");
+    }
+
+    // Surfaces can exist on many different devices, and there can be different Wayland servers for each.
+    // For servers with desktop-style interfaces, Wayland supplies a further surface, a shell surface.
+    // First we have to get a proxy for a shell from the registry.
+    // A shell surface is created from a shell by wl_shell_get_shell_surface.
+
+    MShellSurface = wl_shell_get_shell_surface(MShell,MSurface);
+
+    // Then in order to show a surface on such a device, the surface must be wrapped in a shell surface
+    // which is then set to be a toplevel surface.    
+
+    wl_shell_surface_set_toplevel(MShellSurface);
+
+    //-----
+
+    MRegion = wl_compositor_create_region(MCompositor);
+    wl_region_add(MRegion,0,0,AWidth,AHeight);
+
+    // This request sets the region of the surface that contains opaque content.
+    // A NULL wl_region causes the pending opaque region to be set to empty.
+
+    wl_surface_set_opaque_region(MSurface,MRegion);
+
+    //-----
+
+    // An EGL window needs to be created from a Wayland surface, by the Wayland call wl_egl_window_create.
+    // This is then turned into an EGL drawing surface by the EGL call eglCreateWindowSurface.
+
+    struct wl_egl_window* egl_window = wl_egl_window_create(MSurface,AWidth,AHeight);
+    if (egl_window == EGL_NO_SURFACE) {
+      printf("Can't create egl window\n");
+      //return false;
+    } else {
+      fprintf(stderr, "Created egl window\n");
+    }
+
+//    MRenderer = new SAT_EGLRenderer();
+//    MRenderer->initialize(this);
+//    EGLDisplay egl_display = MRenderer->getEGLDisplay();
+//    EGLConfig egl_config = MRenderer->getEGLConfig();
+//
+//    EGLSurface egl_surface = eglCreateWindowSurface(egl_display,egl_config,egl_window, NULL);
+
+    // make context current
+
+//    EGLContext  egl_context = MRenderer->getEGLContext();
+//
+//    if (eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context)) {
+//      fprintf(stderr, "Made current\n");
+//    } else {
+//      fprintf(stderr, "Made current failed\n");
+//    }
+
+    // drawing
+
+    /*
+    glClearColor(1.0, 1.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glFlush();
+    */
+
+    // swap buffers
+
+
+//    if (eglSwapBuffers(egl_display, egl_surface)) {
+//      fprintf(stderr, "Swapped buffers\n");
+//    } else {
+//      fprintf(stderr, "Swapped buffers failed\n");
+//    }
+
   }
 
   //----------
 
   virtual ~SAT_WaylandWindow() {
+    //...
+    wl_display_disconnect(MDisplay);
+    printf("disconnected from display\n");
   }
 
 //------------------------------
 public: // SAT_RendererOwner
 //------------------------------
 
-  Display* getX11Display() override {
-    return nullptr;
-  }
+  Display*    getX11Display() override { return MX11Display;  }
+//EGLDisplay  getEGLDisplay() override { return MDisplay; }
+//EGLConfig   getEGLConfig()  override { return MConfig; }
+//EGLContext  getEGLContext() override { return MContext; }
 
-//------------------------------
-public:
-//------------------------------
+// //------------------------------
+// public: // SAT_SurfaceOwner
+// //------------------------------
 
-  bool initialize(/*SAT_Renderer* ARenderer*/) {
-
-    //-----
-
-    //get_server_references();
-
-    MDisplay = wl_display_connect(NULL);
-    if (MDisplay == NULL) {
-      fprintf(stderr, "Can't connect to display\n");
-      exit(1);
-    }
-    printf("connected to display\n");
-    struct wl_registry *registry = wl_display_get_registry(MDisplay);
-    wl_registry_add_listener(registry, &registry_listener, /*NULL*/this);
-    wl_display_dispatch(MDisplay);
-    wl_display_roundtrip(MDisplay);
-
-    //-----
-
-    if (MCompositor == NULL || MShell == NULL) {
-      printf("Can't find compositor or shell\n");
-      exit(1);
-    } else {
-      printf("Found compositor and shell\n");
-    }
-    MSurface = wl_compositor_create_surface(MCompositor);
-    if (MSurface == NULL) {
-      printf("Can't create surface\n");
-      return false;
-    } else {
-      printf("Created surface\n");
-    }
-    MShellSurface = wl_shell_get_shell_surface(MShell,MSurface);
-    wl_shell_surface_set_toplevel(MShellSurface);
-
-    //-----
-
-    // create_opaque_region();
-
-    MRegion = wl_compositor_create_region(MCompositor);
-    wl_region_add(MRegion,0,0,480,360);
-    wl_surface_set_opaque_region(MSurface,MRegion);
-
-    //-----
-
-    //init_egl();
-
-    //egl_display = eglGetDisplay((EGLNativeDisplayType)MDisplay);
-    //if (egl_display == EGL_NO_DISPLAY) {
-    //  printf("Can't create egl display\n");
-    //  return false;
-    //} else {
-    //  fprintf(stderr, "Created egl display\n");
-    //}
-    //
-    //EGLint major, minor;
-    //if (eglInitialize(egl_display,&major,&minor) != EGL_TRUE) {
-    //  printf("Can't initialise egl display\n");
-    //  return false;
-    //}
-    //printf("EGL major: %d, minor %d\n",major,minor);
-    //
-    //EGLint count;
-    //eglGetConfigs(egl_display, NULL, 0, &count);
-    //printf("EGL has %d configs\n", count);
-    //
-    //EGLint config_attribs[] = {
-    //  EGL_SURFACE_TYPE,     EGL_WINDOW_BIT,
-    //  EGL_RED_SIZE,         8,
-    //  EGL_GREEN_SIZE,       8,
-    //  EGL_BLUE_SIZE,        8,
-    //  EGL_RENDERABLE_TYPE,  EGL_OPENGL_ES2_BIT,
-    //  EGL_NONE
-    //};
-    //
-    //EGLConfig* configs = (EGLConfig*)calloc(count,sizeof *configs);
-    //EGLint num;
-    //eglChooseConfig(egl_display,config_attribs,configs,count,&num);
-    //
-    //for (int i=0; i<num; i++) {
-    //  EGLint size;
-    //  eglGetConfigAttrib(egl_display,configs[i],EGL_BUFFER_SIZE,&size);
-    //  printf("Buffer size for config %d is %d\n", i,size);
-    //  eglGetConfigAttrib(egl_display,configs[i],EGL_RED_SIZE,&size);
-    //  printf("Red size for config %d is %d\n", i,size);
-    //  // just choose the first one
-    //  egl_conf = configs[i];
-    //  break;
-    //}
-    //
-    //static const EGLint context_attribs[] = {
-    //  EGL_CONTEXT_CLIENT_VERSION, 2,
-    //  EGL_NONE
-    //};
-    //
-    //egl_context = eglCreateContext(egl_display, egl_conf, EGL_NO_CONTEXT, context_attribs);
-
-    //-----
-
-    //create_window();
-
-    // #if defined(SAT_GUI_WAYLAND)
-
-    //   egl_window = wl_egl_window_create(MSurface,480, 360);
-    //   if (egl_window == EGL_NO_SURFACE) {
-    //     printf("Can't create egl window\n");
-    //     exit(1);
-    //   } else {
-    //     fprintf(stderr, "Created egl window\n");
-    //   }
-
-    //   egl_surface = eglCreateWindowSurface(egl_display, egl_conf, egl_window, NULL);
-    //   if (eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context)) {
-    //     fprintf(stderr, "Made current\n");
-    //   } else {
-    //     fprintf(stderr, "Made current failed\n");
-    //   }
-
-    //   /*
-    //   glClearColor(1.0, 1.0, 0.0, 1.0);
-    //   glClear(GL_COLOR_BUFFER_BIT);
-    //   glFlush();
-    //   */
-
-    //   if (eglSwapBuffers(egl_display, egl_surface)) {
-    //     fprintf(stderr, "Swapped buffers\n");
-    //   } else {
-    //     fprintf(stderr, "Swapped buffers failed\n");
-    //   }
-
-    // #endif
-
-    //-----
-
-    return true;
-  }
-
-  //----------
-
-  void cleanup() {
-    //...
-    wl_display_disconnect(MDisplay);
-    printf("disconnected from display\n");
-  }
+//   EGLDisplay          getEGLDisplay() override { return nullptr; }
+//   EGLConfig           getEGLConfig()  override { return nullptr; }
+// //EGLContext          getEGLContext() override { return nullptr; }
+//   EGLNativeWindowType getEGLWindow()  override { return 0; }
+  
 
 //------------------------------
 public: // SAT_BaseWindow

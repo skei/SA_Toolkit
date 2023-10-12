@@ -5,19 +5,28 @@
 #include "sat.h"
 #include "gui/base/sat_base_window.h"
 #include "gui/sat_renderer.h"
+#include "gui/sat_surface_owner.h"
 #include "gui/sat_painter.h"
 
 //----------------------------------------------------------------------
 
-#if defined(SAT_WIN32)
+#if defined(SAT_GUI_NOGUI)
+  ;
 
+#elif defined(SAT_GUI_WAYLAND)
+  #include "gui/wayland/sat_wayland_window.h"
+  typedef SAT_WaylandWindow SAT_ImplementedWindow;
+
+#elif defined(SAT_GUI_WIN32)
   #include "gui/win32/sat_win32_window.h"
   typedef SAT_Win32Window SAT_ImplementedWindow;
 
-#elif defined(SAT_LINUX)
-
+#elif defined(SAT_GUI_X11)
   #include "gui/x11/sat_x11_window.h"
   typedef SAT_X11Window SAT_ImplementedWindow;
+
+#else
+  #error GUI type not defined
 
 #endif
 
@@ -41,14 +50,16 @@ private:
 public:
 //------------------------------
 
-  SAT_Window()
-  : SAT_ImplementedWindow() {
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
+  : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
   }
 
   //----------
 
   virtual ~SAT_Window() {
   }
+
+
 
 
 

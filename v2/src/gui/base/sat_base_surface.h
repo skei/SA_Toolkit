@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/sat_surface_owner.h"
 
 //----------------------------------------------------------------------
 
@@ -12,7 +13,7 @@ class SAT_BaseSurface {
 public:
 //------------------------------
 
-  SAT_BaseSurface() {
+  SAT_BaseSurface(SAT_SurfaceOwner* AOwner) {
   }
 
   //----------

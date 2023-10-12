@@ -211,12 +211,12 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
 // #define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
 
-// #define SAT_STATE_NONE                          0x00
-// #define SAT_STATE_SHIFT                         0x01
-// #define SAT_STATE_CAPS                          0x02
-// #define SAT_STATE_CTRL                          0x04
-// #define SAT_STATE_ALT                           0x08
-// #define SAT_STATE_ALTGR                         0x10
+#define SAT_STATE_NONE                          0x00
+#define SAT_STATE_SHIFT                         0x01
+#define SAT_STATE_CAPS                          0x02
+#define SAT_STATE_CTRL                          0x04
+#define SAT_STATE_ALT                           0x08
+#define SAT_STATE_ALTGR                         0x10
 
 // #define SAT_SYMBOL_NONE                         0
 // #define SAT_SYMBOL_RECT                         1
@@ -412,7 +412,7 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 
 // #define SAT_WIDGET_UPDATE_VALUE                 0
 
-// #define SAT_WINDOW_THREAD_KILL                  666
+#define SAT_WINDOW_THREAD_KILL                  666
 
 //----------------------------------------------------------------------
 #endif

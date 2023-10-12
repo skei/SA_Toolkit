@@ -5,15 +5,18 @@
 //----------
 
 #include "sat.h"
-#include "gui/wayland/sat_wayland_window.h"
+#include "gui/sat_window.h"
+#include "gui/glx/sat_glx_renderer.h"
 
 //----------------------------------------------------------------------
 
 int main() {
 
-  printf("hello, world!\n");
+  SAT_Window* window = new SAT_Window(640,480);
+  window->open();
+  window->eventLoop();
+  window->close();
+  delete window;
 
-
-  printf("goodbye, world!\n");
   return 0;
 }

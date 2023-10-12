@@ -195,8 +195,8 @@
 #if !defined (SAT_GUI_FORMAT_DEFINED)
 
   #if defined (SAT_LINUX)
-    #define SAT_GUI_WAYLAND  
-    //#define SAT_GUI_X11
+    #define SAT_GUI_X11
+    //#define SAT_GUI_WAYLAND  
 
   #elif defined (SAT_WIN32)
     #define SAT_GUI_WIN32
