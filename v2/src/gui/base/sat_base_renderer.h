@@ -13,7 +13,7 @@ class SAT_BaseRenderer {
 public:
 //------------------------------
 
-  SAT_BaseRenderer() {
+  SAT_BaseRenderer(SAT_RendererOwner* AOwner) {
   }
 
   //----------
@@ -24,9 +24,6 @@ public:
 //------------------------------
 public:
 //------------------------------
-
-  virtual bool initialize(SAT_RendererOwner* AOwner) { return false; }
-  virtual void cleanup() {}
 
   virtual void beginRendering() {}
   virtual void beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}

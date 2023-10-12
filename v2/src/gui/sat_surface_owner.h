@@ -27,7 +27,6 @@ public:
     virtual EGLConfig           getEGLConfig()  { return nullptr; }
   //virtual EGLContext          getEGLContext() { return nullptr; }
     virtual EGLNativeWindowType getEGLWindow()  { return 0; }
-    ;
 
   #elif defined(SAT_GUI_WIN32)
     ;

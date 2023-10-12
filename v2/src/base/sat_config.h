@@ -51,8 +51,8 @@
 // gui
 //------------------------------
 
-//#define SAT_RENDERER_MAJOR_VERSION              3
-//#define SAT_RENDERER_MINOR_VERSION              2
+#define SAT_RENDERER_MAJOR_VERSION              3
+#define SAT_RENDERER_MINOR_VERSION              2
 //#define SAT_PAINTER_CLIP_RECT_STACK_SIZE        256
 #define SAT_WIDGET_MAX_VALUES                   16
 #define SAT_WINDOW_DBLCLICK_MS                  250

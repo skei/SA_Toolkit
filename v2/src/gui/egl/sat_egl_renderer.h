@@ -40,28 +40,7 @@ private:
 public:
 //------------------------------
 
-  SAT_EGLRenderer() {
-  }
-
-  //----------
-
-  virtual ~SAT_EGLRenderer() {
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  EGLDisplay  getEGLDisplay() { return egl_display; }
-  EGLConfig   getEGLConfig()  { return egl_config; }
-  EGLContext  getEGLContext() { return egl_context; }
-
-//------------------------------
-public:
-//------------------------------
-
-  bool initialize(SAT_RendererOwner* AOwner) override {
-
+  SAT_EGLRenderer(SAT_RendererOwner* AOwner) {
     Display* display = AOwner->getX11Display();
 
     //egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -130,19 +109,28 @@ public:
     // } else {
     //   fprintf(stderr, "Made current failed\n");
     // }
-
   }
 
   //----------
 
-  void cleanup() override {
+  virtual ~SAT_EGLRenderer() {
     eglDestroyContext(egl_display,egl_context);
     // eglChooseConfig
     // initialize
     // GetDisplay
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
+
+  EGLDisplay  getEGLDisplay() { return egl_display; }
+  EGLConfig   getEGLConfig()  { return egl_config; }
+  EGLContext  getEGLContext() { return egl_context; }
+
+//------------------------------
+public:
+//------------------------------
 
   void beginRendering() override {
     makeCurrent();

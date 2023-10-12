@@ -43,8 +43,8 @@ class SAT_Window
 private:
 //------------------------------
 
-  SAT_Renderer* MRenderer = nullptr;
-  SAT_Painter*  MPainter  = nullptr;
+  //SAT_Renderer* MRenderer = nullptr;
+  //SAT_Painter*  MPainter  = nullptr;
 
 //------------------------------
 public:
@@ -52,11 +52,16 @@ public:
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+
+    //MRenderer = new SAT_Renderer(this);
+    //MPainter = new SAT_Painter(this);
   }
 
   //----------
 
   virtual ~SAT_Window() {
+    //delete MPainter;
+    //delete MRenderer;
   }
 
 

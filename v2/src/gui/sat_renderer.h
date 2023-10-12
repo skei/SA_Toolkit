@@ -40,7 +40,8 @@ class SAT_Renderer
 public:
 //------------------------------
 
-  SAT_Renderer() {
+  SAT_Renderer(SAT_RendererOwner* AOwner)
+  : SAT_ImplementedRenderer(AOwner) {
   }
 
   //----------

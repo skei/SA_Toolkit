@@ -6,7 +6,6 @@
 
 #include "sat.h"
 #include "gui/sat_window.h"
-#include "gui/glx/sat_glx_renderer.h"
 
 //----------------------------------------------------------------------
 

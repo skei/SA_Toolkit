@@ -16,6 +16,7 @@
 
 class SAT_X11Window
 : public SAT_RendererOwner
+, public SAT_PainterOwner
 , public SAT_SurfaceOwner
 , public SAT_BaseWindow {
 
@@ -252,6 +253,10 @@ public: // SAT_RendererOwner
 
   Display*      getX11Display() override { return MDisplay; }
   xcb_window_t  getXcbWindow()  override { return MWindow; }
+
+//------------------------------
+public: // SAT_PainterOwner
+//------------------------------
 
 //------------------------------
 public: // SAT_SurfaceOwner

@@ -30,13 +30,13 @@
 
 #include "sat.h"
 #include "gui/base/sat_base_renderer.h"
-#include "gui/glx/sat_glx.h"
 #include "gui/x11/sat_x11.h"
+#include "gui/glx/sat_glx.h"
 
-//#define SOGL_MAJOR_VERSION SAT_OPENGL_MAJOR
-//#define SOGL_MINOR_VERSION SAT_OPENGL_MINOR
-//#define SOGL_IMPLEMENTATION_X11
-//#include "extern/sogl/simple-opengl-loader.h"
+#define SOGL_MAJOR_VERSION SAT_RENDERER_MAJOR_VERSION
+#define SOGL_MINOR_VERSION SAT_RENDERER_MINOR_VERSION
+#define SOGL_IMPLEMENTATION_X11
+#include "extern/sogl/simple-opengl-loader.h"
 
 #include <GL/gl.h>
 #include <GL/glx.h>
@@ -120,20 +120,10 @@ private:
 public:
 //------------------------------
 
-  SAT_GLXRenderer() {
-  }
-
-  //----------
-
-  virtual ~SAT_GLXRenderer() {
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  bool initialize(SAT_RendererOwner* AOwner) override {
   //SAT_X11OpenGL(Display* display, xcb_window_t window/*, uint32_t width, uint32_t height*/) {
+
+  SAT_GLXRenderer(SAT_RendererOwner* AOwner)
+  : SAT_BaseRenderer(AOwner) {
 
     //MTarget = ATarget;
     //old_x_error_handler = XSetErrorHandler(x_error_handler);
@@ -170,12 +160,11 @@ public:
     //resetCurrent();
     //makeCurrent(0);
     MIsCurrent = true;
-    return true;
   }
 
   //----------
 
-  void cleanup() override {
+  virtual ~SAT_GLXRenderer() {
     //if (MDrawableIsWindow) {
       glXDestroyWindow(MDisplay,MDrawable);
     //}
@@ -187,7 +176,9 @@ public:
     //SAT_XlibCleanupErrorHandler();
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   void beginRendering() override {
 //    makeCurrent();
@@ -294,43 +285,43 @@ private:
       glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
       glXSwapIntervalEXT(ADisplay,ADrawable,0);
     }
+    //} else if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
+    //  glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
+    //} else {
+    //  #ifdef DISPLAY_GLX_INFO
+    //  puts("VSync not supported");
+    //  #endif
+    //  return;
+    //}
+    //if (glXSwapIntervalEXT) {
+    //  if (strstr(glXExtensions, "GLX_EXT_swap_control_tear") != nullptr) {
+    //    #ifdef DISPLAY_GLX_INFO
+    //    puts("Enabling ADAPTIVE VSync");
+    //    #endif
+    //    glXSwapIntervalEXT(dpy, xWin, -1);
+    //  } else {
+    //    #ifdef DISPLAY_GLX_INFO
+    //    puts("Enabling VSync");
+    //    #endif
+    //    glXSwapIntervalEXT(dpy, xWin, 1);
+    //  }
+    //} else if (glXSwapIntervalMESA) {
+    //    #ifdef DISPLAY_GLX_INFO
+    //    puts("Enabling VSync");
+    //    #endif
+    //    glXSwapIntervalMESA(1);
+    //  } else {
+    //    #ifdef DISPLAY_GLX_INFO
+    //    puts("Failed to load swap control function");
+    //    #endif
+    //  }
+    //}
   }
-
-  //} else if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
-  //  glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
-  //} else {
-  //  #ifdef DISPLAY_GLX_INFO
-  //  puts("VSync not supported");
-  //  #endif
-  //  return;
-  //}
-  //if (glXSwapIntervalEXT) {
-  //  if (strstr(glXExtensions, "GLX_EXT_swap_control_tear") != nullptr) {
-  //    #ifdef DISPLAY_GLX_INFO
-  //    puts("Enabling ADAPTIVE VSync");
-  //    #endif
-  //    glXSwapIntervalEXT(dpy, xWin, -1);
-  //  } else {
-  //    #ifdef DISPLAY_GLX_INFO
-  //    puts("Enabling VSync");
-  //    #endif
-  //    glXSwapIntervalEXT(dpy, xWin, 1);
-  //  }
-  //} else if (glXSwapIntervalMESA) {
-  //    #ifdef DISPLAY_GLX_INFO
-  //    puts("Enabling VSync");
-  //    #endif
-  //    glXSwapIntervalMESA(1);
-  //  } else {
-  //    #ifdef DISPLAY_GLX_INFO
-  //    puts("Failed to load swap control function");
-  //    #endif
-  //  }
-  //}
 
   //----------
 
   void enableVSync() {
+    // TODO
   }
 
 //------------------------------
