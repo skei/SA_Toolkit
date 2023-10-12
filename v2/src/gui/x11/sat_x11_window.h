@@ -36,7 +36,7 @@ public:
   }
 
 //------------------------------
-public: // SAT_RenderContext
+public: // SAT_RendererOwner
 //------------------------------
 
   Display* getX11Display() override {

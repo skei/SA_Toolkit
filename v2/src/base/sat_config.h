@@ -116,7 +116,6 @@
 //----------
 
 #if defined (SAT_PLUGIN_ALL)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
   #define SAT_PLUGIN_DSSI
@@ -127,41 +126,33 @@
   #define SAT_PLUGIN_VST3
 
 #elif defined (SAT_PLUGIN_CLAP)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
 
 #elif defined (SAT_PLUGIN_DSSI)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
 
 #elif defined (SAT_PLUGIN_EXE)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
 
 #elif defined (SAT_PLUGIN_LADSPA)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
 
 #elif defined (SAT_PLUGIN_LV2)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
 
 #elif defined (SAT_PLUGIN_VST2)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
 
 #elif defined (SAT_PLUGIN_VST3)
-
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
 
 //#else
-//
 //  #error no PLUGIN type defined
 
 #endif
@@ -169,7 +160,6 @@
 //----------
 
 #if !defined (SAT_PLUGIN_FORMAT_DEFINED)
-
   //#define SAT_PLUGIN_ALL
   #define SAT_PLUGIN_CLAP
 
@@ -179,21 +169,38 @@
 // gui
 //------------------------------
 
-#if defined (SAT_LINUX)
+#undef SAT_GUI_FORMAT_DEFINED
 
-  #define SAT_GUI_X11
-  //#define SAT_WINDOW_X11
-  //#define SAT_RENDERER_GL
-  //#define SAT_PAINTER_NANOVG
-  ;
+//----------
 
-#elif defined (SAT_WIN32)
+#if defined (SAT_GUI_NONE)
+  #define SAT_GUI_FORMAT_DEFINED
 
-  #define SAT_GUI_WIN32
-  //#define SAT_WINDOW_WIN32
-  //#define SAT_RENDERER_GL
-  //#define SAT_PAINTER_NANOVG
-  ;
+#elif defined (SAT_GUI_WAYLAND)
+  #define SAT_GUI_FORMAT_DEFINED
+
+#elif defined (SAT_GUI_WIN32)
+  #define SAT_GUI_FORMAT_DEFINED
+
+#elif defined (SAT_GUI_X11)
+  #define SAT_GUI_FORMAT_DEFINED
+
+//#else
+//  #error no GUI type defined
+
+#endif
+
+//----------
+
+#if !defined (SAT_GUI_FORMAT_DEFINED)
+
+  #if defined (SAT_LINUX)
+    #define SAT_GUI_WAYLAND  
+    //#define SAT_GUI_X11
+
+  #elif defined (SAT_WIN32)
+    #define SAT_GUI_WIN32
+  #endif
 
 #endif
 

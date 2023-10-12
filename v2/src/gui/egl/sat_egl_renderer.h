@@ -1,13 +1,16 @@
-#ifndef sat_x11_gles_renderer_included
-#define sat_x11_gles_renderer_included
+#ifndef sat_egl_renderer_included
+#define sat_egl_renderer_included
 //----------------------------------------------------------------------
+
+// TODO: redo this..
 
 #include "sat.h"
 //#include "extern/glad/glad.h"
 #include "gui/base/sat_base_renderer.h"
+#include "gui/egl/sat_egl.h"
 #include "gui/x11/sat_x11.h"
 
-#include <EGL/egl.h>
+//#include <EGL/egl.h>
 //#include <EGL/eglext.h>
 //#include <EGL/eglplatform.h>
 //#include <GLES2/gl2.h>
@@ -19,30 +22,30 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_X11GLESRenderer
+class SAT_EGLRenderer
 : public SAT_BaseRenderer {
 
 //------------------------------
 private:
 //------------------------------
 
-  EGLDisplay        egl_display;
-  EGLConfig         egl_conf;
-  EGLSurface        egl_surface;
-  EGLContext        egl_context;
-
-  bool              MIsCurrent        = false;
+  EGLDisplay  egl_display = nullptr;
+  EGLConfig   egl_conf    = nullptr;
+  EGLSurface  egl_surface = nullptr;
+  EGLContext  egl_context = nullptr;
+  
+  bool        MIsCurrent  = false;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_X11GLESRenderer() {
+  SAT_EGLRenderer() {
   }
 
   //----------
 
-  virtual ~SAT_X11GLESRenderer() {
+  virtual ~SAT_EGLRenderer() {
   }
 
 //------------------------------

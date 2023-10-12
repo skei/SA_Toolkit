@@ -5,7 +5,7 @@
 //----------
 
 #include "sat.h"
-#include "gui/wayland/sat_wayland_gles_window.h"
+#include "gui/wayland/sat_wayland_window.h"
 
 //----------------------------------------------------------------------
 

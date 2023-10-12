@@ -9,35 +9,16 @@
 
 #if defined(SAT_LINUX)
 
-  //#if defined(SAT_RENDERER_GL)
-  //
-  //  #include "gui/x11/sat_x11_gl_renderer.h"
-  //  typedef SAT_X11GLRenderer SAT_ImplementedRenderer;
-  //
-  //#elif defined(SAT_RENDERER_GLES)
+  //#include "gui/glx/sat_glx_renderer.h"
+  //typedef SAT_GLXRenderer SAT_ImplementedRenderer;
 
-    #include "gui/x11/sat_x11_gles_renderer.h"
-    typedef SAT_X11GLESRenderer SAT_ImplementedRenderer;
-
-  //#else
-  //
-  //  #error No RENDERER type defined
-  //
-  //#endif
+  #include "gui/egl/sat_egl_renderer.h"
+  typedef SAT_EGLRenderer SAT_ImplementedRenderer;
 
 #elif defined(SAT_WIN32)
 
-  //#if defined(SAT_RENDERER_GL)
-  //  #include "gui/win32/sat_win32_gl_renderer.h"
-  //  typedef SAT_Win32GLRenderer SAT_ImplementedRenderer;
-  //#elif defined(SAT_RENDERER_GLES)
-
-    #include "gui/win32/sat_win32_gles_renderer.h"
-    typedef SAT_Win32GLESRenderer SAT_ImplementedRenderer;
-
-  //#else
-  //  #error No RENDERER type defined
-  //#endif
+  #include "gui/wgl/sat_wgl_renderer.h"
+  typedef SAT_WGLRenderer SAT_ImplementedRenderer;
 
 #endif
 

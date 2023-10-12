@@ -29,7 +29,7 @@
 INPUT="build.cpp"
 OUTPUT="build"
 FORMAT="CLAP"
-GUI="NANOVG"
+GUI="NOGUI"
 DEBUG=false
 TEST=false
 LIBRARY=false
@@ -64,7 +64,7 @@ function print_help_and_exit {
   echo "  -i <path>   input file name/path"
   echo "  -o <path>   output file name/path"
   echo "  -f <type>   format (all,clap,dssi,exe,ladspa,lv2,vst2,vst3)"
-  echo "  -g <type>   gui (cairo,gdi,nanovg,nogui,x11)"
+  echo "  -g <type>   gui (nogui,wayland,win32,x11)"
   echo "  -d          debug mode"
   echo "  -t          test mode"
   echo "  -h, -?      this help"
@@ -217,21 +217,17 @@ fi
 #------------------------------
 
 case $GUI in
-  "CAIRO")
-    #echo "gui = cairo"
-    FLAGS+=" -DSAT_GUI_CAIRO"
-    ;;
-  "GDI")
-    #echo "gui = gdi"
-    FLAGS+=" -DSAT_GUI_GDI"
-    ;;
-  "NANOVG")
-    #echo "gui = nanovg"
-    FLAGS+=" -DSAT_GUI_NANOVG"
-    ;; 
   "NOGUI")
     #echo "gui = nogui"
     FLAGS+=" -DSAT_GUI_NOGUI"
+    ;;
+  "WAYLAND")
+    #echo "gui = win32"
+    FLAGS+=" -DSAT_GUI_WAYLAND"
+    ;;
+  "WIN32")
+    #echo "gui = win32"
+    FLAGS+=" -DSAT_GUI_WIN32"
     ;;
   "X11")
     #echo "gui = x11"

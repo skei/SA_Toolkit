@@ -1,9 +1,10 @@
-#ifndef sat_x11_gl_renderer_included
-#define sat_x11_gl_renderer_included
+#ifndef sat_glx_renderer_included
+#define sat_glx_renderer_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
 #include "gui/base/sat_base_renderer.h"
+#include "gui/glx/sat_glx.h"
 
 //----------------------------------------------------------------------
 //
@@ -11,19 +12,19 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_X11GLRenderer
+class SAT_GLXRenderer
 : public SAT_BaseRenderer {
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_X11GLRenderer() {
+  SAT_GLXRenderer() {
   }
 
   //----------
 
-  virtual ~SAT_X11GLRenderer() {
+  virtual ~SAT_GLXRenderer() {
   }
 
 //------------------------------
