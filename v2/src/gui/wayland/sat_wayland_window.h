@@ -40,11 +40,12 @@ private:
   struct wl_display*        MDisplay      = nullptr;
   struct wl_compositor*     MCompositor   = nullptr;
   struct wl_surface*        MSurface      = nullptr;
-  struct wl_region*         MRegion       = nullptr;
   struct wl_shell*          MShell        = nullptr;
   struct wl_shell_surface*  MShellSurface = nullptr;
+  struct wl_region*         MRegion       = nullptr;
+  struct wl_egl_window*     MWindow       = nullptr;
 
-  SAT_EGLRenderer*          MRenderer     = nullptr;
+//  SAT_EGLRenderer*          MRenderer     = nullptr;
 
 //------------------------------
 public:
@@ -144,8 +145,8 @@ public:
     // An EGL window needs to be created from a Wayland surface, by the Wayland call wl_egl_window_create.
     // This is then turned into an EGL drawing surface by the EGL call eglCreateWindowSurface.
 
-    struct wl_egl_window* egl_window = wl_egl_window_create(MSurface,AWidth,AHeight);
-    if (egl_window == EGL_NO_SURFACE) {
+    MWindow = wl_egl_window_create(MSurface,AWidth,AHeight);
+    if (MWindow == EGL_NO_SURFACE) {
       printf("WL: Can't create egl window\n");
       //return false;
     } else {
@@ -157,12 +158,11 @@ public:
 //    EGLDisplay egl_display = MRenderer->getEGLDisplay();
 //    EGLConfig egl_config = MRenderer->getEGLConfig();
 //
-//    EGLSurface egl_surface = eglCreateWindowSurface(egl_display,egl_config,egl_window, NULL);
+//    EGLSurface egl_surface = eglCreateWindowSurface(egl_display,egl_config,MWindow, NULL);
 
     // make context current
 
 //    EGLContext  egl_context = MRenderer->getEGLContext();
-//
 //    if (eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context)) {
 //      fprintf(stderr, "Made current\n");
 //    } else {
@@ -178,7 +178,6 @@ public:
     */
 
     // swap buffers
-
 
 //    if (eglSwapBuffers(egl_display, egl_surface)) {
 //      fprintf(stderr, "Swapped buffers\n");
@@ -200,7 +199,12 @@ public:
 public: // SAT_RendererOwner
 //------------------------------
 
-  Display*    getX11Display() override { return MX11Display;  }
+  Display*                getX11Display()     override  { return MX11Display;  }
+  struct wl_surface*      getWaylandSurface() override  { return MSurface; }
+  virtual wl_egl_window*  getWaylandWindow()  override  { return MWindow; }
+
+
+//  struct wl_egl_surface*  getWaylandWindow() override  { return MEGLWindow; }
   
 //EGLDisplay  getEGLDisplay() override { return MDisplay; }
 //EGLConfig   getEGLConfig()  override { return MConfig; }

@@ -8,10 +8,9 @@
 #include "base/types/sat_queue.h"
 #include "base/types/sat_rect.h"
 
-typedef double  sat_param_t;
-typedef float   sat_sample_t;
-
-typedef std::atomic<bool> SAT_AtomicBool;
+typedef double            sat_param_t;
+typedef float             sat_sample_t;
+typedef std::atomic<bool> sat_atomic_bool_t;
 
 //----------------------------------------------------------------------
 #endif

@@ -28,12 +28,14 @@ class SAT_EGLRenderer
 private:
 //------------------------------
 
-  EGLDisplay  egl_display = nullptr;
-  EGLConfig   egl_config    = nullptr;
-  EGLContext  egl_context = nullptr;
-//EGLSurface  egl_surface = nullptr;
+  EGLDisplay            egl_display = nullptr;
+  EGLConfig             egl_config  = nullptr;
+  EGLContext            egl_context = nullptr;
+
+  EGLSurface            egl_surface = nullptr;
+  struct wl_egl_window* egl_window  = nullptr;
   
-  bool        MIsCurrent  = false;
+  bool                  MIsCurrent  = false;
 
 //------------------------------
 public:
@@ -95,15 +97,18 @@ public:
     egl_context = eglCreateContext(egl_display,egl_config,EGL_NO_CONTEXT,context_attribs);
     //return true;
 
-    // egl_window = wl_egl_window_create(MSurface,AWidth,AHeight);
-    // if (MEGLWindow == EGL_NO_SURFACE) {
-    //   printf("Can't create egl window\n");
-    //   exit(1);
-    // } else {
-    //   fprintf(stderr, "Created egl window\n");
-    // }
+    wl_surface* surface = AOwner->getWaylandSurface();
+    
+    egl_window = wl_egl_window_create(surface,512,512);
+    if (egl_window == EGL_NO_SURFACE) {
+      printf("Can't create egl window\n");
+      //exit(1);
+    } else {
+      fprintf(stderr, "Created egl window\n");
+    }
 
-    // egl_surface = eglCreateWindowSurface(egl_display,egl_config,egl_window,NULL);
+    wl_egl_window* owner_window = AOwner->getWaylandWindow();
+    egl_surface = eglCreateWindowSurface(egl_display,egl_config,(EGLNativeWindowType)owner_window,NULL);
     
     // if (eglMakeCurrent(egl_display,egl_surface,egl_surface,egl_context)) {
     //   fprintf(stderr, "Made current\n");
@@ -163,13 +168,13 @@ public:
   //----------
 
   bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    //glViewport(AXpos,AYpos,AWidth,AHeight);
+    glViewport(AXpos,AYpos,AWidth,AHeight);
     return true;
   }
 
   bool makeCurrent() override {
     MIsCurrent = true;
-//    eglMakeCurrent(egl_display,egl_surface,egl_surface,egl_context);
+    eglMakeCurrent(egl_display,egl_surface,egl_surface,egl_context);
     return true;
   }
 
@@ -189,7 +194,7 @@ public:
   //----------
 
   bool swapBuffers() override {
-//    eglSwapBuffers(egl_display,egl_surface);
+    eglSwapBuffers(egl_display,egl_surface);
     return true;
   }
 

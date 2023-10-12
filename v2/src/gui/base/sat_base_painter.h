@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_renderer.h"
+#include "gui/sat_renderer.h"
 #include "gui/sat_painter_owner.h"
 
 //----------------------------------------------------------------------
@@ -14,7 +14,7 @@ class SAT_BasePainter {
 public:
 //------------------------------
 
-  SAT_BasePainter(SAT_PainterOwner* AOwner, SAT_BaseRenderer* ARenderer) {
+  SAT_BasePainter(SAT_PainterOwner* AOwner, SAT_Renderer* ARenderer) {
   }
 
   //----------
@@ -30,13 +30,13 @@ public:
 //  virtual int32_t getHeaderFont() { return 0; }
 //  virtual void*   getRenderBuffer() { return nullptr; }
 
-  virtual void    beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AMode) {} // viewport
-  virtual void    endPaint(uint32_t AMode) {}
+  virtual void    beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {} // viewport
+  virtual void    endPaint() {}
 
   //virtual void    flush(void) {}
-  //virtual bool    makeCurrent(uint32_t AMode) { return false; }
-  //virtual bool    resetCurrent(uint32_t AMode) { return false; }
-  //virtual void    swapBuffers(uint32_t AMode) {}
+  //virtual bool    makeCurrent() { return false; }
+  //virtual bool    resetCurrent() { return false; }
+  //virtual void    swapBuffers() {}
   //virtual void    setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
 
 //------------------------------

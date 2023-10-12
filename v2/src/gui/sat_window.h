@@ -63,9 +63,12 @@ public:
     delete MRenderer;
   }
 
+//------------------------------
+public:
+//------------------------------
 
-
-
+  SAT_Renderer* getRenderer() { return MRenderer; }
+  SAT_Painter*  getPainter()  { return MPainter; }
 
 };
 

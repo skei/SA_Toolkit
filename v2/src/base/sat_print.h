@@ -31,11 +31,8 @@ public:
     va_list args;
     va_start(args,format);
     vsprintf(MPrintBuffer,format,args);
-    #ifdef SAT_PRINT_SOCKET
-      print_socket("%s%s",MPrefixBuffer,MPrintBuffer);
-    #else
-      printf("%s%s",MPrefixBuffer,MPrintBuffer);
-    #endif
+    //print_socket("%s%s",MPrefixBuffer,MPrintBuffer);
+    printf("%s%s",MPrefixBuffer,MPrintBuffer);
     //flush_stdout
     va_end(args); // move this up?
     //clear_prefix();

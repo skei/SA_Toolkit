@@ -9,9 +9,47 @@
 
 //----------------------------------------------------------------------
 
+class myWindow
+: public SAT_Window {
+
+public:
+
+  myWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
+  : SAT_Window(AWidth,AHeight,AParent) {
+  }
+
+  //----------
+
+  virtual ~myWindow() {
+  }
+
+public:
+
+  void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
+    printf("myWindow.paint\n");
+
+    SAT_Renderer* renderer = getRenderer();
+    SAT_Painter* painter = getPainter();
+
+    printf("renderer: %p\n",renderer);
+    printf("painter: %p\n",painter);
+
+    renderer->beginRendering(0,0,100,100);
+    painter->beginFrame(100,100,1.0);
+    painter->setDrawColor(SAT_White);
+    painter->drawRect(10,10,80,80);
+    painter->endFrame();
+    renderer->endRendering();
+
+  }
+
+};
+
+//----------------------------------------------------------------------
+
 int main() {
 
-  SAT_Window* window = new SAT_Window(640,480);
+  myWindow* window = new myWindow(640,480);
   window->open();
 
   window->eventLoop();

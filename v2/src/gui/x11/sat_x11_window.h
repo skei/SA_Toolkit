@@ -36,7 +36,8 @@ private:
   uint32_t                    MScreenDepth                  = 0;
 
 //bool                        MIsEventThreadActive          = false;
-  std::atomic<bool>           MIsEventThreadActive          {false};
+//std::atomic<bool>           MIsEventThreadActive          {false};
+  sat_atomic_bool_t           MIsEventThreadActive          {false};
 
   pthread_t                   MEventThread                  = 0;
   xcb_client_message_event_t* MClientMessageEvent           = (xcb_client_message_event_t*)MClientMessageEventBuffer;
@@ -52,7 +53,7 @@ private:
   xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
   xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
   xcb_cursor_t                MWindowCursor                 = XCB_NONE;
-  bool                        MIsCursorHidden               = false;          // TODO (?): std::atomic<bool> {false};
+  bool                        MIsCursorHidden               = false;          // TODO: sat_atomicbool_t ?
 
 //------------------------------
 protected:
@@ -388,31 +389,31 @@ public: // SAT_BaseWindow
 
   //----------
 
-//  void eventLoop() override {
-//    MQuitEventLoop = false;
-//    xcb_flush(MConnection);
-//    xcb_generic_event_t* event;// = xcb_wait_for_event(MConnection);
-//    //while (event) {
-//    while ((event = xcb_wait_for_event(MConnection))) {
-//      uint32_t e = event->response_type & ~0x80;
-//      if (e == XCB_CLIENT_MESSAGE) {
-//        xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
-//        xcb_atom_t  type = client_message->type;
-//        uint32_t      data = client_message->data.data32[0];
-//        if (type == MWMProtocolsAtom) {
-//          if (data == MWMDeleteWindowAtom) {
-//            free(event); // not malloc'ed
-//            //MQuitEventLoop = true;
-//            break;
-//          }
-//        }
-//      }
-//      eventHandler(event);
-//      free(event); // not malloc'ed
-//      if (MQuitEventLoop) break;
-//      //event = xcb_wait_for_event(MConnection);
-//    }
-//  }
+  //  void eventLoop() override {
+  //    MQuitEventLoop = false;
+  //    xcb_flush(MConnection);
+  //    xcb_generic_event_t* event;// = xcb_wait_for_event(MConnection);
+  //    //while (event) {
+  //    while ((event = xcb_wait_for_event(MConnection))) {
+  //      uint32_t e = event->response_type & ~0x80;
+  //      if (e == XCB_CLIENT_MESSAGE) {
+  //        xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
+  //        xcb_atom_t  type = client_message->type;
+  //        uint32_t      data = client_message->data.data32[0];
+  //        if (type == MWMProtocolsAtom) {
+  //          if (data == MWMDeleteWindowAtom) {
+  //            free(event); // not malloc'ed
+  //            //MQuitEventLoop = true;
+  //            break;
+  //          }
+  //        }
+  //      }
+  //      eventHandler(event);
+  //      free(event); // not malloc'ed
+  //      if (MQuitEventLoop) break;
+  //      //event = xcb_wait_for_event(MConnection);
+  //    }
+  //  }
   
   uint32_t eventLoop() override {
     xcb_generic_event_t* event = getEvent(true);

@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_painter.h"
+#include "gui/sat_renderer.h"
 
 //----------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ class SAT_Painter
 public:
 //------------------------------
 
-  SAT_Painter(SAT_PainterOwner* AOwner, SAT_BaseRenderer* ARenderer)
+  SAT_Painter(SAT_PainterOwner* AOwner, SAT_Renderer* ARenderer)
   : SAT_ImplementedPainter(AOwner,ARenderer) {
   }
 

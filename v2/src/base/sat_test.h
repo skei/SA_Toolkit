@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------------------------------------
 
 #include "sat.h"
-#include <vector>
+//#include <vector>
 
 //----------------------------------------------------------------------------------------------------
 //
@@ -20,8 +20,11 @@ class SAT_Test {
     SAT_TestFunc  func;
   };
 
-  typedef std::vector<SAT_TestItem>   SAT_TestItems;
-  typedef std::vector<SAT_TestItems>  SAT_TestSections;
+  //typedef std::vector<SAT_TestItem>   SAT_TestItems;
+  //typedef std::vector<SAT_TestItems>  SAT_TestSections;
+
+  typedef SAT_Array<SAT_TestItem>   SAT_TestItems;
+  typedef SAT_Array<SAT_TestItems>  SAT_TestSections;
 
 //------------------------------
 private:

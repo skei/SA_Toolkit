@@ -56,11 +56,12 @@ public:
 
   // assumes opengl context already made current
 
-  SAT_NanoVGPainter(SAT_PainterOwner* AOwner, SAT_BaseRenderer* ARenderer)
+  SAT_NanoVGPainter(SAT_PainterOwner* AOwner, SAT_Renderer* ARenderer)
   : SAT_BasePainter(AOwner,ARenderer) {
-    //ARenderer->makeCurrent();
-    // NVG_ANTIALIAS, NVG_STENCIL_STROKES, NVG_DEBUG
 
+    ARenderer->makeCurrent();
+
+    // NVG_ANTIALIAS, NVG_STENCIL_STROKES, NVG_DEBUG
     #if defined(SAT_GUI_WAYLAND)
       MContext = nvgCreateGLES3(NVG_ANTIALIAS);
     #elif defined(SAT_GUI_WIN32)
@@ -69,12 +70,15 @@ public:
       MContext = nvgCreateGL3(NVG_ANTIALIAS);
     #endif
 
+    printf("nvgContext: %p\n",MContext); // prints (nil)
+
 //    MDefaultFont = nvgCreateFontMem(MContext,"Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size,0);
 //    MHeaderFont = nvgCreateFontMem(MContext,"Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size,0);
 //    nvgFontFaceId(MContext,MDefaultFont);
 //    nvgFontSize(MContext,MTextSize);
 
-    //ARenderer->resetCurrent();
+    ARenderer->resetCurrent();
+    
   }
 
   //----------
@@ -125,37 +129,13 @@ public:
 public:
 //------------------------------
 
-  //void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AMode) {
-  //  #ifdef SAT_USE_GLX
-  //    SAT_GlxPainter::beginPaint(AXpos,AYpos,AWidth,AHeight,AMode);
-  //  #endif
-  //  #ifdef SAT_USE_WGL
-  //    SAT_WglPainter::beginPaint(AXpos,AYpos,AWidth,AHeight,AMode);
-  //  #endif
-  //  // called in SAT_Window.on_window_paint
-  //  //nvgBeginFrame(MContext,AWidth,AHeight,1.0);
-  //  //beginFrame(AWidth,AHeight,1.0);
-  //}
-
-  void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AMode) final {
+  void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
     // viewport
   }
 
   //----------
 
-  //void endPaint(uint32_t AMode) {
-  //  // called in SAT_Window.on_window_paint
-  //  //nvgEndFrame(MContext);
-  //  //endFrame();
-  //  #ifdef SAT_USE_GLX
-  //    SAT_GlxPainter::endPaint(AMode);
-  //  #endif
-  //  #ifdef SAT_USE_WGL
-  //    SAT_WglPainter::endPaint(AMode);
-  //  #endif
-  //}
-
-  void endPaint(uint32_t AMode) final {
+  void endPaint() final {
   }
 
 //------------------------------
