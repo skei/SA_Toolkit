@@ -21,6 +21,8 @@
 #elif defined(SAT_GUI_X11)
   #include "gui/glx/sat_glx_renderer.h"
   typedef SAT_GLXRenderer SAT_ImplementedRenderer;
+  //#include "gui/egl/sat_egl_renderer.h"
+  //typedef SAT_EGLRenderer SAT_ImplementedRenderer;
 
 #else
   #error GUI type not defined

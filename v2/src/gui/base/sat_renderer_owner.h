@@ -21,13 +21,8 @@ class SAT_RendererOwner {
 public:
 
   #if defined(SAT_GUI_WAYLAND)
-    virtual Display*        getX11Display()     { return nullptr; }
     virtual wl_surface*     getWaylandSurface() { return nullptr; }
     virtual wl_egl_window*  getWaylandWindow()  { return nullptr; }
-
-    //virtual EGLDisplay  getEGLDisplay()     { return nullptr; }
-    //virtual EGLConfig   getEGLConfig()      { return nullptr; }
-    //virtual EGLContext  getEGLContext()     { return nullptr; }
 
   #elif defined(SAT_GUI_WIN32)
     ;

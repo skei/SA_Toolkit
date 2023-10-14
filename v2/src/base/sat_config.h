@@ -73,6 +73,15 @@
 // base
 //------------------------------
 
+//#define SAT_PRINT_PRETTY_FUNCTION
+//#define SAT_PRINT_SOCKET
+#define SAT_PRINT_THREAD
+#define SAT_PRINT_TIME
+
+
+//#define SAT_DEBUG_PRINT
+
+
 //#define SAT_NO_AUTODELETE
 //#define SAT_NO_TESTS
 
@@ -176,15 +185,23 @@
 //----------
 
 #if defined (SAT_GUI_NONE)
+  //#define SAT_GUI_RENDERER_NONE
+  //#define SAT_GUI_PAINTER_NONE
   #define SAT_GUI_FORMAT_DEFINED
 
 #elif defined (SAT_GUI_WAYLAND)
+  //#define SAT_GUI_RENDERER_EGL
+  //#define SAT_GUI_PAINTER_NANOVG
   #define SAT_GUI_FORMAT_DEFINED
 
 #elif defined (SAT_GUI_WIN32)
+  //#define SAT_GUI_RENDERER_WGL
+  //#define SAT_GUI_PAINTER_NANOVG
   #define SAT_GUI_FORMAT_DEFINED
 
 #elif defined (SAT_GUI_X11)
+  //#define SAT_GUI_RENDERER_GLX
+  //#define SAT_GUI_PAINTER_NANOVG
   #define SAT_GUI_FORMAT_DEFINED
 
 //#else
@@ -198,7 +215,6 @@
 
   #if defined (SAT_LINUX)
     #define SAT_GUI_X11
-    //#define SAT_GUI_WAYLAND  
 
   #elif defined (SAT_WIN32)
     #define SAT_GUI_WIN32

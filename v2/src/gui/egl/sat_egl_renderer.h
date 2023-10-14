@@ -2,6 +2,17 @@
 #define sat_egl_renderer_included
 //----------------------------------------------------------------------
 
+//    display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+//    eglInitialize(display, &majorVersion, &minorVersion)
+//    eglGetConfigs(display, NULL, 0, &numConfigs)
+//    eglChooseConfig(display, attribList, &config, 1, &numConfigs)
+//    context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs );
+
+//    surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)hWnd, NULL);
+//    eglMakeCurrent(display, surface, surface, context)
+
+//----------
+
 #include "sat.h"
 #include "gui/base/sat_base_renderer.h"
 #include "gui/x11/sat_x11.h"
@@ -28,14 +39,14 @@ class SAT_EGLRenderer
 private:
 //------------------------------
 
-  EGLDisplay            egl_display = nullptr;
-  EGLConfig             egl_config  = nullptr;
-  EGLContext            egl_context = nullptr;
-
-  EGLSurface            egl_surface = nullptr;
-  struct wl_egl_window* egl_window  = nullptr;
-  
   bool                  MIsCurrent  = false;
+
+  EGLDisplay            MDisplay    = nullptr;
+  EGLConfig             MConfig     = nullptr;
+  EGLContext            MContext    = nullptr;
+  EGLSurface            MSurface    = nullptr;
+
+//struct wl_egl_window* MWindow     = nullptr;
 
 //------------------------------
 public:
@@ -44,27 +55,27 @@ public:
   SAT_EGLRenderer(SAT_RendererOwner* AOwner)
   : SAT_BaseRenderer(AOwner) {
 
-    Display* display = AOwner->getX11Display();
+    //Display* display = AOwner->getX11Display();
+    //MDisplay = eglGetDisplay((EGLNativeDisplayType)display);
 
-    //egl_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    egl_display = eglGetDisplay((EGLNativeDisplayType)display);
-    if (egl_display == EGL_NO_DISPLAY) {
-      printf("Can't create egl display\n");
+    MDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    if (MDisplay == EGL_NO_DISPLAY) {
+      SAT_Print("Can't create egl display\n");
       //return false;
     } else {
-      printf("Created egl display\n");
+      SAT_Print("Created egl display\n");
     }
 
     EGLint major, minor;
-    if (eglInitialize(egl_display,&major,&minor) != EGL_TRUE) {
-      printf("Can't initialise egl display\n");
+    if (eglInitialize(MDisplay,&major,&minor) != EGL_TRUE) {
+      SAT_Print("Can't initialise egl display\n");
       //return false;
     }
-    printf("EGL major: %d, minor %d\n",major,minor);
+    SAT_Print("EGL major: %d, minor %d\n",major,minor);
 
     EGLint count;
-    eglGetConfigs(egl_display,NULL,0,&count);
-    printf("EGL has %d configs\n",count);
+    eglGetConfigs(MDisplay,NULL,0,&count);
+    SAT_Print("EGL has %d configs\n",count);
 
     EGLint config_attribs[] = {
       EGL_SURFACE_TYPE,     EGL_WINDOW_BIT, // EGL_PIXMAP_BIT
@@ -82,57 +93,101 @@ public:
 
     EGLConfig* configs = (void**)calloc(count,sizeof *configs);
     EGLint num;
-    eglChooseConfig(egl_display,config_attribs,configs,count,&num);
+    eglChooseConfig(MDisplay,config_attribs,configs,count,&num);
 
     for (int i=0; i<num; i++) {
       EGLint size;
-      eglGetConfigAttrib(egl_display,configs[i],EGL_BUFFER_SIZE,&size);
-      printf("Buffer size for config %d is %d\n",i,size);
-      eglGetConfigAttrib(egl_display,configs[i],EGL_RED_SIZE,&size);
-      printf("Red size for config %d is %d\n",i,size);
+      eglGetConfigAttrib(MDisplay,configs[i],EGL_BUFFER_SIZE,&size);
+      SAT_Print("Buffer size for config %d is %d\n",i,size);
+      eglGetConfigAttrib(MDisplay,configs[i],EGL_RED_SIZE,&size);
+      SAT_Print("Red size for config %d is %d\n",i,size);
       // just choose the first one
-      egl_config = configs[i];
+      MConfig = configs[i]; 
       break;
     }
-    egl_context = eglCreateContext(egl_display,egl_config,EGL_NO_CONTEXT,context_attribs);
-    //return true;
 
-    wl_surface* surface = AOwner->getWaylandSurface();
-    
-    egl_window = wl_egl_window_create(surface,512,512);
-    if (egl_window == EGL_NO_SURFACE) {
-      printf("Can't create egl window\n");
-      //exit(1);
+    MContext = eglCreateContext(MDisplay,MConfig,EGL_NO_CONTEXT,context_attribs);
+    SAT_Print("MContext: %p\n",MContext);
+
+    //--------------------
+    //--------------------
+
+    #if defined(SAT_GUI_WAYLAND)
+
+      wl_egl_window* owner_window = AOwner->getWaylandWindow();
+      SAT_Print("owner_window:  %p\n",owner_window);
+      MSurface = eglCreateWindowSurface(MDisplay,MConfig,(EGLNativeWindowType)owner_window,NULL);
+      SAT_Print("MSurface: %p\n",MSurface); // prints (nil) !!!
+
+//      wl_surface* owner_surface = AOwner->getWaylandSurface();
+//      SAT_Print("owner_surface: %p\n",owner_surface);
+//
+//      wl_egl_window* egl_window = wl_egl_window_create(owner_surface,640,480); // owner->getWidth/height
+//      if (egl_window == EGL_NO_SURFACE) {
+//        SAT_Print("WL: Can't create egl window\n");
+//        //return false;
+//      } else {
+//        SAT_Print("WL: Created egl window\n");
+//      }
+//
+//      MSurface = eglCreateWindowSurface(MDisplay,MConfig,(EGLNativeWindowType)egl_window,NULL);
+//      SAT_Print("MSurface: %p\n",MSurface); // prints (nil) !!!
+
+    #elif defined(SAT_GUI_WIN32)
+      ;
+
+    #elif defined(SAT_GUI_X11)
+      ;
+
+    #endif
+
+    //--------------------
+    //--------------------
+
+    if (eglMakeCurrent(MDisplay,MSurface,MSurface,MContext)) {
+      SAT_Print("Made current\n");
     } else {
-      fprintf(stderr, "Created egl window\n");
+      SAT_Print("Made current failed\n");
     }
-
-    wl_egl_window* owner_window = AOwner->getWaylandWindow();
-    egl_surface = eglCreateWindowSurface(egl_display,egl_config,(EGLNativeWindowType)owner_window,NULL);
     
-    // if (eglMakeCurrent(egl_display,egl_surface,egl_surface,egl_context)) {
-    //   fprintf(stderr, "Made current\n");
-    // } else {
-    //   fprintf(stderr, "Made current failed\n");
-    // }
+//    //--------------------
+//    // test.. render something
+//    //--------------------
+//
+//    // drawing
+//
+//    glClearColor(1.0, 1.0, 0.0, 1.0);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glFlush();
+//
+//    //-----
+//
+//    // swap buffers
+//
+//    if (eglSwapBuffers(MDisplay,MSurface)) {
+//      SAT_Print("Swapped buffers\n");
+//    } else {
+//      SAT_Print("Swapped buffers failed\n");      // <----
+//    }
+
   }
 
   //----------
 
   virtual ~SAT_EGLRenderer() {
-    eglDestroyContext(egl_display,egl_context);
+    eglDestroyContext(MDisplay,MContext);
     // eglChooseConfig
     // initialize
-    eglTerminate(egl_display); // undo eglInitialize
+    eglTerminate(MDisplay); // undo eglInitialize
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  EGLDisplay  getEGLDisplay() { return egl_display; }
-  EGLConfig   getEGLConfig()  { return egl_config; }
-  EGLContext  getEGLContext() { return egl_context; }
+  EGLDisplay  getEGLDisplay() { return MDisplay; }
+  EGLConfig   getEGLConfig()  { return MConfig; }
+  EGLContext  getEGLContext() { return MContext; }
 
 //------------------------------
 public:
@@ -174,7 +229,7 @@ public:
 
   bool makeCurrent() override {
     MIsCurrent = true;
-    eglMakeCurrent(egl_display,egl_surface,egl_surface,egl_context);
+    eglMakeCurrent(MDisplay,MSurface,MSurface,MContext);
     return true;
   }
 
@@ -187,14 +242,14 @@ public:
 
   bool resetCurrent() override {
     MIsCurrent = false;
-    eglMakeCurrent(egl_display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);
+    eglMakeCurrent(MDisplay,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);
     return true;
   }
 
   //----------
 
   bool swapBuffers() override {
-    eglSwapBuffers(egl_display,egl_surface);
+    eglSwapBuffers(MDisplay,MSurface);
     return true;
   }
 

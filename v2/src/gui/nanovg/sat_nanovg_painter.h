@@ -68,9 +68,10 @@ public:
       MContext = nvgCreateGL3(NVG_ANTIALIAS);
     #elif defined(SAT_GUI_X11)
       MContext = nvgCreateGL3(NVG_ANTIALIAS);
+      //MContext = nvgCreateGLES3(NVG_ANTIALIAS);
     #endif
 
-    printf("nvgContext: %p\n",MContext); // prints (nil)
+    //SAT_Print("nvgContext: %p\n",MContext); // prints (nil)
 
 //    MDefaultFont = nvgCreateFontMem(MContext,"Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size,0);
 //    MHeaderFont = nvgCreateFontMem(MContext,"Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size,0);
@@ -94,6 +95,7 @@ public:
       nvgDeleteGL3(MContext);
     #elif defined(SAT_GUI_X11)
       nvgDeleteGL3(MContext);
+      //nvgDeleteGLES3(MContext);
     #endif
     // delete fonts?
     // (nvgCreateFontMem in constructor)

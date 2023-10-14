@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "base/sat_debug_print.h"
 
 class SAT_Registry;
 extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
@@ -39,7 +40,7 @@ public:
 public:
 //------------------------------
 
-  void initialize() {
+  void initialize(SAT_DebugPrint* APrint) {
     if (MIsInitialized) return;
     if (SAT_Register) SAT_Register(this);
     MIsInitialized = true;

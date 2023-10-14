@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/base/sat_painter_owner.h"
 #include "gui/sat_renderer.h"
-#include "gui/sat_painter_owner.h"
 
 //----------------------------------------------------------------------
 

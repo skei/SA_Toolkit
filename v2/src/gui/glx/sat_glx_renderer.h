@@ -131,18 +131,18 @@ public:
     //MHeight   = height;   //ATarget->tgtGetHeight();
 
     MOwnerDisplay = AOwner->getX11Display();
-    printf("MOwnerDisplay: %p\n",MOwnerDisplay);
+    SAT_Print("MOwnerDisplay: %p\n",MOwnerDisplay);
 
     //if (AOwner->isWindow()) {
 
       MFBConfig = findFBConfig(SAT_GlxWindowAttribs);
       MContext = createContext(MFBConfig);
-      printf("MContext: %p\n",MContext);
+      SAT_Print("MContext: %p\n",MContext);
       xcb_window_t owner_window = AOwner->getXcbWindow();
-      printf("owner_window: %i\n",owner_window);
+      SAT_Print("owner_window: %i\n",owner_window);
       //SAT_Assert(owner_window);
       MDrawable = glXCreateWindow(MOwnerDisplay,MFBConfig,owner_window,nullptr);
-      printf("MDrawable: %i\n",(int)MDrawable);
+      SAT_Print("MDrawable: %i\n",(int)MDrawable);
       //MDrawableIsWindow = true;
       
     //}
@@ -164,11 +164,11 @@ public:
 
     const char* glXExtensions = glXQueryExtensionsString(MOwnerDisplay,DefaultScreen(MOwnerDisplay));
     if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
-      printf("GLX_EXT_swap_control\n");
+      SAT_Print("GLX_EXT_swap_control\n");
       glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
     }
     if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
-      printf("GLX_MESA_swap_control\n");
+      SAT_Print("GLX_MESA_swap_control\n");
       //glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
       glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
     }
@@ -262,7 +262,7 @@ public:
     //MPrevContext = glXGetCurrentContext();
     bool res = glXMakeContextCurrent(MOwnerDisplay,MDrawable,MDrawable,MContext);
     if (!res) {
-      //printf("Error: makeCurrent returned false\n");
+      //SAT_Print("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = true;
@@ -284,7 +284,7 @@ public:
     bool res = glXMakeContextCurrent(MOwnerDisplay,0,0,0);
     //bool res = glXMakeContextCurrent(MOwnerDisplay,MDrawable,MDrawable,MPrevContext); // error
     if (!res) {
-      //printf("Error: makeCurrent returned false\n");
+      //SAT_Print("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = false;
@@ -485,18 +485,18 @@ private: // extensions
   // make context current before calling this
 
   bool loadExtensions() {
-    printf("loading extensions..\n");
+    SAT_Print("loading extensions..\n");
     int result = sogl_loadOpenGL();
     if (!result) {
-      printf("sogl_loadOpenGL() failed\n");
+      SAT_Print("sogl_loadOpenGL() failed\n");
       const char** failures = sogl_getFailures();
       while (*failures) {
-        printf("> %s\n",*failures);
+        SAT_Print("> %s\n",*failures);
         failures++;
       }
       return false;
     }
-      printf("sogl_loadOpenGL() succeeded\n");
+      SAT_Print("sogl_loadOpenGL() succeeded\n");
     return true;
   }
 

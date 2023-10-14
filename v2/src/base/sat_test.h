@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------------------------------------
 
 #include "sat.h"
+#include "base/sat_debug_print.h"
 //#include <vector>
 
 //----------------------------------------------------------------------------------------------------
@@ -20,9 +21,6 @@ class SAT_Test {
     SAT_TestFunc  func;
   };
 
-  //typedef std::vector<SAT_TestItem>   SAT_TestItems;
-  //typedef std::vector<SAT_TestItems>  SAT_TestSections;
-
   typedef SAT_Array<SAT_TestItem>   SAT_TestItems;
   typedef SAT_Array<SAT_TestItems>  SAT_TestSections;
 
@@ -30,7 +28,7 @@ class SAT_Test {
 private:
 //------------------------------
 
-  SAT_TestItems     MTestItems = {};
+  SAT_TestItems     MTestItems    = {};
   SAT_TestSections  MTestSections = {};
 
 //------------------------------
@@ -49,7 +47,7 @@ public:
 public:
 //------------------------------
 
-  void initialize() {
+  void initialize(SAT_DebugPrint* APrint) {
   }
 
   //----------

@@ -2,19 +2,25 @@
 #define sat_global_included
 //----------------------------------------------------------------------
 
+#include "base/sat_debug_print.h"
 #include "base/sat_log.h"
 #include "base/sat_registry.h"
 #include "base/sat_test.h"
-#include "base/sat_print.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 class SAT_Global {
 
 public:
 
-  SAT_Log       LOG       = {};
-  SAT_Registry  REGISTRY  = {};
-  SAT_Test      TEST      = {};
-  SAT_Print     PRINT     = {};
+  SAT_DebugPrint  PRINT     = {};
+  SAT_Log         LOG       = {};
+  SAT_Registry    REGISTRY  = {};
+  SAT_Test        TEST      = {};
 
   char          binary_path[SAT_MAX_PATH_LENGTH]  = {0};  // our binary
   char          plugin_path[SAT_MAX_PATH_LENGTH]  = {0};  // path received from host
@@ -45,17 +51,19 @@ public:
 //------------------------------
 
   void initialize() {
-    LOG.initialize();
-    REGISTRY.initialize();
-    TEST.initialize();
+    PRINT.initialize();
+    LOG.initialize(&PRINT);
+    REGISTRY.initialize(&PRINT);
+    TEST.initialize(&PRINT);
   }
 
   //----------
 
   void cleanup() {
-    LOG.cleanup();
-    REGISTRY.cleanup();
     TEST.cleanup();
+    REGISTRY.cleanup();
+    LOG.cleanup();
+    PRINT.cleanup();
   }
   
   //----------

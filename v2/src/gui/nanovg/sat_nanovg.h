@@ -15,8 +15,10 @@
   #define NANOVG_GL3_IMPLEMENTATION
 
 #elif defined(SAT_GUI_X11)
-   #include "gui/glx/sat_glx.h"
+  #include "gui/glx/sat_glx.h"
   #define NANOVG_GL3_IMPLEMENTATION
+  //#include "gui/egl/sat_egl.h"
+  //#define NANOVG_GLES3_IMPLEMENTATION
 
 #endif
 

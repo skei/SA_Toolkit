@@ -8,10 +8,10 @@
 #include "sat.h"
 
 #include <wayland-client.h>
-//#include <wayland-server.h>
 //#include <wayland-client-protocol.h>
-//#include <xdg-shell-client-protocol.h>
+//#include <wayland-server.h>
 #include <wayland-egl.h>
+//#include <xdg-shell-client-protocol.h>
 
 //----------------------------------------------------------------------
 #endif

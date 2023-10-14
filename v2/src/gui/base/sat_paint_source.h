@@ -1,11 +1,10 @@
-#ifndef sat_cairo_included
-#define sat_cairo_included
+#ifndef sat_paint_source_included
+#define sat_paint_source_included
 //----------------------------------------------------------------------
 
-#include "sat.h"
-
-#include <cairo/cairo.h>
-#include <cairo/cairo-xcb.h>
+class SAT_PaintSource {
+public:
+};
 
 //----------------------------------------------------------------------
 #endif

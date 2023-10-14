@@ -4,7 +4,7 @@
 
 #include "sat.h"
 #include "gui/base/sat_base_window.h"
-#include "gui/sat_renderer_owner.h"
+#include "gui/base/sat_renderer_owner.h"
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
 
@@ -839,7 +839,7 @@ private:
         while(expose->count != 0) {
           xcb_generic_event_t* e2 = xcb_wait_for_event(MConnection);
           xcb_expose_event_t* ex2 = (xcb_expose_event_t *)e2;
-          RECT.combine( KODE_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
+          RECT.combine( SAT_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
         }
       */
 

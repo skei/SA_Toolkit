@@ -1,5 +1,5 @@
-#ifndef sat_win32_surface_included
-#define sat_win32_surface_included
+#ifndef sat_wayland_surface_included
+#define sat_wayland_surface_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
@@ -7,20 +7,20 @@
 
 //----------------------------------------------------------------------
 
-class SAT_Win32Surface
+class SAT_WaylandSurface
 : public SAT_BaseSurface {
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Win32Surface(SAT_SurfaceOwner* AOwner)
-  : SAT_BaseSurface(AOwner) {
+  SAT_WaylandSurface(SAT_SurfaceOwner* AOwner)
+  SAT_BaseSurface(AOwner) {
   }
 
   //----------
 
-  virtual ~SAT_Win32Surface() {
+  virtual ~SAT_WaylandSurface() {
   }
 
 

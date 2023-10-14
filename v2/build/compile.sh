@@ -240,6 +240,7 @@ case $GUI in
     LIB+=" -lxkbcommon"
     LIB+=" -lGL"
     LIB+=" -lGLX"
+    #LIB+=" -lEGL"
     FLAGS+=" -DSAT_GUI_X11"
     ;;
   *)
