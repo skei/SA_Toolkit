@@ -4,7 +4,6 @@
 
 #include "sat.h"
 #include "gui/base/sat_painter_owner.h"
-#include "gui/sat_renderer.h"
 
 //----------------------------------------------------------------------
 
@@ -14,7 +13,7 @@ class SAT_BasePainter {
 public:
 //------------------------------
 
-  SAT_BasePainter(SAT_PainterOwner* AOwner, SAT_Renderer* ARenderer) {
+  SAT_BasePainter(SAT_PainterOwner* AOwner) {
   }
 
   //----------

@@ -6,6 +6,8 @@
 
 #include "sat.h"
 #include "gui/sat_window.h"
+#include "gui/sat_renderer.h"
+//#include "gui/sat_widget.h"
 
 //----------------------------------------------------------------------
 
@@ -18,21 +20,16 @@ public:
   : SAT_Window(AWidth,AHeight,AParent) {
   }
 
-  //----------
-
-  virtual ~myWindow() {
-  }
-
 public:
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
     SAT_Renderer* renderer = getRenderer();
     SAT_Painter* painter = getPainter();
     renderer->beginRendering(0,0,640,480);
-      painter->beginFrame(640,480,1.0);
+    painter->beginFrame(640,480,1.0);
       painter->setFillColor(SAT_Yellow);
       painter->fillRect(10,10,80,80);
-      painter->endFrame();
+    painter->endFrame();
     renderer->endRendering();
   }
 
@@ -40,14 +37,12 @@ public:
 
 //----------------------------------------------------------------------
 
-int main() {
 
+int main() {
   myWindow* window = new myWindow(640,480);
   window->open();
-
   window->eventLoop();
   window->close();
   delete window;
-
   return 0;
 }

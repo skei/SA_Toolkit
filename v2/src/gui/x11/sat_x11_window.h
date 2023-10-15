@@ -7,6 +7,8 @@
 #include "gui/base/sat_renderer_owner.h"
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
+#include "gui/sat_painter.h"
+#include "gui/sat_renderer.h"
 
 //----------------------------------------------------------------------
 //
@@ -15,10 +17,10 @@
 //----------------------------------------------------------------------
 
 class SAT_X11Window
-: public SAT_SurfaceOwner
+: public SAT_BaseWindow
+, public SAT_SurfaceOwner
 , public SAT_RendererOwner
-, public SAT_PainterOwner
-, public SAT_BaseWindow {
+, public SAT_PainterOwner {
 
 //------------------------------
 private:
@@ -55,8 +57,11 @@ private:
   xcb_cursor_t                MWindowCursor                 = XCB_NONE;
   bool                        MIsCursorHidden               = false;          // TODO: sat_atomicbool_t ?
 
+  SAT_Renderer*               MRenderer                     = nullptr;
+  SAT_Painter*                MPainter                      = nullptr;
+
 //------------------------------
-protected:
+//protected:
 //------------------------------
 
    int32_t                    MWindowXpos                   = 0;
@@ -76,11 +81,17 @@ public:
 
     // x server connection
 
-    //MConnection = xcb_connect(ADisplayName,&MDefaultScreen);
+    //MDisplay = ARenderer->getX11Display();
     MDisplay = XOpenDisplay(nullptr);
+    SAT_Print("MDisplay: %p\n",MDisplay);
+
+    //MConnection = xcb_connect(ADisplayName,&MDefaultScreen);
     MConnection = XGetXCBConnection(MDisplay);
+    SAT_Print("MConnection: %p\n",MConnection);
+
     XSetEventQueueOwner(MDisplay,XCBOwnsEventQueue);
     MDefaultScreen = DefaultScreen(MDisplay); // ???
+    SAT_Print("MDefaultScreen: %i\n",MDefaultScreen);
 
     // screen
 
@@ -203,11 +214,18 @@ public:
 
     //setTitle(MWindowTitle);
 
-  }
+    MRenderer = new SAT_Renderer(this);
+    MPainter = new SAT_Painter(this);
+
+  } 
 
   //----------
 
   virtual ~SAT_X11Window() {
+
+    delete MPainter;
+    delete MRenderer;
+
     if (MIsMapped) close();
     // keyboard
     xcb_key_symbols_free(MKeySyms);
@@ -231,22 +249,20 @@ public:
 public:
 //------------------------------
 
-  // Display*      getX11Display() { return MDisplay;}
-  // xcb_window_t  getX11Window()  { return MWindow;}
-  
-  uint32_t getScreenWidth()   override { return MScreenWidth; }
-  uint32_t getScreenHeight()  override { return MScreenHeight; }
-  uint32_t getScreenDepth()   override { return MScreenDepth; }
-  
-  uint32_t getWidth()         override { return MWindowWidth; }
-  uint32_t getHeight()        override { return MWindowWidth; }
+  SAT_Renderer* getRenderer() { return MRenderer; }
+  SAT_Painter*  getPainter()  { return MPainter; }
 
 //------------------------------
-public: // SAT_...RendererOwner
+public: // SAT_RendererOwner
 //------------------------------
 
-  Display*      getX11Display() override { return MDisplay; }
-  xcb_window_t  getXcbWindow()  override { return MWindow; }
+  Display* on_rendererOwner_getX11Display() override {
+    return MDisplay;
+  }
+
+  xcb_drawable_t on_rendererOwner_getDrawable() override {
+    return MWindow;
+  }
 
 //------------------------------
 public: // SAT_PainterOwner
@@ -256,6 +272,28 @@ public: // SAT_PainterOwner
 public: // SAT_SurfaceOwner
 //------------------------------
 
+//------------------------------
+public:
+//------------------------------
+
+//  Display*      getX11Display() { return MDisplay;}
+//  xcb_window_t  getXcbWindow()  { return MWindow;}
+
+//------------------------------
+
+  //void setRenderer(SAT_Renderer* ARenderer) override {
+  //}
+  //
+  //SAT_Surface* getSurface() override {
+  //  return nullptr;
+  //}
+  
+  uint32_t getScreenWidth()   override { return MScreenWidth; }
+  uint32_t getScreenHeight()  override { return MScreenHeight; }
+  uint32_t getScreenDepth()   override { return MScreenDepth; }
+  
+  uint32_t getWidth()         override { return MWindowWidth; }
+  uint32_t getHeight()        override { return MWindowWidth; }
 
 //------------------------------
 public: // SAT_BaseWindow

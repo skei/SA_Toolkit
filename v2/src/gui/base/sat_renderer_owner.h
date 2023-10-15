@@ -3,8 +3,6 @@
 //----------------------------------------------------------------------
 
   #if defined(SAT_GUI_WAYLAND)
-    #include "gui/egl/sat_egl.h"
-    #include "gui/x11/sat_x11.h"
     #include "gui/wayland/sat_wayland.h"
 
   #elif defined(SAT_GUI_WIN32)
@@ -21,15 +19,14 @@ class SAT_RendererOwner {
 public:
 
   #if defined(SAT_GUI_WAYLAND)
-    virtual wl_surface*     getWaylandSurface() { return nullptr; }
-    virtual wl_egl_window*  getWaylandWindow()  { return nullptr; }
+    virtual struct wl_display*  on_rendererOwner_getWaylandDisplay() { return nullptr; }
 
   #elif defined(SAT_GUI_WIN32)
     ;
 
   #elif defined(SAT_GUI_X11)
-    virtual Display*      getX11Display() { return nullptr; }
-    virtual xcb_window_t  getXcbWindow()  { return 0; }
+    virtual Display*      on_rendererOwner_getX11Display() { return nullptr; }
+    virtual xcb_drawable_t on_rendererOwner_getDrawable() { return 0; }
 
   #endif
 

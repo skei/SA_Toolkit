@@ -30,6 +30,7 @@
 #include "sat.h"
 #include "gui/base/sat_base_renderer.h"
 #include "gui/x11/sat_x11.h"
+#include "gui/sat_window.h"
 
 #define SOGL_MAJOR_VERSION SAT_RENDERER_MAJOR_VERSION
 #define SOGL_MINOR_VERSION SAT_RENDERER_MINOR_VERSION
@@ -58,7 +59,9 @@ class SAT_GLXRenderer
 private:
 //------------------------------
 
-  Display*              MOwnerDisplay       = None;
+  SAT_RendererOwner*    MOwner              = nullptr;
+
+  Display*              MDisplay            = None;
   GLXFBConfig           MFBConfig           = nullptr;
   GLXContext            MContext            = nullptr;
   GLXDrawable           MDrawable           = GLX_NONE;
@@ -75,7 +78,7 @@ private:
   //GLXContext        MPrevContext      = nullptr;
   //bool              MDrawableIsWindow = false;
 
-  GLint SAT_GlxPixmapAttribs[(11*2)+1] = {
+  GLint SAT_GLXPixmapAttribs[(11*2)+1] = {
     GLX_X_RENDERABLE,   True,
     GLX_X_VISUAL_TYPE,  GLX_TRUE_COLOR,
     GLX_DRAWABLE_TYPE,  GLX_PIXMAP_BIT,
@@ -96,7 +99,7 @@ private:
 
   //----------
 
-  GLint SAT_GlxWindowAttribs[(11*2)+1] = {
+  GLint SAT_GLXWindowAttribs[(11*2)+1] = {
     GLX_X_RENDERABLE,   True,
     GLX_X_VISUAL_TYPE,  GLX_TRUE_COLOR,
     GLX_DRAWABLE_TYPE,  GLX_WINDOW_BIT,
@@ -124,78 +127,94 @@ public:
   SAT_GLXRenderer(SAT_RendererOwner* AOwner)
   : SAT_BaseRenderer(AOwner) {
 
-    //MTarget = ATarget;
-    //old_x_error_handler = XSetErrorHandler(x_error_handler);
-    //SAT_XlibInitErrorHandler();
-    //MWidth    = width;    //ATarget->tgtGetWidth();
-    //MHeight   = height;   //ATarget->tgtGetHeight();
+    MOwner = AOwner;
 
-    MOwnerDisplay = AOwner->getX11Display();
-    SAT_Print("MOwnerDisplay: %p\n",MOwnerDisplay);
+    MDisplay = AOwner->on_rendererOwner_getX11Display();
+    //MDisplay = XOpenDisplay(nullptr);
+    SAT_Print("MDisplay: %p\n",MDisplay);
 
-    //if (AOwner->isWindow()) {
+    MFBConfig = findFBConfig(SAT_GLXWindowAttribs);
+    MContext = createContext(MFBConfig);
+    SAT_Print("MContext: %p\n",MContext);
 
-      MFBConfig = findFBConfig(SAT_GlxWindowAttribs);
-      MContext = createContext(MFBConfig);
-      SAT_Print("MContext: %p\n",MContext);
-      xcb_window_t owner_window = AOwner->getXcbWindow();
-      SAT_Print("owner_window: %i\n",owner_window);
-      //SAT_Assert(owner_window);
-      MDrawable = glXCreateWindow(MOwnerDisplay,MFBConfig,owner_window,nullptr);
-      SAT_Print("MDrawable: %i\n",(int)MDrawable);
-      //MDrawableIsWindow = true;
-      
-    //}
-    //else if (AOwner->isSurface()) { // todo
-    //
-    //  MFBConfig = findFBConfig(SAT_GlxPixmapAttribs); // crash..
-    //  MContext = createContext(MFBConfig);
-    //  xcb_pixmap_t pixmap = ATarget->tgtGetPixmap();
-    //  SAT_Assert(pixmap);
-    //  MDrawable = glXCreatePixmap(MOwnerDisplay,MFBConfig,pixmap,nullptr);
-    //  MDrawableIsWindow = false;
-    //
-    //}
+    xcb_drawable_t drawable = AOwner->on_rendererOwner_getDrawable();
+    SAT_Print("drawable: %i\n",drawable);
 
-    disableVSync();//(MOwnerDisplay,MDrawable);
+    MDrawable = glXCreateWindow(MDisplay,MFBConfig,drawable,nullptr);
+    SAT_Print("MDrawable: %i\n",(int)MDrawable);
 
-    //resetCurrent();
-    //makeCurrent(0);
-
-    const char* glXExtensions = glXQueryExtensionsString(MOwnerDisplay,DefaultScreen(MOwnerDisplay));
-    if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
-      SAT_Print("GLX_EXT_swap_control\n");
-      glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
-    }
-    if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
-      SAT_Print("GLX_MESA_swap_control\n");
-      //glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
-      glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
-    }
+    makeCurrent();
     
-    MIsCurrent = true;
+//    glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
+
+    // const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
+    // if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
+    //   SAT_Print("GLX_EXT_swap_control\n");
+    //   glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
+    // }
+    // if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
+    //   SAT_Print("GLX_MESA_swap_control\n");
+    //   //glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
+    //   glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
+    // }
+
+    // disableVSync();
+
   }
 
   //----------
 
   virtual ~SAT_GLXRenderer() {
-    //if (MDrawableIsWindow) {
-      glXDestroyWindow(MOwnerDisplay,MDrawable);
-    //}
-    //else {
-    //  glXDestroyPixmap(MOwnerDisplay,MDrawable);
-    //}
+    glXDestroyWindow(MDisplay,MDrawable);
     destroyContext();
-    //XSetErrorHandler(old_x_error_handler);
-    //SAT_XlibCleanupErrorHandler();
+    //XCloseDisplay(MDisplay);
+    //MDisplay = nullptr;
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  //virtual bool setSurface(SAT_BaseSurface* ASurface) override {
-  //  return true;
+  //Display* getX11Display() {
+  //  return MDisplay;
+  //}
+
+  //----------
+
+  #if 0
+  
+  GLXDrawable createWindowSurface(xcb_window_t AWindow) {
+    SAT_PRINT;
+    if (MDrawable) {
+      // delete previous drawable..
+    }
+    MDrawable = glXCreateWindow(MDisplay,MFBConfig,AWindow,nullptr);
+    SAT_Print("MDrawable: %i\n",MDrawable);
+//    makeCurrent();
+//    const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
+//    if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
+//      SAT_Print("GLX_EXT_swap_control\n");
+//      glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
+//    }
+//    if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
+//      SAT_Print("GLX_MESA_swap_control\n");
+//      //glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
+//      glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
+//    }
+//    disableVSync();//(MDisplay,MDrawable);
+
+    SAT_PRINT;
+    return MDrawable;
+  }  
+
+  #endif // 0
+
+//------------------------------
+public:
+//------------------------------
+
+  //bool setSurface(SAT_BaseSurface* ASurface) override {
+  //  return false;
   //}
 
   //----------
@@ -260,7 +279,7 @@ public:
     //SAT_Print("MIsCurrent %i -> 1\n",MIsCurrent);
     //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
     //MPrevContext = glXGetCurrentContext();
-    bool res = glXMakeContextCurrent(MOwnerDisplay,MDrawable,MDrawable,MContext);
+    bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
     if (!res) {
       //SAT_Print("Error: makeCurrent returned false\n");
       return false;
@@ -281,8 +300,8 @@ public:
   bool resetCurrent() override {
     //SAT_Print("MIsCurrent %i -> 0\n",MIsCurrent);
     //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
-    bool res = glXMakeContextCurrent(MOwnerDisplay,0,0,0);
-    //bool res = glXMakeContextCurrent(MOwnerDisplay,MDrawable,MDrawable,MPrevContext); // error
+    bool res = glXMakeContextCurrent(MDisplay,0,0,0);
+    //bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MPrevContext); // error
     if (!res) {
       //SAT_Print("Error: makeCurrent returned false\n");
       return false;
@@ -294,7 +313,7 @@ public:
   //----------
 
   bool swapBuffers() override {
-    glXSwapBuffers(MOwnerDisplay,MDrawable);
+    glXSwapBuffers(MDisplay,MDrawable);
     return true;
   }
 
@@ -302,13 +321,13 @@ public:
 
   bool disableVSync(/*Display* ADisplay, GLXDrawable ADrawable*/) override {
 
-    if (glXSwapIntervalEXT) glXSwapIntervalEXT(MOwnerDisplay,MDrawable,0);
+    if (glXSwapIntervalEXT) glXSwapIntervalEXT(MDisplay,MDrawable,0);
     else if (glXSwapIntervalMESA) glXSwapIntervalMESA(0);
 
-    //  const char* glXExtensions = glXQueryExtensionsString(MOwnerDisplay,DefaultScreen(MOwnerDisplay));
+    //  const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
     //  if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
     //    glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
-    //    glXSwapIntervalEXT(MOwnerDisplay,MDrawable,0);
+    //    glXSwapIntervalEXT(MDisplay,MDrawable,0);
     //  }
     //
     //} else if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
@@ -357,16 +376,16 @@ private:
 //------------------------------
 
   // ADisplay : X11 Display*
-  // AAttribs : SAT_GlxPixmapAttribs or SAT_GlxWindowAttribs
+  // AAttribs : SAT_GLXPixmapAttribs or SAT_GLXWindowAttribs
   // Use XFree to free the memory returned by glXChooseFBConfig.
 
   GLXFBConfig findFBConfig(const int* AAttribs) {
     //SAT_PRINT;
     int num_fbc = 0;
-    //SAT_Print("Display: %p\n",MOwnerDisplay);
-    //SAT_Print("Screen: %i\n",DefaultScreen(MOwnerDisplay));
+    //SAT_Print("Display: %p\n",MDisplay);
+    //SAT_Print("Screen: %i\n",DefaultScreen(MDisplay));
     //SAT_Print("AAttribs: %p\n",AAttribs);
-    GLXFBConfig* fbconfigs = glXChooseFBConfig(MOwnerDisplay,DefaultScreen(MOwnerDisplay),AAttribs,&num_fbc);
+    GLXFBConfig* fbconfigs = glXChooseFBConfig(MDisplay,DefaultScreen(MDisplay),AAttribs,&num_fbc);
     //SAT_Print("num_fbc: %i\n",num_fbc);
     GLXFBConfig fbconfig = fbconfigs[0];
     XFree(fbconfigs);
@@ -377,12 +396,12 @@ private:
 
   //glXCreateContextAttribsARBFUNC glXCreateContextAttribsARB = (glXCreateContextAttribsARBFUNC)glXGetProcAddress((const GLubyte*)"glXCreateContextAttribsARB");
   //SAT_Assert(glXCreateContextAttribsARB);
-  //MContext = glXCreateContextAttribsARB(MOwnerDisplay,MFBConfig,nullptr,True,SAT_GlxContextAttribs);
-  //    MContext = glXCreateNewContext(MOwnerDisplay,MFBConfig,GLX_RGBA_TYPE,nullptr,True);
+  //MContext = glXCreateContextAttribsARB(MDisplay,MFBConfig,nullptr,True,SAT_GLXContextAttribs);
+  //    MContext = glXCreateNewContext(MDisplay,MFBConfig,GLX_RGBA_TYPE,nullptr,True);
   //    loadOpenGL();
 
   GLXContext createContext(GLXFBConfig fbconfig) {
-    GLXContext context = glXCreateNewContext(MOwnerDisplay,fbconfig,GLX_RGBA_TYPE,nullptr,True);
+    GLXContext context = glXCreateNewContext(MDisplay,fbconfig,GLX_RGBA_TYPE,nullptr,True);
     //SAT_Assert(context);
     loadExtensions();
     return context;
@@ -392,16 +411,16 @@ private:
 
   void destroyContext() {
     unloadExtensions();
-    glXDestroyContext(MOwnerDisplay,MContext);
+    glXDestroyContext(MDisplay,MContext);
   }
 
   //----------
 
   //----------
 
-  bool getGlxVersion(int* AMajor, int* AMinor) {
+  bool getGLXVersion(int* AMajor, int* AMinor) {
     //SAT_PRINT;
-    bool res = glXQueryVersion(MOwnerDisplay,AMajor,AMinor);
+    bool res = glXQueryVersion(MDisplay,AMajor,AMinor);
     if (!res) return false;
     return true;
   }

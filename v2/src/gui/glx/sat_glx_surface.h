@@ -1,5 +1,5 @@
-#ifndef sat_wayland_surface_included
-#define sat_wayland_surface_included
+#ifndef sat_base_surface_included
+#define sat_base_surface_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
@@ -7,20 +7,20 @@
 
 //----------------------------------------------------------------------
 
-class SAT_WaylandSurface
+class SAT_GLXSurface
 : public SAT_BaseSurface {
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_WaylandSurface(SAT_SurfaceOwner* AOwner)
+  SAT_GLXSurface(SAT_SurfaceOwner* AOwner)
   : SAT_BaseSurface(AOwner) {
   }
 
   //----------
 
-  virtual ~SAT_WaylandSurface() {
+  virtual ~SAT_GLXSurface() {
   }
 
 

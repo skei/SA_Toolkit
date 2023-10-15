@@ -39,6 +39,8 @@ class SAT_EGLRenderer
 private:
 //------------------------------
 
+  SAT_RendererOwner*    MOwner      = nullptr;
+
   bool                  MIsCurrent  = false;
 
   EGLDisplay            MDisplay    = nullptr;
@@ -55,52 +57,52 @@ public:
   SAT_EGLRenderer(SAT_RendererOwner* AOwner)
   : SAT_BaseRenderer(AOwner) {
 
-    //Display* display = AOwner->getX11Display();
-    //MDisplay = eglGetDisplay((EGLNativeDisplayType)display);
+    MOwner = AOwner;
 
-    MDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    if (MDisplay == EGL_NO_DISPLAY) {
-      SAT_Print("Can't create egl display\n");
-      //return false;
-    } else {
-      SAT_Print("Created egl display\n");
-    }
+    //Display* x11_display = AOwner->on_rendererOwner_getX11Display();
+    //MDisplay = eglGetDisplay((EGLNativeDisplayType)x11_display);
+
+    //MDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+    struct wl_display* wdisp = AOwner->on_rendererOwner_getWaylandDisplay();
+    MDisplay = eglGetDisplay((EGLNativeDisplayType)wdisp);
+    SAT_Print("MDisplay: %p\n",MDisplay);
 
     EGLint major, minor;
     if (eglInitialize(MDisplay,&major,&minor) != EGL_TRUE) {
-      SAT_Print("Can't initialise egl display\n");
+      SAT_Print("eglInitialize failed\n");
       //return false;
     }
-    SAT_Print("EGL major: %d, minor %d\n",major,minor);
+    SAT_Print("> EGL major: %d, minor %d\n",major,minor);
 
     EGLint count;
     eglGetConfigs(MDisplay,NULL,0,&count);
-    SAT_Print("EGL has %d configs\n",count);
+    SAT_Print("> EGL has %d configs\n",count);
 
     EGLint config_attribs[] = {
       EGL_SURFACE_TYPE,     EGL_WINDOW_BIT, // EGL_PIXMAP_BIT
       EGL_RED_SIZE,         8,
       EGL_GREEN_SIZE,       8,
       EGL_BLUE_SIZE,        8,
-      EGL_RENDERABLE_TYPE,  EGL_OPENGL_ES2_BIT,
+      EGL_RENDERABLE_TYPE,  EGL_OPENGL_ES3_BIT,
       EGL_NONE
     };
 
     static const EGLint context_attribs[] = {
-      EGL_CONTEXT_CLIENT_VERSION, 2,
+      EGL_CONTEXT_CLIENT_VERSION, 3,
       EGL_NONE
     };
 
-    EGLConfig* configs = (void**)calloc(count,sizeof *configs);
     EGLint num;
+    EGLConfig* configs = (void**)calloc(count,sizeof *configs);
     eglChooseConfig(MDisplay,config_attribs,configs,count,&num);
 
     for (int i=0; i<num; i++) {
       EGLint size;
       eglGetConfigAttrib(MDisplay,configs[i],EGL_BUFFER_SIZE,&size);
-      SAT_Print("Buffer size for config %d is %d\n",i,size);
+      SAT_Print("> Buffer size for config %d is %d\n",i,size);
       eglGetConfigAttrib(MDisplay,configs[i],EGL_RED_SIZE,&size);
-      SAT_Print("Red size for config %d is %d\n",i,size);
+      SAT_Print("> Red size for config %d is %d\n",i,size);
       // just choose the first one
       MConfig = configs[i]; 
       break;
@@ -109,67 +111,14 @@ public:
     MContext = eglCreateContext(MDisplay,MConfig,EGL_NO_CONTEXT,context_attribs);
     SAT_Print("MContext: %p\n",MContext);
 
-    //--------------------
-    //--------------------
+    //makeCurrent(); // we need a surface first..
 
-    #if defined(SAT_GUI_WAYLAND)
-
-      wl_egl_window* owner_window = AOwner->getWaylandWindow();
-      SAT_Print("owner_window:  %p\n",owner_window);
-      MSurface = eglCreateWindowSurface(MDisplay,MConfig,(EGLNativeWindowType)owner_window,NULL);
-      SAT_Print("MSurface: %p\n",MSurface); // prints (nil) !!!
-
-//      wl_surface* owner_surface = AOwner->getWaylandSurface();
-//      SAT_Print("owner_surface: %p\n",owner_surface);
-//
-//      wl_egl_window* egl_window = wl_egl_window_create(owner_surface,640,480); // owner->getWidth/height
-//      if (egl_window == EGL_NO_SURFACE) {
-//        SAT_Print("WL: Can't create egl window\n");
-//        //return false;
-//      } else {
-//        SAT_Print("WL: Created egl window\n");
-//      }
-//
-//      MSurface = eglCreateWindowSurface(MDisplay,MConfig,(EGLNativeWindowType)egl_window,NULL);
-//      SAT_Print("MSurface: %p\n",MSurface); // prints (nil) !!!
-
-    #elif defined(SAT_GUI_WIN32)
-      ;
-
-    #elif defined(SAT_GUI_X11)
-      ;
-
-    #endif
-
-    //--------------------
-    //--------------------
-
-    if (eglMakeCurrent(MDisplay,MSurface,MSurface,MContext)) {
-      SAT_Print("Made current\n");
-    } else {
-      SAT_Print("Made current failed\n");
-    }
+    //if (eglMakeCurrent(MDisplay,MSurface,MSurface,MContext)) {
+    //  SAT_Print("Made current\n");
+    //} else {
+    //  SAT_Print("Made current failed\n");
+    //}
     
-//    //--------------------
-//    // test.. render something
-//    //--------------------
-//
-//    // drawing
-//
-//    glClearColor(1.0, 1.0, 0.0, 1.0);
-//    glClear(GL_COLOR_BUFFER_BIT);
-//    glFlush();
-//
-//    //-----
-//
-//    // swap buffers
-//
-//    if (eglSwapBuffers(MDisplay,MSurface)) {
-//      SAT_Print("Swapped buffers\n");
-//    } else {
-//      SAT_Print("Swapped buffers failed\n");      // <----
-//    }
-
   }
 
   //----------
@@ -185,13 +134,45 @@ public:
 public:
 //------------------------------
 
-  EGLDisplay  getEGLDisplay() { return MDisplay; }
-  EGLConfig   getEGLConfig()  { return MConfig; }
-  EGLContext  getEGLContext() { return MContext; }
+  //EGLDisplay  getEGLDisplay() { return MDisplay; }
+  //EGLConfig   getEGLConfig()  { return MConfig; }
+  //EGLContext  getEGLContext() { return MContext; }
 
 //------------------------------
 public:
 //------------------------------
+
+  //bool setSurface(SAT_BaseSurface* ASurface) override {
+  //  return false;
+  //}
+
+  //----------
+
+  EGLSurface createWindowSurface(EGLNativeWindowType AWindow) {
+    return eglCreateWindowSurface(MDisplay,MConfig,AWindow,NULL);
+  }
+
+  //----------
+
+  //bool setSurface(EGLSurface ASurface) {
+  //  MSurface = ASurface;
+  //  makeCurrent(MSurface);
+  //  return true;
+  //}
+
+  //----------
+
+  //bool makeCurrent(EGLSurface ASurface) {
+  //  MIsCurrent = true;
+  //  eglMakeCurrent(MDisplay,ASurface,ASurface,MContext);
+  //  return true;
+  //}
+
+//------------------------------
+public:
+//------------------------------
+
+
 
   //bool setSurface(SAT_BaseSurface* ASurface) override {
   //  return true;

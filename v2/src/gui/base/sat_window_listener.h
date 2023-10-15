@@ -3,25 +3,11 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/base/sat_base_widget.h"
 
 class SAT_WindowListener {
-  
-//------------------------------
 public:
-//------------------------------
-
-  //virtual void on_windowListener_open() {}
-  //virtual void on_windowListener_close() {}
-  //virtual void on_windowListener_visible() {}
-  virtual void on_windowListener_mouseClick() {}
-  virtual void on_windowListener_mouseRelease() {}
-  virtual void on_windowListener_mouseMove() {}
-  virtual void on_windowListener_keyPress() {}
-  virtual void on_windowListener_keyRelease() {}
-  virtual void on_windowListener_timer() {}
-  virtual void on_windowListener_paint() {}
-  virtual void on_windowListener_userMessage(intptr_t AMessage) {}
-
+  virtual void on_windowListener_resize(SAT_BaseWindow* AWindow) {}
 };
 
 //----------------------------------------------------------------------

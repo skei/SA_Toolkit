@@ -2,20 +2,14 @@
 #define sat_widget_listener_included
 //----------------------------------------------------------------------
 
+#include "sat.h"
+#include "gui/base/sat_base_widget.h"
+
 class SAT_WidgetListener {
-  
-//------------------------------
 public:
-//------------------------------
-
-  virtual void on_widgetListener_mouseClick() {}
-  virtual void on_widgetListener_mouseRelease() {}
-  virtual void on_widgetListener_mouseMove() {}
-  virtual void on_widgetListener_keyPress() {}
-  virtual void on_widgetListener_keyRelease() {}
-  virtual void on_widgetListener_timer() {}
-  virtual void on_widgetListener_paint() {}
-
+  virtual void on_widgetListener_update(SAT_BaseWidget* AFrom) {}
+  virtual void on_widgetListener_redraw(SAT_BaseWidget* AFrom) {}
+  virtual void on_widgetListener_realign(SAT_BaseWidget* AFrom) {}
 };
 
 //----------------------------------------------------------------------

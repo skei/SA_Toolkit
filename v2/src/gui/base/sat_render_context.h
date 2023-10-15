@@ -6,22 +6,23 @@
 
 
 #if defined(SAT_GUI_WIN32)
-
   ;
-
 #elif defined(SAT_GUI_X11)
-
   #include "gui/x11/sat_x11.h"
-
 #endif
 
 //----------------------------------------------------------------------
 
-class SAT_RenderContext {
-public:
+struct SAT_RenderContext {
 
-  #ifdef SAT_GUI_X11
-    //virtual Display* getX11Display() { return nullptr; }
+  #if defined(SAT_GUI_NOGUI)
+    ;
+  #if defined(SAT_GUI_WAYLAND)
+    ;
+  #if defined(SAT_GUI_WIN32)
+    ;
+  #if defined(SAT_GUI_X11)
+    ;
   #endif
 };
 

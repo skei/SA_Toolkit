@@ -56,10 +56,10 @@ public:
 
   // assumes opengl context already made current
 
-  SAT_NanoVGPainter(SAT_PainterOwner* AOwner, SAT_Renderer* ARenderer)
-  : SAT_BasePainter(AOwner,ARenderer) {
+  SAT_NanoVGPainter(SAT_PainterOwner* AOwner)
+  : SAT_BasePainter(AOwner) {
 
-    ARenderer->makeCurrent();
+//    ARenderer->makeCurrent();
 
     // NVG_ANTIALIAS, NVG_STENCIL_STROKES, NVG_DEBUG
     #if defined(SAT_GUI_WAYLAND)
@@ -78,7 +78,7 @@ public:
 //    nvgFontFaceId(MContext,MDefaultFont);
 //    nvgFontSize(MContext,MTextSize);
 
-    ARenderer->resetCurrent();
+//    ARenderer->resetCurrent();
     
   }
 

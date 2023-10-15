@@ -3,6 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/sat_renderer.h"
+#include "gui/sat_surface.h"
 //#include "gui/base/sat_window_listener.h"
 
 //----------------------------------------------------------------------
@@ -21,6 +23,30 @@ public:
   virtual ~SAT_BaseWindow() {
   }
 
+//------------------------------
+public:
+//------------------------------
+
+  //virtual void setRenderer(SAT_Renderer* ARenderer) {}
+  //virtual SAT_Surface* getSurface() { return nullptr; }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void on_window_open() {}
+  virtual void on_window_close() {}
+  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
+  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
+  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
+  virtual void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
+  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void on_window_client_message(uint32_t AData) {}
 //------------------------------
 public:
 //------------------------------
@@ -55,23 +81,6 @@ public:
   virtual void      invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
   virtual void      sendClientMessage(uint32_t AData, uint32_t AType) {}
 
-//------------------------------
-public:
-//------------------------------
-
-  virtual void on_window_open() {}
-  virtual void on_window_close() {}
-  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
-  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-  virtual void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void on_window_client_message(uint32_t AData) {}
 
 };
 

@@ -5,7 +5,7 @@
 #include "sat.h"
 #include "gui/base/sat_base_surface.h"
 //#include "gui/base/sat_paint_source.h"
-#include "gui/base/sat_paint_target.h"
+//#include "gui/base/sat_paint_target.h"
 
 //#include "gui/mip_drawable.h"
 //#include "gui/xcb/mip_xcb.h"
@@ -15,7 +15,7 @@
 
 class SAT_X11Surface
 : public SAT_BaseSurface
-, public SAT_PaintTarget {
+/*, public SAT_PaintTarget*/ {
 
 //------------------------------
 private:
