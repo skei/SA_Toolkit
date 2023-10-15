@@ -4,6 +4,8 @@
 
 //----------
 
+#define SAT_PRINT_SOCKET
+
 #include "sat.h"
 #include "gui/sat_window.h"
 #include "gui/sat_renderer.h"

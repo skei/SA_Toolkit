@@ -18,14 +18,6 @@
 #include "gui/x11/sat_x11.h"
 #include "gui/egl/sat_egl.h"
 
-//#include <X11/Xlib.h>
-//#include <GL/gl.h>
-//#include <GL/glx.h>
-//#include <EGL/egl.h>
-//#include <EGL/eglext.h>
-//#include <EGL/eglplatform.h>
-//#include <GLES2/gl2.h>
-
 //----------------------------------------------------------------------
 //
 //
@@ -58,11 +50,6 @@ public:
   : SAT_BaseRenderer(AOwner) {
 
     MOwner = AOwner;
-
-    //Display* x11_display = AOwner->on_rendererOwner_getX11Display();
-    //MDisplay = eglGetDisplay((EGLNativeDisplayType)x11_display);
-
-    //MDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
     struct wl_display* wdisp = AOwner->on_rendererOwner_getWaylandDisplay();
     MDisplay = eglGetDisplay((EGLNativeDisplayType)wdisp);
@@ -111,23 +98,13 @@ public:
     MContext = eglCreateContext(MDisplay,MConfig,EGL_NO_CONTEXT,context_attribs);
     SAT_Print("MContext: %p\n",MContext);
 
-    //makeCurrent(); // we need a surface first..
-
-    //if (eglMakeCurrent(MDisplay,MSurface,MSurface,MContext)) {
-    //  SAT_Print("Made current\n");
-    //} else {
-    //  SAT_Print("Made current failed\n");
-    //}
-    
   }
 
   //----------
 
   virtual ~SAT_EGLRenderer() {
     eglDestroyContext(MDisplay,MContext);
-    // eglChooseConfig
-    // initialize
-    eglTerminate(MDisplay); // undo eglInitialize
+    eglTerminate(MDisplay);
   }
 
 //------------------------------
@@ -142,43 +119,13 @@ public:
 public:
 //------------------------------
 
-  //bool setSurface(SAT_BaseSurface* ASurface) override {
-  //  return false;
-  //}
-
-  //----------
-
   EGLSurface createWindowSurface(EGLNativeWindowType AWindow) {
     return eglCreateWindowSurface(MDisplay,MConfig,AWindow,NULL);
   }
 
-  //----------
-
-  //bool setSurface(EGLSurface ASurface) {
-  //  MSurface = ASurface;
-  //  makeCurrent(MSurface);
-  //  return true;
-  //}
-
-  //----------
-
-  //bool makeCurrent(EGLSurface ASurface) {
-  //  MIsCurrent = true;
-  //  eglMakeCurrent(MDisplay,ASurface,ASurface,MContext);
-  //  return true;
-  //}
-
 //------------------------------
 public:
 //------------------------------
-
-
-
-  //bool setSurface(SAT_BaseSurface* ASurface) override {
-  //  return true;
-  //}
-
-  //----------
 
   bool beginRendering() override {
     makeCurrent();
