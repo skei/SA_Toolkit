@@ -25,6 +25,9 @@ public:
 public:
 //------------------------------
 
+  virtual uint32_t    getType()     { return 0; }
+  virtual const char* getTypeName() { return ""; }
+
 //  virtual int32_t getDefaultFont() { return 0; }
 //  virtual int32_t getHeaderFont() { return 0; }
 //  virtual void*   getRenderBuffer() { return nullptr; }

@@ -27,10 +27,19 @@ public:
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
     SAT_Renderer* renderer = getRenderer();
     SAT_Painter* painter = getPainter();
-    renderer->beginRendering(0,0,640,480);
-    painter->beginFrame(640,480,1.0);
+    renderer->beginRendering(0,0,AWidth,AHeight); // (0,0,640,480);
+    painter->beginFrame(AWidth,AHeight,1);        // (640,480,1.0);
+
+      const char* painter_type_name = painter->getTypeName();
+
       painter->setFillColor(SAT_Yellow);
-      painter->fillRect(10,10,80,80);
+      painter->fillCircle(200,200,150);
+
+      // need to load a font first..
+      //painter->setTextColor(SAT_BrightRed);
+      //painter->setTextSize(32);
+      //painter->drawText(100,100,"Hello, %s!",painter_type_name);
+
     painter->endFrame();
     renderer->endRendering();
   }

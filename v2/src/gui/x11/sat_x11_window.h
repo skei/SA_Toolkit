@@ -4,6 +4,7 @@
 
 #include "sat.h"
 #include "gui/base/sat_base_window.h"
+#include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_renderer_owner.h"
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
@@ -36,10 +37,9 @@ private:
   uint32_t                    MScreenWidth                  = 0;
   uint32_t                    MScreenHeight                 = 0;
   uint32_t                    MScreenDepth                  = 0;
-
-//bool                        MIsEventThreadActive          = false;
-//std::atomic<bool>           MIsEventThreadActive          {false};
   sat_atomic_bool_t           MIsEventThreadActive          {false};
+  sat_atomic_bool_t           MIsPainting                   {false};
+//sat_atomic_bool_t           MIsClosing                    {false};
 
   pthread_t                   MEventThread                  = 0;
   xcb_client_message_event_t* MClientMessageEvent           = (xcb_client_message_event_t*)MClientMessageEventBuffer;
@@ -173,8 +173,6 @@ public:
       window_mask_values
     );
 
-    //---
-
     // mouse
 
     MEmptyPixmap = xcb_generate_id(MConnection);
@@ -212,7 +210,7 @@ public:
       wantQuitEvents();
     }
 
-    //setTitle(MWindowTitle);
+    //
 
     MRenderer = new SAT_Renderer(this);
     MPainter = new SAT_Painter(this);
@@ -251,6 +249,9 @@ public:
 
   SAT_Renderer* getRenderer() { return MRenderer; }
   SAT_Painter*  getPainter()  { return MPainter; }
+
+  uint32_t      getType()     override { return SAT_WINDOW_TYPE_X11; }
+  const char*   getTypeName() override { return SAT_WINDOW_TYPE_NAME_X11; }
 
 //------------------------------
 public: // SAT_RendererOwner
@@ -838,6 +839,7 @@ private:
       }
 
       /*
+        (where is this from?)
         "Well... personally, I never needed these fancy functions.
         The most complicated that I needed was "only handle the last
         MotionNotify event in the queue and ignore earlier ones". For that,
@@ -854,7 +856,6 @@ private:
         uint16_t w = configure_notify->width;
         uint16_t h = configure_notify->height;
         //SAT_Print("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i\n",x,y,w,h);
-
         if ((x != MWindowXpos) || (y != MWindowYpos)) {
           //SAT_Print("new MWindowXpos/Ypos %i,%i\n",MWindowXpos,MWindowYpos);
           on_window_move(x,y);
@@ -870,25 +871,23 @@ private:
         break;
       }
 
-      /*
-        https://cairographics.org/cookbook/xcbsurface.c/
-        Avoid extra redraws by checking if this is the last expose event in the sequence
-
-        while(expose->count != 0) {
-          xcb_generic_event_t* e2 = xcb_wait_for_event(MConnection);
-          xcb_expose_event_t* ex2 = (xcb_expose_event_t *)e2;
-          RECT.combine( SAT_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
-        }
-      */
-
       case XCB_EXPOSE: {
         xcb_expose_event_t* expose = (xcb_expose_event_t *)AEvent;
         uint16_t x = expose->x;
         uint16_t y = expose->y;
         uint16_t w = expose->width;
         uint16_t h = expose->height;
+          //// https://cairographics.org/cookbook/xcbsurface.c/
+          //// Avoid extra redraws by checking if this is the last expose event in the sequence
+          //while(expose->count != 0) {
+          //  xcb_generic_event_t* e2 = xcb_wait_for_event(MConnection);
+          //  xcb_expose_event_t* ex2 = (xcb_expose_event_t *)e2;
+          //  RECT.combine( SAT_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
+          //}
+        //MIsPainting = true;
         on_window_paint(x,y,w,h);
         xcb_flush(MConnection);
+        //MIsPainting = false;
         MIsExposed = true;
         break;
       }
@@ -1004,8 +1003,6 @@ private:
 
         if (data == SAT_WINDOW_THREAD_KILL) {
           //SAT_Print("SAT_WINDOW_THREAD_KILL\n");
-          
-          //real_free(AEvent); // not malloc'ed
           ::free(AEvent); // not malloc'ed
           return false; // we re finished
           
@@ -1014,8 +1011,6 @@ private:
         //if (type == MWMProtocolsAtom) {
           if (data == MWMDeleteWindowAtom) {
             //SAT_Print("MWMDeleteWindowAtom\n");
-            
-            //real_free(AEvent); // not malloc'ed
             ::free(AEvent); // not malloc'ed
             return false; // we re finished
             
@@ -1023,9 +1018,9 @@ private:
         //}
 
         break;
-      } // switch
+      } // client message
 
-    }
+    } // switch
 
     //real_free(AEvent);
     ::free(AEvent);

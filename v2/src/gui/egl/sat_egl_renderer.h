@@ -51,8 +51,15 @@ public:
 
     MOwner = AOwner;
 
-    struct wl_display* wdisp = AOwner->on_rendererOwner_getWaylandDisplay();
-    MDisplay = eglGetDisplay((EGLNativeDisplayType)wdisp);
+    #if defined(SAT_GUI_WAYLAND)
+      struct wl_display* disp = AOwner->on_rendererOwner_getWaylandDisplay();
+    #elif defined(SAT_GUI_WIN32)
+      ;
+    #elif defined(SAT_GUI_X11)
+      Display* disp = AOwner->on_rendererOwner_getX11Display();
+    #endif
+
+    MDisplay = eglGetDisplay((EGLNativeDisplayType)disp);
     SAT_Print("MDisplay: %p\n",MDisplay);
 
     EGLint major, minor;

@@ -6,7 +6,7 @@
 #include "gui/base/sat_base_window.h"
 #include "gui/base/sat_surface_owner.h"
 #include "gui/sat_renderer.h"
-#include "gui/sat_painter.h"
+//#include "gui/sat_painter.h"
 
 //----------------------------------------------------------------------
 
@@ -43,19 +43,28 @@ class SAT_Window
 private:
 //------------------------------
 
+  //SAT_Painter* MPainter = nullptr;
+
 //------------------------------
 public:
 //------------------------------
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
-
+    //MPainter = new SAT_Painter(this);
   }
 
   //----------
 
   virtual ~SAT_Window() {
+    //delete MPainter;
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  //SAT_Painter*  getPainter()  { return MPainter; }
 
 //------------------------------
 public:

@@ -27,6 +27,9 @@ public:
 public:
 //------------------------------
 
+  virtual uint32_t    getType()     { return 0; }
+  virtual const char* getTypeName() { return ""; }
+
   //virtual void setRenderer(SAT_Renderer* ARenderer) {}
   //virtual SAT_Surface* getSurface() { return nullptr; }
 

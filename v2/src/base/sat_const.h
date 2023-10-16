@@ -173,6 +173,16 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_FILE_APPEND_BINARY                  (char*)"ab"
 // #define SAT_FILE_APPEND_TEXT                    (char*)"a"
 
+#define SAT_GUI_TYPE_NONE                       0
+#define SAT_GUI_TYPE_WAYLAND                    1
+#define SAT_GUI_TYPE_WIN32                      2
+#define SAT_GUI_TYPE_X11                        3
+
+#define SAT_GUI_TYPE_NAME_NONE                  "None"
+#define SAT_GUI_TYPE_NAME_WAYLAND               "Wayland"
+#define SAT_GUI_TYPE_NAME_WIN32                 "Win32"
+#define SAT_GUI_TYPE_NAME_X11                   "X11"
+
 // #define SAT_KEY_NONE                            0
 // #define SAT_KEY_ENTER                           13
 // #define SAT_KEY_ESC                             27
@@ -207,9 +217,31 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_OBSERVE_INT32                       4
 // #define SAT_OBSERVE_STRING                      5
 
+#define SAT_PAINTER_TYPE_NONE                   0
+#define SAT_PAINTER_TYPE_CAIRO                  1
+#define SAT_PAINTER_TYPE_NANOVG                 2
+#define SAT_PAINTER_TYPE_WIN32                  3
+#define SAT_PAINTER_TYPE_X11                    4
+
+#define SAT_PAINTER_TYPE_NAME_NONE              "None"
+#define SAT_PAINTER_TYPE_NAME_CAIRO             "Cairo"
+#define SAT_PAINTER_TYPE_NAME_NANOVG            "NanoVG"
+#define SAT_PAINTER_TYPE_NAME_WIN32             "Win32"
+#define SAT_PAINTER_TYPE_NAME_X11               "X11"
+
 // #define SAT_PLUGIN_EVENT_MODE_BLOCK             0
 // #define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
 // #define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
+
+#define SAT_RENDERER_TYPE_NONE                  0
+#define SAT_RENDERER_TYPE_GLX                   0
+#define SAT_RENDERER_TYPE_EGL                   0
+#define SAT_RENDERER_TYPE_WGL                   0
+
+#define SAT_PAINTER_TYPE_NAME_NONE               "None"
+#define SAT_PAINTER_TYPE_NAME_EGL                "EGL"
+#define SAT_PAINTER_TYPE_NAME_GLX                "GLX"
+#define SAT_PAINTER_TYPE_NAME_WGL                "WGL"
 
 #define SAT_STATE_NONE                          0x00
 #define SAT_STATE_SHIFT                         0x01
@@ -411,6 +443,16 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_WIDGET_TWEEN_RECT                   3
 
 // #define SAT_WIDGET_UPDATE_VALUE                 0
+
+#define SAT_WINDOW_TYPE_NONE                    0
+#define SAT_WINDOW_TYPE_WAYLAND                 1
+#define SAT_WINDOW_TYPE_WIN32                   2
+#define SAT_WINDOW_TYPE_X11                     3
+
+#define SAT_WINDOW_TYPE_NAME_NONE               "None"
+#define SAT_WINDOW_TYPE_NAME_WAYLAND            "Wayland"
+#define SAT_WINDOW_TYPE_NAME_WIN32              "Win32"
+#define SAT_WINDOW_TYPE_NAME_X11                "X11"
 
 #define SAT_WINDOW_THREAD_KILL                  666
 

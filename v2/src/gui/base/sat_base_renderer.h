@@ -26,7 +26,8 @@ public:
 public:
 //------------------------------
 
-  //virtual bool setSurface(SAT_BaseSurface* ASurface) { return false; }
+  virtual uint32_t    getType()     { return 0; }
+  virtual const char* getTypeName() { return ""; }
 
   virtual bool beginRendering() { return false; }
   virtual bool beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) { return false; }

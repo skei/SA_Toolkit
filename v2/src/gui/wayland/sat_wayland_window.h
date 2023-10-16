@@ -4,6 +4,7 @@
 
 #include "sat.h"
 #include "gui/base/sat_base_window.h"
+#include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_renderer_owner.h"
 #include "gui/base/sat_surface_owner.h"
 #include "gui/wayland/sat_wayland.h"
@@ -19,7 +20,7 @@
 class SAT_WaylandWindow
 : public SAT_RendererOwner,
   public SAT_PainterOwner,
-//public SAT_SurfaceOwner,
+  public SAT_SurfaceOwner,
   public SAT_BaseWindow {
 
 //------------------------------
@@ -35,16 +36,16 @@ private:
   struct wl_region*         MRegion         = nullptr;
   struct wl_egl_window*     MWindow         = nullptr;
 
-//struct wl_shell*          MShell          = nullptr;
-//struct wl_shell_surface*  MShellSurface   = nullptr;
-
   struct wl_compositor*     MCompositor     = nullptr;
-  struct wl_subcompositor*  MSubCompositor  = nullptr;
   struct wl_seat*           MSeat           = nullptr;
-  struct wl_shm*            MShm            = nullptr;
   struct xdg_surface*       MXDGSurface     = nullptr;
   struct xdg_toplevel*      MXDGTopLevel    = nullptr;
   struct xdg_wm_base*       MXDGWMBase      = nullptr;
+
+//struct wl_shell*          MShell          = nullptr;
+//struct wl_shell_surface*  MShellSurface   = nullptr;
+//struct wl_shm*            MShm            = nullptr;
+//struct wl_subcompositor*  MSubCompositor  = nullptr;
 
   struct wl_surface*        MCursorSurface  = nullptr;
 
@@ -75,6 +76,8 @@ public:
     wl_region_add(MRegion,0,0,AWidth,AHeight);
     wl_surface_set_opaque_region(MSurface,MRegion);
 
+//    wl_surface_commit(MSurface);
+
     MWindow = wl_egl_window_create(MSurface,AWidth,AHeight);
     SAT_Print("MWindow: %p\n",MWindow);
 
@@ -85,24 +88,43 @@ public:
     MEGLSurface = MRenderer->createWindowSurface(native_window);
     SAT_Print("MEGLSurface: %p\n",MEGLSurface);
 
-    MRenderer->makeCurrent();
-    MPainter = new SAT_Painter(this);
+    // signal that the surface is ready to be configured
+    // wl_surface_commit(MSurface);
+    // ...
+    // create a pool
+    // create a buffer
+    // ...
+    // wait for the surface to be configured
+    //wl_display_roundtrip(display);
+    //wl_surface_attach(MSurface, buffer, 0, 0);
+    //wl_surface_commit(MSurface);    
+
+//    MRenderer->makeCurrent();
+//    MPainter = new SAT_Painter(this);
 
     if (MXDGWMBase) {
+      SAT_Print("adding xdg_wm_base listener\n");
       xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,MWindow);
       MXDGSurface = xdg_wm_base_get_xdg_surface(MXDGWMBase,MSurface);
       SAT_Print("MXDGSurface: %p\n",MXDGSurface);
       if (MXDGSurface) {
+        SAT_Print("adding xdg_surface listener\n");
         xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,MWindow);
         MXDGTopLevel = xdg_surface_get_toplevel(MXDGSurface);
         SAT_Print("MXDGTopLevel: %p\n",MXDGTopLevel);
         if (MXDGTopLevel) {
+          SAT_Print("adding xdg_toplevel listener\n");
           xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,MWindow);
+          SAT_Print("setting xdg_toplevel title\n");
           xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
+          SAT_Print("setting xdg_toplevel app id\n");
           xdg_toplevel_set_app_id(MXDGTopLevel, "hello_world");
         }
       }
     }
+
+    MRenderer->makeCurrent();
+    MPainter = new SAT_Painter(this);
 
   }
 
@@ -132,9 +154,318 @@ public:
   SAT_Renderer* getRenderer() { return MRenderer; }
   SAT_Painter*  getPainter()  { return MPainter; }
 
+  uint32_t      getType()     override { return SAT_WINDOW_TYPE_WAYLAND; }
+  const char*   getTypeName() override { return SAT_WINDOW_TYPE_NAME_WAYLAND; }
+
+//------------------------------
+private: // wl_registry
+//------------------------------
+
+  /*
+    Global registry object
+    The singleton global registry object. The server has a number of global objects that are
+    available to all clients. These objects typically represent an actual object in the server
+    (for example, an input device) or they are singleton objects that provide extension functionality.
+
+    When a client creates a registry object, the registry object will emit a global event for each
+    global currently in the registry. Globals come and go as a result of device or monitor hotplugs,
+    reconfiguration or other events, and the registry will send out global and global_remove events
+    to keep the client up to date with the changes. To mark the end of the initial burst of events,
+    the client can use the wl_display.sync request immediately after calling wl_display.get_registry.
+
+    A client can bind to a global object by using the bind request. This creates a client-side handle
+    that lets the object emit events to the client and lets the client invoke requests on the object.
+  */
+
+  //----------
+
+  void sat_wl_registry_global(struct wl_registry* registry, uint32_t id, const char* interface, uint32_t version) {
+    //SAT_Print("interface: %s id: %i\n",interface,id);
+
+    if (strcmp(interface,xdg_wm_base_interface.name) == 0) {
+      MXDGWMBase = (struct xdg_wm_base*)wl_registry_bind(registry,id,&xdg_wm_base_interface,1);
+      SAT_Print("MXDGWMBase: %p\n",MXDGWMBase);
+    }
+
+    else if (strcmp(interface,"wl_compositor") == 0) {
+      MCompositor = (struct wl_compositor*)wl_registry_bind(registry,id,&wl_compositor_interface,1);
+      SAT_Print("MCompositor: %p\n",MCompositor);
+    }
+
+    //else if (strcmp(interface,"wl_subcompositor") == 0) {
+    //  MSubCompositor = (struct wl_subcompositor*)wl_registry_bind(registry,id,&wl_subcompositor_interface,1);
+    //  SAT_Print("MSubCompositor: %p\n",MSubCompositor);
+    //}
+
+    else if (strcmp(interface,"wl_seat") == 0) {
+      MSeat = (struct wl_seat*)wl_registry_bind(registry,id,&wl_seat_interface,1);
+      SAT_Print("MSeat: %p\n",MSeat);
+    }
+
+    //else if (strcmp(interface,"wl_shm") == 0) {
+    //  MShm = (struct wl_shm*)wl_registry_bind(registry,id,&wl_shm_interface,1);
+    //  SAT_Print("MShm: %p\n",MShm);
+    //}
+
+    //else if (strcmp(interface,"wl_shell") == 0) {
+    //  MShell = (struct wl_shell*)wl_registry_bind(registry,id,&wl_shell_interface,1);
+    //  SAT_Print("MShell: %p\n",MShell);
+    //}
+
+  }
+
+  //----------
+
+  void sat_wl_registry_global_remove(struct wl_registry* registry, uint32_t id) {
+    //SAT_Print("WL: Got a registry losing event for %d\n", id);
+  }
+
+  //------------------------------
+  //
+  //------------------------------
+
+  static
+  void sat_wl_registry_global_callback(void* data, struct wl_registry* registry, uint32_t id, const char* interface, uint32_t version) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_registry_global(registry,id,interface,version);
+  }
+
+  //----------
+
+  static
+  void sat_wl_registry_global_remove_callback(void* data, struct wl_registry *registry, uint32_t id) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_registry_global_remove(registry,id);
+  }
+
+  //------------------------------
+
+  const
+  struct wl_registry_listener sat_wl_registry_listener = {
+    .global         = sat_wl_registry_global_callback,
+    .global_remove  = sat_wl_registry_global_remove_callback
+  };
+
+//------------------------------
+private: // xdg_wm_base
+//------------------------------
+
+  /*
+    Create desktop-style surfaces
+    The xdg_wm_base interface is exposed as a global object enabling clients to turn their
+    wl_surfaces into windows in a desktop environment. It defines the basic functionality needed
+    for clients and the compositor to create windows that can be dragged, resized, maximized,
+    etc, as well as creating transient windows such as popup menus.
+  */
+
+  //----------
+
+  void sat_xdg_wm_base_ping(struct xdg_wm_base *xdg_wm_base, uint32_t serial) {
+    SAT_PRINT;
+    xdg_wm_base_pong(xdg_wm_base, serial);
+  }
+
+  //------------------------------
+  //
+  //------------------------------
+
+  static
+  void sat_xdg_wm_base_ping_callback(void *data, struct xdg_wm_base *xdg_wm_base, uint32_t serial) {
+    SAT_PRINT;
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_xdg_wm_base_ping(xdg_wm_base,serial);
+  }
+
+  //------------------------------
+
+  const
+  struct xdg_wm_base_listener sat_xdg_wm_base_listener {
+    .ping = sat_xdg_wm_base_ping_callback
+  };
+
+//------------------------------
+private: // xdg_surface
+//------------------------------
+
+  /*
+    Desktop user interface surface base interface
+    An interface that may be implemented by a wl_surface, for implementations that provide a desktop-style user interface.
+
+    It provides a base set of functionality required to construct user interface elements requiring
+    management by the compositor, such as toplevel windows, menus, etc. The types of functionality are
+    split into xdg_surface roles.
+
+    Creating an xdg_surface does not set the role for a wl_surface. In order to map an xdg_surface,
+    the client must create a role-specific object using, e.g., get_toplevel, get_popup.
+    The wl_surface for any given xdg_surface can have at most one role, and may not be assigned any role not based on xdg_surface.
+
+    A role must be assigned before any other requests are made to the xdg_surface object.
+
+    The client must call wl_surface.commit on the corresponding wl_surface for the xdg_surface state to take effect.
+
+    Creating an xdg_surface from a wl_surface which has a buffer attached or committed is a client error, and any attempts
+    by a client to attach or manipulate a buffer prior to the first xdg_surface.configure call must also be treated as errors.
+
+    After creating a role-specific object and setting it up, the client must perform an initial commit without any buffer attached.
+    The compositor will reply with initial wl_surface state such as wl_surface.preferred_buffer_scale followed by an
+    xdg_surface.configure event. The client must acknowledge it and is then allowed to attach a buffer to map the surface.
+
+    Mapping an xdg_surface-based role surface is defined as making it possible for the surface to be shown by the compositor.
+    Note that a mapped surface is not guaranteed to be visible once it is mapped.
+
+    For an xdg_surface to be mapped by the compositor, the following conditions must be met: (1) the client has assigned an
+    xdg_surface-based role to the surface (2) the client has set and committed the xdg_surface state and the role-dependent
+    state to the surface (3) the client has committed a buffer to the surface
+
+    A newly-unmapped surface is considered to have met condition (1) out of the 3 required conditions for mapping a surface
+    if its role surface has not been destroyed, i.e. the client must perform the initial commit again before attaching a buffer.
+*/
+
+  //----------
+
+  void sat_xdg_surface_configure(struct xdg_surface *xdg_surface, uint32_t serial) {
+    SAT_PRINT;
+    xdg_surface_ack_configure(xdg_surface, serial);
+    wl_surface_commit(MSurface);
+  }
+
+  //------------------------------
+  //
+  //------------------------------
+
+  static
+  void sat_xdg_surface_configure_callback(void *data, struct xdg_surface *xdg_surface, uint32_t serial) {
+    SAT_PRINT;
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_xdg_surface_configure(xdg_surface,serial);
+  }
+
+  //------------------------------
+
+  const
+  struct xdg_surface_listener sat_xdg_surface_listener = {
+    .configure = sat_xdg_surface_configure_callback
+  };
+
+//------------------------------
+private: // xdg_toplevel
+//------------------------------
+
+  /*
+    Toplevel surface
+    This interface defines an xdg_surface role which allows a surface to, among other things,
+    set window-like properties such as maximize, fullscreen, and minimize, set application-specific
+    metadata like title and id, and well as trigger user interactive operations such as
+    interactive resize and move.
+
+    Unmapping an xdg_toplevel means that the surface cannot be shown by the compositor until it is
+    explicitly mapped again. All active operations (e.g., move, resize) are canceled and all attributes
+    (e.g. title, state, stacking, ...) are discarded for an xdg_toplevel surface when it is unmapped.
+    The xdg_toplevel returns to the state it had right after xdg_surface.get_toplevel. The client can
+    re-map the toplevel by perfoming a commit without any buffer attached, waiting for a configure
+    event and handling it as usual (see xdg_surface description).
+
+    Attaching a null buffer to a toplevel unmaps the surface.
+  */
+
+  //----------
+
+  void sat_xdg_toplevel_configure(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *states) {
+    SAT_PRINT;
+    // if (width==0 || height==0) return;
+    // struct window *window = static_cast<struct window*>(data);
+    // window_resize(window, width, height, true);
+  }
+
+  void sat_xdg_toplevel_close(struct xdg_toplevel *xdg_toplevel) {
+    SAT_PRINT;
+    // running = false;
+  }
+
+  //------------------------------
+  //
+  //------------------------------
+
+  static
+  void sat_xdg_toplevel_configure_callback(void *data, struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *states) {
+    SAT_PRINT;
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_xdg_toplevel_configure(xdg_toplevel,width,height,states);
+  }
+
+  static
+  void sat_xdg_toplevel_close_callback(void *data, struct xdg_toplevel *xdg_toplevel) {
+    SAT_PRINT;
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_xdg_toplevel_close(xdg_toplevel);
+  }
+
+  //------------------------------
+
+  const
+  struct xdg_toplevel_listener sat_xdg_toplevel_listener = {
+    .configure  = sat_xdg_toplevel_configure_callback,
+    .close      = sat_xdg_toplevel_close_callback,
+  };
+
+//------------------------------
+private: // wl_seat
+//------------------------------
+
+  /*
+    Group of input devices
+    A seat is a group of keyboards, pointer and touch devices.
+    This object is published as a global during start up, or when such a device is hot plugged.
+    A seat typically has a pointer and maintains a keyboard focus and a pointer focus.
+  */
+
+  //----------
+
+  void sat_wl_seat_capabilities(struct wl_seat* seat, uint32_t capabilities) {
+    SAT_PRINT;
+    if (capabilities & WL_SEAT_CAPABILITY_POINTER) {
+      struct wl_pointer* pointer = wl_seat_get_pointer(seat);
+      wl_pointer_add_listener(pointer,&wl_pointer_listener,MWindow);
+      MCursorSurface = wl_compositor_create_surface(MCompositor);
+    }
+    //if (capabilities & WL_SEAT_CAPABILITY_KEYBOARD) {
+    //  struct wl_keyboard *keyboard = wl_seat_get_keyboard (seat);
+    //  wl_keyboard_add_listener (keyboard, &keyboard_listener, NULL);
+    //}
+  }
+
+  //------------------------------
+  //
+  //------------------------------
+
+  static
+  void sat_wl_seat_capabilities_callback(void *data, struct wl_seat *seat, uint32_t capabilities) {
+    SAT_PRINT;
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_seat_capabilities(seat,capabilities);
+  }
+
+  //------------------------------
+
+  const
+  struct wl_seat_listener sat_wl_seat_listener = {
+    .capabilities = sat_wl_seat_capabilities_callback
+  };
+
 //------------------------------
 private: // wl_pointer
 //------------------------------
+
+  /*
+    Pointer input device
+    The wl_pointer interface represents one or more input devices, such as mice, which control the
+    pointer location and pointer_focus of a seat.
+
+    The wl_pointer interface generates motion, enter and leave events for the surfaces that the
+    pointer is located over, and button and axis events for button presses, button releases and scrolling.
+  */
+
+  //----------
 
   void wl_pointer_enter(struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t surface_x, wl_fixed_t surface_y) {
     SAT_PRINT;
@@ -269,245 +600,67 @@ private: // wl_pointer
   };
 
 //------------------------------
-private: // wl_registry
-//------------------------------
-
-  void sat_wl_registry_global(struct wl_registry* registry, uint32_t id, const char* interface, uint32_t version) {
-    SAT_Print("interface: %s id: %i\n",interface,id);
-    if (strcmp(interface,"wl_compositor") == 0) {
-      MCompositor = (struct wl_compositor*)wl_registry_bind(registry,id,&wl_compositor_interface,1);
-      SAT_Print("MCompositor: %p\n",MCompositor);
-    }
-    else if (strcmp(interface,"wl_seat") == 0) {
-      MSeat = (struct wl_seat*)wl_registry_bind(registry,id,&wl_seat_interface,1);
-      SAT_Print("MSeat: %p\n",MSeat);
-    }
-    //else if (strcmp(interface,"wl_shell") == 0) {
-    //  MShell = (struct wl_shell*)wl_registry_bind(registry,id,&wl_shell_interface,1);
-    //  SAT_Print("MShell: %p\n",MShell);
-    //}
-    else if (strcmp(interface,"wl_shm") == 0) {
-      MShm = (struct wl_shm*)wl_registry_bind(registry,id,&wl_shm_interface,1);
-      SAT_Print("MShm: %p\n",MShm);
-    }
-    else if (strcmp(interface,"wl_subcompositor") == 0) {
-      MSubCompositor = (struct wl_subcompositor*)wl_registry_bind(registry,id,&wl_subcompositor_interface,1);
-      SAT_Print("MSubCompositor: %p\n",MSubCompositor);
-    }
-    else if (strcmp(interface,xdg_wm_base_interface.name) == 0) {
-      MXDGWMBase = (struct xdg_wm_base*)wl_registry_bind(registry,id,&xdg_wm_base_interface,1);
-      SAT_Print("MXDGWMBase: %p\n",MXDGWMBase);
-    }
-  }
-
-  //----------
-
-  void sat_wl_registry_global_remove(struct wl_registry* registry, uint32_t id) {
-    SAT_Print("WL: Got a registry losing event for %d\n", id);
-  }
-
-  //------------------------------
-  //
-  //------------------------------
-
-  static
-  void sat_wl_registry_global_callback(void* data, struct wl_registry* registry, uint32_t id, const char* interface, uint32_t version) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_wl_registry_global(registry,id,interface,version);
-  }
-
-  //----------
-
-  static
-  void sat_wl_registry_global_remove_callback(void* data, struct wl_registry *registry, uint32_t id) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_wl_registry_global_remove(registry,id);
-  }
-
-  //------------------------------
-
-  const
-  struct wl_registry_listener sat_wl_registry_listener = {
-    .global         = sat_wl_registry_global_callback,
-    .global_remove  = sat_wl_registry_global_remove_callback
-  };
-
-//------------------------------
-private: // wl_seat
-//------------------------------
-
-  void sat_wl_seat_capabilities(struct wl_seat* seat, uint32_t capabilities) {
-    SAT_PRINT;
-    if (capabilities & WL_SEAT_CAPABILITY_POINTER) {
-      struct wl_pointer* pointer = wl_seat_get_pointer(seat);
-      wl_pointer_add_listener(pointer,&wl_pointer_listener,MWindow);
-      MCursorSurface = wl_compositor_create_surface(MCompositor);
-    }
-    //if (capabilities & WL_SEAT_CAPABILITY_KEYBOARD) {
-    //  struct wl_keyboard *keyboard = wl_seat_get_keyboard (seat);
-    //  wl_keyboard_add_listener (keyboard, &keyboard_listener, NULL);
-    //}
-  }
-
-  //------------------------------
-  //
-  //------------------------------
-
-  static
-  void sat_wl_seat_capabilities_callback(void *data, struct wl_seat *seat, uint32_t capabilities) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_wl_seat_capabilities(seat,capabilities);
-  }
-
-  //------------------------------
-
-  const
-  struct wl_seat_listener sat_wl_seat_listener = {
-    .capabilities = sat_wl_seat_capabilities_callback
-  };
-
-//------------------------------
 // wl_shell_surface
 //------------------------------
 
-  void sat_wl_shell_surface_ping(struct wl_shell_surface *shell_surface, uint32_t serial) {
-    SAT_PRINT;
-    wl_shell_surface_pong(shell_surface, serial);
-  }
+  /*
+    Desktop-style metadata interface
+    An interface that may be implemented by a wl_surface, for implementations that provide a
+    desktop-style user interface.
+    It provides requests to treat surfaces like toplevel, fullscreen or popup windows, move, resize
+    or maximize them, associate metadata like title and class, etc.
+    On the server side the object is automatically destroyed when the related wl_surface is destroyed.
+    On the client side, wl_shell_surface_destroy() must be called before destroying the wl_surface object.  
+  */
 
-  void sat_wl_shell_surface_configure(struct wl_shell_surface *shell_surface, uint32_t edges, int32_t width, int32_t height) {
-    SAT_PRINT;
-    // struct window *window = static_cast<struct window*>(data);
-    // //std::cout << "config " << edges << " " << width << " " << height << std::endl;
-    // window_resize(window, width, height, true);
-  }
+  //----------
 
-  void sat_wl_shell_surface_popup_done(struct wl_shell_surface *shell_surface) {
-    SAT_PRINT;
-  }
+  // void sat_wl_shell_surface_ping(struct wl_shell_surface *shell_surface, uint32_t serial) {
+  //   SAT_PRINT;
+  //   wl_shell_surface_pong(shell_surface, serial);
+  // }
 
-  //------------------------------
-  //
-  //------------------------------
+  // void sat_wl_shell_surface_configure(struct wl_shell_surface *shell_surface, uint32_t edges, int32_t width, int32_t height) {
+  //   SAT_PRINT;
+  //   // struct window *window = static_cast<struct window*>(data);
+  //   // //std::cout << "config " << edges << " " << width << " " << height << std::endl;
+  //   // window_resize(window, width, height, true);
+  // }
 
-  static
-  void sat_wl_shell_surface_ping_callback(void *data, struct wl_shell_surface *shell_surface, uint32_t serial) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_wl_shell_surface_ping(shell_surface,serial);
-  }
-
-  static
-  void sat_wl_shell_surface_configure_callback(void *data, struct wl_shell_surface *shell_surface, uint32_t edges, int32_t width, int32_t height) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_wl_shell_surface_configure(shell_surface,edges,width,height);
-  }
-
-  static
-  void sat_wl_shell_surface_popup_done_callback(void *data, struct wl_shell_surface *shell_surface) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_wl_shell_surface_popup_done(shell_surface);
-  }
-
-  //------------------------------
-
-  const
-  struct wl_shell_surface_listener sat_wl_shell_surface_listener = {
-    .ping       = sat_wl_shell_surface_ping_callback,
-    .configure  = sat_wl_shell_surface_configure_callback,
-    .popup_done = sat_wl_shell_surface_popup_done_callback
-  };
-
-//------------------------------
-private: // xdg_surface
-//------------------------------
-
-  void sat_xdg_surface_configure(struct xdg_surface *xdg_surface, uint32_t serial) {
-    SAT_PRINT;
-  }
+  // void sat_wl_shell_surface_popup_done(struct wl_shell_surface *shell_surface) {
+  //   SAT_PRINT;
+  // }
 
   //------------------------------
   //
   //------------------------------
 
-  static
-  void sat_xdg_surface_configure_callback(void *data, struct xdg_surface *xdg_surface, uint32_t serial) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_xdg_surface_configure(xdg_surface,serial);
-  }
+  // static
+  // void sat_wl_shell_surface_ping_callback(void *data, struct wl_shell_surface *shell_surface, uint32_t serial) {
+  //   SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+  //   window->sat_wl_shell_surface_ping(shell_surface,serial);
+  // }
+
+  // static
+  // void sat_wl_shell_surface_configure_callback(void *data, struct wl_shell_surface *shell_surface, uint32_t edges, int32_t width, int32_t height) {
+  //   SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+  //   window->sat_wl_shell_surface_configure(shell_surface,edges,width,height);
+  // }
+
+  // static
+  // void sat_wl_shell_surface_popup_done_callback(void *data, struct wl_shell_surface *shell_surface) {
+  //   SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+  //   window->sat_wl_shell_surface_popup_done(shell_surface);
+  // }
 
   //------------------------------
 
-  const
-  struct xdg_surface_listener sat_xdg_surface_listener = {
-    .configure = sat_xdg_surface_configure_callback
-  };
-
-//------------------------------
-private: // xdg_toplevel
-//------------------------------
-
-  void sat_xdg_toplevel_configure(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *states) {
-    SAT_PRINT;
-    // if (width==0 || height==0) return;
-    // struct window *window = static_cast<struct window*>(data);
-    // window_resize(window, width, height, true);
-  }
-
-  void sat_xdg_toplevel_close(struct xdg_toplevel *xdg_toplevel) {
-    SAT_PRINT;
-    // running = false;
-  }
-
-  //------------------------------
-  //
-  //------------------------------
-
-  static
-  void sat_xdg_toplevel_configure_callback(void *data, struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *states) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_xdg_toplevel_configure(xdg_toplevel,width,height,states);
-  }
-
-  static
-  void sat_xdg_toplevel_close_callback(void *data, struct xdg_toplevel *xdg_toplevel) {
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_xdg_toplevel_close(xdg_toplevel);
-  }
-
-  //------------------------------
-
-  const
-  struct xdg_toplevel_listener sat_xdg_toplevel_listener = {
-    .configure  = sat_xdg_toplevel_configure_callback,
-    .close      = sat_xdg_toplevel_close_callback,
-  };
-
-//------------------------------
-private: // xdg_wm_base
-//------------------------------
-
-  void sat_xdg_wm_base_ping(struct xdg_wm_base *xdg_wm_base, uint32_t serial) {
-    SAT_PRINT;
-    xdg_wm_base_pong(xdg_wm_base, serial);
-  }
-
-  //------------------------------
-  //
-  //------------------------------
-
-  static
-  void sat_xdg_wm_base_ping_callback(void *data, struct xdg_wm_base *xdg_wm_base, uint32_t serial) {
-    SAT_PRINT;
-    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
-    window->sat_xdg_wm_base_ping(xdg_wm_base,serial);
-  }
-
-  //------------------------------
-
-  const
-  struct xdg_wm_base_listener sat_xdg_wm_base_listener {
-    .ping = sat_xdg_wm_base_ping_callback
-  };
+  // const
+  // struct wl_shell_surface_listener sat_wl_shell_surface_listener = {
+  //   .ping       = sat_wl_shell_surface_ping_callback,
+  //   .configure  = sat_wl_shell_surface_configure_callback,
+  //   .popup_done = sat_wl_shell_surface_popup_done_callback
+  // };
 
 //------------------------------
 public: // SAT_RendererOwner
@@ -572,7 +725,7 @@ public: // SAT_BaseWindow
   }
 
   //----------
-  
+
   uint32_t eventLoop() override {
     while (wl_display_dispatch(MDisplay) != -1) {
       ;
