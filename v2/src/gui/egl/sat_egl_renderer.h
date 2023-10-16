@@ -69,6 +69,8 @@ public:
     }
     SAT_Print("> EGL major: %d, minor %d\n",major,minor);
 
+    eglBindAPI(EGL_OPENGL_ES_API);
+
     EGLint count;
     eglGetConfigs(MDisplay,NULL,0,&count);
     SAT_Print("> EGL has %d configs\n",count);
@@ -110,6 +112,7 @@ public:
   //----------
 
   virtual ~SAT_EGLRenderer() {
+    if (MSurface) eglDestroySurface(MDisplay,MSurface);
     eglDestroyContext(MDisplay,MContext);
     eglTerminate(MDisplay);
   }
@@ -127,7 +130,8 @@ public:
 //------------------------------
 
   EGLSurface createWindowSurface(EGLNativeWindowType AWindow) {
-    return eglCreateWindowSurface(MDisplay,MConfig,AWindow,NULL);
+    MSurface = eglCreateWindowSurface(MDisplay,MConfig,AWindow,NULL);
+    return MSurface; // eglCreateWindowSurface(MDisplay,MConfig,AWindow,NULL);
   }
 
 //------------------------------
@@ -163,6 +167,7 @@ public:
   }
 
   bool makeCurrent() override {
+    //SAT_Print("MDisplay %p MSurface %p MContext %p\n",MDisplay,MSurface,MContext);
     MIsCurrent = true;
     eglMakeCurrent(MDisplay,MSurface,MSurface,MContext);
     return true;
