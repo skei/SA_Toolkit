@@ -202,6 +202,8 @@ public:
   //----------
 
   bool disableVSync() override {
+    // Make eglSwapBuffers non-blocking, we manage frame callbacks manually
+    eglSwapInterval(MDisplay,0);
     return true;
   }
 

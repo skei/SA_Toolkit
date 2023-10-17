@@ -90,14 +90,14 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_AUDIO_FILE_WRITE                    0x20
 // #define SAT_AUDIO_FILE_RDWR                     0x30
 
-// #define SAT_BUTTON_NONE                         0
-// #define SAT_BUTTON_LEFT                         1
-// #define SAT_BUTTON_MIDDLE                       2
-// #define SAT_BUTTON_RIGHT                        3
-// #define SAT_BUTTON_SCROLL_UP                    4
-// #define SAT_BUTTON_SCROLL_DOWN                  5
-// #define SAT_BUTTON_BACKWARD                     8
-// #define SAT_BUTTON_FORWARD                      9
+#define SAT_BUTTON_NONE                         0
+#define SAT_BUTTON_LEFT                         1
+#define SAT_BUTTON_MIDDLE                       2
+#define SAT_BUTTON_RIGHT                        3
+#define SAT_BUTTON_SCROLL_UP                    4
+#define SAT_BUTTON_SCROLL_DOWN                  5
+#define SAT_BUTTON_BACKWARD                     8
+#define SAT_BUTTON_FORWARD                      9
 
 // #define SAT_CORNER_NONE                         0
 // #define SAT_CORNER_UPPER_LEFT                   0x01

@@ -64,6 +64,9 @@ public:
 public:
 //------------------------------
 
+  virtual void      sync() {}
+  virtual void      flush() {}
+
   virtual void      open() {}
   virtual void      close() {}
   virtual void      setPos(int32_t AXpos, int32_t AYpos) {}
