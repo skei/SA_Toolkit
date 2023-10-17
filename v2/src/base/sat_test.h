@@ -4,7 +4,6 @@
 
 #include "sat.h"
 #include "base/sat_debug_print.h"
-//#include <vector>
 
 //----------------------------------------------------------------------------------------------------
 //
@@ -21,15 +20,23 @@ class SAT_Test {
     SAT_TestFunc  func;
   };
 
-  typedef SAT_Array<SAT_TestItem>   SAT_TestItems;
-  typedef SAT_Array<SAT_TestItems>  SAT_TestSections;
+  typedef SAT_Array<SAT_TestItem> SAT_TestItems;
+
+  //struct SAT_TestSection {
+  //  const char*   name;
+  //  SAT_TestItems items;
+  //};
+  //
+  //typedef SAT_Array<SAT_TestSection> SAT_TestSections;
 
 //------------------------------
 private:
 //------------------------------
 
+  SAT_DebugPrint*   MPrint        = nullptr;
   SAT_TestItems     MTestItems    = {};
-  SAT_TestSections  MTestSections = {};
+
+//SAT_TestSections  MTestSections = {};
 
 //------------------------------
 public:
@@ -48,6 +55,10 @@ public:
 //------------------------------
 
   void initialize(SAT_DebugPrint* APrint) {
+    #if !defined(SAT_NO_TESTS)
+      MPrint = APrint;
+      //runAllTests();
+    #endif
   }
 
   //----------
@@ -57,9 +68,18 @@ public:
 
   //----------
 
+  //void addSection(const char* AName) {
+  //  SAT_TestSection section = { AName, {} };
+  //  MTestSections.push_back(section);
+  //}
+
+  //----------
+
   void addTest(const char* AName, SAT_TestFunc AFunc) {
-    SAT_TestItem test = { AName, AFunc };
-    MTestItems.push_back(test);
+    #if !defined(SAT_NO_TESTS)
+      SAT_TestItem test = { AName, AFunc };
+      MTestItems.push_back(test);
+    #endif
   }
 
   //----------
@@ -67,18 +87,18 @@ public:
   bool runAllTests() {
     #if !defined(SAT_NO_TESTS)
       uint32_t num = MTestItems.size();
-      printf("Running %i tests.\n",num);
+      MPrint->print("\n>> Running %i tests.\n",num);
       for (uint32_t i=0; i<num; i++) {
         const char*   test_name = MTestItems[i].name;
         SAT_TestFunc  test_func = MTestItems[i].func;
-        printf("- %i/%i : %s\n",i+1,num,test_name);
+        MPrint->print(" - %i/%i : %s\n",i+1,num,test_name);
         bool success = test_func();
         if (!success) {
-          printf("ERROR! Test %i (%s) failed.\n",i+1,test_name);
+          MPrint->print(">> ERROR! Test %i (%s) failed.\n",i+1,test_name);
           return false;
         }
       }
-      printf("All tests succeeded.\n");
+      MPrint->print(">> All tests succeeded.\n\n");
     #endif
     return true;
   }
@@ -91,22 +111,25 @@ public:
 //
 //----------------------------------------------------------------------------------------------------
 
+// see SAT_Global.h
+
 #if !defined(SAT_NO_TESTS)
 
-  #define SAT_AddTest(name,func)                                    \
+  #define SAT_TEST(name,func)                                       \
                                                                     \
     bool sat_test_register_ ##func() {                              \
-      /*SAT_TestItem test = { #name, &func };*/                     \
-      /*SAT_GLOBAL_TEST_ITEMS.push_back(test);*/                    \
       SAT_GLOBAL.TEST.addTest(name,func);                           \
       return true;                                                  \
     }                                                               \
                                                                     \
-    bool sat_test_registered_ ##func = sat_test_register_ ##func(); \
+    bool sat_test_registered_ ##func = sat_test_register_ ##func();
+
+  #define SAT_RUN_TESTS SAT_GLOBAL.TEST.runAllTests();
 
 #else // SAT_NO_TESTS
 
-  #define SAT_AddTest(name,func)
+  #define SAT_TEST(name,func)
+  #define SAT_RUN_TESTS SAT_GLOBAL.TEST.runAllTests();
 
 #endif
 

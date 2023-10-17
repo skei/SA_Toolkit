@@ -4,7 +4,7 @@
 
 #define SAT_VERSION                             "0.5.0"
 #define SAT_VENDOR                              "skei.audio"
-#define SAT_URL                                 "https://github.com/skei/SA_Toolkit" // -> SAT2
+#define SAT_URL                                 "https://github.com/skei/SA_Toolkit"
 
 //----------------------------------------------------------------------
 //
@@ -51,9 +51,9 @@
 // gui
 //------------------------------
 
+//#define SAT_PAINTER_CLIP_RECT_STACK_SIZE        256
 #define SAT_RENDERER_MAJOR_VERSION              3
 #define SAT_RENDERER_MINOR_VERSION              2
-//#define SAT_PAINTER_CLIP_RECT_STACK_SIZE        256
 #define SAT_WIDGET_MAX_VALUES                   16
 #define SAT_WINDOW_DBLCLICK_MS                  250
 #define SAT_WINDOW_MAX_DIRTY_WIDGETS            1024

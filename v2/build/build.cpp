@@ -4,6 +4,7 @@
 
 //----------
 
+//#define SAT_NO_TESTS
 #define SAT_PRINT_SOCKET
 
 #include "sat.h"
@@ -48,8 +49,22 @@ public:
 
 //----------------------------------------------------------------------
 
+bool build_test1() {
+  return true;
+}
+
+SAT_TEST("BUILD: test1",build_test1)
+
+//----------------------------------------------------------------------
 
 int main() {
+
+  //#ifndef SAT_NO_TESTS
+  // SAT_GLOBAL.TEST.runAllTests();
+  //#endif
+
+  SAT_RUN_TESTS
+
   myWindow* window = new myWindow(640,480);
   window->open();
   window->eventLoop();

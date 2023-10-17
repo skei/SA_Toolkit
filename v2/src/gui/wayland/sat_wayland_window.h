@@ -49,12 +49,26 @@ private:
   struct xdg_wm_base*       MXDGWMBase      = nullptr;
 
   struct wl_surface*        MCursorSurface  = nullptr;
-  uint32_t                  MXDGSerial      = 0;
+//uint32_t                  MXDGSerial      = 0;
 
 
 //------------------------------
 public:
 //------------------------------
+
+    /*
+      1. Use eglGetPlatformDisplayEXT in concert with EGL_PLATFORM_WAYLAND_KHR to create an EGL display.
+      2. Configure the display normally, choosing a config appropriate to your circumstances
+         with EGL_SURFACE_TYPE set to EGL_WINDOW_BIT.
+      3. Use wl_egl_window_create to create a wl_egl_window for a given wl_surface.
+      4. Use eglCreatePlatformWindowSurfaceEXT to create an EGLSurface for a wl_egl_window.
+      5. Proceed using EGL normally, e.g. eglMakeCurrent to make current the EGL context for your surface
+         and eglSwapBuffers to send an up-to-date buffer to the compositor and commit the surface.
+      
+      Should you need to change the size of the wl_egl_window later, use wl_egl_window_resize.    
+    */
+
+
 
   SAT_WaylandWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_BaseWindow(AWidth,AHeight,AParent) {
@@ -68,63 +82,60 @@ public:
     wl_display_dispatch(MDisplay);
     wl_display_roundtrip(MDisplay);
 
-    //
+    //-----
 
-    MSurface = wl_compositor_create_surface(MCompositor);
-    SAT_Print("MSurface: %p\n",MSurface);
-
-    MRegion = wl_compositor_create_region(MCompositor);
-    SAT_Print("MRegion: %p\n",MRegion);
-    wl_region_add(MRegion,0,0,AWidth,AHeight);
-    wl_surface_set_opaque_region(MSurface,MRegion);
-
-    MWindow = wl_egl_window_create(MSurface,AWidth,AHeight);
-    SAT_Print("MWindow: %p\n",MWindow);
-
-    wl_egl_window_resize(MWindow,640,480,1,1);
+    xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,MWindow);
 
     //MShellSurface = wl_shell_get_shell_surface(MShell,MSurface);
     //SAT_Print("MShellSurface: %p\n",MShellSurface);
     //wl_shell_surface_set_toplevel(MShellSurface);
 
-    if (MXDGWMBase) {
-      SAT_Print("adding xdg_wm_base listener\n");
+    MSurface = wl_compositor_create_surface(MCompositor);
+    SAT_Print("MSurface: %p\n",MSurface);
 
-      xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,MWindow);
+    MXDGSurface = xdg_wm_base_get_xdg_surface(MXDGWMBase,MSurface);
+    SAT_Print("MXDGSurface: %p\n",MXDGSurface);
 
-      MXDGSurface = xdg_wm_base_get_xdg_surface(MXDGWMBase,MSurface);
-      SAT_Print("MXDGSurface: %p\n",MXDGSurface);
+    xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,MWindow);
 
-      if (MXDGSurface) {
+    MXDGTopLevel = xdg_surface_get_toplevel(MXDGSurface);
+    SAT_Print("MXDGTopLevel: %p\n",MXDGTopLevel);
 
-        xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,MWindow);
+    xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
+    xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,MWindow);
+    //xdg_toplevel_set_app_id(MXDGTopLevel, "hello_world");
 
-        MXDGTopLevel = xdg_surface_get_toplevel(MXDGSurface);
-        SAT_Print("MXDGTopLevel: %p\n",MXDGTopLevel);
+    wl_surface_commit(MSurface);
 
-        if (MXDGTopLevel) {
+  // CreateNativeWindow
 
-          xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,MWindow);
-          xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
-          xdg_toplevel_set_app_id(MXDGTopLevel, "hello_world");
+    MRegion = wl_compositor_create_region(MCompositor);
+    SAT_Print("MRegion: %p\n",MRegion);
+    wl_region_add(MRegion,0,0,AWidth,AHeight);
+    wl_surface_set_opaque_region(MSurface,MRegion);
+    //wl_surface_damage(MSurface,0,0,AWidth,AHeight);
 
-        }
-      }
-    }
+    MWindow = wl_egl_window_create(MSurface,AWidth,AHeight);
+    SAT_Print("MWindow: %p\n",MWindow);
 
-    EGLNativeWindowType native_window = (EGLNativeWindowType)MWindow;
-    SAT_Print("native_window: %i\n",native_window);
+    //wl_egl_window_resize(MWindow,640,480,1,1);
+
+  // CreateEGLContext
 
     MRenderer = new SAT_Renderer(this);
 
-    MEGLSurface = MRenderer->createWindowSurface(native_window);
+    //EGLNativeWindowType native_window = (EGLNativeWindowType)MWindow;
+    //SAT_Print("native_window (MWindow): %x\n",native_window);
+    //MEGLSurface = MRenderer->createWindowSurface(native_window);
+
+    MEGLSurface = MRenderer->createWindowSurface(MWindow);
     SAT_Print("MEGLSurface: %p\n",MEGLSurface);
-    // attach surface/buffer?
 
     MRenderer->makeCurrent();
     MPainter = new SAT_Painter(this);
 
-    wl_surface_commit(MSurface);
+    //wl_surface_attach(MSurface,wl_buffer,0,0);
+    //wl_surface_commit(MSurface);
 
   }
 
@@ -349,12 +360,29 @@ private: // xdg_surface
     it is free to discard all but the last event it received.  
   */
 
+  /*
+    As wl_surface is used to atomically communicate surface changes from client to server,
+    the xdg_surface interface provides the following two messages for the compositor to suggest
+    changes and the client to acknowledge them:
+      request: ack_configure, arg: "serial" uint
+      event: configure, arg: "serial" uint
+    On their own, these messages carry little meaning. However, each subclass of xdg_surface
+    (xdg_toplevel and xdg_popup) have additional events that the server can send ahead of "configure",
+    to make each of the suggestions we've mentioned so far. The server will send all of this state;
+    maximized, focused, a suggested size; then a configure event with a serial. When the client has
+    assumed a state consistent with these suggestions, it sends an ack_configure request with the
+    same serial to indicate this. Upon the next commit to the associated wl_surface,
+    the compositor will consider the state consistent.
+  */
+
   void sat_xdg_surface_configure(struct xdg_surface *xdg_surface, uint32_t serial) {
     SAT_Print("xdg_surface %p serial %i\n",xdg_surface,serial);
-    MXDGSerial = serial;
-    xdg_surface_ack_configure(xdg_surface,serial);
+    //MXDGSerial = serial;
+
     //wl_surface_attach(MXDGSurface,wl_buffer,0,0);
     //wl_surface_commit(MSurface);
+    xdg_surface_ack_configure(xdg_surface,serial);
+
   }
 
   //------------------------------
@@ -412,11 +440,41 @@ private: // xdg_toplevel
 
   void sat_xdg_toplevel_configure(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *states) {
     SAT_Print("xdg_toplevel %p width %i height %i states.size %i\n",xdg_toplevel,width,height,states->size);
-    //if (width==0 || height==0) return;
+    if (width==0 || height==0) return;
     //on_window_resize(width,height);
     // TODO: ack ?
-
     //xdg_surface_ack_configure(MXDGSurface,MXDGSerial);
+
+    // bool is_activated = false;
+    // bool is_fullscreen = false;
+    // bool is_maximized = false;
+    // bool is_resizing = false;
+    // bool is_tiled_top = false;
+    // bool is_tiled_bottom = false;
+    // bool is_tiled_left = false;
+    // bool is_tiled_right = false;
+    // #if defined(XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION)  /* wayland-protocols >= 1.32 */
+    // bool is_suspended UNUSED = false;
+    // #endif
+    // enum xdg_toplevel_state* state;
+    // //wl_array_for_each(state,states) {
+	  // for (state = (xdg_toplevel_state*)states->data;
+    //     (const char*)state < ((const char*)states->data + states->size);
+	  //     state++) {
+    //   switch (*state) {
+    //     case XDG_TOPLEVEL_STATE_MAXIMIZED:    is_maximized = true; break;
+    //     case XDG_TOPLEVEL_STATE_FULLSCREEN:   is_fullscreen = true; break;
+    //     case XDG_TOPLEVEL_STATE_RESIZING:     is_resizing = true; break;
+    //     case XDG_TOPLEVEL_STATE_ACTIVATED:    is_activated = true; break;
+    //     case XDG_TOPLEVEL_STATE_TILED_LEFT:   is_tiled_left = true; break;
+    //     case XDG_TOPLEVEL_STATE_TILED_RIGHT:  is_tiled_right = true; break;
+    //     case XDG_TOPLEVEL_STATE_TILED_TOP:    is_tiled_top = true; break;
+    //     case XDG_TOPLEVEL_STATE_TILED_BOTTOM: is_tiled_bottom = true; break;
+    //     #if defined(XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION)
+    //     case XDG_TOPLEVEL_STATE_SUSPENDED:    is_suspended = true; break;
+    //     #endif
+    //   }
+    // }
 
   }
 
@@ -829,17 +887,48 @@ public: // SAT_BaseWindow
 
   //----------
 
-  uint32_t eventLoop() override {
-    SAT_PRINT;
+  /*
 
-    //while (running) {
-    //  wl_display_dispatch_pending (display);
-    //  draw_window (&window);
+    // from: https://emersion.fr/blog/2018/wayland-rendering-loop/  
+
+    void render(void) {
+      glClear(GL_COLOR_BUFFER_BIT);
+      draw();
+      // Make eglSwapBuffers non-blocking, we manage frame callbacks manually
+      eglSwapInterval(egl_display, 0);
+      // Register a frame callback to know when we need to draw the next frame
+      struct wl_callback *callback = wl_surface_frame(surface);
+      wl_callback_add_listener(callback, &frame_listener, NULL);
+      // This call won't block
+      eglSwapBuffers(egl_display, egl_surface);
+    }
+
+    static void frame_handle_done(void *data, struct wl_callback *callback, uint32_t time) {
+      wl_callback_destroy(callback);
+      render();
+    }
+
+    const struct wl_callback_listener frame_listener = {
+      .done = frame_handle_done,
+    };  
+
+  */
+
+  uint32_t eventLoop() override {
+
+    //while (wl_display_dispatch(MDisplay) != -1) {
+    //  SAT_PRINT;
+    //  wl_display_flush(MDisplay);
     //}
 
-    while (wl_display_dispatch(MDisplay) != -1) {
-      SAT_PRINT;
-    }
+	  bool program_alive = true;
+    while (program_alive) {
+      wl_display_dispatch_pending(MDisplay);
+      //MRenderer->beginRendering(0,0,640,480);
+      //MRenderer->endRendering();
+      on_window_paint(0,0,640,480);
+	  }
+
     return 0;
   }
 
