@@ -42,9 +42,10 @@ private:
 //struct wl_shm*            MShm            = nullptr;
 //struct wl_subcompositor*  MSubCompositor  = nullptr;
 
+  struct xdg_wm_base*       MXDGWMBase      = nullptr;
   struct xdg_surface*       MXDGSurface     = nullptr;
   struct xdg_toplevel*      MXDGTopLevel    = nullptr;
-  struct xdg_wm_base*       MXDGWMBase      = nullptr;
+  struct xdg_positioner*    MXDGPositioner  = nullptr;
 
   struct wl_surface*        MCursorSurface  = nullptr;
 
@@ -54,30 +55,46 @@ public:
 
   SAT_WaylandWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_BaseWindow(AWidth,AHeight,AParent) {
+
     MDisplay = wl_display_connect(nullptr);
     SAT_Print("MDisplay: %p\n",MDisplay);
+
     struct wl_registry *registry = wl_display_get_registry(MDisplay);
     wl_registry_add_listener(registry,&sat_wl_registry_listener,this);
+
     wl_display_dispatch(MDisplay);
     wl_display_roundtrip(MDisplay);
 
+    //-----
+
     xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,MWindow);
     wl_seat_add_listener(MSeat,&sat_wl_seat_listener,MWindow);
+
+    //MXDGPositioner = xdg_wm_base_create_positioner(MXDGWMBase);
+
     MSurface = wl_compositor_create_surface(MCompositor);
     SAT_Print("MSurface: %p\n",MSurface);
+
     wl_surface_add_listener(MSurface,&sat_wl_surface_listener,MWindow);
+
     MRegion = wl_compositor_create_region(MCompositor);
     SAT_Print("MRegion: %p\n",MRegion);
     wl_region_add(MRegion,0,0,AWidth,AHeight);
     wl_surface_set_opaque_region(MSurface,MRegion);
+
     MXDGSurface = xdg_wm_base_get_xdg_surface(MXDGWMBase,MSurface);
     SAT_Print("MXDGSurface: %p\n",MXDGSurface);
+
     xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,MWindow);
+
     MXDGTopLevel = xdg_surface_get_toplevel(MXDGSurface);
     SAT_Print("MXDGTopLevel: %p\n",MXDGTopLevel);
+
     xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,MWindow);
     xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
+
     wl_surface_commit(MSurface);
+
     MWindow = wl_egl_window_create(MSurface,AWidth,AHeight);
     SAT_Print("MWindow: %p\n",MWindow);
     MRenderer = new SAT_Renderer(this);
@@ -109,11 +126,170 @@ public:
 public:
 //------------------------------
 
-  SAT_Renderer* getRenderer() { return MRenderer; }
-  SAT_Painter*  getPainter()  { return MPainter; }
+  uint32_t          getWindowType()     override { return SAT_WINDOW_TYPE_WAYLAND; }
+  const char*       getWindowTypeName() override { return SAT_WINDOW_TYPE_NAME_WAYLAND; }
+  SAT_BaseRenderer* getRenderer()       override { return MRenderer; }
+  SAT_BasePainter*  getPainter()        override { return MPainter; }
 
-  uint32_t      getType()     override { return SAT_WINDOW_TYPE_WAYLAND; }
-  const char*   getTypeName() override { return SAT_WINDOW_TYPE_NAME_WAYLAND; }
+//------------------------------
+public: // SAT_RendererOwner
+//------------------------------
+
+  struct wl_display* on_rendererOwner_getWaylandDisplay() override { return MDisplay; }
+
+//------------------------------
+public: // SAT_PainterOwner
+//------------------------------
+
+//------------------------------
+// public: // SAT_SurfaceOwner
+//------------------------------
+
+//------------------------------
+public: // SAT_BaseWindow
+//------------------------------
+
+  void open() override {
+  }
+
+  //----------
+
+  void close() override {
+  }
+
+  //----------
+  
+  void setPos(int32_t AXpos, int32_t AYpos) override {
+  }
+
+  //----------
+  
+  void setSize(int32_t AWidth, int32_t AHeight) override {
+  }
+
+  //----------
+  
+  void setTitle(const char* ATitle) override {
+    xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
+  }
+
+  //----------
+  
+  void setMousePos(int32_t AXpos, int32_t AYpos) override {
+  }
+
+  //----------
+  
+  void setMouseCursor(int32_t ACursor) override {
+    // const auto image = wl_cursor_theme_get_cursor(cursor_theme, "left_ptr")->images[0];
+    // wl_pointer_set_cursor(pointer, serial, cursor_surface, image->hotspot_x, image->hotspot_y);
+    // wl_surface_attach(cursor_surface, wl_cursor_image_get_buffer(image), 0, 0);
+    // wl_surface_damage(cursor_surface, 0, 0, image->width, image->height);
+    // wl_surface_commit(cursor_surface);
+  }
+
+  //----------
+  
+  void hideMouse() override {
+  }
+
+  //----------
+  
+  void showMouse() override {
+  }
+
+  //----------
+
+  // https://emersion.fr/blog/2018/wayland-rendering-loop/  
+  //
+  // void render(void) {
+  //   glClear(GL_COLOR_BUFFER_BIT);
+  //   draw();
+  //   // Make eglSwapBuffers non-blocking, we manage frame callbacks manually
+  //   eglSwapInterval(egl_display, 0);
+  //   // Register a frame callback to know when we need to draw the next frame
+  //   struct wl_callback *callback = wl_surface_frame(surface);
+  //   wl_callback_add_listener(callback, &frame_listener, NULL);
+  //   // This call won't block
+  //   eglSwapBuffers(egl_display, egl_surface);
+  // }
+  //
+  // static void frame_handle_done(void *data, struct wl_callback *callback, uint32_t time) {
+  //   wl_callback_destroy(callback);
+  //   render();
+  // }
+  //
+  // const struct wl_callback_listener frame_listener = {
+  //   .done = frame_handle_done,
+  // };  
+
+
+  uint32_t eventLoop() override {
+
+    while (wl_display_dispatch(MDisplay) != -1) {
+      //SAT_Print("painting\n");
+      on_window_paint(0,0,640,480);
+    }
+
+	  // bool program_alive = true;
+    // while (program_alive) {
+    //   wl_display_dispatch_pending(MDisplay);
+    //   //MRenderer->beginRendering(0,0,640,480);
+    //   SAT_Print("painting\n");
+    //   on_window_paint(0,0,640,480);
+    //   //MRenderer->endRendering();
+	  // }
+
+    return 0;
+  }
+
+  //----------
+  
+  void startEventThread() override {
+  }
+
+  //----------
+  
+  void stopEventThread() override {
+  }
+
+  //----------
+  
+  void startTimer(uint32_t AMSInterval, bool AOneShot) override {
+  }
+
+  //----------
+  
+  void stopTimer() override {
+  }
+
+  //----------
+  
+  void setParent(intptr_t AParent) override {
+  }
+
+  //----------
+  
+  void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+    wl_surface_damage(MSurface,AXpos,AYpos,AWidth,AHeight);
+  }
+
+  //----------
+  
+  void sendClientMessage(uint32_t AData, uint32_t AType) override {
+  }
+
+  //----------
+  
+  void sync() override {
+    wl_display_sync(MDisplay);
+  }
+
+  //----------
+
+  void flush() override {
+    wl_display_flush(MDisplay);
+  }
 
 //------------------------------
 private: // wl_registry
@@ -668,167 +844,6 @@ private: // wl_pointer
     .button = sat_wl_pointer_button_callback,
     .axis   = sat_wl_pointer_axis_callback
   };
-
-//------------------------------
-public: // SAT_RendererOwner
-//------------------------------
-
-  struct wl_display* on_rendererOwner_getWaylandDisplay() override { return MDisplay; }
-
-//------------------------------
-public: // SAT_PainterOwner
-//------------------------------
-
-//------------------------------
-// public: // SAT_SurfaceOwner
-//------------------------------
-
-//------------------------------
-public: // SAT_BaseWindow
-//------------------------------
-
-  void sync() override {
-    wl_display_sync(MDisplay);
-  }
-
-  //----------
-
-  void flush() override {
-    wl_display_flush(MDisplay);
-  }
-
-  //----------
-  
-  void open() override {
-  }
-
-  //----------
-
-  void close() override {
-  }
-
-  //----------
-  
-  void setPos(int32_t AXpos, int32_t AYpos) override {
-  }
-
-  //----------
-  
-  void setSize(int32_t AWidth, int32_t AHeight) override {
-  }
-
-  //----------
-  
-  void setTitle(const char* ATitle) override {
-    xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
-  }
-
-  //----------
-  
-  void setMousePos(int32_t AXpos, int32_t AYpos) override {
-  }
-
-  //----------
-  
-  void setMouseCursor(int32_t ACursor) override {
-    // const auto image = wl_cursor_theme_get_cursor(cursor_theme, "left_ptr")->images[0];
-    // wl_pointer_set_cursor(pointer, serial, cursor_surface, image->hotspot_x, image->hotspot_y);
-    // wl_surface_attach(cursor_surface, wl_cursor_image_get_buffer(image), 0, 0);
-    // wl_surface_damage(cursor_surface, 0, 0, image->width, image->height);
-    // wl_surface_commit(cursor_surface);
-  }
-
-  //----------
-  
-  void hideMouse() override {
-  }
-
-  //----------
-  
-  void showMouse() override {
-  }
-
-  //----------
-
-  // https://emersion.fr/blog/2018/wayland-rendering-loop/  
-  //
-  // void render(void) {
-  //   glClear(GL_COLOR_BUFFER_BIT);
-  //   draw();
-  //   // Make eglSwapBuffers non-blocking, we manage frame callbacks manually
-  //   eglSwapInterval(egl_display, 0);
-  //   // Register a frame callback to know when we need to draw the next frame
-  //   struct wl_callback *callback = wl_surface_frame(surface);
-  //   wl_callback_add_listener(callback, &frame_listener, NULL);
-  //   // This call won't block
-  //   eglSwapBuffers(egl_display, egl_surface);
-  // }
-  //
-  // static void frame_handle_done(void *data, struct wl_callback *callback, uint32_t time) {
-  //   wl_callback_destroy(callback);
-  //   render();
-  // }
-  //
-  // const struct wl_callback_listener frame_listener = {
-  //   .done = frame_handle_done,
-  // };  
-
-
-  uint32_t eventLoop() override {
-
-    while (wl_display_dispatch(MDisplay) != -1) {
-
-      SAT_Print("painting\n");
-      on_window_paint(0,0,640,480);
-    }
-
-	  // bool program_alive = true;
-    // while (program_alive) {
-    //   wl_display_dispatch_pending(MDisplay);
-    //   //MRenderer->beginRendering(0,0,640,480);
-    //   SAT_Print("painting\n");
-    //   on_window_paint(0,0,640,480);
-    //   //MRenderer->endRendering();
-	  // }
-
-    return 0;
-  }
-
-  //----------
-  
-  void startEventThread() override {
-  }
-
-  //----------
-  
-  void stopEventThread() override {
-  }
-
-  //----------
-  
-  void startTimer(uint32_t AMSInterval, bool AOneShot) override {
-  }
-
-  //----------
-  
-  void stopTimer() override {
-  }
-
-  //----------
-  
-  void setParent(intptr_t AParent) override {
-  }
-
-  //----------
-  
-  void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    wl_surface_damage(MSurface,AXpos,AYpos,AWidth,AHeight);
-  }
-
-  //----------
-  
-  void sendClientMessage(uint32_t AData, uint32_t AType) override {
-  }
 
 };
 

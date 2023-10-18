@@ -5,7 +5,7 @@
 #include "sat.h"
 #include "gui/base/sat_base_widget.h"
 #include "gui/base/sat_widget_listener.h"
-//#include "gui/base/sat_widget_owner.h"
+#include "gui/base/sat_paint_context.h"
 
 //----------
 
@@ -22,18 +22,17 @@ class SAT_Widget
 private:
 //------------------------------
 
-  SAT_WidgetOwner*    MOwner      = nullptr;
-  SAT_Widget*         MParent     = nullptr;
-  SAT_WidgetArray     MChildren   = {};
-  SAT_WidgetListener* MListener   = {};
-  uint32_t            MChildIndex = 0;
+  SAT_WidgetOwner*    MOwner        = nullptr;
+  SAT_WidgetListener* MListener     = {};
 
-  const char*         MName       = "";
-  double              MValue      = 0.0;
+  SAT_BaseWidget*     MParent       = nullptr;
+  uint32_t            MParentIndex  = 0;
+  SAT_WidgetArray     MChildren     = {};
 
-  SAT_Rect            MRect       = {};
-  SAT_Rect            MCreateRect = {};
-  SAT_Rect            MLayoutRect = {};
+  const char*         MName         = "";
+  double              MValue        = 0.0;
+
+  SAT_Rect            MRect         = {};
 
 //------------------------------
 public:
@@ -52,63 +51,128 @@ public:
 public:
 //------------------------------
 
-  double      getHeight()                 override { return MRect.h; }
-  const char* getName()                   override { return MName; }
-  SAT_Point   getPos()                    override { return SAT_Point(MRect.x,MRect.y); }
-  SAT_Rect    getRect()                   override { return MRect; }
-  SAT_Point   getSize()                   override { return SAT_Point(MRect.w,MRect.h); }
-  double      getValue(uint32_t AIndex=0) override { return 0.0; }
-  double      getWidth()                  override { return MRect.w; }
+  const char* getName() override {
+    return MName;
+  }
 
-  //----------
+  double getValue(uint32_t AIndex=0) override {
+    return 0.0;
+  }
 
-  void setName(const char* AName)                 override { MName = AName; }
-  void setPos(SAT_Point APos)                     override { MRect.setPos(APos); }
-  void setSize(SAT_Point ASize)                   override { MRect.setSize(ASize); }
-  void setValue(double AValue, uint32_t AIndex=0) override { MValue = AValue; }
+  SAT_Point getPos() override {
+    return SAT_Point(MRect.x,MRect.y);
+  }
+
+  SAT_Point getSize() override {
+    return SAT_Point(MRect.w,MRect.h);
+  }
+
+  SAT_Rect getRect() override {
+    return MRect;
+  }
+
+  double getWidth() override {
+    return MRect.w;
+  }
+
+  double getHeight() override {
+    return MRect.h;
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  void setWidgetOwner(SAT_WidgetOwner* AOwner) override {
-    MOwner = AOwner;
-    // tell all sub-widgets..
+  void setName(const char* AName) override {
+    MName = AName;
   }
+
+  void setValue(double AValue, uint32_t AIndex=0) override {
+    MValue = AValue;
+  }
+
+  void setPos(SAT_Point APos) override
+  {
+    MRect.setPos(APos);
+  }
+  
+  void setSize(SAT_Point ASize) override
+  {
+    MRect.setSize(ASize);
+  }
+  
+  void setRect(SAT_Rect ARect) override {
+    MRect = ARect;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setOwnerWidget(SAT_WidgetOwner* AOwner, bool ARecursive=true) override {
+    MOwner = AOwner;
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildren.size(); i++) {
+        MChildren[i]->setOwnerWidget(AOwner,ARecursive);
+      }
+    }
+  }
+
+  //----------
 
   void setParentWidget(SAT_BaseWidget* AWidget) override {
+    MParent = AWidget;
   }
 
-  void setWidgetIndex(uint32_t AIndex) override {
+  //----------
+
+  void setParentIndex(uint32_t AIndex) override {
+    MParentIndex = AIndex;
   }
+
+  //----------
 
   void appendChildWidget(SAT_BaseWidget* AWidget) override {
     uint32_t index = MChildren.size();
     AWidget->setParentWidget(this);
-    AWidget->setWidgetIndex(index);
+    AWidget->setParentIndex(index);
     MChildren.push_back(AWidget);
   }
 
+  //----------
+
   void deleteChildWidgets() override {
   }
+
+  //----------
 
   SAT_BaseWidget* findChildWidget(uint32_t AXpos, uint32_t AYpos) override {
     return nullptr;
   }
 
+  //----------
+
   SAT_BaseWidget* findChildWidget(const char* AName) override { return nullptr;
     return nullptr;
   }
 
+  //----------
+
   void realignChildWidgets() override {
   }
 
-  void paintChildWidgets() override {
+  //----------
+
+  void paintChildWidgets(SAT_PaintContext* AContext) override {
+    for (uint32_t i=0; i<MChildren.size(); i++) {
+      MChildren[i]->on_widget_paint(AContext);
+    }
   }
+
+  //----------
 
   void markWidgetDirty() override {
   }
-
 
 };
 

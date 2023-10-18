@@ -3,12 +3,12 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-//#include "gui/base/sat_base_window.h"
+#include "gui/base/sat_base_window.h"
 
 class SAT_WidgetOwner {
 public:
-  //SAT_BaseWindow* on_widgetOwner_getWindow() { return nullptr; }
-  SAT_Window* on_widgetOwner_getWindow() { return nullptr; }
+  //SAT_Window* on_widgetOwner_getWindow() { return nullptr; }
+  SAT_BaseWindow* on_widgetOwner_getWindow() { return nullptr; }
 };
 
 //----------------------------------------------------------------------

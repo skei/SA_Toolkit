@@ -5,47 +5,36 @@
 //----------
 
 //#define SAT_NO_TESTS
-#define SAT_PRINT_SOCKET
+//#define SAT_PRINT_SOCKET
 
 #include "sat.h"
 #include "gui/sat_window.h"
-#include "gui/sat_renderer.h"
-//#include "gui/sat_widget.h"
+#include "gui/sat_widget.h"
 
 //----------------------------------------------------------------------
 
-class myWindow
-: public SAT_Window {
-
+class myWidget
+: public SAT_Widget {
 public:
-
-  myWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_Window(AWidth,AHeight,AParent) {
-  }
-
-public:
-
-  void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) final {
-    SAT_Renderer* renderer = getRenderer();
-    SAT_Painter* painter = getPainter();
-    renderer->beginRendering(0,0,AWidth,AHeight); // (0,0,640,480);
-    painter->beginFrame(AWidth,AHeight,1);        // (640,480,1.0);
-
-      const char* painter_type_name = painter->getTypeName();
-
-      painter->setFillColor(SAT_Yellow);
-      painter->fillCircle(200,200,150);
-
-      // need to load a font first..
-      //painter->setTextColor(SAT_BrightRed);
-      //painter->setTextSize(32);
-      //painter->drawText(100,100,"Hello, %s!",painter_type_name);
-
-    painter->endFrame();
-    renderer->endRendering();
+  void on_widget_paint(SAT_PaintContext* AContext) final {
+    SAT_PRINT;
+    SAT_BasePainter* painter = AContext->painter;
+    painter->setFillColor(SAT_Yellow);
+    painter->fillCircle(200,200,150);
   }
 
 };
+
+//----------------------------------------------------------------------
+
+// class myWindow
+// : public SAT_Window {
+// public:
+//   myWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
+//   : SAT_Window(AWidth,AHeight,AParent) {
+//   }
+// public:
+// };
 
 //----------------------------------------------------------------------
 
@@ -59,16 +48,20 @@ SAT_TEST("BUILD: test1",build_test1)
 
 int main() {
 
-  //#ifndef SAT_NO_TESTS
-  // SAT_GLOBAL.TEST.runAllTests();
-  //#endif
-
   SAT_RUN_TESTS
 
-  myWindow* window = new myWindow(640,480);
+  //myWindow* window = new myWindow(640,480);
+  SAT_Window* window = new SAT_Window(640,480);
+
+  myWidget* root = new myWidget();
+  window->setRootWidget(root);
+
   window->open();
   window->eventLoop();
   window->close();
+
+  delete root;
   delete window;
+
   return 0;
 }

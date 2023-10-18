@@ -247,11 +247,45 @@ public:
 public:
 //------------------------------
 
-  SAT_Renderer* getRenderer() { return MRenderer; }
-  SAT_Painter*  getPainter()  { return MPainter; }
+  SAT_BaseRenderer* getRenderer() {
+    return MRenderer;
+  }
 
-  uint32_t      getType()     override { return SAT_WINDOW_TYPE_X11; }
-  const char*   getTypeName() override { return SAT_WINDOW_TYPE_NAME_X11; }
+  SAT_BasePainter* getPainter() {
+    return MPainter;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  uint32_t getWindowType() override {
+    return SAT_WINDOW_TYPE_X11;
+  }
+
+  const char* getWindowTypeName() override {
+    return SAT_WINDOW_TYPE_NAME_X11;
+  }
+
+  uint32_t getScreenWidth() override {
+    return MScreenWidth;
+  }
+
+  uint32_t getScreenHeight() override {
+    return MScreenHeight;
+  }
+
+  uint32_t getScreenDepth() override {
+    return MScreenDepth;
+  }
+  
+  uint32_t getWidth() override {
+    return MWindowWidth;
+  }
+
+  uint32_t getHeight() override {
+    return MWindowWidth;
+  }
 
 //------------------------------
 public: // SAT_RendererOwner
@@ -277,24 +311,6 @@ public: // SAT_SurfaceOwner
 public:
 //------------------------------
 
-//  Display*      getX11Display() { return MDisplay;}
-//  xcb_window_t  getXcbWindow()  { return MWindow;}
-
-//------------------------------
-
-  //void setRenderer(SAT_Renderer* ARenderer) override {
-  //}
-  //
-  //SAT_Surface* getSurface() override {
-  //  return nullptr;
-  //}
-  
-  uint32_t getScreenWidth()   override { return MScreenWidth; }
-  uint32_t getScreenHeight()  override { return MScreenHeight; }
-  uint32_t getScreenDepth()   override { return MScreenDepth; }
-  
-  uint32_t getWidth()         override { return MWindowWidth; }
-  uint32_t getHeight()        override { return MWindowWidth; }
 
 //------------------------------
 public: // SAT_BaseWindow

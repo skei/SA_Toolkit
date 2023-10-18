@@ -83,6 +83,10 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 //
 //----------------------------------------------------------------------
 
+// TODO: move (most of) these to SAT_Enums.h ?
+
+//----------
+
 // #define SAT_ALIGNMENT_SIMD                      16
 // #define SAT_ALIGNMENT_CACHE                     64
 
