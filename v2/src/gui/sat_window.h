@@ -4,7 +4,9 @@
 
 #include "sat.h"
 #include "gui/base/sat_paint_context.h"
+#include "gui/base/sat_widget_listener.h"
 #include "gui/base/sat_window_listener.h"
+#include "gui/base/sat_widget_listener.h"
 #include "gui/sat_widget.h"
 
 //----------------------------------------------------------------------
@@ -35,11 +37,11 @@
 
 //----------------------------------------------------------------------
 //
-// rendering window
+// paint window
 //
 //----------------------------------------------------------------------
 
-class SAT_PaintingWindow
+class SAT_PaintWindow
 : public SAT_ImplementedWindow {
 
 //------------------------------
@@ -53,7 +55,7 @@ protected:
 public:
 //------------------------------
 
-  SAT_PaintingWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
+  SAT_PaintWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     MPaintContext.painter = getPainter();
     MPaintContext.update_rect = SAT_Rect(0,0,AWidth,AHeight);
@@ -61,7 +63,7 @@ public:
 
   //----------
 
-  virtual ~SAT_PaintingWindow() {
+  virtual ~SAT_PaintWindow() {
   }
 
 //------------------------------
@@ -105,7 +107,7 @@ public: // base window
 //----------------------------------------------------------------------
 
 class SAT_WidgetWindow
-: public SAT_PaintingWindow
+: public SAT_PaintWindow
 , public SAT_WidgetOwner
 , public SAT_WidgetListener {
 
@@ -125,7 +127,7 @@ public:
 //------------------------------
 
   SAT_WidgetWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_PaintingWindow(AWidth,AHeight,AParent) {
+  : SAT_PaintWindow(AWidth,AHeight,AParent) {
   }
 
   //----------
@@ -140,13 +142,13 @@ public:
   virtual void setRootWidget(SAT_Widget* AWidget) {
     MRootWidget = AWidget;
     MRootWidget->setParent(nullptr);
-    MRootWidget->setListener(this);
+    //MRootWidget->setListener(this);
     MRootWidget->setOwner(this);
   }
 
-  //virtual void setListener(SAT_WindowListener* AListener) {
-  //  MListener = AListener;
-  //}
+  virtual void setListener(SAT_WindowListener* AListener) {
+    MListener = AListener;
+  }
 
 //------------------------------
 public: // base window
@@ -154,7 +156,7 @@ public: // base window
 
   void on_window_open() override {
     //SAT_Print("\n");
-    //SAT_PaintingWindow::on_window_open();
+    //SAT_PaintWindow::on_window_open();
     if (MRootWidget) {
       //MRootWidget->on_widget_open(this);
       MRootWidget->setOwner(this);
@@ -163,17 +165,17 @@ public: // base window
 
   void on_window_close() override {
     //SAT_Print("\n");
-    //SAT_PaintingWindow::on_window_close();
+    //SAT_PaintWindow::on_window_close();
   }
   
   void on_window_move(int32_t AXpos, int32_t AYpos) override {
     //SAT_Print("\n");
-    //SAT_PaintingWindow::on_window_move(AXpos,AYpos);
+    //SAT_PaintWindow::on_window_move(AXpos,AYpos);
   }
   
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
     //SAT_Print("\n");
-    //SAT_PaintingWindow::on_window_move(AWidth,AHeight);
+    //SAT_PaintWindow::on_window_move(AWidth,AHeight);
     if (MRootWidget) {
       MRootWidget->setSize(SAT_Point(AWidth,AHeight));
       MRootWidget->realignChildWidgets();
@@ -183,7 +185,7 @@ public: // base window
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     //SAT_Print("\n");
-    //SAT_PaintingWindow::on_window_paint(AXpos,AYpos,AWidth,AHeight);
+    //SAT_PaintWindow::on_window_paint(AXpos,AYpos,AWidth,AHeight);
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     SAT_BaseRenderer* renderer = getRenderer();
     renderer->beginRendering(0,0,AWidth,AHeight);
@@ -239,20 +241,20 @@ public: // widget owner
   }
 
 //------------------------------
-public: // widget window
+public: // widget listener
 //------------------------------
 
-  void on_widgetListener_update(SAT_BaseWidget* AFrom) override {
-    //SAT_PRINT;
-  }
+  //void on_widgetListener_update_value(SAT_Widget* AFrom) override {
+  //  //SAT_PRINT;
+  //}
 
-  void on_widgetListener_redraw(SAT_BaseWidget* AFrom) override {
-    //SAT_PRINT;
-  }
+  //void on_widgetListener_redraw(SAT_Widget* AFrom) override {
+  //  //SAT_PRINT;
+  //}
 
-  void on_widgetListener_realign(SAT_BaseWidget* AFrom) override {
-    //SAT_PRINT;
-  }
+  //void on_widgetListener_realign(SAT_Widget* AFrom) override {
+  //  //SAT_PRINT;
+  //}
 
 };
 

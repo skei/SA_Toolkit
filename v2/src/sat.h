@@ -72,11 +72,11 @@
 
 //----------------------------------------------------------------------
 
-#ifdef SAT_LINUX
+#if defined (SAT_LINUX)
   #include "base/sat_linux.h"
 #endif
 
-#ifdef SAT_WIN32
+#if defined (SAT_WIN32)
   #include "base/sat_win32.h"
 #endif
 
@@ -89,6 +89,7 @@
 #include "base/sat_test.h"
 #include "base/sat_global.h"
 
+//static
 SAT_Global SAT_GLOBAL = {};
 
 //----------------------------------------------------------------------

@@ -3,12 +3,10 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_bitmap.h"
 
 //----------------------------------------------------------------------
 
-class SAT_Bitmap
-: public class SAT_BaseBitmap {
+class SAT_Bitmap {
 
 //------------------------------
 private:
@@ -32,8 +30,7 @@ public:
 
   //----------
 
-  SAT_Bitmap(uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=32)
-  : SAT_BaseBitmap(AWidth,AHeight,ADepth) {
+  SAT_Bitmap(uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=32) {
   }
 
   //----------

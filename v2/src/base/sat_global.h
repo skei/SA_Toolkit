@@ -2,7 +2,7 @@
 #define sat_global_included
 //----------------------------------------------------------------------
 
-#include "base/sat_debug_print.h"
+#include "base/debug/sat_debug_print.h"
 #include "base/sat_log.h"
 #include "base/sat_registry.h"
 #include "base/sat_test.h"
@@ -30,13 +30,13 @@ public:
 public:
 
   SAT_Global() {
-    #if defined(SAT_PLUGIN_EXE)
-      //SAT_GetExePath(binary_path);
-      //DEBUG.print("exe path '%s'\n",binary_path);
-    #else
-      //SAT_GetLibPath(binary_path);
-      //DEBUG.print("lib path '%s'\n",binary_path);
-    #endif
+    //#if defined(SAT_PLUGIN_EXE)
+    //  SAT_GetExePath(binary_path);
+    //  DEBUG.print("exe path '%s'\n",binary_path);
+    //#else
+    //  SAT_GetLibPath(binary_path);
+    //  DEBUG.print("lib path '%s'\n",binary_path);
+    //#endif
     initialize();
   }
 

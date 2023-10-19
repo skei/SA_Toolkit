@@ -2,6 +2,8 @@
 #define sat_widget_owner_included
 //----------------------------------------------------------------------
 
+// window
+
 #include "sat.h"
 #include "gui/base/sat_base_window.h"
 

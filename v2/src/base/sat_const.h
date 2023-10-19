@@ -65,12 +65,12 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_DOUBLE_EPSILON                      2.2204460492503131E-16
 #define SAT_DOUBLE_DENORM                       4.9406564584124654E-324
 
-#ifdef SAT_32BIT
+#if defined (SAT_32BIT)
 #define SAT_INT_MAX                             SAT_INT32_MAX             // 2147483647L
 #define SAT_UINT_MAX                            SAT_UINT32_MAX            // 8589934591UL
 #endif
 
-#ifdef SAT_64BIT
+#if defined (SAT_64BIT)
 #define SAT_INT_MAX                             SAT_INT64_MAX             // 9223372036854775807L
 #define SAT_UINT_MAX                            SAT_UINT64_MAX            // 18446744073709551615UL
 #endif
@@ -161,14 +161,14 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_DIRECTION_HORIZ                     5
 // #define SAT_DIRECTION_VERT                      6
 
-// #define SAT_EDGE_NONE                           0
-// #define SAT_EDGE_LEFT                           0x01
-// #define SAT_EDGE_RIGHT                          0x02
-// #define SAT_EDGE_TOP                            0x04
-// #define SAT_EDGE_BOTTOM                         0x08
-// #define SAT_EDGE_ALL                            0x0F
-// #define SAT_EDGE_HORIZ                          (SAT_EDGE_LEFT | SAT_EDGE_RIGHT)
-// #define SAT_EDGE_VERT                           (SAT_EDGE_TOP | SAT_EDGE_BOTTOM)
+#define SAT_EDGE_NONE                           0
+#define SAT_EDGE_LEFT                           0x01
+#define SAT_EDGE_RIGHT                          0x02
+#define SAT_EDGE_TOP                            0x04
+#define SAT_EDGE_BOTTOM                         0x08
+#define SAT_EDGE_ALL                            0x0F
+#define SAT_EDGE_HORIZ                          (SAT_EDGE_LEFT | SAT_EDGE_RIGHT)
+#define SAT_EDGE_VERT                           (SAT_EDGE_TOP | SAT_EDGE_BOTTOM)
 
 // #define SAT_FILE_READ_BINARY                    (char*)"rb"
 // #define SAT_FILE_READ_TEXT                      (char*)"r"
@@ -284,7 +284,7 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // 0 Reset/Normal, 1 Bold, 2 Faint, 3 Italics, 4 Underlined
 // "\e[1;97m" (bold white)
 
-#ifdef SAT_LINUX
+#if defined (SAT_LINUX)
 
   #define SAT_TERM_BG_BLACK                     "\e[40m"
   #define SAT_TERM_BG_RED                       "\e[41m"

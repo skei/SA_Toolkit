@@ -2,7 +2,7 @@
 #define sat_print_included
 //----------------------------------------------------------------------
 
-#ifdef SAT_PRINT_SOCKET
+#ifdef SAT_DEBUG_PRINT_SOCKET
   #ifdef SAT_LINUX
     #include <sys/socket.h>
     #include <sys/un.h>
@@ -18,7 +18,7 @@
 
 //----------
 
-#ifdef SAT_PRINT_THREAD
+#ifdef SAT_DEBUG_PRINT_THREAD
   #ifdef SAT_LINUX
     #include <sys/syscall.h>
     #include <sys/unistd.h>
@@ -31,7 +31,7 @@
 
 //----------
 
-#ifdef SAT_PRINT_TIME
+#ifdef SAT_DEBUG_PRINT_TIME
   #include <sys/time.h> // gettimeofday
 #endif
 
@@ -52,7 +52,7 @@ private:
   char MPrefixBuffer[256] = {0};
   char MPrintBuffer[256]  = {0};
   
-  #ifdef SAT_PRINT_SOCKET
+  #ifdef SAT_DEBUG_PRINT_SOCKET
     #ifdef SAT_WIN32
       SOCKET  MSocketHandle = 0;
       WSADATA MWsadata      = {};
@@ -62,7 +62,7 @@ private:
     #endif
   #endif
 
-  #ifdef SAT_PRINT_TIME
+  #ifdef SAT_DEBUG_PRINT_TIME
     double MStartTime = 0.0;
   #endif
 
@@ -83,10 +83,10 @@ public:
 //------------------------------
 
   void initialize() {
-    #ifdef SAT_PRINT_SOCKET
+    #ifdef SAT_DEBUG_PRINT_SOCKET
       setup_socket();
     #endif
-    #ifdef SAT_PRINT_TIME
+    #ifdef SAT_DEBUG_PRINT_TIME
       time_start();
     #endif
   }
@@ -94,7 +94,7 @@ public:
   //----------
 
   void cleanup() {
-    #ifdef SAT_PRINT_SOCKET
+    #ifdef SAT_DEBUG_PRINT_SOCKET
       cleanup_socket();
     #endif
   }
@@ -122,7 +122,7 @@ public: // print
     va_start(args,format);
     vsprintf(MPrintBuffer,format,args);
 
-    #ifdef SAT_PRINT_SOCKET
+    #ifdef SAT_DEBUG_PRINT_SOCKET
       print_socket("%s%s",MPrefixBuffer,MPrintBuffer);
     #else
       printf("%s%s",MPrefixBuffer,MPrintBuffer);
@@ -139,13 +139,13 @@ public: // print
     __SAT_UNUSED char buffer[256];
     strcpy(MPrefixBuffer,"[");
 
-    #ifdef SAT_PRINT_TIME
+    #ifdef SAT_DEBUG_PRINT_TIME
       double time = time_elapsed();
       sprintf(buffer, SAT_TERM_FG_RED "%.6f" SAT_TERM_RESET ":",time);
       strcat(MPrefixBuffer,buffer);
     #endif
 
-    #ifdef SAT_PRINT_THREAD
+    #ifdef SAT_DEBUG_PRINT_THREAD
       #ifdef SAT_LINUX
         uint32_t thread_id = gettid();
       #endif
@@ -195,7 +195,7 @@ private:
 private: // socket
 //------------------------------
 
-  #ifdef SAT_PRINT_SOCKET
+  #ifdef SAT_DEBUG_PRINT_SOCKET
 
     void setup_socket() {
       #ifdef SAT_LINUX
@@ -250,7 +250,7 @@ private: // socket
 private: // time
 //------------------------------
 
-  #ifdef SAT_PRINT_TIME
+  #ifdef SAT_DEBUG_PRINT_TIME
 
     void time_start() {
       struct timeval time;
@@ -278,7 +278,7 @@ private: // time
 
 void SAT_NoPrint(const char*,...) {}
 
-#ifdef SAT_PRINT_PRETTY_FUNCTION
+#ifdef SAT_DEBUG_PRINT_PRETTY_FUNCTION
 
   #define SAT_Print \
     SAT_GLOBAL.PRINT.set_prefix( __FILE__, __PRETTY_FUNCTION__, __LINE__ ); \
@@ -311,7 +311,7 @@ void SAT_NoPrint(const char*,...) {}
 //----------
 
 #ifndef SAT_DEBUG
-#ifndef SAT_PRINT_ALWAYS
+#ifndef SAT_DEBUG_PRINT_ALWAYS
 
   #undef SAT_Print
   #undef SAT_DPrint

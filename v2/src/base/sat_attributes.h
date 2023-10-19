@@ -2,7 +2,7 @@
 #define sat_attributes_included
 //----------------------------------------------------------------------
 
-#ifdef SAT_LINUX
+#if defined (SAT_LINUX)
   #define __SAT_IMPORT
   #define __SAT_EXPORT __SAT_PUBLIC
   #define __SAT_CDECL
@@ -11,7 +11,7 @@
   #define __SAT_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 
-#ifdef SAT_WIN32
+#if defined (SAT_WIN32)
   #define __SAT_IMPORT  __attribute__ ((dllimport))
   #define __SAT_EXPORT  __attribute__ ((dllexport))
   #define __SAT_CDECL   __attribute__ ((cdecl))

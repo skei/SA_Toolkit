@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------------------------------------
 
 #include "sat.h"
-#include "base/sat_debug_print.h"
+#include "base/debug/sat_debug_print.h"
 
 //----------------------------------------------------------------------------------------------------
 //
@@ -115,14 +115,14 @@ public:
 
 #if !defined(SAT_NO_TESTS)
 
-  #define SAT_TEST(name,func)                                       \
-                                                                    \
-    bool sat_test_register_ ##func() {                              \
-      SAT_GLOBAL.TEST.addTest(name,func);                           \
-      return true;                                                  \
-    }                                                               \
-                                                                    \
-    bool sat_test_registered_ ##func = sat_test_register_ ##func();
+  #define SAT_TEST(name,func)                                         \
+                                                                      \
+    bool sat__test_register_ ##func() {                               \
+      SAT_GLOBAL.TEST.addTest(name,func);                             \
+      return true;                                                    \
+    }                                                                 \
+                                                                      \
+    bool sat__test_registered_ ##func = sat__test_register_ ##func();
 
   #define SAT_RUN_TESTS SAT_GLOBAL.TEST.runAllTests();
 

@@ -27,11 +27,13 @@
 #----------------------------------------------------------------------
 
 INPUT="build.cpp"
-OUTPUT="build"
-FORMAT="CLAP"
-GUI="NOGUI"
+OUTPUT="build.exe"
+FORMAT="EXE"
+GUI="X11"
 DEBUG=false
 TEST=false
+VERBOSE=false
+ADDITIONAL=""
 LIBRARY=false
 
 FLAGS=""
@@ -66,7 +68,9 @@ function print_help_and_exit {
   echo "  -f <type>   format (all,clap,dssi,exe,ladspa,lv2,vst2,vst3)"
   echo "  -g <type>   gui (nogui,wayland,win32,x11)"
   echo "  -d          debug mode"
-  echo "  -t          test mode"
+  echo "  -t          include tests"
+  echo "  -v          verbose"
+  echo "  -a <flags>  additional flags (in quotes)"
   echo "  -h, -?      this help"
   exit 1
 }
@@ -77,19 +81,22 @@ function print_help_and_exit {
 #
 #----------------------------------------------------------------------
 
-if [ "$#" -eq 0 ]; then
-  print_help_and_exit
-fi
+#if [ "$#" -eq 0 ]; then
+#  print_help_and_exit
+#fi
 
-while getopts i:o:f:g:dth? arg
+while getopts i:o:f:g:a:dtvh? arg
 do
+  A=""
   case $arg in
     i)    INPUT=$OPTARG;;
     o)    OUTPUT=$OPTARG;;
     f)    FORMAT=${OPTARG^^};;
     g)    GUI=${OPTARG^^};;
+    a)    ADDITIONAL=$OPTARG;;
     d)    DEBUG=true;;
     t)    TEST=true;;
+    v)    VERBOSE=true;;
     h|?)  print_help_and_exit;;
     *)    exit 1;;
   esac
@@ -268,11 +275,9 @@ fi
 # -t test
 #------------------------------
 
-if $TEST
+if ! $TEST
   then
-    #echo "test mode"
-    FLAGS+=" -DSAT_TEST"
-#  else
+    FLAGS+=" -DSAT_NO_TESTS"
 fi
 
 #----------------------------------------------------------------------
@@ -290,5 +295,9 @@ fi
 #echo "g++" $INPUT "-o" $OUTPUT $FLAGS $INC $LIB
 #echo
 
-g++ $INPUT -o $OUTPUT $FLAGS $INC $LIB
+if $VERBOSE; then
+  echo g++ $INPUT -o $OUTPUT $FLAGS $INC $LIB $ADDITIONAL
+fi  
+
+g++ $INPUT -o $OUTPUT $FLAGS $INC $LIB $ADDITIONAL
 

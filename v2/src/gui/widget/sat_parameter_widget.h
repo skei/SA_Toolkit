@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-//#include "gui/base/sat_base_widget.h"
 //#include "gui/base/sat_widget_listener.h"
 //#include "gui/base/sat_paint_context.h"
 
