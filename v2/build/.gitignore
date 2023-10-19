@@ -1,0 +1,7 @@
+# ignore everything
+*
+# except
+!.gitignore
+!build.cpp
+!compile
+
