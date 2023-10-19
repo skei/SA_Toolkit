@@ -222,7 +222,7 @@
   #define SAT_GUI_FORMAT_DEFINED
 
 #elif defined (SAT_GUI_X11)
-  //#define SAT_GUI_WINDOW_WX11
+  //#define SAT_GUI_WINDOW_X11
   //#define SAT_GUI_RENDERER_GLX
   //#define SAT_GUI_PAINTER_NANOVG
   #define SAT_GUI_FORMAT_DEFINED

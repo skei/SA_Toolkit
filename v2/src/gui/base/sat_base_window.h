@@ -82,8 +82,8 @@ public:
   virtual void              setParent(intptr_t AParent)                                                                               {}
   virtual void              invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight)                                 {}
   virtual void              sendClientMessage(uint32_t AData, uint32_t AType)                                                         {}
-  virtual void              sync()                                                                                                    {}
-  virtual void              flush()                                                                                                   {}
+  //virtual void              sync()                                                                                                    {}
+  //virtual void              flush()                                                                                                   {}
 
 };
 

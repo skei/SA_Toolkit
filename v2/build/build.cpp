@@ -4,7 +4,7 @@
 
 //----------
 
-//#define SAT_NO_TESTS
+#define SAT_NO_TESTS
 //#define SAT_PRINT_SOCKET
 
 #include "sat.h"
@@ -50,7 +50,6 @@ int main() {
 
   SAT_RUN_TESTS
 
-  //myWindow* window = new myWindow(640,480);
   SAT_Window* window = new SAT_Window(640,480);
 
   myWidget* root = new myWidget();

@@ -45,6 +45,17 @@ public:
   //----------
 
   virtual ~SAT_Widget() {
+    #ifndef SAT_NO_AUTODELETE
+      deleteChildWidgets();
+    #endif
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void setListener(SAT_WidgetListener* AListener) {
+    MListener = AListener;
   }
 
 //------------------------------
@@ -109,18 +120,16 @@ public:
 public:
 //------------------------------
 
-  void setOwnerWidget(SAT_WidgetOwner* AOwner, bool ARecursive=true) override {
+  void setOwner(SAT_WidgetOwner* AOwner) override {
     MOwner = AOwner;
-    if (ARecursive) {
-      for (uint32_t i=0; i<MChildren.size(); i++) {
-        MChildren[i]->setOwnerWidget(AOwner,ARecursive);
-      }
+    for (uint32_t i=0; i<MChildren.size(); i++) {
+      MChildren[i]->setOwner(AOwner);
     }
   }
 
   //----------
 
-  void setParentWidget(SAT_BaseWidget* AWidget) override {
+  void setParent(SAT_BaseWidget* AWidget) override {
     MParent = AWidget;
   }
 
@@ -134,7 +143,7 @@ public:
 
   void appendChildWidget(SAT_BaseWidget* AWidget) override {
     uint32_t index = MChildren.size();
-    AWidget->setParentWidget(this);
+    AWidget->setParent(this);
     AWidget->setParentIndex(index);
     MChildren.push_back(AWidget);
   }
@@ -142,6 +151,10 @@ public:
   //----------
 
   void deleteChildWidgets() override {
+    for (uint32_t i=0; i<MChildren.size(); i++) {
+      delete MChildren[i];
+    }
+    MChildren.clear();
   }
 
   //----------

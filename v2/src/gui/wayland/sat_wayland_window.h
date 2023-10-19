@@ -280,16 +280,26 @@ public: // SAT_BaseWindow
   }
 
   //----------
+
+  /*
+    wl_display_sync - Asynchronous roundtrip
+    The sync request asks the server to emit the 'done' event on the returned wl_callback object.
+    Since requests are handled in-order and events are delivered in-order, this can be used as a
+    barrier to ensure all previous requests and the resulting events have been handled.
+    The object returned by this request will be destroyed by the compositor after the callback is
+    fired and as such the client must not attempt to use it after that point.
+    The callback_data passed in the callback is the event serial.
+  */
   
-  void sync() override {
-    wl_display_sync(MDisplay);
-  }
+  //void sync() override {
+  //  wl_display_sync(MDisplay);
+  //}
 
   //----------
 
-  void flush() override {
-    wl_display_flush(MDisplay);
-  }
+  //void flush() override {
+  //  wl_display_flush(MDisplay);
+  //}
 
 //------------------------------
 private: // wl_registry

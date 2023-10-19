@@ -7,8 +7,7 @@
 
 class SAT_WidgetOwner {
 public:
-  //SAT_Window* on_widgetOwner_getWindow() { return nullptr; }
-  SAT_BaseWindow* on_widgetOwner_getWindow() { return nullptr; }
+  virtual SAT_BaseWindow* on_widgetOwner_getWindow() { return nullptr; }
 };
 
 //----------------------------------------------------------------------

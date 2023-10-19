@@ -999,48 +999,28 @@ private:
 
       case XCB_CLIENT_MESSAGE: {
         xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)AEvent;
-        //xcb_atom_t type = client_message->type;
+        xcb_atom_t type = client_message->type;
         uint32_t data = client_message->data.data32[0];
-        on_window_client_message(data);
-
-        //switch(data) {
-        //  case SAT_WINDOW_THREAD_KILL:
-        //    SAT_Print("SAT_WINDOW_THREAD_KILL\n");
-        //    free(AEvent); // not malloc'ed
-        //    return false; // we re finished, die!
-        //  //default:
-        //  //  break;
-        //  /*
-        //  default:
-        //    on_window_clientMessage(data,nullptr);
-        //    break;
-        //  */
-        //}
-
         if (data == SAT_WINDOW_THREAD_KILL) {
-          //SAT_Print("SAT_WINDOW_THREAD_KILL\n");
-          ::free(AEvent); // not malloc'ed
-          return false; // we re finished
-          
+          SAT_Print("SAT_WINDOW_THREAD_KILL\n");
+          ::free(AEvent);
+          return false;
         }
-
-        //if (type == MWMProtocolsAtom) {
+        if (type == MWMProtocolsAtom) { // why was this commented out?
           if (data == MWMDeleteWindowAtom) {
-            //SAT_Print("MWMDeleteWindowAtom\n");
-            ::free(AEvent); // not malloc'ed
-            return false; // we re finished
-            
+            SAT_Print("MWMDeleteWindowAtom\n");
+            ::free(AEvent);
+            return false;
           }
-        //}
-
+        }
+        on_window_client_message(data);
         break;
       } // client message
 
     } // switch
 
-    //real_free(AEvent);
     ::free(AEvent);
-    return true; // we are still alive
+    return true; // still alive
     
   }
 
