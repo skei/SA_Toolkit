@@ -8,6 +8,7 @@
 #include "base/types/sat_point.h"
 #include "base/types/sat_queue.h"
 #include "base/types/sat_rect.h"
+#include "base/types/sat_stack.h"
 
 typedef double            sat_param_t;
 typedef float             sat_sample_t;

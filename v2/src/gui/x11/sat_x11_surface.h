@@ -7,9 +7,9 @@
 //#include "gui/base/sat_paint_source.h"
 //#include "gui/base/sat_paint_target.h"
 
-//#include "gui/mip_drawable.h"
-//#include "gui/xcb/mip_xcb.h"
-//#include "gui/xcb/mip_xcb_utils.h"
+//#include "gui/sat_drawable.h"
+//#include "gui/xcb/sat_x11.h"
+//#include "gui/xcb/sat_x11_utils.h"
 
 //----------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ public:
     //   MCairoSurface = cairo_xcb_surface_create(
     //     MConnection,
     //     MPixmap,
-    //     mip_xcb_find_visual(MConnection,MTargetVisual),
+    //     sat_xcb_find_visual(MConnection,MTargetVisual),
     //     MWidth,
     //     MHeight
     //   );

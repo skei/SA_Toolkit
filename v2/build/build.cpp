@@ -5,25 +5,37 @@
 //----------
 
 //#define SAT_NO_TESTS
-//#define SAT_PRINT_SOCKET
+//#define SAT_DEBUG_PRINT_SOCKET
 
 #include "sat.h"
 #include "gui/sat_window.h"
-#include "gui/sat_widget.h"
+//#include "gui/sat_widget.h"
+
+#define WINDOW_WIDTH  500
+#define WINDOW_HEIGHT 500
 
 //----------------------------------------------------------------------
 
-class myWidget
-: public SAT_Widget {
+class myRootWidget
+: public SAT_RootWidget {
+private:
+  SAT_Color color1 = SAT_Yellow;
+  SAT_Color color2 = SAT_Red;
 public:
-  myWidget(SAT_Rect ARect) : SAT_Widget(ARect) {}
+  myRootWidget(SAT_Rect ARect,SAT_WidgetListener* AListener) : SAT_RootWidget(ARect,AListener) {}
   void on_widget_paint(SAT_PaintContext* AContext) final {
-    SAT_PRINT;
+    SAT_Print("***\n");
     SAT_BasePainter* painter = AContext->painter;
-    painter->setFillColor(SAT_Yellow);
-    painter->fillCircle(200,200,150);
+    SAT_Rect mrect = getRect();
+    painter->setFillColor(color1);
+    painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+    painter->setFillColor(color2);
+    double x = mrect.x + (mrect.w * 0.5); // 200
+    double y = mrect.y + (mrect.h * 0.5); // 200
+    double rx = mrect.w * 0.4;
+    double ry = mrect.h * 0.4; // 150
+    painter->fillEllipse(x,y,rx,ry);
   }
-
 };
 
 //----------------------------------------------------------------------
@@ -53,9 +65,10 @@ int main() {
 
   SAT_RUN_TESTS
 
-  SAT_Window* window = new SAT_Window(640,480);
+  SAT_Window* window = new SAT_Window(WINDOW_WIDTH,WINDOW_HEIGHT);
 
-  myWidget* root = new myWidget(100);
+  // note, this is not automatically deleted! (set, not append)
+  myRootWidget* root = new myRootWidget(0,window);
   window->setRootWidget(root);
 
   window->open();
@@ -68,7 +81,8 @@ int main() {
   return 0;
 }
 
+//----------------------------------------------------------------------
+
 void SAT_Register(SAT_Registry* ARegistry) {
   SAT_Print("Hello world!\n");
 }
-

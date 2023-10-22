@@ -11,7 +11,7 @@
 //#include <errno.h>      // errno
 
 
-#include "base/utils/sat_math.h"
+//#include "base/utils/sat_math.h"
 
 //----------------------------------------------------------------------
 
@@ -123,7 +123,7 @@ public:
   void start(float ms, bool oneshot=false) {
     if (!MIsRunning) {
       float s = ms * 0.001f;
-      float sec = SAT_Trunc(s);
+      float sec = floorf(s);// SAT_Trunc(s);
       float nsec = (s-sec) * 1000000000; // 1000000.0f * (sec - SAT_Fract(s));
       time_t isec = sec;
       long insec = nsec;

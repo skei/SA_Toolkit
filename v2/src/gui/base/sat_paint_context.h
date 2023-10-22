@@ -9,6 +9,7 @@
 struct SAT_PaintContext {
   SAT_BasePainter*  painter;
   SAT_Rect          update_rect;
+  uint32_t          counter;
 };
 
 //----------------------------------------------------------------------

@@ -17,6 +17,19 @@
 //
 //----------------------------------------------------------------------
 
+struct SAT_WaylandPendingChanges {
+  uint32_t  serial;
+  int32_t   width;
+  int32_t   height;
+  bool      maximized;
+  bool      fullscreen;
+  bool      resizing;
+  bool      activated;
+};
+
+//----------------------------------------------------------------------
+
+
 class SAT_WaylandWindow
 : public SAT_RendererOwner,
   public SAT_PainterOwner,
@@ -38,6 +51,7 @@ private:
 
   struct wl_compositor*     MCompositor     = nullptr;
   struct wl_seat*           MSeat           = nullptr;
+  struct wl_pointer*        MPointer        = nullptr;
 
 //struct wl_shm*            MShm            = nullptr;
 //struct wl_subcompositor*  MSubCompositor  = nullptr;
@@ -49,12 +63,22 @@ private:
 
   struct wl_surface*        MCursorSurface  = nullptr;
 
+  uint32_t                  MWidth          = 0;
+  uint32_t                  MHeight         = 0;
+
+  SAT_WaylandPendingChanges MPendingChanges = {}; // &MPendingChanges now prints 0x88
+  uint32_t                  MPointerSerial  = 0;
+
 //------------------------------
 public:
 //------------------------------
 
   SAT_WaylandWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_BaseWindow(AWidth,AHeight,AParent) {
+    SAT_Print("AWidth %i AHeight %i AParent %i\n",AWidth,AHeight,AParent);
+
+    MWidth = AWidth;
+    MHeight = AHeight;
 
     MDisplay = wl_display_connect(nullptr);
     SAT_Print("MDisplay: %p\n",MDisplay);
@@ -67,30 +91,36 @@ public:
 
     //-----
 
-    xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,MWindow);
-    wl_seat_add_listener(MSeat,&sat_wl_seat_listener,MWindow);
+    xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,this);//MWindow);
+    wl_seat_add_listener(MSeat,&sat_wl_seat_listener,this);//MWindow);
+
+    MPointer = wl_seat_get_pointer(MSeat);
+    wl_pointer_add_listener(MPointer,&sat_wl_pointer_listener,this);//MWindow);
+
+    MCursorSurface = wl_compositor_create_surface(MCompositor);
 
     //MXDGPositioner = xdg_wm_base_create_positioner(MXDGWMBase);
 
     MSurface = wl_compositor_create_surface(MCompositor);
     SAT_Print("MSurface: %p\n",MSurface);
-
-    wl_surface_add_listener(MSurface,&sat_wl_surface_listener,MWindow);
+    wl_surface_add_listener(MSurface,&sat_wl_surface_listener,this);//MWindow);
 
     MRegion = wl_compositor_create_region(MCompositor);
     SAT_Print("MRegion: %p\n",MRegion);
     wl_region_add(MRegion,0,0,AWidth,AHeight);
     wl_surface_set_opaque_region(MSurface,MRegion);
 
+    memset(&MPendingChanges,0,sizeof(SAT_WaylandPendingChanges));
+    MPendingChanges.width = AWidth;
+    MPendingChanges.height = AHeight;
+
     MXDGSurface = xdg_wm_base_get_xdg_surface(MXDGWMBase,MSurface);
     SAT_Print("MXDGSurface: %p\n",MXDGSurface);
-
-    xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,MWindow);
+    xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,this);//MWindow);
 
     MXDGTopLevel = xdg_surface_get_toplevel(MXDGSurface);
     SAT_Print("MXDGTopLevel: %p\n",MXDGTopLevel);
-
-    xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,MWindow);
+    xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,this);//MWindow);
     xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
 
     wl_surface_commit(MSurface);
@@ -101,13 +131,21 @@ public:
     MEGLSurface = MRenderer->createWindowSurface(MWindow); // deleted by SAT_EglRenderer destructor
     SAT_Print("MEGLSurface: %p\n",MEGLSurface);
     MRenderer->makeCurrent();
+    MRenderer->disableVSync();
     MPainter = new SAT_Painter(this);
+
+//    on_window_open();
+
   }
 
   //----------
 
   virtual ~SAT_WaylandWindow() {
+
     //eglDestroySurface(MDisplay,MEGLSurface); 
+
+    wl_surface_destroy(MCursorSurface);
+
     MRenderer->resetCurrent();
     delete MRenderer;
     delete MPainter;
@@ -131,6 +169,13 @@ public:
   SAT_BaseRenderer* getRenderer()       override { return MRenderer; }
   SAT_BasePainter*  getPainter()        override { return MPainter; }
 
+  uint32_t          getWidth()          override { return MWidth; }
+  uint32_t          getHeight()         override { return MHeight; }
+  uint32_t          getScreenWidth()    override { return 0; }
+  uint32_t          getScreenHeight()   override { return 0; }
+  uint32_t          getScreenDepth()    override { return 0; }
+
+
 //------------------------------
 public: // SAT_RendererOwner
 //------------------------------
@@ -150,21 +195,31 @@ public: // SAT_BaseWindow
 //------------------------------
 
   void open() override {
+    SAT_PRINT;
+    //invalidate(0,0,getWidth(),getHeight());
+    //wl_display_frame_callback();
+    on_window_open();
   }
 
   //----------
 
   void close() override {
+    on_window_close();
   }
 
   //----------
   
   void setPos(int32_t AXpos, int32_t AYpos) override {
+    SAT_Print("AXpos %i AYpos %i\n",AXpos,AYpos);
   }
 
   //----------
   
   void setSize(int32_t AWidth, int32_t AHeight) override {
+    SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
+    MWidth = AWidth;
+    MHeight = AHeight;
+    wl_egl_window_resize(MWindow,AWidth,AHeight,0,0);
   }
 
   //----------
@@ -213,24 +268,7 @@ public: // SAT_BaseWindow
   //   // This call won't block
   //   eglSwapBuffers(egl_display, egl_surface);
   // }
-  //
-  // static void frame_handle_done(void *data, struct wl_callback *callback, uint32_t time) {
-  //   wl_callback_destroy(callback);
-  //   render();
-  // }
-  //
-  // const struct wl_callback_listener frame_listener = {
-  //   .done = frame_handle_done,
-  // };  
-
-
-  uint32_t eventLoop() override {
-
-    while (wl_display_dispatch(MDisplay) != -1) {
-      //SAT_Print("painting\n");
-      on_window_paint(0,0,640,480);
-    }
-
+  
 	  // bool program_alive = true;
     // while (program_alive) {
     //   wl_display_dispatch_pending(MDisplay);
@@ -240,11 +278,45 @@ public: // SAT_BaseWindow
     //   //MRenderer->endRendering();
 	  // }
 
+  /*
+    wl_display_dispatch
+    Dispatch events on the default event queue.
+    If the default event queue is empty, this function blocks until there are events to be read
+    from the display fd. Events are read and queued on the appropriate event queues. Finally, events
+    on the default event queue are dispatched. On failure -1 is returned and errno set appropriately.
+    In a multi threaded environment, do not manually wait using poll() (or equivalent) before
+    calling this function, as doing so might cause a dead lock. If external reliance on poll()
+    (or equivalent) is required, see wl_display_prepare_read_queue() of how to do so.
+    This function is thread safe as long as it dispatches the right queue on the right thread.
+    It is also compatible with the multi thread event reading preparation API (see wl_display_prepare_read_queue()),
+    and uses the equivalent functionality internally. It is not allowed to call this function while
+    the thread is being prepared for reading events, and doing so will cause a dead lock.    
+  */
+
+  /*
+    wl_display_dispatch_pending
+    This function dispatches events on the main event queue. It does not attempt to read the
+    display fd and simply returns zero if the main queue is empty, i.e., it doesn't block.    
+  */
+
+  //----------
+
+  uint32_t eventLoop() override {
+    SAT_PRINT;
+    wl_surface_commit(MSurface);
+    wl_display_dispatch_pending(MDisplay);
+
+    renderFrame(0);
+
+    while (wl_display_dispatch(MDisplay) != -1) {
+      //SAT_PRINT;
+      ;
+    }
     return 0;
   }
 
   //----------
-  
+
   void startEventThread() override {
   }
 
@@ -271,7 +343,9 @@ public: // SAT_BaseWindow
   //----------
   
   void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    wl_surface_damage(MSurface,AXpos,AYpos,AWidth,AHeight);
+    //wl_surface_damage(MSurface,AXpos,AYpos,AWidth,AHeight);
+    //wl_surface_commit(MSurface);
+    //on_window_paint(AXpos,AYpos,AWidth,AHeight);
   }
 
   //----------
@@ -279,27 +353,28 @@ public: // SAT_BaseWindow
   void sendClientMessage(uint32_t AData, uint32_t AType) override {
   }
 
-  //----------
+//------------------------------
+private:
+//------------------------------
 
-  /*
-    wl_display_sync - Asynchronous roundtrip
-    The sync request asks the server to emit the 'done' event on the returned wl_callback object.
-    Since requests are handled in-order and events are delivered in-order, this can be used as a
-    barrier to ensure all previous requests and the resulting events have been handled.
-    The object returned by this request will be destroyed by the compositor after the callback is
-    fired and as such the client must not attempt to use it after that point.
-    The callback_data passed in the callback is the event serial.
-  */
-  
-  //void sync() override {
-  //  wl_display_sync(MDisplay);
-  //}
+  // Make eglSwapBuffers non-blocking, we manage frame callbacks manually
+  //eglSwapInterval(egl_display, 0);
 
-  //----------
+  void renderFrame(uint32_t ATime) {
+    uint32_t w = getWidth();
+    uint32_t h = getHeight();
+    //SAT_Print("ATime %i w %i h %i\n",ATime,w,h);
 
-  //void flush() override {
-  //  wl_display_flush(MDisplay);
-  //}
+    MRenderer->beginRendering(0,0,w,h);
+    on_window_paint(0,0,w,h);
+    //MRenderer->disableVSync();
+    MRenderer->endRendering();
+
+//    struct wl_callback *callback = wl_surface_frame(MSurface);
+//    wl_callback_add_listener(callback,&sat_wl_callback_listener,this);
+//    wl_surface_commit(MSurface);
+
+  }
 
 //------------------------------
 private: // wl_registry
@@ -454,6 +529,7 @@ private: // xdg_surface
     It provides a base set of functionality required to construct user interface elements requiring
     management by the compositor, such as toplevel windows, menus, etc. The types of functionality are
     split into xdg_surface roles.
+
     Creating an xdg_surface does not set the role for a wl_surface. In order to map an xdg_surface,
     the client must create a role-specific object using, e.g., get_toplevel, get_popup.
     The wl_surface for any given xdg_surface can have at most one role, and may not be assigned any role not based on xdg_surface.
@@ -464,6 +540,7 @@ private: // xdg_surface
     After creating a role-specific object and setting it up, the client must perform an initial commit without any buffer attached.
     The compositor will reply with initial wl_surface state such as wl_surface.preferred_buffer_scale followed by an
     xdg_surface.configure event. The client must acknowledge it and is then allowed to attach a buffer to map the surface.
+
     Mapping an xdg_surface-based role surface is defined as making it possible for the surface to be shown by the compositor.
     Note that a mapped surface is not guaranteed to be visible once it is mapped.
     For an xdg_surface to be mapped by the compositor, the following conditions must be met: (1) the client has assigned an
@@ -489,23 +566,34 @@ private: // xdg_surface
   */
 
   /*
-    As wl_surface is used to atomically communicate surface changes from client to server,
-    the xdg_surface interface provides the following two messages for the compositor to suggest
-    changes and the client to acknowledge them:
-      request: ack_configure, arg: "serial" uint
-      event: configure, arg: "serial" uint
-    On their own, these messages carry little meaning. However, each subclass of xdg_surface
-    (xdg_toplevel and xdg_popup) have additional events that the server can send ahead of "configure",
-    to make each of the suggestions we've mentioned so far. The server will send all of this state;
-    maximized, focused, a suggested size; then a configure event with a serial. When the client has
-    assumed a state consistent with these suggestions, it sends an ack_configure request with the
+    ..each subclass of xdg_surface (xdg_toplevel and xdg_popup) have additional events that the server
+    can send ahead of "configure", to make each of the suggestions we've mentioned so far. The server
+    will send all of this state; maximized, focused, a suggested size; then a configure event with a serial.
+    When the client has assumed a state consistent with these suggestions, it sends an ack_configure request with the
     same serial to indicate this. Upon the next commit to the associated wl_surface,
     the compositor will consider the state consistent.
   */
 
   void sat_xdg_surface_configure(struct xdg_surface *xdg_surface, uint32_t serial) {
     SAT_Print("xdg_surface %p serial %i\n",xdg_surface,serial);
+
+    // do pending changes..
+    // clear MPendingChanges
+
+    SAT_PRINT;
+    uint32_t size = sizeof(SAT_WaylandPendingChanges);
+    SAT_Print("size %i\n",size);
+
+    SAT_WaylandPendingChanges* changes = &MPendingChanges;
+
+    SAT_Print("MPendingChanges %p\n",changes);                // prints 0x10/0x88 ?????
+    memset(&MPendingChanges,0,size);                          // so this crashes....
+
+    SAT_PRINT;
+
     xdg_surface_ack_configure(xdg_surface,serial);
+
+    SAT_PRINT;
   }
 
   //------------------------------
@@ -562,25 +650,38 @@ private: // xdg_toplevel
   */
 
   void sat_xdg_toplevel_configure(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *states) {
+
     SAT_Print("xdg_toplevel %p width %i height %i states.size %i\n",xdg_toplevel,width,height,states->size);
-    //if (width==0 || height==0) return;
-	  // for (state = (xdg_toplevel_state*)states->data;
-    //     (const char*)state < ((const char*)states->data + states->size);
-	  //     state++) {
-    //   switch (*state) {
-    //     case XDG_TOPLEVEL_STATE_MAXIMIZED:    { SAT_Print("- maximized\n"); break; }
-    //     case XDG_TOPLEVEL_STATE_FULLSCREEN:   { SAT_Print("- fullscreen\n"); break; }
-    //     case XDG_TOPLEVEL_STATE_RESIZING:     { SAT_Print("- resizing\n"); break; }
-    //     case XDG_TOPLEVEL_STATE_ACTIVATED:    { SAT_Print("- activated\n"); break; }
-    //     case XDG_TOPLEVEL_STATE_TILED_LEFT:   { SAT_Print("- tiled left\n"); break; }
-    //     case XDG_TOPLEVEL_STATE_TILED_RIGHT:  { SAT_Print("- tiled right\n"); break; }
-    //     case XDG_TOPLEVEL_STATE_TILED_TOP:    { SAT_Print("- tiled top\n"); break; }
-    //     case XDG_TOPLEVEL_STATE_TILED_BOTTOM: { SAT_Print("- tiled bottom\n"); break; }
-    //     #if defined(XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION)
-    //     case XDG_TOPLEVEL_STATE_SUSPENDED:    { SAT_Print("- suspended\n"); break; }
-    //     #endif
-    //   }
-    // }
+
+    if ((width != 0) && (height != 0)) {
+      MPendingChanges.width = width;
+      MPendingChanges.height = height;
+    }
+
+    for (xdg_toplevel_state* state = (xdg_toplevel_state*)states->data;
+        (const char*)state < ((const char*)states->data + states->size);
+        state++) {
+      switch (*state) {
+        case XDG_TOPLEVEL_STATE_MAXIMIZED:    MPendingChanges.maximized = true;       break;
+        case XDG_TOPLEVEL_STATE_FULLSCREEN:   MPendingChanges.fullscreen = true;      break;
+        case XDG_TOPLEVEL_STATE_RESIZING:     MPendingChanges.resizing = true;        break;
+        case XDG_TOPLEVEL_STATE_ACTIVATED:    MPendingChanges.activated = true;       break;
+        case XDG_TOPLEVEL_STATE_TILED_LEFT:   break;
+        case XDG_TOPLEVEL_STATE_TILED_RIGHT:  break;
+        case XDG_TOPLEVEL_STATE_TILED_TOP:    break;
+        case XDG_TOPLEVEL_STATE_TILED_BOTTOM: break;
+        #if defined(XDG_TOPLEVEL_STATE_SUSPENDED_SINCE_VERSION)
+        case XDG_TOPLEVEL_STATE_SUSPENDED:    break;
+        #endif
+        default:                              SAT_Print("unknown state %i\n",*state); break;
+      }
+    }
+
+    //setSize(width,height);
+    //MWidth = width;
+    //MHeight = height;
+    //on_window_open();
+    //renderFrame(0);
 
   }
 
@@ -719,11 +820,11 @@ private: // wl_seat
 
   void sat_wl_seat_capabilities(struct wl_seat* seat, uint32_t capabilities) {
     SAT_Print("capabilities %08x\n",capabilities);
-    if (capabilities & WL_SEAT_CAPABILITY_POINTER) {
-      struct wl_pointer* pointer = wl_seat_get_pointer(seat);
-      wl_pointer_add_listener(pointer,&sat_wl_pointer_listener,MWindow);
-      MCursorSurface = wl_compositor_create_surface(MCompositor);
-    }
+    //if (capabilities & WL_SEAT_CAPABILITY_POINTER) {
+    //  struct wl_pointer* pointer = wl_seat_get_pointer(seat);
+    //  wl_pointer_add_listener(pointer,&sat_wl_pointer_listener,this);//MWindow);
+    //  MCursorSurface = wl_compositor_create_surface(MCompositor);                                           // deleted?
+    //}
     //if (capabilities & WL_SEAT_CAPABILITY_KEYBOARD) {
     //  struct wl_keyboard *keyboard = wl_seat_get_keyboard (seat);
     //  wl_keyboard_add_listener (keyboard, &keyboard_listener, NULL);
@@ -799,7 +900,7 @@ private: // wl_pointer
   void sat_wl_pointer_motion(struct wl_pointer *pointer, uint32_t time, wl_fixed_t x, wl_fixed_t y) {
     double xpos = wl_fixed_to_double(x);
     double ypos = wl_fixed_to_double(y);
-    SAT_Print("x %f y %f time %i\n",x,y,time);
+    SAT_Print("x %f y %f time %i\n",xpos,ypos,time);
   }
 
   void sat_wl_pointer_button(struct wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state) {
@@ -808,7 +909,23 @@ private: // wl_pointer
 
   void sat_wl_pointer_axis(struct wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {
     double val = wl_fixed_to_double(value);
-    SAT_Print("axis %i value %f time %i\n",axis,value,time);
+    SAT_Print("axis %i value %f time %i\n",axis,val,time);
+  }
+
+  void sat_wl_pointer_frame(struct wl_pointer *wl_pointer) {
+    SAT_Print("\n");
+  }
+
+  void sat_wl_pointer_axis_source(struct wl_pointer *wl_pointer, uint32_t axis_source) {
+    SAT_Print("axis_source %i\n",axis_source);
+  }
+
+  void sat_wl_pointer_axis_stop(struct wl_pointer *wl_pointer, uint32_t time, uint32_t axis) {
+    SAT_Print("time %i axis %i\n",time,axis);
+  }
+
+  void sat_wl_pointer_axis_discrete(struct wl_pointer *wl_pointer, uint32_t axis, int32_t discrete) {
+    SAT_Print("axis %i discrete %i\n",axis,discrete);
   }
 
   //------------------------------
@@ -839,21 +956,79 @@ private: // wl_pointer
     window->sat_wl_pointer_button(pointer,serial,time,button,state);
   }
 
-  static void sat_wl_pointer_axis_callback(void *data, struct wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {
+  static
+  void sat_wl_pointer_axis_callback(void *data, struct wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value) {
     SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
     window->sat_wl_pointer_axis(pointer,time,axis,value);
+  }
+
+  static
+  void sat_wl_pointer_frame_callback(void *data, struct wl_pointer *wl_pointer) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_pointer_frame(wl_pointer);
+  }
+
+  static
+  void sat_wl_pointer_axis_source_callback(void *data, struct wl_pointer *wl_pointer, uint32_t axis_source) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_pointer_axis_source(wl_pointer,axis_source);
+  }
+
+  static
+  void sat_wl_pointer_axis_stop_callback(void *data, struct wl_pointer *wl_pointer, uint32_t time, uint32_t axis) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_pointer_axis_stop(wl_pointer,time,axis);
+  }
+
+  static
+  void sat_wl_pointer_axis_discrete_callback(void *data, struct wl_pointer *wl_pointer, uint32_t axis, int32_t discrete) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_pointer_axis_discrete(wl_pointer,axis,discrete);
   }
 
   //------------------------------
 
   const
   struct wl_pointer_listener sat_wl_pointer_listener = {
-    .enter  = sat_wl_pointer_enter_callback,
-    .leave  = sat_wl_pointer_leave_callback,
-    .motion = sat_wl_pointer_motion_callback,
-    .button = sat_wl_pointer_button_callback,
-    .axis   = sat_wl_pointer_axis_callback
+    .enter          = sat_wl_pointer_enter_callback,
+    .leave          = sat_wl_pointer_leave_callback,
+    .motion         = sat_wl_pointer_motion_callback,
+    .button         = sat_wl_pointer_button_callback,
+    .axis           = sat_wl_pointer_axis_callback,
+    .frame          = sat_wl_pointer_frame_callback,
+    .axis_source    = sat_wl_pointer_axis_source_callback,
+    .axis_stop      = sat_wl_pointer_axis_stop_callback,
+    .axis_discrete  = sat_wl_pointer_axis_discrete_callback
   };
+
+//------------------------------
+private: // wl_callback
+//------------------------------
+
+  void sat_wl_callback_done(struct wl_callback *callback, uint32_t time) {
+    //if (!MIsPainting)
+    renderFrame(time);
+  }
+  
+  //------------------------------
+  //
+  //------------------------------
+
+  static
+  void sat_wl_callback_done_callback(void *data, struct wl_callback *callback, uint32_t time) {
+    //SAT_Print("time %i\n",time);
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_callback_done(callback,time);
+    wl_callback_destroy(callback);
+  }
+  
+  //------------------------------
+
+  const
+  struct wl_callback_listener sat_wl_callback_listener = {
+    .done = sat_wl_callback_done_callback
+  };  
+
 
 };
 

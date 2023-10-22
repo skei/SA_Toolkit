@@ -36,8 +36,8 @@ struct SAT_Rect {
   }
 
   SAT_Rect(double v) {
-    x = v;
-    y = v;
+    x = 0;
+    y = 0;
     w = v;
     h = v;
   }

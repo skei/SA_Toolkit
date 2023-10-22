@@ -901,7 +901,11 @@ private:
           //  RECT.combine( SAT_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
           //}
         //MIsPainting = true;
+
+        MRenderer->beginRendering(0,0,w,h);
         on_window_paint(x,y,w,h);
+        MRenderer->endRendering();
+
         xcb_flush(MConnection);
         //MIsPainting = false;
         MIsExposed = true;

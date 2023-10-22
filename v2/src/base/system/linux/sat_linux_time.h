@@ -10,7 +10,8 @@
 #include <signal.h>     // sigval
 #include <errno.h>      // errno
 
-#include "base/sat_const.h"
+#include "sat.h"
+//#include "base/sat_const.h"
 //#include "base/utils/sat_math.h"
 
 //----------------------------------------------------------------------

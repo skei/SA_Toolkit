@@ -6,11 +6,11 @@
 
 //----------
 
-#ifdef SAT_LINUX
+#if defined (SAT_LINUX)
   #include "base/system/linux/sat_linux_timer.h"
 #endif
 
-#ifdef SAT_WIN32
+#if defined (SAT_WIN32)
   #include "base/system/win32/sat_win32_timer.h"
 #endif
 

@@ -213,9 +213,9 @@ if $LIBRARY
     FLAGS+=" -shared"
     FLAGS+=" -fPIC"
     FLAGS+=" -DSAT_LIBRARY"
-  else
-    #echo "application"
-    FLAGS+=" -DSAT_EXE"
+  #else
+  #  #echo "application"
+  #  FLAGS+=" -DSAT_EXE"
 fi
 
 

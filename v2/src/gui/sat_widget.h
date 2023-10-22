@@ -20,7 +20,7 @@ typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 
 struct SAT_WidgetLayout {
   uint32_t  anchor        = SAT_EDGE_NONE;
-  bool      fill_layout   = true;
+  bool      crop_layout   = false;
   SAT_Rect  inner_border  = {};
   SAT_Rect  outer_border  = {};
 };
@@ -110,7 +110,7 @@ public:
   //----------
 
   uint32_t            getAnchor()                   { return MLayout.anchor; }
-  bool                getFillLayout()               { return MLayout.fill_layout; }
+  bool                getCropLayout()               { return MLayout.crop_layout; }
   SAT_Rect            getInnerBorder()              { return MLayout.inner_border; }
   SAT_Rect            getOuterBorder()              { return MLayout.outer_border; }
 
@@ -138,7 +138,7 @@ public:
   //----------
 
   void          setAnchor(uint32_t AAnchor)                 { MLayout.anchor = AAnchor; }
-  void          setFillLayout(bool AFill)                   { MLayout.fill_layout = AFill; }
+  void          setCropLayout(bool AFill)                   { MLayout.crop_layout = AFill; }
   void          setInnerBorder(SAT_Rect ABorder)            { MLayout.inner_border = ABorder; }
   void          setOuterBorder(SAT_Rect ABorder)            { MLayout.outer_border = ABorder; }
 
@@ -257,7 +257,6 @@ public:
 
     SAT_Rect layout_rect = MRect;
     layout_rect.shrink(MLayout.inner_border);
-
     MContentRect = SAT_Rect(layout_rect.x,layout_rect.y,0,0);
 
     for (uint32_t i=0; i<MChildren.size(); i++) {
@@ -275,37 +274,38 @@ public:
         child_rect.y += layout_rect.y;
 
         uint32_t child_anchor = child_layout->anchor;
-        uint32_t child_fill_layout = child_layout->fill_layout;
+        uint32_t child_crop_layout = child_layout->crop_layout;
 
-        // TODO: centering, percentages
+        // TODO: centering, percentages, stacking, ..
 
         if (child_anchor & SAT_EDGE_LEFT) {
           child_rect.x = layout_rect.x;
-          if (child_fill_layout) {
+          if (child_crop_layout) {
             layout_rect.x += child_rect.w;
             layout_rect.w -= child_rect.w;
           }
         }
         if (child_anchor & SAT_EDGE_RIGHT) {
           child_rect.setX2( layout_rect.w - child_rect.w );
-          if (child_fill_layout) {
+          if (child_crop_layout) {
             layout_rect.w -= child_rect.w;
           }
         }
         if (child_anchor & SAT_EDGE_TOP) {
           child_rect.y = layout_rect.y;
-          if (child_fill_layout) {
+          if (child_crop_layout) {
             layout_rect.y += child_rect.h;
             layout_rect.h -= child_rect.h;
           }
         }
         if (child_anchor & SAT_EDGE_BOTTOM) {
           child_rect.setY2( layout_rect.h - child_rect.h );
-          if (child_fill_layout) {
+          if (child_crop_layout) {
             layout_rect.h -= child_rect.h;
           }
         }
         MContentRect.combine(child_rect);
+        child->setRect(child_rect);
         child->realignChildWidgets();
       } // visible
     } // for
@@ -347,8 +347,8 @@ public:
 
   //----------
 
-  virtual void do_widget_update_value(SAT_Widget* AWidget) {
-    if (MParent) MParent->do_widget_update_value(AWidget);
+  virtual void do_widget_updateValue(SAT_Widget* AWidget) {
+    if (MParent) MParent->do_widget_updateValue(AWidget);
   }
 
   //----------
@@ -362,6 +362,18 @@ public:
   virtual void do_widget_realign(SAT_Widget* AWidget) {
     if (MParent) MParent->do_widget_realign(AWidget);
   }
+
+  //----------
+
+  virtual void do_widget_setCursor(SAT_Widget* AWidget, uint32_t ACursor) {
+    if (MParent) MParent->do_widget_setCursor(AWidget,ACursor);
+  }
+
+  // grab mouse
+  // grab keyboard
+  // modal (popup/un-popup)
+  // select, cancel
+  // tooltip?
 
 };
 

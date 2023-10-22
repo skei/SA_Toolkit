@@ -115,41 +115,41 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_CORNER_RIGHT                        (SAT_CORNER_UPPER_RIGHT | SAT_CORNER_LOWER_RIGHT)
 // #define SAT_CORNER_ALL                          (SAT_CORNER_UPPER       | SAT_CORNER_LOWER)
 
-// #define SAT_CURSOR_LOCK                        -4
-// #define SAT_CURSOR_UNLOCK                      -3
-// #define SAT_CURSOR_SHOW                        -2
-// #define SAT_CURSOR_HIDE                        -1
-// #define SAT_CURSOR_DEFAULT                      0
-// #define SAT_CURSOR_ARROW                        1
-// #define SAT_CURSOR_ARROW_UP                     2
-// #define SAT_CURSOR_ARROW_DOWN                   3
-// #define SAT_CURSOR_ARROW_LEFT                   4
-// #define SAT_CURSOR_ARROW_RIGHT                  5
-// #define SAT_CURSOR_ARROW_UP_DOWN                6
-// #define SAT_CURSOR_ARROW_LEFT_RIGHT             7
-// #define SAT_CURSOR_ARROW_TOP_LEFT               8
-// #define SAT_CURSOR_ARROW_TOP_RIGHT              9
-// #define SAT_CURSOR_ARROW_BOTTOM_LEFT            10
-// #define SAT_CURSOR_ARROW_BOTTOM_RIGHT           11
-// #define SAT_CURSOR_ARROW_LEFT_SIDE              12
-// #define SAT_CURSOR_ARROW_RIGHT_SIDE             13
-// #define SAT_CURSOR_ARROW_TOP_SIDE               14
-// #define SAT_CURSOR_ARROW_BOTTOM_SIDE            15
-// #define SAT_CURSOR_MOVE                         16
-// #define SAT_CURSOR_WAIT                         17
-// #define SAT_CURSOR_ARROW_WAIT                   18 // !!!
-// #define SAT_CURSOR_HAND                         19
-// #define SAT_CURSOR_FINGER                       20
-// #define SAT_CURSOR_CROSS                        21
-// #define SAT_CURSOR_CROSS2                       22
-// #define SAT_CURSOR_PENCIL                       23
-// #define SAT_CURSOR_PLUS                         24
-// #define SAT_CURSOR_QUESTION                     25
-// #define SAT_CURSOR_IBEAM                        26
-// #define SAT_CURSOR_ARROW_INVALID                27
-// #define SAT_CURSOR_INVALID                      28
-// #define SAT_CURSOR_X                            29
-// #define SAT_CURSOR_COUNT                        30
+#define SAT_CURSOR_LOCK                        -4
+#define SAT_CURSOR_UNLOCK                      -3
+#define SAT_CURSOR_SHOW                        -2
+#define SAT_CURSOR_HIDE                        -1
+#define SAT_CURSOR_DEFAULT                      0
+#define SAT_CURSOR_ARROW                        1
+#define SAT_CURSOR_ARROW_UP                     2
+#define SAT_CURSOR_ARROW_DOWN                   3
+#define SAT_CURSOR_ARROW_LEFT                   4
+#define SAT_CURSOR_ARROW_RIGHT                  5
+#define SAT_CURSOR_ARROW_UP_DOWN                6
+#define SAT_CURSOR_ARROW_LEFT_RIGHT             7
+#define SAT_CURSOR_ARROW_TOP_LEFT               8
+#define SAT_CURSOR_ARROW_TOP_RIGHT              9
+#define SAT_CURSOR_ARROW_BOTTOM_LEFT            10
+#define SAT_CURSOR_ARROW_BOTTOM_RIGHT           11
+#define SAT_CURSOR_ARROW_LEFT_SIDE              12
+#define SAT_CURSOR_ARROW_RIGHT_SIDE             13
+#define SAT_CURSOR_ARROW_TOP_SIDE               14
+#define SAT_CURSOR_ARROW_BOTTOM_SIDE            15
+#define SAT_CURSOR_MOVE                         16
+#define SAT_CURSOR_WAIT                         17
+#define SAT_CURSOR_ARROW_WAIT                   18 // !!!
+#define SAT_CURSOR_HAND                         19
+#define SAT_CURSOR_FINGER                       20
+#define SAT_CURSOR_CROSS                        21
+#define SAT_CURSOR_CROSS2                       22
+#define SAT_CURSOR_PENCIL                       23
+#define SAT_CURSOR_PLUS                         24
+#define SAT_CURSOR_QUESTION                     25
+#define SAT_CURSOR_IBEAM                        26
+#define SAT_CURSOR_ARROW_INVALID                27
+#define SAT_CURSOR_INVALID                      28
+#define SAT_CURSOR_X                            29
+#define SAT_CURSOR_COUNT                        30
 
 // #define SAT_DIRECTION_NONE                      0
 // #define SAT_DIRECTION_LEFT                      1

@@ -10,6 +10,8 @@
 #include <unistd.h> // readlink
 #include <dlfcn.h>
 
+#include "sat.h"
+
 /*
   SAT_GetHomePath    '/home/<user>/'
   SAT_GetExeFilename '/home/<user>/Desktop/skeilib/bin/skeilib_debug'
