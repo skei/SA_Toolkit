@@ -37,7 +37,6 @@ public:
   //----------
 
   ~SAT_Registry() {
-    // delete appended descriptors, factories, etc..
   }
 
 //------------------------------
@@ -48,6 +47,12 @@ public:
     if (MIsInitialized) return;
     if (SAT_Register) SAT_Register(this);
     MIsInitialized = true;
+  }
+
+  //----------
+
+  bool isInitialized() {
+    return MIsInitialized;
   }
 
   //----------

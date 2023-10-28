@@ -103,6 +103,7 @@ SAT_TEST("BUILD: test1",build_test1)
 //----------------------------------------------------------------------
 
 int main() {
+  SAT_LOG("test %i\n",1);
   SAT_Print("Hello world!\n");
   SAT_RUN_TESTS
   SAT_Window* window = new SAT_Window(WINDOW_WIDTH,WINDOW_HEIGHT);

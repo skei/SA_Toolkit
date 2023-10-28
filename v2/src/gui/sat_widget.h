@@ -98,6 +98,30 @@ public:
 public:
 //------------------------------
 
+  uint32_t            getAnchor()                   { return MLayout.anchor; }
+  bool                getCropLayout()               { return MLayout.crop_layout; }
+  SAT_Rect            getInnerBorder()              { return MLayout.inner_border; }
+  SAT_Rect            getOuterBorder()              { return MLayout.outer_border; }
+  SAT_Rect            getBaseRect()                 { return MBaseRect; }
+  SAT_WidgetLayout*   getLayout()                   { return &MLayout; }
+  SAT_WidgetState*    getState()                    { return &MState; }
+  bool                isActive()                    { return MState.active; }
+  bool                isVisible()                   { return MState.visible; }
+  bool                isInteracting()               { return MState.interacting; }
+
+  void          setAnchor(uint32_t AAnchor)                 { MLayout.anchor = AAnchor; }
+  void          setCropLayout(bool AFill)                   { MLayout.crop_layout = AFill; }
+  void          setInnerBorder(SAT_Rect ABorder)            { MLayout.inner_border = ABorder; }
+  void          setOuterBorder(SAT_Rect ABorder)            { MLayout.outer_border = ABorder; }
+  void          setActive(bool AActive=true)                { MState.active = AActive; }
+  void          setVisible(bool AVisible=true)              { MState.visible = AVisible; }
+  void          setInteracting(bool AInteracting=true)      { MState.interacting = AInteracting; }
+
+//------------------------------
+public:
+//------------------------------
+
+
   virtual const char* getName()                     { return MName; }
   virtual int32_t     getId()                       { return MId; }
   virtual double      getValue(uint32_t AIndex=0)   { return MValue; }
@@ -107,27 +131,6 @@ public:
   virtual double      getWidth()                    { return MRect.w; }
   virtual double      getHeight()                   { return MRect.h; }
 
-  //----------
-
-  uint32_t            getAnchor()                   { return MLayout.anchor; }
-  bool                getCropLayout()               { return MLayout.crop_layout; }
-  SAT_Rect            getInnerBorder()              { return MLayout.inner_border; }
-  SAT_Rect            getOuterBorder()              { return MLayout.outer_border; }
-
-  bool                isActive()                    { return MState.active; }
-  bool                isVisible()                   { return MState.visible; }
-  bool                isInteracting()               { return MState.interacting; }
-
-  //
-
-  SAT_Rect            getBaseRect()                 { return MBaseRect; }
-  SAT_WidgetLayout*   getLayout()                   { return &MLayout; }
-  SAT_WidgetState*    getState()                    { return &MState; }
-
-//------------------------------
-public:
-//------------------------------
-
   virtual void  setName(const char* AName)                  { MName = AName; }
   virtual void  setId(int32_t AId)                          { MId = AId; }
   virtual void  setValue(double AValue, uint32_t AIndex=0)  { MValue = AValue; }
@@ -135,16 +138,6 @@ public:
   virtual void  setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
   virtual void  setRect(SAT_Rect ARect)                     { MRect = ARect; }
 
-  //----------
-
-  void          setAnchor(uint32_t AAnchor)                 { MLayout.anchor = AAnchor; }
-  void          setCropLayout(bool AFill)                   { MLayout.crop_layout = AFill; }
-  void          setInnerBorder(SAT_Rect ABorder)            { MLayout.inner_border = ABorder; }
-  void          setOuterBorder(SAT_Rect ABorder)            { MLayout.outer_border = ABorder; }
-
-  void          setActive(bool AActive=true)                { MState.active = AActive; }
-  void          setVisible(bool AVisible=true)              { MState.visible = AVisible; }
-  void          setInteracting(bool AInteracting=true)      { MState.interacting = AInteracting; }
 
 //------------------------------
 public:

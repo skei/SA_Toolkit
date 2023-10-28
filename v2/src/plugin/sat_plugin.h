@@ -100,26 +100,8 @@ protected:
   }
 
 //------------------------------
-protected:
+protected: // SAT_EditorListener
 //------------------------------
-
-  // void process(clap_process_t* process) {}
-
-//------------------------------
-protected:
-//------------------------------
-
-  // void queueParamFromGuiToPlugin() {}
-  // void flushParamFromGuiToPlugin() {}
-
-  // void queueParamFromGuiToHost() {}
-  // void flushParamFromGuiToHost() {}
-
-  // void queueParamFromHostToGui() {}
-  // void flushParamFromHostToGui() {}
-
-  // void queueModFromHostToGui() {}
-  // void flushModFromHostToGui() {}
 
 };
 

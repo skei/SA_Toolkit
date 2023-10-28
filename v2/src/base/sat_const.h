@@ -170,12 +170,12 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_EDGE_HORIZ                          (SAT_EDGE_LEFT | SAT_EDGE_RIGHT)
 #define SAT_EDGE_VERT                           (SAT_EDGE_TOP | SAT_EDGE_BOTTOM)
 
-// #define SAT_FILE_READ_BINARY                    (char*)"rb"
-// #define SAT_FILE_READ_TEXT                      (char*)"r"
-// #define SAT_FILE_WRITE_BINARY                   (char*)"wb"
-// #define SAT_FILE_WRITE_TEXT                     (char*)"w"
-// #define SAT_FILE_APPEND_BINARY                  (char*)"ab"
-// #define SAT_FILE_APPEND_TEXT                    (char*)"a"
+#define SAT_FILE_READ_BINARY                    (char*)"rb"
+#define SAT_FILE_READ_TEXT                      (char*)"r"
+#define SAT_FILE_WRITE_BINARY                   (char*)"wb"
+#define SAT_FILE_WRITE_TEXT                     (char*)"w"
+#define SAT_FILE_APPEND_BINARY                  (char*)"ab"
+#define SAT_FILE_APPEND_TEXT                    (char*)"a"
 
 #define SAT_GUI_TYPE_NONE                       0
 #define SAT_GUI_TYPE_WAYLAND                    1
