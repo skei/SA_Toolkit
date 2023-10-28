@@ -11,14 +11,16 @@
 
 #include <wayland-client.h>
 #include <wayland-client-protocol.h>
-//#include <wayland-server.h>
+#include <wayland-cursor.h>
 #include <wayland-egl.h> 
+#include <wayland-util.h>
 
 #include "extern/wayland/xdg-shell.h"
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wattributes"
-    #include "extern/wayland/xdg-shell.c.h"
-  #pragma GCC diagnostic pop
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
+  #include "extern/wayland/xdg-shell.c.h"
+#pragma GCC diagnostic pop
 
 
 

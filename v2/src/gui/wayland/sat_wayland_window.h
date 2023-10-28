@@ -52,6 +52,8 @@ private:
   struct wl_compositor*     MCompositor     = nullptr;
   struct wl_seat*           MSeat           = nullptr;
   struct wl_pointer*        MPointer        = nullptr;
+  
+  struct wl_output*         MOutput         = nullptr;
 
 //struct wl_shm*            MShm            = nullptr;
 //struct wl_subcompositor*  MSubCompositor  = nullptr;
@@ -67,7 +69,7 @@ private:
   uint32_t                  MHeight         = 0;
 
   SAT_WaylandPendingChanges MPendingChanges = {}; // &MPendingChanges now prints 0x88
-  uint32_t                  MPointerSerial  = 0;
+  //uint32_t                  MPointerSerial  = 0;
 
 //------------------------------
 public:
@@ -89,41 +91,52 @@ public:
     wl_display_dispatch(MDisplay);
     wl_display_roundtrip(MDisplay);
 
-    //-----
-
-    xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,this);//MWindow);
-    wl_seat_add_listener(MSeat,&sat_wl_seat_listener,this);//MWindow);
-
-    MPointer = wl_seat_get_pointer(MSeat);
-    wl_pointer_add_listener(MPointer,&sat_wl_pointer_listener,this);//MWindow);
-
-    MCursorSurface = wl_compositor_create_surface(MCompositor);
-
-    //MXDGPositioner = xdg_wm_base_create_positioner(MXDGWMBase);
-
-    MSurface = wl_compositor_create_surface(MCompositor);
-    SAT_Print("MSurface: %p\n",MSurface);
-    wl_surface_add_listener(MSurface,&sat_wl_surface_listener,this);//MWindow);
-
-    MRegion = wl_compositor_create_region(MCompositor);
-    SAT_Print("MRegion: %p\n",MRegion);
-    wl_region_add(MRegion,0,0,AWidth,AHeight);
-    wl_surface_set_opaque_region(MSurface,MRegion);
-
     memset(&MPendingChanges,0,sizeof(SAT_WaylandPendingChanges));
     MPendingChanges.width = AWidth;
     MPendingChanges.height = AHeight;
 
-    MXDGSurface = xdg_wm_base_get_xdg_surface(MXDGWMBase,MSurface);
-    SAT_Print("MXDGSurface: %p\n",MXDGSurface);
-    xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,this);//MWindow);
+    //-----
 
-    MXDGTopLevel = xdg_surface_get_toplevel(MXDGSurface);
-    SAT_Print("MXDGTopLevel: %p\n",MXDGTopLevel);
-    xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,this);//MWindow);
-    xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
+    if (MCompositor) {
+      MSurface = wl_compositor_create_surface(MCompositor);
+      SAT_Print("MSurface: %p\n",MSurface);
+      wl_surface_add_listener(MSurface,&sat_wl_surface_listener,this);
+
+      MRegion = wl_compositor_create_region(MCompositor);
+      SAT_Print("MRegion: %p\n",MRegion);
+      wl_region_add(MRegion,0,0,AWidth,AHeight);
+      wl_surface_set_opaque_region(MSurface,MRegion);
+    }
+
+    if (MXDGWMBase) {
+      xdg_wm_base_add_listener(MXDGWMBase,&sat_xdg_wm_base_listener,this);
+
+      MXDGSurface = xdg_wm_base_get_xdg_surface(MXDGWMBase,MSurface);
+      SAT_Print("MXDGSurface: %p\n",MXDGSurface);
+      xdg_surface_add_listener(MXDGSurface,&sat_xdg_surface_listener,this);
+
+      MXDGTopLevel = xdg_surface_get_toplevel(MXDGSurface);
+      SAT_Print("MXDGTopLevel: %p\n",MXDGTopLevel);
+      xdg_toplevel_add_listener(MXDGTopLevel, &sat_xdg_toplevel_listener,this);
+      xdg_toplevel_set_title(MXDGTopLevel,"Hello world!");
+
+      //MXDGPositioner = xdg_wm_base_create_positioner(MXDGWMBase);
+    }
+
+    if (MSeat) {
+      wl_seat_add_listener(MSeat,&sat_wl_seat_listener,this);
+    
+      MPointer = wl_seat_get_pointer(MSeat);
+      wl_pointer_add_listener(MPointer,&sat_wl_pointer_listener,this);
+      MCursorSurface = wl_compositor_create_surface(MCompositor);
+    }
+
+    if (MOutput) {
+      wl_output_add_listener(MOutput,&sat_wl_output_listener,this);
+    }
 
     wl_surface_commit(MSurface);
+    wl_display_flush(MDisplay);
 
     MWindow = wl_egl_window_create(MSurface,AWidth,AHeight);
     SAT_Print("MWindow: %p\n",MWindow);
@@ -254,29 +267,6 @@ public: // SAT_BaseWindow
   }
 
   //----------
-
-  // https://emersion.fr/blog/2018/wayland-rendering-loop/  
-  //
-  // void render(void) {
-  //   glClear(GL_COLOR_BUFFER_BIT);
-  //   draw();
-  //   // Make eglSwapBuffers non-blocking, we manage frame callbacks manually
-  //   eglSwapInterval(egl_display, 0);
-  //   // Register a frame callback to know when we need to draw the next frame
-  //   struct wl_callback *callback = wl_surface_frame(surface);
-  //   wl_callback_add_listener(callback, &frame_listener, NULL);
-  //   // This call won't block
-  //   eglSwapBuffers(egl_display, egl_surface);
-  // }
-  
-	  // bool program_alive = true;
-    // while (program_alive) {
-    //   wl_display_dispatch_pending(MDisplay);
-    //   //MRenderer->beginRendering(0,0,640,480);
-    //   SAT_Print("painting\n");
-    //   on_window_paint(0,0,640,480);
-    //   //MRenderer->endRendering();
-	  // }
 
   /*
     wl_display_dispatch
@@ -419,6 +409,11 @@ private: // wl_registry
     else if (strcmp(interface,"wl_seat") == 0) {
       MSeat = (struct wl_seat*)wl_registry_bind(registry,id,&wl_seat_interface,7); // weston = 7
       SAT_Print("> MSeat: %p\n",MSeat);
+    }
+
+    else if (strcmp(interface,"wl_output") == 0) {
+      MOutput = (struct wl_output*)wl_registry_bind(registry,id,&wl_output_interface,1);
+      SAT_Print("MOutput: %p\n",MOutput);
     }
 
     //else if (strcmp(interface,"wl_shm") == 0) {
@@ -580,20 +575,20 @@ private: // xdg_surface
     // do pending changes..
     // clear MPendingChanges
 
-    SAT_PRINT;
+    //SAT_PRINT;
     uint32_t size = sizeof(SAT_WaylandPendingChanges);
-    SAT_Print("size %i\n",size);
+    //SAT_Print("size %i\n",size);
 
     SAT_WaylandPendingChanges* changes = &MPendingChanges;
 
-    SAT_Print("MPendingChanges %p\n",changes);                // prints 0x10/0x88 ?????
+    //SAT_Print("MPendingChanges %p\n",changes);                // prints 0x10/0x88 ?????
     memset(&MPendingChanges,0,size);                          // so this crashes....
 
-    SAT_PRINT;
+    //SAT_PRINT;
 
     xdg_surface_ack_configure(xdg_surface,serial);
 
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   //------------------------------
@@ -701,6 +696,28 @@ private: // xdg_toplevel
     //on_window_close();
   }
 
+	/*
+	  recommended window geometry bounds
+	  The configure_bounds event may be sent prior to a
+	  xdg_toplevel.configure event to communicate the bounds a window
+	  geometry size is recommended to constrain to.
+	  The passed width and height are in surface coordinate space. If
+	  width and height are 0, it means bounds is unknown and
+	  equivalent to as if no configure_bounds event was ever sent for
+	  this surface.
+	  The bounds can for example correspond to the size of a monitor
+	  excluding any panels or other shell components, so that a
+	  surface isn't created in a way that it cannot fit.
+	  The bounds may change at any point, and in such a case, a new
+	  xdg_toplevel.configure_bounds will be sent, followed by
+	  xdg_toplevel.configure and xdg_surface.configure.
+	  since 4
+	*/
+
+  void sat_xdg_toplevel_configure_bounds(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height) {
+    SAT_Print("width %i height %i\n",width,height);
+  }
+
   //------------------------------
   //
   //------------------------------
@@ -717,12 +734,100 @@ private: // xdg_toplevel
     window->sat_xdg_toplevel_close(xdg_toplevel);
   }
 
+  static
+  void sat_xdg_toplevel_configure_bounds_callback(void *data, struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_xdg_toplevel_configure_bounds(xdg_toplevel,width,height);
+  }
+
   //------------------------------
 
   const
   struct xdg_toplevel_listener sat_xdg_toplevel_listener = {
-    .configure  = sat_xdg_toplevel_configure_callback,
-    .close      = sat_xdg_toplevel_close_callback,
+    .configure        = sat_xdg_toplevel_configure_callback,
+    .close            = sat_xdg_toplevel_close_callback,
+    .configure_bounds = sat_xdg_toplevel_configure_bounds_callback
+
+  };
+
+//------------------------------
+private: // wl_output
+//------------------------------
+
+  void sat_wl_output_geometry(struct wl_output *wl_output, int32_t x, int32_t y, int32_t physical_width, int32_t physical_height, int32_t subpixel, const char *make, const char *model, int32_t transform) {
+    SAT_Print("x %i y %i phys.width %i phys.height %i subpixel %i make %s model %s transform %i\n",x,y,physical_width,physical_height,subpixel,make,model,transform);
+  }
+
+  void sat_wl_output_mode(struct wl_output *wl_output, uint32_t flags, int32_t width, int32_t height, int32_t refresh) {
+    SAT_Print("flags %i width %i height %i refresh %i\n",flags,width,height,refresh);
+  }
+
+  void sat_wl_output_done(struct wl_output *wl_output) {
+    SAT_Print("\n");
+  }
+
+  void sat_wl_output_scale(struct wl_output *wl_output, int32_t factor) {
+    SAT_Print("factor %i\n",factor);
+  }
+
+  void sat_wl_output_name(struct wl_output *wl_output, const char *name) {
+    SAT_Print("name %s\n",name);
+  }
+
+  void sat_wl_output_description(struct wl_output *wl_output, const char *description) {
+    SAT_Print("description %s\n",description);
+  }
+
+  //------------------------------
+  //
+  //------------------------------
+
+  static
+  void sat_wl_output_geometry_callback(void *data, struct wl_output *wl_output, int32_t x, int32_t y, int32_t physical_width, int32_t physical_height, int32_t subpixel, const char *make, const char *model, int32_t transform) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_output_geometry(wl_output,x,y,physical_width,physical_height,subpixel,make,model,transform);
+  }
+
+  static
+  void sat_wl_output_mode_callback(void *data, struct wl_output *wl_output, uint32_t flags, int32_t width, int32_t height, int32_t refresh) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_output_mode(wl_output,flags,width,height,refresh);
+  }
+
+  static
+  void sat_wl_output_done_callback(void *data, struct wl_output *wl_output) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_output_done(wl_output);
+  }
+
+  static
+  void sat_wl_output_scale_callback(void *data, struct wl_output *wl_output, int32_t factor) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_output_scale(wl_output,factor);
+  }
+
+  static
+  void sat_wl_output_name_callback(void *data, struct wl_output *wl_output, const char *name) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_output_name(wl_output,name);
+  }
+
+  static
+  void sat_wl_output_description_callback(void *data, struct wl_output *wl_output, const char *description) {
+    SAT_WaylandWindow* window = (SAT_WaylandWindow*)data;
+    window->sat_wl_output_description(wl_output,description);
+  }
+
+  //------------------------------
+
+  const
+  struct wl_output_listener sat_wl_output_listener = {
+    .geometry     = sat_wl_output_geometry_callback,
+    .mode         = sat_wl_output_mode_callback,
+    .done         = sat_wl_output_done_callback,
+    .scale        = sat_wl_output_scale_callback,
+    .name         = sat_wl_output_name_callback,
+    .description  = sat_wl_output_description_callback
   };
 
 //------------------------------
@@ -738,6 +843,7 @@ private: // wl_surface
 
   void sat_wl_surface_enter(struct wl_surface *wl_surface, struct wl_output *output) {
     SAT_PRINT;
+//    wl_output_add_listener(MOutout,&sat_wl_output_listener,this);
   }
 
   /*
@@ -883,6 +989,17 @@ private: // wl_pointer
 
     The wl_pointer interface generates motion, enter and leave events for the surfaces that the
     pointer is located over, and button and axis events for button presses, button releases and scrolling.
+
+    enter, leave, button : have serial
+  */
+
+  //
+
+  /*
+    ".. if you buffer up all of the input events you receive from a device, then wait for the
+    frame event to signal that you've received all events for a single input "frame", you can
+    interpret the buffered up Wayland events as a single input event, then reset the buffer
+    and start collecting events for the next frame."
   */
 
   //----------
