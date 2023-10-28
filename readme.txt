@@ -26,6 +26,8 @@ whenever i (or potential contributors/collaborators) need it
 * headers-only
 * lock/wait free
 
+(in progress: re-write, wayland, egl/gles, better compile script(s), unit testing, logging, etc..)
+
 some previews: https://www.youtube.com/@torhelgeskei
 see also: https://discord.gg/KMNea8P6Pe
 
