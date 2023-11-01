@@ -39,6 +39,9 @@
 
 #include "sat.h"
 
+#define SAT_DEBUG_PRINT_BUFFER_SIZE         256
+#define SAT_DEBUG_PRINT_PREFIX_BUFFER_SIZE  256
+
 //----------------------------------------------------------------------
 
 class SAT_DebugPrint {
@@ -49,8 +52,8 @@ private:
 
   bool MIsInitialized = false;
 
-  char MPrefixBuffer[256] = {0};
-  char MPrintBuffer[256]  = {0};
+  char MPrefixBuffer[SAT_DEBUG_PRINT_PREFIX_BUFFER_SIZE] = {0};
+  char MPrintBuffer[SAT_DEBUG_PRINT_BUFFER_SIZE]  = {0};
   
   #ifdef SAT_DEBUG_PRINT_SOCKET
     #ifdef SAT_WIN32
@@ -136,7 +139,7 @@ public: // print
   //----------
   
   void set_prefix(const char* file, const char* func, uint32_t line) {
-    __SAT_UNUSED char buffer[256];
+    __SAT_UNUSED char buffer[SAT_DEBUG_PRINT_PREFIX_BUFFER_SIZE];
     strcpy(MPrefixBuffer,"[");
 
     #ifdef SAT_DEBUG_PRINT_TIME

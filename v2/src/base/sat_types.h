@@ -5,6 +5,7 @@
 //#include "sat.h"
 #include "base/types/sat_array.h"
 #include "base/types/sat_color.h"
+#include "base/types/sat_dictionary.h"
 #include "base/types/sat_point.h"
 #include "base/types/sat_queue.h"
 #include "base/types/sat_rect.h"

@@ -92,14 +92,22 @@ public:
   //----------
 
   // returns -1 if plugin not found
-
-  const clap_plugin_descriptor_t* findDescriptor(const char* plugin_id) {
+  
+  int32_t findDescriptor(const char* plugin_id) {
     uint32_t num = MDescriptors.size();
     for (uint32_t i=0; i<num; i++) {
-      if (strcmp(plugin_id,MDescriptors[i]->id) == 0) return MDescriptors[i];
+      if (strcmp(plugin_id,MDescriptors[i]->id) == 0) return i;
     }
-    return nullptr;
+    return -1;
   }
+
+  //const clap_plugin_descriptor_t* findDescriptor(const char* plugin_id) {
+  //  uint32_t num = MDescriptors.size();
+  //  for (uint32_t i=0; i<num; i++) {
+  //    if (strcmp(plugin_id,MDescriptors[i]->id) == 0) return MDescriptors[i];
+  //  }
+  //  return nullptr;
+  //}
 
 };
 
@@ -114,15 +122,15 @@ public:
   /* #include "plugin/sat_entry.h" */                                                                                             \
                                                                                                                                   \
   void SAT_Register(SAT_Registry* ARegistry) {                                                                                    \
-    /*uint32_t index = ARegistry->getNumDescriptors();*/                                                                          \
-    /*SAT_Log("SAT_Register -> id %s index %i\n",DESC.id,index);*/                                                                \
+    uint32_t index = ARegistry->getNumDescriptors();                                                                              \
+    SAT_Print("index %i = id %s\n",index,DESC.id);                                                                                \
     ARegistry->registerDescriptor(&DESC);                                                                                         \
   }                                                                                                                               \
                                                                                                                                   \
   /* ----- */                                                                                                                     \
                                                                                                                                   \
   const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) { \
-    /*SAT_Log("SAT_CreatePlugin (index %i)\n",AIndex);*/                                                                          \
+    SAT_Print("index %i\n",AIndex);                                                                                               \
     if (AIndex == 0) {                                                                                                            \
       SAT_Plugin* plugin = new PLUG(ADescriptor,AHost); /* deleted in: ... */                                                     \
       return plugin->getClapPlugin();                                                                                             \

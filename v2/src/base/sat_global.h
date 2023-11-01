@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/debug/sat_debug_print.h"
+#include "base/utils/sat_strutils.h"
 #include "base/sat_log.h"
 #include "base/sat_registry.h"
 #include "base/sat_test.h"
@@ -69,7 +70,7 @@ public:
   //----------
   
   void setBinaryPath(const char* APath) {
-    strcpy(binary_path,APath);
+    SAT_Strlcpy(binary_path,APath,SAT_MAX_PATH_LENGTH);
   }
   
   const char* getBinaryPath() {
@@ -79,7 +80,7 @@ public:
   //----------
   
   void setPluginPath(const char* APath) {
-    strcpy(plugin_path,APath);
+    SAT_Strlcpy(plugin_path,APath,SAT_MAX_PATH_LENGTH);
   }
   
   const char* getPluginPath() {

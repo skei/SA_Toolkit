@@ -204,6 +204,7 @@ private: // plugin
   }
 
   //------------------------------
+  protected:
 
   //const
   clap_plugin_t MPlugin {
@@ -222,12 +223,12 @@ private: // plugin
   };
 
 //------------------------------
-private: // extensions
+// extensions
 //------------------------------
 
-  //------------------------------
-  // audio-ports-config
-  //------------------------------
+//------------------------------
+private: // audio-ports-config
+//------------------------------
 
   static
   uint32_t audio_ports_config_count_callback(const clap_plugin_t *plugin) {
@@ -247,7 +248,9 @@ private: // extensions
     return plug->audio_ports_config_select(config_id);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_audio_ports_config_t MExtAudioPortsConfig {
     .count  = audio_ports_config_count_callback,
@@ -255,9 +258,9 @@ private: // extensions
     .select = audio_ports_config_select_callback
   };
 
-  //------------------------------
-  // audio-ports
-  //------------------------------
+//------------------------------
+private: // audio-ports
+//------------------------------
 
   static
   uint32_t audio_ports_count_callback(const clap_plugin_t *plugin, bool is_input) {
@@ -271,16 +274,18 @@ private: // extensions
     return plug->audio_ports_get(index,is_input,info);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_audio_ports_t MExtAudioPorts {
     .count  = audio_ports_count_callback,
     .get    = audio_ports_get_callback
   };
 
-  //------------------------------
-  // gui
-  //------------------------------
+//------------------------------
+private: // gui
+//------------------------------
 
   static
   bool gui_is_api_supported_callback(const clap_plugin_t *plugin, const char *api, bool is_floating) {
@@ -372,7 +377,9 @@ private: // extensions
     return plug->gui_hide();
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_gui_t MExtGui {
     .is_api_supported   = gui_is_api_supported_callback,
@@ -392,9 +399,9 @@ private: // extensions
     .hide               = gui_hide_callback
   };
 
-  //------------------------------
-  // latency
-  //------------------------------
+//------------------------------
+private: // latency
+//------------------------------
 
   static
   uint32_t latency_get_callback(const clap_plugin_t *plugin) {
@@ -402,15 +409,17 @@ private: // extensions
     return plug->latency_get();
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_latency_t MExtLatency {
     .get = latency_get_callback
   };
 
-  //------------------------------
-  // note-name
-  //------------------------------
+//------------------------------
+private: // note-name
+//------------------------------
 
   static
   uint32_t note_name_count_callback(const clap_plugin_t *plugin) {
@@ -424,16 +433,18 @@ private: // extensions
     return plug->note_name_get(index,note_name);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_note_name_t MExtNoteName {
     .count  = note_name_count_callback,
     .get    = note_name_get_callback
   };
 
-  //------------------------------
-  // note-ports
-  //------------------------------
+//------------------------------
+private: // note-ports
+//------------------------------
 
   static
   uint32_t note_ports_count_callback(const clap_plugin_t *plugin, bool is_input) {
@@ -447,16 +458,18 @@ private: // extensions
     return plug->note_ports_get(index,is_input,info);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_note_ports_t MExtNotePorts {
     .count  = note_ports_count_callback,
     .get    = note_ports_get_callback
   };
 
-  //------------------------------
-  // params
-  //------------------------------
+//------------------------------
+private: // params
+//------------------------------
 
   static
   uint32_t params_count_callback(const clap_plugin_t *plugin) {
@@ -494,7 +507,9 @@ private: // extensions
     plug->params_flush(in,out);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_params_t MExtParams {
     .count          = params_count_callback,
@@ -505,9 +520,9 @@ private: // extensions
     .flush          = params_flush_callback
   };
 
-  //------------------------------
-  // posix-fd-support
-  //------------------------------
+//------------------------------
+private: // posix-fd-support
+//------------------------------
 
   static
   void posix_fd_support_on_fd_callback(const clap_plugin_t *plugin, int fd, clap_posix_fd_flags_t flags) {
@@ -515,15 +530,17 @@ private: // extensions
     plug->posix_fd_support_on_fd(fd,flags);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_posix_fd_support_t MExtPosixFdSupport {
     .on_fd = posix_fd_support_on_fd_callback
   };
 
-  //------------------------------
-  // render
-  //------------------------------
+//------------------------------
+private: // render
+//------------------------------
 
   static
   bool render_has_hard_realtime_requirement_callback(const clap_plugin_t *plugin) {
@@ -537,16 +554,18 @@ private: // extensions
     return plug->render_set(mode);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_render_t MExtRender {
     .has_hard_realtime_requirement  = render_has_hard_realtime_requirement_callback,
     .set                            = render_set_callback
   };
 
-  //------------------------------
-  // state
-  //------------------------------
+//------------------------------
+private: // state
+//------------------------------
 
   static
   bool state_save_callback(const clap_plugin_t *plugin, const clap_ostream_t *stream) {
@@ -560,16 +579,18 @@ private: // extensions
     return plug->state_load(stream);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_state_t MExtState {
     .save = state_save_callback,
     .load = state_load_callback,
   };
 
-  //------------------------------
-  // tail
-  //------------------------------
+//------------------------------
+private: // tail
+//------------------------------
 
   static
   uint32_t tail_get_callback(const clap_plugin_t *plugin) {
@@ -577,15 +598,17 @@ private: // extensions
     return plug->tail_get();
   }
   
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_tail_t MExtTail {
     .get = tail_get_callback
   };
 
-  //------------------------------
-  // thread-pool
-  //------------------------------
+//------------------------------
+private: // thread-pool
+//------------------------------
 
   static
   void thread_pool_exec_callback(const clap_plugin_t *plugin, uint32_t task_index) {
@@ -593,15 +616,17 @@ private: // extensions
     plug->thread_pool_exec(task_index);
   }
   
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_thread_pool_t MExtThreadPool {
     .exec = thread_pool_exec_callback
   };
 
-  //------------------------------
-  // timer-support
-  //------------------------------
+//------------------------------
+private: // timer-support
+//------------------------------
 
   static
   void timer_on_timer_callback(const clap_plugin_t *plugin, clap_id timer_id) {
@@ -609,15 +634,17 @@ private: // extensions
     plug->timer_on_timer(timer_id);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_timer_support_t MExtTimerSupport {
     .on_timer = timer_on_timer_callback
   };
 
-  //------------------------------
-  // voice-info
-  //------------------------------
+//------------------------------
+private: // voice-info
+//------------------------------
 
   static
   bool voice_info_get_callback(const clap_plugin_t *plugin, clap_voice_info_t *info) {
@@ -625,19 +652,21 @@ private: // extensions
     return plug->voice_info_get(info);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_voice_info_t MExtVoiceInfo {
     .get = voice_info_get_callback
   };
 
 //------------------------------
-private: // drafts
+// drafts
 //------------------------------
 
-  //------------------------------
-  // ambisonic
-  //------------------------------
+//------------------------------
+private: // ambisonic
+//------------------------------
 
   static
   bool ambisonic_is_config_supported_callback(const clap_plugin_t *plugin, const clap_ambisonic_config_t *config) {
@@ -651,16 +680,18 @@ private: // drafts
     return plug->ambisonic_get_config(is_input,port_index,config);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_ambisonic_t MExtAmbisonic {
     .is_config_supported  = ambisonic_is_config_supported_callback,
     .get_config           = ambisonic_get_config_callback
   };
 
-  //------------------------------
-  // audio-ports-activation
-  //------------------------------
+//------------------------------
+private: // audio-ports-activation
+//------------------------------
 
   static
   bool audio_ports_activation_can_activate_while_processing_callback(const clap_plugin_t *plugin) {
@@ -674,16 +705,18 @@ private: // drafts
     return plug->audio_ports_activation_set_active(is_input,port_index,is_active,sample_size);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_audio_ports_activation_t MExtAudioPortsActivation {
     .can_activate_while_processing  = audio_ports_activation_can_activate_while_processing_callback,
     .set_active                     = audio_ports_activation_set_active_callback
   };
 
-  //------------------------------
-  // check-for-update
-  //------------------------------
+//------------------------------
+private: // check-for-update
+//------------------------------
 
   static
   void check_for_update_check_callback(const clap_plugin_t *plugin, bool include_preview) {
@@ -691,15 +724,17 @@ private: // drafts
     plug->check_for_update_check(include_preview);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_check_for_update_t MExtCheckForUpdate {
     .check = check_for_update_check_callback
   };
 
-  //------------------------------
-  // configurable-audio-ports
-  //------------------------------
+//------------------------------
+private: // configurable-audio-ports
+//------------------------------
 
   static
   bool configurable_audio_ports_can_apply_configuration_callback(const clap_plugin_t *plugin, const struct clap_audio_port_configuration_request *requests, uint32_t request_count) {
@@ -713,16 +748,18 @@ private: // drafts
     return plug->configurable_audio_ports_apply_configuration(requests,request_count);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_configurable_audio_ports_t MExtConfigurableAudioPorts {
     .can_apply_configuration  = configurable_audio_ports_can_apply_configuration_callback,
     .apply_configuration      = configurable_audio_ports_apply_configuration_callback
   };
 
-  //------------------------------
-  // context-menu
-  //------------------------------
+//------------------------------
+private: // context-menu
+//------------------------------
 
   static
   bool context_menu_populate_callback(const clap_plugin_t *plugin, const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) {
@@ -736,16 +773,18 @@ private: // drafts
     return plug->context_menu_perform(target,action_id);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_context_menu_t MExtContextMenu {
     .populate = context_menu_populate_callback,
     .perform  = context_menu_perform_callback
   };
 
-  //------------------------------
-  // cv
-  //------------------------------
+//------------------------------
+private: // cv
+//------------------------------
 
   static
   bool cv_get_channel_type_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) {
@@ -753,15 +792,17 @@ private: // drafts
     return plug->cv_get_channel_type(is_input,port_index,channel_index,channel_type);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_cv_t MExtCv {
     .get_channel_type = cv_get_channel_type_callback
   };
 
-  //------------------------------
-  // extensible-audio-ports
-  //------------------------------
+//------------------------------
+private: // extensible-audio-ports
+//------------------------------
 
   static
   bool extensible_audio_ports_add_port_callback(const clap_plugin_t *plugin, bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) {
@@ -775,16 +816,18 @@ private: // drafts
     return plug->extensible_audio_ports_remove_port(is_input,index);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_extensible_audio_ports_t MExtExtensibleAudioPorts {
     .add_port     = extensible_audio_ports_add_port_callback,
     .remove_port  = extensible_audio_ports_remove_port_callback
   };
 
-  //------------------------------
-  // midi-mappings
-  //------------------------------
+//------------------------------
+private: // midi-mappings
+//------------------------------
 
   static
   uint32_t midi_mappings_count_callback(const clap_plugin_t *plugin) {
@@ -798,16 +841,18 @@ private: // drafts
     return plug->midi_mappings_get(index,mapping);
   }
     
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_midi_mappings_t MExtMidiMappings {
     .count  = midi_mappings_count_callback, 
     .get    = midi_mappings_get_callback
   };
 
-  //------------------------------
-  // param-indication
-  //------------------------------
+//------------------------------
+private: // param-indication
+//------------------------------
 
   static
   void param_indication_set_mapping_callback(const clap_plugin_t *plugin, clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {
@@ -821,16 +866,18 @@ private: // drafts
     return plug->param_indication_set_automation(param_id,automation_state,color);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_param_indication_t MExtParamIndication {
     .set_mapping    = param_indication_set_mapping_callback,
     .set_automation = param_indication_set_automation_callback
   };
 
-  //------------------------------
-  // preset-load
-  //------------------------------
+//------------------------------
+private: // preset-load
+//------------------------------
 
   static
   bool preset_load_from_location_callback(const clap_plugin_t *plugin, uint32_t location_kind, const char *location, const char *load_key) {
@@ -838,15 +885,17 @@ private: // drafts
     return plug->preset_load_from_location(location_kind,location,load_key);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_preset_load_t MExtPresetLoad {
     .from_location = preset_load_from_location_callback
   };
 
-  //------------------------------
-  // remote-controls
-  //------------------------------
+//------------------------------
+private: // remote-controls
+//------------------------------
 
   static
   uint32_t remote_controls_count_callback(const clap_plugin_t *plugin) {
@@ -860,16 +909,18 @@ private: // drafts
     return plug->remote_controls_get(page_index,page);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_remote_controls_t MExtRemoteControls {
     .count  = remote_controls_count_callback,
     .get    = remote_controls_get_callback
   };
 
-  //------------------------------
-  // resource-directory
-  //------------------------------
+//------------------------------
+private: // resource-directory
+//------------------------------
 
   static
   void resource_directory_set_directory_callback(const clap_plugin_t *plugin, const char *path, bool is_shared) {
@@ -895,7 +946,9 @@ private: // drafts
     return plug->resource_directory_get_file_path(index,path,path_size);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_resource_directory_t MExtResourceDirectory {
     .set_directory    = resource_directory_set_directory_callback,
@@ -904,9 +957,9 @@ private: // drafts
     .get_file_path    = resource_directory_get_file_path_callback
   };
 
-  //------------------------------
-  // state-context
-  //------------------------------
+//------------------------------
+private: // state-context
+//------------------------------
 
   static
   bool state_context_save_callback(const clap_plugin_t *plugin, const clap_ostream_t *stream, uint32_t context_type) {
@@ -920,16 +973,18 @@ private: // drafts
     return plug->state_context_load(stream,context_type);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_state_context_t MExtStateContext {
     .save = state_context_save_callback,
     .load = state_context_load_callback
   };
 
-  //------------------------------
-  // surround
-  //------------------------------
+//------------------------------
+private: // surround
+//------------------------------
 
   static
   bool surround_is_channel_mask_supported_callback(const clap_plugin_t *plugin, uint64_t channel_mask) {
@@ -943,16 +998,18 @@ private: // drafts
     return plug->surround_get_channel_map(is_input,port_index,channel_map,channel_map_capacity);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_surround_t MExtSurround {
     surround_is_channel_mask_supported_callback,
     surround_get_channel_map_callback
   };
 
-  //------------------------------
-  // track-info
-  //------------------------------
+//------------------------------
+private: // track-info
+//------------------------------
 
   static
   void track_info_changed_callback(const clap_plugin_t *plugin) {
@@ -960,15 +1017,17 @@ private: // drafts
     plug->track_info_changed();
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_track_info_t MExtTrackInfo {
     .changed = track_info_changed_callback
   };
 
-  //------------------------------
-  // triggers
-  //------------------------------
+//------------------------------
+private: // triggers
+//------------------------------
 
   static
   uint32_t triggers_count_callback(const clap_plugin_t *plugin) {
@@ -982,16 +1041,18 @@ private: // drafts
     return plug->triggers_get_info(index,trigger_info);
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_triggers_t MExtTriggers {
     .count    = triggers_count_callback,
     .get_info = triggers_get_info_callback
   };
 
-  //------------------------------
-  // tuning
-  //------------------------------
+//------------------------------
+private: // tuning
+//------------------------------
 
   static
   void tuning_changed_callback(const clap_plugin_t *plugin) {
@@ -999,7 +1060,9 @@ private: // drafts
     plug->tuning_changed();
   }
 
-  //----------
+//--------------------
+protected:
+//--------------------
 
   const clap_plugin_tuning_t MExtTuning {
     .changed = tuning_changed_callback

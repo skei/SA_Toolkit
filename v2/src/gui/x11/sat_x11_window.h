@@ -509,6 +509,12 @@ public: // SAT_BaseWindow
   }
 
   //----------
+
+  /*
+    the event thread is blocking when waiting for new events to arrive.
+    to wake it up, we send a 'client message'.. when the thread receives this event,
+    it will (should) kill itself..
+  */
   
   void stopEventThread() override {
     void* ret;

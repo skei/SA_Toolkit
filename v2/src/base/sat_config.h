@@ -70,6 +70,11 @@
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 
+//#define SAT_PLUGIN_USE_ARA_FACTORY
+//#define SAT_PLUGIN_USE_INVALIDATION_FACTORY
+#define SAT_PLUGIN_USE_PLUGIN_FACTORY
+//#define SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
+
 //#define SAT_TESTS
 
   #define SAT_TESTS_EXIT_ON_FAILURE
@@ -212,6 +217,15 @@
     #define SAT_GUI_WIN32
   #endif
 
+#endif
+
+
+//------------------------------
+// debug
+//------------------------------
+
+#if !defined (SAT_PLUGIN_EXE)
+  #define SAT_DEBUG_PRINT_SOCKET
 #endif
 
 //----------------------------------------------------------------------

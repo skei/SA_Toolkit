@@ -1,7 +1,7 @@
 /*
 
-  ./compile -i build.cpp -o build.exe -f exe -g x11 -d
-  nc -U -l -k /tmp/sat.socket
+./compile -i build.cpp -o build.exe -f exe -g x11 -d
+nc -U -l -k /tmp/sat.socket
 
 */
 //----------------------------------------------------------------------
@@ -120,11 +120,24 @@ public:
 
   myPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
+    SAT_Print("hello world!\n");
   }
 
   //----------
 
   virtual ~myPlugin() {
+    SAT_Print("goodbye world!\n");
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() override {
+    SAT_PRINT;
+    registerExtension(CLAP_EXT_PARAMS,&MExtParams);
+    appendParameter( new SAT_Parameter("param1",0.5));
+    return SAT_Plugin::init();
   }
 
 };
@@ -135,4 +148,5 @@ public:
 //
 //----------------------------------------------------------------------
 
+#include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);

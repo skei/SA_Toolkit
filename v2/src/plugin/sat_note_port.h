@@ -20,7 +20,9 @@ class SAT_NotePort {
 private:
 //------------------------------
 
-  clap_note_port_info_t  MInfo = {};
+  clap_note_port_info_t MInfo   = {};
+  int32_t               MIndex  = -1;
+
 
 //------------------------------
 public:
@@ -31,7 +33,7 @@ public:
 
   //----------
 
-  SAT_NotePort(clap_note_port_info_t* AInfo) {
+  SAT_NotePort(const clap_note_port_info_t* AInfo) {
     memcpy(&MInfo,AInfo,sizeof(clap_note_port_info_t));
   }
 
@@ -44,15 +46,23 @@ public:
 public:
 //------------------------------
 
-  clap_note_port_info_t* getInfo() {
+  virtual int32_t getIndex() {
+    return MIndex;
+  }
+
+  virtual const clap_note_port_info_t* getInfo() {
     return &MInfo;
   }
 
+//------------------------------
+public:
+//------------------------------
 
+  virtual void setIndex(int32_t AIndex) {
+    MIndex = AIndex;
+  }
 
 };
-
-typedef SAT_Array<SAT_AudioPort*> SAT_AudioPorts;
 
 //----------------------------------------------------------------------
 #endif
