@@ -81,9 +81,9 @@ function print_help_and_exit {
 #
 #----------------------------------------------------------------------
 
-#if [ "$#" -eq 0 ]; then
-#  print_help_and_exit
-#fi
+if [ "$#" -eq 0 ]; then
+  print_help_and_exit
+fi
 
 while getopts i:o:f:g:a:dtvh? arg
 do
@@ -275,9 +275,9 @@ fi
 # -t test
 #------------------------------
 
-if ! $TEST
+if $TEST
   then
-    FLAGS+=" -DSAT_NO_TESTS"
+    FLAGS+=" -DSAT_TESTS"
 fi
 
 #----------------------------------------------------------------------

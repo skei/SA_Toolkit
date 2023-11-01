@@ -8,7 +8,7 @@
 
 class SAT_Registry;
 extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
-//extern const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
+extern const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
 
 typedef SAT_Array<const clap_plugin_descriptor_t*>  SAT_DescriptorArray;
 
@@ -114,7 +114,7 @@ public:
   /* #include "plugin/sat_entry.h" */                                                                                             \
                                                                                                                                   \
   void SAT_Register(SAT_Registry* ARegistry) {                                                                                    \
-    uint32_t index = ARegistry->getNumDescriptors();                                                                              \
+    /*uint32_t index = ARegistry->getNumDescriptors();*/                                                                          \
     /*SAT_Log("SAT_Register -> id %s index %i\n",DESC.id,index);*/                                                                \
     ARegistry->registerDescriptor(&DESC);                                                                                         \
   }                                                                                                                               \

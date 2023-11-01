@@ -22,7 +22,6 @@ private:
 //------------------------------
 
   SAT_File    MFile                             = {};
-//  const char* MLogfileName                      = "sat_log.txt";
   char        MLogfileName[SAT_MAX_PATH_LENGTH] = {0};
   bool        MEnabled                          = false;
   char        MDesktopPath[SAT_MAX_PATH_LENGTH] = {0};

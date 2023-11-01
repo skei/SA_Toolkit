@@ -6,13 +6,14 @@
 */
 //----------------------------------------------------------------------
 
-//#define SAT_NO_TESTS
+//#define SAT_TESTS
 //#define SAT_DEBUG_PRINT_SOCKET
 
 #include "sat.h"
 #include "gui/sat_window.h"
-//#include "gui/sat_widget.h"
 #include "plugin/sat_plugin.h"
+
+//----------------------------------------------------------------------
 
 #define WINDOW_WIDTH  500
 #define WINDOW_HEIGHT 500
@@ -25,25 +26,10 @@ const clap_plugin_descriptor_t myDescriptor = {
   .url          = "website.com",
   .manual_url   = "website.com/manual",
   .support_url  = "website.com/support",
-  .version      = "0.0.2",
+  .version      = "0.0.1",
   .description  = "my plugin",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
-
-//----------------------------------------------------------------------
-//
-// window
-//
-//----------------------------------------------------------------------
-
-// class myWindow
-// : public SAT_Window {
-// public:
-//   myWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-//   : SAT_Window(AWidth,AHeight,AParent) {
-//   }
-// public:
-// };
 
 //----------------------------------------------------------------------
 //
@@ -87,14 +73,16 @@ public:
 //
 //----------------------------------------------------------------------
 
-bool build_test1() {
-  //SAT_Print("Hello world!\n");
-  return false;
-}
+#if defined(SAT_TESTS)
 
-//----------
+  bool build_test1() {
+    //SAT_Print("Hello world!\n");
+    return false;
+  }
 
-SAT_TEST("BUILD: test1",build_test1)
+  SAT_TEST("BUILD: test1",build_test1)
+
+#endif
 
 //----------------------------------------------------------------------
 //
@@ -139,7 +127,6 @@ public:
   virtual ~myPlugin() {
   }
 
-
 };
 
 //----------------------------------------------------------------------
@@ -149,22 +136,3 @@ public:
 //----------------------------------------------------------------------
 
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
-
-/*
-
-void SAT_Register(SAT_Registry* ARegistry) {
-  SAT_Print("Hello world!\n");
-}
-
-const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
-  SAT_Print("Hello world!\n");
-  switch (AIndex) {
-    case 0:
-      myPlugin* plugin = new myPlugin(ADescriptor,AHost);
-      return plugin->getClapPlugin();
-  }
-  SAT_Print("ERROR! No plugin at index %i\n",AIndex);
-  return nullptr;
-}
-
-*/

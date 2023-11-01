@@ -155,27 +155,29 @@ public: // base window
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     MIsPainting = true;
     SAT_Print("AXpos %i AYpos %i AWidth %i AHeight %i\n",AXpos,AYpos,AWidth,AHeight);
-    //SAT_PaintWindow::on_window_paint(AXpos,AYpos,AWidth,AHeight);
-
-    SAT_BasePainter* painter = getPainter();
-    MPaintContext.painter = painter;
+    SAT_BasePainter* painter  = getPainter();
+    MPaintContext.painter     = painter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
-
-//    SAT_BaseRenderer* renderer = getRenderer();         // -> lower level (x11/wayland, ..)
-//    renderer->beginRendering(0,0,AWidth,AHeight);       // -> lower level
-
+    MPaintContext.scale       = 1.0;
+    //SAT_BaseRenderer* renderer = getRenderer();         // -> lower level (x11/wayland, ..)
+    //renderer->beginRendering(0,0,AWidth,AHeight);       // -> lower level
     painter->beginPaint(AXpos,AYpos,AWidth,AHeight);
+
+    // queued widgets -> buffer
+
     painter->beginFrame(AWidth,AHeight,1);
     //paintRootWidget(&MPaintContext);
-
-    handleDirtyWidgets(); // -> TODO: timer
+      // hack, paints directly to screen, now..
+      // todo: timer 
+      handleDirtyWidgets();
     paintQueuedWidgets(&MPaintContext);
-
     painter->endFrame();
+
+    // buffer -> screen
+    // todo
+
     painter->endPaint();
-
-//    renderer->endRendering();                           // -> lower level
-
+    //renderer->endRendering();                           // -> lower level
     MPaintContext.counter += 1;
     MIsPainting = false;
   }
@@ -294,6 +296,8 @@ private:
 
   //----------
 
+  //todo: check doubles, ..
+
   SAT_Rect handleDirtyWidgets() {
     SAT_Rect rect;
     SAT_Widget* widget;
@@ -311,7 +315,6 @@ private:
     uint32_t count = 0;
     while (MPaintWidgets.read(&widget)) {
       count += 1;
-      //widget->on_widget_paint(AContext);
       widget->on_widget_paint(AContext);
     }
     SAT_Print("%i\n",count);

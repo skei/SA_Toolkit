@@ -49,14 +49,18 @@
 
 //#define SAT_DEBUG
 //#define SAT_DEBUG_PRINT_ALWAYS
+  #define SAT_DEBUG_PRINT_THREAD
+  #define SAT_DEBUG_PRINT_TIME
 //#define SAT_DEBUG_PRINT_PRETTY_FUNCTION
 //#define SAT_DEBUG_PRINT_SOCKET
+
 //#define SAT_GUI_NOGUI
 //#define SAT_GUI_WAYLAND
 //#define SAT_GUI_WIN32
 //#define SAT_GUI_X11
+
 //#define SAT_NO_AUTODELETE
-//#define SAT_NO_TESTS
+
 //#define SAT_PLUGIN_ALL
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_DSSI
@@ -65,9 +69,11 @@
 //#define SAT_PLUGIN_LV2
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
-#define SAT_DEBUG_PRINT_THREAD
-#define SAT_DEBUG_PRINT_TIME
-#define SAT_X11_WAIT_FOR_MAPNOTIFY
+
+//#define SAT_TESTS
+
+  #define SAT_TESTS_EXIT_ON_FAILURE
+  #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 //----------------------------------------------------------------------
 //

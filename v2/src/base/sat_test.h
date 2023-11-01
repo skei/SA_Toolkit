@@ -55,7 +55,7 @@ public:
 //------------------------------
 
   void initialize(SAT_DebugPrint* APrint) {
-    #if !defined(SAT_NO_TESTS)
+    #if defined(SAT_TESTS)
       MPrint = APrint;
       //runAllTests();
     #endif
@@ -76,7 +76,7 @@ public:
   //----------
 
   void addTest(const char* AName, SAT_TestFunc AFunc) {
-    #if !defined(SAT_NO_TESTS)
+    #if defined(SAT_TESTS)
       SAT_TestItem test = { AName, AFunc };
       MTestItems.push_back(test);
     #endif
@@ -85,7 +85,7 @@ public:
   //----------
 
   bool runAllTests() {
-    #if !defined(SAT_NO_TESTS)
+    #if defined(SAT_TESTS)
       uint32_t num = MTestItems.size();
       MPrint->print("\n>> Running %i tests.\n",num);
       for (uint32_t i=0; i<num; i++) {
@@ -95,6 +95,9 @@ public:
         bool success = test_func();
         if (!success) {
           MPrint->print(">> ERROR! Test %i (%s) failed.\n",i+1,test_name);
+          #if defined(SAT_TESTS_EXIT_ON_FAILURE)
+            exit(127);
+          #endif
           return false;
         }
       }
@@ -113,7 +116,7 @@ public:
 
 // see SAT_Global.h
 
-#if !defined(SAT_NO_TESTS)
+#if defined(SAT_TESTS)
 
   #define SAT_TEST(name,func)                                         \
                                                                       \
@@ -126,7 +129,7 @@ public:
 
   #define SAT_RUN_TESTS SAT_GLOBAL.TEST.runAllTests();
 
-#else // SAT_NO_TESTS
+#else // !SAT_TESTS
 
   #define SAT_TEST(name,func)
   #define SAT_RUN_TESTS SAT_GLOBAL.TEST.runAllTests();
