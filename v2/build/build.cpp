@@ -7,7 +7,6 @@ nc -U -l -k /tmp/sat.socket
 //----------------------------------------------------------------------
 
 //#define SAT_TESTS
-//#define SAT_DEBUG_PRINT_SOCKET
 
 #include "sat.h"
 #include "gui/sat_window.h"
@@ -135,7 +134,10 @@ public:
 
   bool init() override {
     SAT_PRINT;
-    registerExtension(CLAP_EXT_PARAMS,&MExtParams);
+    registerDefaultExtension();
+    //appendClapNoteInputPort("input");
+    appendStereoAudioInputPort("input");
+    appendStereoAudioOutputPort("output");
     appendParameter( new SAT_Parameter("param1",0.5));
     return SAT_Plugin::init();
   }

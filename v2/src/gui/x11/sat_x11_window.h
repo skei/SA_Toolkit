@@ -211,9 +211,11 @@ public:
     }
 
     //
-
+SAT_PRINT;
     MRenderer = new SAT_Renderer(this);
+SAT_PRINT;
     MPainter = new SAT_Painter(this);
+SAT_PRINT;
 
   } 
 
@@ -526,13 +528,13 @@ public: // SAT_BaseWindow
 
   //----------
   
-  void startTimer(uint32_t AMSInterval, bool AOneShot) override {
-  }
+  //void startTimer(uint32_t AMSInterval, bool AOneShot) override {
+  //}
 
   //----------
   
-  void stopTimer() override {
-  }
+  //void stopTimer() override {
+  //}
 
   //----------
   

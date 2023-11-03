@@ -5,12 +5,15 @@
 #include "sat.h"
 #include "base/debug/sat_debug_print.h"
 #include "plugin/clap/sat_clap.h"
+#include "plugin/clap/sat_clap_plugin.h"
 
 class SAT_Registry;
 extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
-extern const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
+//extern const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
+extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
 
 typedef SAT_Array<const clap_plugin_descriptor_t*>  SAT_DescriptorArray;
+typedef SAT_Array<const clap_plugin_factory_t*>     SAT_FactoryArray;
 
 //----------------------------------------------------------------------
 //
@@ -24,8 +27,10 @@ class SAT_Registry {
 private:
 //------------------------------
 
-  bool                MIsInitialized  = false;
-  SAT_DescriptorArray MDescriptors    = {};
+  bool                  MIsInitialized  = false;
+  SAT_DescriptorArray   MDescriptors    = {};
+  SAT_FactoryArray      MFactories      = {};
+  SAT_ConstCharPtrArray MFactoryIds     = {};
 
 //------------------------------
 public:
@@ -63,7 +68,7 @@ public:
   }
 
 //------------------------------
-public:
+public: // descriptors
 //------------------------------
 
   // returns index of descriptor
@@ -101,13 +106,45 @@ public:
     return -1;
   }
 
-  //const clap_plugin_descriptor_t* findDescriptor(const char* plugin_id) {
-  //  uint32_t num = MDescriptors.size();
-  //  for (uint32_t i=0; i<num; i++) {
-  //    if (strcmp(plugin_id,MDescriptors[i]->id) == 0) return MDescriptors[i];
-  //  }
-  //  return nullptr;
-  //}
+//------------------------------
+public: // factories
+//------------------------------
+
+  // returns index of factory
+
+  uint32_t registerFactory(const char* factory_id, const clap_plugin_factory_t* factory) {
+    uint32_t index = MFactories.size();
+    MFactoryIds.push_back(factory_id);
+    MFactories.push_back(factory);
+    return index;
+  }
+
+  //----------
+
+  uint32_t getNumFactories() {
+    return MFactories.size();
+  }
+
+  // returns nullptr if index out of range
+
+  const clap_plugin_factory_t* getFactory(uint32_t index) {
+    if (index < MFactories.size()) {
+      return MFactories[index];
+    }
+    return nullptr;
+  }
+
+  //----------
+
+  // returns -1 if plugin not found
+  
+  int32_t findFactory(const char* factory_id) {
+    uint32_t num = MFactories.size();
+    for (uint32_t i=0; i<num; i++) {
+      if (strcmp(factory_id,MFactoryIds[i]) == 0) return i;
+    }
+    return -1;
+  }
 
 };
 
@@ -117,25 +154,27 @@ public:
 //
 //----------------------------------------------------------------------
 
-#define SAT_PLUGIN_ENTRY(DESC,PLUG)                                                                                               \
-                                                                                                                                  \
-  /* #include "plugin/sat_entry.h" */                                                                                             \
-                                                                                                                                  \
-  void SAT_Register(SAT_Registry* ARegistry) {                                                                                    \
-    uint32_t index = ARegistry->getNumDescriptors();                                                                              \
-    SAT_Print("index %i = id %s\n",index,DESC.id);                                                                                \
-    ARegistry->registerDescriptor(&DESC);                                                                                         \
-  }                                                                                                                               \
-                                                                                                                                  \
-  /* ----- */                                                                                                                     \
-                                                                                                                                  \
-  const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) { \
-    SAT_Print("index %i\n",AIndex);                                                                                               \
-    if (AIndex == 0) {                                                                                                            \
-      SAT_Plugin* plugin = new PLUG(ADescriptor,AHost); /* deleted in: ... */                                                     \
-      return plugin->getClapPlugin();                                                                                             \
-    }                                                                                                                             \
-    return nullptr;                                                                                                               \
+#define SAT_PLUGIN_ENTRY(DESC,PLUG)                                                                                                   \
+                                                                                                                                      \
+  /* #include "plugin/sat_entry.h" */                                                                                                 \
+                                                                                                                                      \
+  void SAT_Register(SAT_Registry* ARegistry) {                                                                                        \
+    uint32_t index = ARegistry->getNumDescriptors();                                                                                  \
+    SAT_Print("index %i = id %s\n",index,DESC.id);                                                                                    \
+    ARegistry->registerDescriptor(&DESC);                                                                                             \
+  }                                                                                                                                   \
+                                                                                                                                      \
+  /* ----- */                                                                                                                         \
+                                                                                                                                      \
+  /*const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {*/ \
+  SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {          \
+    SAT_Print("index %i\n",AIndex);                                                                                                   \
+    if (AIndex == 0) {                                                                                                                \
+      SAT_Plugin* plugin = new PLUG(ADescriptor,AHost); /* deleted in: ... */                                                         \
+      /*return plugin->getClapPlugin();*/                                                                                             \
+      return plugin;                                                                                                                  \
+    }                                                                                                                                 \
+    return nullptr;                                                                                                                   \
   }
 
 //----------------------------------------------------------------------

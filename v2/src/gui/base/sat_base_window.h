@@ -78,8 +78,8 @@ public:
   virtual uint32_t          eventLoop()                                                                                               { return 0; }
   virtual void              startEventThread()                                                                                        {}
   virtual void              stopEventThread()                                                                                         {}
-  virtual void              startTimer(uint32_t AMSInterval, bool AOneShot)                                                           {}
-  virtual void              stopTimer()                                                                                               {}
+  //virtual void              startTimer(uint32_t AMSInterval, bool AOneShot)                                                           {}
+  //virtual void              stopTimer()                                                                                               {}
   virtual void              setParent(intptr_t AParent)                                                                               {}
   virtual void              invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight)                                 {}
   virtual void              sendClientMessage(uint32_t AData, uint32_t AType)                                                         {}

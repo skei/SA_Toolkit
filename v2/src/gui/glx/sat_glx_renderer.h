@@ -152,8 +152,12 @@ public:
 
     //
 
+    SAT_PRINT;
+
     //glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
     makeCurrent();
+
+    SAT_PRINT;
 
     const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
     if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
@@ -169,6 +173,8 @@ public:
     //
 
     //disableVSync();
+
+    SAT_PRINT;
 
   }
 

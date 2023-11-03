@@ -12,6 +12,7 @@
 
 class SAT_EditorListener {
 protected:
+  virtual void on_editorListener_timer() {}
 };
 
 //----------------------------------------------------------------------

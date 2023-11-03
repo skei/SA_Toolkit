@@ -9,19 +9,19 @@
 
 //----------------------------------------------------------------------
 
-#ifdef SAT_PLUGIN_USE_ARA_FACTORY
+#if defined (SAT_PLUGIN_USE_ARA_FACTORY)
   #include "plugin/clap/factories/sat_clap_ara_factory.h"
 #endif
 
-#ifdef SAT_PLUGIN_USE_INVALIDATION_FACTORY
+#if defined (SAT_PLUGIN_USE_INVALIDATION_FACTORY)
   #include "plugin/clap/factories/sat_clap_invalidation_factory.h"
 #endif
 
-#ifdef SAT_PLUGIN_USE_PLUGIN_FACTORY
+#if defined (SAT_PLUGIN_USE_PLUGIN_FACTORY)
    #include "plugin/clap/factories/sat_clap_plugin_factory.h"
 #endif
 
-#ifdef SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
+#if defined (SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY)
   #include "plugin/clap/factories/sat_clap_preset_discovery_factory.h"
 #endif
 

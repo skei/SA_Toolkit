@@ -32,6 +32,17 @@ public:
 
   //----------
 
+  SAT_AudioPort(const char* name, uint32_t flags, uint32_t channel_count, const char* port_type) {
+    MInfo.id            = 0;  // !!!
+    SAT_Strlcpy(MInfo.name,name,CLAP_NAME_SIZE);
+    MInfo.flags         = flags;
+    MInfo.channel_count = channel_count;
+    MInfo.port_type     = port_type;
+    MInfo.in_place_pair = CLAP_INVALID_ID;
+  }
+
+  //----------
+
   SAT_AudioPort(const clap_audio_port_info_t* AInfo) {
     memcpy(&MInfo,AInfo,sizeof(clap_audio_port_info_t));
   }

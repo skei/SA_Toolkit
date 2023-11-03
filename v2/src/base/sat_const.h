@@ -197,14 +197,14 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_KEY_DELETE                          46
 // #define SAT_KEY_BACKSPACE                       8
 
-// #define SAT_MIDI_NOTE_OFF                       0x80
-// #define SAT_MIDI_NOTE_ON                        0x90
-// #define SAT_MIDI_POLY_AFTERTOUCH                0xA0
-// #define SAT_MIDI_CONTROL_CHANGE                 0xB0
-// #define SAT_MIDI_PROGRAM_CHANGE                 0xC0
-// #define SAT_MIDI_CHANNEL_AFTERTOUCH             0xD0
-// #define SAT_MIDI_PITCHBEND                      0xE0
-// #define SAT_MIDI_SYS                            0xF0
+#define SAT_MIDI_NOTE_OFF                       0x80
+#define SAT_MIDI_NOTE_ON                        0x90
+#define SAT_MIDI_POLY_AFTERTOUCH                0xA0
+#define SAT_MIDI_CONTROL_CHANGE                 0xB0
+#define SAT_MIDI_PROGRAM_CHANGE                 0xC0
+#define SAT_MIDI_CHANNEL_AFTERTOUCH             0xD0
+#define SAT_MIDI_PITCHBEND                      0xE0
+#define SAT_MIDI_SYS                            0xF0
 
 // #define SAT_MODMATRIX_MODE_OFF                  0
 // #define SAT_MODMATRIX_MODE_GLOBAL               1
@@ -233,9 +233,9 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_PAINTER_TYPE_NAME_WIN32             "Win32"
 #define SAT_PAINTER_TYPE_NAME_X11               "X11"
 
-// #define SAT_PLUGIN_EVENT_MODE_BLOCK             0
-// #define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
-// #define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
+#define SAT_PLUGIN_EVENT_MODE_BLOCK             0
+#define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
+#define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
 
 #define SAT_RENDERER_TYPE_NONE                  0
 #define SAT_RENDERER_TYPE_GLX                   0

@@ -79,9 +79,11 @@ public:
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+    SAT_PRINT;
     MPaintContext.painter = getPainter();
     MPaintContext.update_rect = SAT_Rect(0,0,AWidth,AHeight);
     MPaintContext.counter = 0;
+    SAT_PRINT;
   }
 
   //----------
@@ -167,9 +169,11 @@ public: // base window
 
     painter->beginFrame(AWidth,AHeight,1);
     //paintRootWidget(&MPaintContext);
+
       // hack, paints directly to screen, now..
-      // todo: timer 
+      // called from on_timerListener_timer()
       handleDirtyWidgets();
+
     paintQueuedWidgets(&MPaintContext);
     painter->endFrame();
 
@@ -266,7 +270,7 @@ public: // widget listener
   }
 
 //------------------------------
-public: // timer owner
+public: // timer listener
 //------------------------------
 
   void do_timerListener_callback(SAT_Timer* ATimer) override {
@@ -280,8 +284,20 @@ public: // timer owner
 public:
 //------------------------------
 
-  void markWidgetDirty(SAT_Widget* AWidget) {
+  virtual void markWidgetDirty(SAT_Widget* AWidget) {
     MDirtyWidgets.write(AWidget);
+  }
+
+  //----------
+
+  virtual void startTimer(uint32_t AMSInterval, bool AOneShot) {
+    MTimer.start(AMSInterval,AOneShot);
+  }
+
+  //----------
+
+  virtual void stopTimer() {
+    MTimer.stop();
   }
 
 //------------------------------

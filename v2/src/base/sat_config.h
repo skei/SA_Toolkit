@@ -2,7 +2,7 @@
 #define sat_config_included
 //----------------------------------------------------------------------
 
-#define SAT_VERSION                             "0.5.0"
+#define SAT_VERSION                             "0.9.0"
 #define SAT_VENDOR                              "skei.audio"
 #define SAT_URL                                 "https://github.com/skei/SA_Toolkit"
 #define SAT_LOG_DIRECTORY                       "skei.audio"
@@ -48,9 +48,10 @@
 //----------------------------------------------------------------------
 
 //#define SAT_DEBUG
+
 //#define SAT_DEBUG_PRINT_ALWAYS
-  #define SAT_DEBUG_PRINT_THREAD
-  #define SAT_DEBUG_PRINT_TIME
+#define SAT_DEBUG_PRINT_THREAD
+#define SAT_DEBUG_PRINT_TIME
 //#define SAT_DEBUG_PRINT_PRETTY_FUNCTION
 //#define SAT_DEBUG_PRINT_SOCKET
 
@@ -70,6 +71,8 @@
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 
+#define SAT_PLUGIN_CONVERT_MIDI
+
 //#define SAT_PLUGIN_USE_ARA_FACTORY
 //#define SAT_PLUGIN_USE_INVALIDATION_FACTORY
 #define SAT_PLUGIN_USE_PLUGIN_FACTORY
@@ -77,8 +80,8 @@
 
 //#define SAT_TESTS
 
-  #define SAT_TESTS_EXIT_ON_FAILURE
-  #define SAT_X11_WAIT_FOR_MAPNOTIFY
+#define SAT_TESTS_EXIT_ON_FAILURE
+#define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 //----------------------------------------------------------------------
 //
@@ -141,7 +144,6 @@
 #if !defined (SAT_PLUGIN_FORMAT_DEFINED)
   //#define SAT_PLUGIN_ALL
   #define SAT_PLUGIN_CLAP
-
 #endif
 
 //------------------------------
@@ -219,13 +221,18 @@
 
 #endif
 
-
 //------------------------------
 // debug
 //------------------------------
 
-#if !defined (SAT_PLUGIN_EXE)
-  #define SAT_DEBUG_PRINT_SOCKET
+#if defined (SAT_PLUGIN_EXE)
+  #if defined (SAT_DEBUG_PRINT_SOCKET)
+    #undef SAT_DEBUG_PRINT_SOCKET
+  #endif
+#else
+  #if !defined (SAT_DEBUG_PRINT_SOCKET)
+    #define SAT_DEBUG_PRINT_SOCKET
+  #endif
 #endif
 
 //----------------------------------------------------------------------

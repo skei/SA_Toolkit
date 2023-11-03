@@ -102,7 +102,7 @@ protected:
   virtual bool                state_load(const clap_istream_t *stream) { return false; }
   virtual uint32_t            tail_get() { return 0; }
   virtual void                thread_pool_exec(uint32_t task_index) {}
-  virtual void                timer_on_timer(clap_id timer_id) {}
+  virtual void                timer_support_on_timer(clap_id timer_id) {}
   virtual bool                voice_info_get(clap_voice_info_t *info) { return false; }
 
   // drafts
@@ -629,9 +629,9 @@ private: // timer-support
 //------------------------------
 
   static
-  void timer_on_timer_callback(const clap_plugin_t *plugin, clap_id timer_id) {
+  void timer_support_on_timer_callback(const clap_plugin_t *plugin, clap_id timer_id) {
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    plug->timer_on_timer(timer_id);
+    plug->timer_support_on_timer(timer_id);
   }
 
 //--------------------
@@ -639,7 +639,7 @@ protected:
 //--------------------
 
   const clap_plugin_timer_support_t MExtTimerSupport {
-    .on_timer = timer_on_timer_callback
+    .on_timer = timer_support_on_timer_callback
   };
 
 //------------------------------
@@ -665,7 +665,7 @@ protected:
 //------------------------------
 
 //------------------------------
-private: // ambisonic
+private: // draft: ambisonic
 //------------------------------
 
   static
@@ -690,7 +690,7 @@ protected:
   };
 
 //------------------------------
-private: // audio-ports-activation
+private: // draft: audio-ports-activation
 //------------------------------
 
   static
@@ -715,7 +715,7 @@ protected:
   };
 
 //------------------------------
-private: // check-for-update
+private: // draft: check-for-update
 //------------------------------
 
   static
@@ -733,7 +733,7 @@ protected:
   };
 
 //------------------------------
-private: // configurable-audio-ports
+private: // draft: configurable-audio-ports
 //------------------------------
 
   static
@@ -758,7 +758,7 @@ protected:
   };
 
 //------------------------------
-private: // context-menu
+private: // draft: context-menu
 //------------------------------
 
   static
@@ -783,7 +783,7 @@ protected:
   };
 
 //------------------------------
-private: // cv
+private: // draft: cv
 //------------------------------
 
   static
@@ -801,7 +801,7 @@ protected:
   };
 
 //------------------------------
-private: // extensible-audio-ports
+private: // draft: extensible-audio-ports
 //------------------------------
 
   static
@@ -826,7 +826,7 @@ protected:
   };
 
 //------------------------------
-private: // midi-mappings
+private: // draft: midi-mappings
 //------------------------------
 
   static
@@ -851,7 +851,7 @@ protected:
   };
 
 //------------------------------
-private: // param-indication
+private: // draft: param-indication
 //------------------------------
 
   static
@@ -876,7 +876,7 @@ protected:
   };
 
 //------------------------------
-private: // preset-load
+private: // draft: preset-load
 //------------------------------
 
   static
@@ -894,7 +894,7 @@ protected:
   };
 
 //------------------------------
-private: // remote-controls
+private: // draft: remote-controls
 //------------------------------
 
   static
@@ -919,7 +919,7 @@ protected:
   };
 
 //------------------------------
-private: // resource-directory
+private: // draft: resource-directory
 //------------------------------
 
   static
@@ -958,7 +958,7 @@ protected:
   };
 
 //------------------------------
-private: // state-context
+private: // draft: state-context
 //------------------------------
 
   static
@@ -983,7 +983,7 @@ protected:
   };
 
 //------------------------------
-private: // surround
+private: // draft: surround
 //------------------------------
 
   static
@@ -1008,7 +1008,7 @@ protected:
   };
 
 //------------------------------
-private: // track-info
+private: // draft: track-info
 //------------------------------
 
   static
@@ -1026,7 +1026,7 @@ protected:
   };
 
 //------------------------------
-private: // triggers
+private: // draft: triggers
 //------------------------------
 
   static
@@ -1051,7 +1051,7 @@ protected:
   };
 
 //------------------------------
-private: // tuning
+private: // draft: tuning
 //------------------------------
 
   static

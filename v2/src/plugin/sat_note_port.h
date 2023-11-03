@@ -28,6 +28,9 @@ private:
 public:
 //------------------------------
 
+
+  //----------
+
   SAT_NotePort() {
   }
 
@@ -35,6 +38,15 @@ public:
 
   SAT_NotePort(const clap_note_port_info_t* AInfo) {
     memcpy(&MInfo,AInfo,sizeof(clap_note_port_info_t));
+  }
+
+  //----------
+
+  SAT_NotePort(const char* name, uint32_t supported_dialects, uint32_t preferred_dialects) {
+    MInfo.id                  = 0; // !!!
+    MInfo.supported_dialects  = supported_dialects;
+    MInfo.preferred_dialect   = preferred_dialects;
+    SAT_Strlcpy(MInfo.name,name,CLAP_NAME_SIZE);
   }
 
   //----------
