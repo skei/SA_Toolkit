@@ -49,11 +49,18 @@
 
 //#define SAT_DEBUG
 
+#define SAT_DEBUG_ASSERT
+#define SAT_DEBUG_BREAKPOINT
+#define SAT_DEBUG_CALLSTACK
+#define SAT_DEBUG_CRASH_HANDLER
+//#define SAT_DEBUG_MEMTRACE
+//#define SAT_DEBUG_OBSERVER
 //#define SAT_DEBUG_PRINT_ALWAYS
 #define SAT_DEBUG_PRINT_THREAD
 #define SAT_DEBUG_PRINT_TIME
 //#define SAT_DEBUG_PRINT_PRETTY_FUNCTION
 //#define SAT_DEBUG_PRINT_SOCKET
+//#define SAT_DEBUG_WINDOW
 
 //#define SAT_GUI_NOGUI
 //#define SAT_GUI_WAYLAND
@@ -90,6 +97,33 @@
 //----------------------------------------------------------------------
 
 //------------------------------
+// debug
+//------------------------------
+
+#if !defined (SAT_DEBUG)
+  #undef AT_DEBUG_ASSERT
+  #undef AT_DEBUG_BREAKPOINT
+  #undef AT_DEBUG_CALLSTACK
+  #undef AT_DEBUG_CRASH_HANDLER
+  #undef AT_DEBUG_MEMTRACE
+  #undef AT_DEBUG_OBSERVER
+  //#undef AT_DEBUG_PRINT
+  #undef AT_DEBUG_WINDOW
+#endif
+
+//----------
+
+// #if defined (SAT_PLUGIN_EXE)
+//   #if defined (SAT_DEBUG_PRINT_SOCKET)
+//     #undef SAT_DEBUG_PRINT_SOCKET
+//   #endif
+// #else
+//   #if !defined (SAT_DEBUG_PRINT_SOCKET)
+//     #define SAT_DEBUG_PRINT_SOCKET
+//   #endif
+// #endif
+
+//------------------------------
 // plugin
 //------------------------------
 
@@ -109,30 +143,37 @@
 
 #elif defined (SAT_PLUGIN_CLAP)
   #define SAT_PLUGIN_FORMAT_DEFINED
+  #define SAT_PLUGIN
 
 #elif defined (SAT_PLUGIN_DSSI)
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
+  #define SAT_PLUGIN
 
 #elif defined (SAT_PLUGIN_EXE)
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
+  #define SAT_EXE
 
 #elif defined (SAT_PLUGIN_LADSPA)
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
+  #define SAT_PLUGIN
 
 #elif defined (SAT_PLUGIN_LV2)
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
+  #define SAT_PLUGIN
 
 #elif defined (SAT_PLUGIN_VST2)
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
+  #define SAT_PLUGIN
 
 #elif defined (SAT_PLUGIN_VST3)
   #define SAT_PLUGIN_FORMAT_DEFINED
   #define SAT_PLUGIN_CLAP
+  #define SAT_PLUGIN
 
 //#else
 //  #error no PLUGIN type defined
@@ -144,6 +185,7 @@
 #if !defined (SAT_PLUGIN_FORMAT_DEFINED)
   //#define SAT_PLUGIN_ALL
   #define SAT_PLUGIN_CLAP
+  #define SAT_PLUGIN
 #endif
 
 //------------------------------
@@ -219,20 +261,6 @@
     #define SAT_GUI_WIN32
   #endif
 
-#endif
-
-//------------------------------
-// debug
-//------------------------------
-
-#if defined (SAT_PLUGIN_EXE)
-  #if defined (SAT_DEBUG_PRINT_SOCKET)
-    #undef SAT_DEBUG_PRINT_SOCKET
-  #endif
-#else
-  #if !defined (SAT_DEBUG_PRINT_SOCKET)
-    #define SAT_DEBUG_PRINT_SOCKET
-  #endif
 #endif
 
 //----------------------------------------------------------------------

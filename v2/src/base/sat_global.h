@@ -4,6 +4,7 @@
 
 #include "base/debug/sat_debug_print.h"
 #include "base/utils/sat_strutils.h"
+#include "base/sat_debug.h"
 #include "base/sat_log.h"
 #include "base/sat_registry.h"
 #include "base/sat_test.h"
@@ -19,6 +20,7 @@ class SAT_Global {
 public:
 
   SAT_DebugPrint  PRINT                             = {};
+  SAT_Debug       DEBUG                             = {};
   SAT_Log         LOG                               = {};
   SAT_Registry    REGISTRY                          = {};
   SAT_Test        TEST                              = {};
@@ -53,6 +55,7 @@ public:
 
   void initialize() {
     PRINT.initialize();
+    DEBUG.initialize(&PRINT);
     LOG.initialize(&PRINT);
     REGISTRY.initialize(&PRINT);
     TEST.initialize(&PRINT);
@@ -64,6 +67,7 @@ public:
     TEST.cleanup();
     REGISTRY.cleanup();
     LOG.cleanup();
+    DEBUG.cleanup();
     PRINT.cleanup();
   }
   
@@ -98,6 +102,22 @@ public:
 //
 //
 //----------------------------------------------------------------------
+
+SAT_Global SAT_GLOBAL = {};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+//------------------------------
+// debug
+//------------------------------
+
+void sat_crash_handler_callback(int sig) {
+  SAT_GLOBAL.DEBUG.crashHandler(sig);
+}
 
 //------------------------------
 // log

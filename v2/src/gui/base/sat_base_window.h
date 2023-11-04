@@ -29,6 +29,7 @@ public:
 
   virtual uint32_t          getWindowType()                                                                                           { return 0; }
   virtual const char*       getWindowTypeName()                                                                                       { return ""; }
+
   virtual SAT_BaseRenderer* getRenderer()                                                                                             { return nullptr; }
   virtual SAT_BasePainter*  getPainter()                                                                                              { return nullptr; }
 

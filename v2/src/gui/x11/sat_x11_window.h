@@ -3,11 +3,15 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+
+#include "gui/base/sat_base_painter.h"
 #include "gui/base/sat_base_window.h"
 #include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_renderer_owner.h"
+
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
+
 #include "gui/sat_painter.h"
 #include "gui/sat_renderer.h"
 
@@ -210,12 +214,8 @@ public:
       wantQuitEvents();
     }
 
-    //
-SAT_PRINT;
-    MRenderer = new SAT_Renderer(this);
-SAT_PRINT;
-    MPainter = new SAT_Painter(this);
-SAT_PRINT;
+     MRenderer = new SAT_Renderer(this);
+     MPainter = new SAT_Painter(this);
 
   } 
 
@@ -223,8 +223,8 @@ SAT_PRINT;
 
   virtual ~SAT_X11Window() {
 
-    delete MPainter;
-    delete MRenderer;
+    // delete MPainter;
+    // delete MRenderer;
 
     if (MIsMapped) close();
     // keyboard

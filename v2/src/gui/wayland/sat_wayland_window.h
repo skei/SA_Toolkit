@@ -317,13 +317,13 @@ public: // SAT_BaseWindow
 
   //----------
   
-  void startTimer(uint32_t AMSInterval, bool AOneShot) override {
-  }
+  //void startTimer(uint32_t AMSInterval, bool AOneShot) override {
+  //}
 
   //----------
   
-  void stopTimer() override {
-  }
+  //void stopTimer() override {
+  //}
 
   //----------
   

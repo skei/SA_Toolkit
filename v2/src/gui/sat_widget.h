@@ -62,7 +62,7 @@ private:
 private:
 //------------------------------
 
-  const char*         MName                     = "";
+  const char*         MName                     = "MWidget";
   int32_t             MId                       = -1;
 
   SAT_WidgetOwner*    MOwner                    = nullptr;
@@ -186,6 +186,8 @@ public:
   }
 
   //----------
+
+  // returns null if no child widgets at x,y
 
   virtual SAT_Widget* findChildWidget(uint32_t AXpos, uint32_t AYpos, bool ARecursive=true) {
     for (uint32_t i=0; i<MChildren.size(); i++) {
@@ -337,6 +339,9 @@ public:
   virtual void on_widget_mouseMove() {}
   virtual void on_widget_keyPress() {}
   virtual void on_widget_keyRelease() {}
+  virtual void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos) {}
+  virtual void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) {}
+
 
   //----------
 

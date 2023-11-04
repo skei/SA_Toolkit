@@ -28,6 +28,7 @@ public:
   SAT_RootWidget(SAT_Rect ARect, SAT_WidgetListener* AListener)
   : SAT_Widget(ARect) {
     MListener = AListener;
+    setName("MRootWidget");
   }
 
   //----------

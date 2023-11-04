@@ -1,34 +1,26 @@
 /*
 
-./compile -i build.cpp -o build.exe -f exe -g x11 -d
-nc -U -l -k /tmp/sat.socket
+  in '/bin' directory:
+    ../build/compile -i ../build/build.cpp -o build.exe -f exe -g x11 -d  
+
+  in separate console:
+    nc -U -l -k /tmp/sat.socket
 
 */
 //----------------------------------------------------------------------
 
-//#define SAT_TESTS
+#ifdef SAT_PLUGIN
+  #define SAT_DEBUG_PRINT_SOCKET
+#endif
 
 #include "sat.h"
 #include "gui/sat_window.h"
 #include "plugin/sat_plugin.h"
 
-//----------------------------------------------------------------------
+//----------
 
 #define WINDOW_WIDTH  500
 #define WINDOW_HEIGHT 500
-
-const clap_plugin_descriptor_t myDescriptor = {
-  .clap_version = CLAP_VERSION,
-  .id           = "me/myPlugin",
-  .name         = "myPlugin",
-  .vendor       = "me",
-  .url          = "website.com",
-  .manual_url   = "website.com/manual",
-  .support_url  = "website.com/support",
-  .version      = "0.0.1",
-  .description  = "my plugin",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
-};
 
 //----------------------------------------------------------------------
 //
@@ -68,31 +60,19 @@ public:
 
 //----------------------------------------------------------------------
 //
-// tests
-//
-//----------------------------------------------------------------------
-
-#if defined(SAT_TESTS)
-
-  bool build_test1() {
-    //SAT_Print("Hello world!\n");
-    return false;
-  }
-
-  SAT_TEST("BUILD: test1",build_test1)
-
-#endif
-
-//----------------------------------------------------------------------
-//
 // main
 //
 //----------------------------------------------------------------------
 
 int main() {
-  SAT_LOG("test %i\n",1);
   SAT_Print("Hello world!\n");
+  SAT_LOG("test %i\n",1);
   SAT_RUN_TESTS
+  // SAT_Assert(1==1);
+  // SAT_GLOBAL.DEBUG.printCallStack();
+  // int* ptr = nullptr;
+  // int i = *ptr;
+  // SAT_Print("%i\n",i);
   SAT_Window* window = new SAT_Window(WINDOW_WIDTH,WINDOW_HEIGHT);
   myRootWidget* root = new myRootWidget(0,window);
   window->setRootWidget(root);
@@ -103,6 +83,25 @@ int main() {
   delete window;
   return 0;
 }
+
+//----------------------------------------------------------------------
+//
+// descriptor
+//
+//----------------------------------------------------------------------
+
+const clap_plugin_descriptor_t myDescriptor = {
+  .clap_version = CLAP_VERSION,
+  .id           = "me/myPlugin",
+  .name         = "myPlugin",
+  .vendor       = "me",
+  .url          = "website.com",
+  .manual_url   = "website.com/manual",
+  .support_url  = "website.com/support",
+  .version      = "0.0.1",
+  .description  = "my plugin",
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+};
 
 //----------------------------------------------------------------------
 //
@@ -152,3 +151,15 @@ public:
 
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+
+//----------------------------------------------------------------------
+//
+// tests
+//
+//----------------------------------------------------------------------
+
+#if defined(SAT_TESTS)
+  bool build_test1() { return true; }
+  SAT_TEST("BUILD: test1",build_test1)
+#endif
+

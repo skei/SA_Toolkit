@@ -14,7 +14,8 @@
 struct SAT_ProcessContext {
   const clap_process_t* process;
   double                samplerate;
-  uint32_t              counter;
+  uint32_t              process_counter;
+  uint64_t              sample_counter;
 };
 
 //----------------------------------------------------------------------

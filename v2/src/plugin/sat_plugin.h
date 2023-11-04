@@ -33,31 +33,31 @@ class SAT_Plugin
 private:
 //------------------------------
 
-  const clap_plugin_descriptor_t* MDescriptor                 = nullptr;
-  SAT_Editor*                     MEditor                     = nullptr;
+  const clap_plugin_descriptor_t* MDescriptor           = nullptr;
+  SAT_Editor*                     MEditor               = nullptr;
 
-  SAT_ParameterArray              MParameters                 = {};
-  SAT_AudioPortArray              MAudioInputPorts            = {};
-  SAT_NotePortArray               MNoteInputPorts             = {};
-  SAT_AudioPortArray              MAudioOutputPorts           = {};
-  SAT_NotePortArray               MNoteOutputPorts            = {};
+  SAT_ParameterArray              MParameters           = {};
+  SAT_AudioPortArray              MAudioInputPorts      = {};
+  SAT_NotePortArray               MNoteInputPorts       = {};
+  SAT_AudioPortArray              MAudioOutputPorts     = {};
+  SAT_NotePortArray               MNoteOutputPorts      = {};
 
-  SAT_ProcessContext              MProcessContext             = {};
-  SAT_Dictionary<const void*>     MExtensions                 = {};
+  SAT_ProcessContext              MProcessContext       = {};
+  SAT_Dictionary<const void*>     MExtensions           = {};
 
-  uint32_t                        MEventMode                  = SAT_PLUGIN_EVENT_MODE_BLOCK;
-  SAT_FromHostQueue               MParamFromHostToGui         = {};
-  SAT_FromHostQueue               MModFromHostToGui           = {};
-  SAT_FromGuiQueue                MParamFromGuiToAudio        = {};
-  SAT_FromGuiQueue                MParamFromGuiToHost         = {};
+  uint32_t                        MEventMode            = SAT_PLUGIN_EVENT_MODE_BLOCK;
+  SAT_FromHostQueue               MParamFromHostToGui   = {};
+  SAT_FromHostQueue               MModFromHostToGui     = {};
+  SAT_FromGuiQueue                MParamFromGuiToAudio  = {};
+  SAT_FromGuiQueue                MParamFromGuiToHost   = {};
 
-  bool                            MIsInitialized              = false;
-  bool                            MIsActivated                = false;
-  bool                            MIsProcessing               = false;
-  double                          MSampleRate                 = 0.0;
-  uint32_t                        MMinBufferSize              = 0;
-  uint32_t                        MMaxBufferSize              = 0;
-  int32_t                         MRenderMode                 = CLAP_RENDER_REALTIME;
+  bool                            MIsInitialized        = false;
+  bool                            MIsActivated          = false;
+  bool                            MIsProcessing         = false;
+  double                          MSampleRate           = 0.0;
+  uint32_t                        MMinBufferSize        = 0;
+  uint32_t                        MMaxBufferSize        = 0;
+  int32_t                         MRenderMode           = CLAP_RENDER_REALTIME;
 
 //------------------------------
 public:
@@ -486,12 +486,12 @@ public: // audio
 
   //----------
 
-  //virtual void processAudioInterleaved(SAT_ProcessContext* AContext, uint32_t AOffset) {
+  //void processAudioInterleaved(SAT_ProcessContext* AContext, uint32_t AOffset) {
   //}
 
   //----------
 
-  //virtual void processAudioQuantized(SAT_ProcessContext* AContext) {
+  //void processAudioQuantized(SAT_ProcessContext* AContext) {
   //}
 
 //------------------------------
@@ -520,6 +520,7 @@ public: // queues
     uint32_t index;
     while (MParamFromHostToGui.read(&index)) {
       SAT_Print("%i\n",index);
+      // todo
     }
   }
 
@@ -527,6 +528,7 @@ public: // queues
     uint32_t index;
     while (MParamFromHostToGui.read(&index)) {
       SAT_Print("%i\n",index);
+      // todo
     }
   }
 
@@ -534,6 +536,7 @@ public: // queues
     uint32_t index;
     while (MParamFromHostToGui.read(&index)) {
       SAT_Print("%i\n",index);
+      // todo
     }
   }
 
@@ -541,6 +544,7 @@ public: // queues
     uint32_t index;
     while (MParamFromHostToGui.read(&index)) {
       SAT_Print("%i\n",index);
+      // todo
     }
   }
 
@@ -608,6 +612,8 @@ protected: // clap_plugin
   //----------
 
   void reset() override {
+    MProcessContext.process_counter = 0;
+    MProcessContext.sample_counter = 0;
   }
 
   //----------
@@ -615,11 +621,12 @@ protected: // clap_plugin
   clap_process_status process(const clap_process_t *process) override {
     MProcessContext.process = process;
     MProcessContext.samplerate = MSampleRate;
-    MProcessContext.counter += 1;
+    MProcessContext.process_counter += 1;
     flushParamFromGuiToAudio();
     handleEvents(&MProcessContext);
     processAudio(&MProcessContext);
     flushParamFromGuiToHost();
+    MProcessContext.sample_counter += process->frames_count;
     return CLAP_PROCESS_CONTINUE;
   }
 
@@ -1116,6 +1123,7 @@ protected: // draft: preset_load
 //------------------------------
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
+    // loadPreset(location,load_key);
     return false;
   }
   
@@ -1130,6 +1138,18 @@ protected: // draft: remote_controls
   //----------
 
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
+    // SAT_Strlcpy(page->section_name,"",CLAP_NAME_SIZE);
+    // page->page_id = 0;
+    // SAT_Strlcpy(page->name,"",CLAP_NAME_SIZE);
+    // page->param_ids[0] = 0;// CLAP_INVALID_ID;
+    // page->param_ids[1] = 1;//CLAP_INVALID_ID;
+    // page->param_ids[2] = 2;//CLAP_INVALID_ID;
+    // page->param_ids[3] = 3;//CLAP_INVALID_ID;
+    // page->param_ids[4] = 4;//CLAP_INVALID_ID;
+    // page->param_ids[5] = 5;//CLAP_INVALID_ID;
+    // page->param_ids[6] = 6;//CLAP_INVALID_ID;
+    // page->param_ids[7] = 7;//CLAP_INVALID_ID;
+    // page->is_for_preset = false;
     return false;
   }
   
@@ -1138,6 +1158,8 @@ protected: // draft: resource_directory
 //------------------------------
 
   void resource_directory_set_directory(const char *path, bool is_shared) override {
+    // MResourceDirectory = path;
+    // MResourceDirectoryIsShared = is_shared;
   }
 
   //----------
@@ -1197,7 +1219,18 @@ protected: // draft: surround
 protected: // draft: track_info
 //------------------------------
 
+  // uint64_t      flags;                 // see the flags above
+  // char          name[CLAP_NAME_SIZE];  // track name, available if flags contain CLAP_TRACK_INFO_HAS_TRACK_NAME
+  // clap_color_t  color;                 // track color, available if flags contain CLAP_TRACK_INFO_HAS_TRACK_COLOR
+  // int32_t       audio_channel_count;   // available if flags contain CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL. see audio-ports.h, struct clap_audio_port_info to learn how to use channel count and port type
+  // const char*   audio_port_type;
+
   void track_info_changed() override {
+    // const clap_host_t* host = getClapHost();
+    // const clap_host_track_info_t* track_info = (const clap_host_track_info_t*)host->get_extension(host,CLAP_EXT_TRACK_INFO);
+    // clap_track_info_t info;
+    // if (track_info->get(host,&info)) {
+    // }
   }
 
 //------------------------------

@@ -138,7 +138,7 @@ public:
     MParent = window;
     if (MWindow) {
       #if defined (SAT_GUI_WAYLAND)
-        MWindow->setParent(window->ptr);
+        MWindow->setParent((intptr_t)window->ptr);
       #elif defined (SAT_GUI_WIN32)
         MWindow->setParent(window->win32);
       #elif defined (SAT_GUI_X11)
@@ -147,7 +147,7 @@ public:
     }
     else {
       #if defined (SAT_GUI_WAYLAND)
-        MWindow = new SAT_Window(MWidth,MHeight,MParent->ptr);
+        MWindow = new SAT_Window(MWidth,MHeight,(intptr_t)MParent->ptr);
       #elif defined (SAT_GUI_WIN32)
         MWindow = new SAT_Window(MWidth,MHeight,MParent->win32);
       #elif defined (SAT_GUI_X11)
