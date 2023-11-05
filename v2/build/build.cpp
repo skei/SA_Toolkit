@@ -28,8 +28,11 @@
 //
 //----------------------------------------------------------------------
 
-class myRootWidget
-: public SAT_RootWidget {
+//class myRootWidget
+//: public SAT_RootWidget {
+
+class myWidget
+: public SAT_Widget {
 
 private:
 
@@ -38,8 +41,12 @@ private:
 
 public:
 
-  myRootWidget(SAT_Rect ARect,SAT_WidgetListener* AListener)
-  : SAT_RootWidget(ARect,AListener) {
+  //myRootWidget(SAT_Rect ARect,SAT_WidgetListener* AListener)
+  //: SAT_RootWidget(ARect,AListener) {
+  //}
+  
+  myWidget(SAT_Rect ARect)
+  : SAT_Widget(ARect) {
   }
   
   void on_widget_paint(SAT_PaintContext* AContext) final {
@@ -54,6 +61,7 @@ public:
     double radiusx = rect.w * 0.4;
     double radiusy = rect.h * 0.4;
     painter->fillEllipse(centerx,centery,radiusx,radiusy);
+    paintChildWidgets(AContext);
   }
 
 };
@@ -74,8 +82,14 @@ int main() {
   // int i = *ptr;
   // SAT_Print("%i\n",i);
   SAT_Window* window = new SAT_Window(WINDOW_WIDTH,WINDOW_HEIGHT);
-  myRootWidget* root = new myRootWidget(0,window);
+
+  //myRootWidget* root = new myRootWidget(0,window);
+  SAT_RootWidget* root = new SAT_RootWidget(0,window);
   window->setRootWidget(root);
+
+  myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
+  root->appendChildWidget(widget);
+
   window->open();
   window->eventLoop();
   window->close();

@@ -242,9 +242,13 @@ private:
     if (MRootWidget) {
       SAT_Widget* hover = MRootWidget->findChildWidget(AXpos,AYpos);
       if (hover) {
-        SAT_Print("%s\n",hover->getName());
+        //SAT_Print("%s\n",hover->getName());
         if (hover != MHoverWidget) {
-          if (MHoverWidget) MHoverWidget->on_widget_leave(hover,AXpos,AYpos);
+          if (MHoverWidget) {
+            SAT_Print("leaving %s\n",MHoverWidget->getName());
+            MHoverWidget->on_widget_leave(hover,AXpos,AYpos);
+          }
+          SAT_Print("entering %s\n",hover->getName());
           hover->on_widget_enter(MHoverWidget,AXpos,AYpos);
           MHoverWidget = hover;
           // cursor
@@ -252,8 +256,11 @@ private:
         }
       }
       else {
-        // root widget
-        SAT_Print("%s\n",MRootWidget->getName());
+        if (MHoverWidget) {
+          SAT_Print("leaving %s\n",MHoverWidget->getName());
+          MHoverWidget->on_widget_leave(hover,AXpos,AYpos);
+          MHoverWidget = nullptr;
+        }
       }
     }
   }
@@ -396,14 +403,24 @@ public: // base window
 
   void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     SAT_Print("\n");
-    if (MRootWidget) MRootWidget->on_widget_enter(nullptr,AXpos,AYpos);
+    //if (MRootWidget) {
+    //  MRootWidget->on_widget_enter(nullptr,AXpos,AYpos);
+    //}
+    MHoverWidget = nullptr;
+    updateHoverWidget(AXpos,AYpos);
   }
   
   //----------
 
   void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     SAT_Print("\n");
-    if (MRootWidget) MRootWidget->on_widget_leave(nullptr,AXpos,AYpos);
+    if (MHoverWidget) {
+      MHoverWidget->on_widget_leave(nullptr,AXpos,AYpos);
+      MHoverWidget = nullptr;
+    }
+    //if (MRootWidget) {
+    //  MRootWidget->on_widget_leave(nullptr,AXpos,AYpos);
+    //}
   }
   
   //----------
