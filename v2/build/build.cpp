@@ -14,8 +14,9 @@
 #endif
 
 #include "sat.h"
-#include "gui/sat_window.h"
 #include "plugin/sat_plugin.h"
+#include "gui/sat_window.h"
+#include "gui/sat_widgets.h"
 
 //----------
 
@@ -50,7 +51,7 @@ public:
   }
   
   void on_widget_paint(SAT_PaintContext* AContext) final {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     SAT_BasePainter* painter = AContext->painter;
     SAT_Rect rect = getRect();
     painter->setFillColor(color1);
@@ -93,7 +94,7 @@ int main() {
   window->open();
   window->eventLoop();
   window->close();
-  delete root;
+  //delete root;
   delete window;
   return 0;
 }

@@ -9,10 +9,10 @@
 
 class SAT_WidgetListener {
 public:
-  virtual void on_widgetListener_update_value(SAT_Widget* AWidget) {}
+  virtual void on_widgetListener_update(SAT_Widget* AWidget) {}
   virtual void on_widgetListener_redraw(SAT_Widget* AWidget) {}
   virtual void on_widgetListener_realign(SAT_Widget* AFrAWidgetom) {}
-  virtual void on_widgetListener_setCursor(SAT_Widget* AWidget, uint32_t ACursor) {}
+  virtual void on_widgetListener_setCursor(SAT_Widget* AWidget, int32_t ACursor) {}
 };
 
 //----------------------------------------------------------------------

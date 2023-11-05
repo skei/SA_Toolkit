@@ -63,17 +63,18 @@ private:
 //------------------------------
 
   const char*         MName                     = "MWidget";
-//int32_t             MId                       = -1;
-
   SAT_WidgetOwner*    MOwner                    = nullptr;
   SAT_Widget*         MParent                   = nullptr;
   uint32_t            MParentIndex              = 0;
   SAT_WidgetArray     MChildren                 = {};
   double              MValue                    = 0.0;
   SAT_Rect            MRect                     = {};
-
   SAT_WidgetLayout    MLayout                   = {};
   SAT_WidgetState     MState                    = {};
+  void*               MParameter                = nullptr;
+  uint32_t            MLastPainted              = 0;
+
+//int32_t             MId                       = -1;
 //SAT_WidgetOptions   MOptions                  = {};
 
 //------------------------------
@@ -117,6 +118,9 @@ public:
   void                setVisible(bool AVisible=true)              { MState.visible = AVisible; }
   void                setInteracting(bool AInteracting=true)      { MState.interacting = AInteracting; }
 
+  uint32_t getLastPainted() { return MLastPainted; }
+  void setLastPainted(uint32_t ALast) { MLastPainted = ALast; }
+
 //------------------------------
 public:
 //------------------------------
@@ -131,6 +135,9 @@ public:
   virtual double      getWidth()                                  { return MRect.w; }
   virtual double      getHeight()                                 { return MRect.h; }
 
+  virtual void*       getParameter()                              { return MParameter; }
+  virtual SAT_Widget* getParent()                                 { return MParent; }
+
   virtual void        setName(const char* AName)                  { MName = AName; }
 //virtual void        setId(int32_t AId)                          { MId = AId; }
   virtual void        setValue(double AValue, uint32_t AIndex=0)  { MValue = AValue; }
@@ -142,6 +149,12 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  virtual void connect(void* AParameter) {
+    MParameter = AParameter;
+  }
+
+  //----------
 
   virtual void setOwner(SAT_WidgetOwner* AOwner, bool ARecursive=true) {
     MOwner = AOwner;
@@ -247,9 +260,6 @@ public:
   //----------
 
   virtual void realignChildWidgets() {
-
-    //SAT_Rect parent_rect = MRect;
-
     SAT_Rect layout_rect = MRect;
     layout_rect.shrink(MLayout.inner_border);
     MContentRect = SAT_Rect(layout_rect.x,layout_rect.y,0,0);
@@ -325,8 +335,8 @@ public:
 public:
 //------------------------------
 
-//virtual void on_widget_open(SAT_WidgetOwner* AOwner){}
-//virtual void on_widget_firstShown() {}
+  //virtual void on_widget_open(SAT_WidgetOwner* AOwner){}
+  //virtual void on_widget_firstShown() {}
 
   virtual void on_widget_move() {
   }
@@ -341,16 +351,27 @@ public:
     paintChildWidgets(AContext);
   }
 
-  virtual void on_widget_timer() {}
+  virtual void on_widget_timer() {
+  }
 
-  virtual void on_widget_mouseClick() {}
-  virtual void on_widget_mouseDblClick() {}
-  virtual void on_widget_mouseRelease() {}
-  virtual void on_widget_mouseMove() {}
+  virtual void on_widget_mouseClick() {
+  }
 
-  virtual void on_widget_keyPress() {}
-  virtual void on_widget_keyRelease() {}
+  virtual void on_widget_mouseDblClick() {
+  }
 
+  virtual void on_widget_mouseRelease() {
+  }
+
+  virtual void on_widget_mouseMove() {
+  }
+
+  virtual void on_widget_keyPress() {
+  }
+
+  virtual void on_widget_keyRelease() {
+  }
+  
   virtual void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos) {
   }
 

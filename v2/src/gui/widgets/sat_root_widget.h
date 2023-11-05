@@ -3,8 +3,9 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/sat_widget.h"
 #include "gui/base/sat_widget_listener.h"
+#include "gui/widgets/sat_panel_widget.h"
+//#include "gui/sat_widget.h"
 
 //----------------------------------------------------------------------
 //
@@ -13,7 +14,8 @@
 //----------------------------------------------------------------------
 
 class SAT_RootWidget
-: public SAT_Widget {
+//: public SAT_Widget {
+: public SAT_PanelWidget {
 
 //------------------------------
 private:
@@ -26,7 +28,8 @@ public:
 //------------------------------
 
   SAT_RootWidget(SAT_Rect ARect, SAT_WidgetListener* AListener)
-  : SAT_Widget(ARect) {
+  //: SAT_Widget(ARect) {
+  : SAT_PanelWidget(ARect) {
     MListener = AListener;
     setName("MRootWidget");
   }
@@ -40,8 +43,8 @@ public:
 public: // widget listener
 //------------------------------
 
-  virtual void do_widget_update_value(SAT_Widget* AWidget) {
-    if (MListener) MListener->on_widgetListener_update_value(AWidget);
+  virtual void do_widget_update(SAT_Widget* AWidget) {
+    if (MListener) MListener->on_widgetListener_update(AWidget);
   }
 
   //----------

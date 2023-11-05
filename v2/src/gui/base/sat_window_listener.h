@@ -10,7 +10,7 @@
 class SAT_WindowListener {
 public:
   virtual void on_windowListener_resize(SAT_BaseWindow* AWindow) {}
-  virtual void on_windowListener_timer(SAT_BaseWindow* AWindow) {}
+  virtual void on_windowListener_timer(SAT_BaseWindow* AWindow, double AElapsed) {}
 };
 
 //----------------------------------------------------------------------

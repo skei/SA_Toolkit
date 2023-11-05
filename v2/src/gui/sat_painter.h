@@ -53,11 +53,11 @@ public:
 public:
 //------------------------------
 
-  void pushClipRect(SAT_Rect ARect) {
+  void pushClip(SAT_Rect ARect) override {
     // TODO
   }
 
-  void popClipRect() {
+  void popClip() override {
     // TODO
   }
 

@@ -47,6 +47,9 @@ public:
   virtual void        setClip(float x, float y, float w, float h) {}
   virtual void        resetClip() {}
   virtual double      getTextBounds(const char* AText, double* ABounds) { return 0.0; }
+
+  virtual void pushClip(SAT_Rect ARect) {}
+  virtual void popClip() {}
   
   virtual void        setDrawColor(SAT_Color color) {}
   virtual void        setFillColor(SAT_Color color) {}

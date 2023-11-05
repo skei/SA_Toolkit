@@ -29,6 +29,12 @@ private:
   char              MValueText[SAT_MAX_NAME_LENGTH] = {0};
   const char*       MValueFormat                    = "%.2f";
 
+  uint32_t          MAutomationState                = 0;
+  SAT_Color         MAutomationColor                = SAT_White;
+  bool              MIsMapped                       = false;
+  SAT_Color         MMappedColor                    = SAT_Black;
+
+  void*             MWidget                         = nullptr;
 
 //------------------------------
 public:
@@ -78,6 +84,11 @@ public:
     return MValue;
   }
 
+  virtual uint32_t  getAutomationState() { return MAutomationState; }
+  virtual SAT_Color getAutomationColor() { return MAutomationColor; }
+  virtual bool      getIsMapped()        { return MIsMapped; }
+  virtual SAT_Color getMappedColor()     { return MMappedColor; }
+
 //------------------------------
 public:
 //------------------------------
@@ -99,9 +110,20 @@ public:
     MValueFormat = AFormat;
   }
 
+  virtual void setAutomationState(uint32_t AState)  { MAutomationState = AState; }
+  virtual void setAutomationColor(SAT_Color AColor) { MAutomationColor = AColor; }
+  virtual void setIsMapped(bool AMapped)            { MIsMapped = AMapped; }
+  virtual void setMappedColor(SAT_Color AColor)     { MMappedColor = AColor; }
+
 //------------------------------
 public:
 //------------------------------
+
+  virtual void connect(void* AWidget) {
+    MWidget = AWidget;
+  }
+
+  //----------
 
   virtual sat_param_t normalize(sat_param_t AValue) {
     sat_param_t range = MInfo.max_value - MInfo.min_value;

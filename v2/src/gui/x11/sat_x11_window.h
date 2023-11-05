@@ -332,6 +332,7 @@ public: // SAT_BaseWindow
   //----------
 
   void close() override {
+    on_window_close(); // check if not called multiple times!
     if (MIsEmbedded) stopEventThread();
     xcb_unmap_window(MConnection,MWindow);
     xcb_flush(MConnection);

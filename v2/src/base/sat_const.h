@@ -103,11 +103,11 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_BUTTON_BACKWARD                     8
 #define SAT_BUTTON_FORWARD                      9
 
-// #define SAT_CORNER_NONE                         0
-// #define SAT_CORNER_UPPER_LEFT                   0x01
-// #define SAT_CORNER_UPPER_RIGHT                  0x02
-// #define SAT_CORNER_LOWER_RIGHT                  0x04
-// #define SAT_CORNER_LOWER_LEFT                   0x08
+#define SAT_CORNER_NONE                         0
+#define SAT_CORNER_UPPER_LEFT                   0x01
+#define SAT_CORNER_UPPER_RIGHT                  0x02
+#define SAT_CORNER_LOWER_RIGHT                  0x04
+#define SAT_CORNER_LOWER_LEFT                   0x08
 
 // #define SAT_CORNER_UPPER                        (SAT_CORNER_UPPER_LEFT  | SAT_CORNER_UPPER_RIGHT)
 // #define SAT_CORNER_LOWER                        (SAT_CORNER_LOWER_LEFT  | SAT_CORNER_LOWER_RIGHT)
