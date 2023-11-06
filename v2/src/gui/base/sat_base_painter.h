@@ -139,8 +139,8 @@ public:
   virtual void        deleteRenderBuffer(void* buffer) {}
   virtual int32_t     getImageFromRenderBuffer(void* buffer) { return -1; }
   virtual void        selectRenderBuffer(void* buffer) {}
-  virtual void        selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) {}
-  virtual void        selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) {}
+  //virtual void        selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) {}
+  //virtual void        selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) {}
 
 };
 

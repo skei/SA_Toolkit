@@ -4,6 +4,7 @@
 
 #include "sat.h"
 #include "gui/sat_widget.h"
+#include "plugin/sat_parameter.h"
 
 //----------------------------------------------------------------------
 //

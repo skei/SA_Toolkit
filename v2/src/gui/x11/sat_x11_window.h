@@ -286,7 +286,7 @@ public:
   }
 
   uint32_t getHeight() override {
-    return MWindowWidth;
+    return MWindowHeight;
   }
 
 //------------------------------
@@ -911,9 +911,9 @@ private:
           //}
         //MIsPainting = true;
 
-        MRenderer->beginRendering(0,0,w,h);
+//        MRenderer->beginRendering(0,0,w,h);
         on_window_paint(x,y,w,h);
-        MRenderer->endRendering();
+//        MRenderer->endRendering();
 
         xcb_flush(MConnection);
         //MIsPainting = false;

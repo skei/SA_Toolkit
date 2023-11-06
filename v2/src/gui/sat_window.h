@@ -323,17 +323,18 @@ private:
 private:
 //------------------------------
 
-  bool checkAndPossiblyResizeBuffer(int32_t AWidth, int32_t AHeight) {
+  bool checkAndPossiblyResizeBuffer(SAT_BasePainter* APainter) {
     uint32_t width2  = SAT_NextPowerOfTwo(getWidth());
     uint32_t height2 = SAT_NextPowerOfTwo(getHeight());
+    SAT_Print("bufferwidth %i bufferheight %i getWidth %i getHeight %i width2 %i height2 %i\n",MBufferWidth,MBufferHeight,getWidth(),getHeight(),width2,height2);
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
       // if size has changed: create new buffer, copy old to new, delete old
-      SAT_BasePainter* painter = getPainter();
-      void* buffer = painter->createRenderBuffer(width2,height2);
+      //SAT_BasePainter* painter = getPainter();
+      void* buffer = APainter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
       // we don't need to copy the buffer if we're redrawing the entire thing anyway, do we?
       //copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-      painter->deleteRenderBuffer(MRenderBuffer);
+      APainter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
       MBufferHeight = height2;
@@ -344,66 +345,72 @@ private:
 
   //----------
   
-  void paintQueuedWidgetsToBuffer() {
-    SAT_BasePainter* painter = getPainter();
-    painter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-    //prepaint(&MPaintContext);
-    painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
-//    painter->setClipRect(SAT_Rect(0,0,MWindowWidth,MWindowHeight));
+  void paintQueuedWidgetsToBuffer(SAT_BasePainter* APainter) {
+
+//    SAT_BasePainter* painter = getPainter();
+//    painter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+//    //prepaint(&MPaintContext);
+//    painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
+
+//    APainter->setClip(0,0,getWidth(),getHeight());
+
     SAT_Widget* widget;
     //int32_t paint_count = MPaintContext.counter;
     while (MPaintWidgets.read(&widget)) {
       //if (widget->isRecursivelyVisible()) {
       //if (widget->isVisible()) {
-        if (widget->getLastPainted() != MPaintContext.counter) { //paint_count) {
-          SAT_Rect cliprect = calcClipRect(widget);
-          // if cliprect visible?
-          painter->pushClip(cliprect);
+        if (widget->getLastPainted() != MPaintContext.counter) {
+//          SAT_Rect cliprect = calcClipRect(widget);
+//          // if cliprect visible?
+//          APainter->pushClip(cliprect);
           widget->on_widget_paint(&MPaintContext);
-          painter->popClip();
-          widget->setLastPainted(MPaintContext.counter); //paint_count);
-          //count += 1;
+//          APainter->popClip();
+          widget->setLastPainted(MPaintContext.counter);
         }
       //}
     }
-    painter->endFrame();
+
+//    painter->endFrame();
+
   }
 
   //----------
   
-  void paintRootWidgetToBuffer() {
-    SAT_BasePainter* painter = getPainter();
-     painter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
-     //prepaint(&MPaintContext);
-     painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
-     painter->setClip(0,0,getWidth(),getHeight());
+  void paintRootWidgetToBuffer(SAT_BasePainter* APainter) {
 
-     // clear paint queue
-     SAT_Widget* widget;
-     while (MPaintWidgets.read(&widget)) {}
+//    SAT_BasePainter* painter = getPainter();
+//    //SAT_BaseRenderer* renderer = getRenderer();
+//    painter->selectRenderBuffer(MRenderBuffer,MBufferWidth,MBufferHeight);
+//    //renderer->setViewport(0,0,MBufferWidth,MBufferHeight);
+//    //prepaint(&MPaintContext);
+//    painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
 
-     //count = 1;
-     if (MRootWidget) {
-       MRootWidget->on_widget_paint(&MPaintContext);
-       MRootWidget->setLastPainted(MPaintContext.counter); //paint_count);
-     }
-     painter->endFrame();
-     //postpaint(&MPaintContext);
+//      APainter->setClip(0,0,getWidth(),getHeight());
+
+      // clear paint queue
+      SAT_Widget* widget;
+      while (MPaintWidgets.read(&widget)) {}
+      //count = 1;
+      if (MRootWidget) {
+        if (MRootWidget->getLastPainted() != MPaintContext.counter) {
+          MRootWidget->on_widget_paint(&MPaintContext);
+          MRootWidget->setLastPainted(MPaintContext.counter);
+        }
+      }
+
+//    painter->endFrame();
+
   }
 
   //----------
-  
-  void copyBufferToScreen(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) {
-    //copyBuffer(nullptr,0,0,getWidth(),getHeight(),MRenderBuffer,AXpos,AYpos,AWidth,AHeight);
-    //void copyBuffer(void* ADst, int32_t ADstXpos, int32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, int32_t ASrcXpos, int32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
-    SAT_BasePainter* painter = getPainter();
-    painter->selectRenderBuffer(nullptr,getWidth(),getHeight());
-    painter->beginFrame(getWidth(),getHeight(),1.0);
-    int32_t image = painter->getImageFromRenderBuffer(MRenderBuffer);
-    painter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
-    painter->fillRect(AXpos,AYpos,AWidth,AHeight);
-    painter->endFrame();
-    //}  
+
+  void copyBufferToScreen(SAT_BasePainter* APainter, int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) {
+//    APainter->selectRenderBuffer(nullptr);
+//    APainter->beginFrame(getWidth(),getHeight(),1.0);
+      int32_t image = APainter->getImageFromRenderBuffer(MRenderBuffer);
+      APainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
+      APainter->fillRect(AXpos,AYpos,AWidth,AHeight);
+//    APainter->endFrame();
   }
 
 //------------------------------
@@ -453,23 +460,48 @@ public: // base window
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     //SAT_Print("AXpos %i AYpos %i AWidth %i AHeight %i counter %i\n",AXpos,AYpos,AWidth,AHeight,MPaintContext.counter);
+
     MIsPainting = true;
 
-    SAT_BasePainter* painter  = getPainter();
-    MPaintContext.painter     = painter;
-    MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
-    MPaintContext.scale       = 1.0;
-    MPaintContext.counter     += 1; // start from 1 (and increase)..
+    SAT_BaseRenderer* renderer  = getRenderer();
 
-    painter->beginPaint(AXpos,AYpos,AWidth,AHeight);
-    if (checkAndPossiblyResizeBuffer(getWidth(),getHeight())) {
-      paintRootWidgetToBuffer();
+    SAT_BasePainter* painter    = getPainter();
+    MPaintContext.painter       = painter;
+    MPaintContext.update_rect   = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
+    MPaintContext.scale         = 1.0;
+    MPaintContext.counter      += 1;
+
+    renderer->beginRendering(0,0,AWidth,AHeight);
+    painter->beginPaint(AXpos,AYpos,getWidth(),getHeight());
+
+    if (checkAndPossiblyResizeBuffer(painter)) {
+      painter->selectRenderBuffer(MRenderBuffer);
+      renderer->setViewport(0,0,MBufferWidth,MBufferHeight);
+      painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
+      painter->setClip(0,0,getWidth(),getHeight());
+      paintRootWidgetToBuffer(painter);
+      painter->endFrame();
     }
+
     else {
-      paintQueuedWidgetsToBuffer();
+      painter->selectRenderBuffer(MRenderBuffer);
+      renderer->setViewport(0,0,MBufferWidth,MBufferHeight);
+      painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
+      painter->setClip(0,0,getWidth(),getHeight());
+      paintQueuedWidgetsToBuffer(painter);
+      painter->endFrame();
     }
-    copyBufferToScreen(AXpos,AYpos,AWidth,AHeight);
+
+    painter->selectRenderBuffer(nullptr);
+    //renderer->setViewport(0,0,MBufferWidth,MBufferHeight);
+    renderer->setViewport(0,0,getWidth(),getHeight());
+    painter->beginFrame(getWidth(),getHeight(),1.0);
+    copyBufferToScreen(painter,AXpos,AYpos,AWidth,AHeight);
+    painter->endFrame();
+
     painter->endPaint();
+    renderer->endRendering();
+
     MIsPainting = false;
   }
   

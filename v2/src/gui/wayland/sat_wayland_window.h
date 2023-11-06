@@ -355,10 +355,10 @@ private:
     uint32_t h = getHeight();
     //SAT_Print("ATime %i w %i h %i\n",ATime,w,h);
 
-    MRenderer->beginRendering(0,0,w,h);
+//    MRenderer->beginRendering(0,0,w,h);
     on_window_paint(0,0,w,h);
     //MRenderer->disableVSync();
-    MRenderer->endRendering();
+//    MRenderer->endRendering();
 
 //    struct wl_callback *callback = wl_surface_frame(MSurface);
 //    wl_callback_add_listener(callback,&sat_wl_callback_listener,this);
