@@ -86,7 +86,7 @@
 //extern void SAT_DPrint(const char*,...) {}
 
 //#include "base/sat_debug.h"
-#include "base/sat_test.h"
+//#include "base/sat_test.h"
 #include "base/sat_global.h"
 
 //static

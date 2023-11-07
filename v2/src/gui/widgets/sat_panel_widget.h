@@ -375,6 +375,7 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
+    //SAT_Print("%s : %i\n",getName(),AContext->counter);
     drawDropShadow(AContext);
     fillBackground(AContext);
     paintChildWidgets(AContext);

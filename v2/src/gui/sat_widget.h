@@ -395,7 +395,7 @@ public:
   //----------
 
   virtual void do_widget_realign(SAT_Widget* AWidget) {
-    if (MParent) MParent->do_widget_realign(AWidget);
+    //if (MParent) MParent->do_widget_realign(AWidget);
   }
 
   //----------

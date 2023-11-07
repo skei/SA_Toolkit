@@ -28,14 +28,11 @@ int main() {
   SAT_Window* window = new SAT_Window(WINDOW_WIDTH,WINDOW_HEIGHT);
   SAT_RootWidget* root = new SAT_RootWidget(0,window);
   window->setRootWidget(root);
-
-    SAT_PanelWidget* panel1 = new SAT_PanelWidget(SAT_Rect(10,10,100,100));
-    root->appendChildWidget(panel1);
-
+  SAT_PanelWidget* panel1 = new SAT_PanelWidget(SAT_Rect(10,10,100,100));
+  root->appendChildWidget(panel1);
   window->open();
   window->eventLoop();
   window->close();
-  //delete root;
   delete window;
   return 0;
 }

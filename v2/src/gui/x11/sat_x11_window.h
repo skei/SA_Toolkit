@@ -902,6 +902,7 @@ private:
         uint16_t y = expose->y;
         uint16_t w = expose->width;
         uint16_t h = expose->height;
+        //SAT_Print("XCB_EXPOSE x %i y %i w %i h %i\n",x,y,w,h);
           //// https://cairographics.org/cookbook/xcbsurface.c/
           //// Avoid extra redraws by checking if this is the last expose event in the sequence
           //while(expose->count != 0) {
