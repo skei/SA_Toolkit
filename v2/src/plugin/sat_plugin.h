@@ -59,6 +59,9 @@ private:
   uint32_t                        MMaxBufferSize        = 0;
   int32_t                         MRenderMode           = CLAP_RENDER_REALTIME;
 
+  uint32_t MEditorWidth   = 256;
+  uint32_t MEditorHeight  = 256;
+
 //------------------------------
 public:
 //------------------------------
@@ -276,7 +279,7 @@ public: // editor
 //------------------------------
 
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener) {
-    return new SAT_Editor(AListener);
+    return new SAT_Editor(AListener,MEditorWidth,MEditorHeight);
     //return nullptr;
   }
 
@@ -709,51 +712,67 @@ protected: // gui
 //------------------------------
 
   bool gui_is_api_supported(const char *api, bool is_floating) override {
-    SAT_Print("api %s is_floating %i\n",api,is_floating);
+    SAT_Print("api %s is_floating %i",api,is_floating);
     #if defined(SAT_GUI_WAYLAND)
-      if ((strcmp(api,CLAP_WINDOW_API_WAYLAND) == 0) && (is_floating)) return true;
+      if ((strcmp(api,CLAP_WINDOW_API_WAYLAND) == 0) && (is_floating)) {
+        SAT_DPrint(" -> true\n");
+        return true;
+      }
     #endif
     #if defined(SAT_GUI_WIN32)
-      if ((strcmp(api,CLAP_WINDOW_API_WIN32) == 0) && (!is_floating)) return true;
+      if ((strcmp(api,CLAP_WINDOW_API_WIN32) == 0) && (!is_floating)) {
+        SAT_DPrint(" -> true\n");
+        return true;
+      }
     #endif
     #if defined(SAT_GUI_X11)
-      if ((strcmp(api,CLAP_WINDOW_API_X11) == 0) && (!is_floating)) return true;
+      if ((strcmp(api,CLAP_WINDOW_API_X11) == 0) && (!is_floating)) {
+        SAT_DPrint(" -> true\n");
+        return true;
+      }
     #endif
+    SAT_DPrint(" -> false\n");
     return false;
   }
 
   //----------
 
   bool gui_get_preferred_api(const char **api, bool *is_floating) override {
-    SAT_Print("\n");
+    SAT_Print("");
     #if defined(SAT_GUI_WAYLAND)
       *api = CLAP_WINDOW_API_WAYLAND;
       *is_floating = true;
+      SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
     #endif
     #if defined(SAT_GUI_WIN32)
       *api = CLAP_WINDOW_API_WIN32;
       *is_floating = false;
+      SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
     #endif
     #if defined(SAT_GUI_X11)
       *api = CLAP_WINDOW_API_X11;
       *is_floating = false;
+      SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
     #endif
+    SAT_DPrint(" -> false\n");
     return false;
   }
 
   //----------
 
   bool gui_create(const char *api, bool is_floating) override {
-    SAT_Print("api %s is_floating %i\n",api,is_floating);
+    SAT_Print("api %s is_floating %i",api,is_floating);
     MEditor = createEditor(this);
-    //SAT_Print("> MEditor %p\n",MEditor);
     if (MEditor) {
       //setupEditor(MEditor);
+      SAT_DPrint(" -> true\n");
       return true;
     }
+    SAT_DPrint(" -> false\n");
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
@@ -766,86 +785,108 @@ protected: // gui
       deleteEditor(MEditor);
       MEditor = nullptr;
     }
+    else { SAT_Print("MEditor = null\n"); }
   }
 
   //----------
 
   bool gui_set_scale(double scale) override {
+    SAT_Print("scale %f\n",scale);
     if (MEditor) return MEditor->set_scale(scale);
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
-    if (MEditor) return MEditor->get_size(width,height);
-    return false;
+    bool result = MEditor->get_size(width,height);
+    SAT_Print("(*width %i *height %i)\n",*width,*height);
+    return result;
   }
 
   //----------
 
   bool gui_can_resize() override {
+    SAT_Print("\n");
     if (MEditor) return MEditor->can_resize();
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_get_resize_hints(clap_gui_resize_hints_t *hints) override {
+    SAT_Print("\n");
     if (MEditor) return MEditor->get_resize_hints(hints);
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_adjust_size(uint32_t *width, uint32_t *height) override {
+    SAT_Print("(*width %i *height %i)\n",*width,*height);
     if (MEditor) return MEditor->adjust_size(width,height);
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_set_size(uint32_t width, uint32_t height) override {
+    SAT_Print("width %i height %i\n",width,height);
     if (MEditor) return MEditor->set_size(width,height);
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_set_parent(const clap_window_t *window) override {
+    SAT_Print("\n");
     if (MEditor) {
       bool result = MEditor->set_parent(window);
       SAT_Window* window = MEditor->getWindow();
       if (window) setupEditorWindow(MEditor,window);
       return result;
     }
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_set_transient(const clap_window_t *window) override {
+    SAT_Print("\n");
     if (MEditor) return MEditor->set_transient(window);
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   void gui_suggest_title(const char *title) override {
+    SAT_Print("title %s\n",title);
     if (MEditor) MEditor->suggest_title(title);
+    else { SAT_Print("MEditor = null\n"); }
   }
 
   //----------
 
   bool gui_show() override {
+    SAT_Print("\n");
     if (MEditor) return MEditor->show();
+    SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_hide() override {
+    SAT_Print("\n");
     if (MEditor) return MEditor->hide();
+    SAT_Print("MEditor = null\n");
     return false;
   }
 

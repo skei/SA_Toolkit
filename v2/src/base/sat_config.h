@@ -188,6 +188,10 @@
   #define SAT_PLUGIN
 #endif
 
+#ifdef SAT_PLUGIN
+  #define SAT_DEBUG_PRINT_SOCKET
+#endif
+
 //------------------------------
 // gui
 //------------------------------

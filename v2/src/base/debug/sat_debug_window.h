@@ -71,7 +71,7 @@ public:
 public:
 //------------------------------
 
-  void do_timerListener_callback(SAT_Timer* ATimer) override {
+  void on_timerListener_callback(SAT_Timer* ATimer) override {
     //SAT_PRINT;
    
 //    uint32_t num = SAT_GLOBAL.DEBUG.getNumObservers();

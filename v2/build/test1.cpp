@@ -6,9 +6,9 @@
 */
 //----------------------------------------------------------------------
 
-#ifdef SAT_PLUGIN
-  #define SAT_DEBUG_PRINT_SOCKET
-#endif
+//#ifdef SAT_PLUGIN
+//  #define SAT_DEBUG_PRINT_SOCKET
+//#endif
 
 #include "sat.h"
 #include "plugin/sat_plugin.h"
@@ -48,8 +48,9 @@ public:
   }
   
   void on_widget_paint(SAT_PaintContext* AContext) final {
-    //SAT_Print("\n");
+    //SAT_Print("%s\n",getName());
     SAT_BasePainter* painter = AContext->painter;
+    //double scale = AContext->scale;
     SAT_Rect rect = getRect();
     painter->setFillColor(color1);
     painter->fillRect(rect.x,rect.y,rect.w,rect.h);
@@ -60,6 +61,15 @@ public:
     double radiusy = rect.h * 0.4;
     painter->fillEllipse(centerx,centery,radiusx,radiusy);
     paintChildWidgets(AContext);
+
+    // test
+
+    //SAT_Assert(1==0);
+    //SAT_GLOBAL.DEBUG.printCallStack();
+
+    //int* ptr = nullptr;
+    //int i = *ptr;
+    //SAT_Print("%i\n",i);
   }
 
 };
@@ -71,17 +81,17 @@ public:
 //----------------------------------------------------------------------
 
 int main() {
-  SAT_Print("Hello world!\n");
+
+  //SAT_Print("Hello world!\n");
+  //SAT_PRINT;
+  //SAT_DPrint("hello #2\n");
   SAT_LOG("test %i\n",1);
   SAT_RUN_TESTS
-  // SAT_Assert(1==1);
-  // SAT_GLOBAL.DEBUG.printCallStack();
-  // int* ptr = nullptr;
-  // int i = *ptr;
-  // SAT_Print("%i\n",i);
+
+  //-----
+
   SAT_Window* window = new SAT_Window(WINDOW_WIDTH,WINDOW_HEIGHT);
 
-  //myRootWidget* root = new myRootWidget(0,window);
   SAT_RootWidget* root = new SAT_RootWidget(0,window);
   window->setRootWidget(root);
 
@@ -91,7 +101,6 @@ int main() {
   window->open();
   window->eventLoop();
   window->close();
-  //delete root;
   delete window;
   return 0;
 }
@@ -104,8 +113,8 @@ int main() {
 
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/myPlugin",
-  .name         = "myPlugin",
+  .id           = "me/test1",
+  .name         = "test1",
   .vendor       = "me",
   .url          = "website.com",
   .manual_url   = "website.com/manual",
@@ -130,13 +139,13 @@ public:
 
   myPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
-    SAT_Print("hello world!\n");
+    //SAT_Print("hello world!\n");
   }
 
   //----------
 
   virtual ~myPlugin() {
-    SAT_Print("goodbye world!\n");
+    //SAT_Print("goodbye world!\n");
   }
 
 //------------------------------
@@ -144,13 +153,21 @@ public:
 //------------------------------
 
   bool init() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     registerDefaultExtension();
     //appendClapNoteInputPort("input");
     appendStereoAudioInputPort("input");
     appendStereoAudioOutputPort("output");
     appendParameter( new SAT_Parameter("param1",0.5));
     return SAT_Plugin::init();
+  }
+
+  void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) override {
+    //SAT_PRINT;
+    SAT_RootWidget* root = new SAT_RootWidget(SAT_Rect(100,100),AWindow);
+    AWindow->setRootWidget(root);
+    myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
+    root->appendChildWidget(widget);
   }
 
 };
@@ -172,6 +189,8 @@ SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
 #if defined(SAT_TESTS)
   bool build_test1() { return true; }
+  bool build_test2() { return true; }
   SAT_TEST("BUILD: test1",build_test1)
+  SAT_TEST("BUILD: test2 yo, man!",build_test2)
 #endif
 

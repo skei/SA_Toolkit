@@ -136,45 +136,36 @@ public:
 
     // MDisplay = AOwner->on_rendererOwner_getX11Display();
     // //MDisplay = XOpenDisplay(nullptr);
-    SAT_Print("MDisplay: %p\n",MDisplay);
+    //SAT_Print("MDisplay: %p\n",MDisplay);
 
     MFBConfig = findFBConfig(SAT_GLXWindowAttribs);
     MContext = createContext(MFBConfig);
-    SAT_Print("MContext: %p\n",MContext);
+    //SAT_Print("MContext: %p\n",MContext);
 
     //
 
     xcb_drawable_t drawable = AOwner->on_rendererOwner_getDrawable();
-    SAT_Print("drawable: %i\n",drawable);
+    //SAT_Print("drawable: %i\n",drawable);
 
     MDrawable = glXCreateWindow(MDisplay,MFBConfig,drawable,nullptr);
-    SAT_Print("MDrawable: %i\n",(int)MDrawable);
+    //SAT_Print("MDrawable: %i\n",(int)MDrawable);
 
     //
-
-    SAT_PRINT;
 
     //glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
     makeCurrent();
 
-    SAT_PRINT;
-
     const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
     if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
-      SAT_Print("GLX_EXT_swap_control\n");
+      //SAT_Print("GLX_EXT_swap_control\n");
       glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
     }
     if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
-      SAT_Print("GLX_MESA_swap_control\n");
-      //glXSwapIntervalMESA = reinterpret_cast<PFNGLXSWAPINTERVALMESAPROC>(glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA"));
+      //SAT_Print("GLX_MESA_swap_control\n");
       glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
     }
 
-    //
-
     //disableVSync();
-
-    SAT_PRINT;
 
   }
 
@@ -198,7 +189,7 @@ public:
 
   //----------
 
-  bool beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+  bool beginRendering(int32_t AWidth, int32_t AHeight) override {
     makeCurrent();
     setViewport(0,0,AWidth,AHeight);
     //setClip(SAT_DRect(AXpos,AYpos,AWidth,AHeight));
@@ -285,6 +276,7 @@ public:
   //----------
 
   bool swapBuffers() override {
+    //SAT_PRINT;
     glXSwapBuffers(MDisplay,MDrawable);
     return true;
   }
@@ -476,7 +468,7 @@ private: // extensions
   // make context current before calling this
 
   bool loadExtensions() {
-    SAT_Print("loading extensions..\n");
+    //SAT_Print("loading extensions..\n");
     int result = sogl_loadOpenGL();
     if (!result) {
       SAT_Print("sogl_loadOpenGL() failed\n");
@@ -487,7 +479,7 @@ private: // extensions
       }
       return false;
     }
-      SAT_Print("sogl_loadOpenGL() succeeded\n");
+    //SAT_Print("sogl_loadOpenGL() succeeded\n");
     return true;
   }
 

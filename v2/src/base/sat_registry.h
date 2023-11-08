@@ -160,18 +160,16 @@ public: // factories
                                                                                                                                       \
   void SAT_Register(SAT_Registry* ARegistry) {                                                                                        \
     uint32_t index = ARegistry->getNumDescriptors();                                                                                  \
-    SAT_Print("index %i = id %s\n",index,DESC.id);                                                                                    \
+    /*SAT_Print("index %i = id %s\n",index,DESC.id);*/                                                                                \
     ARegistry->registerDescriptor(&DESC);                                                                                             \
   }                                                                                                                                   \
                                                                                                                                       \
   /* ----- */                                                                                                                         \
                                                                                                                                       \
-  /*const clap_plugin_t* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {*/ \
   SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {          \
-    SAT_Print("index %i\n",AIndex);                                                                                                   \
+    /*SAT_Print("index %i\n",AIndex);*/                                                                                               \
     if (AIndex == 0) {                                                                                                                \
       SAT_Plugin* plugin = new PLUG(ADescriptor,AHost); /* deleted in: ... */                                                         \
-      /*return plugin->getClapPlugin();*/                                                                                             \
       return plugin;                                                                                                                  \
     }                                                                                                                                 \
     return nullptr;                                                                                                                   \

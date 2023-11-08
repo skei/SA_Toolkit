@@ -87,15 +87,15 @@ public:
 
     //MDisplay = ARenderer->getX11Display();
     MDisplay = XOpenDisplay(nullptr);
-    SAT_Print("MDisplay: %p\n",MDisplay);
+    //SAT_Print("MDisplay: %p\n",MDisplay);
 
     //MConnection = xcb_connect(ADisplayName,&MDefaultScreen);
     MConnection = XGetXCBConnection(MDisplay);
-    SAT_Print("MConnection: %p\n",MConnection);
+    //SAT_Print("MConnection: %p\n",MConnection);
 
     XSetEventQueueOwner(MDisplay,XCBOwnsEventQueue);
     MDefaultScreen = DefaultScreen(MDisplay); // ???
-    SAT_Print("MDefaultScreen: %i\n",MDefaultScreen);
+    //SAT_Print("MDefaultScreen: %i\n",MDefaultScreen);
 
     // screen
 
@@ -223,10 +223,11 @@ public:
 
   virtual ~SAT_X11Window() {
 
-    // delete MPainter;
-    // delete MRenderer;
-
     if (MIsMapped) close();
+
+    delete MPainter;
+    delete MRenderer;
+
     // keyboard
     xcb_key_symbols_free(MKeySyms);
     // mouse
@@ -880,19 +881,19 @@ private:
         int16_t y  = configure_notify->y;
         uint16_t w = configure_notify->width;
         uint16_t h = configure_notify->height;
-        //SAT_Print("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i\n",x,y,w,h);
-        if ((x != MWindowXpos) || (y != MWindowYpos)) {
-          //SAT_Print("new MWindowXpos/Ypos %i,%i\n",MWindowXpos,MWindowYpos);
+
+        //SAT_Print("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i (MWindowWidth/Height %i,%i)\n",x,y,w,h,MWindowWidth,MWindowHeight);
+
+        //if ((x != MWindowXpos) || (y != MWindowYpos)) {
           on_window_move(x,y);
           MWindowXpos = x;
           MWindowYpos = y;
-        }
-        if ((w != MWindowWidth) || (h != MWindowHeight)) {
-          //SAT_Print("new MWindowWidth/Height %i,%i\n",MWindowWidth,MWindowHeight);
+        //}
+        //if ((w != MWindowWidth) || (h != MWindowHeight)) {
           on_window_resize(w,h);
           MWindowWidth  = w;
           MWindowHeight = h;
-        }
+        //}
         break;
       }
 
@@ -1016,13 +1017,13 @@ private:
         xcb_atom_t type = client_message->type;
         uint32_t data = client_message->data.data32[0];
         if (data == SAT_WINDOW_THREAD_KILL) {
-          SAT_Print("SAT_WINDOW_THREAD_KILL\n");
+          //SAT_Print("SAT_WINDOW_THREAD_KILL\n");
           ::free(AEvent);
           return false;
         }
         if (type == MWMProtocolsAtom) { // why was this commented out?
           if (data == MWMDeleteWindowAtom) {
-            SAT_Print("MWMDeleteWindowAtom\n");
+            //SAT_Print("MWMDeleteWindowAtom\n");
             ::free(AEvent);
             return false;
           }

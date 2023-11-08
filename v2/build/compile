@@ -262,8 +262,9 @@ esac
 
 if $DEBUG
   then
-    #echo "debug mode"
     FLAGS+=" -DSAT_DEBUG"
+    FLAGS+=" -g"
+    FLAGS+=" -Wl,-Bsymbolic"
   else
     FLAGS+=" -DNDEBUG"
     FLAGS+=" -O3"

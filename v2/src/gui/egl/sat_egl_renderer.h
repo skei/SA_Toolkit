@@ -145,7 +145,7 @@ public:
 
   //----------
 
-  bool beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+  bool beginRendering(int32_t AWidth, int32_t AHeight) override {
     makeCurrent();
     setViewport(0,0,AWidth,AHeight);
     return true;

@@ -29,16 +29,16 @@ public:
   virtual uint32_t    getType()     { return 0; }
   virtual const char* getTypeName() { return ""; }
 
-  virtual bool beginRendering() { return false; }
-  virtual bool beginRendering(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) { return false; }
-  virtual bool endRendering() { return false; }
+  virtual bool        beginRendering() { return false; }
+  virtual bool        beginRendering(int32_t AWidth, int32_t AHeight) { return false; }
+  virtual bool        endRendering() { return false; }
 
-  virtual bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) { return false; }
-  virtual bool makeCurrent() { return false; }
-  virtual bool resetCurrent() { return false; }
-  virtual bool swapBuffers() { return false; }
-  virtual bool disableVSync() { return false; }
-  virtual bool enableVSync() { return false; }
+  virtual bool        setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) { return false; }
+  virtual bool        makeCurrent() { return false; }
+  virtual bool        resetCurrent() { return false; }
+  virtual bool        swapBuffers() { return false; }
+  virtual bool        disableVSync() { return false; }
+  virtual bool        enableVSync() { return false; }
 
 };
 

@@ -28,7 +28,7 @@ public:
   virtual uint32_t    getType()     { return 0; }
   virtual const char* getTypeName() { return ""; }
 
-  virtual void        beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
+  virtual void        beginPaint(int32_t AWidth, int32_t AHeight) {}
   virtual void        endPaint() {}
 
 //virtual int32_t     getDefaultFont() { return 0; }
