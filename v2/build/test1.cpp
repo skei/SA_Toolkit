@@ -34,8 +34,8 @@ class myWidget
 
 private:
 
-  SAT_Color color1 = SAT_Yellow;
-  SAT_Color color2 = SAT_Red;
+  SAT_Color MColor1 = SAT_Yellow;
+  SAT_Color MColor2 = SAT_Red;
 
 public:
 
@@ -45,6 +45,7 @@ public:
   
   myWidget(SAT_Rect ARect)
   : SAT_Widget(ARect) {
+    setName("myWidget");
   }
   
   void on_widget_paint(SAT_PaintContext* AContext) final {
@@ -52,9 +53,9 @@ public:
     SAT_BasePainter* painter = AContext->painter;
     //double scale = AContext->scale;
     SAT_Rect rect = getRect();
-    painter->setFillColor(color1);
+    painter->setFillColor(MColor1);
     painter->fillRect(rect.x,rect.y,rect.w,rect.h);
-    painter->setFillColor(color2);
+    painter->setFillColor(MColor2);
     double centerx = rect.x + (rect.w * 0.5);
     double centery = rect.y + (rect.h * 0.5);
     double radiusx = rect.w * 0.4;
@@ -71,6 +72,15 @@ public:
     //int i = *ptr;
     //SAT_Print("%i\n",i);
   }
+
+  void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) final {
+    SAT_PRINT;
+    SAT_Color temp = MColor1;
+    MColor1 = MColor2;
+    MColor2 = temp;
+    do_widget_redraw(this);
+  }
+
 
 };
 

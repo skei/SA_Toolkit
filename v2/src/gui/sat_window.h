@@ -82,6 +82,12 @@ private:
   int32_t             MMousePreviousXpos    = 0;
   int32_t             MMousePreviousYpos    = 0;
   int32_t             MMouseCurrentCursor   = 0;
+  int32_t             MMouseClickedXpos     = 0;
+  int32_t             MMouseClickedYpos     = 0;
+  uint32_t            MMouseClickedButton   = SAT_BUTTON_NONE;
+  uint32_t            MMouseClickedState    = SAT_STATE_NONE;
+  uint32_t            MMouseClickedTime     = 0;
+
   bool                MMouseIsLocked        = false;
   int32_t             MLockedCurrentX       = 0;
   int32_t             MLockedCurrentY       = 0;
@@ -99,8 +105,10 @@ private:
 public:
 //------------------------------
 
-  SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener=nullptr, intptr_t AParent=0)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+
+    MListener = AListener;
 
     SAT_Assert(AWidth > 0);
     SAT_Assert(AHeight > 0);
@@ -136,8 +144,6 @@ public:
   //----------
 
   virtual ~SAT_Window() {
-    //delete MPainter;
-    //delete MRenderer;
 
     if (MTimer.isRunning()) MTimer.stop();
     if (MRootWidget) {
@@ -186,17 +192,23 @@ public:
 
   //----------
 
-  virtual void setListener(SAT_WindowListener* AListener) {
-    MListener = AListener;
-  }
+  //virtual void setListener(SAT_WindowListener* AListener) {
+  //  MListener = AListener;
+  //}
 
   //----------
+
+  // called from:
+  // on_window_open()
 
   virtual void startTimer(uint32_t AMSInterval, bool AOneShot=false) {
     MTimer.start(AMSInterval,AOneShot);
   }
 
   //----------
+
+  // called from:
+  // on_window_close  
 
   virtual void stopTimer() {
     MTimer.stop();
@@ -351,35 +363,6 @@ private:
 private: // buffer
 //------------------------------
 
-  // virtual void createBuffer(uint32_t AWidth, uint32_t AHeight) {
-  //   SAT_BasePainter* painter = getPainter();
-  //   SAT_Assert(painter);
-  //   MRenderBuffer = painter->createRenderBuffer(AWidth,AHeight);
-  //   SAT_Assert(MRenderBuffer);
-  //   MBufferWidth = AWidth;
-  //   MBufferHeight = AHeight;
-  // }
-
-  // virtual void deleteBuffer() {
-  //   SAT_BasePainter* painter = getPainter();
-  //   SAT_Assert(painter);
-  //   painter->deleteRenderBuffer(MRenderBuffer);
-  //   MRenderBuffer = nullptr;
-  // }
-
-  // virtual void copyBuffer(void* ADst, int32_t ADstXpos, int32_t ADstYpos, uint32_t ADstWidth, uint32_t ADstHeight, void* ASrc, int32_t ASrcXpos, int32_t ASrcYpos, uint32_t ASrcWidth, uint32_t ASrcHeight) {
-  //   SAT_BasePainter* painter = getPainter();
-  //   SAT_Assert(painter);
-  //   painter->selectRenderBuffer(ADst,ADstWidth,ADstHeight);
-  //   painter->beginFrame(ADstWidth,ADstHeight);
-  //   int32_t image = painter->getImageFromRenderBuffer(ASrc);
-  //   painter->setFillImage(image, ADstXpos,ADstYpos, 1,1, 1.0, 0.0);
-  //   painter->fillRect(ASrcXpos,ASrcYpos,ASrcWidth,ASrcHeight);
-  //   painter->endFrame();
-  // }  
-
-  //------------------------------
-
   bool checkAndPossiblyResizeBuffer(SAT_BasePainter* APainter) {
     uint32_t width2  = SAT_NextPowerOfTwo(getWidth());
     uint32_t height2 = SAT_NextPowerOfTwo(getHeight());
@@ -431,7 +414,7 @@ private: // buffer
       //count = 1;
       if (MRootWidget) {
         if (MRootWidget->getLastPainted() != MPaintContext.counter) {
-//          SAT_Print("root widget\n");
+          //SAT_Print("root widget\n");
           MRootWidget->on_widget_paint(&MPaintContext);
           MRootWidget->setLastPainted(MPaintContext.counter);
         }
@@ -462,7 +445,6 @@ public: // base window
       //MDirtyGuiWidgets.write(MRootWidget);
       //markWidgetDirtyFromGui(MRootWidget);
       markRootWidgetDirty();
-
     }
 
   }
@@ -502,9 +484,9 @@ public: // base window
     SAT_Print("AXpos %i AYpos %i AWidth %i AHeight %i counter %i MRenderBuffer %p (%i,%i)\n",AXpos,AYpos,AWidth,AHeight,MPaintContext.counter,MRenderBuffer,MBufferWidth,MBufferHeight);
 
     SAT_BaseRenderer* renderer  = getRenderer();
-    SAT_Assert(renderer);
-
     SAT_BasePainter* painter    = getPainter();
+
+    SAT_Assert(renderer);
     SAT_Assert(painter);
 
     MPaintContext.painter     = painter;
@@ -519,21 +501,23 @@ public: // base window
     renderer->beginRendering(window_width,window_height);
     painter->beginPaint(window_width,window_height);
 
-//#if 0
+    // draw paint queue to buffer
 
     painter->selectRenderBuffer(MRenderBuffer);
     renderer->setViewport(0,0,MBufferWidth,MBufferHeight);
     painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
     painter->setClip(0,0,window_width,window_height);
 
-    //if (checkAndPossiblyResizeBuffer(painter)) {
-    //  paintRootWidgetToBuffer(painter);
-    //}
-    //else {
+    if (checkAndPossiblyResizeBuffer(painter)) {
+      paintRootWidgetToBuffer(painter);
+    }
+    else {
       paintQueuedWidgetsToBuffer(painter);
-    //}
-    
+    }
+
     painter->endFrame();
+
+    // copy buffer to screen
 
     painter->selectRenderBuffer(nullptr);
     renderer->setViewport(0,0,window_width,window_height);
@@ -542,15 +526,7 @@ public: // base window
     copyBufferToScreen(painter,AXpos,AYpos,AWidth,AHeight);
     painter->endFrame();
 
-//#else // !0
-
-    // renderer->setViewport(0,0,window_width,window_height);
-    // painter->beginFrame(window_width,window_height,1.0);
-    // painter->setFillColor(SAT_Red);
-    // painter->fillRect(0,0,100,100);
-    // painter->endFrame();
-
-//#endif // 0
+    //
 
     painter->endPaint();
     renderer->endRendering();
@@ -560,40 +536,101 @@ public: // base window
   
   //----------
 
-  void on_window_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
+  void on_window_keyPress(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
     //SAT_Print("\n");
+    if (MKeyCaptureWidget) {
+      SAT_Print("%s\n",MKeyCaptureWidget->getName());
+      MKeyCaptureWidget->on_widget_keyPress(AChar,AKeySym,AState,ATime);
+    }
   }
   
   //----------
 
-  void on_window_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
+  void on_window_keyRelease(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
     //SAT_Print("\n");
+    if (MKeyCaptureWidget) {
+      SAT_Print("%s\n",MKeyCaptureWidget->getName());
+      MKeyCaptureWidget->on_widget_keyRelease(AChar,AKeySym,AState,ATime);
+    }
   }
   
   //----------
 
-  void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    //SAT_Print("\n");
+  /*
+  */
+
+  void on_window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (MHoverWidget) {
+      if (!MMouseCaptureWidget) {
+        // clicked first button
+        MMouseCaptureWidget  = MHoverWidget;
+        MMouseClickedXpos     = AXpos;
+        MMouseClickedYpos     = AYpos;
+        MMouseClickedButton   = AButton;
+        MMouseClickedState    = AState;
+        MMouseClickedTime     = ATime;
+        MHoverWidget->on_widget_mouseClick(AXpos,AYpos,AButton,AState,ATime);
+      }
+      //else {} // clicked another button
+    }
+    // else {
+    //   // not hovering over a widget..      
+    //   if (MModalWidget) {
+    //     if ((AButton == SAT_BUTTON_LEFT) || (AButton == SAT_BUTTON_RIGHT)) {
+    //       //SAT_Print("nope.. closeing modal\n");
+    //       //MModalWidget->close();
+    //       MModalWidget->do_widgetListener_close(MModalWidget);
+    //     }
+    //   }
+    // }
   }
   
   //----------
 
-  void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    //SAT_Print("\n");
+  void on_window_mouseRelease(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (MMouseCaptureWidget) {
+      if (AButton == MMouseClickedButton) {
+        // released first button
+        MMouseCaptureWidget->on_widget_mouseRelease(AXpos,AYpos,AButton,AState,ATime);
+        MMouseCaptureWidget = nullptr;
+        //updateHoverWidget(AXpos,AYpos);
+      }
+      //else {} // released later button
+    }
+    //else {} // we should never end up here?
   }
   
   //----------
 
-  void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
-    //SAT_Print("\n");
+  void on_window_mouseMove(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     MMouseCurrentXpos = AXpos;
     MMouseCurrentYpos = AYpos;
-    updateHoverWidget(AXpos,AYpos);
+    int32_t x = AXpos;
+    int32_t y = AYpos;
+    if (MMouseIsLocked) {
+      updateLockedMouse(AXpos,AYpos);
+      x = MLockedCurrentX;
+      y = MLockedCurrentY;
+    }
+    if (MModalWidget) {
+      updateHoverWidget(AXpos,AYpos);
+      MModalWidget->on_widget_mouseMove(x,y,AState,ATime);
+    }
+    else if (MMouseCaptureWidget) {
+      //updateHoverWidget(AXpos,AYpos);
+      MMouseCaptureWidget->on_widget_mouseMove(x,y,AState,ATime);
+    }
+    else {
+      updateHoverWidget(AXpos,AYpos);
+      if (MHoverWidget) MHoverWidget->on_widget_mouseMove(x,y,AState,ATime);
+    }
+    MMousePreviousXpos = AXpos;
+    MMousePreviousYpos = AYpos;
   }
   
   //----------
 
-  void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  void on_window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     //SAT_Print("\n");
     //if (MRootWidget) {
     //  MRootWidget->on_widget_enter(nullptr,AXpos,AYpos);
@@ -604,7 +641,7 @@ public: // base window
   
   //----------
 
-  void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  void on_window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     //SAT_Print("\n");
     if (MHoverWidget) {
       MHoverWidget->on_widget_leave(nullptr,AXpos,AYpos);
@@ -617,7 +654,7 @@ public: // base window
   
   //----------
 
-  void on_window_client_message(uint32_t AData) override {
+  void on_window_clientMessage(uint32_t AData) override {
     //SAT_Print("AData %i\n",AData);
   }
 
@@ -634,26 +671,28 @@ public: // widget listener
 //------------------------------
 
   void on_widgetListener_update(SAT_Widget* AWidget) override {
-    //SAT_Print("\n");
+    SAT_Print("%s\n",AWidget->getName());
     //if (MListener) MListener->on_windowListener_update(AWidget);
   }
 
   //----------
 
   void on_widgetListener_redraw(SAT_Widget* AWidget) override {
-    //SAT_Print("\n");
+    SAT_Print("%s\n",AWidget->getName());
     markWidgetDirtyFromGui(AWidget);
   }
 
   //----------
 
   void on_widgetListener_realign(SAT_Widget* AWidget) override {
+    SAT_Print("%s\n",AWidget->getName());
     //SAT_Print("\n");
   }
 
   //----------
 
-  void on_widgetListener_setCursor(SAT_Widget* ASender, int32_t ACursor) override {
+  void on_widgetListener_setCursor(SAT_Widget* AWidget, int32_t ACursor) override {
+    SAT_Print("%s\n",AWidget->getName());
     switch(ACursor) {
       case SAT_CURSOR_LOCK:
         lockMouseCursor();
@@ -674,24 +713,22 @@ public: // widget listener
           MMouseCurrentCursor = ACursor;
         }
     }
-  }  
+  }
 
-//------------------------------
-public: // window listener
-//------------------------------
+  void on_widgetListener_setHint(SAT_Widget* AWidget, const char* AHint) override {
+    if (AHint[0]) {
+      SAT_Print("hint: %s\n",AHint);
+    }
+  }
 
-  //void on_windowListener_update(SAT_Widget* AWidget) {
-  //}
+  void on_widgetListener_setModal(SAT_Widget* AWidget) override {
+    MModalWidget = AWidget;
+  }
 
-  //----------
+  void on_widgetListener_captureKeys(SAT_Widget* AWidget) override {
+    MKeyCaptureWidget = AWidget;
+  }
 
-  //void on_windowListener_resize(SAT_BaseWindow* AWindow) {
-  //}
-
-  //----------
-
-  //void on_windowListener_timer(SAT_BaseWindow* AWindow, double AElapsed) override {
-  //}
 
 //------------------------------
 public: // timer listener
@@ -700,20 +737,22 @@ public: // timer listener
   void on_timerListener_callback(SAT_Timer* ATimer) override {
     //SAT_Print("\n");
     if (!ATimer->isRunning()) return;
+
     double now = SAT_GetTime();
     double elapsed = now - MPrevTime;
     MPrevTime = now;
-    //on_window_timer(ATimer,elapsed);
-    // flush param/mod fromHostToGui
     if (MListener) MListener->on_windowListener_timer(this,elapsed);
-    //for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(0,AElapsed);
-    //MTweens.process(elapsed,MScale);
 
     // don't add new widgets to paintqueue, if we're still painting the previous batch
+    // timer runs in separate thread than gui/painting
     if (MIsPainting) return;
+
+    // we draw everything in the paint queue
+    // to keep the buffer always updated..
 
     SAT_Rect rect = SAT_Rect(0,0,0,0);
     SAT_Widget* widget;
+
     while (MDirtyHostWidgets.read(&widget)) {
       //SAT_Print("dirty from host: %s\n",widget->getName());
       MPaintWidgets.write(widget);
@@ -724,6 +763,11 @@ public: // timer listener
       MPaintWidgets.write(widget);
       rect.combine(widget->getRect());
     }
+
+    // if any widgets were drawn, we invalidate the area
+    // later, we will receive EXPOSE/WM_PAINT event (in the gui-thread)
+    // where we do the painting, and copy update-rect to screen
+
     if (rect.isNotEmpty()) {
       //SAT_Print("invalidating %.f,%.f - %.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
       invalidate(rect.x,rect.y,rect.w,rect.h);

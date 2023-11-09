@@ -718,14 +718,12 @@ protected: // gui
         SAT_DPrint(" -> true\n");
         return true;
       }
-    #endif
-    #if defined(SAT_GUI_WIN32)
+    #elif defined(SAT_GUI_WIN32)
       if ((strcmp(api,CLAP_WINDOW_API_WIN32) == 0) && (!is_floating)) {
         SAT_DPrint(" -> true\n");
         return true;
       }
-    #endif
-    #if defined(SAT_GUI_X11)
+    #elif defined(SAT_GUI_X11)
       if ((strcmp(api,CLAP_WINDOW_API_X11) == 0) && (!is_floating)) {
         SAT_DPrint(" -> true\n");
         return true;
@@ -744,14 +742,12 @@ protected: // gui
       *is_floating = true;
       SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
-    #endif
-    #if defined(SAT_GUI_WIN32)
+    #elif defined(SAT_GUI_WIN32)
       *api = CLAP_WINDOW_API_WIN32;
       *is_floating = false;
       SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
-    #endif
-    #if defined(SAT_GUI_X11)
+    #elif defined(SAT_GUI_X11)
       *api = CLAP_WINDOW_API_X11;
       *is_floating = false;
       SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);

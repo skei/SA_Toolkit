@@ -5,6 +5,8 @@
 #include "sat.h"
 #include "gui/base/sat_painter_owner.h"
 
+typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_RectStack;
+
 //----------------------------------------------------------------------
 
 class SAT_BasePainter {
@@ -31,8 +33,12 @@ public:
   virtual void        beginPaint(int32_t AWidth, int32_t AHeight) {}
   virtual void        endPaint() {}
 
-//virtual int32_t     getDefaultFont() { return 0; }
-//virtual int32_t     getHeaderFont() { return 0; }
+  virtual void setDefaultFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) {}
+  virtual void setHeaderFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) {}
+
+  virtual int32_t     getDefaultFont() { return 0; }
+  virtual int32_t     getHeaderFont() { return 0; }
+  
 //virtual void*       getRenderBuffer() { return nullptr; }
 
 //------------------------------
@@ -48,9 +54,6 @@ public:
   virtual void        resetClip() {}
   virtual double      getTextBounds(const char* AText, double* ABounds) { return 0.0; }
 
-  virtual void pushClip(SAT_Rect ARect) {}
-  virtual void popClip() {}
-  
   virtual void        setDrawColor(SAT_Color color) {}
   virtual void        setFillColor(SAT_Color color) {}
   virtual void        setFillGradient(double AX1, double AY1, double AX2, double AY2, SAT_Color AColor1, SAT_Color AColor2) {}
@@ -141,6 +144,19 @@ public:
   virtual void        selectRenderBuffer(void* buffer) {}
   //virtual void        selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) {}
   //virtual void        selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) {}
+
+  // painter
+
+  virtual void            pushClip(SAT_Rect ARect) {}
+  virtual void            pushOverlappingClip(SAT_Rect ARect) {}
+  virtual SAT_Rect        popClip() { return SAT_Rect(0,0,0,0); }
+  virtual void            resetClipStack() {}
+  virtual void            setClipRect(SAT_Rect ARect)  {}
+  virtual SAT_Rect        getClipRect() { return SAT_Rect(0,0,0,0); }
+  virtual SAT_RectStack*  getClipStack() { return nullptr; }
+
+  virtual SAT_Point       getTextPos(SAT_Rect ARect, const char* AText, uint32_t AAlignment) { return SAT_Point(0,0); }
+  virtual void            drawTextBox(SAT_Rect ARect, const char* AText, uint32_t AAlignment)  {}
 
 };
 

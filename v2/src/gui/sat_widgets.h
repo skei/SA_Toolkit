@@ -10,7 +10,6 @@
 #include "gui/widgets/sat_root_widget.h"
 #include "gui/widgets/sat_sizer_widget.h"
 #include "gui/widgets/sat_symbol_widget.h"
-#include "gui/widgets/sat_text_widget.h"
 
 #include "gui/widgets/container/sat_group_box_widget.h"
 #include "gui/widgets/container/sat_pages_widget.h"
@@ -28,7 +27,6 @@
 #include "gui/widgets/value/sat_drag_value_widget.h"
 #include "gui/widgets/value/sat_knob_widget.h"
 #include "gui/widgets/value/sat_slider_widget.h"
-#include "gui/widgets/value/sat_value_widget.h"
 
 
 

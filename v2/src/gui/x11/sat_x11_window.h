@@ -68,8 +68,8 @@ private:
 //protected:
 //------------------------------
 
-   int32_t                    MWindowXpos                   = 0;
-   int32_t                    MWindowYpos                   = 0;
+  int32_t                     MWindowXpos                   = 0;
+  int32_t                     MWindowYpos                   = 0;
   uint32_t                    MWindowWidth                  = 0;
   uint32_t                    MWindowHeight                 = 0;
 
@@ -931,7 +931,7 @@ private:
         uint32_t ts = key_press->time;
         uint32_t ks = remapKey(k,s);
         s = remapState(s);
-        on_window_key_press(k,ks,s,ts);
+        on_window_keyPress(k,ks,s,ts);
        break;
       }
 
@@ -943,7 +943,7 @@ private:
         uint32_t ts = key_release->time;
         uint32_t ks = remapKey(k,s);
         s = remapState(s);
-        on_window_key_release(k,ks,s,ts);
+        on_window_keyRelease(k,ks,s,ts);
         break;
       }
 
@@ -957,7 +957,7 @@ private:
         uint32_t ts = button_press->time;
         b = remapButton(b,s);
         s = remapState(s);
-        on_window_mouse_click(x,y,b,s,ts);
+        on_window_mouseClick(x,y,b,s,ts);
         break;
       }
 
@@ -971,7 +971,7 @@ private:
         uint32_t ts = button_release->time;
         b = remapButton(b,s);
         s = remapState(s);
-        on_window_mouse_release(x,y,b,s,ts);
+        on_window_mouseRelease(x,y,b,s,ts);
         break;
       }
 
@@ -984,7 +984,7 @@ private:
         int32_t   y = motion_notify->event_y;
         uint32_t ts = motion_notify->time;
         s = remapState(s);
-        on_window_mouse_move(x,y,s,ts);
+        on_window_mouseMove(x,y,s,ts);
         break;
       }
 
@@ -996,7 +996,7 @@ private:
         int32_t   x = enter_notify->event_x;
         int32_t   y = enter_notify->event_y;
         uint32_t ts = enter_notify->time;
-        on_window_mouse_enter(x,y,ts);
+        on_window_mouseEnter(x,y,ts);
         break;
       }
 
@@ -1008,7 +1008,7 @@ private:
         int32_t   x = leave_notify->event_x;
         int32_t   y = leave_notify->event_y;
         uint32_t ts = leave_notify->time;
-        on_window_mouse_leave(x,y,ts);
+        on_window_mouseLeave(x,y,ts);
         break;
       }
 
@@ -1028,7 +1028,7 @@ private:
             return false;
           }
         }
-        on_window_client_message(data);
+        on_window_clientMessage(data);
         break;
       } // client message
 

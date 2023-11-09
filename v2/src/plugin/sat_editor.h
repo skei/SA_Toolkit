@@ -43,14 +43,14 @@ public:
     MListener = AListener;
 
     #if defined (SAT_GUI_WAYLAND)
-      MWindow = new SAT_Window(AWidth,AHeight,AParent);
+      MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
     #elif defined (SAT_GUI_WIN32)
-      MWindow = new SAT_Window(AWidth,AHeight,AParent);
+      MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
     #elif defined (SAT_GUI_X11)
-      MWindow = new SAT_Window(AWidth,AHeight,AParent);
+      MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
     #endif
 
-    MWindow->setListener(this);
+    //MWindow->setListener(this);
 
   }
 
@@ -73,6 +73,16 @@ public:
 
   virtual bool isOpen() {
     return MIsOpen;
+  }
+
+//------------------------------
+public: // window listener
+//------------------------------
+
+  //void on_windowListener_update(SAT_Widget* AWidget) override {}
+  //void on_windowListener_resize(SAT_BaseWindow* AWindow, int32_t AWidth, int32_t AHeight) override {}
+
+  void on_windowListener_timer(SAT_BaseWindow* AWindow, double AElapsed) override {
   }
 
 //------------------------------
@@ -132,9 +142,11 @@ public:
   //----------
 
   /*
-    we receive no on_window_resize events if window is embedded
-    window->setSize will call xcb_configure_window (x11),
-    which will result in an CONFIGURE_NOTIFY event (???)
+    we don't receive EXPOSE/WM_PAINT events if window is embedded
+    (double check if this is actually/still true) -> yes..
+    calling window->setSize will call xcb_configure_window (x11),
+    which will result in an NOTIFY event (???)
+
   */
 
   virtual bool set_size(uint32_t width, uint32_t height) {
@@ -142,12 +154,8 @@ public:
     MWidth = width;
     MHeight = height;
     if (MWindow) {
-
       MWindow->setSize(width,height);
-
-      // if not, we call it manually..
       //if (MIsOpen) { MWindow->on_window_resize(width,height); }
-
     }
     return true;
   }
@@ -161,27 +169,19 @@ public:
   virtual bool set_parent(const clap_window_t *window) {
     //SAT_Print("\n");
     MParent = window;
-    //if (MWindow) {
-      #if defined (SAT_GUI_WAYLAND)
-        MWindow->setParent((intptr_t)MParent->ptr);
-      #elif defined (SAT_GUI_WIN32)
-        MWindow->setParent(MParent->win32);
-      #elif defined (SAT_GUI_X11)
-        SAT_PRINT;
-        MWindow->setParent(MParent->x11);
-      #endif
-    //}
-    //else {
-    //  #if defined (SAT_GUI_WAYLAND)
-    //    MWindow = new SAT_Window(MWidth,MHeight,(intptr_t)MParent->ptr);
-    //  #elif defined (SAT_GUI_WIN32)
-    //    MWindow = new SAT_Window(MWidth,MHeight,MParent->win32);
-    //  #elif defined (SAT_GUI_X11)
-    //    MWindow = new SAT_Window(MWidth,MHeight,MParent->x11);
-    //  #endif
-    //  MWindow->setListener(this);
-    //}
-    return true;
+    #if defined (SAT_GUI_WAYLAND)
+      MWindow->setParent((intptr_t)MParent->ptr);
+      return true;
+    #elif defined (SAT_GUI_WIN32)
+      MWindow->setParent(MParent->win32);
+      return true;
+    #elif defined (SAT_GUI_X11)
+      SAT_PRINT;
+      MWindow->setParent(MParent->x11);
+      return true;
+    #else
+      return false;
+    #endif
   }
 
   //----------
@@ -205,9 +205,7 @@ public:
   virtual bool show() {
     //SAT_Print("\n");
      if (MWindow && !MIsOpen) {
-
-//      MWindow->markRootWidgetDirty();
-
+      // MWindow->markRootWidgetDirty();
       MWindow->open();
       MIsOpen = true;
       return true;

@@ -8,8 +8,8 @@
 
 // #include "gui/sat_opengl.h"
 
-// #include "../data/fonts/Roboto/Roboto-Regular.h"
-// #include "../data/fonts/Manjari/Manjari-Thin.h"
+#include "../data/fonts/Roboto/Roboto-Regular.h"
+#include "../data/fonts/Manjari/Manjari-Thin.h"
 
 typedef NVGpaint sat_nanovg_paint_t;
 
@@ -73,10 +73,15 @@ public:
 
     //SAT_Print("nvgContext: %p\n",MContext); // prints (nil)
 
-//    MDefaultFont = nvgCreateFontMem(MContext,"Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size,0);
-//    MHeaderFont = nvgCreateFontMem(MContext,"Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size,0);
-//    nvgFontFaceId(MContext,MDefaultFont);
-//    nvgFontSize(MContext,MTextSize);
+   //MDefaultFont = nvgCreateFontMem(MContext,"Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size,0);
+   //MHeaderFont = nvgCreateFontMem(MContext,"Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size,0);
+   //nvgFontFaceId(MContext,MDefaultFont);
+   //nvgFontSize(MContext,MTextSize);
+
+    setDefaultFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
+    setHeaderFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
+    selectFont(MDefaultFont);
+    setTextSize(MTextSize);
 
 //    ARenderer->resetCurrent();
     
@@ -111,21 +116,29 @@ public:
 
   //----------
 
-//  int32_t getDefaultFont() final {
-//    return MDefaultFont;
-//  }
+  void setDefaultFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
+    MDefaultFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
+    //nvgFontFaceId(MContext,MDefaultFont);
+  }
+
+  void setHeaderFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
+    MHeaderFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
+    //nvgFontFaceId(MContext,MDefaultFont);
+  }
+
+  int32_t getDefaultFont() final {
+    return MDefaultFont;
+  }
+
+  int32_t getHeaderFont() final {
+    return MHeaderFont;
+  }
 
   //----------
-
-//  int32_t getHeaderFont() final {
-//    return MHeaderFont;
-//  }
   
-  //----------
-  
-//  void* getRenderBuffer() final {
-//    return MCurrentRenderBuffer;
-//  }
+  //void* getRenderBuffer() final {
+  //  return MCurrentRenderBuffer;
+  //}
 
 //------------------------------
 public:

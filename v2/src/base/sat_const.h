@@ -274,11 +274,11 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_SYMBOL_TRI                          16
 // #define SAT_SYMBOL_NOISE                        17
 
-// #define SAT_TEXT_ALIGN_CENTER                   0
-// #define SAT_TEXT_ALIGN_LEFT                     0x01
-// #define SAT_TEXT_ALIGN_RIGHT                    0x02
-// #define SAT_TEXT_ALIGN_TOP                      0x04
-// #define SAT_TEXT_ALIGN_BOTTOM                   0x08
+#define SAT_TEXT_ALIGN_CENTER                   0
+#define SAT_TEXT_ALIGN_LEFT                     0x01
+#define SAT_TEXT_ALIGN_RIGHT                    0x02
+#define SAT_TEXT_ALIGN_TOP                      0x04
+#define SAT_TEXT_ALIGN_BOTTOM                   0x08
 
 // https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
 // 0 Reset/Normal, 1 Bold, 2 Faint, 3 Italics, 4 Underlined

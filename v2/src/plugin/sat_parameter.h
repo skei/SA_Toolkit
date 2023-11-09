@@ -89,6 +89,13 @@ public:
   virtual bool      getIsMapped()        { return MIsMapped; }
   virtual SAT_Color getMappedColor()     { return MMappedColor; }
 
+  virtual clap_id               getId()       { return MInfo.id; }
+  virtual const char*           getName()     { return MInfo.name; }
+  virtual const char*           getModule()   { return MInfo.name; }
+  virtual clap_param_info_flags getFlags()    { return MInfo.flags; }
+  virtual sat_param_t           getMinValue() { return MInfo.min_value; }
+  virtual sat_param_t           getMaxValue() { return MInfo.max_value; }
+
 //------------------------------
 public:
 //------------------------------
