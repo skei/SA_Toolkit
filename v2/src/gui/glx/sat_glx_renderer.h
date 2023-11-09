@@ -165,7 +165,7 @@ public:
       glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
     }
 
-    //disableVSync();
+    disableVSync();
 
   }
 
