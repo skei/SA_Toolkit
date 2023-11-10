@@ -38,10 +38,12 @@
 
 #include "base/system/sat_timer.h"
 #include "gui/base/sat_paint_context.h"
+#include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_widget_listener.h"
 #include "gui/base/sat_window_listener.h"
 #include "gui/base/sat_widget_listener.h"
 #include "gui/widgets/sat_root_widget.h"
+#include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 
 typedef SAT_LockFreeQueue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS> SAT_WidgetQueue;
@@ -53,6 +55,7 @@ class SAT_Window
 , public SAT_WidgetOwner
 , public SAT_WidgetListener
 //, public SAT_WindowListener
+, public SAT_PainterOwner
 , public SAT_TimerListener {
 
 //------------------------------
@@ -100,6 +103,8 @@ private:
   int32_t             MInitialHeight        = 0;
   double              MScale                = 1.0;
 
+  SAT_Painter*        MPainter              = nullptr;
+  SAT_WidgetArray     MTimerWidgets         = {};
 
 //------------------------------
 public:
@@ -113,23 +118,18 @@ public:
     SAT_Assert(AWidth > 0);
     SAT_Assert(AHeight > 0);
 
-    //SAT_PRINT;
-    SAT_BasePainter* painter = getPainter();
-    SAT_Assert(painter);
+    MPainter = new SAT_Painter(this);
+    SAT_Assert(MPainter);
 
-    MPaintContext.painter     = painter;
+    MPaintContext.painter     = MPainter;
     MPaintContext.update_rect = SAT_Rect(0,0,AWidth,AHeight);
     MPaintContext.scale       = 1.0;
     MPaintContext.counter     = 0;
 
-    // buffer  
     uint32_t width2 = SAT_NextPowerOfTwo(AWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(AHeight);
-
-    //SAT_Print("creating FBO. %i,%i pow2: %i,%i\n",AWidth,AHeight, width2,height2);
-    MRenderBuffer = painter->createRenderBuffer(width2,height2);
+    MRenderBuffer = MPainter->createRenderBuffer(width2,height2);
     SAT_Assert(MRenderBuffer);
-
     MBufferWidth = width2;
     MBufferHeight = height2;
 
@@ -151,9 +151,10 @@ public:
       delete MRootWidget;
     }
 
-    SAT_BasePainter* painter = getPainter();
-    SAT_Assert(painter);
-    painter->deleteRenderBuffer(MRenderBuffer);
+    SAT_Assert(MPainter);
+    MPainter->deleteRenderBuffer(MRenderBuffer);
+
+    delete MPainter;
 
   }
 
@@ -165,7 +166,7 @@ public:
   // on_window_open()
   // on_window_resize()
 
-  virtual bool markRootWidgetDirty() {
+  virtual bool markRootWidgetDirty/*FromGui*/() {
     if (MRootWidget) {
       return MDirtyGuiWidgets.write(MRootWidget);
     }
@@ -226,9 +227,32 @@ public:
 
   //----------
 
+  virtual void registerTimerWidget(SAT_Widget* AWidget) {
+    MTimerWidgets.append(AWidget);
+  }
+
+  //----------
+
+  virtual void unregisterTimerWidget(SAT_Widget* AWidget) {
+    MTimerWidgets.remove(AWidget);
+  }
+  
+  //----------
+
+
+
+  //----------
+
   bool isPainting() {
     return MIsPainting;
   }
+
+  //----------
+
+  SAT_Painter* getPainter() override {
+    return MPainter;
+  }
+
 
 //------------------------------
 public: // scale
@@ -368,31 +392,6 @@ private:
   //  //MModalWidget->modalize();
   //  MModalWidget = AWidget;
   //}
-
-//------------------------------
-private: // buffer
-//------------------------------
-
-  bool checkAndPossiblyResizeBuffer(SAT_BasePainter* APainter) {
-    uint32_t width2  = SAT_NextPowerOfTwo(getWidth());
-    uint32_t height2 = SAT_NextPowerOfTwo(getHeight());
-    SAT_Print("bufferwidth %i bufferheight %i getWidth %i getHeight %i width2 %i height2 %i\n",MBufferWidth,MBufferHeight,getWidth(),getHeight(),width2,height2);
-    if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
-      // if size has changed: create new buffer, copy old to new, delete old
-      //SAT_BasePainter* painter = getPainter();
-      SAT_Assert(APainter);
-      void* buffer = APainter->createRenderBuffer(width2,height2);
-      SAT_Assert(buffer);
-      // we don't need to copy the buffer if we're redrawing the entire thing anyway, do we?
-      //copyBuffer(buffer,0,0,width2,height2,MRenderBuffer,0,0,MBufferWidth,MBufferHeight);
-      APainter->deleteRenderBuffer(MRenderBuffer);
-      MRenderBuffer = buffer;
-      MBufferWidth  = width2;
-      MBufferHeight = height2;
-      return true;
-    }
-    return false;
-  }
 
 //------------------------------
 public: // base window
@@ -570,9 +569,6 @@ public: // base window
   
   //----------
 
-  /*
-  */
-
   void on_window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (MHoverWidget) {
       if (!MMouseCaptureWidget) {
@@ -587,16 +583,15 @@ public: // base window
       }
       //else {} // clicked another button
     }
-    // else {
-    //   // not hovering over a widget..      
-    //   if (MModalWidget) {
-    //     if ((AButton == SAT_BUTTON_LEFT) || (AButton == SAT_BUTTON_RIGHT)) {
-    //       //SAT_Print("nope.. closeing modal\n");
-    //       //MModalWidget->close();
-    //       MModalWidget->do_widgetListener_close(MModalWidget);
-    //     }
-    //   }
-    // }
+    else {
+      // not hovering over a widget..      
+      if (MModalWidget) {
+        if ((AButton == SAT_BUTTON_LEFT) || (AButton == SAT_BUTTON_RIGHT)) {
+          //MModalWidget->close();
+          MModalWidget->do_widget_close(MModalWidget);
+        }
+      }
+    }
   }
   
   //----------
@@ -672,6 +667,11 @@ public: // base window
     //SAT_Print("AData %i\n",AData);
   }
 
+  //----------
+
+  void on_window_timer(double AElapsed) override {
+  }
+
 //------------------------------
 public: // widget owner
 //------------------------------
@@ -729,20 +729,35 @@ public: // widget listener
     }
   }
 
+  //----------
+
   void on_widgetListener_setHint(SAT_Widget* AWidget, const char* AHint) override {
     if (AHint[0]) {
       SAT_Print("hint: %s\n",AHint);
     }
   }
 
+  //----------
+
   void on_widgetListener_setModal(SAT_Widget* AWidget) override {
     MModalWidget = AWidget;
   }
+
+  //----------
 
   void on_widgetListener_captureKeys(SAT_Widget* AWidget) override {
     MKeyCaptureWidget = AWidget;
   }
 
+  //----------
+
+  void on_widgetListener_close(SAT_Widget* AWidget) override {
+  }
+
+  //----------
+
+  void do_widgetListener_select(SAT_Widget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) override{
+  }
 
 //------------------------------
 public: // timer listener
@@ -755,7 +770,10 @@ public: // timer listener
     double now = SAT_GetTime();
     double elapsed = now - MPrevTime;
     MPrevTime = now;
+
+    //on_window_timer(elapsed);
     if (MListener) MListener->on_windowListener_timer(this,elapsed);
+    for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(elapsed);
 
     // don't add new widgets to paintqueue, if we're still painting the previous batch
     // timer runs in separate thread than gui/painting
@@ -789,7 +807,12 @@ public: // timer listener
     else {
       //SAT_Print("empty rect - no invalidation\n");
     }
+
   }
+
+//------------------------------
+public: // SAT_PainterOwner
+//------------------------------
 
 };
 

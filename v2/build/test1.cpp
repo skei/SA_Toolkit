@@ -81,6 +81,9 @@ public:
     do_widget_redraw(this);
   }
 
+  void on_widget_timer(double AElapsed) final {
+    SAT_Print("elapsed %f\n",AElapsed);
+  }
 
 };
 
@@ -104,9 +107,12 @@ int main() {
 
   SAT_RootWidget* root = new SAT_RootWidget(0,window);
   window->setRootWidget(root);
+  root->setText("Hello, world!");
 
   myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
   root->appendChildWidget(widget);
+  
+  window->registerTimerWidget(widget);
 
   window->open();
   window->eventLoop();
@@ -172,12 +178,18 @@ public:
     return SAT_Plugin::init();
   }
 
+  //----------
+
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) override {
     //SAT_PRINT;
     SAT_RootWidget* root = new SAT_RootWidget(SAT_Rect(100,100),AWindow);
     AWindow->setRootWidget(root);
+
     myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
     root->appendChildWidget(widget);
+
+    AWindow->registerTimerWidget(widget);
+
   }
 
 };

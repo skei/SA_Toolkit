@@ -104,7 +104,6 @@ public:
   SAT_PanelWidget(SAT_Rect ARect)
   : SAT_Widget(ARect) {
     setName("SAT_PanelWidget");
-    setText("Text");
   }
 
   virtual ~SAT_PanelWidget() {

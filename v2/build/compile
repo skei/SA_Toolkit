@@ -264,7 +264,7 @@ if $DEBUG
   then
     FLAGS+=" -DSAT_DEBUG"
     FLAGS+=" -g"
-    FLAGS+=" -Wl,-Bsymbolic"
+    #FLAGS+=" -Wl,-Bsymbolic"
   else
     FLAGS+=" -DNDEBUG"
     FLAGS+=" -O3"

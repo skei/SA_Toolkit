@@ -4,15 +4,13 @@
 
 #include "sat.h"
 
-#include "gui/base/sat_base_painter.h"
 #include "gui/base/sat_base_window.h"
-#include "gui/base/sat_painter_owner.h"
+#include "gui/base/sat_surface_owner.h"
 #include "gui/base/sat_renderer_owner.h"
 
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
 
-#include "gui/sat_painter.h"
 #include "gui/sat_renderer.h"
 
 //----------------------------------------------------------------------
@@ -24,12 +22,13 @@
 class SAT_X11Window
 : public SAT_BaseWindow
 , public SAT_SurfaceOwner
-, public SAT_RendererOwner
-, public SAT_PainterOwner {
+, public SAT_RendererOwner {
 
 //------------------------------
 private:
 //------------------------------
+
+  SAT_Renderer*               MRenderer                     = nullptr;
 
   Display*                    MDisplay                      = nullptr;
   xcb_connection_t*           MConnection                   = nullptr;
@@ -61,9 +60,6 @@ private:
   xcb_cursor_t                MWindowCursor                 = XCB_NONE;
   bool                        MIsCursorHidden               = false;          // TODO: sat_atomicbool_t ?
 
-  SAT_Renderer*               MRenderer                     = nullptr;
-  SAT_Painter*                MPainter                      = nullptr;
-
 //------------------------------
 //protected:
 //------------------------------
@@ -72,9 +68,6 @@ private:
   int32_t                     MWindowYpos                   = 0;
   uint32_t                    MWindowWidth                  = 0;
   uint32_t                    MWindowHeight                 = 0;
-
-//uint32_t                    MPreviousWindowWidth          = 0;
-//uint32_t                    MPreviousWindowHeight         = 0;
 
 //------------------------------
 public:
@@ -215,7 +208,6 @@ public:
     }
 
      MRenderer = new SAT_Renderer(this);
-     MPainter = new SAT_Painter(this);
 
   } 
 
@@ -225,7 +217,6 @@ public:
 
     if (MIsMapped) close();
 
-    delete MPainter;
     delete MRenderer;
 
     // keyboard
@@ -250,12 +241,8 @@ public:
 public:
 //------------------------------
 
-  SAT_BaseRenderer* getRenderer() {
+  SAT_BaseRenderer* getRenderer() override {
     return MRenderer;
-  }
-
-  SAT_BasePainter* getPainter() {
-    return MPainter;
   }
 
 //------------------------------
@@ -301,10 +288,6 @@ public: // SAT_RendererOwner
   xcb_drawable_t on_rendererOwner_getDrawable() override {
     return MWindow;
   }
-
-//------------------------------
-public: // SAT_PainterOwner
-//------------------------------
 
 //------------------------------
 public: // SAT_SurfaceOwner

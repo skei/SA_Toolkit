@@ -16,7 +16,8 @@ public:
   virtual void on_widgetListener_setHint(SAT_Widget* AWidget, const char* AHint) {}
   virtual void on_widgetListener_setModal(SAT_Widget* AWidget) {}
   virtual void on_widgetListener_captureKeys(SAT_Widget* ASender) {}
-
+  virtual void on_widgetListener_close(SAT_Widget* ASender) {}
+  virtual void do_widgetListener_select(SAT_Widget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) {}
 };
 
 //----------------------------------------------------------------------

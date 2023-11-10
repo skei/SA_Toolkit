@@ -280,6 +280,7 @@ public:
   //----------
 
   // returns null if no child widgets at x,y
+  // todo: ifActive
 
   virtual SAT_Widget* findChildWidget(uint32_t AXpos, uint32_t AYpos, bool ARecursive=true) {
     for (uint32_t i=0; i<MChildren.size(); i++) {
@@ -315,26 +316,6 @@ public:
     }
     return nullptr;
   }
-
-  //----------
-
-  // virtual SAT_Widget* findChildWidget(int32_t AId, bool ARecursive=true) { return nullptr;
-  //   for (uint32_t i=0; i<MChildren.size(); i++) {
-  //     SAT_Widget* child = MChildren[i];
-  //     int32_t id = child->getId();
-  //     if (AId == id) {
-  //       return child;
-  //     }
-  //     else {
-  //       if (ARecursive) {
-  //         SAT_Widget* subchild = child->findChildWidget(AId,ARecursive);
-  //         if (subchild) return subchild;
-  //       }
-  //     }
-
-  //   }
-  //   return nullptr;
-  // }
 
   //----------
 
@@ -426,10 +407,35 @@ public:
 
   //----------
 
+  /*
+    SAT_Rect mrect = getRect();
+    SAT_Painter* painter= AContext->painter;
+    uint32_t num = MChildWidgets.size();
+    if (num > 0) {
+      if (MAutoClip) painter->pushOverlappingClip(mrect);
+      for (uint32_t i=0; i<num; i++) {
+        SAT_Widget* widget = MChildWidgets[i];
+        
+        //if (widget->isRecursivelyVisible()) {
+        if (widget->isVisible()) {
+          
+          SAT_Rect wr = widget->getRect();
+          wr.overlap(mrect);
+          if (wr.isNotEmpty()) {
+            widget->on_widget_paint(AContext);
+          } // not empty
+          
+        } // visible
+        
+      } // for
+      if (MAutoClip) painter->popClip();
+    } // num > 0
+  */
+
   virtual void paintChildWidgets(SAT_PaintContext* AContext) {
     for (uint32_t i=0; i<MChildren.size(); i++) {
       SAT_Widget* child = MChildren[i];
-      if (child->getState()->visible) {
+      if (child->isVisible()) {
         SAT_Rect child_rect = child->getRect();
         if (child_rect.intersects(MRect)) {
           child->on_widget_paint(AContext);
@@ -536,13 +542,13 @@ public:
     if (MParent) MParent->do_widget_captureKeys(AWidget);
   }
 
-  //void do_widgetListener_close(SAT_Widget* ASender) override {
-  //  if (MListener) MListener->do_widgetListener_close(ASender);
-  //}
+  virtual void do_widget_close(SAT_Widget* AWidget) {
+    if (MParent) MParent->do_widget_close(AWidget);
+  }
 
-  //void do_widgetListener_select(SAT_Widget* ASender, int32_t AIndex, int32_t ASubIndex=-1) override {
-  //  if (MListener) MListener->do_widgetListener_select(ASender,AIndex,ASubIndex);
-  //}
+  virtual void do_widget_select(SAT_Widget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) {
+    if (MParent) MParent->do_widget_select(AWidget,AIndex,ASubIndex);
+  }
   
   //void do_widgetListener_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {
   //  SAT_Rect mrect = getRect();

@@ -4,12 +4,12 @@
 
 #include "sat.h"
 #include "gui/base/sat_base_window.h"
-#include "gui/base/sat_painter_owner.h"
+//#include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_renderer_owner.h"
 #include "gui/base/sat_surface_owner.h"
 #include "gui/wayland/sat_wayland.h"
 #include "gui/sat_renderer.h"
-#include "gui/sat_painter.h"
+//#include "gui/sat_painter.h"
 
 //----------------------------------------------------------------------
 //
@@ -32,7 +32,7 @@ struct SAT_WaylandPendingChanges {
 
 class SAT_WaylandWindow
 : public SAT_RendererOwner,
-  public SAT_PainterOwner,
+  //public SAT_PainterOwner,
   public SAT_SurfaceOwner,
   public SAT_BaseWindow {
 
@@ -41,7 +41,7 @@ private:
 //------------------------------
 
   SAT_Renderer*             MRenderer       = nullptr;
-  SAT_Painter*              MPainter        = nullptr;
+  //SAT_Painter*              MPainter        = nullptr;
   EGLSurface                MEGLSurface     = nullptr;
 
   struct wl_display*        MDisplay        = nullptr;
@@ -145,7 +145,7 @@ public:
     SAT_Print("MEGLSurface: %p\n",MEGLSurface);
     MRenderer->makeCurrent();
     MRenderer->disableVSync();
-    MPainter = new SAT_Painter(this);
+//    MPainter = new SAT_Painter(this);
 
 //    on_window_open();
 
@@ -161,7 +161,7 @@ public:
 
     MRenderer->resetCurrent();
     delete MRenderer;
-    delete MPainter;
+//    delete MPainter;
     if (MXDGWMBase) {
       xdg_toplevel_destroy(MXDGTopLevel);
       xdg_surface_destroy(MXDGSurface);
@@ -180,7 +180,7 @@ public:
   uint32_t          getWindowType()     override { return SAT_WINDOW_TYPE_WAYLAND; }
   const char*       getWindowTypeName() override { return SAT_WINDOW_TYPE_NAME_WAYLAND; }
   SAT_BaseRenderer* getRenderer()       override { return MRenderer; }
-  SAT_BasePainter*  getPainter()        override { return MPainter; }
+//  SAT_BasePainter*  getPainter()        override { return MPainter; }
 
   uint32_t          getWidth()          override { return MWidth; }
   uint32_t          getHeight()         override { return MHeight; }
