@@ -425,7 +425,7 @@ public: // base window
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    SAT_Print("AXpos %i AYpos %i AWidth %i AHeight %i counter %i MRenderBuffer %p (%i,%i)\n",AXpos,AYpos,AWidth,AHeight,MPaintContext.counter,MRenderBuffer,MBufferWidth,MBufferHeight);
+    //SAT_Print("AXpos %i AYpos %i AWidth %i AHeight %i counter %i MRenderBuffer %p (%i,%i)\n",AXpos,AYpos,AWidth,AHeight,MPaintContext.counter,MRenderBuffer,MBufferWidth,MBufferHeight);
 
     SAT_BaseRenderer* renderer = getRenderer();
     SAT_BasePainter* painter = getPainter();
@@ -450,7 +450,7 @@ public: // base window
     bool resized = false;
     uint32_t width2  = SAT_NextPowerOfTwo(getWidth());
     uint32_t height2 = SAT_NextPowerOfTwo(getHeight());
-    SAT_Print("bufferwidth %i bufferheight %i getWidth %i getHeight %i width2 %i height2 %i\n",MBufferWidth,MBufferHeight,getWidth(),getHeight(),width2,height2);
+    //SAT_Print("bufferwidth %i bufferheight %i getWidth %i getHeight %i width2 %i height2 %i\n",MBufferWidth,MBufferHeight,getWidth(),getHeight(),width2,height2);
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
       void* buffer = painter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
@@ -720,28 +720,28 @@ public: // widget listener
 //------------------------------
 
   void on_widgetListener_update(SAT_Widget* AWidget) override {
-    SAT_Print("%s\n",AWidget->getName());
+    //SAT_Print("%s\n",AWidget->getName());
     //if (MListener) MListener->on_windowListener_update(AWidget);
   }
 
   //----------
 
   void on_widgetListener_redraw(SAT_Widget* AWidget) override {
-    SAT_Print("%s\n",AWidget->getName());
+    //SAT_Print("%s\n",AWidget->getName());
     markWidgetDirtyFromGui(AWidget);
   }
 
   //----------
 
   void on_widgetListener_realign(SAT_Widget* AWidget) override {
-    SAT_Print("%s\n",AWidget->getName());
+    //SAT_Print("%s\n",AWidget->getName());
     //SAT_Print("\n");
   }
 
   //----------
 
   void on_widgetListener_setCursor(SAT_Widget* AWidget, int32_t ACursor) override {
-    SAT_Print("%s\n",AWidget->getName());
+    //SAT_Print("%s\n",AWidget->getName());
     switch(ACursor) {
       case SAT_CURSOR_LOCK:
         lockMouseCursor();
@@ -768,7 +768,7 @@ public: // widget listener
 
   void on_widgetListener_setHint(SAT_Widget* AWidget, const char* AHint) override {
     if (AHint[0]) {
-      SAT_Print("hint: %s\n",AHint);
+      //SAT_Print("hint: %s\n",AHint);
     }
   }
 

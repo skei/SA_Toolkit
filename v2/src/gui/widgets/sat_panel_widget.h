@@ -617,7 +617,7 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    SAT_Print("%s : counter %i w/h %i,%i\n",getName(),AContext->counter,getWidth(),getHeight());
+    //SAT_Print("%s : counter %i w/h %i,%i\n",getName(),AContext->counter,getWidth(),getHeight());
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawText(AContext);

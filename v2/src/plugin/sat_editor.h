@@ -37,7 +37,6 @@ private:
 public:
 //------------------------------
 
-  //SAT_Editor(SAT_EditorListener* AListener) {
   SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0) {
     //if (AListener) MListener = AListener;
     MListener = AListener;
@@ -67,13 +66,8 @@ public:
 public:
 //------------------------------
 
-  virtual SAT_Window* getWindow() {
-    return MWindow;
-  }
-
-  virtual bool isOpen() {
-    return MIsOpen;
-  }
+  virtual SAT_Window* getWindow() { return MWindow; }
+  virtual bool        isOpen()    { return MIsOpen; }
 
 //------------------------------
 public:
@@ -229,8 +223,12 @@ public: // window listener
     }
   }
 
+  //----------
+
   //void on_windowListener_resize(SAT_BaseWindow* AWindow, int32_t AWidth, int32_t AHeight) override {
   //}
+
+  //----------
 
   void on_windowListener_timer(SAT_Timer* ATimer, double AElapsed) override {
   }

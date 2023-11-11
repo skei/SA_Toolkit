@@ -96,6 +96,14 @@
 //
 //----------------------------------------------------------------------
 
+// #if defined (SAT_PLUGIN_EXE)
+//   #undef SAT_DEBUG_PRINT_SOCKET
+//   #define SAT_DEBUG_MEMTRACE
+// #else
+//   #define SAT_DEBUG_PRINT_SOCKET
+//   #undef SAT_DEBUG_MEMTRACE
+// #endif
+
 //------------------------------
 // debug
 //------------------------------
@@ -110,14 +118,6 @@
   //#undef AT_DEBUG_PRINT
   #undef AT_DEBUG_WINDOW
 #endif
-
-// #if defined (SAT_PLUGIN_EXE)
-//   #undef SAT_DEBUG_PRINT_SOCKET
-//   #define SAT_DEBUG_MEMTRACE
-// #else
-//   #define SAT_DEBUG_PRINT_SOCKET
-//   #undef SAT_DEBUG_MEMTRACE
-// #endif
 
 //------------------------------
 // plugin

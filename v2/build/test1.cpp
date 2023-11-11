@@ -6,28 +6,40 @@
 */
 //----------------------------------------------------------------------
 
-//#ifdef SAT_PLUGIN
-//  #define SAT_DEBUG_PRINT_SOCKET
-//#endif
+//#define SAT_DEBUG_PRINT_SOCKET
+//#define SAT_DEBUG_MEMTRACE
 
 #include "sat.h"
 #include "plugin/sat_plugin.h"
 #include "gui/sat_window.h"
 #include "gui/sat_widgets.h"
 
-//----------
+#include "base/utils/sat_easing.h"
+#include "base/utils/sat_windowing.h"
+#include "base/utils/sat_tween_manager.h"
 
-#define WINDOW_WIDTH  500
-#define WINDOW_HEIGHT 500
+#define EDITOR_WIDTH  500
+#define EDITOR_HEIGHT 500
+#define EDITOR_SCALE  1.0
+
+//----------------------------------------------------------------------
+//
+// tests
+//
+//----------------------------------------------------------------------
+
+#if defined(SAT_TESTS)
+  bool build_test1() { return true; }
+  bool build_test2() { return true; }
+  SAT_TEST("BUILD: test1",build_test1)
+  SAT_TEST("BUILD: test2 yo, man!",build_test2)
+#endif
 
 //----------------------------------------------------------------------
 //
 // widget
 //
 //----------------------------------------------------------------------
-
-//class myRootWidget
-//: public SAT_RootWidget {
 
 class myWidget
 : public SAT_Widget {
@@ -39,10 +51,6 @@ private:
 
 public:
 
-  //myRootWidget(SAT_Rect ARect,SAT_WidgetListener* AListener)
-  //: SAT_RootWidget(ARect,AListener) {
-  //}
-  
   myWidget(SAT_Rect ARect)
   : SAT_Widget(ARect) {
     setName("myWidget");
@@ -50,6 +58,8 @@ public:
     //void* memory_leak = malloc(666);
 
   }
+
+  //----------
   
   void on_widget_paint(SAT_PaintContext* AContext) final {
     //SAT_Print("%s\n",getName());
@@ -66,18 +76,18 @@ public:
     painter->fillEllipse(centerx,centery,radiusx,radiusy);
     paintChildWidgets(AContext);
 
-    // test
-
     //SAT_Assert(1==0);
 
     //SAT_GLOBAL.DEBUG.printCallStack();
 
-    // int* ptr = nullptr;
-    // int i = *ptr;
-    // SAT_Print("%i\n",i);
+    //int* ptr = nullptr;
+    //int i = *ptr;
+    //SAT_Print("%i\n",i);
 
   }
 
+  //----------
+  
   void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) final {
     SAT_PRINT;
     SAT_Color temp = MColor1;
@@ -108,7 +118,7 @@ int main() {
 
   //-----
 
-  SAT_Window* window = new SAT_Window(WINDOW_WIDTH,WINDOW_HEIGHT);
+  SAT_Window* window = new SAT_Window(EDITOR_WIDTH,EDITOR_HEIGHT);
 
   SAT_RootWidget* root = new SAT_RootWidget(0,window);
   window->setRootWidget(root);
@@ -185,6 +195,7 @@ public:
     appendStereoAudioInputPort("input");
     appendStereoAudioOutputPort("output");
     appendParameter( new SAT_Parameter("param1",0.5));
+    //setInitialEditorSize();
     return SAT_Plugin::init();
   }
 
@@ -192,6 +203,7 @@ public:
 
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) override {
     //SAT_PRINT;
+    //AWindow->setInitialSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     SAT_RootWidget* root = new SAT_RootWidget(SAT_Rect(100,100),AWindow);
     AWindow->setRootWidget(root);
 
@@ -215,17 +227,4 @@ public:
 
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
-
-//----------------------------------------------------------------------
-//
-// tests
-//
-//----------------------------------------------------------------------
-
-#if defined(SAT_TESTS)
-  bool build_test1() { return true; }
-  bool build_test2() { return true; }
-  SAT_TEST("BUILD: test1",build_test1)
-  SAT_TEST("BUILD: test2 yo, man!",build_test2)
-#endif
 
