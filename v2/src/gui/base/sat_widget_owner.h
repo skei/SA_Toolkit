@@ -9,7 +9,12 @@
 
 class SAT_WidgetOwner {
 public:
-  virtual SAT_BaseWindow* on_widgetOwner_getWindow() { return nullptr; }
+  virtual SAT_BaseWindow* on_widgetOwner_getWindow()  { return nullptr; }
+  virtual double          on_widgetOwner_getWidth()   { return 0.0; }
+  virtual double          on_widgetOwner_getHeight()  { return 0.0; }
+  virtual double          on_widgetOwner_getScale()   { return 0.0; }
+
+
 };
 
 //----------------------------------------------------------------------

@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "base/system/sat_timer.h"
 //#include "gui/sat_renderer.h"
 #include "gui/base/sat_base_renderer.h"
 #include "gui/base/sat_base_painter.h"
@@ -27,16 +28,6 @@ public:
 public:
 //------------------------------
 
-  virtual uint32_t          getWindowType()                                                                                         { return 0; }
-  virtual const char*       getWindowTypeName()                                                                                     { return ""; }
-
-  virtual SAT_BaseRenderer* getRenderer()                                                                                           { return nullptr; }
-  virtual SAT_BasePainter*  getPainter()                                                                                            { return nullptr; }
-
-//------------------------------
-public:
-//------------------------------
-
   virtual void              on_window_open()                                                                                        {}
   virtual void              on_window_close()                                                                                       {}
   virtual void              on_window_move(int32_t AXpos, int32_t AYpos)                                                            {}
@@ -50,11 +41,18 @@ public:
   virtual void              on_window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime)                                      {}
   virtual void              on_window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime)                                      {}
   virtual void              on_window_clientMessage(uint32_t AData)                                                                 {}
-  virtual void              on_window_timer(double AElapsed)                                                                        {}
+  virtual void              on_window_timer(SAT_Timer* ATimer, double AElapsed)                                                     {}
 
 //------------------------------
 public:
 //------------------------------
+
+  virtual uint32_t          getWindowType()                                                                                         { return 0; }
+  virtual const char*       getWindowTypeName()                                                                                     { return ""; }
+
+  virtual SAT_BaseRenderer* getRenderer()                                                                                           { return nullptr; }
+  virtual SAT_BasePainter*  getPainter()                                                                                            { return nullptr; }
+
 
   virtual uint32_t          getWidth()                                                                                              { return 0; }
   virtual uint32_t          getHeight()                                                                                             { return 0; }

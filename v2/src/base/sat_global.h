@@ -126,6 +126,36 @@ void sat_crash_handler_callback(int sig) {
   #define SAT_LOG SAT_GLOBAL.LOG.print
 
 //------------------------------
+// memtrace
+//------------------------------
+
+  #ifdef SAT_DEBUG_MEMTRACE
+
+    static __thread char*         sat_memtrace_prefix_file;
+    static __thread unsigned int  sat_memtrace_prefix_line;
+
+    unsigned int sat_memtrace_prefix(const char* file, const unsigned int line) {
+      sat_memtrace_prefix_file = (char*)file;
+      sat_memtrace_prefix_line = line;
+      return 1;
+    }
+
+    void* operator  new       (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL.DEBUG.MEMTRACE.malloc(size, file, line, 1); }
+    void* operator  new[]     (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL.DEBUG.MEMTRACE.malloc(size, file, line, 1); }
+    void  operator  delete    (void* ptr)                                               { return SAT_GLOBAL.DEBUG.MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
+    void  operator  delete[]  (void* ptr)                                               { return SAT_GLOBAL.DEBUG.MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
+
+    #define malloc(s)     SAT_GLOBAL.DEBUG.MEMTRACE.malloc(  s,    __FILE__, __LINE__ )
+    #define calloc(n,s)   SAT_GLOBAL.DEBUG.MEMTRACE.calloc(  n, s, __FILE__, __LINE__ )
+    #define realloc(p,s)  SAT_GLOBAL.DEBUG.MEMTRACE.realloc( p, s, __FILE__, __LINE__ )
+    #define free(p)       SAT_GLOBAL.DEBUG.MEMTRACE.free(    p,    __FILE__, __LINE__ )
+
+    #define new           new(__FILE__, __LINE__)
+    #define delete        if (sat_memtrace_prefix(__FILE__, __LINE__)) delete
+
+  #endif
+
+//------------------------------
 // print
 //------------------------------
 

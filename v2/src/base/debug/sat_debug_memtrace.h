@@ -4,7 +4,7 @@
 
 #ifdef SAT_DEBUG_MEMTRACE
 
-  #include "base/sat.h"
+  #include "sat.h"
 
   #include <stdarg.h>       // va_
   #include <sys/unistd.h>
@@ -34,7 +34,8 @@
   private:
   //------------------------------
 
-    SAT_MemTraceNodes MMemTraceNodes = {};
+    SAT_DebugPrint*   MPrint          = nullptr;
+    SAT_MemTraceNodes MMemTraceNodes  = {};
 
   //------------------------------
   public:
@@ -48,10 +49,23 @@
     //----------
 
     ~SAT_MemTrace() {
-      print_memtrace();
       //cleanup..
     }
     
+//------------------------------
+public:
+//------------------------------
+
+  void initialize(SAT_DebugPrint* APrint) {
+    MPrint = APrint;
+  }
+
+  //----------
+
+  void cleanup() {
+    print_memtrace();
+  }
+
   //------------------------------
   public: // memtrace
   //------------------------------
@@ -99,12 +113,14 @@
           // check for malloc/fre mismatch
           if (MMemTraceNodes[i].flag != flag) {
             if (MMemTraceNodes[i].flag == 0) {
-              SAT_DPrint("Mismatch! malloc (%s/%i) delete (%s/%i)\n",MMemTraceNodes[i].file,MMemTraceNodes[i].line,strip_path(file),line);
+              MPrint->print("Mismatch! malloc (%s/%i) delete (%s/%i)\n",MMemTraceNodes[i].file,MMemTraceNodes[i].line,strip_path(file),line);
             }
             else {
-              SAT_DPrint("Mismatch! new (%s/%i) free (%s/%i)\n",MMemTraceNodes[i].file,MMemTraceNodes[i].line,strip_path(file),line);
+              MPrint->print("Mismatch! new (%s/%i) free (%s/%i)\n",MMemTraceNodes[i].file,MMemTraceNodes[i].line,strip_path(file),line);
             }
-            SAT_PrintCallStack();
+
+//            SAT_PrintCallStack();
+
           }
           // remove node
           MMemTraceNodes.remove(i);
@@ -125,14 +141,14 @@
 
     void print_memtrace() {
       if (MMemTraceNodes.size() > 0) {
-        SAT_DPrint("Leaked memory:\n");
+        MPrint->print("Leaked memory:\n");
         for (uint32_t i=0; i<MMemTraceNodes.size(); i++) {
           char*     file  = MMemTraceNodes[i].file;
           uint32_t  line  = MMemTraceNodes[i].line;
           uint32_t  flag  = MMemTraceNodes[i].flag;
           void*     ptr   = MMemTraceNodes[i].ptr;
           uint32_t  size  = MMemTraceNodes[i].size;
-          SAT_DPrint("  %i. %s, line %i (%s): ptr %p size %i\n",i,file,line,(flag==1)?"new":"malloc",ptr,size);
+          MPrint->print("  %i. %s, line %i (%s): ptr %p size %i\n",i,file,line,(flag==1)?"new":"malloc",ptr,size);
         }
       }
     }
@@ -152,44 +168,13 @@
     
   };
 
-  //----------------------------------------------------------------------
-  //
-  // TODO: -> SAT_GLOBAL.DEBUG
-  //
-  //----------------------------------------------------------------------
+#else
 
-  SAT_MemTrace SAT_GLOBAL_MEMTRACE = {};
-
-  //----------------------------------------------------------------------
-
-  static __thread char*         sat_memtrace_prefix_file;
-  static __thread unsigned int  sat_memtrace_prefix_line;
-
-  unsigned int sat_memtrace_prefix(const char* file, const unsigned int line) {
-    sat_memtrace_prefix_file = (char*)file;
-    sat_memtrace_prefix_line = line;
-    return 1;
-  }
-
-  void* operator  new       (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL_MEMTRACE.malloc(size, file, line, 1); }
-  void* operator  new[]     (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL_MEMTRACE.malloc(size, file, line, 1); }
-  void  operator  delete    (void* ptr)                                               { return SAT_GLOBAL_MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
-  void  operator  delete[]  (void* ptr)                                               { return SAT_GLOBAL_MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
-
-  #define malloc(s)     SAT_GLOBAL_MEMTRACE.malloc(  s,    __FILE__, __LINE__ )
-  #define calloc(n,s)   SAT_GLOBAL_MEMTRACE.calloc(  n, s, __FILE__, __LINE__ )
-  #define realloc(p,s)  SAT_GLOBAL_MEMTRACE.realloc( p, s, __FILE__, __LINE__ )
-  #define free(p)       SAT_GLOBAL_MEMTRACE.free(    p,    __FILE__, __LINE__ )
-
-  #define new           new(__FILE__, __LINE__)
-  #define delete        if (sat_memtrace_prefix(__FILE__, __LINE__)) delete
-
-//#else // ! SAT_DEBUG_MEMTRACE
-//
-//  #define real_malloc   malloc
-//  #define real_calloc   calloc
-//  #define real_realloc  realloc
-//  #define real_free     free
+  class SAT_MemTrace {
+  public:
+    void initialize(SAT_DebugPrint* APrint) {}
+    void cleanup() {}
+  };
 
 #endif // SAT_DEBUG_MEMTRACE
 

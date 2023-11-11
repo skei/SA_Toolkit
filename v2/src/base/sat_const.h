@@ -151,15 +151,15 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_CURSOR_X                            29
 #define SAT_CURSOR_COUNT                        30
 
-// #define SAT_DIRECTION_NONE                      0
-// #define SAT_DIRECTION_LEFT                      1
-// #define SAT_DIRECTION_RIGHT                     2
-// #define SAT_DIRECTION_UP                        3
-// #define SAT_DIRECTION_DOWN                      4
-// #define SAT_DIRECTION_TOP                       3
-// #define SAT_DIRECTION_BOTTOM                    4
-// #define SAT_DIRECTION_HORIZ                     5
-// #define SAT_DIRECTION_VERT                      6
+#define SAT_DIRECTION_NONE                      0
+#define SAT_DIRECTION_LEFT                      1
+#define SAT_DIRECTION_RIGHT                     2
+#define SAT_DIRECTION_UP                        3
+#define SAT_DIRECTION_DOWN                      4
+#define SAT_DIRECTION_TOP                       3
+#define SAT_DIRECTION_BOTTOM                    4
+#define SAT_DIRECTION_HORIZ                     5
+#define SAT_DIRECTION_VERT                      6
 
 #define SAT_EDGE_NONE                           0
 #define SAT_EDGE_LEFT                           0x01

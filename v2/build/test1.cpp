@@ -46,6 +46,9 @@ public:
   myWidget(SAT_Rect ARect)
   : SAT_Widget(ARect) {
     setName("myWidget");
+
+    //void* memory_leak = malloc(666);
+
   }
   
   void on_widget_paint(SAT_PaintContext* AContext) final {
@@ -66,11 +69,13 @@ public:
     // test
 
     //SAT_Assert(1==0);
+
     //SAT_GLOBAL.DEBUG.printCallStack();
 
-    //int* ptr = nullptr;
-    //int i = *ptr;
-    //SAT_Print("%i\n",i);
+    // int* ptr = nullptr;
+    // int i = *ptr;
+    // SAT_Print("%i\n",i);
+
   }
 
   void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) final {
@@ -81,9 +86,9 @@ public:
     do_widget_redraw(this);
   }
 
-  void on_widget_timer(double AElapsed) final {
-    SAT_Print("elapsed %f\n",AElapsed);
-  }
+  //void on_widget_timer(SAT_Timer* ATimer, double AElapsed) final {
+  //  SAT_Print("elapsed %f\n",AElapsed);
+  //}
 
 };
 
@@ -111,13 +116,18 @@ int main() {
 
   myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
   root->appendChildWidget(widget);
+
+  SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Value",0.5);
+  root->appendChildWidget(dragvalue);
   
-  window->registerTimerWidget(widget);
+  //window->registerTimerWidget(widget);
 
   window->open();
   window->eventLoop();
   window->close();
+
   delete window;
+
   return 0;
 }
 
@@ -188,7 +198,10 @@ public:
     myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
     root->appendChildWidget(widget);
 
-    AWindow->registerTimerWidget(widget);
+    SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Value",0.5);
+    root->appendChildWidget(dragvalue);
+  
+    //AWindow->registerTimerWidget(widget);
 
   }
 

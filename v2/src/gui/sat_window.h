@@ -162,6 +162,12 @@ public:
 public:
 //------------------------------
 
+  bool isPainting() { return MIsPainting; }
+
+//------------------------------
+public:
+//------------------------------
+
   // called from:
   // on_window_open()
   // on_window_resize()
@@ -203,12 +209,6 @@ public:
 
   //----------
 
-  //virtual void setListener(SAT_WindowListener* AListener) {
-  //  MListener = AListener;
-  //}
-
-  //----------
-
   // called from:
   // on_window_open()
 
@@ -237,28 +237,9 @@ public:
     MTimerWidgets.remove(AWidget);
   }
   
-  //----------
-
-
-
-  //----------
-
-  bool isPainting() {
-    return MIsPainting;
-  }
-
-  //----------
-
-  SAT_Painter* getPainter() override {
-    return MPainter;
-  }
-
-
 //------------------------------
 public: // scale
 //------------------------------
-
-  //----------
 
   virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
     MInitialWidth = AWidth;
@@ -342,7 +323,7 @@ public: // keyboard
 private:
 //------------------------------
 
-  virtual SAT_Rect calcClipRect(SAT_Widget* AWidget) {
+  SAT_Rect calcClipRect(SAT_Widget* AWidget) {
     SAT_Rect rect = AWidget->getRect();
     SAT_Widget* parent = AWidget->getParent();
     while (parent) {
@@ -383,19 +364,15 @@ private:
     }
   }
 
-  //----------
-
-  // null = off
-
-  //void modalize(SAT_Widget* AWidget) {
-  //  //if (MModalWidget) MModalWidget.unmodalize();
-  //  //MModalWidget->modalize();
-  //  MModalWidget = AWidget;
-  //}
-
 //------------------------------
 public: // base window
 //------------------------------
+
+  SAT_BasePainter* getPainter() override {
+    return MPainter;
+  }
+
+  //----------
 
   void on_window_open() override {
     //MRootWidget->on_widget_open(this);
@@ -430,6 +407,9 @@ public: // base window
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
     //SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
+
+//    MScale = recalcScale(AWidth,AHeight);
+
     if (MRootWidget) {
       MRootWidget->setSize(SAT_Point(AWidth,AHeight));
       MRootWidget->realignChildWidgets();
@@ -549,24 +529,48 @@ public: // base window
   
   //----------
 
-  void on_window_keyPress(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
-    //SAT_Print("\n");
-    if (MKeyCaptureWidget) {
-      SAT_Print("%s\n",MKeyCaptureWidget->getName());
-      MKeyCaptureWidget->on_widget_keyPress(AChar,AKeySym,AState,ATime);
-    }
-  }
-  
-  //----------
+  // move widgets from dirty queues to paint queue
+  // we can safely write to MPaintWidgets during timer handling (?)
 
-  void on_window_keyRelease(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
-    //SAT_Print("\n");
-    if (MKeyCaptureWidget) {
-      SAT_Print("%s\n",MKeyCaptureWidget->getName());
-      MKeyCaptureWidget->on_widget_keyRelease(AChar,AKeySym,AState,ATime);
+  void on_window_timer(SAT_Timer* ATimer, double AElapsed) override {
+
+    if (MListener) MListener->on_windowListener_timer(ATimer,AElapsed);
+    for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(ATimer,AElapsed);
+
+    // don't add new widgets to paintqueue, if we're still painting the previous batch
+    // timer runs in separate thread than gui/painting
+    if (MIsPainting) return;
+
+    // we draw everything in the paint queue
+    // to keep the buffer always updated..
+
+    SAT_Rect rect = SAT_Rect(0,0,0,0);
+    SAT_Widget* widget;
+
+    while (MDirtyHostWidgets.read(&widget)) {
+      //SAT_Print("dirty from host: %s\n",widget->getName());
+      MPaintWidgets.write(widget);
+      rect.combine(widget->getRect());
     }
+    while (MDirtyGuiWidgets.read(&widget)) {
+      //SAT_Print("dirty from gui: %s\n",widget->getName());
+      MPaintWidgets.write(widget);
+      rect.combine(widget->getRect());
+    }
+
+    // if any widgets were drawn, we invalidate the area
+    // later, we will receive EXPOSE/WM_PAINT event (in the gui-thread)
+    // where we do the painting, and copy update-rect to screen
+
+    if (rect.isNotEmpty()) {
+      //SAT_Print("invalidating %.f,%.f - %.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
+      invalidate(rect.x,rect.y,rect.w,rect.h);
+    }
+    else {
+      //SAT_Print("empty rect - no invalidation\n");
+    }    
   }
-  
+
   //----------
 
   void on_window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
@@ -639,6 +643,26 @@ public: // base window
   
   //----------
 
+  void on_window_keyPress(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
+    //SAT_Print("\n");
+    if (MKeyCaptureWidget) {
+      SAT_Print("%s\n",MKeyCaptureWidget->getName());
+      MKeyCaptureWidget->on_widget_keyPress(AChar,AKeySym,AState,ATime);
+    }
+  }
+  
+  //----------
+
+  void on_window_keyRelease(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {
+    //SAT_Print("\n");
+    if (MKeyCaptureWidget) {
+      SAT_Print("%s\n",MKeyCaptureWidget->getName());
+      MKeyCaptureWidget->on_widget_keyRelease(AChar,AKeySym,AState,ATime);
+    }
+  }
+  
+  //----------
+
   void on_window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     //SAT_Print("\n");
     //if (MRootWidget) {
@@ -667,10 +691,9 @@ public: // base window
     //SAT_Print("AData %i\n",AData);
   }
 
-  //----------
-
-  void on_window_timer(double AElapsed) override {
-  }
+//------------------------------
+public: // SAT_PainterOwner
+//------------------------------
 
 //------------------------------
 public: // widget owner
@@ -678,6 +701,18 @@ public: // widget owner
 
   SAT_BaseWindow* on_widgetOwner_getWindow() override {
     return this;
+  }
+
+  double on_widgetOwner_getWidth() override {
+    return getWidth();
+  }
+
+  double on_widgetOwner_getHeight() override {
+    return getHeight();
+  }
+
+  double on_widgetOwner_getScale() override {
+    return MScale;
   }
 
 //------------------------------
@@ -766,53 +801,11 @@ public: // timer listener
   void on_timerListener_callback(SAT_Timer* ATimer) override {
     //SAT_Print("\n");
     if (!ATimer->isRunning()) return;
-
     double now = SAT_GetTime();
     double elapsed = now - MPrevTime;
     MPrevTime = now;
-
-    //on_window_timer(elapsed);
-    if (MListener) MListener->on_windowListener_timer(this,elapsed);
-    for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(elapsed);
-
-    // don't add new widgets to paintqueue, if we're still painting the previous batch
-    // timer runs in separate thread than gui/painting
-    if (MIsPainting) return;
-
-    // we draw everything in the paint queue
-    // to keep the buffer always updated..
-
-    SAT_Rect rect = SAT_Rect(0,0,0,0);
-    SAT_Widget* widget;
-
-    while (MDirtyHostWidgets.read(&widget)) {
-      //SAT_Print("dirty from host: %s\n",widget->getName());
-      MPaintWidgets.write(widget);
-      rect.combine(widget->getRect());
-    }
-    while (MDirtyGuiWidgets.read(&widget)) {
-      //SAT_Print("dirty from gui: %s\n",widget->getName());
-      MPaintWidgets.write(widget);
-      rect.combine(widget->getRect());
-    }
-
-    // if any widgets were drawn, we invalidate the area
-    // later, we will receive EXPOSE/WM_PAINT event (in the gui-thread)
-    // where we do the painting, and copy update-rect to screen
-
-    if (rect.isNotEmpty()) {
-      //SAT_Print("invalidating %.f,%.f - %.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
-      invalidate(rect.x,rect.y,rect.w,rect.h);
-    }
-    else {
-      //SAT_Print("empty rect - no invalidation\n");
-    }
-
+    on_window_timer(ATimer,elapsed);
   }
-
-//------------------------------
-public: // SAT_PainterOwner
-//------------------------------
 
 };
 

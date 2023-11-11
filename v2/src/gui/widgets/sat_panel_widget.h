@@ -19,29 +19,41 @@ class SAT_PanelWidget
 protected:
 //------------------------------
 
+  // indicators
+
   SAT_Rect  MMappedIndicatorOffset      = SAT_Rect();
   SAT_Rect  MAutomationIndicatorOffset  = SAT_Rect();
+
+  // background
   
   bool      MFillBackground             = true;
   SAT_Color MBackgroundColor            = SAT_DarkGrey;
+
+  // gradient
   
   bool      MFillGradient               = false;
   SAT_Color MGradientColor1             = SAT_LightGrey;
   SAT_Color MGradientColor2             = SAT_DarkGrey;
   double    MGradientFactor1            = 0.2;
   double    MGradientFactor2            = 0.2;
+
+  // border
   
   bool      MDrawBorder                 = true;
   SAT_Color MBorderColor                = SAT_DarkerGrey;
   double    MBorderWidth                = 1.0;
   uint32_t  MBorderEdges                = SAT_EDGE_ALL;
   uint32_t  MBorderCorners              = SAT_CORNER_NONE;
+
+  // rounded corners
   
   bool      MRoundedCorners             = false;
   double    MTLCorner                   = 0.0;
   double    MTRCorner                   = 0.0;
   double    MBRCorner                   = 0.0;
   double    MBLCorner                   = 0.0;
+
+  // drop shadow
   
   bool      MDrawDropShadow             = false;
   double    MDropShadowFeather          = 10.0;
@@ -79,7 +91,7 @@ protected:
 
   bool      MDrawValue              = false;
   SAT_Color MValueColor             = SAT_White;
-  double    MValueSize              = 9;
+  double    MValueSize              = 16;
   uint32_t  MValueAlignment         = SAT_TEXT_ALIGN_RIGHT;
   SAT_Rect  MValueOffset            = {0,0,0,0};
   char      MValueText[256]         = {0};
@@ -88,6 +100,8 @@ protected:
   double    MValueDropShadowSize    = 4.0;
   SAT_Color MValueDropShadowColor   = SAT_Black;//SAT_Color(0,0,0,0.75);
   SAT_Point MValueDropShadowOffset  = {2,2};
+
+  //
 
 //  SAT_Color MDisabledColor          = SAT_Grey;
 //  double    MDisabledAlpha          = 0.5;
@@ -612,36 +626,6 @@ public:
     drawBorder(AContext);
     drawHostIndicators(AContext);
   }
-  
-  // void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-  //   if (AButton == SAT_BUTTON_LEFT) {
-  //     if (MDrawDropShadow && !MDropShadowInner) {
-  //       MDropShadowXOffsetTMP = MDropShadowXOffset;
-  //       MDropShadowYOffsetTMP = MDropShadowYOffset;
-  //       MDropShadowXOffset = 0;
-  //       MDropShadowYOffset = 0;
-  //       //SAT_Color temp  = MGradientColor1;
-  //       //MGradientColor1 = MGradientColor2;
-  //       //MGradientColor2 = temp;
-  //       do_widgetListener_update(this,0);
-  //       do_widgetListener_redraw(this,0);
-  //     }
-  //   }
-  // }
-
-  // void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-  //   if (AButton == SAT_BUTTON_LEFT) {
-  //     if (MDrawDropShadow && !MDropShadowInner) {
-  //       MDropShadowXOffset = MDropShadowXOffsetTMP;
-  //       MDropShadowYOffset = MDropShadowYOffsetTMP;
-  //       //SAT_Color temp  = MGradientColor1;
-  //       //MGradientColor1 = MGradientColor2;
-  //       //MGradientColor2 = temp;
-  //       do_widgetListener_update(this,0);
-  //       do_widgetListener_redraw(this,0);
-  //     }
-  //   }
-  // }
   
 };
 

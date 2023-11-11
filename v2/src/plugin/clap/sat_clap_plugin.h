@@ -153,6 +153,7 @@ private: // plugin
   void destroy_callback(const struct clap_plugin *plugin) {
     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
     plug->destroy();
+    //delete this;
   }
 
   static

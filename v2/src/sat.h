@@ -7,15 +7,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <atomic>
+#include <malloc.h>
 #include <math.h>
 #include <memory.h>
 #include <string.h>
 #include <time.h>
-
-#include <malloc.h>
-//#include <sys/mman.h> // -> sat_linux.h
-
-#include <atomic>
 //#include <vector>
 
 //----------------------------------------------------------------------
@@ -82,18 +79,7 @@
 
 //----------------------------------------------------------------------
 
-//extern void SAT_Print(const char*,...) {}
-//extern void SAT_DPrint(const char*,...) {}
-
-//#include "base/sat_debug.h"
-//#include "base/sat_test.h"
 #include "base/sat_global.h"
-
-//static
-//SAT_Global SAT_GLOBAL = {};
-
-//----------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------
 #endif

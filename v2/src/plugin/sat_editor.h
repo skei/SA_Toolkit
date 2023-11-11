@@ -76,16 +76,6 @@ public:
   }
 
 //------------------------------
-public: // window listener
-//------------------------------
-
-  //void on_windowListener_update(SAT_Widget* AWidget) override {}
-  //void on_windowListener_resize(SAT_BaseWindow* AWindow, int32_t AWidth, int32_t AHeight) override {}
-
-  void on_windowListener_timer(SAT_BaseWindow* AWindow, double AElapsed) override {
-  }
-
-//------------------------------
 public:
 //------------------------------
 
@@ -223,6 +213,26 @@ public:
       return true;
     }
     return false;
+  }
+
+//------------------------------
+public: // window listener
+//------------------------------
+
+  void on_windowListener_update(SAT_Widget* AWidget) override {
+    SAT_Parameter* parameter= (SAT_Parameter*)AWidget->getParameter();
+    if (parameter) {
+      uint32_t index = parameter->getIndex();
+      sat_param_t value = parameter->getValue();
+      if (MListener) MListener->on_editorListener_update(index,value);
+      SAT_Print("index %i value %f\n",index,value);
+    }
+  }
+
+  //void on_windowListener_resize(SAT_BaseWindow* AWindow, int32_t AWidth, int32_t AHeight) override {
+  //}
+
+  void on_windowListener_timer(SAT_Timer* ATimer, double AElapsed) override {
   }
 
 };

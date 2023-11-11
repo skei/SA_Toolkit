@@ -73,6 +73,7 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
+    SAT_PRINT;
     #ifndef SAT_NO_AUTODELETE
       deleteAudioPorts();
       deleteNotePorts();
@@ -556,8 +557,14 @@ protected: // SAT_EditorListener
 //------------------------------
 
   void on_editorListener_timer() override {
-    //flushParamFromHostToGui();
-    //flushModFromHostToGui();
+    // flushParamFromHostToGui();
+    // flushModFromHostToGui();
+  }
+
+  void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) override {
+    // MParameters[AIndex]->setValue(AValue);
+    // queueParamFromGuiToAudio(AIndex);
+    // queueParamFromGuiToHost(AIndex);
   }
 
 //----------------------------------------------------------------------
@@ -580,7 +587,11 @@ protected: // clap_plugin
   //----------
 
   void destroy() override {
+    SAT_PRINT;
     MIsInitialized = false;
+
+    delete this;
+    
   }
 
   //----------

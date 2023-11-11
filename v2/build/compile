@@ -31,6 +31,7 @@ OUTPUT="build.exe"
 FORMAT="EXE"
 GUI="X11"
 DEBUG=false
+SANITIZE=false
 TEST=false
 VERBOSE=false
 ADDITIONAL=""
@@ -48,6 +49,8 @@ FLAGS+=" -static-libgcc"
 INC=""
 INC+=" -I../src"
 #INC+=" -I../src/extern/vst3/vst3sdk"
+
+PRELIB=""
 
 LIB=""
 LIB+=" -ldl -lrt"
@@ -68,6 +71,7 @@ function print_help_and_exit {
   echo "  -f <type>   format (all,clap,dssi,exe,ladspa,lv2,vst2,vst3)"
   echo "  -g <type>   gui (nogui,wayland,win32,x11)"
   echo "  -d          debug mode"
+  echo "  -s          sanitize"
   echo "  -t          include tests"
   echo "  -v          verbose"
   echo "  -a <flags>  additional flags (in quotes)"
@@ -85,7 +89,7 @@ if [ "$#" -eq 0 ]; then
   print_help_and_exit
 fi
 
-while getopts i:o:f:g:a:dtvh? arg
+while getopts i:o:f:g:a:dstvh? arg
 do
   A=""
   case $arg in
@@ -95,6 +99,7 @@ do
     g)    GUI=${OPTARG^^};;
     a)    ADDITIONAL=$OPTARG;;
     d)    DEBUG=true;;
+    s)    SANITIZE=true;;
     t)    TEST=true;;
     v)    VERBOSE=true;;
     h|?)  print_help_and_exit;;
@@ -264,12 +269,25 @@ if $DEBUG
   then
     FLAGS+=" -DSAT_DEBUG"
     FLAGS+=" -g"
+    FLAGS+=" -export-dynamic"
     #FLAGS+=" -Wl,-Bsymbolic"
   else
     FLAGS+=" -DNDEBUG"
     FLAGS+=" -O3"
     FLAGS+=" -ffast-math"
     FLAGS+=" -s"
+fi
+
+#------------------------------
+# -s sanitize
+#------------------------------
+
+if $SANITIZE
+  then
+    #PRELIB+=" -lasan"
+    FLAGS+=" -fsanitize=leak"
+    #FLAGS+=" -fsanitize=address"
+    FLAGS+=" -fno-omit-frame-pointer -fno-optimize-sibling-calls"
 fi
 
 #------------------------------
@@ -297,8 +315,7 @@ fi
 #echo
 
 if $VERBOSE; then
-  echo g++ $INPUT -o $OUTPUT $FLAGS $INC $LIB $ADDITIONAL
+  echo g++ $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
 fi  
 
-g++ $INPUT -o $OUTPUT $FLAGS $INC $LIB $ADDITIONAL
-
+g++ $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
