@@ -25,8 +25,8 @@ public:
     ;
 
   #elif defined(SAT_GUI_X11)
-    virtual Display*      on_rendererOwner_getX11Display() { return nullptr; }
-    virtual xcb_drawable_t on_rendererOwner_getDrawable() { return 0; }
+    virtual Display*            on_rendererOwner_getX11Display() { return nullptr; }
+    virtual xcb_drawable_t      on_rendererOwner_getDrawable() { return 0; }
 
   #endif
 

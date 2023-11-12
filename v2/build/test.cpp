@@ -1,6 +1,6 @@
 /*
   in '/bin' directory:
-    ../build/compile -i ../build/build.cpp -o build.exe -f exe -g x11 -d  
+    ../build/compile -i ../build/build.cpp -o build.exe -f exe -g x11 -d
   in separate console:
     nc -U -l -k /tmp/sat.socket
 */
@@ -14,10 +14,6 @@
 #include "gui/sat_window.h"
 #include "gui/sat_widgets.h"
 
-#include "base/utils/sat_easing.h"
-#include "base/utils/sat_windowing.h"
-#include "base/utils/sat_tween_manager.h"
-
 #define EDITOR_WIDTH  500
 #define EDITOR_HEIGHT 500
 #define EDITOR_SCALE  1.0
@@ -29,10 +25,13 @@
 //----------------------------------------------------------------------
 
 #if defined(SAT_TESTS)
+
   bool build_test1() { return true; }
   bool build_test2() { return true; }
+
   SAT_TEST("BUILD: test1",build_test1)
   SAT_TEST("BUILD: test2 yo, man!",build_test2)
+
 #endif
 
 //----------------------------------------------------------------------
@@ -46,24 +45,28 @@ class myWidget
 
 private:
 
-  SAT_Color MColor1 = SAT_Yellow;
-  SAT_Color MColor2 = SAT_Red;
+  SAT_Color MColor1     = SAT_Yellow;
+  SAT_Color MColor2     = SAT_Red;
+
+//void*     memory_leak = nullptr;
 
 public:
 
   myWidget(SAT_Rect ARect)
   : SAT_Widget(ARect) {
     setName("myWidget");
+    //memory_leak = malloc(666);
+  }
 
-    //void* memory_leak = malloc(666);
-
+  virtual ~myWidget() {
+    //free(memory_leak);
   }
 
   //----------
   
   void on_widget_paint(SAT_PaintContext* AContext) final {
     //SAT_Print("%s\n",getName());
-    SAT_BasePainter* painter = AContext->painter;
+    SAT_Painter* painter = AContext->painter;
     //double scale = AContext->scale;
     SAT_Rect rect = getRect();
     painter->setFillColor(MColor1);
@@ -89,16 +92,12 @@ public:
   //----------
   
   void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) final {
-    SAT_PRINT;
+    //SAT_PRINT;
     SAT_Color temp = MColor1;
     MColor1 = MColor2;
     MColor2 = temp;
     do_widget_redraw(this);
   }
-
-  //void on_widget_timer(SAT_Timer* ATimer, double AElapsed) final {
-  //  SAT_Print("elapsed %f\n",AElapsed);
-  //}
 
 };
 
@@ -110,34 +109,35 @@ public:
 
 int main() {
 
-  //SAT_Print("Hello world!\n");
-  //SAT_PRINT;
-  //SAT_DPrint("hello #2\n");
-  SAT_LOG("test %i\n",1);
-  SAT_RUN_TESTS
+  SAT_Print("Hello world!\n");
+  SAT_PRINT;
+  SAT_DPrint("hello #2\n");
+
+  //SAT_LOG("test %i\n",1);
+
+  #if defined(SAT_TESTS)
+    SAT_RUN_TESTS
+  #endif
 
   //-----
 
   SAT_Window* window = new SAT_Window(EDITOR_WIDTH,EDITOR_HEIGHT);
-
   SAT_RootWidget* root = new SAT_RootWidget(0,window);
   window->setRootWidget(root);
   root->setText("Hello, world!");
-
-  myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
-  root->appendChildWidget(widget);
-
-  SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Value",0.5);
-  root->appendChildWidget(dragvalue);
-  
+    myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
+    root->appendChildWidget(widget);
+    SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(120,10,100,100),"Knob",0.5);
+    root->appendChildWidget(knob);
+    SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Drag",0.5);
+    root->appendChildWidget(dragvalue);
+    SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10,150,200,20),"Slider",0.5);
+    root->appendChildWidget(slider);
   //window->registerTimerWidget(widget);
-
   window->open();
   window->eventLoop();
   window->close();
-
   delete window;
-
   return 0;
 }
 
@@ -170,6 +170,12 @@ class myPlugin
 : public SAT_Plugin {
 
 //------------------------------
+private:
+//------------------------------
+
+  SAT_Parameter* MParam1 = nullptr;
+
+//------------------------------
 public:
 //------------------------------
 
@@ -188,7 +194,7 @@ public:
 public:
 //------------------------------
 
-  bool init() override {
+  bool init() final {
     //SAT_PRINT;
     registerDefaultExtension();
     //appendClapNoteInputPort("input");
@@ -201,19 +207,24 @@ public:
 
   //----------
 
-  void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) override {
+  void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     //SAT_PRINT;
     //AWindow->setInitialSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     SAT_RootWidget* root = new SAT_RootWidget(SAT_Rect(100,100),AWindow);
     AWindow->setRootWidget(root);
 
-    myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
-    root->appendChildWidget(widget);
+      myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
+      root->appendChildWidget(widget);
+      SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(120,10,100,100),"Knob",0.5);
+      root->appendChildWidget(knob);
+      SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Drag",0.5);
+      root->appendChildWidget(dragvalue);
+      SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10,150,200,20),"Slider",0.5);
+      root->appendChildWidget(slider);
 
-    SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Value",0.5);
-    root->appendChildWidget(dragvalue);
-  
-    //AWindow->registerTimerWidget(widget);
+    SAT_Parameter* param = getParameter(0);
+    SAT_Print("param1 %p\n",param);
+    AEditor->connect(knob,param);
 
   }
 

@@ -73,6 +73,23 @@ public:
 public:
 //------------------------------
 
+  virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter) {
+    AWidget->setParameter(AParameter);
+    AParameter->setWidget(AWidget);
+  }
+
+  //----------
+
+  virtual void updateParameterFromHost(SAT_Parameter* AParameter) {
+    uint32_t index = AParameter->getIndex();
+    sat_param_t value = AParameter->getValue();
+    SAT_Print("index %i value %f\n",index,value);
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   // handled in SAT_Plugin
 
   //virtual bool is_api_supported(const char *api, bool is_floating) { return false; }
@@ -214,18 +231,21 @@ public: // window listener
 //------------------------------
 
   void on_windowListener_update(SAT_Widget* AWidget) override {
-    SAT_Parameter* parameter= (SAT_Parameter*)AWidget->getParameter();
+    SAT_Print("%s\n",AWidget->getName());
+    sat_param_t value = AWidget->getValue();
+    SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter();
     if (parameter) {
-      uint32_t index = parameter->getIndex();
-      sat_param_t value = parameter->getValue();
-      if (MListener) MListener->on_editorListener_update(index,value);
-      SAT_Print("index %i value %f\n",index,value);
+      //SAT_Print("parameter %p\n",parameter);
+      //SAT_Print("listener %p\n",MListener);
+      if (MListener) {
+        MListener->on_editorListener_update(parameter,value);
+      }
     }
   }
 
   //----------
 
-  //void on_windowListener_resize(SAT_BaseWindow* AWindow, int32_t AWidth, int32_t AHeight) override {
+  //void on_windowListener_resize(SAT_Window* AWindow, int32_t AWidth, int32_t AHeight) override {
   //}
 
   //----------

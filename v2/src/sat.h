@@ -58,13 +58,11 @@
   #define SAT_CPP11
 #endif
 
-
 //----------------------------------------------------------------------
 
 #include "base/sat_config.h"
 #include "base/sat_attributes.h"
 #include "base/sat_const.h"
-#include "base/sat_enums.h"
 #include "base/sat_types.h"
 
 //----------------------------------------------------------------------

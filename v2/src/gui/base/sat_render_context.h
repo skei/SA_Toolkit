@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-
+//#include "gui/sat_renderer.h"
 
 #if defined(SAT_GUI_WIN32)
   ;

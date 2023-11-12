@@ -161,6 +161,7 @@ private:
   // if two values are identical, will fid the first one..
   // todo: check if we're on the left or right side if values are equal (or similar)
   
+  // ..ClosestValueHorizontal
   int32_t findClosestValue(double AXpos, double AYpos) {
     if (MNumValues == 0) {
       return 0;

@@ -14,7 +14,7 @@ private:
 
   uint32_t  MBufferSize = 0;
   uint32_t* MBuffer     = nullptr;
-
+  bool      MAllocated  = false;
   uint32_t  MWidth      = 0;
   uint32_t  MHeight     = 0;
   uint32_t  MDepth      = 0;

@@ -68,6 +68,10 @@ public:
 public:
 //------------------------------
 
+  virtual void* getWidget() {
+    return MWidget;
+  }
+  
   virtual int32_t getIndex() {
     return MIndex;
   }
@@ -76,12 +80,20 @@ public:
     return &MInfo;
   }
 
+  virtual sat_param_t getValue() {
+    return MValue;
+  }
+
   virtual sat_param_t getModulation() {
     return MModulation;
   }
 
-  virtual sat_param_t getValue() {
-    return MValue;
+  virtual sat_param_t getNormalizedValue() {
+    return normalize(MValue);
+  }
+
+  virtual sat_param_t getNormalizedModulation() {
+    return normalize(MModulation);
   }
 
   virtual uint32_t  getAutomationState() { return MAutomationState; }
@@ -100,6 +112,10 @@ public:
 public:
 //------------------------------
 
+  virtual void setWidget(void* AWidget) {
+    MWidget = AWidget;
+  }
+  
   virtual void setIndex(int32_t AIndex) {
     MIndex    = AIndex;
     MInfo.id  = AIndex;   // !!!!!

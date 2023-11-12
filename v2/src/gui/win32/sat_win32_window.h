@@ -24,7 +24,7 @@ public:
 
   //----------
 
-  virtual ~SAT_BaseWindow() {
+  virtual ~SAT_Win32Window() {
   }
 
 

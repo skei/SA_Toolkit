@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_surface.h"
 #include "gui/base/sat_renderer_owner.h"
 
 //----------------------------------------------------------------------
@@ -26,7 +25,7 @@ public:
 public:
 //------------------------------
 
-  virtual uint32_t    getType()     { return 0; }
+  virtual uint32_t    getType() { return 0; }
   virtual const char* getTypeName() { return ""; }
 
   virtual bool        beginRendering() { return false; }

@@ -179,15 +179,12 @@ public:
 
   uint32_t          getWindowType()     override { return SAT_WINDOW_TYPE_WAYLAND; }
   const char*       getWindowTypeName() override { return SAT_WINDOW_TYPE_NAME_WAYLAND; }
-  SAT_BaseRenderer* getRenderer()       override { return MRenderer; }
-//  SAT_BasePainter*  getPainter()        override { return MPainter; }
-
+  SAT_Renderer*     getRenderer()       override { return MRenderer; }
   uint32_t          getWidth()          override { return MWidth; }
   uint32_t          getHeight()         override { return MHeight; }
   uint32_t          getScreenWidth()    override { return 0; }
   uint32_t          getScreenHeight()   override { return 0; }
   uint32_t          getScreenDepth()    override { return 0; }
-
 
 //------------------------------
 public: // SAT_RendererOwner

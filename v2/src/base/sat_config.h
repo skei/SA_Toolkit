@@ -48,16 +48,15 @@
 //----------------------------------------------------------------------
 
 //#define SAT_DEBUG
-
-#define SAT_DEBUG_ASSERT
-#define SAT_DEBUG_BREAKPOINT
-#define SAT_DEBUG_CALLSTACK
-#define SAT_DEBUG_CRASH_HANDLER
+  #define SAT_DEBUG_ASSERT
+  #define SAT_DEBUG_BREAKPOINT
+  #define SAT_DEBUG_CALLSTACK
+  #define SAT_DEBUG_CRASH_HANDLER
 //#define SAT_DEBUG_MEMTRACE
 //#define SAT_DEBUG_OBSERVER
 //#define SAT_DEBUG_PRINT_ALWAYS
-#define SAT_DEBUG_PRINT_THREAD
-#define SAT_DEBUG_PRINT_TIME
+  #define SAT_DEBUG_PRINT_THREAD
+  #define SAT_DEBUG_PRINT_TIME
 //#define SAT_DEBUG_PRINT_PRETTY_FUNCTION
 //#define SAT_DEBUG_PRINT_SOCKET
 //#define SAT_DEBUG_WINDOW
@@ -78,17 +77,17 @@
 //#define SAT_PLUGIN_VST2
 //#define SAT_PLUGIN_VST3
 
-#define SAT_PLUGIN_CONVERT_MIDI
+  #define SAT_PLUGIN_CONVERT_MIDI
 
 //#define SAT_PLUGIN_USE_ARA_FACTORY
 //#define SAT_PLUGIN_USE_INVALIDATION_FACTORY
-#define SAT_PLUGIN_USE_PLUGIN_FACTORY
+  #define SAT_PLUGIN_USE_PLUGIN_FACTORY
 //#define SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
 
 //#define SAT_TESTS
-
 #define SAT_TESTS_EXIT_ON_FAILURE
-#define SAT_X11_WAIT_FOR_MAPNOTIFY
+
+  #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 //----------------------------------------------------------------------
 //

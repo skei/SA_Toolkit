@@ -1,5 +1,5 @@
 *
 !.gitignore
 !compile
-!*.cpp
+!test.cpp
 

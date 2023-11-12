@@ -619,6 +619,48 @@ float fixTime(float t, float d) {
 
 //----------
 
+// #define SAT_LINEAR_TWEEN        1
+// #define SAT_EASE_IN_QUAD        2
+// #define SAT_EASE_OUT_QUAD       3
+// #define SAT_EASE_INOUT_QUAD     4
+// #define SAT_EASE_OUTIN_QUAD     5
+// #define SAT_EASE_IN_CUBIC       6
+// #define SAT_EASE_OUT_CUBIC      7
+// #define SAT_EASE_INOUT_CUBIC    8
+// #define SAT_EASE_OUTIN_CUBIC    9
+// #define SAT_EASE_IN_QUART       10
+// #define SAT_EASE_OUT_QUART      11
+// #define SAT_EASE_INOUT_QUART    12
+// #define SAT_EASE_OUTIN_QUART    13
+// #define SAT_EASE_IN_QUINT       14
+// #define SAT_EASE_OUT_QUINT      15
+// #define SAT_EASE_INOUT_QUINT    16
+// #define SAT_EASE_OUTIN_QUINT    17
+// #define SAT_EASE_IN_SINE        18
+// #define SAT_EASE_OUT_SINE       19
+// #define SAT_EASE_INOUT_SINE     20
+// #define SAT_EASE_OUTIN_SINE     21
+// #define SAT_EASE_IN_EXPO        22
+// #define SAT_EASE_OUT_EXPO       23
+// #define SAT_EASE_INOUT_EXPO     24
+// #define SAT_EASE_OUTIN_EXPO     25
+// #define SAT_EASE_IN_CIRC        26
+// #define SAT_EASE_OUT_CIRC       27
+// #define SAT_EASE_INOUT_CIRC     28
+// #define SAT_EASE_OUTIN_CIRC     29
+// #define SAT_EASE_IN_ELASTIC     30
+// #define SAT_EASE_OUT_ELASTIC    31
+// #define SAT_EASE_INOUT_ELASTIC  32
+// #define SAT_EASE_OUTIN_ELASTIC  33
+// #define SAT_EASE_IN_BACK        34
+// #define SAT_EASE_OUT_BACK       35
+// #define SAT_EASE_INOUT_BACK     36
+// #define SAT_EASE_OUTIN_BACK     37
+// #define SAT_EASE_OUT_BOUNCE     38
+// #define SAT_EASE_IN_BOUNCE      39
+// #define SAT_EASE_INOUT_BOUNCE   40
+// #define SAT_EASE_OUTIN_BOUNCE   41
+
 float SAT_Easing(uint32_t typ, float t, float b, float c, float d, bool AMirror=false) {
   if (AMirror) t = fixTime(t,d);
   switch (typ) {

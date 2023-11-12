@@ -112,16 +112,16 @@ public: // extensions
 public: // parameters
 //------------------------------
 
-  virtual int32_t appendParameter(SAT_Parameter* AParameter) {
+  virtual SAT_Parameter* appendParameter(SAT_Parameter* AParameter) {
     int32_t index = MParameters.size();
     AParameter->setIndex(index);
     MParameters.append(AParameter);
-    return index;
+    return AParameter;
   }
 
   //----------
 
-  virtual int32_t appendParameter(const clap_param_info_t* AInfo) {
+  virtual SAT_Parameter* appendParameter(const clap_param_info_t* AInfo) {
     SAT_Parameter* parameter = new SAT_Parameter(AInfo);
     return appendParameter(parameter);
   }
@@ -138,6 +138,28 @@ public: // parameters
     }
     MParameters.clear(true);
   }
+
+  //----------
+
+  virtual uint32_t getNumParameters() {
+    return MParameters.size();
+  }
+
+  //----------
+
+  virtual SAT_Parameter* getParameter(uint32_t AIndex) {
+    return MParameters[AIndex];
+  }
+
+  //----------
+
+  virtual void updateParameterFromGui(SAT_Parameter* AParameter) {
+    uint32_t index = AParameter->getIndex();
+    sat_param_t value = AParameter->getValue();
+    SAT_Print("index %i value %f\n",index,value);
+  }
+
+
 
 //------------------------------
 public: // audio ports
@@ -561,11 +583,15 @@ protected: // SAT_EditorListener
     // flushModFromHostToGui();
   }
 
-  void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) override {
-    // MParameters[AIndex]->setValue(AValue);
-    // queueParamFromGuiToAudio(AIndex);
-    // queueParamFromGuiToHost(AIndex);
+  void on_editorListener_update(SAT_Parameter* AParameter, sat_param_t AValue) override {
+    uint32_t index = AParameter->getIndex();
+    SAT_Print("parameter %p index %i value %f\n",AParameter,index,AValue);
+    MParameters[index]->setValue(AValue);
+//    queueParamFromGuiToAudio(AIndex);
+//    queueParamFromGuiToHost(AIndex);
   }
+
+
 
 //----------------------------------------------------------------------
 //

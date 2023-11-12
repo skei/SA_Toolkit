@@ -306,7 +306,7 @@ public:
     SAT_Assert(AContext);
     if (MDrawDropShadow) {
       double S = AContext->scale;//getWindowScale();
-      SAT_BasePainter* painter = AContext->painter;
+      SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
       //if (MDrawBorder) mrect.shrink(MBorderWidth * 0.5);
@@ -348,7 +348,7 @@ public:
     SAT_Assert(AContext);
     if (MFillBackground) {
       double S = AContext->scale;//getWindowScale();
-      SAT_BasePainter* painter = AContext->painter;
+      SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
 
@@ -389,7 +389,7 @@ public:
     SAT_Assert(AContext);
     if (MDrawBorder) {
       double S = AContext->scale;//getWindowScale();
-      SAT_BasePainter* painter = AContext->painter;
+      SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
       
@@ -438,7 +438,7 @@ public:
       double S = AContext->scale; // getWindowScale();
       
       //SAT_Print("S %f\n",S);
-      SAT_BasePainter* painter = AContext->painter;
+      SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
       SAT_Rect textoffset = MTextOffset;
@@ -519,7 +519,7 @@ public:
     if (MDrawValue) {
       // if MOwner == null, this will return 1.0
       double S = AContext->scale;//getWindowScale();
-      SAT_BasePainter* painter = AContext->painter;
+      SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
       SAT_Rect valueoffset = MValueOffset;
@@ -565,10 +565,12 @@ public:
 
   //----------
 
+  // todo: MDrawHostIndicators
+
   virtual void drawHostIndicators(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
     
-    SAT_BasePainter* painter = AContext->painter;
+    SAT_Painter* painter = AContext->painter;
     SAT_Assert(painter);
     double S = AContext->scale;//getWindowScale();
     SAT_Rect mrect = getRect();
@@ -617,7 +619,7 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    //SAT_Print("%s : counter %i w/h %i,%i\n",getName(),AContext->counter,getWidth(),getHeight());
+    //SAT_Print("%s : counter %i w/h %.2f,%.2f\n",getName(),AContext->counter,getWidth(),getHeight());
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawText(AContext);

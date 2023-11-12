@@ -64,27 +64,40 @@ private:
 
   SAT_RootWidget*     MRootWidget           = nullptr;
   SAT_WindowListener* MListener             = nullptr;
+
   sat_atomic_bool_t   MIsPainting           = false;
   SAT_PaintContext    MPaintContext         = {};
+  SAT_Painter*        MPainter              = nullptr;
+
+  void*               MRenderBuffer         = nullptr;
+  uint32_t            MBufferWidth          = 0;
+  uint32_t            MBufferHeight         = 0;
+
   SAT_Timer           MTimer                = SAT_Timer(this);
+  double              MPrevTime             = 0.0;
+  SAT_WidgetArray     MTimerWidgets         = {};
+
+  int32_t             MInitialWidth         = 0;
+  int32_t             MInitialHeight        = 0;
+  double              MScale                = 1.0;
+
   SAT_WidgetQueue     MDirtyGuiWidgets      = {};
   SAT_WidgetQueue     MDirtyHostWidgets     = {};
+  SAT_WidgetQueue     MDirtyTimerWidgets    = {};
   SAT_WidgetQueue     MPaintWidgets         = {};
+
   SAT_Widget*         MHoverWidget          = nullptr;
   SAT_Widget*         MModalWidget          = nullptr;
   SAT_Widget*         MInteractiveWidget    = nullptr;
   SAT_Widget*         MMouseCaptureWidget   = nullptr;
   SAT_Widget*         MKeyCaptureWidget     = nullptr;
 
-  void*               MRenderBuffer         = nullptr;
-  uint32_t            MBufferWidth          = 0;
-  uint32_t            MBufferHeight         = 0;
-
   int32_t             MMouseCurrentXpos     = 0;
   int32_t             MMouseCurrentYpos     = 0;
   int32_t             MMousePreviousXpos    = 0;
   int32_t             MMousePreviousYpos    = 0;
   int32_t             MMouseCurrentCursor   = 0;
+
   int32_t             MMouseClickedXpos     = 0;
   int32_t             MMouseClickedYpos     = 0;
   uint32_t            MMouseClickedButton   = SAT_BUTTON_NONE;
@@ -96,15 +109,6 @@ private:
   int32_t             MLockedCurrentY       = 0;
   int32_t             MLockedClickedX       = 0;
   int32_t             MLockedClickedY       = 0;
-
-  double              MPrevTime             = 0.0;
-
-  int32_t             MInitialWidth         = 0;
-  int32_t             MInitialHeight        = 0;
-  double              MScale                = 1.0;
-
-  SAT_Painter*        MPainter              = nullptr;
-  SAT_WidgetArray     MTimerWidgets         = {};
 
 //------------------------------
 public:
@@ -135,7 +139,7 @@ public:
 
     //if (AParent) setParent(AParent);
 
-    SAT_BaseRenderer* renderer = getRenderer();
+    SAT_Renderer* renderer = getRenderer();
     SAT_Assert(renderer);
     renderer->resetCurrent();
 
@@ -196,6 +200,15 @@ public:
 
   virtual bool markWidgetDirtyFromHost(SAT_Widget* AWidget) {
     return MDirtyHostWidgets.write(AWidget);
+  }
+
+  //----------
+
+  // called from:
+  // timer functions..
+
+  virtual bool markWidgetDirtyFromTimer(SAT_Widget* AWidget) {
+    return MDirtyTimerWidgets.write(AWidget);
   }
 
   //----------
@@ -368,7 +381,7 @@ private:
 public: // base window
 //------------------------------
 
-  SAT_BasePainter* getPainter() override {
+  SAT_Painter* getPainter() override {
     return MPainter;
   }
 
@@ -427,8 +440,9 @@ public: // base window
   void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     //SAT_Print("AXpos %i AYpos %i AWidth %i AHeight %i counter %i MRenderBuffer %p (%i,%i)\n",AXpos,AYpos,AWidth,AHeight,MPaintContext.counter,MRenderBuffer,MBufferWidth,MBufferHeight);
 
-    SAT_BaseRenderer* renderer = getRenderer();
-    SAT_BasePainter* painter = getPainter();
+    SAT_Renderer* renderer = getRenderer();
+    SAT_Painter* painter = getPainter();
+
     SAT_Assert(renderer);
     SAT_Assert(painter);
 
@@ -440,7 +454,6 @@ public: // base window
     uint32_t window_width = getWidth();
     uint32_t window_height = getHeight();
 
-    MIsPainting = true;
     renderer->beginRendering(window_width,window_height);
     painter->beginPaint(window_width,window_height);
 
@@ -466,7 +479,13 @@ public: // base window
     painter->selectRenderBuffer(MRenderBuffer);
     renderer->setViewport(0,0,MBufferWidth,MBufferHeight);
     painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
+    painter->setClipRect(SAT_Rect(0,0,window_width,window_height));
     painter->setClip(0,0,window_width,window_height);
+
+    // if there are dirty widgets coming in after this,
+    // they have to wait until next timer tick
+    
+    MIsPainting = true;
 
     if (resized) {
 
@@ -477,8 +496,12 @@ public: // base window
       
       if (MRootWidget) {
         if (MRootWidget->getLastPainted() != MPaintContext.counter) {
+
+          //painter->resetClip();
+
           //SAT_Print("root widget\n");
           MRootWidget->on_widget_paint(&MPaintContext);
+
           MRootWidget->setLastPainted(MPaintContext.counter);
         }
       }
@@ -489,20 +512,27 @@ public: // base window
 
       SAT_Widget* widget;
       while (MPaintWidgets.read(&widget)) {
+        if (widget->isRecursivelyVisible()) {
         //if (widget->isVisible()) {
           if (widget->getLastPainted() != MPaintContext.counter) {
+
             SAT_Rect cliprect = calcClipRect(widget);
+            // if cliprect visible?
             painter->pushClip(cliprect);
+
             //SAT_Print("%s\n",widget->getName());
             widget->on_widget_paint(&MPaintContext);
+
             painter->popClip();
+
             widget->setLastPainted(MPaintContext.counter);
           }
-        //}
+        }
       }
 
     }
 
+    MIsPainting = false;
     painter->endFrame();
 
     // copy buffer to screen
@@ -523,7 +553,6 @@ public: // base window
 
     painter->endPaint();
     renderer->endRendering();
-    MIsPainting = false;
 
   }
   
@@ -547,6 +576,11 @@ public: // base window
     SAT_Rect rect = SAT_Rect(0,0,0,0);
     SAT_Widget* widget;
 
+    while (MDirtyTimerWidgets.read(&widget)) {
+      //SAT_Print("dirty from timer: %s\n",widget->getName());
+      MPaintWidgets.write(widget);
+      rect.combine(widget->getRect());
+    }
     while (MDirtyHostWidgets.read(&widget)) {
       //SAT_Print("dirty from host: %s\n",widget->getName());
       MPaintWidgets.write(widget);
@@ -699,7 +733,7 @@ public: // SAT_PainterOwner
 public: // widget owner
 //------------------------------
 
-  SAT_BaseWindow* on_widgetOwner_getWindow() override {
+  SAT_Window* on_widgetOwner_getWindow() override {
     return this;
   }
 
@@ -721,7 +755,7 @@ public: // widget listener
 
   void on_widgetListener_update(SAT_Widget* AWidget) override {
     //SAT_Print("%s\n",AWidget->getName());
-    //if (MListener) MListener->on_windowListener_update(AWidget);
+    if (MListener) MListener->on_windowListener_update(AWidget);
   }
 
   //----------
@@ -791,8 +825,13 @@ public: // widget listener
 
   //----------
 
-  void do_widgetListener_select(SAT_Widget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) override{
+  void on_widgetListener_select(SAT_Widget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) override{
   }
+
+  //----------
+
+  //void on_widgetListener_resized(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
+  //}
 
 //------------------------------
 public: // timer listener

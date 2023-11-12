@@ -179,8 +179,9 @@ public:
   //----------
   
   SAT_TweenChain* appendChain(SAT_TweenChain* AChain) {
-    MPending.write(AChain);
+    SAT_PRINT;
     //MChains.append(AChain);
+    MPending.write(AChain);
     return AChain;
   }
   
@@ -198,12 +199,13 @@ public:
 
     SAT_TweenChain* chain;
     while (MPending.read(&chain)) {
-      appendChain(chain);
+      MChains.append(chain);
     }
 
     uint32_t num_chains = MChains.size();
     for (uint32_t i=0; i<num_chains; i++) {
       if (MChains[i]->MActive) {
+
         uint32_t index = MChains[i]->MCurrentNode;
         SAT_TweenNode* node = MChains[i]->MNodes[index];
         if (node) {// && node->MActive) {
@@ -246,13 +248,15 @@ public:
     // delete finished chains
     uint32_t i = 0;
     while (i < MChains.size()) {
-      if (!MChains[i]->MActive) {
-        for (uint32_t j=0; j<MChains[i]->MNodes.size(); j++) {
-          SAT_Print("deleting node %i\n",j);
-          delete MChains[i]->MNodes[j];
-        }
-        SAT_Print("deleting chain %i\n",i);
-        delete MChains[i];
+      SAT_TweenChain* chain = MChains[i];
+      if (!chain->MActive) {
+        //for (uint32_t j=0; j<chain->MNodes.size(); j++) {
+        //  SAT_TweenNode* node = chain->MNodes[j];
+        //  SAT_Print("deleting node %i\n",j);
+        //  delete node;
+        //}
+        //SAT_Print("deleting chain %i\n",i);
+        delete chain;
         MChains.remove(i);
       }
       i += 1;

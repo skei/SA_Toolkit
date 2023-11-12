@@ -6,6 +6,8 @@
 
 #include "sat.h"
 
+class SAT_Parameter;
+
 //----------------------------------------------------------------------
 //
 //
@@ -13,10 +15,9 @@
 //----------------------------------------------------------------------
 
 class SAT_EditorListener {
-//protected:
 public:
   virtual void on_editorListener_timer() {}
-  virtual void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) {}
+  virtual void on_editorListener_update(SAT_Parameter* AParameter, sat_param_t AValue) {}
 };
 
 //----------------------------------------------------------------------

@@ -241,7 +241,7 @@ public:
 public:
 //------------------------------
 
-  SAT_BaseRenderer* getRenderer() override {
+  SAT_Renderer* getRenderer() override {
     return MRenderer;
   }
 
@@ -510,16 +510,6 @@ public: // SAT_BaseWindow
     //xcb_flush(MConnection);
     pthread_join(MEventThread,&ret);
   }
-
-  //----------
-  
-  //void startTimer(uint32_t AMSInterval, bool AOneShot) override {
-  //}
-
-  //----------
-  
-  //void stopTimer() override {
-  //}
 
   //----------
   
