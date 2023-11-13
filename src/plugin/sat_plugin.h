@@ -2,6 +2,9 @@
 #define sat_plugin_included
 //----------------------------------------------------------------------
 
+#if !defined (SAT_GUI_NOGUI)
+#endif // nogui
+
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_plugin.h"
@@ -9,8 +12,11 @@
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_process_context.h"
-#include "plugin/sat_editor.h"
-#include "plugin/sat_editor_listener.h"
+
+#if !defined (SAT_GUI_NOGUI)
+  #include "plugin/sat_editor.h"
+  #include "plugin/sat_editor_listener.h"
+#endif
 
 //#include "plugin/sat_audio_processor.h"
 // #include "plugin/sat_event_processor.h"
@@ -27,14 +33,18 @@ typedef SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_Fr
 
 class SAT_Plugin
 : public SAT_ClapPlugin
-, public SAT_EditorListener {
+
+#if !defined (SAT_GUI_NOGUI)
+: public SAT_EditorListener
+#endif
+
+  {
 
 //------------------------------
 private:
 //------------------------------
 
   const clap_plugin_descriptor_t* MDescriptor           = nullptr;
-  SAT_Editor*                     MEditor               = nullptr;
 
   SAT_ParameterArray              MParameters           = {};
   SAT_AudioPortArray              MAudioInputPorts      = {};
@@ -46,10 +56,6 @@ private:
   SAT_Dictionary<const void*>     MExtensions           = {};
 
   uint32_t                        MEventMode            = SAT_PLUGIN_EVENT_MODE_BLOCK;
-  SAT_FromHostQueue               MParamFromHostToGui   = {};
-  SAT_FromHostQueue               MModFromHostToGui     = {};
-  SAT_FromGuiQueue                MParamFromGuiToAudio  = {};
-  SAT_FromGuiQueue                MParamFromGuiToHost   = {};
 
   bool                            MIsInitialized        = false;
   bool                            MIsActivated          = false;
@@ -59,8 +65,16 @@ private:
   uint32_t                        MMaxBufferSize        = 0;
   int32_t                         MRenderMode           = CLAP_RENDER_REALTIME;
 
-  uint32_t MEditorWidth   = 256;
-  uint32_t MEditorHeight  = 256;
+#if !defined (SAT_GUI_NOGUI)
+  SAT_Editor*                     MEditor               = nullptr;
+  uint32_t                        MEditorWidth          = 256;
+  uint32_t                        MEditorHeight         = 256;
+  SAT_FromHostQueue               MParamFromHostToGui   = {};
+  SAT_FromHostQueue               MModFromHostToGui     = {};
+  SAT_FromGuiQueue                MParamFromGuiToAudio  = {};
+  SAT_FromGuiQueue                MParamFromGuiToHost   = {};
+#endif
+
 
 //------------------------------
 public:
@@ -95,7 +109,9 @@ public: // extensions
     MExtensions.addItem(CLAP_EXT_AUDIO_PORTS,&MExtAudioPorts);
     MExtensions.addItem(CLAP_EXT_NOTE_PORTS,&MExtNotePorts);
     MExtensions.addItem(CLAP_EXT_PARAMS,&MExtParams);
-    MExtensions.addItem(CLAP_EXT_GUI,&MExtGui);
+    #if !defined (SAT_GUI_NOGUI)
+      MExtensions.addItem(CLAP_EXT_GUI,&MExtGui);
+    #endif
   }
 
   //----------
@@ -301,6 +317,8 @@ public: // note ports
 public: // editor
 //------------------------------
 
+#if !defined (SAT_GUI_NOGUI)
+
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener) {
     return new SAT_Editor(AListener,MEditorWidth,MEditorHeight);
     //return nullptr;
@@ -320,6 +338,8 @@ public: // editor
 
   //virtual void cleanupEditor(SAT_Editor* AEditor) {
   //}
+
+#endif // nogui
 
 //------------------------------
 public: // events
@@ -524,6 +544,8 @@ public: // audio
 public: // queues
 //------------------------------
 
+#if !defined (SAT_GUI_NOGUI)
+
   bool queueParamFromHostToGui(uint32_t AIndex) {
     return MParamFromHostToGui.write(AIndex);
   }
@@ -574,9 +596,13 @@ public: // queues
     }
   }
 
+#endif // nogui
+
 //------------------------------
 protected: // SAT_EditorListener
 //------------------------------
+
+#if !defined (SAT_GUI_NOGUI)
 
   void on_editorListener_timer() override {
     // flushParamFromHostToGui();
@@ -589,9 +615,10 @@ protected: // SAT_EditorListener
     MParameters[index]->setValue(AValue);
 //    queueParamFromGuiToAudio(AIndex);
 //    queueParamFromGuiToHost(AIndex);
+
   }
 
-
+#endif // nogui
 
 //----------------------------------------------------------------------
 //
@@ -662,10 +689,18 @@ protected: // clap_plugin
     MProcessContext.process = process;
     MProcessContext.samplerate = MSampleRate;
     MProcessContext.process_counter += 1;
-    flushParamFromGuiToAudio();
+
+    #if !defined (SAT_GUI_NOGUI)
+      flushParamFromGuiToAudio();
+    #endif
+
     handleEvents(&MProcessContext);
     processAudio(&MProcessContext);
-    flushParamFromGuiToHost();
+
+    #if !defined (SAT_GUI_NOGUI)
+      flushParamFromGuiToHost();
+    #endif
+
     MProcessContext.sample_counter += process->frames_count;
     return CLAP_PROCESS_CONTINUE;
   }
@@ -747,6 +782,8 @@ protected: // audio_ports_config
 //------------------------------
 protected: // gui
 //------------------------------
+
+#if !defined (SAT_GUI_NOGUI)
 
   bool gui_is_api_supported(const char *api, bool is_floating) override {
     SAT_Print("api %s is_floating %i",api,is_floating);
@@ -922,6 +959,8 @@ protected: // gui
     SAT_Print("MEditor = null\n");
     return false;
   }
+
+#endif // nogui
 
 //------------------------------
 protected: // latency
