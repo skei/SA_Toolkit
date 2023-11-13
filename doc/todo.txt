@@ -1,0 +1,63 @@
+----------------------------------------------------------------------
+base
+----------------------------------------------------------------------
+
+  * unit tests
+  * logging, severity level, file output, timing
+  * debug: improve memtracer, callstack
+  * debug: observer
+
+----------------------------------------------------------------------
+gui
+----------------------------------------------------------------------
+
+  * (everything from v1)
+  * layout (percentages, center, upper/center/lower l/r/t/b)
+  * widget opacity flag (redrawing)
+  * transparent drop shadows
+  * tweening, animations
+  * double clicking
+  * multiple layers (background, widgets, overlay)
+  * cached widgets
+  * rotated text
+  * cached svg
+  * mipmap images
+  * renderer
+    direct 3d rendering, shaders, meshes, etc
+  * all widets (optionally) movable, sizable
+    - flag for enabled edge/corner, within parent, min/max size,
+    - rect/offset for movable/sizable 'area'
+    - move within parent (slider thumb, xypad, env/graph nodes)
+  * resizing (pixels vs scaling), inner/outer, proportional
+  * proportional editor scaling (clap)
+
+----------------------------------------------------------------------
+plugin
+----------------------------------------------------------------------
+
+  * tick/quantized audio processing
+  * layered audio processors (thread pool)
+  * voice manager, single/multi-threaded
+  * modulation matrix (per sample,tick,block.. plus global,voice)
+
+----------------------------------------------------------------------
+other / ideas
+----------------------------------------------------------------------
+
+  * (automatic) ini file for each plugin
+    - looks for plugin-id-related ini file in plugin platform
+      specific places, and aitomatically loads it..
+
+  * presets
+    - plugin name/id specific path to look for plugins
+    - preset discovery
+
+  * jit (graph -> x86_64)
+
+  * compression
+    - split layers, multires, (haar) wavelets, (i)fft, dct, delta
+
+  * encryption (isaac)
+
+  * universal file format, text/binary
+    - presets, images (compressed, mipmaps), 'prepared' svg, fonts
