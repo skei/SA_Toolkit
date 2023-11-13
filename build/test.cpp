@@ -49,10 +49,10 @@
 
   private:
 
-    SAT_Color MColor1     = SAT_Yellow;
-    SAT_Color MColor2     = SAT_Red;
-
-  //void*     memory_leak = nullptr;
+    SAT_Window* MOwnerWindow  = nullptr;
+    SAT_Color   MColor1       = SAT_Yellow;
+    SAT_Color   MColor2       = SAT_Red;
+  //void*       memory_leak   = nullptr;
 
   public:
 
@@ -67,7 +67,14 @@
     }
 
     //----------
-    
+
+    void on_widget_open(SAT_WidgetOwner* AOwner) final {
+      MOwnerWindow = AOwner->on_widgetOwner_getWindow();
+    }
+
+
+    //----------
+
     void on_widget_paint(SAT_PaintContext* AContext) final {
       //SAT_Print("%s\n",getName());
       SAT_Painter* painter = AContext->painter;
@@ -101,7 +108,27 @@
       MColor1 = MColor2;
       MColor2 = temp;
       do_widget_redraw(this);
+
+      SAT_Rect r = getRect();
+      //SAT_Print("%.f,%.f,%.f,%.f\n",r.x,r.y,r.w,r.h);
+      double startval[4] = { r.x, r.y, r.w, r.h };
+      double endval[4] = { (200 - r.x), (200 - r.y), r.w, r.h };
+      SAT_TweenNode* node = new SAT_TweenNode(this, 0, 1.0, 0, 4, startval, endval, 36);
+      SAT_TweenChain* chain = new SAT_TweenChain();
+      chain->appendNode(node);
+      MOwnerWindow->getTweenManager()->appendChain(chain);
+
     }
+
+    //----------
+    
+    void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ANum, double* AData) {
+      //SAT_PRINT;
+      SAT_Rect r = SAT_Rect( AData[0], AData[1], AData[2], AData[3] );
+      setRectAndBase(r);
+      do_widget_realign(this);
+    }
+
 
   };
 

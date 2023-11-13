@@ -37,6 +37,7 @@
 //----------------------------------------------------------------------
 
 #include "base/system/sat_timer.h"
+#include "base/utils/sat_tween_manager.h"
 #include "gui/base/sat_paint_context.h"
 #include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_widget_listener.h"
@@ -65,6 +66,7 @@ private:
   sat_atomic_bool_t   MIsPainting           = false;
   SAT_PaintContext    MPaintContext         = {};
   SAT_Painter*        MPainter              = nullptr;
+  SAT_TweenManager    MTweenManager         = {};
 
   void*               MRenderBuffer         = nullptr;
   uint32_t            MBufferWidth          = 0;
@@ -163,7 +165,8 @@ public:
 public:
 //------------------------------
 
-  bool isPainting() { return MIsPainting; }
+  SAT_TweenManager* getTweenManager() { return &MTweenManager; }
+  bool              isPainting()      { return MIsPainting; }
 
 //------------------------------
 public:
@@ -563,6 +566,8 @@ public: // base window
     if (MListener) MListener->on_windowListener_timer(ATimer,AElapsed);
     for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(ATimer,AElapsed);
 
+    MTweenManager.process(AElapsed);
+
     // don't add new widgets to paintqueue, if we're still painting the previous batch
     // timer runs in separate thread than gui/painting
     if (MIsPainting) return;
@@ -766,7 +771,11 @@ public: // widget listener
 
   void on_widgetListener_realign(SAT_Widget* AWidget) override {
     //SAT_Print("%s\n",AWidget->getName());
-    //SAT_Print("\n");
+    SAT_Widget* parent = AWidget->getParent();
+    if (parent) {
+      parent->realignChildWidgets();
+      markWidgetDirtyFromTimer(parent);
+    }
   }
 
   //----------

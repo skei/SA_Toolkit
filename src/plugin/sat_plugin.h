@@ -2,9 +2,6 @@
 #define sat_plugin_included
 //----------------------------------------------------------------------
 
-#if !defined (SAT_GUI_NOGUI)
-#endif // nogui
-
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_plugin.h"
@@ -19,7 +16,7 @@
 #endif
 
 //#include "plugin/sat_audio_processor.h"
-// #include "plugin/sat_event_processor.h"
+//#include "plugin/sat_event_processor.h"
 //#include "plugin/sat_parameter_manager.h"
 
 typedef SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_FromHostQueue;
@@ -35,7 +32,7 @@ class SAT_Plugin
 : public SAT_ClapPlugin
 
 #if !defined (SAT_GUI_NOGUI)
-: public SAT_EditorListener
+, public SAT_EditorListener
 #endif
 
   {
@@ -96,16 +93,24 @@ public:
   }
 
 //------------------------------
+public: // presets
+//------------------------------
+
+  virtual bool loadPreset(const char* ALocation, const char* AKey) {
+    return false;
+  }
+
+//------------------------------
 public: // extensions
 //------------------------------
 
-  void registerExtension(const char* AId, const void* APtr) {
+  virtual void registerExtension(const char* AId, const void* APtr) {
     MExtensions.addItem(AId,APtr);
   }
 
   //----------
 
-  void registerDefaultExtension() {
+  virtual void registerDefaultExtension() {
     MExtensions.addItem(CLAP_EXT_AUDIO_PORTS,&MExtAudioPorts);
     MExtensions.addItem(CLAP_EXT_NOTE_PORTS,&MExtNotePorts);
     MExtensions.addItem(CLAP_EXT_PARAMS,&MExtParams);
@@ -116,12 +121,12 @@ public: // extensions
 
   //----------
 
-  void registerDefaultSynthExtension() {
+  virtual void registerDefaultSynthExtension() {
   }
 
   //----------
 
-  void registerAllExtension() {
+  virtual void registerAllExtension() {
   }
 
 //------------------------------
@@ -358,9 +363,7 @@ public: // events
 
   //----------
 
-  virtual void handleEvents(SAT_ProcessContext* AContext) {
-    const clap_process_t* process = AContext->process;
-    const clap_input_events_t* in_events = process->in_events;
+  virtual void handleEvents(const clap_input_events_t *in_events, const clap_output_events_t *out_events) {
     uint32_t num = in_events->size(in_events);
     switch (MEventMode) {
       case SAT_PLUGIN_EVENT_MODE_BLOCK: {
@@ -694,7 +697,7 @@ protected: // clap_plugin
       flushParamFromGuiToAudio();
     #endif
 
-    handleEvents(&MProcessContext);
+    handleEvents(process->in_events,process->out_events);
     processAudio(&MProcessContext);
 
     #if !defined (SAT_GUI_NOGUI)
@@ -751,6 +754,8 @@ protected: // audio_ports_config
   }
 
   //----------
+
+  //TODO: fix this
 
   bool audio_ports_config_get(uint32_t index, clap_audio_ports_config_t *config) override {
     switch (index) {
@@ -981,6 +986,10 @@ protected: // note_name
   //----------
 
   bool note_name_get(uint32_t index, clap_note_name_t *note_name) override {
+    //note_name->port = -1;
+    //note_name->channel = -1;
+    //note_name->key = -1;
+    //SAT_Strlcpy(note_name->name,"",CLAP_NAME_SIZE);
     return false;
   }
 
@@ -997,11 +1006,11 @@ protected: // note_ports
   bool note_ports_get(uint32_t index, bool is_input, clap_note_port_info_t *info) override {
     switch (index) {
       case 0: {
-        return true;
         info->id                  = 0; // index;
         SAT_Strlcpy(info->name,"",CLAP_NAME_SIZE);
         info->preferred_dialect   = CLAP_NOTE_DIALECT_CLAP;
         info->supported_dialects  = CLAP_NOTE_DIALECT_CLAP;// | CLAP_NOTE_DIALECT_MIDI | CLAP_NOTE_DIALECT_MIDI_MPE | CLAP_NOTE_DIALECT_MIDI2;
+        return true;
       }
     }
     return false;
@@ -1045,8 +1054,15 @@ protected: // params
   
   //----------
 
+  // on main/gui thread?
+
   void params_flush(const clap_input_events_t *in, const clap_output_events_t *out) override {
-    // flush queues
+    //handleEvents(in,out);
+    for (uint32_t i=0; i<in->size(in); i++) {
+      const clap_event_header_t* header;
+      header = in->get(in,i);
+      handleEvent(header);
+    }
   }
 
 //------------------------------
@@ -1068,7 +1084,7 @@ protected: // render
 
   bool render_set(clap_plugin_render_mode mode) override {
     MRenderMode = mode;
-    return false;
+    return true;
   }
 
 //------------------------------
@@ -1076,13 +1092,13 @@ protected: // state
 //------------------------------
 
   bool state_save(const clap_ostream_t *stream) override {
-    return false;
+    return true;
   }
 
   //----------
 
   bool state_load(const clap_istream_t *stream) override {
-    return false;
+    return true;
   }
 
 //------------------------------
@@ -1112,6 +1128,10 @@ protected: // voice_info
 //------------------------------
 
   bool voice_info_get(clap_voice_info_t *info) override {
+    //info->voice_count     = 16;
+    //info->voice_capacity  = 16;
+    //info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
+    //return true;
     return false;
   }
 
@@ -1214,7 +1234,8 @@ protected: // draft: midi_mappings
     //mapping->channel = 0;
     //mapping->number = 0;
     //apping->param_id = 0;
-    return true;
+    //return true;
+    return false;
   }
   
 //------------------------------
@@ -1222,13 +1243,18 @@ protected: // draft: param_indication
 //------------------------------
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
-    //MParameters[param_id]->setMappingIndication(has_mapping,color,label,description);
+    MParameters[param_id]->setIsMapped(has_mapping);
+    MParameters[param_id]->setMappedColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
   }
   
   //----------
 
+
+
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
     //MParameters[param_id]->setAutomationIndication(automation_state,color);
+    MParameters[param_id]->setAutomationState(automation_state);
+    MParameters[param_id]->setAutomationColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
   }
   
 //------------------------------
@@ -1236,8 +1262,7 @@ protected: // draft: preset_load
 //------------------------------
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
-    // loadPreset(location,load_key);
-    return false;
+    return loadPreset(location,load_key);
   }
   
 //------------------------------
@@ -1245,25 +1270,22 @@ protected: // draft: remote_controls
 //------------------------------
 
   uint32_t remote_controls_count() override {
-    return 0;
+    return 1;
   }
   
   //----------
 
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
-    // SAT_Strlcpy(page->section_name,"",CLAP_NAME_SIZE);
-    // page->page_id = 0;
-    // SAT_Strlcpy(page->name,"",CLAP_NAME_SIZE);
-    // page->param_ids[0] = 0;// CLAP_INVALID_ID;
-    // page->param_ids[1] = 1;//CLAP_INVALID_ID;
-    // page->param_ids[2] = 2;//CLAP_INVALID_ID;
-    // page->param_ids[3] = 3;//CLAP_INVALID_ID;
-    // page->param_ids[4] = 4;//CLAP_INVALID_ID;
-    // page->param_ids[5] = 5;//CLAP_INVALID_ID;
-    // page->param_ids[6] = 6;//CLAP_INVALID_ID;
-    // page->param_ids[7] = 7;//CLAP_INVALID_ID;
-    // page->is_for_preset = false;
-    return false;
+    SAT_Strlcpy(page->page_name,"Perform",CLAP_NAME_SIZE);
+    SAT_Strlcpy(page->section_name,"",CLAP_NAME_SIZE);
+    page->page_id = 0;
+    page->is_for_preset = false;
+    uint32_t numpar = MParameters.size();
+    for (uint32_t i=0; i<8; i++) {
+      if (i < numpar) page->param_ids[i] = i;// CLAP_INVALID_ID;
+      else page->param_ids[i] = CLAP_INVALID_ID;
+    }
+    return true;
   }
   
 //------------------------------

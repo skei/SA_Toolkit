@@ -179,7 +179,7 @@ public:
   //----------
   
   SAT_TweenChain* appendChain(SAT_TweenChain* AChain) {
-    SAT_PRINT;
+    //SAT_PRINT;
     //MChains.append(AChain);
     MPending.write(AChain);
     return AChain;
@@ -234,7 +234,7 @@ public:
             MChains[i]->MCurrentTime = 0.0;
             MChains[i]->MCurrentNode += 1;
             if (MChains[i]->MCurrentNode >= MChains[i]->MNodes.size()) {
-              SAT_Print("finished %i\n",i);
+              //SAT_Print("finished %i\n",i);
               MChains[i]->MActive = false;
               // //TODO: if looping
               // MChains[i]->MCurrentNode = 0;

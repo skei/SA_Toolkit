@@ -595,13 +595,13 @@ public: // do_ (upwards)
 
   virtual void do_widget_realign(SAT_Widget* AWidget) {
     //if (MParent) MParent->do_widget_realign(AWidget);
-    if (AWidget) {
-      realignChildWidgets();
-      do_widget_redraw(this);
-    }
-    else {
+    //if (AWidget) {
+    //  realignChildWidgets();
+    //  do_widget_redraw(this);
+    //}
+    //else {
       if (MParent) MParent->do_widget_realign(this);
-    }
+    //}
   }
 
   // widget wants to change the mouse cursor (or show/hide, lock/unlock)
