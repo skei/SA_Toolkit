@@ -53,40 +53,37 @@ class SAT_Widget {
 private:
 //------------------------------
 
-  SAT_Rect            MInitialRect                = {};
-  SAT_Rect            MBaseRect                   = {};
-  SAT_Rect            MContentRect                = {};
+  SAT_Rect            MInitialRect                    = {};
+  SAT_Rect            MBaseRect                       = {};
+  SAT_Rect            MContentRect                    = {};
 
-  SAT_Point           MMouseClickedPos            = {0,0};
-  uint32_t            MMouseClickedButton         = SAT_BUTTON_NONE;
-  bool                MMouseWaitingForMovement    = false;
+  SAT_Point           MMouseClickedPos                = {0,0};
+  uint32_t            MMouseClickedButton             = SAT_BUTTON_NONE;
+  bool                MMouseWaitingForMovement        = false;
 
 //------------------------------
 private:
 //------------------------------
 
-  SAT_WidgetLayout    MLayout                     = {};
-  SAT_WidgetState     MState                      = {};
-  SAT_WidgetOptions   MOptions                    = {};
+  SAT_WidgetLayout    MLayout                         = {};
+  SAT_WidgetState     MState                          = {};
+  SAT_WidgetOptions   MOptions                        = {};
 
-  const char*         MName                       = "MWidget";
-  SAT_WidgetOwner*    MOwner                      = nullptr;
-  SAT_Widget*         MParent                     = nullptr;
-  uint32_t            MParentIndex                = 0;
-  SAT_WidgetArray     MChildren                   = {};
-//double              MValue                      = 0.0;
+//int32_t             MId                             = -1;
+  const char*         MName                           = "MWidget";
+  SAT_WidgetOwner*    MOwner                          = nullptr;
+  SAT_Widget*         MParent                         = nullptr;
+  uint32_t            MParentIndex                    = 0;
+  SAT_WidgetArray     MChildWidgets                   = {};
   double              MValues[SAT_WIDGET_MAX_VALUES]  = {};
-  SAT_Rect            MRect                       = {};
-  void*               MParameter                  = nullptr;
-  uint32_t            MLastPainted                = 0;
+  SAT_Rect            MRect                           = {};
+  void*               MParameter                      = nullptr;
+  uint32_t            MLastPainted                    = 0;
 
-//int32_t             MId                         = -1;
-//SAT_WidgetOptions   MOptions                    = {};
+  int32_t             MMouseCursor                    = SAT_CURSOR_DEFAULT;
+  const char*         MHint                           = "";
 
-  int32_t             MMouseCursor                = SAT_CURSOR_DEFAULT;
-  const char*         MHint                       = "";
-
-  int32_t             MSelectedIndex              = 0;
+  int32_t             MSelectedIndex                  = 0;
 
 //------------------------------
 public:
@@ -191,8 +188,8 @@ public:
     MOwner = AOwner;
     on_widget_open(AOwner);
     if (ARecursive) {
-      for (uint32_t i=0; i<MChildren.size(); i++) {
-        MChildren[i]->setOwner(AOwner,ARecursive);
+      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+        MChildWidgets[i]->setOwner(AOwner,ARecursive);
       }
     }
   }
@@ -234,8 +231,8 @@ public:
   virtual void setActive(bool AState=true, bool ARecursive=true) {
     MState.active = AState;
     if (ARecursive) {
-      for (uint32_t i=0; i<MChildren.size(); i++) {
-        MChildren[i]->setActive(AState,ARecursive);
+      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+        MChildWidgets[i]->setActive(AState,ARecursive);
       }
     }
   }
@@ -253,8 +250,8 @@ public:
   virtual void setVisible(bool AState=true, bool ARecursive=true) {
     MState.visible = AState;
     if (ARecursive) {
-      for (uint32_t i=0; i<MChildren.size(); i++) {
-        MChildren[i]->setVisible(AState,ARecursive);
+      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+        MChildWidgets[i]->setVisible(AState,ARecursive);
       }
     }
   }
@@ -305,22 +302,22 @@ public:
   //----------
 
   virtual void appendChildWidget(SAT_Widget* AWidget) {
-    uint32_t index = MChildren.size();
+    uint32_t index = MChildWidgets.size();
     AWidget->setParent(this);
     AWidget->setParentIndex(index);
-    MChildren.push_back(AWidget);
+    MChildWidgets.push_back(AWidget);
   }
 
   //----------
 
   virtual void deleteChildWidgets() {
-    for (uint32_t i=0; i<MChildren.size(); i++) {
-      if (MChildren[i]) {
-        delete MChildren[i];
-        MChildren[i] = nullptr;
+    for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+      if (MChildWidgets[i]) {
+        delete MChildWidgets[i];
+        MChildWidgets[i] = nullptr;
       }
     }
-    MChildren.clear();
+    MChildWidgets.clear();
   }
 
   //----------
@@ -329,8 +326,16 @@ public:
   // todo: ifActive
 
   virtual SAT_Widget* findChildWidget(uint32_t AXpos, uint32_t AYpos, bool ARecursive=true) {
-    for (uint32_t i=0; i<MChildren.size(); i++) {
-      SAT_Widget* child = MChildren[i];
+
+    // handle from first to last
+    // opposite of painters algo
+    // last painted = topmost = first handled
+    // see also: paintChildWidgets
+
+    uint32_t num = MChildWidgets.size();
+    //for (int32_t i=(num-1); i>=0; i--) {
+    for (uint32_t i=0; i<num; i++) {
+      SAT_Widget* child = MChildWidgets[i];
       SAT_Rect child_rect = child->getRect();
       if (child_rect.contains(AXpos,AYpos)) {
         if (ARecursive) {
@@ -346,8 +351,8 @@ public:
   //----------
 
   virtual SAT_Widget* findChildWidget(const char* AName, bool ARecursive=true) { return nullptr;
-    for (uint32_t i=0; i<MChildren.size(); i++) {
-      SAT_Widget* child = MChildren[i];
+    for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+      SAT_Widget* child = MChildWidgets[i];
       const char* name = child->getName();
       if (strcmp(AName,name) == 0) {
         return child;
@@ -366,9 +371,9 @@ public:
   //----------
 
   virtual void scrollChildWidgets(double AOffsetX, double AOffsetY) {
-    uint32_t num = MChildren.size();
+    uint32_t num = MChildWidgets.size();
     for (uint32_t i=0; i<num; i++) {
-      SAT_Widget* child = MChildren[i];
+      SAT_Widget* child = MChildWidgets[i];
       if (child->isVisible()) {
         //child->setChildrenOffset(AOffsetX,AOffsetY);
         child->MRect.x += AOffsetX;
@@ -387,8 +392,8 @@ public:
     MRect = MBaseRect;
     MRect.scale(AScale);
     if (ARecursive) {
-      for (uint32_t i=0; i<MChildren.size(); i++) {
-        MChildren[i]->scaleWidget(AScale);
+      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+        MChildWidgets[i]->scaleWidget(AScale);
       }
     }
   }
@@ -404,8 +409,8 @@ public:
     layout_rect.shrink(MLayout.inner_border);
     MContentRect = SAT_Rect(layout_rect.x,layout_rect.y,0,0);
 
-    for (uint32_t i=0; i<MChildren.size(); i++) {
-      SAT_Widget* child = MChildren[i];
+    for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+      SAT_Widget* child = MChildWidgets[i];
       SAT_WidgetState* child_state = child->getState();
 
       if (child_state->visible) {
@@ -460,13 +465,13 @@ public:
 
   //----------
 
-  // for (uint32_t i=0; i<MChildren.size(); i++) {
-  //   SAT_Widget* child = MChildren[i];
+  // for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+  //   SAT_Widget* child = MChildWidgets[i];
   //   if (child->isVisible()) {
   //     SAT_Rect child_rect = child->getRect();
   //     if (child_rect.intersects(MRect)) {
   //       child->on_widget_paint(AContext);
-  //       MChildren[i]->paintChildWidgets(AContext);
+  //       MChildWidgets[i]->paintChildWidgets(AContext);
   //     } // intersects
   //   } // visible
   // } // for
@@ -476,11 +481,16 @@ public:
   virtual void paintChildWidgets(SAT_PaintContext* AContext) {
     SAT_Rect mrect = getRect();
     SAT_Painter* painter= AContext->painter;
-    uint32_t num = MChildren.size();
+    uint32_t num = MChildWidgets.size();
     if (num > 0) {
       if (autoClip()) painter->pushOverlappingClip(mrect);
-      for (uint32_t i=0; i<num; i++) {
-        SAT_Widget* widget = MChildren[i];
+
+      // draw from last to first (painters algo)
+      // see also: findChildWidget
+
+      //for (uint32_t i=0; i<num; i++) {
+      for (int32_t i=(num-1); i>=0; i--) {
+        SAT_Widget* widget = MChildWidgets[i];
         //if (widget->isRecursivelyVisible()) {
         if (widget->isVisible()) {
           SAT_Rect wr = widget->getRect();

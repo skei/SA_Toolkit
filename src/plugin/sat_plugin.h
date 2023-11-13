@@ -97,7 +97,63 @@ public: // presets
 //------------------------------
 
   virtual bool loadPreset(const char* ALocation, const char* AKey) {
-    return false;
+    //return false;
+    char line_buffer[256] = {0};
+    SAT_File file = {};
+    if (!file.exists(ALocation)) {
+      SAT_Print("Error! '%s' does not exist\n",ALocation);
+      return false;
+    }
+    
+    if (file.open(ALocation,SAT_FILE_READ_TEXT)) {
+      for (uint32_t i=0; i<5; i++) file.readLine(line_buffer,256); // skip metadata
+      
+      // hex
+
+      //sat_param_t param_buffer[SAT_PLUGIN_MAX_PARAMETERS] = {0};
+      //void* ptr = param_buffer;
+      //while (file.readLine(line_buffer,256)) {
+      //  if (line_buffer[strlen(line_buffer)-1] == '\n') line_buffer[strlen(line_buffer)-1] = 0;
+      //  if (line_buffer[0] != 0) {
+      //    SAT_Print("%s\n",line_buffer);
+      //    ptr = SAT_HexDecode(ptr,line_buffer,32); // num bytes
+      //  }
+      //}
+      //sat_param_t* param_ptr = (sat_param_t*)ptr;
+      //uint32_t num_params = getNumParameters();
+      //for (uint32_t i=0; i<num_params; i++) {
+      //  sat_param_t value = *param_ptr++;
+      //  SAT_Print("%i : %f\n",i,value);
+      //}
+      //setAllParameters(param_buffer);
+      
+      // ascii
+      
+      uint32_t i = 0;
+      while (file.readLine(line_buffer,256)) {
+        if (line_buffer[strlen(line_buffer)-1] == '\n') line_buffer[strlen(line_buffer)-1] = 0;
+        if (line_buffer[0] != 0) {
+          
+          SAT_Print("line %i: '%s'\n",i,line_buffer);
+          
+          //ptr = SAT_HexDecode(ptr,line_buffer,32); // num bytes
+          //setParameterValue(i,v);
+
+          //double v = atof(line_buffer);
+          //SAT_Print("%i = %f\n",i,v);
+          
+          i += 1;
+        }
+      }
+      file.close();
+    }
+    else {
+      SAT_Print("Error opening file '%s'\n",ALocation);
+      return false;
+    }
+    
+    return true;
+
   }
 
 //------------------------------
@@ -180,7 +236,52 @@ public: // parameters
     SAT_Print("index %i value %f\n",index,value);
   }
 
+  //----------
+  //----------
+  //----------
 
+  // void setParameterValue(uint32_t AIndex, sat_param_t AValue) {
+  //   //MParameterValues[AIndex] = AValue;
+  //   MParameters[AIndex]->setValue(AValue);
+  // }
+
+  //----------
+
+  // void setDefaultParameterValues() {
+  //   uint32_t num = MParameters.size();
+  //   for (uint32_t i=0; i<num; i++) {
+  //     double value = MParameters[i]->getDefaultValue();
+  //     MParameters[i]->setValue(value);
+  //   }
+  // }
+  
+  //----------
+  
+  // void initEditorParameterValues() {
+  //   uint32_t num = MParameters.size();
+  //   for (uint32_t i=0; i<num; i++) {
+  //     SAT_Parameter* param = MParameters[i];
+  //     double value = MParameters[i]->getValue();//getDefaultValue();
+  //     // parameters are in clap-space
+  //     // widgets are 0..1
+  //     uint32_t sub = param->getWidgetIndex();
+  //     //SAT_Print("sub %i\n",sub);
+  //      
+  //     MEditor->initParameterValue(param,i,sub,value); // (arg value  = clap space)
+  //   }
+  // }
+
+//------------------------------
+public: // modulation
+//------------------------------
+
+  // void resetAllModulations() {
+  //   uint32_t num_params = getNumParameters();
+  //   for (uint32_t i=0; i<num_params; i++) {
+  //     SAT_Print("%i : %f\n",i);
+  //     //setModulation(0);
+  //   }
+  // }
 
 //------------------------------
 public: // audio ports
@@ -494,6 +595,195 @@ public: // events
   void handleMidi2Event(clap_event_midi2_t* event) {
     handleMidi2(event);
   }
+
+//------------------------------
+public: // process events
+//------------------------------
+
+  /*
+    don't send ALL param value/mods to gui.. only last one in block
+    set flag, and check at end of process
+  */
+
+  // call before processing all events
+  
+  // void clearAutomationToGui() {
+  //   uint32_t num = MParameters.size();
+  //   for (uint32_t i=0; i<num; i++) {
+  //     MParameters[i]->setGuiAutomationDirty(false);
+  //   }
+  // }
+  
+  // void clearModulationToGui() {
+  //   uint32_t num = MParameters.size();
+  //   for (uint32_t i=0; i<num; i++) {
+  //     MParameters[i]->setGuiModulationDirty(false);
+  //   }
+  // }
+  
+  //----------
+    
+  // call after processing all events
+  
+  // void queueAutomationToGui() {
+  //   uint32_t num = MParameters.size();
+  //   for (uint32_t i=0; i<num; i++) {
+  //     if (MParameters[i]->isGuiAutomationDirty()) {
+  //       double value = MParameters[i]->getLastAutomatedValue();
+  //       queueParamFromHostToGui(i,value);
+  //     }
+  //   }
+  // }
+
+  // void queueModulationToGui() {
+  //   uint32_t num = MParameters.size();
+  //   for (uint32_t i=0; i<num; i++) {
+  //     if (MParameters[i]->isGuiModulationDirty()) {
+  //       double value = MParameters[i]->getLastModulatedValue();
+  //       queueModFromHostToGui(i,value);
+  //     }
+  //   }
+  // }
+
+  //----------
+
+  // virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  // }
+
+  //----------
+
+  // virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  // }
+
+  //----------
+
+  // called from SAT_Plugin.process(), just before processAudio()
+
+  // virtual void processBlockEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  //   //SAT_PRINT;
+  //   if (!in_events) return;
+  //   //if (!out_events) return;
+  //   clearAutomationToGui();
+  //   clearModulationToGui();
+  //   uint32_t prev_time = 0;
+  //   uint32_t size = in_events->size(in_events);
+  //   for (uint32_t i=0; i<size; i++) {
+  //     const clap_event_header_t* header = in_events->get(in_events,i);
+  //     if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
+  //       if (header->time < prev_time) {
+  //         SAT_Print("huh? not sorted? prev_time %i header->time %i header->type %i\n",prev_time,header->time,header->type);
+  //       }
+  //       handleEvent(header);
+  //       prev_time = header->time;
+  //     }
+  //   }
+  //   queueAutomationToGui();
+  //   queueModulationToGui();
+  // }
+
+  //----------
+  
+  /*
+    todo: check what would happen if we get events that aren't sorted..
+    ignored?
+  */
+
+  // processes events at their sample accurate place, and audio inbetween
+
+  // virtual void processInterleavedEvents(SAT_ProcessContext* AContext) {
+  //   const clap_input_events_t* in_events = AContext->process->in_events;
+  //   uint32_t remaining = AContext->process->frames_count;
+  //   uint32_t num_events = in_events->size(in_events);
+  //   uint32_t current_time = 0;
+  //   uint32_t current_event = 0;
+  //   clearAutomationToGui();
+  //   clearModulationToGui();
+  //   while (remaining > 0) {
+  //     if (current_event < num_events) {
+  //       const clap_event_header_t* header = in_events->get(in_events,current_event);
+  //       current_event += 1;
+  //       int32_t length = header->time - current_time;
+  //       // if length > remaining ...
+  //       //while (length > 0) {
+  //       if (length > 0) {
+  //         processAudio(AContext,current_time,length);
+  //         remaining -= length;    // -= 32;
+  //         current_time += length; // -= 32;
+  //       }
+  //       //processEventInterleaved(header);
+  //       handleEvent(header);
+  //     }
+  //     else { // no more events
+  //       int32_t length = remaining;
+  //       processAudio(AContext,current_time,length);
+  //       remaining -= length;
+  //       current_time += length;
+  //     }
+  //   }
+  //   //SAT_Assert( events.read(&event) == false );
+  //   queueAutomationToGui();
+  //   queueModulationToGui();
+  // }
+
+  //----------
+  
+  // split audio block in smaller, regular sizes, and quantize events
+  // (process all events 'belonging' to the slice, at the atart ot the slice,
+  // and then the audio)..
+  // events could be processed up to (slicesize - 1) samples 'early'..
+
+  // virtual void processQuantizedEvents(SAT_ProcessContext* AContext) {
+  //   uint32_t buffer_length = AContext->process->frames_count;
+  //   uint32_t remaining = buffer_length;
+  //   uint32_t current_time = 0;
+  //   uint32_t current_event = 0;
+  //   uint32_t next_event_time = 0;
+  //   clearAutomationToGui();
+  //   clearModulationToGui();
+  //   const clap_input_events_t* in_events = AContext->process->in_events;
+  //   uint32_t num_events = in_events->size(in_events);
+  //   if (num_events > 0) {
+  //     const clap_event_header_t* header = in_events->get(in_events,current_event);
+  //     current_event += 1;
+  //     next_event_time = header->time;
+  //     do {
+  //       // process events for next slice
+  //       while (next_event_time < (current_time + SAT_AUDIO_QUANTIZED_SIZE)) {
+  //         handleEvent(header);
+  //         if (current_event < num_events) {
+  //           header = in_events->get(in_events,current_event);
+  //           // if (header)
+  //           current_event += 1;
+  //           next_event_time = header->time;
+  //         }
+  //         else {
+  //           next_event_time = buffer_length; // ???
+  //         }
+  //       }
+  //       // process next slice
+  //       if (remaining < SAT_AUDIO_QUANTIZED_SIZE) {
+  //         processAudio(AContext,current_time,remaining);
+  //         current_time += remaining;
+  //         remaining = 0;
+  //       }
+  //       else {
+  //         processAudio(AContext,current_time);
+  //         current_time += SAT_AUDIO_QUANTIZED_SIZE;
+  //         remaining -= SAT_AUDIO_QUANTIZED_SIZE;
+  //       }
+  //     } while (remaining > 0);
+  //   }
+  //   else { // no events..
+  //     do {
+  //       if (remaining < SAT_AUDIO_QUANTIZED_SIZE) processAudio(AContext,current_time,remaining);
+  //       else processAudio(AContext,current_time);
+  //       current_time += SAT_AUDIO_QUANTIZED_SIZE;
+  //       remaining -= SAT_AUDIO_QUANTIZED_SIZE;
+  //     } while (remaining > 0);
+  //   }
+  //   queueAutomationToGui();
+  //   queueModulationToGui();
+  // }
 
 //------------------------------
 public: // audio
@@ -1263,6 +1553,23 @@ protected: // draft: preset_load
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
     return loadPreset(location,load_key);
+    // switch (location_kind) {
+    //   case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
+    //     SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
+    //     MHost->preset_load_loaded(location_kind,location,load_key);
+    //     return true;
+    //   }
+    //   case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
+    //     SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
+    //     MHost->preset_load_loaded(location_kind,location,load_key);
+    //     return true;
+    //   }
+    //   default: {
+    //     SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
+    //     return false;
+    //   }
+    // }
+    // return false;
   }
   
 //------------------------------

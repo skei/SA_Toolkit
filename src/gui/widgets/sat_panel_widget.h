@@ -109,8 +109,6 @@ protected:
 //  bool      MDrawModulation         = true;
 //  bool      MIsInteracting          = false;
 
-
-
 //------------------------------
 public:
 //------------------------------
@@ -628,7 +626,7 @@ public:
     drawBorder(AContext);
     drawHostIndicators(AContext);
   }
-  
+
 };
 
 //----------------------------------------------------------------------

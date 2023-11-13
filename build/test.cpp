@@ -9,6 +9,12 @@
 //#define SAT_DEBUG_PRINT_SOCKET
 //#define SAT_DEBUG_MEMTRACE
 
+#define EDITOR_WIDTH  500
+#define EDITOR_HEIGHT 500
+#define EDITOR_SCALE  1.0
+
+//----------
+
 #include "plugin/sat_plugin.h"
 
 #if !defined (SAT_GUI_NOGUI)
@@ -16,9 +22,6 @@
   #include "gui/sat_widgets.h"
 #endif
 
-#define EDITOR_WIDTH  500
-#define EDITOR_HEIGHT 500
-#define EDITOR_SCALE  1.0
 
 //----------------------------------------------------------------------
 //
@@ -47,14 +50,18 @@
   class myWidget
   : public SAT_Widget {
 
+  //------------------------------
   private:
+  //------------------------------
 
     SAT_Window* MOwnerWindow  = nullptr;
     SAT_Color   MColor1       = SAT_Yellow;
     SAT_Color   MColor2       = SAT_Red;
   //void*       memory_leak   = nullptr;
 
+  //------------------------------
   public:
+  //------------------------------
 
     myWidget(SAT_Rect ARect)
     : SAT_Widget(ARect) {
@@ -66,12 +73,13 @@
       //free(memory_leak);
     }
 
-    //----------
+  //------------------------------
+  public:
+  //------------------------------
 
     void on_widget_open(SAT_WidgetOwner* AOwner) final {
       MOwnerWindow = AOwner->on_widgetOwner_getWindow();
     }
-
 
     //----------
 
@@ -89,15 +97,11 @@
       double radiusy = rect.h * 0.4;
       painter->fillEllipse(centerx,centery,radiusx,radiusy);
       paintChildWidgets(AContext);
-
       //SAT_Assert(1==0);
-
       //SAT_GLOBAL.DEBUG.printCallStack();
-
       //int* ptr = nullptr;
       //int i = *ptr;
       //SAT_Print("%i\n",i);
-
     }
 
     //----------
@@ -108,21 +112,25 @@
       MColor1 = MColor2;
       MColor2 = temp;
       do_widget_redraw(this);
-
       SAT_Rect r = getRect();
       //SAT_Print("%.f,%.f,%.f,%.f\n",r.x,r.y,r.w,r.h);
       double startval[4] = { r.x, r.y, r.w, r.h };
       double endval[4] = { (200 - r.x), (200 - r.y), r.w, r.h };
-      SAT_TweenNode* node = new SAT_TweenNode(this, 0, 1.0, 0, 4, startval, endval, 36);
+      SAT_TweenNode* node = new SAT_TweenNode(this, 0, 2.0, 0, 4, startval, endval, 36);
       SAT_TweenChain* chain = new SAT_TweenChain();
       chain->appendNode(node);
       MOwnerWindow->getTweenManager()->appendChain(chain);
+    }
 
+    //----------
+
+    void on_widget_timer(SAT_Timer* ATimer, double AElapsed) final {
+      SAT_Print("elapsed: %f\n",AElapsed);
     }
 
     //----------
     
-    void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ANum, double* AData) {
+    void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ANum, double* AData) final {
       //SAT_PRINT;
       SAT_Rect r = SAT_Rect( AData[0], AData[1], AData[2], AData[3] );
       setRectAndBase(r);
@@ -141,41 +149,39 @@
 //----------------------------------------------------------------------
 
 int main() {
-
   SAT_Print("Hello world!\n");
   SAT_PRINT;
   SAT_DPrint("hello #2\n");
-
   //SAT_LOG("test %i\n",1);
-
   #if defined(SAT_TESTS)
     SAT_RUN_TESTS
   #endif
-
-  //-----
-
   #if !defined (SAT_GUI_NOGUI)
 
     SAT_Window* window = new SAT_Window(EDITOR_WIDTH,EDITOR_HEIGHT);
+
     SAT_RootWidget* root = new SAT_RootWidget(0,window);
     window->setRootWidget(root);
     root->setText("Hello, world!");
-      myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
-      root->appendChildWidget(widget);
+
+      myWidget* mywidget = new myWidget(SAT_Rect(10,10,100,100));
       SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(120,10,100,100),"Knob",0.5);
-      root->appendChildWidget(knob);
+      SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(230,10,100,100));
       SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Drag",0.5);
-      root->appendChildWidget(dragvalue);
       SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10,150,200,20),"Slider",0.5);
+
+      root->appendChildWidget(knob);
+      root->appendChildWidget(dragvalue);
       root->appendChildWidget(slider);
+      root->appendChildWidget(movable);
+      root->appendChildWidget(mywidget);
+
     //window->registerTimerWidget(widget);
     window->open();
     window->eventLoop();
     window->close();
     delete window;
-
   #endif // nogui
-
   return 0;
 }
 
@@ -246,27 +252,29 @@ public:
   //----------
 
   #if !defined (SAT_GUI_NOGUI)
-
     void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-      //SAT_PRINT;
-      //AWindow->setInitialSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+
       SAT_RootWidget* root = new SAT_RootWidget(SAT_Rect(100,100),AWindow);
       AWindow->setRootWidget(root);
+      root->setText("Hello, world!");
 
-        myWidget* widget = new myWidget(SAT_Rect(10,10,100,100));
-        root->appendChildWidget(widget);
-        SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(120,10,100,100),"Knob",0.5);
-        root->appendChildWidget(knob);
-        SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Drag",0.5);
-        root->appendChildWidget(dragvalue);
-        SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10,150,200,20),"Slider",0.5);
-        root->appendChildWidget(slider);
+      myWidget* mywidget = new myWidget(SAT_Rect(10,10,100,100));
+      SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(120,10,100,100),"Knob",0.5);
+      SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(230,10,100,100));
+      SAT_DragValueWidget* dragvalue = new SAT_DragValueWidget(SAT_Rect(10,120,200,20),"Drag",0.5);
+      SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(10,150,200,20),"Slider",0.5);
+
+      root->appendChildWidget(knob);
+      root->appendChildWidget(dragvalue);
+      root->appendChildWidget(slider);
+      root->appendChildWidget(movable);
+      root->appendChildWidget(mywidget);
 
       SAT_Parameter* param = getParameter(0);
       SAT_Print("param1 %p\n",param);
       AEditor->connect(knob,param);
-  }
-
+      
+    }
   #endif // nogui
   
 };

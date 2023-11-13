@@ -12,6 +12,7 @@
 #include "gui/widgets/sat_symbol_widget.h"
 
 #include "gui/widgets/container/sat_group_box_widget.h"
+#include "gui/widgets/container/sat_movable_widget.h"
 #include "gui/widgets/container/sat_pages_widget.h"
 #include "gui/widgets/container/sat_scroll_box_widget.h"
 #include "gui/widgets/container/sat_tabs_widget.h"
