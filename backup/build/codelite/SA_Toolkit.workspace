@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="SA_Toolkit" Database="" Version="10000">
+  <WorkspaceParserMacros/>
+  <WorkspaceParserPaths>
+    <Include Path="../../src"/>
+  </WorkspaceParserPaths>
+  <Project Name="SA_Toolkit" Path="SA_Toolkit.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="linux_exe_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_exe_release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_exe_debug" Selected="yes">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_exe_debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_plugin_debug" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_plugin_debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_plugin_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_plugin_release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="win32_exe_debug" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="win32_exe_debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="win32_exe_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="win32_exe_release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="win32_plugin_debug" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="win32_plugin_debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="win32_plugin_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="win32_plugin_release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_exelib_debug" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_exelib_debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="linux_exelib_release" Selected="no">
+      <Environment/>
+      <Project Name="SA_Toolkit" ConfigName="linux_exelib_release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
