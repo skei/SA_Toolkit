@@ -391,37 +391,76 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 // #define SAT_VOICE_RELEASED                      3
 // #define SAT_VOICE_FINISHED                      4
 
-// #define SAT_WIDGET_ALIGN_DEFAULT                0
-// #define SAT_WIDGET_ALIGN_NONE                   1
-// #define SAT_WIDGET_ALIGN_PARENT                 2
-// #define SAT_WIDGET_ALIGN_CENTER                 3
-// #define SAT_WIDGET_ALIGN_HCENTER                4
-// #define SAT_WIDGET_ALIGN_VCENTER                5
+#define SAT_WIDGET_LAYOUT_ANCHOR_LEFT           0x0001
+#define SAT_WIDGET_LAYOUT_ANCHOR_RIGHT          0x0002
+#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ   0x0004
 
-// #define SAT_WIDGET_ALIGN_FILL                   6
-// #define SAT_WIDGET_ALIGN_HFILL                  7
-// #define SAT_WIDGET_ALIGN_VFILL                  8
+#define SAT_WIDGET_LAYOUT_ANCHOR_TOP            0x0010
+#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM         0x0020
+#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT    0x0040
 
-// #define SAT_WIDGET_ALIGN_LEFT                   9
-// //#define SAT_WIDGET_ALIGN_LEFT_FILL
-// #define SAT_WIDGET_ALIGN_LEFT_TOP               10
-// #define SAT_WIDGET_ALIGN_LEFT_CENTER            11
-// #define SAT_WIDGET_ALIGN_LEFT_BOTTOM            12
-// #define SAT_WIDGET_ALIGN_RIGHT                  13
-// //#define SAT_WIDGET_ALIGN_RIGHT_FILL
-// #define SAT_WIDGET_ALIGN_RIGHT_TOP              14
-// #define SAT_WIDGET_ALIGN_RIGHT_CENTER           15
-// #define SAT_WIDGET_ALIGN_RIGHT_BOTTOM           16
-// #define SAT_WIDGET_ALIGN_TOP                    17
-// //#define SAT_WIDGET_ALIGN_TOP_FILL
-// #define SAT_WIDGET_ALIGN_TOP_LEFT               18
-// #define SAT_WIDGET_ALIGN_TOP_CENTER             19
-// #define SAT_WIDGET_ALIGN_TOP_RIGHT              20
-// #define SAT_WIDGET_ALIGN_BOTTOM                 21
-// //#define SAT_WIDGET_ALIGN_BOTTOM_FILL
-// #define SAT_WIDGET_ALIGN_BOTTOM_LEFT            22
-// #define SAT_WIDGET_ALIGN_BOTTOM_CENTER          23
-// #define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           24
+#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER         (SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ + SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)
+
+#define SAT_WIDGET_LAYOUT_STRETCH_LEFT          0x0100
+#define SAT_WIDGET_LAYOUT_STRETCH_RIGHT         0x0200
+#define SAT_WIDGET_LAYOUT_STRETCH_TOP           0x0400
+#define SAT_WIDGET_LAYOUT_STRETCH_BOTTOM        0x0800
+
+#define SAT_WIDGET_LAYOUT_STRETCH_HORIZ         0x0300
+#define SAT_WIDGET_LAYOUT_STRETCH_VERT          0x0C00
+#define SAT_WIDGET_LAYOUT_STRETCH_ALL           0x0F00
+
+#define SAT_WIDGET_LAYOUT_CROP_LEFT             0x1000
+#define SAT_WIDGET_LAYOUT_CROP_RIGHT            0x2000
+#define SAT_WIDGET_LAYOUT_CROP_TOP              0x4000
+#define SAT_WIDGET_LAYOUT_CROP_BOTTOM           0x8000
+
+#define SAT_WIDGET_LAYOUT_WINDOW                0x10000
+#define SAT_WIDGET_LAYOUT_PARENT                0x20000
+#define SAT_WIDGET_LAYOUT_PERCENT               0x40000
+
+#define SAT_WIDGET_LAYOUT_DEFAULT               0
+
+/*
+
+#define SAT_WIDGET_ALIGN_DEFAULT                0
+#define SAT_WIDGET_ALIGN_PARENT                 0
+#define SAT_WIDGET_ALIGN_CLIENT                 1
+#define SAT_WIDGET_ALIGN_NONE                   2
+
+#define SAT_WIDGET_ALIGN_FILL                   10
+#define SAT_WIDGET_ALIGN_HFILL                  11
+#define SAT_WIDGET_ALIGN_VFILL                  12
+
+#define SAT_WIDGET_ALIGN_CENTER                 20
+#define SAT_WIDGET_ALIGN_HCENTER                21
+#define SAT_WIDGET_ALIGN_VCENTER                22
+
+#define SAT_WIDGET_ALIGN_LEFT                   30
+#define SAT_WIDGET_ALIGN_LEFT_TOP               31
+#define SAT_WIDGET_ALIGN_LEFT_CENTER            32
+#define SAT_WIDGET_ALIGN_LEFT_BOTTOM            33
+//#define SAT_WIDGET_ALIGN_LEFT_FILL
+
+#define SAT_WIDGET_ALIGN_RIGHT                  40
+#define SAT_WIDGET_ALIGN_RIGHT_TOP              41
+#define SAT_WIDGET_ALIGN_RIGHT_CENTER           42
+#define SAT_WIDGET_ALIGN_RIGHT_BOTTOM           43
+//#define SAT_WIDGET_ALIGN_RIGHT_FILL
+
+#define SAT_WIDGET_ALIGN_TOP                    50
+#define SAT_WIDGET_ALIGN_TOP_LEFT               51
+#define SAT_WIDGET_ALIGN_TOP_CENTER             52
+#define SAT_WIDGET_ALIGN_TOP_RIGHT              53
+//#define SAT_WIDGET_ALIGN_TOP_FILL
+
+#define SAT_WIDGET_ALIGN_BOTTOM                 60
+#define SAT_WIDGET_ALIGN_BOTTOM_LEFT            61
+#define SAT_WIDGET_ALIGN_BOTTOM_CENTER          62
+#define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           63
+//#define SAT_WIDGET_ALIGN_BOTTOM_FILL
+
+*/
 
 // #define SAT_WIDGET_NOTIFY_NONE                  0
 // #define SAT_WIDGET_NOTIFY_CLOSE                 1

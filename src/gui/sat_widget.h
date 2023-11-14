@@ -19,8 +19,7 @@ typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 //----------------------------------------------------------------------
 
 struct SAT_WidgetLayout {
-  uint32_t  anchor        = SAT_EDGE_NONE;
-  bool      crop_layout   = false;
+  uint32_t  flags         = SAT_WIDGET_LAYOUT_DEFAULT;
   SAT_Rect  inner_border  = {};
   SAT_Rect  outer_border  = {};
 };
@@ -135,6 +134,7 @@ public:
   virtual double              getWidth()                                  { return MRect.w; }
   virtual double              getHeight()                                 { return MRect.h; }
   virtual SAT_Rect            getBaseRect()                               { return MBaseRect; }
+  virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
 
   virtual void                setPos(SAT_Point APos)                      { MRect.setPos(APos); }
   virtual void                setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
@@ -144,15 +144,17 @@ public:
   // layout
 
   virtual SAT_WidgetLayout*   getLayout()                                 { return &MLayout; }
-  virtual uint32_t            getAnchor()                                 { return MLayout.anchor; }
-  virtual bool                getCropLayout()                             { return MLayout.crop_layout; }
-  virtual SAT_Rect            getInnerBorder()                            { return MLayout.inner_border; }
-  virtual SAT_Rect            getOuterBorder()                            { return MLayout.outer_border; }
+  virtual uint32_t            getLayoutFlags()                            { return MLayout.flags; }
+  virtual SAT_Rect            getLayoutInnerBorder()                      { return MLayout.inner_border; }
+  virtual SAT_Rect            getLayoutOuterBorder()                      { return MLayout.outer_border; }
 
-  virtual void                setAnchor(uint32_t AAnchor)                 { MLayout.anchor = AAnchor; }
-  virtual void                setCropLayout(bool AFill)                   { MLayout.crop_layout = AFill; }
-  virtual void                setInnerBorder(SAT_Rect ABorder)            { MLayout.inner_border = ABorder; }
-  virtual void                setOuterBorder(SAT_Rect ABorder)            { MLayout.outer_border = ABorder; }
+  virtual void                setLayoutFlags(uint32_t AFlags)             { MLayout.flags = AFlags; }
+  virtual void                setLayoutInnerBorder(SAT_Rect ABorder)      { MLayout.inner_border = ABorder; }
+  virtual void                setLayoutOuterBorder(SAT_Rect ABorder)      { MLayout.outer_border = ABorder; }
+
+  virtual bool                hasLayoutFlag(uint32_t AFlag)               { return (MLayout.flags & AFlag); }
+  virtual void                addLayoutFlag(uint32_t AFlag)               { MLayout.flags |= AFlag; }
+  virtual void                clearLayoutFlag(uint32_t AFlag)             { MLayout.flags &= ~AFlag; }
 
   // state
 
@@ -184,12 +186,12 @@ public:
   // called from:
   // SAT_Window.on_window_open()
 
-  virtual void setOwner(SAT_WidgetOwner* AOwner, bool ARecursive=true) {
+  virtual void ownerWindowOpened(SAT_WidgetOwner* AOwner, bool ARecursive=true) {
     MOwner = AOwner;
     on_widget_open(AOwner);
     if (ARecursive) {
       for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-        MChildWidgets[i]->setOwner(AOwner,ARecursive);
+        MChildWidgets[i]->ownerWindowOpened(AOwner,ARecursive);
       }
     }
   }
@@ -405,60 +407,105 @@ public:
   // (sets rect, and content)
 
   virtual void realignChildWidgets(bool ARecursive=true) {
-    SAT_Rect layout_rect = MRect;
+
+    // parent
+
+    SAT_Rect parent_rect = getRect();
+    double parent_xcenter = parent_rect.x + (parent_rect.w * 0.5);
+    double parent_ycenter = parent_rect.y + (parent_rect.h * 0.5);
+
+    // layout
+    
+    SAT_Rect layout_rect = getRect();
+    // add inner border for sub-widget alignment
     layout_rect.shrink(MLayout.inner_border);
+
+    // initial context rect is empty
     MContentRect = SAT_Rect(layout_rect.x,layout_rect.y,0,0);
+
+    //
 
     for (uint32_t i=0; i<MChildWidgets.size(); i++) {
       SAT_Widget* child = MChildWidgets[i];
       SAT_WidgetState* child_state = child->getState();
 
       if (child_state->visible) {
+        child->on_widget_prealign();
 
-        child->on_widget_realign();
+        uint32_t layout = child->getLayout()->flags;
+        SAT_Rect child_rect;// = child->getBaseRect();
 
-        SAT_Rect child_rect = child->getBaseRect();
-        SAT_WidgetLayout* child_layout = child->getLayout();
+        // percent (initial size/scale)
 
-        child_rect.x += layout_rect.x;
-        child_rect.y += layout_rect.y;
-
-        uint32_t child_anchor = child_layout->anchor;
-        uint32_t child_crop_layout = child_layout->crop_layout;
-
-        // TODO: centering, percentages, stacking, ..
-
-        if (child_anchor & SAT_EDGE_LEFT) {
-          child_rect.x = layout_rect.x;
-          if (child_crop_layout) {
-            layout_rect.x += child_rect.w;
-            layout_rect.w -= child_rect.w;
-          }
+        if (layout & SAT_WIDGET_LAYOUT_PERCENT) {
+          child_rect = SAT_Rect(parent_rect.w,parent_rect.h,parent_rect.w,parent_rect.h);
+          child_rect.scale(child->getInitialRect());
+          child_rect.scale(0.01);
         }
-        if (child_anchor & SAT_EDGE_RIGHT) {
-          child_rect.setX2( layout_rect.w - child_rect.w );
-          if (child_crop_layout) {
-            layout_rect.w -= child_rect.w;
-          }
+        else {
+          child_rect = child->getBaseRect();
         }
-        if (child_anchor & SAT_EDGE_TOP) {
-          child_rect.y = layout_rect.y;
-          if (child_crop_layout) {
-            layout_rect.y += child_rect.h;
-            layout_rect.h -= child_rect.h;
-          }
+
+        // relative to.. (where is 0.0)
+
+        if (layout & SAT_WIDGET_LAYOUT_WINDOW) {
         }
-        if (child_anchor & SAT_EDGE_BOTTOM) {
-          child_rect.setY2( layout_rect.h - child_rect.h );
-          if (child_crop_layout) {
-            layout_rect.h -= child_rect.h;
-          }
+        else if (layout & SAT_WIDGET_LAYOUT_PARENT) {
+          child_rect.x += parent_rect.x;
+          child_rect.y += parent_rect.y;
         }
+        else {
+          child_rect.x += layout_rect.x;
+          child_rect.y += layout_rect.y;
+        }
+
+        double layout_xcenter = layout_rect.x + (layout_rect.w * 0.5);
+        double layout_ycenter = layout_rect.y + (layout_rect.h * 0.5);
+
+        // anchor (move it around)
+
+        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { child_rect.x = layout_rect.x; }
+        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_TOP)          { child_rect.y = layout_rect.y; }
+        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)        { child_rect.x = layout_rect.w  - child_rect.w; }
+        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM)       { child_rect.y = layout_rect.h  - child_rect.h; }
+        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ) { child_rect.x = layout_xcenter - (child_rect.w * 0.5); }
+        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)  { child_rect.y = layout_ycenter - (child_rect.h * 0.5); }
+
+        // stretch (move edges)
+
+        if (layout & SAT_WIDGET_LAYOUT_STRETCH_LEFT)        { child_rect.setX1( layout_rect.x ); }
+        if (layout & SAT_WIDGET_LAYOUT_STRETCH_TOP)         { child_rect.setY1( layout_rect.y ); }
+        if (layout & SAT_WIDGET_LAYOUT_STRETCH_RIGHT)       { child_rect.setX2( layout_rect.w  /*- child_rect.w*/ ); }
+        if (layout & SAT_WIDGET_LAYOUT_STRETCH_BOTTOM)      { child_rect.setY2( layout_rect.h  /*- child_rect.h*/ ); }
+
+        // crop (remove available space for other widgets)
+
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.x += child_rect.w;  layout_rect.w -= child_rect.w; }
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.y += child_rect.h;  layout_rect.h -= child_rect.h; }
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.w -= child_rect.w;  }
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_BOTTOM)         { layout_rect.h -= child_rect.h;  }
+
+        // double ww = child_rect.x + child_rect.w;
+        // double hh = child_rect.h + child_rect.y;
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.x += ww;  layout_rect.w -= ww; }
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.y += hh;  layout_rect.h -= hh; }
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.w -= ww;  }
+        // if (layout & SAT_WIDGET_LAYOUT_CROP_BOTTOM)         { layout_rect.h -= hh;  }
+
+        if (layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.setX1( child_rect.x2() ); }
+        if (layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.setX2( child_rect.x ); }
+        if (layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.setY1( child_rect.y2() ); }
+        if (layout & SAT_WIDGET_LAYOUT_CROP_BOTTOM)         { layout_rect.setY2( child_rect.y ); }
+
+        // remember surrounding rect
         MContentRect.combine(child_rect);
+        // add final/outer border
+        child_rect.shrink(MLayout.outer_border);
         child->setRect(child_rect);
-        if (ARecursive) {
-          child->realignChildWidgets(ARecursive);
-        }
+        child->on_widget_postalign();
+
+        if (ARecursive) child->realignChildWidgets(ARecursive);
+
       } // visible
     } // for
   }
@@ -509,7 +556,7 @@ public: // on_ (downwards)
 //------------------------------
 
   // called from
-  // SAT_Window.on_window_open() -> SAT_Widget.setOwner
+  // SAT_Window.on_window_open() -> SAT_Widget.ownerWindowOpened
 
   virtual void on_widget_open(SAT_WidgetOwner* AOwner) {
   }
@@ -524,10 +571,16 @@ public: // on_ (downwards)
   virtual void on_widget_resize(double AWidth, double AHeight) {
   }
 
-  // called from
-  // SAT_Widget.realignChildWidgets
+  // called from SAT_Widget.realignChildWidgets
+  // just before alignment
 
-  virtual void on_widget_realign() {
+  virtual void on_widget_prealign() {
+  }
+
+  // called from SAT_Widget.realignChildWidgets
+  // after alignment
+
+  virtual void on_widget_postalign() {
   }
 
   virtual void on_widget_paint(SAT_PaintContext* AContext) {

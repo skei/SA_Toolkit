@@ -41,6 +41,7 @@
 #include "gui/base/sat_paint_context.h"
 #include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_widget_listener.h"
+#include "gui/base/sat_window_listener.h"
 #include "gui/widgets/sat_root_widget.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
@@ -216,8 +217,6 @@ public:
   virtual void setRootWidget(SAT_RootWidget* AWidget) {
     MRootWidget = AWidget;
     MRootWidget->setParent(nullptr);
-    //MRootWidget->setListener(this);
-    //MRootWidget->setOwner(this);
   }
 
   //----------
@@ -391,7 +390,7 @@ public: // base window
     //MRootWidget->on_widget_open(this);
     startTimer(SAT_WINDOW_TIMER_MS);
     if (MRootWidget) {
-      MRootWidget->setOwner(this);
+      MRootWidget->ownerWindowOpened(this);
       uint32_t w = getWidth();
       uint32_t h = getHeight();
       MRootWidget->setSize(SAT_Point(w,h));
