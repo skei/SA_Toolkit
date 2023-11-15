@@ -19,9 +19,10 @@ typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 //----------------------------------------------------------------------
 
 struct SAT_WidgetLayout {
-  uint32_t  flags         = SAT_WIDGET_LAYOUT_DEFAULT;
-  SAT_Rect  inner_border  = {};
-  SAT_Rect  outer_border  = {};
+  uint32_t  flags           = SAT_WIDGET_LAYOUT_DEFAULT;
+  SAT_Rect  inner_border    = {};
+  SAT_Rect  outer_border    = {};
+  SAT_Point spacing         = {};
 };
 
 //----------
@@ -68,7 +69,6 @@ private:
   SAT_WidgetState     MState                          = {};
   SAT_WidgetOptions   MOptions                        = {};
 
-//int32_t             MId                             = -1;
   const char*         MName                           = "MWidget";
   SAT_WidgetOwner*    MOwner                          = nullptr;
   SAT_Widget*         MParent                         = nullptr;
@@ -110,12 +110,22 @@ public:
   virtual int32_t             getCursor()                                 { return MMouseCursor; }
   virtual const char*         getHint()                                   { return MHint; }
   virtual SAT_Widget*         getParent()                                 { return MParent; }
-  virtual void*               getParameter()                              { return MParameter; }
+  virtual int32_t             getParentIndex()                            { return MParentIndex; }
+  virtual void*               getParameter(uint32_t AIndex=0)             { return MParameter; }
+  virtual SAT_WidgetOwner*    getOwner()                                  { return MOwner; }
+  
+  //----------
+
+
+  virtual uint32_t            getNumChildWidgets()                        { return MChildWidgets.size(); }
+  virtual SAT_Widget*         getChildWidget(uint32_t AIndex)             { return MChildWidgets[AIndex]; }
 
   virtual void                setName(const char* AName)                  { MName = AName; }
   virtual void                setCursor(int32_t ACursor)                  { MMouseCursor = ACursor; }
   virtual void                setHint(const char* AHint)                  { MHint = AHint; }
   virtual void                setParameter(void* AParameter)              { MParameter = AParameter; }
+  virtual void                setParameter(void* AParameter, uint32_t AIndex=0) { MParameter = AParameter; }
+
 
   // value
 
@@ -135,11 +145,17 @@ public:
   virtual double              getHeight()                                 { return MRect.h; }
   virtual SAT_Rect            getBaseRect()                               { return MBaseRect; }
   virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
+  virtual SAT_Rect            getContentRect()                            { return MContentRect; }
 
   virtual void                setPos(SAT_Point APos)                      { MRect.setPos(APos); }
   virtual void                setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
   virtual void                setRect(SAT_Rect ARect)                     { MRect = ARect; }
   virtual void                setBaseRect(SAT_Rect ARect)                 { MBaseRect = ARect; }
+
+  virtual void                setWidth(double AWidth)                     { MRect.w = AWidth; }
+  virtual void                setHeight(double AHeight)                   { MRect.h = AHeight; }
+  virtual void                setBaseWidth(double AWidth)                 { MBaseRect.w = AWidth; }
+  virtual void                setBaseHeight(double AHeight)               { MBaseRect.h = AHeight; }
 
   // layout
 
@@ -147,10 +163,12 @@ public:
   virtual uint32_t            getLayoutFlags()                            { return MLayout.flags; }
   virtual SAT_Rect            getLayoutInnerBorder()                      { return MLayout.inner_border; }
   virtual SAT_Rect            getLayoutOuterBorder()                      { return MLayout.outer_border; }
+  virtual SAT_Point           getLayoutSpacing()                          { return MLayout.spacing; }
 
   virtual void                setLayoutFlags(uint32_t AFlags)             { MLayout.flags = AFlags; }
   virtual void                setLayoutInnerBorder(SAT_Rect ABorder)      { MLayout.inner_border = ABorder; }
   virtual void                setLayoutOuterBorder(SAT_Rect ABorder)      { MLayout.outer_border = ABorder; }
+  virtual void                setLayoutSpacing(SAT_Point ASpacing)        { MLayout.spacing = ASpacing; }
 
   virtual bool                hasLayoutFlag(uint32_t AFlag)               { return (MLayout.flags & AFlag); }
   virtual void                addLayoutFlag(uint32_t AFlag)               { MLayout.flags |= AFlag; }
@@ -163,8 +181,8 @@ public:
   virtual bool                isVisible()                                 { return MState.visible; }
   virtual bool                isInteracting()                             { return MState.interacting; }
 
-//virtual void                setActive(bool AActive=true)                { MState.active = AActive; }
-//virtual void                setVisible(bool AVisible=true)              { MState.visible = AVisible; }
+//virtual void                setActive(bool AActive=true)                { MState.active = AActive; }    // see later down
+//virtual void                setVisible(bool AVisible=true)              { MState.visible = AVisible; }  // see later down
   virtual void                setInteracting(bool AInteracting=true)      { MState.interacting = AInteracting; }
 
   // options
@@ -182,6 +200,10 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  virtual void redrawParent() {
+    if (MParent) MParent->do_widget_redraw(MParent);
+  }
 
   // called from:
   // SAT_Window.on_window_open()
@@ -213,20 +235,6 @@ public:
   virtual void setParentIndex(uint32_t AIndex) {
     MParentIndex = AIndex;
   }
-
-  //----------
-
-  //virtual void parentUpdate() {
-  //  if (MParent) MParent->do_widget_update(this);
-  //}
-
-  //virtual void parentRedraw() {
-  //  if (MParent) MParent->do_widget_redraw(this);
-  //}
-
-  //virtual void parentRealign() {
-  //  if (MParent) MParent->do_widget_realign(this);
-  //}
 
   //----------
 
@@ -282,12 +290,16 @@ public:
 
   //----------
 
+  // asks /owner window about its width
+
   virtual double getWindowWidth() {
     if (MOwner) return MOwner->on_widgetOwner_getWidth();
     else return 0.0;
   }
   
   //----------
+
+  // asks owner window about its height
 
   virtual double getWindowHeight() {
     if (MOwner) return MOwner->on_widgetOwner_getHeight();
@@ -296,6 +308,8 @@ public:
   
   //----------
 
+  // asks owner window about its scale
+
   virtual double getWindowScale() {
     if (MOwner) return MOwner->on_widgetOwner_getScale();
     else return 1.0;
@@ -303,11 +317,12 @@ public:
 
   //----------
 
-  virtual void appendChildWidget(SAT_Widget* AWidget) {
+  virtual SAT_Widget* appendChildWidget(SAT_Widget* AWidget) {
     uint32_t index = MChildWidgets.size();
     AWidget->setParent(this);
     AWidget->setParentIndex(index);
     MChildWidgets.push_back(AWidget);
+    return AWidget;
   }
 
   //----------
@@ -328,15 +343,9 @@ public:
   // todo: ifActive
 
   virtual SAT_Widget* findChildWidget(uint32_t AXpos, uint32_t AYpos, bool ARecursive=true) {
-
-    // handle from first to last
-    // opposite of painters algo
-    // last painted = topmost = first handled
-    // see also: paintChildWidgets
-
     uint32_t num = MChildWidgets.size();
-    //for (int32_t i=(num-1); i>=0; i--) {
-    for (uint32_t i=0; i<num; i++) {
+    for (int32_t i=(num-1); i>=0; i--) {
+    //for (uint32_t i=0; i<num; i++) {
       SAT_Widget* child = MChildWidgets[i];
       SAT_Rect child_rect = child->getRect();
       if (child_rect.contains(AXpos,AYpos)) {
@@ -408,36 +417,34 @@ public:
 
   virtual void realignChildWidgets(bool ARecursive=true) {
 
-    // parent
-
     SAT_Rect parent_rect = getRect();
+    parent_rect.shrink(MLayout.inner_border);
     double parent_xcenter = parent_rect.x + (parent_rect.w * 0.5);
     double parent_ycenter = parent_rect.y + (parent_rect.h * 0.5);
 
-    // layout
-    
     SAT_Rect layout_rect = getRect();
-    // add inner border for sub-widget alignment
     layout_rect.shrink(MLayout.inner_border);
+    double layout_xcenter = layout_rect.x + (layout_rect.w * 0.5);
+    double layout_ycenter = layout_rect.y + (layout_rect.h * 0.5);
 
-    // initial context rect is empty
+    SAT_Point spacing = MLayout.spacing;
+
     MContentRect = SAT_Rect(layout_rect.x,layout_rect.y,0,0);
 
-    //
-
     for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-      SAT_Widget* child = MChildWidgets[i];
-      SAT_WidgetState* child_state = child->getState();
+
+      SAT_Widget*       child         = MChildWidgets[i];
+      SAT_Rect          child_rect;   // = child->getBaseRect();
+      SAT_WidgetState*  child_state   = child->getState();
+      uint32_t          child_layout  = child->getLayout()->flags;
+      SAT_Point         child_offset; // = child_rect.getPos();
 
       if (child_state->visible) {
         child->on_widget_prealign();
 
-        uint32_t layout = child->getLayout()->flags;
-        SAT_Rect child_rect;// = child->getBaseRect();
+        //-----
 
-        // percent (initial size/scale)
-
-        if (layout & SAT_WIDGET_LAYOUT_PERCENT) {
+        if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
           child_rect = SAT_Rect(parent_rect.w,parent_rect.h,parent_rect.w,parent_rect.h);
           child_rect.scale(child->getInitialRect());
           child_rect.scale(0.01);
@@ -446,64 +453,76 @@ public:
           child_rect = child->getBaseRect();
         }
 
-        // relative to.. (where is 0.0)
+        //SAT_Print("%.f,%.f,%.f,%.f\n",child_rect.x,child_rect.y,child_rect.w,child_rect.h);
 
-        if (layout & SAT_WIDGET_LAYOUT_WINDOW) {
-        }
-        else if (layout & SAT_WIDGET_LAYOUT_PARENT) {
-          child_rect.x += parent_rect.x;
-          child_rect.y += parent_rect.y;
-        }
-        else {
-          child_rect.x += layout_rect.x;
-          child_rect.y += layout_rect.y;
-        }
+        //-----
 
-        double layout_xcenter = layout_rect.x + (layout_rect.w * 0.5);
-        double layout_ycenter = layout_rect.y + (layout_rect.h * 0.5);
+        // if (child_layout & SAT_WIDGET_LAYOUT_WINDOW) {
+        //   //child_rect.x -= layout_rect.x;
+        //   //child_rect.y -= layout_rect.y;
+        // }
+        // else if (child_layout & SAT_WIDGET_LAYOUT_PARENT) {
+        //   //child_rect.x += parent_rect.x /*- layout_rect.x*/;
+        //   //child_rect.y += parent_rect.y /*- layout_rect.y*/;
+        // }
+        // else {
+        //   //child_rect.x += layout_rect.x;
+        //   //child_rect.y += layout_rect.y;
+        // }
 
-        // anchor (move it around)
+        //-----
 
-        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { child_rect.x = layout_rect.x; }
-        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_TOP)          { child_rect.y = layout_rect.y; }
-        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)        { child_rect.x = layout_rect.w  - child_rect.w; }
-        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM)       { child_rect.y = layout_rect.h  - child_rect.h; }
-        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ) { child_rect.x = layout_xcenter - (child_rect.w * 0.5); }
-        if (layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)  { child_rect.y = layout_ycenter - (child_rect.h * 0.5); }
+        // child_rect contains border/spacing
+        // with += and it will apply again here.. :-/
+        // if we force it to 0,0, we lose the ability to offset..
+        // let's try, and see how it goes..
 
-        // stretch (move edges)
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { child_rect.x += layout_rect.x; }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_TOP)          { child_rect.y += layout_rect.y; }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)        { child_rect.x += (layout_rect.x2()  - child_rect.w); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM)       { child_rect.y += (layout_rect.y2()  - child_rect.h); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ) { child_rect.x += (layout_xcenter - (child_rect.w * 0.5)); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)  { child_rect.y += (layout_ycenter - (child_rect.h * 0.5)); }
 
-        if (layout & SAT_WIDGET_LAYOUT_STRETCH_LEFT)        { child_rect.setX1( layout_rect.x ); }
-        if (layout & SAT_WIDGET_LAYOUT_STRETCH_TOP)         { child_rect.setY1( layout_rect.y ); }
-        if (layout & SAT_WIDGET_LAYOUT_STRETCH_RIGHT)       { child_rect.setX2( layout_rect.w  /*- child_rect.w*/ ); }
-        if (layout & SAT_WIDGET_LAYOUT_STRETCH_BOTTOM)      { child_rect.setY2( layout_rect.h  /*- child_rect.h*/ ); }
+        // previous offsets
+        //if (xanchored) child_rect.x -= child_offset.x;
+        //if (yanchored) child_rect.y += child_offset.y;
+        // negative, so we can add realigned pos to find diff
+        //child_offset.x = - child_rect.x;
+        //child_offset.y = - child_rect.y;
 
-        // crop (remove available space for other widgets)
+        // if (!xanchored) child_rect.x += parent_rect.x;          
+        // if (!yanchored) child_rect.y += parent_rect.y;          
 
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.x += child_rect.w;  layout_rect.w -= child_rect.w; }
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.y += child_rect.h;  layout_rect.h -= child_rect.h; }
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.w -= child_rect.w;  }
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_BOTTOM)         { layout_rect.h -= child_rect.h;  }
+        //SAT_Print("%.f,%.f,%.f,%.f\n",child_rect.x,child_rect.y,child_rect.w,child_rect.h);
 
-        // double ww = child_rect.x + child_rect.w;
-        // double hh = child_rect.h + child_rect.y;
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.x += ww;  layout_rect.w -= ww; }
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.y += hh;  layout_rect.h -= hh; }
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.w -= ww;  }
-        // if (layout & SAT_WIDGET_LAYOUT_CROP_BOTTOM)         { layout_rect.h -= hh;  }
+        //-----
 
-        if (layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.setX1( child_rect.x2() ); }
-        if (layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.setX2( child_rect.x ); }
-        if (layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.setY1( child_rect.y2() ); }
-        if (layout & SAT_WIDGET_LAYOUT_CROP_BOTTOM)         { layout_rect.setY2( child_rect.y ); }
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_LEFT)        { child_rect.setX1( layout_rect.x ); }
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_TOP)         { child_rect.setY1( layout_rect.y ); }
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_RIGHT)       { child_rect.setX2( layout_rect.x2() /*- child_rect.w*/ ); }
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_BOTTOM)      { child_rect.setY2( layout_rect.y2() /*- child_rect.h*/ ); }
 
-        // remember surrounding rect
+        //-----
+
+        if (child_layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.setX1( child_rect.x2() ); layout_rect.x += spacing.x; layout_rect.w -= spacing.x; }
+        if (child_layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.setY1( child_rect.y2() ); layout_rect.y += spacing.y; layout_rect.h -= spacing.y; }
+        if (child_layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.setX2( child_rect.x    ); layout_rect.w -= spacing.x; }
+        if (child_layout & SAT_WIDGET_LAYOUT_CROP_BOTTOM)         { layout_rect.setY2( child_rect.y    ); layout_rect.h -= spacing.y; }
+
+        //-----
+
         MContentRect.combine(child_rect);
-        // add final/outer border
         child_rect.shrink(MLayout.outer_border);
-        child->setRect(child_rect);
-        child->on_widget_postalign();
 
+        //child_offset.x += child_rect.x;
+        //child_offset.y += child_rect.y;
+        //SAT_Print("offset %.f,%.f\n",child_offset.x,child_offset.y);
+        //child->MLayoutOffset = child_offset;
+
+        child->setRect(child_rect);
+
+        child->on_widget_postalign();
         if (ARecursive) child->realignChildWidgets(ARecursive);
 
       } // visible
@@ -532,11 +551,8 @@ public:
     if (num > 0) {
       if (autoClip()) painter->pushOverlappingClip(mrect);
 
-      // draw from last to first (painters algo)
-      // see also: findChildWidget
-
-      //for (uint32_t i=0; i<num; i++) {
-      for (int32_t i=(num-1); i>=0; i--) {
+      for (uint32_t i=0; i<num; i++) {
+      //for (int32_t i=(num-1); i>=0; i--) {
         SAT_Widget* widget = MChildWidgets[i];
         //if (widget->isRecursivelyVisible()) {
         if (widget->isVisible()) {
@@ -597,6 +613,7 @@ public: // on_ (downwards)
   // SAT_TweenManager
 
   virtual void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ANum, double* AData) {
+    //todo: handleTweening...
   }
 
   //

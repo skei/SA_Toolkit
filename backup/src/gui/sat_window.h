@@ -307,10 +307,10 @@ public:
 
   //----------
 
-  virtual void resize(uint32_t AWidth, uint32_t AHeight) {
-    setSize(AWidth,AHeight);            // resizes window, but widgets are still 1:1, 320,100
-    on_window_resize(AWidth,AHeight);   // rescales widgets, but window is still 320,100
-  }
+//  virtual void resize(uint32_t AWidth, uint32_t AHeight) {
+//    setSize(AWidth,AHeight);            // resizes window, but widgets are still 1:1, 320,100
+//    on_window_resize(AWidth,AHeight);   // rescales widgets, but window is still 320,100
+//  }
   
 //------------------------------
 public: // capture

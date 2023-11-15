@@ -862,11 +862,13 @@ private:
           MWindowXpos = x;
           MWindowYpos = y;
         //}
+
         //if ((w != MWindowWidth) || (h != MWindowHeight)) {
           on_window_resize(w,h);
           MWindowWidth  = w;
           MWindowHeight = h;
         //}
+
         break;
       }
 

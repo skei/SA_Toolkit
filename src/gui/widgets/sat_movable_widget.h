@@ -28,25 +28,18 @@ private:
   uint32_t  MSizableEdges       = SAT_EDGE_ALL;
   uint32_t  MSizableFlags       = 0; // 1 =limit_to_parent
 
-  //
+//------------------------------
+private:
+//------------------------------
 
   bool      MCanMove            = false;
   uint32_t  MResizeEdge         = SAT_EDGE_NONE;
-
   bool      MIsMoving           = false;
   bool      MIsResizing         = false;
-
-  //double    MClickedX     = 0.0;
-  //double    MClickedY     = 0.0;
-  double    MPrevX     = 0.0;
-  double    MPrevY     = 0.0;
-  uint32_t  MClickedB     = SAT_BUTTON_NONE;
-
-
-  // double    MResizingClickedX   = 0.0;
-  // double    MResizingClickedY   = 0.0;
-
-
+  double    MPrevX              = 0.0;
+  double    MPrevY              = 0.0;
+  double    MMovedX             = 0.0;
+  double    MMovedY             = 0.0;
 
 //------------------------------
 public:
@@ -61,6 +54,30 @@ public:
 
   virtual ~SAT_MovableWidget() {
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool      isMovable()             { return MIsMovable; }
+  SAT_Rect  getMovableOffset()      { return  MMovableOffset; }
+  uint32_t  getMovableDirections()  { return MMovableDirections; }
+  uint32_t  getMovableFlags()       { return MMovableFlags; }
+
+  bool      isSizable()             { return MIsMovable; }
+  SAT_Rect  getSizableBorder()      { return MSizableBorder; }
+  uint32_t  getSizableEdges()       { return MSizableEdges; }
+  uint32_t  getSizableFlags()       { return MSizableFlags; }
+
+  void      setIsMovable(bool AMovable=true)            { MIsMovable = AMovable; }
+  void      setMovableOffset(SAT_Rect AOffset)          { MMovableOffset = AOffset; }
+  void      setMovableDirections(uint32_t ADirections)  { MMovableDirections = ADirections; }
+  void      setMovableFlags(uint32_t AFlags)            { MMovableFlags = AFlags; }
+
+  void      setIsSizable(bool ASizable=true)            { MIsMovable = ASizable; }
+  void      setSizableBorder(SAT_Rect ABorder)          { MSizableBorder = ABorder; }
+  void      setSizableEdges(uint32_t AEdges)            { MSizableEdges = AEdges; }
+  void      setSizableFlags(uint32_t AFlags)            { MSizableFlags = AFlags; }
 
 //------------------------------
 private:
@@ -152,18 +169,32 @@ public:
 
   //----------
 
+  /*
+    mrect contains layout, so if we move, and then sets new rect/base based on
+    this.. the base rect will already contain borders, so next time it is aligned,
+    borders will reapply.. on and on..
+    we can only have 
+  */
+
   void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) override {
     if (MIsMoving) {
-      SAT_Rect mrect = getRect();
+      //SAT_Rect mrect = getRect();
+      SAT_Rect mrect = getBaseRect();
       double deltax = AXpos - MPrevX;
       double deltay = AYpos - MPrevY;
       if (MMovableDirections & SAT_DIRECTION_HORIZ) mrect.x += deltax;
       if (MMovableDirections & SAT_DIRECTION_VERT)  mrect.y += deltay;
+
+      //SAT_Point offset = getLayoutOffset();
+      //mrect.x -= offset.x;
+      //mrect.y -= offset.y;
+
       setRectAndBase(mrect);
       do_widget_realign(this);
     }
     else if (MIsResizing) {
-      SAT_Rect mrect = getRect();
+      //SAT_Rect mrect = getRect();
+      SAT_Rect mrect = getBaseRect();
       double deltax = AXpos - MPrevX;
       double deltay = AYpos - MPrevY;
       if (MResizeEdge & SAT_EDGE_LEFT)    { mrect.removeLeft(deltax); }

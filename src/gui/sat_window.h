@@ -117,6 +117,9 @@ public:
   SAT_Window(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener=nullptr, intptr_t AParent=0)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
 
+    MInitialWidth = AWidth;
+    MInitialHeight = AHeight;
+
     MListener = AListener;
 
     SAT_Assert(AWidth > 0);
@@ -269,6 +272,7 @@ public: // scale
       if (xscale < yscale) scale = xscale;
       else scale =  yscale;
     }
+    //SAT_Print("scale: %f\n",scale);
     return scale;
   }
   
@@ -418,9 +422,9 @@ public: // base window
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-    //SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
 
-//    MScale = recalcScale(AWidth,AHeight);
+    //SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
+    MScale = recalcScale(AWidth,AHeight);
 
     if (MRootWidget) {
       MRootWidget->setSize(SAT_Point(AWidth,AHeight));

@@ -261,25 +261,25 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_STATE_ALT                           0x08
 #define SAT_STATE_ALTGR                         0x10
 
-// #define SAT_SYMBOL_NONE                         0
-// #define SAT_SYMBOL_RECT                         1
-// #define SAT_SYMBOL_FILLED_RECT                  2
-// #define SAT_SYMBOL_CIRCLE                       3
-// #define SAT_SYMBOL_FILLED_CIRCLE                4
-// #define SAT_SYMBOL_TRI_UP                       5
-// #define SAT_SYMBOL_FILLED_TRI_UP                6
-// #define SAT_SYMBOL_TRI_DOWN                     7
-// #define SAT_SYMBOL_FILLED_TRI_DOWN              8
-// #define SAT_SYMBOL_TRI_LEFT                     9
-// #define SAT_SYMBOL_FILLED_TRI_LEFT              10
-// #define SAT_SYMBOL_TRI_RIGHT                    11
-// #define SAT_SYMBOL_FILLED_TRI_RIGHT             12
+#define SAT_SYMBOL_NONE                         0
+#define SAT_SYMBOL_RECT                         1
+#define SAT_SYMBOL_FILLED_RECT                  2
+#define SAT_SYMBOL_CIRCLE                       3
+#define SAT_SYMBOL_FILLED_CIRCLE                4
+#define SAT_SYMBOL_TRI_UP                       5
+#define SAT_SYMBOL_FILLED_TRI_UP                6
+#define SAT_SYMBOL_TRI_DOWN                     7
+#define SAT_SYMBOL_FILLED_TRI_DOWN              8
+#define SAT_SYMBOL_TRI_LEFT                     9
+#define SAT_SYMBOL_FILLED_TRI_LEFT              10
+#define SAT_SYMBOL_TRI_RIGHT                    11
+#define SAT_SYMBOL_FILLED_TRI_RIGHT             12
 
-// #define SAT_SYMBOL_SINE                         13
-// #define SAT_SYMBOL_SAW                          14
-// #define SAT_SYMBOL_SQUARE                       15
-// #define SAT_SYMBOL_TRI                          16
-// #define SAT_SYMBOL_NOISE                        17
+#define SAT_SYMBOL_SINE                         13
+#define SAT_SYMBOL_SAW                          14
+#define SAT_SYMBOL_SQUARE                       15
+#define SAT_SYMBOL_TRI                          16
+#define SAT_SYMBOL_NOISE                        17
 
 #define SAT_TEXT_ALIGN_CENTER                   0
 #define SAT_TEXT_ALIGN_LEFT                     0x01

@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/widgets/value/sat_drag_value_widget.h"
+#include "gui/widgets/sat_drag_value_widget.h"
 //#include "plugin/sat_parameter.h"
 
 //----------------------------------------------------------------------

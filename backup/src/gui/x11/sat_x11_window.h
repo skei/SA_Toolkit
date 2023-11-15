@@ -828,7 +828,8 @@ private:
         int16_t y  = configure_notify->y;
         uint16_t w = configure_notify->width;
         uint16_t h = configure_notify->height;
-        //SAT_Print("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i\n",x,y,w,h);
+        
+        SAT_Print("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i\n",x,y,w,h);
 
         if ((x != MWindowXpos) || (y != MWindowYpos)) {
           //SAT_Print("new MWindowXpos/Ypos %i,%i\n",MWindowXpos,MWindowYpos);
