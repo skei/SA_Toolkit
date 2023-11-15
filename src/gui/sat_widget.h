@@ -123,7 +123,7 @@ public:
   virtual void                setName(const char* AName)                  { MName = AName; }
   virtual void                setCursor(int32_t ACursor)                  { MMouseCursor = ACursor; }
   virtual void                setHint(const char* AHint)                  { MHint = AHint; }
-  virtual void                setParameter(void* AParameter)              { MParameter = AParameter; }
+  //virtual void                setParameter(void* AParameter)              { MParameter = AParameter; }
   virtual void                setParameter(void* AParameter, uint32_t AIndex=0) { MParameter = AParameter; }
 
 

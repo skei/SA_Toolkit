@@ -81,9 +81,9 @@ public:
   //----------
 
   virtual void updateParameterFromHost(SAT_Parameter* AParameter) {
-    uint32_t index = AParameter->getIndex();
-    sat_param_t value = AParameter->getValue();
-    SAT_Print("index %i value %f\n",index,value);
+    // uint32_t index = AParameter->getIndex();
+    // sat_param_t value = AParameter->getValue();
+    // SAT_Print("index %i value %f\n",index,value);
   }
 
   //----------
@@ -91,14 +91,14 @@ public:
   // parameters are in clap-space
   // widgets are 0..1
   
-  // virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue) {
-  //   //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
-  //   SAT_Widget* widget = (SAT_Widget*)AParam->getWidget();
-  //   if (widget) {
-  //     double v = AParam->normalizeValue(AValue);
-  //     widget->setValue(v,ASubIndex);
-  //   }
-  // }
+  virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue) {
+    // //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
+    // SAT_Widget* widget = (SAT_Widget*)AParam->getWidget();
+    // if (widget) {
+    //   double v = AParam->normalizeValue(AValue);
+    //   widget->setValue(v,ASubIndex);
+    // }
+  }
 
   //----------
 
@@ -110,21 +110,21 @@ public:
   // parameters are in clap-space
   // widgets are 0..1
 
-  // virtual void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
-  //   if (MIsOpen) {
-  //     //SAT_PaintContext* pc = MWindow->getPaintContext();
-  //     //uint32_t counter = pc->counter;
-  //     SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
-  //     uint32_t index = AParameter->getWidgetIndex();
-  //     if (widget) {
-  //       sat_param_t normalized_value = AParameter->normalizeValue(AValue);
-  //       widget->setValue(normalized_value,index);
-  //       //widget->update();
-  //       //parentRedraw();
-  //       widget->do_widgetListener_redraw(widget,0);
-  //     }
-  //   }
-  // }
+  virtual void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
+    // if (MIsOpen) {
+    //   //SAT_PaintContext* pc = MWindow->getPaintContext();
+    //   //uint32_t counter = pc->counter;
+    //   SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
+    //   uint32_t index = AParameter->getWidgetIndex();
+    //   if (widget) {
+    //     sat_param_t normalized_value = AParameter->normalizeValue(AValue);
+    //     widget->setValue(normalized_value,index);
+    //     //widget->update();
+    //     //parentRedraw();
+    //     widget->do_widgetListener_redraw(widget,0);
+    //   }
+    // }
+  }
   
   //----------
 
@@ -133,27 +133,64 @@ public:
   
   // AValue, clap-space
 
-  // virtual void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
-  //   if (MIsOpen) {
-  //     SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
-  //     if (widget) {
-  //       //sat_param_t normalized_modulation = AParameter->normalizeValue(AValue);
-  //       //widget->setModulation(normalized_modulation);
-  //       sat_param_t normalized_value = AParameter->normalizeValue(AValue);
-  //       widget->setModulation(normalized_value);
-  //       //widget->update();
-  //       //widget->parentRedraw();
-  //       widget->do_widgetListener_redraw(widget,0);
+  virtual void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
+    // if (MIsOpen) {
+    //   SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
+    //   if (widget) {
+    //     //sat_param_t normalized_modulation = AParameter->normalizeValue(AValue);
+    //     //widget->setModulation(normalized_modulation);
+    //     sat_param_t normalized_value = AParameter->normalizeValue(AValue);
+    //     widget->setModulation(normalized_value);
+    //     //widget->update();
+    //     //widget->parentRedraw();
+    //     widget->do_widgetListener_redraw(widget,0);
+    //   }
+    // }
+  }
+
+//------------------------------
+public: // window listener
+//------------------------------
+
+  // void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
+  //   if (MListener) {
+  //     SAT_Parameter* param = (SAT_Parameter*)ASender->getParameter(AIndex);
+  //     if (param) {
+  //       double value = ASender->getValue(AIndex); // 0..1
+  //       //uint32_t parm_index = ASender->getConnectionIndex();
+  //       uint32_t param_index = param->getIndex();
+  //       //SAT_Print("AIndex %i param_index %i value %f\n",AIndex,param_index,value);
+  //       MListener->do_editorListener_parameter_update(param_index,value);
   //     }
   //   }
   // }
 
+  void on_windowListener_update(SAT_Widget* AWidget) override {
+    SAT_Print("%s\n",AWidget->getName());
+    sat_param_t value = AWidget->getValue();
+    SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter();
+    if (parameter) {
+      //SAT_Print("parameter %p\n",parameter);
+      //SAT_Print("listener %p\n",MListener);
+      if (MListener) {
+        MListener->on_editorListener_update(parameter,value);
+      }
+    }
+  }
+
   //----------
 
+  //void on_windowListener_resize(SAT_Window* AWindow, int32_t AWidth, int32_t AHeight) override {
+  //}
+
+  //----------
+
+  void on_windowListener_timer(SAT_Timer* ATimer, double AElapsed) override {
+  }
 
 
 //------------------------------
-public:
+public: // clap_plugin
 //------------------------------
 
   // handled in SAT_Plugin
@@ -290,46 +327,6 @@ public:
       return true;
     }
     return false;
-  }
-
-//------------------------------
-public: // window listener
-//------------------------------
-
-  // void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
-  //   if (MListener) {
-  //     SAT_Parameter* param = (SAT_Parameter*)ASender->getParameter(AIndex);
-  //     if (param) {
-  //       double value = ASender->getValue(AIndex); // 0..1
-  //       //uint32_t parm_index = ASender->getConnectionIndex();
-  //       uint32_t param_index = param->getIndex();
-  //       //SAT_Print("AIndex %i param_index %i value %f\n",AIndex,param_index,value);
-  //       MListener->do_editorListener_parameter_update(param_index,value);
-  //     }
-  //   }
-  // }
-
-  void on_windowListener_update(SAT_Widget* AWidget) override {
-    SAT_Print("%s\n",AWidget->getName());
-    sat_param_t value = AWidget->getValue();
-    SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter();
-    if (parameter) {
-      //SAT_Print("parameter %p\n",parameter);
-      //SAT_Print("listener %p\n",MListener);
-      if (MListener) {
-        MListener->on_editorListener_update(parameter,value);
-      }
-    }
-  }
-
-  //----------
-
-  //void on_windowListener_resize(SAT_Window* AWindow, int32_t AWidth, int32_t AHeight) override {
-  //}
-
-  //----------
-
-  void on_windowListener_timer(SAT_Timer* ATimer, double AElapsed) override {
   }
 
 };
