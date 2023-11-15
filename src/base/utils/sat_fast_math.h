@@ -11,7 +11,7 @@
 //----------------------------------------------------------------------
 
 #include <math.h> // expf, log2
-#include "base/sat.h"
+#include "sat.h"
 
 //#define SAT_MATH_EXTRA_PRECISION
 

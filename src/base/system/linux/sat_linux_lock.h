@@ -2,7 +2,7 @@
 #define sat_linux_lock_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 
 // -lpthread
 #include <pthread.h>

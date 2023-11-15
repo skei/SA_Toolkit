@@ -9,7 +9,7 @@
 
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "base/utils/sat_integer_math.h"
 #include "base/utils/sat_random.h"
 #include "base/types/sat_color.h"

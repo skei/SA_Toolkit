@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------
 
 #include <dlfcn.h>
-#include "base/sat.h"
+#include "sat.h"
 
 // see
 //#include "extern/tcc/tinycc/libtcc.h"

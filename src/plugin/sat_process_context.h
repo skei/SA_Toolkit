@@ -16,6 +16,9 @@ struct SAT_ProcessContext {
   double                samplerate;
   uint32_t              process_counter;
   uint64_t              sample_counter;
+
+  uint32_t voice_length;
+  float**  voice_buffer;
 };
 
 //----------------------------------------------------------------------

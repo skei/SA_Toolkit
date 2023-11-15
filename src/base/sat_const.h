@@ -83,12 +83,12 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 //
 //----------------------------------------------------------------------
 
-// #define SAT_ALIGNMENT_SIMD                      16
-// #define SAT_ALIGNMENT_CACHE                     64
+#define SAT_ALIGNMENT_SIMD                      16
+#define SAT_ALIGNMENT_CACHE                     64
 
-// #define SAT_AUDIO_FILE_READ                     0x10
-// #define SAT_AUDIO_FILE_WRITE                    0x20
-// #define SAT_AUDIO_FILE_RDWR                     0x30
+#define SAT_AUDIO_FILE_READ                     0x10
+#define SAT_AUDIO_FILE_WRITE                    0x20
+#define SAT_AUDIO_FILE_RDWR                     0x30
 
 #define SAT_BUTTON_NONE                         0
 #define SAT_BUTTON_LEFT                         1
@@ -385,11 +385,11 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 
 #endif
 
-// #define SAT_VOICE_OFF                           0
-// #define SAT_VOICE_WAITING                       1
-// #define SAT_VOICE_PLAYING                       2
-// #define SAT_VOICE_RELEASED                      3
-// #define SAT_VOICE_FINISHED                      4
+#define SAT_VOICE_OFF                           0
+#define SAT_VOICE_WAITING                       1
+#define SAT_VOICE_PLAYING                       2
+#define SAT_VOICE_RELEASED                      3
+#define SAT_VOICE_FINISHED                      4
 
 #define SAT_WIDGET_LAYOUT_ANCHOR_LEFT           0x0001
 #define SAT_WIDGET_LAYOUT_ANCHOR_RIGHT          0x0002

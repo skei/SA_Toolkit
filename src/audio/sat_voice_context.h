@@ -2,7 +2,7 @@
 #define sat_voice_context_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_process_context.h"
 

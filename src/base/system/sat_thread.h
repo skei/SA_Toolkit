@@ -2,7 +2,7 @@
 #define sat_thread_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 
 //----------
 

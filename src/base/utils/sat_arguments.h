@@ -2,7 +2,7 @@
 #define sat_arguments_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 
 class SAT_Arguments {
 
