@@ -731,7 +731,7 @@ public: // image
     //flags |= NVG_IMAGE_PREMULTIPLIED;     // Image data has premultiplied alpha.
     //flags |= NVG_IMAGE_NEAREST;           // Image interpolation is Nearest instead Linear
     int image = nvgCreateImage(MContext,AFilename,flags);
-//    SAT_Assert(image);
+    SAT_Assert(image);
     //int w,h;
     //nvgImageSize(MContext,image,&w,&h);
     //SAT_Print("image %i size %i,%i\n",image,w,h);
@@ -868,7 +868,7 @@ public: // image
 public: // paints
 //------------------------------
 
-  sat_nanovg_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) /*final*/ {
+  sat_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) /*final*/ {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
     return nvgLinearGradient(MContext,sx,sy,ex,ey,ic,oc);
@@ -876,7 +876,7 @@ public: // paints
 
   //----------
 
-  sat_nanovg_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*final*/ {
+  sat_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*final*/ {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
     //sat_nanovg_paint_t paint;
@@ -885,7 +885,7 @@ public: // paints
 
   //----------
 
-  sat_nanovg_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) /*final*/ {
+  sat_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) /*final*/ {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
     return nvgRadialGradient(MContext,cx,cy,inr,outr,ic,oc);
@@ -893,7 +893,7 @@ public: // paints
 
   //----------
 
-  sat_nanovg_paint_t imagePattern(double ox, double oy, double ex, double ey, double angle, int image, double alpha) /*final*/ {
+  sat_paint_t imagePattern(double ox, double oy, double ex, double ey, double angle, int image, double alpha) /*final*/ {
     return nvgImagePattern(MContext,ox,oy,ex,ey,angle,image,alpha);
   }
 

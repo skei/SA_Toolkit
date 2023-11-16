@@ -28,8 +28,8 @@ protected:
   bool        MValueIsBits                = false;//true;
   bool        MAllowZeroBits              = true;
 
-  double      MTextSize                   = 9.0;
-  SAT_Color   MTextColor                  = SAT_Color(0.0);
+  //double      MTextSize                   = 9.0;
+  //SAT_Color   MTextColor                  = SAT_Color(0.0);
   SAT_Color   MActiveTextColor            = SAT_Color(0.0);
 
   bool        MCellFillBackground         = true;
@@ -86,7 +86,7 @@ public:
 public:
 //------------------------------
 
-  virtual void setTextColor(SAT_Color AColor)                 { MTextColor = AColor; }
+  //virtual void setTextColor(SAT_Color AColor)                 { MTextColor = AColor; }
   virtual void setActiveTextColor(SAT_Color AColor)           { MActiveTextColor = AColor; }
   
   virtual void setCellFillBackground(bool AFill)              { MCellFillBackground = AFill; }
@@ -113,9 +113,9 @@ public:
     MDrawRoundedBottom = AState;
   }
 
-  void setTextSize(double ASize) {
-    MTextSize = ASize;
-  }
+  //void setTextSize(double ASize) {
+  //  MTextSize = ASize;
+  //}
 
   void setAllowZeroBits(bool AAllow=true) {
     MAllowZeroBits = AAllow;

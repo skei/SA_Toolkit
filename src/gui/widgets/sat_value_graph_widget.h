@@ -160,7 +160,7 @@ public:
 //  void on_widget_mouseRelease(float AXpos, float AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp=0) override {
 //  }
 
-  void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime=0) override {
+  void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATime=0) override {
       //SWidget::on_mouseMove(AXpos,AYpos,AState);
 
       //float w = (float)(AXpos - mrect.x) / (float)mrect.w; // 0..1
@@ -170,7 +170,7 @@ public:
       if (index != MSelected) {
         MSelected = index;
         //STrace("MSelected: %i\n",MSelected);
-        do_widgetListener_redraw(this,0);
+        do_widget_redraw(this);
       }
   }
 
@@ -179,15 +179,15 @@ public:
 //    //if (flags.autoHint) do_widgetListener_setHint(this,MHint);
 //  }
 
-  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime=0) override {
+  void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) override {
 //    //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
 //    //if (flags.autoHint) do_widgetListener_setHint(this,"");
       //SWidget::on_leave(AWidget);
       if (MSelected>=0) {
         MSelected = -1;
-        do_widgetListener_redraw(this,0);
+        do_widget_redraw(this);
       }
-      SAT_Widget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATime);
+      SAT_Widget::on_widget_leave(ATo,AXpos,AYpos);
   }
 
 };

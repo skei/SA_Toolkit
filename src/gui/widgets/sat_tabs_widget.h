@@ -48,8 +48,8 @@ public:
     MHeader->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
     
     //MHeader->setDrawRoundedBottom(false);
-    MHeader->setRoundedCorners(true);
-    MHeader->setCornerSizes(6,6,0,0);
+    //MHeader->setRoundedCorners(true);
+    //MHeader->setCornerSizes(6,6,0,0);
     
     MPages = new SAT_PagesWidget(SAT_Rect());
     //MPages->Layout.alignment = SAT_WIDGET_ALIGN_FILL_CLIENT;
@@ -117,14 +117,10 @@ public: // child to parent
 
   void do_widget_update(SAT_Widget* AWidget) override {
     if (AWidget == MHeader) {
-      
       int32_t sel = MHeader->getSelected();
       MPages->setPage(sel/*,true*/);
-      //MPages->on_realign();
-
       MPages->realignChildWidgets();
       do_widget_redraw(MPages);
-      
     }
     SAT_Widget::do_widget_update(AWidget);
   }

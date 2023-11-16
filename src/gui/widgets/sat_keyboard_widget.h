@@ -304,15 +304,15 @@ public:
 
   //----------
 
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     //SAT_DRect mrect = getRect();
     if (AButton == SAT_BUTTON_LEFT) {
       int32_t note = find_note(AXpos,AYpos);
       if (note >= 0) {
         if (MActiveMap[note]) deactivate(note);
         else activate(note);
-        do_widgetListener_update(this,0);
-        do_widgetListener_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
       }
     }
   }

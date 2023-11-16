@@ -194,15 +194,15 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_GUI_TYPE_NAME_WIN32                 "Win32"
 #define SAT_GUI_TYPE_NAME_X11                   "X11"
 
-// #define SAT_KEY_NONE                            0
-// #define SAT_KEY_ENTER                           13
-// #define SAT_KEY_ESC                             27
-// #define SAT_KEY_HOME                            36
-// #define SAT_KEY_END                             35
-// #define SAT_KEY_LEFT                            37
-// #define SAT_KEY_RIGHT                           39
-// #define SAT_KEY_DELETE                          46
-// #define SAT_KEY_BACKSPACE                       8
+#define SAT_KEY_NONE                            0
+#define SAT_KEY_ENTER                           13
+#define SAT_KEY_ESC                             27
+#define SAT_KEY_HOME                            36
+#define SAT_KEY_END                             35
+#define SAT_KEY_LEFT                            37
+#define SAT_KEY_RIGHT                           39
+#define SAT_KEY_DELETE                          46
+#define SAT_KEY_BACKSPACE                       8
 
 #define SAT_MIDI_NOTE_OFF                       0x80
 #define SAT_MIDI_NOTE_ON                        0x90

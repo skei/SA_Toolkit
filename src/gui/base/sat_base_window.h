@@ -53,7 +53,6 @@ public:
   virtual SAT_Renderer* getRenderer() { return nullptr; }
   virtual SAT_Painter*  getPainter() { return nullptr; }
 
-
   virtual uint32_t      getWidth() { return 0; }
   virtual uint32_t      getHeight() { return 0; }
   virtual uint32_t      getScreenWidth() { return 0; }

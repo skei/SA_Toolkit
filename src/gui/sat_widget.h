@@ -75,6 +75,7 @@ private:
   uint32_t            MParentIndex                    = 0;
   SAT_WidgetArray     MChildWidgets                   = {};
   double              MValues[SAT_WIDGET_MAX_VALUES]  = {};
+  double              MModulation                     = 0;
   SAT_Rect            MRect                           = {};
   void*               MParameter                      = nullptr;
   uint32_t            MLastPainted                    = 0;
@@ -123,18 +124,18 @@ public:
   virtual void                setName(const char* AName)                  { MName = AName; }
   virtual void                setCursor(int32_t ACursor)                  { MMouseCursor = ACursor; }
   virtual void                setHint(const char* AHint)                  { MHint = AHint; }
-  //virtual void                setParameter(void* AParameter)              { MParameter = AParameter; }
   virtual void                setParameter(void* AParameter, uint32_t AIndex=0) { MParameter = AParameter; }
-
 
   // value
 
   virtual double              getSelectedValue()                          { return MValues[MSelectedIndex]; }
   virtual int32_t             getSelectedValueIndex()                     { return MSelectedIndex; }
   virtual double              getValue(uint32_t AIndex=0)                 { return MValues[AIndex]; }
+  virtual double              getModulation()                             { return MModulation; }
 
   virtual void                selectValue(int32_t AIndex)                 { MSelectedIndex = AIndex; }
   virtual void                setValue(double AValue, uint32_t AIndex=0)  { MValues[AIndex] = AValue; }
+  virtual void                setModulation(double AValue)                { MModulation = AValue; }
 
   // rect
 
@@ -347,13 +348,15 @@ public:
     for (int32_t i=(num-1); i>=0; i--) {
     //for (uint32_t i=0; i<num; i++) {
       SAT_Widget* child = MChildWidgets[i];
-      SAT_Rect child_rect = child->getRect();
-      if (child_rect.contains(AXpos,AYpos)) {
-        if (ARecursive) {
-          SAT_Widget* subchild = child->findChildWidget(AXpos,AYpos,ARecursive);
-          if (subchild) return subchild;
+      if (child->isActive()) {
+        SAT_Rect child_rect = child->getRect();
+        if (child_rect.contains(AXpos,AYpos)) {
+          if (ARecursive) {
+            SAT_Widget* subchild = child->findChildWidget(AXpos,AYpos,ARecursive);
+            if (subchild) return subchild;
+          }
+          return child;
         }
-        return child;
       }
     }
     return nullptr;
@@ -477,12 +480,17 @@ public:
         // if we force it to 0,0, we lose the ability to offset..
         // let's try, and see how it goes..
 
-        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { child_rect.x += layout_rect.x; }
-        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_TOP)          { child_rect.y += layout_rect.y; }
-        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)        { child_rect.x += (layout_rect.x2()  - child_rect.w); }
-        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM)       { child_rect.y += (layout_rect.y2()  - child_rect.h); }
-        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ) { child_rect.x += (layout_xcenter - (child_rect.w * 0.5)); }
-        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)  { child_rect.y += (layout_ycenter - (child_rect.h * 0.5)); }
+        bool xanchored = false;
+        bool yanchored = false;
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { xanchored = true; child_rect.x += layout_rect.x; }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_TOP)          { yanchored = true; child_rect.y += layout_rect.y; }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)        { xanchored = true; child_rect.x += (layout_rect.x2()  - child_rect.w); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM)       { yanchored = true; child_rect.y += (layout_rect.y2()  - child_rect.h); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ) { xanchored = true; child_rect.x += (layout_xcenter - (child_rect.w * 0.5)); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)  { yanchored = true; child_rect.y += (layout_ycenter - (child_rect.h * 0.5)); }
+
+        if (!xanchored) child_rect.x += parent_rect.x;
+        if (!yanchored) child_rect.y += parent_rect.y;
 
         // previous offsets
         //if (xanchored) child_rect.x -= child_offset.x;
@@ -527,6 +535,10 @@ public:
 
       } // visible
     } // for
+
+    //MContentRect.w += MLayout.inner_border.w;
+    //MContentRect.h += MLayout.inner_border.h;
+
   }
 
   //----------

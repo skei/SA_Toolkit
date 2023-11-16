@@ -391,6 +391,7 @@ public: // base window
   //----------
 
   void on_window_open() override {
+    SAT_PRINT;
     //MRootWidget->on_widget_open(this);
     startTimer(SAT_WINDOW_TIMER_MS);
     if (MRootWidget) {
@@ -751,7 +752,7 @@ public: // widget owner
   }
 
   double on_widgetOwner_getScale() override {
-    return MScale;
+    return 1.0;//MScale;
   }
 
 //------------------------------
@@ -847,7 +848,6 @@ public: // timer listener
 //------------------------------
 
   void on_timerListener_callback(SAT_Timer* ATimer) override {
-    //SAT_Print("\n");
     if (!ATimer->isRunning()) return;
     double now = SAT_GetTime();
     double elapsed = now - MPrevTime;

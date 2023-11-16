@@ -42,7 +42,7 @@ private:
 
   bool      MSnap             = false;
   double    MSnapPos          = 0.5;
-  double    MSnapDist         = 0.1;
+  double    MSnapDist         = 0.2;
   double    MSnapSpeed        = 1.5;
 
   bool      MQuantize         = false;
@@ -60,12 +60,24 @@ public:
 
   SAT_DragValueWidget(SAT_Rect ARect, const char* AText, double AValue)
   : SAT_PanelWidget(ARect/*,AText,AValue*/) {
+
     setName("SAT_DragValueWidget");
+
+    setFillBackground(true);
+    setBackgroundColor(0.25);
+
     setDrawText(true);
     setText(AText);
+    setTextSize(12);
+    setTextColor(SAT_LightGrey);
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
+
     setDrawValue(true);
     setValue(AValue);
+    setValueSize(12);
+    setValueColor(SAT_LightestGrey);
+
+    setDrawBorder(false);
     
     //setCursor(SAT_CURSOR_ARROW_UP_DOWN);
     switch (MDragDirection) {

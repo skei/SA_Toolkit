@@ -41,9 +41,11 @@
 #define NANOSVG_IMPLEMENTATION
 #include "extern/nanosvg/nanosvgrast.h"
 
-typedef NVGpaint sat_nanovg_paint_t;
-
 //----------------------------------------------------------------------
+
+typedef NVGpaint sat_paint_t;
+
+//----------
 
 NVGcolor nvg_color(SAT_Color AColor) {
   NVGcolor color;

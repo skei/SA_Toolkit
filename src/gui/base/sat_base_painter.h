@@ -7,6 +7,8 @@
 
 typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_RectStack;
 
+//struct sat_paint_t;
+
 //----------------------------------------------------------------------
 
 class SAT_BasePainter {
@@ -134,9 +136,9 @@ public:
   virtual void            imageSize(int image, int* w, int* h) {}
   virtual void            setFillImage(int32_t AImage, double xofs, double yofs, double xscale, double yscale, double AAlpha=1.0, double AAngle=0.0) {}
   
-//virtual sat_nanovg_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) {
-//virtual sat_nanovg_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) {
-//virtual sat_nanovg_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) {
+//virtual sat_paint_t     linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) { return sat_paint_t(); }
+//virtual sat_paint_t     boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) {return sat_paint_t(); }
+//virtual sat_paint_t     radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) {return sat_paint_t(); }
 
   virtual void*           createRenderBuffer(uint32_t AWidth, uint32_t AHeight) { return nullptr; }
   virtual void            deleteRenderBuffer(void* buffer) {}

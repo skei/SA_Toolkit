@@ -117,7 +117,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
+  void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = true;
       SAT_Rect mrect = getRect();
@@ -125,7 +125,7 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
 
       MSliderValues[i] = SAT_Clamp(v,0,1);
-      do_widgetListener_redraw(this,0);
+      do_widget_redraw(this);
 
 //      if (Options.autoHideCursor) {
 //        do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
@@ -137,7 +137,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
+  void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
       
@@ -151,7 +151,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime=0) override {
+  void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATime=0) override {
     SAT_Rect mrect = getRect();
     //SWidget::on_mouseMove(AXpos,AYpos,AState);
     float w = (float)(AXpos - mrect.x) / (float)mrect.w; // 0..1
@@ -160,23 +160,23 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
       MSliderValues[index] = SAT_Clamp(v,0,1);
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widgetListener_redraw(this,0);
+      do_widget_redraw(this);
     }
     else {
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widgetListener_redraw(this,0);
+      do_widget_redraw(this);
     }
   }
 
   //----------
 
-  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime=0) override {
-    SAT_Widget::on_widget_mouse_leave(ATo,AXpos,AYpos,ATime);
+  void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) override {
+    SAT_Widget::on_widget_leave(ATo,AXpos,AYpos);
     //SAT_DRect mrect = getRect();
     //SWidget::on_leave(AWidget);
     if (MHoverSlider >= 0) {
       MHoverSlider = -1;
-      do_widgetListener_redraw(this,0);
+      do_widget_redraw(this);
     }
     //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
     //if (flags.autoHint) do_widgetListener_setHint(this,"");

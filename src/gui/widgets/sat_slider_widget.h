@@ -23,7 +23,7 @@ protected:
 //------------------------------
 
   bool      MDrawSliderBar      = true;
-  SAT_Color MSliderBarColor     = SAT_Grey;
+  SAT_Color MSliderBarColor     = SAT_DarkestGrey;
   uint32_t  MSliderBarDirection = SAT_DIRECTION_LEFT;
   SAT_Rect  MSliderBarOffset    = SAT_Rect(0,0,0,0);
 
@@ -34,7 +34,7 @@ protected:
 
   bool      MDrawSliderEdge     = true;
   double    MSliderEdgeWidth    = 2;
-  SAT_Color MSliderEdgeColor    = SAT_LighterGrey;
+  SAT_Color MSliderEdgeColor    = SAT_LightestGrey;
   
   uint32_t  MDrawDirection      = SAT_DIRECTION_RIGHT;
 

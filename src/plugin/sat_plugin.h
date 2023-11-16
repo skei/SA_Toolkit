@@ -8,6 +8,7 @@
 #include "plugin/sat_audio_port.h"
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"
+#include "plugin/sat_note.h"
 #include "plugin/sat_process_context.h"
 
 #if !defined (SAT_GUI_NOGUI)
@@ -21,23 +22,20 @@
 
 //----------------------------------------------------------------------
 
-// // 128 bit
-// struct SAT_ParamQueueItem {
-//   uint32_t    type;
-//   uint32_t    index;
-//   union {
-//     double    value;
-//     SAT_Note  note;   // 64bit
-//   };
-// };
+// 128 bit
+struct SAT_ParamQueueItem {
+  uint32_t    type;
+  uint32_t    index;
+  union {
+    double    value;
+    SAT_Note  note;   // 64bit
+  };
+};
 
-// typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
-// typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
-// typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
-// typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
-
-typedef SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_FromHostQueue;
-typedef SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_FromGuiQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
+typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
 
 //----------------------------------------------------------------------
 //
@@ -52,50 +50,65 @@ class SAT_Plugin
 , public SAT_EditorListener
 #endif
 
-  {
+{
 
 //------------------------------
 private:
 //------------------------------
 
-  const clap_plugin_descriptor_t* MDescriptor           = nullptr;
+  const char*                     MPluginFormat               = "";
 
-  SAT_ParameterArray              MParameters           = {};
-  SAT_AudioPortArray              MAudioInputPorts      = {};
-  SAT_NotePortArray               MNoteInputPorts       = {};
-  SAT_AudioPortArray              MAudioOutputPorts     = {};
-  SAT_NotePortArray               MNoteOutputPorts      = {};
+  const clap_plugin_descriptor_t* MDescriptor                 = nullptr;
 
-  SAT_ProcessContext              MProcessContext       = {};
-  SAT_Dictionary<const void*>     MExtensions           = {};
+  SAT_ParameterArray              MParameters                 = {};
+  SAT_AudioPortArray              MAudioInputPorts            = {};
+  SAT_NotePortArray               MNoteInputPorts             = {};
+  SAT_AudioPortArray              MAudioOutputPorts           = {};
+  SAT_NotePortArray               MNoteOutputPorts            = {};
 
-  uint32_t                        MEventMode            = SAT_PLUGIN_EVENT_MODE_BLOCK;
+  SAT_ProcessContext              MProcessContext             = {};
+  SAT_Dictionary<const void*>     MExtensions                 = {};
 
-  bool                            MIsInitialized        = false;
-  bool                            MIsActivated          = false;
-  bool                            MIsProcessing         = false;
-  double                          MSampleRate           = 0.0;
-  uint32_t                        MMinBufferSize        = 0;
-  uint32_t                        MMaxBufferSize        = 0;
-  int32_t                         MRenderMode           = CLAP_RENDER_REALTIME;
+  uint32_t                        MEventMode                  = SAT_PLUGIN_EVENT_MODE_BLOCK;
+
+  bool                            MIsInitialized              = false;
+  bool                            MIsActivated                = false;
+  bool                            MIsProcessing               = false;
+  double                          MSampleRate                 = 0.0;
+  uint32_t                        MMinBufferSize              = 0;
+  uint32_t                        MMaxBufferSize              = 0;
+  int32_t                         MRenderMode                 = CLAP_RENDER_REALTIME;
+  const char*                     MResourceDirectory          = "";
+  bool                            MResourceDirectoryShared    = false;
+
+  uint64_t                        MTrackFlags                 = 0;
+  char                            MTrackName[CLAP_NAME_SIZE]  = {0};
+  SAT_Color                       MTrackColor                 = SAT_Black;
+  int32_t                         MTrackChannelCount          = 0;
+  const char*                     MTrackPortType              = nullptr;
+  bool                            MTrackIsReturnTrack         = false;
+  bool                            MTrackIsBus                 = false;
+  bool                            MTrackIsMaster              = false;
+
 
 #if !defined (SAT_GUI_NOGUI)
-  SAT_Editor*                     MEditor               = nullptr;
-  uint32_t                        MEditorWidth          = 256;
-  uint32_t                        MEditorHeight         = 256;
-  SAT_FromHostQueue               MParamFromHostToGui   = {};
-  SAT_FromHostQueue               MModFromHostToGui     = {};
-  SAT_FromGuiQueue                MParamFromGuiToAudio  = {};
-  SAT_FromGuiQueue                MParamFromGuiToHost   = {};
+  SAT_Editor*                     MEditor                   = nullptr;
+  //uint32_t                        MEditorWidth              = 256;
+  //uint32_t                        MEditorHeight             = 256;
 
-  // SAT_ParamFromHostToGuiQueue       MParamFromHostToGuiQueue                      = {};   // when the host changes a parameter, we need to redraw it
-  // SAT_ModFromHostToGuiQueue         MModFromHostToGuiQueue                        = {};   // --"-- modulation
-  // SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudioQueue                     = {};   // twweak knob, send parameter value to audio process
-  // SAT_ParamFromGuiToHostQueue       MParamFromGuiToHostQueue                      = {};   // tell host about parameter change
+  SAT_ParamFromHostToGuiQueue     MParamFromHostToGuiQueue  = {};   // when the host changes a parameter, we need to redraw it
+  SAT_ModFromHostToGuiQueue       MModFromHostToGuiQueue    = {};   // --"-- modulation
+  SAT_ParamFromGuiToAudioQueue    MParamFromGuiToAudioQueue = {};   // twweak knob, send parameter value to audio process
+  SAT_ParamFromGuiToHostQueue     MParamFromGuiToHostQueue  = {};   // tell host about parameter change
 
   // set in gui_create (false), gui_destroy (true)
   // checked in handleParamValueEvent, handleParamModEvent
-  std::atomic<bool> MIsEditorClosing {false};
+
+  std::atomic<bool>               MIsEditorClosing          {false};
+
+  uint32_t                        MInitialEditorWidth       = 512;
+  uint32_t                        MInitialEditorHeight      = 512;
+  double                          MInitialEditorScale       = 1.0;
 
 #endif
 
@@ -117,6 +130,87 @@ public:
       deleteNotePorts();
       deleteParameters();
     #endif
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setPluginFormat(const char* AFormat) {
+    MPluginFormat = AFormat;
+  }
+
+//------------------------------
+public: // extensions
+//------------------------------
+
+  virtual void registerExtension(const char* AId, const void* APtr) {
+    if (!MExtensions.hasItem(AId)) {
+      MExtensions.addItem(AId,APtr);
+    }
+  }
+
+  //----------
+
+  virtual void registerDefaultExtensions() {
+    registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
+    #if !defined (SAT_GUI_NOGUI)
+      registerExtension(CLAP_EXT_GUI,                     &MExtGui);
+    #endif
+    registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
+    registerExtension(CLAP_EXT_STATE,                     &MExtState);
+  }
+
+  //----------
+
+  virtual void registerDefaultSynthExtensions() {
+    registerDefaultExtensions();
+    registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
+    registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
+    registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
+  }
+
+  //----------
+
+  virtual void registerAllExtension() {
+    registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig);
+    #ifndef SAT_NO_GUI
+      registerExtension(CLAP_EXT_GUI,                     &MExtGui);
+    #endif
+    registerExtension(CLAP_EXT_LATENCY,                   &MExtLatency);
+    registerExtension(CLAP_EXT_NOTE_NAME,                 &MExtNoteName);
+    registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
+    registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
+    registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,          &MExtPosixFdSupport);
+    registerExtension(CLAP_EXT_RENDER,                    &MExtRender);
+    registerExtension(CLAP_EXT_STATE,                     &MExtState);
+    registerExtension(CLAP_EXT_TAIL,                      &MExtTail);
+    registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
+    registerExtension(CLAP_EXT_TIMER_SUPPORT,             &MExtTimerSupport);
+    registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
+  }
+
+  //----------
+
+  virtual void registerDraftExtension() {
+    registerExtension(CLAP_EXT_AMBISONIC,                 &MExtAmbisonic);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation);
+    registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,          &MExtCheckForUpdate);
+    registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts);
+    registerExtension(CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu);
+    registerExtension(CLAP_EXT_CV,                        &MExtCv);
+    registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts);
+    registerExtension(CLAP_EXT_MIDI_MAPPINGS,             &MExtMidiMappings);
+    registerExtension(CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication);
+    registerExtension(CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad);
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls);
+    registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,        &MExtResourceDirectory);
+    registerExtension(CLAP_EXT_STATE_CONTEXT,             &MExtStateContext);
+    registerExtension(CLAP_EXT_SURROUND,                  &MExtSurround);
+    registerExtension(CLAP_EXT_TRACK_INFO,                &MExtTrackInfo);
+    registerExtension(CLAP_EXT_TRIGGERS,                  &MExtTriggers);
+    registerExtension(CLAP_EXT_TUNING,                    &MExtTuning);
   }
 
 //------------------------------
@@ -306,9 +400,9 @@ public: // parameters
     SAT_Print("index %i value %f\n",index,value);
   }
 
-  //----------
-  //----------
-  //----------
+//------------------------------
+//
+//------------------------------
 
   void setParameterValue(uint32_t AIndex, sat_param_t AValue) {
     //MParameterValues[AIndex] = AValue;
@@ -352,6 +446,40 @@ public: // modulation
   //     //setModulation(0);
   //   }
   // }
+
+//------------------------------
+public: // editor
+//------------------------------
+
+#if !defined (SAT_GUI_NOGUI)
+
+  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) {
+    return new SAT_Editor(AListener,AWidth,AHeight);
+    //return nullptr;
+  }
+
+  virtual void deleteEditor(SAT_Editor* AEditor) {
+    delete AEditor;
+  }
+
+  //----------
+
+  virtual void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
+    SAT_PRINT;
+  }
+
+  //----------
+
+  //virtual void cleanupEditor(SAT_Editor* AEditor) {
+  //}
+
+  virtual void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0) {
+    MInitialEditorWidth = AWidth;
+    MInitialEditorHeight = AHeight;
+    MInitialEditorScale = AScale;
+  }
+
+#endif // nogui
 
 //------------------------------
 public: // presets
@@ -418,254 +546,625 @@ public: // presets
   }
 
 //------------------------------
-public: // extensions
-//------------------------------
-
-  virtual void registerExtension(const char* AId, const void* APtr) {
-    MExtensions.addItem(AId,APtr);
-  }
-
-  //----------
-
-  virtual void registerDefaultExtension() {
-    MExtensions.addItem(CLAP_EXT_AUDIO_PORTS,&MExtAudioPorts);
-    #if !defined (SAT_GUI_NOGUI)
-      MExtensions.addItem(CLAP_EXT_GUI,&MExtGui);
-    #endif
-    MExtensions.addItem(CLAP_EXT_PARAMS,&MExtParams);
-    MExtensions.addItem(CLAP_EXT_STATE,&MExtState);
-  }
-
-  //----------
-
-  virtual void registerDefaultSynthExtension() {
-    registerDefaultExtension();
-    registerExtension(CLAP_EXT_NOTE_PORTS,&MExtNotePorts);
-    registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
-    registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
-  }
-
-  //----------
-
-  virtual void registerAllExtension() {
-    // registerExtension(CLAP_EXT_AMBISONIC,                 &MExtAmbisonic);
-    // registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation);
-    // registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig);
-    // registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
-    // registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,          &MExtCheckForUpdate);
-    // registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts);
-    // registerExtension(CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu);
-    // registerExtension(CLAP_EXT_CV,                        &MExtCv);
-    // registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts);
-    // #ifndef SAT_NO_GUI
-    //   registerExtension(CLAP_EXT_GUI,                     &MExtGui);
-    // #endif
-    // registerExtension(CLAP_EXT_LATENCY,                   &MExtLatency);
-    // registerExtension(CLAP_EXT_MIDI_MAPPINGS,             &MExtMidiMappings);
-    // registerExtension(CLAP_EXT_NOTE_NAME,                 &MExtNoteName);
-    // registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
-    // registerExtension(CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication);
-    // registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
-    // registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,          &MExtPosixFdSupport);
-    // registerExtension(CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad);
-    // registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls);
-    // registerExtension(CLAP_EXT_RENDER,                    &MExtRender);
-    // registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,        &MExtResourceDirectory);
-    // registerExtension(CLAP_EXT_STATE,                     &MExtState);
-    // registerExtension(CLAP_EXT_STATE_CONTEXT,             &MExtStateContext);
-    // registerExtension(CLAP_EXT_SURROUND,                  &MExtSurround);
-    // registerExtension(CLAP_EXT_TAIL,                      &MExtTail);
-    // registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
-    // registerExtension(CLAP_EXT_TIMER_SUPPORT,             &MExtTimerSupport);
-    // registerExtension(CLAP_EXT_TRACK_INFO,                &MExtTrackInfo);
-    // registerExtension(CLAP_EXT_TRIGGERS,                  &MExtTriggers);
-    // registerExtension(CLAP_EXT_TUNING,                    &MExtTuning);
-    // registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
-  }
-
-//------------------------------
-public: // editor
-//------------------------------
-
-#if !defined (SAT_GUI_NOGUI)
-
-  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener) {
-    return new SAT_Editor(AListener,MEditorWidth,MEditorHeight);
-    //return nullptr;
-  }
-
-  virtual void deleteEditor(SAT_Editor* AEditor) {
-    delete AEditor;
-  }
-
-  //----------
-
-  virtual void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
-    SAT_PRINT;
-  }
-
-  //----------
-
-  //virtual void cleanupEditor(SAT_Editor* AEditor) {
-  //}
-
-#endif // nogui
-
-//------------------------------
 public: // events
 //------------------------------
 
-  virtual void handleNoteOn(clap_event_note_t* event) {}
-  virtual void handleNoteOff(clap_event_note_t* event) {}
-  virtual void handleNoteChoke(clap_event_note_t* event) {}
-  virtual void handleNoteExpression(clap_event_note_expression_t* headeventer) {}
-  virtual void handleParamValue(clap_event_param_value_t* event) {}
-  virtual void handleParamMod(clap_event_param_mod_t* event) {}
-  virtual void handleTransport(clap_event_transport_t* event) {}
-  virtual void handleMidi(clap_event_midi_t* event) {}
-  virtual void handleMidiSysex(clap_event_midi_sysex_t* event) {}
-  virtual void handleMidi2(clap_event_midi2_t* event) {}
+  virtual bool on_plugin_noteOn(clap_event_note_t* event) { return false; }
+  virtual bool on_plugin_noteOff(clap_event_note_t* event) { return false; }
+  virtual bool on_plugin_noteChoke(clap_event_note_t* event) { return false; }
+  virtual bool on_plugin_noteExpression(clap_event_note_expression_t* headeventer) { return false; }
+  virtual bool on_plugin_paramValue(clap_event_param_value_t* event) { return false; }
+  virtual bool on_plugin_paramMod(clap_event_param_mod_t* event) { return false; }
+  virtual bool on_plugin_transport(clap_event_transport_t* event) { return false; }
+  virtual bool on_plugin_midi(clap_event_midi_t* event) { return false; }
+  virtual bool on_plugin_midiSysex(clap_event_midi_sysex_t* event) { return false; }
+  virtual bool on_plugin_midi2(clap_event_midi2_t* event) { return false; }
+
+//------------------------------
+//
+//------------------------------
+
+  // virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  // }
 
   //----------
 
-  virtual void processEventsBlock(const clap_input_events_t *in_events, const clap_output_events_t *out_events) {
-    uint32_t num = in_events->size(in_events);
-//    switch (MEventMode) {
-//      case SAT_PLUGIN_EVENT_MODE_BLOCK: {
-        for (uint32_t i=0; i<num; i++) {
-          const clap_event_header_t* header;
-          header = in_events->get(in_events,i);
-          handleEvent(header);
-        }
-//        break;
-//      }
-//      case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
-//        break;
-//      }
-//      case SAT_PLUGIN_EVENT_MODE_QUANTIZED: {
-//        break;
-//      }
-//    }
-  }
+  // virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  // }
 
-  //----------
+//------------------------------
+//
+//------------------------------
 
   // virtual
-  void handleEvent(const clap_event_header_t* header) {
+  bool handleEvent(const clap_event_header_t* header) {
     if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
       switch (header->type) {
-        case CLAP_EVENT_NOTE_ON:          handleNoteOn((clap_event_note_t*)header);
-        case CLAP_EVENT_NOTE_OFF:         handleNoteOff((clap_event_note_t*)header);
-        case CLAP_EVENT_NOTE_CHOKE:       handleNoteChoke((clap_event_note_t*)header);
-        case CLAP_EVENT_NOTE_EXPRESSION:  handleNoteExpression((clap_event_note_expression_t*)header);
-        case CLAP_EVENT_PARAM_VALUE:      handleParamValue((clap_event_param_value_t*)header);
-        case CLAP_EVENT_PARAM_MOD:        handleParamMod((clap_event_param_mod_t*)header);
-        case CLAP_EVENT_TRANSPORT:        handleTransport((clap_event_transport_t*)header);
-        case CLAP_EVENT_MIDI:             handleMidi((clap_event_midi_t*)header);
-        case CLAP_EVENT_MIDI_SYSEX:       handleMidiSysex((clap_event_midi_sysex_t*)header);
-        case CLAP_EVENT_MIDI2:            handleMidi2((clap_event_midi2_t*)header);
+        case CLAP_EVENT_NOTE_ON:          return handleNoteOnEvent((clap_event_note_t*)header);
+        case CLAP_EVENT_NOTE_OFF:         return handleNoteOffEvent((clap_event_note_t*)header);
+        case CLAP_EVENT_NOTE_CHOKE:       return handleNoteChokeEvent((clap_event_note_t*)header);
+        case CLAP_EVENT_NOTE_EXPRESSION:  return handleNoteExpressionEvent((clap_event_note_expression_t*)header);
+        case CLAP_EVENT_PARAM_VALUE:      return handleParamValueEvent((clap_event_param_value_t*)header);
+        case CLAP_EVENT_PARAM_MOD:        return handleParamModEvent((clap_event_param_mod_t*)header);
+        case CLAP_EVENT_TRANSPORT:        return handleTransportEvent((clap_event_transport_t*)header);
+        case CLAP_EVENT_MIDI:             return handleMidiEvent((clap_event_midi_t*)header);
+        case CLAP_EVENT_MIDI_SYSEX:       return handleMidiSysexEvent((clap_event_midi_sysex_t*)header);
+        case CLAP_EVENT_MIDI2:            return handleMidi2Event((clap_event_midi2_t*)header);
       }
     }
+    return false;
   }
 
   //----------
 
-  void handleNoteOnEvent(clap_event_note_t* event) {
+  bool handleNoteOnEvent(clap_event_note_t* event) {
     //int32_t id   = event->note_id;
     //int16_t port = event->port_index;
     //int16_t chan = event->key;
     //int16_t key  = event->key;
     //double  vel  = event->velocity;
-    handleNoteOn(event);
+    return on_plugin_noteOn(event);
   }
 
   //----------
 
-  void handleNoteOffEvent(clap_event_note_t* event) {
-    handleNoteOff(event);
+  bool handleNoteOffEvent(clap_event_note_t* event) {
+    return on_plugin_noteOff(event);
   }
 
   //----------
 
-  void handleNoteChokeEvent(clap_event_note_t* event) {
-    handleNoteChoke(event);
+  bool handleNoteChokeEvent(clap_event_note_t* event) {
+    return on_plugin_noteChoke(event);
   }
 
   //----------
 
-  void handleNoteExpressionEvent(clap_event_note_expression_t* event) {
-    handleNoteExpression(event);
+  bool handleNoteExpressionEvent(clap_event_note_expression_t* event) {
+    return on_plugin_noteExpression(event);
+
+    // uint32_t expression = event->expression_id;
+    // double value = event->value;
+    // switch (expression) {
+    //   case CLAP_NOTE_EXPRESSION_VOLUME:     SAT_Print("NOTE VOLUME EXPRESSION %.3f\n",value);     break; // with 0 < x <= 4, plain = 20 * log(x)
+    //   case CLAP_NOTE_EXPRESSION_PAN:        SAT_Print("NOTE PAN EXPRESSION %.3f\n",value);        break; // pan, 0 left, 0.5 center, 1 right
+    //   case CLAP_NOTE_EXPRESSION_TUNING:     SAT_Print("NOTE TUNING EXPRESSION %.3f\n",value);     break; // relative tuning in semitone, from -120 to +120
+    //   case CLAP_NOTE_EXPRESSION_VIBRATO:    SAT_Print("NOTE VIBRATO EXPRESSION %.3f\n",value);    break; // 0..1
+    //   case CLAP_NOTE_EXPRESSION_EXPRESSION: SAT_Print("NOTE EXPRESSION EXPRESSION %.3f\n",value); break; // 0..1
+    //   case CLAP_NOTE_EXPRESSION_BRIGHTNESS: SAT_Print("NOTE BRIGHTNESS EXPRESSION %.3f\n",value); break; // 0..1
+    //   case CLAP_NOTE_EXPRESSION_PRESSURE:   SAT_Print("NOTE PRESSURE EXPRESSION %.3f\n",value);   break; // 0..1
+    // }
+
   }
 
   //----------
 
-  void handleParamValueEvent(clap_event_param_value_t* event) {
+  bool handleParamValueEvent(clap_event_param_value_t* event) {
     uint32_t index = event->param_id; // !!!
     double value = event->value;
-    SAT_Print("index %i value %.3f\n",index,value);
+    //SAT_Print("from host (event).. index %i value %.3f\n",index,value);
     MParameters[index]->setValue(value);
-    handleParamValue(event);
-    // host_to_gui
+
+    if (!MIsEditorClosing) {
+      if (MEditor && MEditor->isOpen()) {
+        //queueParamFromHostToGui(index,value);
+        MParameters[index]->setGuiAutomationDirty(true);
+        MParameters[index]->setLastAutomatedValue(value);
+      }
+    }
+
+    return on_plugin_paramValue(event);
   }
 
   //----------
 
-  void handleParamModEvent(clap_event_param_mod_t* event) {
+  bool handleParamModEvent(clap_event_param_mod_t* event) {
     uint32_t index = event->param_id; // !!!
     double amount = event->amount;
-    SAT_Print("index %i amount %.3f\n",index,amount);
+    //SAT_Print("from host (event).. index %i amount %.3f\n",index,amount);
     MParameters[index]->setModulation(amount);
-    handleParamMod(event);
-    // host_to_gui
-  }
 
-  //----------
-
-  void handleTransportEvent(clap_event_transport_t* event) {
-    handleTransport(event);
-  }
-
-  //----------
-
-  void handleMidiEvent(clap_event_midi_t* event) {
-    handleMidi(event); // data1,data2,data3
-    uint8_t data1 = event->data[0];
-    uint8_t data2 = event->data[1];
-    uint8_t data3 = event->data[2];
-    #ifdef SAT_PLUGIN_CONVERT_MIDI
-      uint8_t msg   = (data1 & 0xf0);
-      uint8_t chan  = (data1 & 0x0f);
-      switch (msg) {
-        case SAT_MIDI_NOTE_OFF: break;
-        case SAT_MIDI_NOTE_ON: break;
-        case SAT_MIDI_POLY_AFTERTOUCH: break;
-        case SAT_MIDI_CONTROL_CHANGE: break;
-        case SAT_MIDI_PROGRAM_CHANGE: break;
-        case SAT_MIDI_CHANNEL_AFTERTOUCH: break;
-        case SAT_MIDI_PITCHBEND: break;
-        case SAT_MIDI_SYS: break;
+    if (!MIsEditorClosing) {
+      if (MEditor && MEditor->isOpen()) {
+        //queueModFromHostToGui(index,value);
+        MParameters[index]->setGuiModulationDirty(true);
+        MParameters[index]->setLastModulatedValue(amount);
       }
-    #endif
+    }
+
+    return on_plugin_paramMod(event);
   }
 
   //----------
 
-  void handleMidiSysexEvent(clap_event_midi_sysex_t* event) {
-    handleMidiSysex(event);
+  bool handleTransportEvent(clap_event_transport_t* event) {
+    bool result = on_plugin_transport(event);
+
+    if (event->flags & CLAP_TRANSPORT_HAS_TEMPO) {
+      //MProcessContext.tempo     = event->tempo;             // in bpm
+      //MProcessContext.tempo_inc = event->tempo_inc;         // tempo increment for each samples and until the next time info event
+    }
+    if (event->flags & CLAP_TRANSPORT_HAS_BEATS_TIMELINE) {
+      //MProcessContext. = clap_beattime song_pos_beats;      // position in beats
+      //clap_beattime loop_start_beats;
+      //clap_beattime loop_end_beats;
+      //clap_beattime bar_start;                              // start pos of the current bar
+      //int32_t       bar_number;                             // bar at song pos 0 has the number 0
+    }
+    if (event->flags & CLAP_TRANSPORT_HAS_SECONDS_TIMELINE) {
+      //clap_sectime  song_pos_seconds;                       // position in seconds
+      //clap_sectime  loop_start_seconds;
+      //clap_sectime  loop_end_seconds;
+    }
+    if (event->flags & CLAP_TRANSPORT_HAS_TIME_SIGNATURE) {
+      //uint16_t      tsig_num;                               // time signature numerator
+      //uint16_t      tsig_denom;                             // time signature denominator
+    }
+    if (event->flags & CLAP_TRANSPORT_IS_PLAYING) {}
+    if (event->flags & CLAP_TRANSPORT_IS_RECORDING) {}
+    if (event->flags & CLAP_TRANSPORT_IS_LOOP_ACTIVE) {}
+    if (event->flags & CLAP_TRANSPORT_IS_WITHIN_PRE_ROLL) {}
+
+    return result;
+
   }
 
   //----------
 
-  void handleMidi2Event(clap_event_midi2_t* event) {
-    handleMidi2(event);
+  bool handleMidiEvent(clap_event_midi_t* event) {
+    return on_plugin_midi(event); // data1,data2,data3
+
+    // #ifdef SAT_PLUGIN_CONVERT_MIDI
+    //   uint8_t data1 = event->data[0];
+    //   uint8_t data2 = event->data[1];
+    //   uint8_t data3 = event->data[2];
+    //   uint8_t msg   = (data1 & 0xf0);
+    //   uint8_t chan  = (data1 & 0x0f);
+    //   switch (msg) {
+    //     case SAT_MIDI_NOTE_OFF: break;
+    //     case SAT_MIDI_NOTE_ON: break;
+    //     case SAT_MIDI_POLY_AFTERTOUCH: break;
+    //     case SAT_MIDI_CONTROL_CHANGE: break;
+    //     case SAT_MIDI_PROGRAM_CHANGE: break;
+    //     case SAT_MIDI_CHANNEL_AFTERTOUCH: break;
+    //     case SAT_MIDI_PITCHBEND: break;
+    //     case SAT_MIDI_SYS: break;
+    //   }
+    // #endif
+
+    //
+
+    // uint8_t msg0 = event->data[0];
+    // //uint8_t index = event->data[1];
+    // //uint8_t value = event->data[2];
+    // uint32_t msg  = msg0 & 0xf0;
+    // //uint32_t chan = msg0 & 0x0f;
+    // switch (msg) {
+    //   case SAT_MIDI_NOTE_OFF: {
+    //     //SAT_Print("MIDI NOTE OFF. chan %i key %i vel %i\n",chan,data2,data3);
+    //     //clap_event_note_t note_event;
+    //     //note_event.header.size     = sizeof(clap_event_note_t);
+    //     //note_event.header.time     = 0;
+    //     //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    //     //note_event.header.type     = CLAP_EVENT_NOTE_OFF;
+    //     //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+    //     //note_event.note_id         = (chan * 128) + index;
+    //     //note_event.port_index      = event->port_index;
+    //     //note_event.channel         = chan;
+    //     //note_event.key             = index;
+    //     //note_event.velocity        = value * (double)SAT_INV127;
+    //     //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
+    //     break;
+    //   }
+    //   case SAT_MIDI_NOTE_ON: {
+    //     //SAT_Print("MIDI NOTE ON. chan %i key %i vel %i\n",chan,data2,data3);
+    //     //clap_event_note_t note_event;
+    //     //note_event.header.size     = sizeof(clap_event_note_t);
+    //     //note_event.header.time     = 0;
+    //     //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    //     //note_event.header.type     = CLAP_EVENT_NOTE_ON;
+    //     //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+    //     //note_event.note_id         = (chan * 128) + index;
+    //     //note_event.port_index      = event->port_index;
+    //     //note_event.channel         = chan;
+    //     //note_event.key             = index;
+    //     //note_event.velocity        = value * (double)SAT_INV127;
+    //     //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
+    //     break;
+    //   }
+    //   case SAT_MIDI_POLY_AFTERTOUCH: {
+    //     //SAT_Print("MIDI POLY AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
+    //     // pressure note expression
+    //     break;
+    //   }
+    //   case SAT_MIDI_CONTROL_CHANGE: {
+    //     //SAT_Print("MIDI CONTROL_CHANGE. chan %i index %i val %i\n",chan,data2,data3);
+    //     // cc74: brightness
+    //     break;
+    //   }
+    //   case SAT_MIDI_PROGRAM_CHANGE: {
+    //     //SAT_Print("MIDI PROGRAM CHANGE. chan %i data1 %i data2 %i\n",chan,data2,data3);
+    //     break;
+    //   }
+    //   case SAT_MIDI_CHANNEL_AFTERTOUCH: {
+    //     //SAT_Print("MIDI CHANNEL AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
+    //     // pressure note expression
+    //     break;
+    //   }
+    //   case SAT_MIDI_PITCHBEND: {
+    //     //SAT_Print("MIDI PITCH BEND. chan %i data1 %i data2 %i\n",chan,data2,data3);
+    //     // tuning note expression
+    //     break;
+    //   }
+    //   case SAT_MIDI_SYS: {
+    //     //SAT_Print("MIDI SYS. chan %i data1 %i data2 %i\n",chan,data2,data3);
+    //     break;
+    //   }
+    // } // switch msg
+
+  }
+
+  //----------
+
+  bool handleMidiSysexEvent(clap_event_midi_sysex_t* event) {
+    return on_plugin_midiSysex(event);
+  }
+
+  //----------
+
+  bool handleMidi2Event(clap_event_midi2_t* event) {
+    return on_plugin_midi2(event);
+  }
+
+//------------------------------
+private: // queues
+//------------------------------
+
+  // parameter, host -> gui
+  // (automation, host-provided generic plugin interface)
+  //
+  // TODO: check for duplicates
+  // pop updates to array, check array for duplicates..
+  // called from:
+  // - SAT_Plugin.handleParamValueEvent
+
+  void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_ParamQueueItem item;
+    item.type   = CLAP_EVENT_PARAM_VALUE;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MParamFromHostToGuiQueue.write(item)) {
+      //SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
+      SAT_Print("queueParamFromHostToGui: couldn't write to queue\n");
+    }
+  }
+
+  //----------
+
+  // TODO: check for duplicated (param/mod)
+  // called from:
+  // - SAT_Plugin.do_editorListener_timer
+
+  void flushParamFromHostToGui() {
+    uint32_t count = 0;
+    //SAT_Print("\n");
+    SAT_ParamQueueItem item;
+    while (MParamFromHostToGuiQueue.read(&item)) {
+      count += 1;
+      SAT_Parameter* parameter = MParameters[item.index];
+
+      // parameters are in clap-space
+      // widgets are 0..1
+
+      if (MEditor && MEditor->isOpen()) {
+        MEditor->updateParameterFromHost(parameter,item.value);
+      }
+    }
+    //if (count > 0) { SAT_Print("flushParamFromHostToGui: %i events\n",count); }
+  }
+
+//------------------------------
+//
+//------------------------------
+
+  // modulation, host -> gui
+  // (modulation)
+  //
+  // called from:
+  // - SAT_Plugin.handleParamModEvent
+
+  void queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_ParamQueueItem item;
+    item.type   = CLAP_EVENT_PARAM_MOD;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MModFromHostToGuiQueue.write(item)) {
+      //SAT_Log("queueModFromHostToGui: couldn't write to queue\n");
+      SAT_Print("queueModFromHostToGui: couldn't write to queue\n");
+    }
+  }
+
+  //----------
+
+  // TODO: check for duplicates
+  // pop updates to array, check array for duplicates..
+  // called from:
+  // - SAT_Plugin.do_editorListener_timer
+
+  void flushModFromHostToGui() {
+    //SAT_Print("\n");
+    SAT_ParamQueueItem item;
+    uint32_t count = 0;
+    while (MModFromHostToGuiQueue.read(&item)) {
+      count += 1;
+      SAT_Parameter* parameter = MParameters[item.index];
+      if (MEditor && MEditor->isOpen()) {
+        MEditor->updateModulationFromHost(parameter,item.value);
+      }
+    }
+    //if (count > 0) { SAT_Print("flushModFromHostToGui: %i events\n",count); }
   }
 
 
 //------------------------------
-public: // audio
+//
 //------------------------------
 
-  void processAudioBlock(SAT_ProcessContext* AContext) {
+  // parameter, gui -> audio
+  // (tweak knob)
+  //
+  // called from:
+  // - SAT_Plugin.do_editorListener_parameter_update
+
+  void queueParamFromGuiToAudio(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_ParamQueueItem item;
+    item.type   = CLAP_EVENT_PARAM_VALUE;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MParamFromGuiToAudioQueue.write(item)) {
+      //SAT_Log("queueParamFromGuiToAudio: couldn't write to queue\n");
+    }
+  }
+
+  //----------
+
+  // TODO: check for duplicates? can we have duplicates from gui?
+  // called from:
+  // - SAT_Plugin.process
+
+  void flushParamFromGuiToAudio() {
+    uint32_t count = 0;
+    //SAT_Print("\n");
+    SAT_ParamQueueItem item;
+    while (MParamFromGuiToAudioQueue.read(&item)) {
+      count += 1;
+      //SAT_PRINT;
+      clap_event_param_value_t event;
+      event.header.size     = sizeof(clap_event_param_value_t);
+      event.header.time     = 0;
+      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID; // SAT_EVENT_SPACE_ID
+      event.header.type     = CLAP_EVENT_PARAM_VALUE;
+      event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+      event.param_id        = item.index;
+      event.cookie          = nullptr; // set?
+      event.note_id         = -1;
+      event.port_index      = -1;
+      event.channel         = -1;
+      event.key             = -1;
+      event.value           = item.value;
+      bool handled          = handleParamValueEvent(&event); // handleParamValueEvent ?
+      if (!handled) {
+        //TODO
+      }
+    }
+    //if (count > 0) { SAT_Print("flushParamFromGuiToAudio: %i events\n",count); }
+  }
+
+
+//------------------------------
+//
+//------------------------------
+
+  // parameter, gui -> host
+  // (tweak knob)
+  //
+  // called from:
+  // - SAT_Plugin.do_editorListener_parameter_update
+
+  void queueParamFromGuiToHost(uint32_t AIndex, sat_param_t AValue) {
+    //SAT_Print("%i = %f\n",AIndex,AValue);
+    SAT_ParamQueueItem item;
+    item.type   = CLAP_EVENT_PARAM_VALUE;
+    item.index  = AIndex;
+    item.value  = AValue;
+    if (!MParamFromGuiToHostQueue.write(item)) {
+      //SAT_Log("queueParamFromGuiToHost: couldn't write to queue\n");
+    }
+  }
+
+  //----------
+
+  // TODO: check for duplicates? can we have duplicates from gui?
+  // called from:
+  // - SAT_Plugin.process()
+
+  void flushParamFromGuiToHost(const clap_output_events_t *out_events) {
+    uint32_t count = 0;
+    //SAT_Print("\n");
+    SAT_ParamQueueItem item;
+    while (MParamFromGuiToHostQueue.read(&item)) {
+      count += 1;
+      //SAT_Print("%i = %.3f\n",item.index,item.value);
+      SAT_Parameter* parameter = getParameter(item.index);
+      // gesture begin
+      {
+        clap_event_param_gesture_t event;
+        event.header.size     = sizeof(clap_event_param_gesture_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_GESTURE_BEGIN;
+        event.header.flags    = 0;
+        event.param_id        = item.index;
+        const clap_event_header_t* header = (const clap_event_header_t*)&event;
+        out_events->try_push(out_events,header);
+      }
+      // param value
+      {
+        clap_event_param_value_t event;
+        event.header.size     = sizeof(clap_event_param_value_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_VALUE;
+        event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+        event.param_id        = item.index;
+        event.cookie          = parameter->getCookie(); // reaper needs the event.cookie ??
+        event.note_id         = -1;
+        event.port_index      = -1;
+        event.channel         = -1;
+        event.key             = -1;
+        event.value           = item.value;
+        // to host..
+        const clap_event_header_t* header = (const clap_event_header_t*)&event;
+        out_events->try_push(out_events,header);
+      }
+      // gesture end
+      {
+        clap_event_param_gesture_t event;
+        event.header.size     = sizeof(clap_event_param_gesture_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_GESTURE_END;
+        event.header.flags    = 0;
+        event.param_id        = item.index;
+        const clap_event_header_t* header = (const clap_event_header_t*)&event;
+        out_events->try_push(out_events,header);
+      }
+    } // while
+    //if (count > 0) { SAT_Print("flushParamFromGuiToHost: %i events\n",count); }
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+  // don't send ALL param value/mods to gui.. only last one in block
+  // set flag, and check at end of process
+  //
+  // call before processing all events
+  
+  void clearAutomationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      MParameters[i]->setGuiAutomationDirty(false);
+    }
+  }
+  
+  //----------
+
+  void clearModulationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      MParameters[i]->setGuiModulationDirty(false);
+    }
+  }
+  
+  //----------
+    
+  // call after processing all events
+  
+  void queueAutomationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      if (MParameters[i]->isGuiAutomationDirty()) {
+        double value = MParameters[i]->getLastAutomatedValue();
+        queueParamFromHostToGui(i,value);
+      }
+    }
+  }
+
+  //----------
+    
+  void queueModulationToGui() {
+    uint32_t num = MParameters.size();
+    for (uint32_t i=0; i<num; i++) {
+      if (MParameters[i]->isGuiModulationDirty()) {
+        double value = MParameters[i]->getLastModulatedValue();
+        queueModFromHostToGui(i,value);
+      }
+    }
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+//------------------------------
+public: // process
+//------------------------------
+
+  virtual void processEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+    //SAT_PRINT;
+    if (!in_events) return;
+    //if (!out_events) return;
+    clearAutomationToGui();
+    clearModulationToGui();
+    uint32_t prev_time = 0;
+    uint32_t size = in_events->size(in_events);
+    for (uint32_t i=0; i<size; i++) {
+      const clap_event_header_t* header = in_events->get(in_events,i);
+      if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
+        if (header->time < prev_time) {
+          SAT_Print("huh? not sorted? prev_time %i header->time %i header->type %i\n",prev_time,header->time,header->type);
+        }
+        handleEvent(header);
+        prev_time = header->time;
+      }
+    }
+    queueAutomationToGui();
+    queueModulationToGui();
+  }
+
+  //----------
+
+  virtual void processSample(float* spl0, float* spl1) {
+  }
+
+  //----------
+
+  virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
+    const clap_process_t* process = AContext->process;
+    //float* inputs[2];
+    //float* outputs[2];
+    //inputs[0]  = process->audio_inputs[0].data32[0] + AOffset;
+    //inputs[1]  = process->audio_inputs[0].data32[1] + AOffset;
+    //outputs[0] = process->audio_outputs[0].data32[0] + AOffset;
+    //outputs[1] = process->audio_outputs[0].data32[1] + AOffset;
+    //SAT_CopyStereoBuffer(outputs,inputs,ALength);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+      processSample(&spl0,&spl1);
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }
+  }
+
+  //----------
+
+  virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset) {
+    processAudio(AContext,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
+  }
+
+  //----------
+
+  virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     if (MAudioInputPorts.size() < 1) return;
@@ -677,24 +1176,114 @@ public: // audio
     float* output0 = process->audio_outputs[0].data32[0];
     float* output1 = process->audio_outputs[0].data32[1];
     for (uint32_t i=0; i<length; i++) {
-      *output0++ = *input0++;
-      *output1++ = *input1++;
+      //*output0++ = *input0++;
+      //*output1++ = *input1++;
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+      processSample(&spl0,&spl1);
+      *output0++ = spl0;
+      *output1++ = spl1;
     }
   }
 
   //----------
 
-  //void processAudioInterleaved(SAT_ProcessContext* AContext, uint32_t AOffset) {
-  //}
+  // processes events at their sample accurate place, and audio inbetween
+
+  virtual void processAudioInterleaved(SAT_ProcessContext* AContext) {
+    const clap_input_events_t* in_events = AContext->process->in_events;
+    uint32_t remaining = AContext->process->frames_count;
+    uint32_t num_events = in_events->size(in_events);
+    uint32_t current_time = 0;
+    uint32_t current_event = 0;
+    clearAutomationToGui();
+    clearModulationToGui();
+    while (remaining > 0) {
+      if (current_event < num_events) {
+        const clap_event_header_t* header = in_events->get(in_events,current_event);
+        current_event += 1;
+        int32_t length = header->time - current_time;
+        // if length > remaining ...
+        //while (length > 0) {
+        if (length > 0) {
+          processAudio(AContext,current_time,length);
+          remaining -= length;    // -= 32;
+          current_time += length; // -= 32;
+        }
+        //processEventInterleaved(header);
+        handleEvent(header);
+      }
+      else { // no more events
+        int32_t length = remaining;
+        processAudio(AContext,current_time,length);
+        remaining -= length;
+        current_time += length;
+      }
+    }
+    //SAT_Assert( events.read(&event) == false );
+    queueAutomationToGui();
+    queueModulationToGui();
+  }
 
   //----------
 
-  //void processAudioQuantized(SAT_ProcessContext* AContext) {
-  //}
+  // split audio block in smaller, regular sizes, and quantize events
+  // (process all events 'belonging' to the slice, at the atart ot the slice,
+  // and then the audio)..
+  // events could be processed up to (slicesize - 1) samples 'early'..
 
-
-
-
+  virtual void processAudioQuantized(SAT_ProcessContext* AContext) {
+    uint32_t buffer_length = AContext->process->frames_count;
+    uint32_t remaining = buffer_length;
+    uint32_t current_time = 0;
+    uint32_t current_event = 0;
+    uint32_t next_event_time = 0;
+    clearAutomationToGui();
+    clearModulationToGui();
+    const clap_input_events_t* in_events = AContext->process->in_events;
+    uint32_t num_events = in_events->size(in_events);
+    if (num_events > 0) {
+      const clap_event_header_t* header = in_events->get(in_events,current_event);
+      current_event += 1;
+      next_event_time = header->time;
+      do {
+        // process events for next slice
+        while (next_event_time < (current_time + SAT_AUDIO_QUANTIZED_SIZE)) {
+          handleEvent(header);
+          if (current_event < num_events) {
+            header = in_events->get(in_events,current_event);
+            // if (header)
+            current_event += 1;
+            next_event_time = header->time;
+          }
+          else {
+            next_event_time = buffer_length; // ???
+          }
+        }
+        // process next slice
+        if (remaining < SAT_AUDIO_QUANTIZED_SIZE) {
+          processAudio(AContext,current_time,remaining);
+          current_time += remaining;
+          remaining = 0;
+        }
+        else {
+          processAudio(AContext,current_time);
+          current_time += SAT_AUDIO_QUANTIZED_SIZE;
+          remaining -= SAT_AUDIO_QUANTIZED_SIZE;
+        }
+      } while (remaining > 0);
+    }
+    else { // no events..
+      do {
+        if (remaining < SAT_AUDIO_QUANTIZED_SIZE) processAudio(AContext,current_time,remaining);
+        else processAudio(AContext,current_time);
+        current_time += SAT_AUDIO_QUANTIZED_SIZE;
+        remaining -= SAT_AUDIO_QUANTIZED_SIZE;
+      } while (remaining > 0);
+    }
+    queueAutomationToGui();
+    queueModulationToGui();
+  }
 
 //----------------------------------------------------------------------
 //
@@ -710,21 +1299,25 @@ protected: // SAT_EditorListener
 
 #if !defined (SAT_GUI_NOGUI)
 
-  void on_editorListener_timer() override {
-    // flushParamFromHostToGui();
-    // flushModFromHostToGui();
+  void on_editorListener_timer(SAT_Timer* ATimer, double AElapsed) override {
+    //SAT_PRINT;
+    flushParamFromHostToGui();
+    flushModFromHostToGui();
   }
+
+  //----------
 
   void on_editorListener_update(SAT_Parameter* AParameter, sat_param_t AValue) override {
     uint32_t index = AParameter->getIndex();
-    SAT_Print("parameter %p index %i value %f\n",AParameter,index,AValue);
+    //SAT_Print("from gui.. AParameter %p index %i AValue %f\n",AParameter,index,AValue);
     MParameters[index]->setValue(AValue);
-//    queueParamFromGuiToAudio(AIndex);
-//    queueParamFromGuiToHost(AIndex);
-
+    queueParamFromGuiToAudio(index,AValue);
+    queueParamFromGuiToHost(index,AValue);
   }
 
 #endif // nogui
+
+
 
 //------------------------------
 protected: // clap_plugin
@@ -755,9 +1348,9 @@ protected: // clap_plugin
     MSampleRate     = sample_rate;
     MMinBufferSize  = min_frames_count;
     MMaxBufferSize  = max_frames_count;
-    // MProcessContext.samplerate = sample_rate;
-    // MProcessContext.minbufsize = min_frames_count;
-    // MProcessContext.maxbufsize = max_frames_count;
+    MProcessContext.samplerate = sample_rate;
+    MProcessContext.minbufsize = min_frames_count;
+    MProcessContext.maxbufsize = max_frames_count;
     return true;
   }
 
@@ -794,12 +1387,12 @@ protected: // clap_plugin
     MProcessContext.samplerate = MSampleRate;
     MProcessContext.process_counter += 1;
     #if !defined (SAT_GUI_NOGUI)
-//      flushParamFromGuiToAudio();
+      flushParamFromGuiToAudio();
     #endif
-    processEventsBlock(process->in_events,process->out_events);
-    processAudioBlock(&MProcessContext);
+    processEvents(process->in_events,process->out_events);
+    processAudio(&MProcessContext);
     #if !defined (SAT_GUI_NOGUI)
-//      flushParamFromGuiToHost();
+      flushParamFromGuiToHost(process->out_events);
     #endif
     MProcessContext.sample_counter += process->frames_count;
     return CLAP_PROCESS_CONTINUE;
@@ -888,84 +1481,115 @@ protected: // gui
 #if !defined (SAT_GUI_NOGUI)
 
   bool gui_is_api_supported(const char *api, bool is_floating) override {
-    SAT_Print("api %s is_floating %i",api,is_floating);
+    //SAT_Print("api %s is_floating %i",api,is_floating);
     #if defined(SAT_GUI_WAYLAND)
       if ((strcmp(api,CLAP_WINDOW_API_WAYLAND) == 0) && (is_floating)) {
-        SAT_DPrint(" -> true\n");
+        //SAT_DPrint(" -> true\n");
         return true;
       }
     #elif defined(SAT_GUI_WIN32)
       if ((strcmp(api,CLAP_WINDOW_API_WIN32) == 0) && (!is_floating)) {
-        SAT_DPrint(" -> true\n");
+        //SAT_DPrint(" -> true\n");
         return true;
       }
     #elif defined(SAT_GUI_X11)
       if ((strcmp(api,CLAP_WINDOW_API_X11) == 0) && (!is_floating)) {
-        SAT_DPrint(" -> true\n");
+        //SAT_DPrint(" -> true\n");
         return true;
       }
     #endif
-    SAT_DPrint(" -> false\n");
+    //SAT_DPrint(" -> false\n");
     return false;
   }
 
   //----------
 
   bool gui_get_preferred_api(const char **api, bool *is_floating) override {
-    SAT_Print("");
+    //SAT_Print("");
     #if defined(SAT_GUI_WAYLAND)
       *api = CLAP_WINDOW_API_WAYLAND;
       *is_floating = true;
-      SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
+      //SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
     #elif defined(SAT_GUI_WIN32)
       *api = CLAP_WINDOW_API_WIN32;
       *is_floating = false;
-      SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
+      //SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
     #elif defined(SAT_GUI_X11)
       *api = CLAP_WINDOW_API_X11;
       *is_floating = false;
-      SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
+      //SAT_DPrint(" -> true (*api %s is_floating %i)\n",*api,*is_floating);
       return true;
     #endif
-    SAT_DPrint(" -> false\n");
+    //SAT_DPrint(" -> false\n");
     return false;
   }
 
   //----------
 
   bool gui_create(const char *api, bool is_floating) override {
-    SAT_Print("api %s is_floating %i",api,is_floating);
-    MEditor = createEditor(this);
+    MIsEditorClosing = false;
+
+    // if (is_floating == true) return false;
+    //
+    // #ifdef SAT_LINUX
+    //   if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
+    // #endif
+    // #ifdef SAT_WIN32
+    //   if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
+    // #endif
+
+    // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
+    // if ((MInitialEditorWidth <= 0) || (MInitialEditorHeight <= 0)) {
+    //   uint32_t num = MParameters.size();
+    //   double w =  300 +             // slider width
+    //               10 + 10;          // inner border (top/bottom)
+    //   double h =  40 +              // header
+    //               20 +              // footer
+    //               10 + 10 +         // inner border
+    //               (num * 20) +      // sliders
+    //               ((num - 1) * 5);  // spacing
+    //   double s =  2.0;
+    //   setInitialEditorSize(w,h,s);
+    // }
+
+    uint32_t w = (double)MInitialEditorWidth * MInitialEditorScale;
+    uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
+
+    //SAT_Print("api %s is_floating %i",api,is_floating);
+    MEditor = createEditor(this,w,h);
+    MEditor->create(api,is_floating);
     if (MEditor) {
       //setupEditor(MEditor);
-      SAT_DPrint(" -> true\n");
+      //SAT_DPrint(" -> true\n");
       return true;
     }
-    SAT_DPrint(" -> false\n");
-    SAT_Print("MEditor = null\n");
+    //SAT_DPrint(" -> false\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   void gui_destroy() override {
-    SAT_Print("\n");
+    MIsEditorClosing = true;
+    //SAT_Print("\n");
     if (MEditor) {
       //cleanupEditor(MEditor);
+      MEditor->destroy();
       deleteEditor(MEditor);
       MEditor = nullptr;
     }
-    else { SAT_Print("MEditor = null\n"); }
+    //else { SAT_Print("MEditor = null\n"); }
   }
 
   //----------
 
   bool gui_set_scale(double scale) override {
-    SAT_Print("scale %f\n",scale);
+    //SAT_Print("scale %f\n",scale);
     if (MEditor) return MEditor->set_scale(scale);
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
@@ -973,92 +1597,92 @@ protected: // gui
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
     bool result = MEditor->get_size(width,height);
-    SAT_Print("(*width %i *height %i)\n",*width,*height);
+    //SAT_Print("(*width %i *height %i)\n",*width,*height);
     return result;
   }
 
   //----------
 
   bool gui_can_resize() override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MEditor) return MEditor->can_resize();
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_get_resize_hints(clap_gui_resize_hints_t *hints) override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MEditor) return MEditor->get_resize_hints(hints);
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_adjust_size(uint32_t *width, uint32_t *height) override {
-    SAT_Print("(*width %i *height %i)\n",*width,*height);
+    //SAT_Print("(*width %i *height %i)\n",*width,*height);
     if (MEditor) return MEditor->adjust_size(width,height);
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_set_size(uint32_t width, uint32_t height) override {
-    SAT_Print("width %i height %i\n",width,height);
+    //SAT_Print("width %i height %i\n",width,height);
     if (MEditor) return MEditor->set_size(width,height);
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_set_parent(const clap_window_t *window) override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MEditor) {
       bool result = MEditor->set_parent(window);
       SAT_Window* window = MEditor->getWindow();
       if (window) setupEditorWindow(MEditor,window);
       return result;
     }
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_set_transient(const clap_window_t *window) override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MEditor) return MEditor->set_transient(window);
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   void gui_suggest_title(const char *title) override {
-    SAT_Print("title %s\n",title);
+    //SAT_Print("title %s\n",title);
     if (MEditor) MEditor->suggest_title(title);
-    else { SAT_Print("MEditor = null\n"); }
+    //else { SAT_Print("MEditor = null\n"); }
   }
 
   //----------
 
   bool gui_show() override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MEditor) return MEditor->show();
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
   //----------
 
   bool gui_hide() override {
-    SAT_Print("\n");
+    //SAT_Print("\n");
     if (MEditor) return MEditor->hide();
-    SAT_Print("MEditor = null\n");
+    //SAT_Print("MEditor = null\n");
     return false;
   }
 
@@ -1188,92 +1812,84 @@ protected: // render
 protected: // state
 //------------------------------
 
-  // bool state_save(const clap_ostream_t *stream) override {
-  //   //uint32_t total = 0;
-  //   uint32_t written = 0;
-  //   uint32_t version = 0;
-  //   uint32_t num_params = MParameters.size();
-  //   // version
-  //   written = stream->write(stream,&version,sizeof(uint32_t));
-  //   if (written != sizeof(uint32_t)) {
-  //     //SAT_Print("state_save: error writing version\n");
-  //     return false;
-  //   }
-  //   //total += sizeof(uint32_t);
-  //   // num params
-  //   written = stream->write(stream,&num_params,sizeof(uint32_t));
-  //   if (written != sizeof(uint32_t)) {
-  //     //SAT_Print("state_save: error writing parameter count\n");
-  //     return false;
-  //   }
-  //   //total += sizeof(uint32_t);
-  //   // param values
-  //   for (uint32_t i=0; i<num_params; i++) {
-  //     double value = MParameters[i]->getValue();
-  //     //double value = MParameterValues[i];
-  //     written = stream->write(stream,&value,sizeof(double));
-  //     if (written != sizeof(double)) {
-  //       //SAT_Print("state_load: error writing parameter %i\n",i);
-  //       return false;
-  //     }
-  //     //total += sizeof(double);
-  //   }
-  //   //SAT_Print("total: %i\n",total);
-  //   return true;
-  // }
-
   bool state_save(const clap_ostream_t *stream) override {
+    //uint32_t total = 0;
+    uint32_t written = 0;
+    uint32_t version = 0;
+    uint32_t num_params = MParameters.size();
+    // version
+    written = stream->write(stream,&version,sizeof(uint32_t));
+    if (written != sizeof(uint32_t)) {
+      //SAT_Print("state_save: error writing version\n");
+      return false;
+    }
+    //total += sizeof(uint32_t);
+    // num params
+    written = stream->write(stream,&num_params,sizeof(uint32_t));
+    if (written != sizeof(uint32_t)) {
+      //SAT_Print("state_save: error writing parameter count\n");
+      return false;
+    }
+    //total += sizeof(uint32_t);
+    // param values
+    for (uint32_t i=0; i<num_params; i++) {
+      double value = MParameters[i]->getValue();
+      //double value = MParameterValues[i];
+      written = stream->write(stream,&value,sizeof(double));
+      if (written != sizeof(double)) {
+        //SAT_Print("state_load: error writing parameter %i\n",i);
+        return false;
+      }
+      //total += sizeof(double);
+    }
+    //SAT_Print("total: %i\n",total);
     return true;
   }
 
   //----------
 
-  // bool state_load(const clap_istream_t *stream) override {
-  //   //uint32_t total = 0;
-  //   uint32_t read = 0;
-  //   uint32_t version = 0;
-  //   uint32_t num_params = 0;
-  //   // version
-  //   read = stream->read(stream,&version,sizeof(uint32_t));
-  //   if (read != sizeof(uint32_t)) {
-  //     //SAT_Print("state_load: error reading version\n");
-  //     return false;
-  //   }
-  //   //total += sizeof(uint32_t);
-  //   //TODO: check version
-  //   // num params
-  //   read = stream->read(stream,&num_params,sizeof(uint32_t));
-  //   if (read != sizeof(uint32_t)) {
-  //     //SAT_Print("state_load: error reading parameter count\n");
-  //     return false;
-  //   }
-  //   //total += sizeof(uint32_t);
-  //   //TODO: check num params = marameters.size
-  //   if (num_params != MParameters.size()) {
-  //     //SAT_Print("state_load: wrong parameter count\n");
-  //     return false;
-  //   }
-  //   // param values
-  //   for (uint32_t i=0; i<num_params; i++) {
-  //     double value = 0.0;
-  //     read = stream->read(stream,&value,sizeof(double));
-  //     if (read != sizeof(double)) {
-  //       //SAT_Print("state_load: error reading parameter %i\n",i);
-  //       return false;
-  //     }
-  //     //total += sizeof(double);
-      
-  //     MParameters[i]->setValue(value);    // !!!!!!!!!!!!!!!!!!!!
-      
-  //     //MParameterValues[i] = value;
-  //   }
-  //   //SAT_Print("total: %i\n",total);
-  //   //updateParameterValues();
-  //   //updateEditorParameterValues();
-  //   return true;
-  // }
-
   bool state_load(const clap_istream_t *stream) override {
+    //uint32_t total = 0;
+    uint32_t read = 0;
+    uint32_t version = 0;
+    uint32_t num_params = 0;
+    // version
+    read = stream->read(stream,&version,sizeof(uint32_t));
+    if (read != sizeof(uint32_t)) {
+      //SAT_Print("state_load: error reading version\n");
+      return false;
+    }
+    //total += sizeof(uint32_t);
+    //TODO: check version
+    // num params
+    read = stream->read(stream,&num_params,sizeof(uint32_t));
+    if (read != sizeof(uint32_t)) {
+      //SAT_Print("state_load: error reading parameter count\n");
+      return false;
+    }
+    //total += sizeof(uint32_t);
+    //TODO: check num params = marameters.size
+    if (num_params != MParameters.size()) {
+      //SAT_Print("state_load: wrong parameter count\n");
+      return false;
+    }
+    // param values
+    for (uint32_t i=0; i<num_params; i++) {
+      double value = 0.0;
+      read = stream->read(stream,&value,sizeof(double));
+      if (read != sizeof(double)) {
+        //SAT_Print("state_load: error reading parameter %i\n",i);
+        return false;
+      }
+      //total += sizeof(double);
+      
+      MParameters[i]->setValue(value);    // !!!!!!!!!!!!!!!!!!!!
+      
+      //MParameterValues[i] = value;
+    }
+    //SAT_Print("total: %i\n",total);
+    //updateParameterValues();
+    //updateEditorParameterValues();
     return true;
   }
 
@@ -1438,24 +2054,35 @@ protected: // draft: preset_load
 //------------------------------
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
-    return loadPresetFromFile(location,load_key);
-    // switch (location_kind) {
-    //   case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
-    //     SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
-    //     MHost->preset_load_loaded(location_kind,location,load_key);
-    //     return true;
-    //   }
-    //   case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
-    //     SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
-    //     MHost->preset_load_loaded(location_kind,location,load_key);
-    //     return true;
-    //   }
-    //   default: {
-    //     SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
-    //     return false;
-    //   }
-    // }
-    // return false;
+
+    const clap_host_t* host = getClapHost();
+    const clap_host_preset_load_t* preset_load = (const clap_host_preset_load_t*)host->get_extension(host,CLAP_EXT_PRESET_LOAD);
+    
+    //return loadPresetFromFile(location,load_key);
+
+    switch (location_kind) {
+      case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
+
+//        MHost->preset_load_loaded(location_kind,location,load_key);
+        preset_load->loaded(host,location_kind,location,load_key);
+
+        return true;
+      }
+      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
+
+//        MHost->preset_load_loaded(location_kind,location,load_key);
+        preset_load->loaded(host,location_kind,location,load_key);
+
+        return true;
+      }
+      default: {
+        SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
+        return false;
+      }
+    }
+    return false;
   }
   
 //------------------------------
@@ -1486,8 +2113,8 @@ protected: // draft: resource_directory
 //------------------------------
 
   void resource_directory_set_directory(const char *path, bool is_shared) override {
-    // MResourceDirectory = path;
-    // MResourceDirectoryIsShared = is_shared;
+    MResourceDirectory = path;
+    MResourceDirectoryShared = is_shared;
   }
 
   //----------
@@ -1547,18 +2174,26 @@ protected: // draft: surround
 protected: // draft: track_info
 //------------------------------
 
-  // uint64_t      flags;                 // see the flags above
-  // char          name[CLAP_NAME_SIZE];  // track name, available if flags contain CLAP_TRACK_INFO_HAS_TRACK_NAME
-  // clap_color_t  color;                 // track color, available if flags contain CLAP_TRACK_INFO_HAS_TRACK_COLOR
-  // int32_t       audio_channel_count;   // available if flags contain CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL. see audio-ports.h, struct clap_audio_port_info to learn how to use channel count and port type
-  // const char*   audio_port_type;
-
   void track_info_changed() override {
-    // const clap_host_t* host = getClapHost();
-    // const clap_host_track_info_t* track_info = (const clap_host_track_info_t*)host->get_extension(host,CLAP_EXT_TRACK_INFO);
-    // clap_track_info_t info;
-    // if (track_info->get(host,&info)) {
-    // }
+    const clap_host_t* host = getClapHost();
+    const clap_host_track_info_t* track_info = (const clap_host_track_info_t*)host->get_extension(host,CLAP_EXT_TRACK_INFO);
+    clap_track_info_t info;
+    if (track_info->get(host,&info)) {
+      MTrackFlags = info.flags;
+      if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME) {
+        SAT_Strlcpy(MTrackName,info.name,CLAP_NAME_SIZE);
+      }
+      if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR) {
+        MTrackColor = SAT_Color(info.color.red,info.color.green,info.color.blue,info.color.alpha);
+      }
+      if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL) {
+        MTrackChannelCount = info.audio_channel_count;
+        MTrackPortType = info.audio_port_type;
+      }
+      MTrackIsReturnTrack = ((info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK)  != 0);
+      MTrackIsBus         = ((info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)           != 0);
+      MTrackIsMaster      = ((info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)        != 0);
+    }
   }
 
 //------------------------------
@@ -1586,709 +2221,4 @@ protected: // draft: tunung
 
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------
-//public: // events
-//------------------------------
-
-  /*
-    don't send ALL param value/mods to gui.. only last one in block
-    set flag, and check at end of process
-  */
-
-  // call before processing all events
-  
-  // void clearAutomationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     MParameters[i]->setGuiAutomationDirty(false);
-  //   }
-  // }
-  
-  // void clearModulationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     MParameters[i]->setGuiModulationDirty(false);
-  //   }
-  // }
-  
-  //----------
-    
-  // call after processing all events
-  
-  // void queueAutomationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     if (MParameters[i]->isGuiAutomationDirty()) {
-  //       double value = MParameters[i]->getLastAutomatedValue();
-  //       queueParamFromHostToGui(i,value);
-  //     }
-  //   }
-  // }
-
-  // void queueModulationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     if (MParameters[i]->isGuiModulationDirty()) {
-  //       double value = MParameters[i]->getLastModulatedValue();
-  //       queueModFromHostToGui(i,value);
-  //     }
-  //   }
-  // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------
-//public: // process events
-//------------------------------
-
-  /*
-    don't send ALL param value/mods to gui.. only last one in block
-    set flag, and check at end of process
-  */
-
-  // call before processing all events
-  
-  // void clearAutomationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     MParameters[i]->setGuiAutomationDirty(false);
-  //   }
-  // }
-  
-  // void clearModulationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     MParameters[i]->setGuiModulationDirty(false);
-  //   }
-  // }
-  
-  //----------
-    
-  // call after processing all events
-  
-  // void queueAutomationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     if (MParameters[i]->isGuiAutomationDirty()) {
-  //       double value = MParameters[i]->getLastAutomatedValue();
-  //       queueParamFromHostToGui(i,value);
-  //     }
-  //   }
-  // }
-
-  // void queueModulationToGui() {
-  //   uint32_t num = MParameters.size();
-  //   for (uint32_t i=0; i<num; i++) {
-  //     if (MParameters[i]->isGuiModulationDirty()) {
-  //       double value = MParameters[i]->getLastModulatedValue();
-  //       queueModFromHostToGui(i,value);
-  //     }
-  //   }
-  // }
-
-  //----------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  // }
-
-  //----------
-
-  // virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  // }
-
-  //----------
-
-  // called from SAT_Plugin.process(), just before processAudio()
-
-  // virtual void processBlockEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  //   //SAT_PRINT;
-  //   if (!in_events) return;
-  //   //if (!out_events) return;
-  //   clearAutomationToGui();
-  //   clearModulationToGui();
-  //   uint32_t prev_time = 0;
-  //   uint32_t size = in_events->size(in_events);
-  //   for (uint32_t i=0; i<size; i++) {
-  //     const clap_event_header_t* header = in_events->get(in_events,i);
-  //     if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
-  //       if (header->time < prev_time) {
-  //         SAT_Print("huh? not sorted? prev_time %i header->time %i header->type %i\n",prev_time,header->time,header->type);
-  //       }
-  //       handleEvent(header);
-  //       prev_time = header->time;
-  //     }
-  //   }
-  //   queueAutomationToGui();
-  //   queueModulationToGui();
-  // }
-
-  //----------
-  
-  /*
-    todo: check what would happen if we get events that aren't sorted..
-    ignored?
-  */
-
-  // processes events at their sample accurate place, and audio inbetween
-
-  // virtual void processInterleavedEvents(SAT_ProcessContext* AContext) {
-  //   const clap_input_events_t* in_events = AContext->process->in_events;
-  //   uint32_t remaining = AContext->process->frames_count;
-  //   uint32_t num_events = in_events->size(in_events);
-  //   uint32_t current_time = 0;
-  //   uint32_t current_event = 0;
-  //   clearAutomationToGui();
-  //   clearModulationToGui();
-  //   while (remaining > 0) {
-  //     if (current_event < num_events) {
-  //       const clap_event_header_t* header = in_events->get(in_events,current_event);
-  //       current_event += 1;
-  //       int32_t length = header->time - current_time;
-  //       // if length > remaining ...
-  //       //while (length > 0) {
-  //       if (length > 0) {
-  //         processAudio(AContext,current_time,length);
-  //         remaining -= length;    // -= 32;
-  //         current_time += length; // -= 32;
-  //       }
-  //       //processEventInterleaved(header);
-  //       handleEvent(header);
-  //     }
-  //     else { // no more events
-  //       int32_t length = remaining;
-  //       processAudio(AContext,current_time,length);
-  //       remaining -= length;
-  //       current_time += length;
-  //     }
-  //   }
-  //   //SAT_Assert( events.read(&event) == false );
-  //   queueAutomationToGui();
-  //   queueModulationToGui();
-  // }
-
-  //----------
-  
-  // split audio block in smaller, regular sizes, and quantize events
-  // (process all events 'belonging' to the slice, at the atart ot the slice,
-  // and then the audio)..
-  // events could be processed up to (slicesize - 1) samples 'early'..
-
-  // virtual void processQuantizedEvents(SAT_ProcessContext* AContext) {
-  //   uint32_t buffer_length = AContext->process->frames_count;
-  //   uint32_t remaining = buffer_length;
-  //   uint32_t current_time = 0;
-  //   uint32_t current_event = 0;
-  //   uint32_t next_event_time = 0;
-  //   clearAutomationToGui();
-  //   clearModulationToGui();
-  //   const clap_input_events_t* in_events = AContext->process->in_events;
-  //   uint32_t num_events = in_events->size(in_events);
-  //   if (num_events > 0) {
-  //     const clap_event_header_t* header = in_events->get(in_events,current_event);
-  //     current_event += 1;
-  //     next_event_time = header->time;
-  //     do {
-  //       // process events for next slice
-  //       while (next_event_time < (current_time + SAT_AUDIO_QUANTIZED_SIZE)) {
-  //         handleEvent(header);
-  //         if (current_event < num_events) {
-  //           header = in_events->get(in_events,current_event);
-  //           // if (header)
-  //           current_event += 1;
-  //           next_event_time = header->time;
-  //         }
-  //         else {
-  //           next_event_time = buffer_length; // ???
-  //         }
-  //       }
-  //       // process next slice
-  //       if (remaining < SAT_AUDIO_QUANTIZED_SIZE) {
-  //         processAudio(AContext,current_time,remaining);
-  //         current_time += remaining;
-  //         remaining = 0;
-  //       }
-  //       else {
-  //         processAudio(AContext,current_time);
-  //         current_time += SAT_AUDIO_QUANTIZED_SIZE;
-  //         remaining -= SAT_AUDIO_QUANTIZED_SIZE;
-  //       }
-  //     } while (remaining > 0);
-  //   }
-  //   else { // no events..
-  //     do {
-  //       if (remaining < SAT_AUDIO_QUANTIZED_SIZE) processAudio(AContext,current_time,remaining);
-  //       else processAudio(AContext,current_time);
-  //       current_time += SAT_AUDIO_QUANTIZED_SIZE;
-  //       remaining -= SAT_AUDIO_QUANTIZED_SIZE;
-  //     } while (remaining > 0);
-  //   }
-  //   queueAutomationToGui();
-  //   queueModulationToGui();
-  // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------
-//public: // audio
-//------------------------------
-
-  // virtual void processAudio(SAT_ProcessContext* AContext) {
-  //   switch (MEventMode) {
-  //     case SAT_PLUGIN_EVENT_MODE_BLOCK: {
-  //       processAudioBlock(AContext);
-  //       break;
-  //     }
-  //     case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
-  //       break;
-  //     }
-  //     case SAT_PLUGIN_EVENT_MODE_QUANTIZED: {
-  //       break;
-  //     }
-  //   }
-  // }
-
-  //----------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // flushParamFromGuiToAudio();
-  // if (process->transport) handleTransportEvent(process->transport);
-  // //preProcessEvents(process->in_events,process->out_events);
-  // switch (MEventMode) {
-  //   case SAT_PLUGIN_EVENT_MODE_BLOCK: {
-  //     processBlockEvents(process->in_events,process->out_events);
-  //     processAudio(&MProcessContext);
-  //     break;
-  //   }
-  //   case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
-  //     SAT_PRINT;
-  //     processInterleavedEvents(&MProcessContext);
-  //     break;
-  //   }
-  //   case SAT_PLUGIN_EVENT_MODE_QUANTIZED: {
-  //     processQuantizedEvents(&MProcessContext);
-  //     break;
-  //   }
-  // }
-  // postProcessEvents(process->in_events,process->out_events);
-  // flushParamFromGuiToHost(process->out_events);
-
-
-
-
-//------------------------------
-//public: // queues
-//------------------------------
-
-//   // parameter, host -> gui
-//   // (automation, host-provided generic plugin interface)
-//
-//   /*
-//     TODO: check for duplicates
-//     pop updates to array, check array for duplicates..
-//     called from:
-//     - SAT_Plugin.handleParamValueEvent
-//   */
-//
-//   void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
-//     //SAT_Print("%i = %f\n",AIndex,AValue);
-//     SAT_ParamQueueItem item;
-//     item.type   = CLAP_EVENT_PARAM_VALUE;
-//     item.index  = AIndex;
-//     item.value  = AValue;
-//     if (!MParamFromHostToGuiQueue.write(item)) {
-//       //SAT_Log("queueParamFromHostToGui: couldn't write to queue\n");
-//       SAT_Print("queueParamFromHostToGui: couldn't write to queue\n");
-//     }
-//   }
-//
-//   /*
-//     TODO: check for duplicated (param/mod)
-//     called from:
-//     - SAT_Plugin.do_editorListener_timer
-//   */
-//
-//   void flushParamFromHostToGui() {
-//     uint32_t count = 0;
-//     //SAT_Print("\n");
-//     SAT_ParamQueueItem item;
-//     while (MParamFromHostToGuiQueue.read(&item)) {
-//       count += 1;
-//       SAT_Parameter* parameter = MParameters[item.index];
-//
-//       // parameters are in clap-space
-//       // widgets are 0..1
-//
-//       if (MEditor && MEditor->isOpen()) {
-//         MEditor->updateParameterFromHost(parameter,item.value);
-//       }
-//     }
-//     //if (count > 0) { SAT_Print("flushParamFromHostToGui: %i events\n",count); }
-//   }
-//
-//   // modulation, host -> gui
-//   // (modulation)
-//
-//   /*
-//     called from:
-//     - SAT_Plugin.handleParamModEvent
-//   */
-//
-//   void queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
-//     //SAT_Print("%i = %f\n",AIndex,AValue);
-//     SAT_ParamQueueItem item;
-//     item.type   = CLAP_EVENT_PARAM_MOD;
-//     item.index  = AIndex;
-//     item.value  = AValue;
-//     if (!MModFromHostToGuiQueue.write(item)) {
-//       //SAT_Log("queueModFromHostToGui: couldn't write to queue\n");
-//       SAT_Print("queueModFromHostToGui: couldn't write to queue\n");
-//     }
-//   }
-//
-//   /*
-//     TODO: check for duplicates
-//     pop updates to array, check array for duplicates..
-//     called from:
-//     - SAT_Plugin.do_editorListener_timer
-//   */
-//
-//   void flushModFromHostToGui() {
-//     //SAT_Print("\n");
-//     SAT_ParamQueueItem item;
-//     uint32_t count = 0;
-//     while (MModFromHostToGuiQueue.read(&item)) {
-//       count += 1;
-//       SAT_Parameter* parameter = MParameters[item.index];
-//       if (MEditor && MEditor->isOpen()) {
-//         MEditor->updateModulationFromHost(parameter,item.value);
-//       }
-//     }
-//     //if (count > 0) { SAT_Print("flushModFromHostToGui: %i events\n",count); }
-//   }
-//
-//   // parameter, gui -> audio
-//   // (tweak knob)
-//
-//   /*
-//     called from:
-//     - SAT_Plugin.do_editorListener_parameter_update
-//   */
-//
-//   void queueParamFromGuiToAudio(uint32_t AIndex, sat_param_t AValue) {
-//     //SAT_Print("%i = %f\n",AIndex,AValue);
-//     SAT_ParamQueueItem item;
-//     item.type   = CLAP_EVENT_PARAM_VALUE;
-//     item.index  = AIndex;
-//     item.value  = AValue;
-//     if (!MParamFromGuiToAudioQueue.write(item)) {
-//       //SAT_Log("queueParamFromGuiToAudio: couldn't write to queue\n");
-// //      SAT_Print("queueParamFromGuiToAudio: couldn't write to queue\n");
-//     }
-//   }
-//
-//   /*
-//     TODO: check for duplicates? can we have duplicates from gui?
-//     called from:
-//     - SAT_Plugin.process
-//   */
-//
-//   void flushParamFromGuiToAudio() {
-//     uint32_t count = 0;
-//     //SAT_Print("\n");
-//     SAT_ParamQueueItem item;
-//     while (MParamFromGuiToAudioQueue.read(&item)) {
-//       count += 1;
-//       //SAT_PRINT;
-//       clap_event_param_value_t event;
-//       event.header.size     = sizeof(clap_event_param_value_t);
-//       event.header.time     = 0;
-//       event.header.space_id = CLAP_CORE_EVENT_SPACE_ID; // SAT_EVENT_SPACE_ID
-//       event.header.type     = CLAP_EVENT_PARAM_VALUE;
-//       event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-//       event.param_id        = item.index;
-//       event.cookie          = nullptr; // set?
-//       event.note_id         = -1;
-//       event.port_index      = -1;
-//       event.channel         = -1;
-//       event.key             = -1;
-//       event.value           = item.value;
-//       bool handled = handleParamValue(&event); // handleParamValueEvent ?
-//       if (!handled) {
-//         //TODO
-//       }
-//     }
-//     //if (count > 0) { SAT_Print("flushParamFromGuiToAudio: %i events\n",count); }
-//   }
-//
-//   // parameter, gui -> host
-//   // (tweak knob)
-//
-//   /*
-//     called from:
-//     - SAT_Plugin.do_editorListener_parameter_update
-//   */
-//
-//   void queueParamFromGuiToHost(uint32_t AIndex, sat_param_t AValue) {
-//     //SAT_Print("%i = %f\n",AIndex,AValue);
-//     SAT_ParamQueueItem item;
-//     item.type   = CLAP_EVENT_PARAM_VALUE;
-//     item.index  = AIndex;
-//     item.value  = AValue;
-//     if (!MParamFromGuiToHostQueue.write(item)) {
-//       //SAT_Log("queueParamFromGuiToHost: couldn't write to queue\n");
-// //      SAT_Print("queueParamFromGuiToHost: couldn't write to queue\n");
-//     }
-//   }
-//
-//   /*
-//     TODO: check for duplicates? can we have duplicates from gui?
-//     called from:
-//     - SAT_Plugin.process()
-//   */
-//
-//   void flushParamFromGuiToHost(const clap_output_events_t *out_events) {
-//     uint32_t count = 0;
-//     //SAT_Print("\n");
-//     SAT_ParamQueueItem item;
-//     while (MParamFromGuiToHostQueue.read(&item)) {
-//       count += 1;
-//       //SAT_Print("%i = %.3f\n",item.index,item.value);
-//       SAT_Parameter* parameter = getParameter(item.index);
-//       // gesture begin
-//       {
-//         clap_event_param_gesture_t event;
-//         event.header.size     = sizeof(clap_event_param_gesture_t);
-//         event.header.time     = 0;
-//         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-//         event.header.type     = CLAP_EVENT_PARAM_GESTURE_BEGIN;
-//         event.header.flags    = 0;
-//         event.param_id        = item.index;
-//         const clap_event_header_t* header = (const clap_event_header_t*)&event;
-//         out_events->try_push(out_events,header);
-//       }
-//       // param value
-//       {
-//         clap_event_param_value_t event;
-//         event.header.size     = sizeof(clap_event_param_value_t);
-//         event.header.time     = 0;
-//         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-//         event.header.type     = CLAP_EVENT_PARAM_VALUE;
-//         event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-//         event.param_id        = item.index;
-//         event.cookie          = parameter->getCookie(); // reaper needs the event.cookie ??
-//         event.note_id         = -1;
-//         event.port_index      = -1;
-//         event.channel         = -1;
-//         event.key             = -1;
-//         event.value           = item.value;
-//         // to host..
-//         const clap_event_header_t* header = (const clap_event_header_t*)&event;
-//         out_events->try_push(out_events,header);
-//       }
-//       // gesture end
-//       {
-//         clap_event_param_gesture_t event;
-//         event.header.size     = sizeof(clap_event_param_gesture_t);
-//         event.header.time     = 0;
-//         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-//         event.header.type     = CLAP_EVENT_PARAM_GESTURE_END;
-//         event.header.flags    = 0;
-//         event.param_id        = item.index;
-//         const clap_event_header_t* header = (const clap_event_header_t*)&event;
-//         out_events->try_push(out_events,header);
-//       }
-//     } // while
-//     //if (count > 0) { SAT_Print("flushParamFromGuiToHost: %i events\n",count); }
-//   }
-
-
-
-
-
-
-
-
-
-/*
-
-#if !defined (SAT_GUI_NOGUI)
-
-  bool queueParamFromHostToGui(uint32_t AIndex) {
-    return MParamFromHostToGui.write(AIndex);
-  }
-
-  bool queueModFromHostToGui(uint32_t AIndex) {
-    return MModFromHostToGui.write(AIndex);
-  }
-
-  bool queueParamFromGuiToHost(uint32_t AIndex) {
-    return MParamFromGuiToHost.write(AIndex);
-  }
-
-  bool queueParamFromGuiToAudio(uint32_t AIndex) {
-    return MParamFromGuiToAudio.write(AIndex);
-  }
-
-  //----------
-
-  void flushParamFromHostToGui() {
-    uint32_t index;
-    while (MParamFromHostToGui.read(&index)) {
-      SAT_Print("%i\n",index);
-      // todo
-    }
-  }
-
-  void flushModFromHostToGui() {
-    uint32_t index;
-    while (MParamFromHostToGui.read(&index)) {
-      SAT_Print("%i\n",index);
-      // todo
-    }
-  }
-
-  void flushParamFromGuiToHost() {
-    uint32_t index;
-    while (MParamFromHostToGui.read(&index)) {
-      SAT_Print("%i\n",index);
-      // todo
-    }
-  }
-
-  void flushParamFromGuiToAudio() {
-    uint32_t index;
-    while (MParamFromHostToGui.read(&index)) {
-      SAT_Print("%i\n",index);
-      // todo
-    }
-  }
-
-#endif // nogui
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

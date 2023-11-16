@@ -60,8 +60,8 @@ protected:
   double    MDropShadowCorner           = 0.0;
   double    MDropShadowXOffset          = 0.0;
   double    MDropShadowYOffset          = 0.0;
-  SAT_Color MDropShadowIColor           = SAT_DarkestGrey;
-  SAT_Color MDropShadowOColor           = SAT_DarkGrey;
+  SAT_Color MDropShadowIColor           = SAT_Color(0.0, 0.0, 0.0, 0.5 );
+  SAT_Color MDropShadowOColor           = SAT_Color(0.0, 0.0, 0.0, 0 );
   bool      MDropShadowInner            = false;
 
   double    MDropShadowXOffsetTMP       = 0.0;
@@ -71,11 +71,12 @@ protected:
 
   bool        MDrawText             = true;
   SAT_Color   MTextColor            = SAT_White;
-  double      MTextSize             = 16.0;
+  double      MTextSize             = 12.0;
   uint32_t    MTextAlignment        = SAT_TEXT_ALIGN_CENTER;
   SAT_Rect    MTextOffset           = {};
 //  const char* MText                 = nullptr;
   char        MText[1024]           = {0};
+  int32_t     MTextFont             = -1;
   
   bool        MAutoSize             = false;
   SAT_Rect    MAutoSizeBorder       = SAT_Rect(0,0,0,0);
@@ -91,7 +92,7 @@ protected:
 
   bool      MDrawValue              = false;
   SAT_Color MValueColor             = SAT_White;
-  double    MValueSize              = 16;
+  double    MValueSize              = 12.0;
   uint32_t  MValueAlignment         = SAT_TEXT_ALIGN_RIGHT;
   SAT_Rect  MValueOffset            = {0,0,0,0};
   char      MValueText[256]         = {0};
@@ -255,6 +256,7 @@ public:
   
   //virtual void setText(const char* AText)                 { MText = AText; }
   virtual void setText(const char* AText)                 { strcpy(MText,AText); }
+  virtual void setTextFont(int32_t AFont)                 { MTextFont = AFont; }
   
   virtual void setAutoSize(bool AAuto=true)               { MAutoSize = AAuto; }
   virtual void setAutoTextSize(bool AAuto=true)           { MAutoTextSize = AAuto; }
@@ -314,6 +316,9 @@ public:
       SAT_Rect sr = mrect;
       sr.shrink(MDropShadowFeather * (S*0.5));
       //sat_nanovg_paint_t shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,MDropShadowIColor,MDropShadowOColor);
+
+      sat_paint_t shadow;
+
       if (MDropShadowInner) {
         //sr.x -=  MDropShadowXOffset * S;
         //sr.y -=  MDropShadowYOffset * S;
@@ -321,14 +326,17 @@ public:
         //sr.h +=  MDropShadowYOffset * S * 2;
         sr.w += (MDropShadowFeather*S*0.5);
         sr.h += (MDropShadowFeather*S*0.5);
+        shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,MDropShadowOColor,MDropShadowIColor);
+      }
+      else {
+        shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,MDropShadowIColor,MDropShadowOColor);
       }
 
-//      sat_nanovg_paint_t shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,MDropShadowIColor,MDropShadowOColor);
 
       //painter->setFillPaint(shadow);
       //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
 
-//      painter->setFillPaint(shadow);
+      painter->setFillPaint(shadow);
 
       //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
       if (MRoundedCorners) {
@@ -446,8 +454,8 @@ public:
       if (mrect.h <= 0.0) return;
       double textsize = MTextSize * S;
 
-//      painter->setTextColor(MTextColor);
-//      painter->setTextSize(textsize); // try original..
+      // painter->setTextColor(MTextColor);
+      // painter->setTextSize(textsize); // try original..
       
       // if autosize is true, the text will be scaled up as much as
       // possible to fit inside the rect..
@@ -466,16 +474,20 @@ public:
           if (wratio < hratio) textsize *= wratio;
           else textsize *= hratio;
           //SAT_Print("mrect.w %.2f mrect.h %.2f wratio %.2f hratio %.2f\n",mrect.w,mrect.h,wratio,hratio);
-//          painter->setTextSize(textsize);
+          // painter->setTextSize(textsize);
         //}
       }
       
-//      SAT_Print("textsize %f winscale %f\n",textsize,S); // prints textsize: 8, winscale: 1.0
-//      SAT_Print("textsize %f winscale %f owner %p\n",textsize,S,getOwner()); // prints textsize: 8, winscale: 1.0
+      //      SAT_Print("textsize %f winscale %f\n",textsize,S); // prints textsize: 8, winscale: 1.0
+      //      SAT_Print("textsize %f winscale %f owner %p\n",textsize,S,getOwner()); // prints textsize: 8, winscale: 1.0
       
       const char* text = MText;
       painter->setTextSize(textsize);
-      
+
+if (MTextFont != -1) {
+  painter->selectFont(MTextFont);
+}
+
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
         // drop shadow
@@ -506,6 +518,11 @@ public:
         painter->setTextColor(MTextColor);
         painter->drawText(p.x,p.y,text);
       }
+
+if (MTextFont != -1) {
+  int32_t default_font = painter->getDefaultFont();
+  painter->selectFont(default_font);
+}
       
     }
   }

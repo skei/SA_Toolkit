@@ -74,9 +74,9 @@ private:
     MEditing = true;
     MCaretPos = strlen(MText);
     //do_widgetListener_update(this);
-    do_widgetListener_want_keys(this);
-    do_widgetListener_set_modal(this);
-    do_widgetListener_redraw(this,0);
+    do_widget_captureKeys(this);
+    do_widget_setModal(this);
+    do_widget_redraw(this);
   }
 
   //----------
@@ -85,9 +85,9 @@ private:
     SAT_PRINT;
     MEditing = false;
     //do_widgetListener_update(this);
-    do_widgetListener_want_keys(nullptr);
-    do_widgetListener_set_modal(nullptr);
-    do_widgetListener_redraw(this,0);
+    do_widget_captureKeys(nullptr);
+    do_widget_setModal(nullptr);
+    do_widget_redraw(this);
   }
 
 //------------------------------
@@ -187,7 +187,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
+  void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
     //SAT_Widget::on_widget_mouseClick(AXpos,AYpos,AButton,AState);
     switch(AButton) {
       case SAT_BUTTON_LEFT:
@@ -208,7 +208,7 @@ public:
 
   // AKey = key code, not ascii..
 
-  void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimeStamp=0) override {
+  void on_widget_keyPress(char AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATimeStamp=0) override {
     
     //SAT_Print("AChar %i '%c' AKeySym %i AState %i\n",(int)AChar,AChar,AKeySym,AState);
     
@@ -226,42 +226,42 @@ public:
         break;
       case SAT_KEY_HOME:
         MCaretPos = 0;
-        do_widgetListener_update(this,0);
-        do_widgetListener_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_END:
         len = strlen(MText);
         MCaretPos = len;
-        do_widgetListener_update(this,0);
-        do_widgetListener_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_LEFT:
         MCaretPos -= 1;
         if (MCaretPos < 0) MCaretPos = 0;
-        do_widgetListener_update(this,0);
-        do_widgetListener_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_RIGHT:
         len = strlen(MText);
         MCaretPos += 1;
         if (MCaretPos > len) MCaretPos = len;
-        do_widgetListener_update(this,0);
-        do_widgetListener_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_DELETE:
         len = strlen(MText);
         if ((uint32_t)MCaretPos < strlen(MText)) {
           SAT_DeleteChar(MText,MCaretPos);
-          do_widgetListener_update(this,0);
-          do_widgetListener_redraw(this,0);
+          do_widget_update(this);
+          do_widget_redraw(this);
         }
         break;
       case SAT_KEY_BACKSPACE:
         if (MCaretPos > 0) {
           MCaretPos -= 1;
           SAT_DeleteChar(MText,MCaretPos);
-          do_widgetListener_update(this,0);
-          do_widgetListener_redraw(this,0);
+          do_widget_update(this);
+          do_widget_redraw(this);
         }
         break;
       default:
@@ -278,8 +278,8 @@ public:
           
           SAT_InsertChar(MText,MCaretPos,c);
           MCaretPos += 1;
-          do_widgetListener_update(this,0);
-          do_widgetListener_redraw(this,0);
+          do_widget_update(this);
+          do_widget_redraw(this);
         }
         break;
     } // switch

@@ -11,7 +11,7 @@ class SAT_CurveWidget
 protected:
 //------------------------------
 
-    SAT_Color MCurveColor     = SAT_DarkestGrey;
+    SAT_Color MCurveColor     = SAT_LightGrey;
     SAT_Color MInteractColor  = SAT_Color(1);//SAT_COLOR_WHITE;
     bool      MDecay          = false;
     double    MCoords[1024]   = {0};
@@ -28,7 +28,7 @@ public:
     setName("SAT_CurveWidget");
     MDecay = ADecay;
     setText("curve");
-    setBackgroundColor(SAT_DarkGrey);
+    setBackgroundColor(0.3);
     setBorderWidth(0.5);
     setBorderColor(SAT_Grey);
   }

@@ -56,11 +56,17 @@ public:
       MVerticalScrollBar = new SAT_ScrollBarWidget( SAT_Rect(10,10) );
       SAT_PanelWidget::appendChildWidget(MVerticalScrollBar);
       MVerticalScrollBar->setName("scrollbox/v.scr");
+
 //      MVerticalScrollBar->setAlignment(SAT_WIDGET_ALIGN_RIGHT);
 //      MVerticalScrollBar->setStretching(SAT_WIDGET_STRETCH_VERTICAL);
+      MVerticalScrollBar->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_RIGHT);
+      MVerticalScrollBar->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_VERT);
+      MVerticalScrollBar->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_RIGHT);
+
       MVerticalScrollBar->setDirection(SAT_DIRECTION_VERT);
+
       if (showHorizontalScrollBar) {
-//        MVerticalScrollBar->setOuterBorder(SAT_Rect(0,0,0,10));
+        MVerticalScrollBar->setLayoutOuterBorder(SAT_Rect(0,0,0,10));
       }
     }
     
@@ -68,9 +74,15 @@ public:
       MHorizontalScrollBar = new SAT_ScrollBarWidget( SAT_Rect(10,10) );
       SAT_PanelWidget::appendChildWidget(MHorizontalScrollBar);
       MHorizontalScrollBar->setName("scrollbox/h.scr");
+
 //      MHorizontalScrollBar->setAlignment(SAT_WIDGET_ALIGN_BOTTOM);
 //      MHorizontalScrollBar->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+      MHorizontalScrollBar->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM);
+      MHorizontalScrollBar->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+      MHorizontalScrollBar->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_BOTTOM);
+
       MHorizontalScrollBar->setDirection(SAT_DIRECTION_HORIZ);
+
       //MHorizontalScrollBar->layout.extraBorder.w = 10;
       //if (showVerticalScrollBar) {
       //  MHorizontalScrollBar->Layout.extraBorder.w = 10;
@@ -81,13 +93,17 @@ public:
     MContent->setName("scrollbox/content");
     SAT_PanelWidget::appendChildWidget(MContent);
     //MContent->setAlignment(SAT_WIDGET_ALIGN_LEFT | SAT_WIDGET_ALIGN_TOP);
+
 //    MContent->setStretching(SAT_WIDGET_STRETCH_ALL);
+    MContent->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_ALL);
+
     //MContent->layout.spacing = 5;
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(false);
     MContent->setFillBackground(true);
     //MContent->setFillBackground(true);
     //MContent->setBackgroundColor(SAT_COLOR_DARK_GREEN);
+
 //    MContent->setAutoClip(true);
     
   }
@@ -181,15 +197,15 @@ public:
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender) override {
-    if (ASender == MVerticalScrollBar) {
+  void do_widget_update(SAT_Widget* AWidget) override {
+    if (AWidget == MVerticalScrollBar) {
       //SAT_Print("vscroll\n");
       float visible = MVerticalScrollBar->getThumbSize();
       float pos     = MVerticalScrollBar->getThumbPos();
       float prev    = MVerticalScrollBar->getPrevThumbPos();
       updateScroll(MVerticalScrollBar,visible,pos,prev,true);
     }
-    else if (ASender == MHorizontalScrollBar) {
+    else if (AWidget == MHorizontalScrollBar) {
       //SAT_Print("hscroll\n");
       float visible = MHorizontalScrollBar->getThumbSize();
       float pos     = MHorizontalScrollBar->getThumbPos();
@@ -197,8 +213,8 @@ public: // child to parent
       updateScroll(MHorizontalScrollBar,visible,pos,prev,true);
     }
     else {
-      //SAT_Print("...\n");
-      SAT_PanelWidget::do_widget_update(ASender);
+      //SAT_Print("%s\n",AWidget->getName());
+      SAT_PanelWidget::do_widget_update(AWidget);
     }
   }
   

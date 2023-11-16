@@ -241,13 +241,19 @@ public:
 public:
 //------------------------------
 
+  xcb_window_t getX11Window() {
+    return MWindow;
+  }
+
+//------------------------------
+public: // base window
+//------------------------------
+
   SAT_Renderer* getRenderer() override {
     return MRenderer;
   }
 
-//------------------------------
-public:
-//------------------------------
+  //----------
 
   uint32_t getWindowType() override {
     return SAT_WINDOW_TYPE_X11;

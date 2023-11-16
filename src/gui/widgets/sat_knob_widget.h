@@ -53,6 +53,7 @@ public:
     setName("SAT_KnobWidget");
 
     setFillBackground(true);
+    setBackgroundColor(SAT_DarkGrey);
     setDrawBorder(false);
 
     //setDrawValue(false);

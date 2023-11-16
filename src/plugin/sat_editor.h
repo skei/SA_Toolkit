@@ -40,6 +40,8 @@ public:
   SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0) {
     //if (AListener) MListener = AListener;
     MListener = AListener;
+    MWidth = AWidth;
+    MHeight = AHeight;
 
     #if defined (SAT_GUI_WAYLAND)
       MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
@@ -57,6 +59,7 @@ public:
 
   virtual ~SAT_Editor() {
     if (MWindow /*&& MIsOpen*/) {
+      //MWindow->on_window_close();
       MWindow->close();
       delete MWindow;
     }
@@ -80,24 +83,16 @@ public:
 
   //----------
 
-  virtual void updateParameterFromHost(SAT_Parameter* AParameter) {
-    // uint32_t index = AParameter->getIndex();
-    // sat_param_t value = AParameter->getValue();
-    // SAT_Print("index %i value %f\n",index,value);
-  }
-
-  //----------
-
   // parameters are in clap-space
   // widgets are 0..1
   
   virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue) {
-    // //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
-    // SAT_Widget* widget = (SAT_Widget*)AParam->getWidget();
-    // if (widget) {
-    //   double v = AParam->normalizeValue(AValue);
-    //   widget->setValue(v,ASubIndex);
-    // }
+    //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
+    SAT_Widget* widget = (SAT_Widget*)AParam->getWidget();
+    if (widget) {
+      double v = AParam->normalize(AValue);
+      widget->setValue(v,ASubIndex);
+    }
   }
 
   //----------
@@ -111,21 +106,27 @@ public:
   // widgets are 0..1
 
   virtual void updateParameterFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
-    // if (MIsOpen) {
-    //   //SAT_PaintContext* pc = MWindow->getPaintContext();
-    //   //uint32_t counter = pc->counter;
-    //   SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
-    //   uint32_t index = AParameter->getWidgetIndex();
-    //   if (widget) {
-    //     sat_param_t normalized_value = AParameter->normalizeValue(AValue);
-    //     widget->setValue(normalized_value,index);
-    //     //widget->update();
-    //     //parentRedraw();
-    //     widget->do_widgetListener_redraw(widget,0);
-    //   }
-    // }
+    if (MIsOpen) {
+      //SAT_PaintContext* pc = MWindow->getPaintContext();
+      //uint32_t counter = pc->counter;
+      SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
+      uint32_t index = AParameter->getWidgetIndex();
+      if (widget) {
+        sat_param_t normalized_value = AParameter->normalize(AValue);
+        widget->setValue(normalized_value,index);
+        //widget->update();
+        //parentRedraw();
+        widget->do_widget_redraw(widget);
+      }
+    }
   }
   
+  // virtual void updateParameterFromHost(SAT_Parameter* AParameter) {
+  //   uint32_t index = AParameter->getIndex();
+  //   sat_param_t value = AParameter->getValue();
+  //   SAT_Print("index %i value %f\n",index,value);
+  // }
+
   //----------
 
   // parameters are in clap-space
@@ -134,45 +135,32 @@ public:
   // AValue, clap-space
 
   virtual void updateModulationFromHost(SAT_Parameter* AParameter, sat_param_t AValue) {
-    // if (MIsOpen) {
-    //   SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
-    //   if (widget) {
-    //     //sat_param_t normalized_modulation = AParameter->normalizeValue(AValue);
-    //     //widget->setModulation(normalized_modulation);
-    //     sat_param_t normalized_value = AParameter->normalizeValue(AValue);
-    //     widget->setModulation(normalized_value);
-    //     //widget->update();
-    //     //widget->parentRedraw();
-    //     widget->do_widgetListener_redraw(widget,0);
-    //   }
-    // }
+    if (MIsOpen) {
+      SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
+      if (widget) {
+        //sat_param_t normalized_modulation = AParameter->normalizeValue(AValue);
+        //widget->setModulation(normalized_modulation);
+        sat_param_t normalized_value = AParameter->normalize(AValue);
+        widget->setModulation(normalized_value);
+        //widget->update();
+        //widget->parentRedraw();
+        widget->do_widget_redraw(widget);
+      }
+    }
   }
 
 //------------------------------
 public: // window listener
 //------------------------------
 
-  // void do_windowListener_update_widget(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex) override {
-  //   if (MListener) {
-  //     SAT_Parameter* param = (SAT_Parameter*)ASender->getParameter(AIndex);
-  //     if (param) {
-  //       double value = ASender->getValue(AIndex); // 0..1
-  //       //uint32_t parm_index = ASender->getConnectionIndex();
-  //       uint32_t param_index = param->getIndex();
-  //       //SAT_Print("AIndex %i param_index %i value %f\n",AIndex,param_index,value);
-  //       MListener->do_editorListener_parameter_update(param_index,value);
-  //     }
-  //   }
-  // }
-
   void on_windowListener_update(SAT_Widget* AWidget) override {
-    SAT_Print("%s\n",AWidget->getName());
-    sat_param_t value = AWidget->getValue();
-    SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter();
-    if (parameter) {
-      //SAT_Print("parameter %p\n",parameter);
-      //SAT_Print("listener %p\n",MListener);
-      if (MListener) {
+    if (MListener) {
+      //SAT_Print("%s\n",AWidget->getName());
+      sat_param_t value = AWidget->getValue();
+      SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter();
+      if (parameter) {
+        //SAT_Print("parameter %p\n",parameter);
+        //SAT_Print("listener %p\n",MListener);
         MListener->on_editorListener_update(parameter,value);
       }
     }
@@ -181,11 +169,14 @@ public: // window listener
   //----------
 
   //void on_windowListener_resize(SAT_Window* AWindow, int32_t AWidth, int32_t AHeight) override {
+  //  if (MListener) MListener->do_editorListener_timer(AWindow,AElapsed);
   //}
 
   //----------
 
   void on_windowListener_timer(SAT_Timer* ATimer, double AElapsed) override {
+    //SAT_PRINT;
+    if (MListener) MListener->on_editorListener_timer(ATimer,AElapsed);
   }
 
 
@@ -197,8 +188,22 @@ public: // clap_plugin
 
   //virtual bool is_api_supported(const char *api, bool is_floating) { return false; }
   //virtual bool get_preferred_api(const char **api, bool *is_floating) { return false; }
-  //virtual bool create(const char *api, bool is_floating) { return false; }
-  //virtual void destroy() {}
+
+  //----------
+
+  virtual bool create(const char *api, bool is_floating) {
+    return true;
+  }
+
+  //----------
+
+  virtual void destroy() {
+    //SAT_Print("\n");
+    //if (MWindow) MWindow->on_window_close();
+    if (MIsOpen) MWindow->close();
+    MIsOpen = false;
+    //MIsClosing = true;
+  }
 
   //----------
 
@@ -259,7 +264,7 @@ public: // clap_plugin
     MHeight = height;
     if (MWindow) {
       MWindow->setSize(width,height);
-      //if (MIsOpen) { MWindow->on_window_resize(width,height); }
+//      /*if (MIsOpen)*/ { MWindow->on_window_resize(width,height); }
     }
     return true;
   }
@@ -267,7 +272,7 @@ public: // clap_plugin
   //----------
 
   /*
-    todo: delay window creation until show()?
+    todo: should we (cache info and) delay window creation until show()?
   */
 
   virtual bool set_parent(const clap_window_t *window) {
@@ -280,7 +285,7 @@ public: // clap_plugin
       MWindow->setParent(MParent->win32);
       return true;
     #elif defined (SAT_GUI_X11)
-      SAT_PRINT;
+      //SAT_PRINT;
       MWindow->setParent(MParent->x11);
       return true;
     #else
