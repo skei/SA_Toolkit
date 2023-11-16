@@ -277,9 +277,10 @@ public:
 
   //----------
 
-  virtual void setRectAndBase(SAT_Rect ARect, double AScale=1.0) {
+  virtual void setRectAndBase(SAT_Rect ARect/*, double AScale=1.0*/) {
+    double scale = getWindowScale();
     setRect(ARect);
-    ARect.scale(1.0 / AScale);
+    ARect.scale(1.0 / scale);//AScale);
     setBaseRect(ARect);
   }
 
@@ -420,6 +421,17 @@ public:
 
   virtual void realignChildWidgets(bool ARecursive=true) {
 
+    double scale = getWindowScale();
+
+    SAT_Rect inner_border = MLayout.inner_border;
+    inner_border.scale(scale);
+
+    SAT_Rect outer_border = MLayout.outer_border;
+    outer_border.scale(scale);
+
+    SAT_Point spacing = MLayout.spacing;
+    spacing.scale(scale);
+
     SAT_Rect parent_rect = getRect();
     parent_rect.shrink(MLayout.inner_border);
     double parent_xcenter = parent_rect.x + (parent_rect.w * 0.5);
@@ -430,14 +442,14 @@ public:
     double layout_xcenter = layout_rect.x + (layout_rect.w * 0.5);
     double layout_ycenter = layout_rect.y + (layout_rect.h * 0.5);
 
-    SAT_Point spacing = MLayout.spacing;
-
     MContentRect = SAT_Rect(layout_rect.x,layout_rect.y,0,0);
 
     for (uint32_t i=0; i<MChildWidgets.size(); i++) {
 
-      SAT_Widget*       child         = MChildWidgets[i];
-      SAT_Rect          child_rect;   // = child->getBaseRect();
+      SAT_Widget* child = MChildWidgets[i];
+
+      SAT_Rect child_rect; // = child->getBaseRect();
+
       SAT_WidgetState*  child_state   = child->getState();
       uint32_t          child_layout  = child->getLayout()->flags;
       SAT_Point         child_offset; // = child_rect.getPos();
@@ -454,6 +466,7 @@ public:
         }
         else {
           child_rect = child->getBaseRect();
+          child_rect.scale(scale);
         }
 
         //SAT_Print("%.f,%.f,%.f,%.f\n",child_rect.x,child_rect.y,child_rect.w,child_rect.h);
@@ -520,6 +533,8 @@ public:
 
         //-----
 
+        child_rect.shrink(outer_border);
+
         MContentRect.combine(child_rect);
         child_rect.shrink(MLayout.outer_border);
 
@@ -536,8 +551,8 @@ public:
       } // visible
     } // for
 
-    //MContentRect.w += MLayout.inner_border.w;
-    //MContentRect.h += MLayout.inner_border.h;
+    MContentRect.w += inner_border.w;
+    MContentRect.h += inner_border.h;
 
   }
 

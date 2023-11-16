@@ -424,11 +424,14 @@ public: // base window
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-
+    //MWidth = AWidth;
+    //MHeight = AHeight;
     //SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
     MScale = recalcScale(AWidth,AHeight);
-
     if (MRootWidget) {
+
+//      MRootWidget->scaleWidget(MScale);
+
       MRootWidget->setSize(SAT_Point(AWidth,AHeight));
       MRootWidget->realignChildWidgets();
       //MDirtyGuiWidgets.write(MRootWidget);
@@ -453,7 +456,7 @@ public: // base window
 
     MPaintContext.painter = painter;
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
-    MPaintContext.scale = 1.0;
+    MPaintContext.scale = MScale;
     MPaintContext.counter += 1;
 
     uint32_t window_width = getWidth();
@@ -753,7 +756,7 @@ public: // widget owner
   }
 
   double on_widgetOwner_getScale() override {
-    return 1.0;//MScale;
+    return MScale;
   }
 
 //------------------------------

@@ -19,6 +19,7 @@ struct SAT_Point {
   union {
     struct { double x,y; };
     struct { double w,h; };
+    struct { double horiz,vert; };
   };
 
 //------------------------------
@@ -46,8 +47,69 @@ struct SAT_Point {
   }
 
 //------------------------------
-// public:
+public:
 //------------------------------
+
+  SAT_Point& operator += (double P) {
+    add(P);
+    return *this;
+  }
+
+  SAT_Point& operator -= (double P) {
+    sub(P);
+    return *this;
+  }
+
+//  MIP_Rect& operator += (double P) {
+//    add(P);
+//    return *this;
+//  }
+//
+//  MIP_Rect& operator -= (double P) {
+//    sub(P);
+//    return *this;
+//  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void scale(double AScale) {
+    x *= AScale;
+    y *= AScale;
+  }
+
+  void scale(double sx, double sy) {
+    x *= sx;
+    y *= sy;
+  }
+
+  void scale(SAT_Point s) {
+    x *= s.x;
+    y *= s.y;
+  }
+
+  //----------
+
+  void add(double AValue) {
+    x += AValue;
+    y += AValue;
+  }
+
+  void add(double ax, double ay) {
+    x += ax;
+    y += ay;
+  }
+
+  void sub(double AValue) {
+    x -= AValue;
+    y -= AValue;
+  }
+
+  void sub(double ax, double ay) {
+    x -= ax;
+    y -= ay;
+  }
 
 };
 

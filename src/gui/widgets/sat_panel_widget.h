@@ -441,9 +441,11 @@ public:
     if (MDrawText) {
       
       // if MOwner == null, this will return 1.0
+
       double S = AContext->scale; // getWindowScale();
       
-      //SAT_Print("S %f\n",S);
+      SAT_Print("S %f\n",S);
+
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
       SAT_Rect mrect = getRect();
@@ -482,11 +484,12 @@ public:
       //      SAT_Print("textsize %f winscale %f owner %p\n",textsize,S,getOwner()); // prints textsize: 8, winscale: 1.0
       
       const char* text = MText;
-      painter->setTextSize(textsize);
 
 if (MTextFont != -1) {
   painter->selectFont(MTextFont);
 }
+
+      painter->setTextSize(textsize);
 
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
