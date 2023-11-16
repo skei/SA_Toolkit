@@ -5,6 +5,8 @@
 #include "plugin/sat_editor.h"
 #include "gui/sat_widgets.h"
 
+#include "plugin/clap/sat_clap_host_implementation.h"
+
 //----------
 
 #define EDITOR_WIDTH  800
@@ -204,6 +206,7 @@ private: // widget page
           panel->setDropShadowInner(true);
           panel->setDropShadowFeather(5);
           panel->setDropShadowOffset(3,2);
+          panel->setDropShadowColors( SAT_Color(0.0, 0.0, 0.0, 0.5 ), SAT_Color(0.33, 0.33, 0.33, 0.5 ));
 
         // panel : font
 

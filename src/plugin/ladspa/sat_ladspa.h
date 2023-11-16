@@ -2,7 +2,7 @@
 #define sat_ladspa_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 
 #ifdef SAT_LINUX
   #include <ladspa.h>

@@ -119,6 +119,9 @@ public:
 
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
+
+    MProcessContext.plugin = this;
+
   }
 
   //----------
@@ -686,10 +689,12 @@ public: // events
     if (result) return true;
 
     if (event->flags & CLAP_TRANSPORT_HAS_TEMPO) {
+      //MProcessContext.has_tempo = true
       //MProcessContext.tempo     = event->tempo;             // in bpm
       //MProcessContext.tempo_inc = event->tempo_inc;         // tempo increment for each samples and until the next time info event
     }
     if (event->flags & CLAP_TRANSPORT_HAS_BEATS_TIMELINE) {
+      //MProcessContext.has_beats = true
       //MProcessContext. = clap_beattime song_pos_beats;      // position in beats
       //clap_beattime loop_start_beats;
       //clap_beattime loop_end_beats;
@@ -697,11 +702,13 @@ public: // events
       //int32_t       bar_number;                             // bar at song pos 0 has the number 0
     }
     if (event->flags & CLAP_TRANSPORT_HAS_SECONDS_TIMELINE) {
+      //MProcessContext.has_seconds = true
       //clap_sectime  song_pos_seconds;                       // position in seconds
       //clap_sectime  loop_start_seconds;
       //clap_sectime  loop_end_seconds;
     }
     if (event->flags & CLAP_TRANSPORT_HAS_TIME_SIGNATURE) {
+      //MProcessContext.has_timesig = true
       //uint16_t      tsig_num;                               // time signature numerator
       //uint16_t      tsig_denom;                             // time signature denominator
     }
@@ -1349,10 +1356,11 @@ protected: // clap_plugin
   //----------
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) override {
-    MIsActivated = true;
-    MSampleRate     = sample_rate;
-    MMinBufferSize  = min_frames_count;
-    MMaxBufferSize  = max_frames_count;
+    MProcessContext.plugin    = this;
+    MIsActivated              = true;
+    MSampleRate               = sample_rate;
+    MMinBufferSize            = min_frames_count;
+    MMaxBufferSize            = max_frames_count;
     MProcessContext.samplerate = sample_rate;
     MProcessContext.minbufsize = min_frames_count;
     MProcessContext.maxbufsize = max_frames_count;
@@ -1390,7 +1398,11 @@ protected: // clap_plugin
   clap_process_status process(const clap_process_t *process) override {
     MProcessContext.process = process;
     MProcessContext.samplerate = MSampleRate;
+    MProcessContext.minbufsize = MMinBufferSize;
+    MProcessContext.maxbufsize = MMaxBufferSize;
     MProcessContext.process_counter += 1;
+    //MProcessContext.voice_buffer
+    //MProcessContext.voice_length
     #if !defined (SAT_GUI_NOGUI)
       flushParamFromGuiToAudio();
     #endif

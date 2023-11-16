@@ -4,7 +4,7 @@
 
 // clap-as-ladspa
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/ladspa/sat_ladspa.h"
 
 //#include "kode.h"
@@ -106,9 +106,13 @@ public:
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     
     MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
+    MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
+
+    //MPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
+    //MClapPlugin = MPlugin->getClapPlugin();
+    
     MClapPlugin->init(MClapPlugin);
     
-    MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
     //SAT_Print("MPlugin %p\n",MPlugin);
     
     clap_audio_port_info_t info;

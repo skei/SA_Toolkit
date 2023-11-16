@@ -6,6 +6,7 @@
 #include "extern/clap/clap.h"
 
 #include "extern/clap/ext/draft/check-for-update.h"
+#include "extern/clap/ext/draft/transport-control.h"
 
 //----------------------------------------------------------------------
 #endif

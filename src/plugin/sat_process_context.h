@@ -5,6 +5,8 @@
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
 
+class SAT_Plugin;
+
 //----------------------------------------------------------------------
 //
 //
@@ -20,6 +22,9 @@ struct SAT_ProcessContext {
   uint64_t              sample_counter;
   uint32_t              voice_length;
   float**               voice_buffer;
+
+  SAT_Plugin*           plugin;
+  
 };
 
 //----------------------------------------------------------------------

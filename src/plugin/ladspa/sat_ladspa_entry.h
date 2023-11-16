@@ -2,7 +2,7 @@
 #define sat_ladspa_entry_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/sat_host_implementation.h"
 #include "plugin/ladspa/sat_ladspa.h"
 #include "plugin/ladspa/sat_ladspa_plugin.h"

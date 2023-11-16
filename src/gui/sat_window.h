@@ -132,6 +132,7 @@ public:
     MPaintContext.update_rect = SAT_Rect(0,0,AWidth,AHeight);
     MPaintContext.scale       = 1.0;
     MPaintContext.counter     = 0;
+    MPaintContext.window      = this;
 
     uint32_t width2 = SAT_NextPowerOfTwo(AWidth);
     uint32_t height2 = SAT_NextPowerOfTwo(AHeight);
