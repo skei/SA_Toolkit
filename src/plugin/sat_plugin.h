@@ -598,42 +598,46 @@ public: // events
   //----------
 
   bool handleNoteOnEvent(clap_event_note_t* event) {
-    //int32_t id   = event->note_id;
-    //int16_t port = event->port_index;
-    //int16_t chan = event->key;
-    //int16_t key  = event->key;
-    //double  vel  = event->velocity;
-    return on_plugin_noteOn(event);
+    bool result = on_plugin_noteOn(event);
+    if (result) return true;
+    return false;
   }
 
   //----------
 
   bool handleNoteOffEvent(clap_event_note_t* event) {
-    return on_plugin_noteOff(event);
+    bool result = on_plugin_noteOff(event);
+    if (result) return true;
+    return false;
   }
 
   //----------
 
   bool handleNoteChokeEvent(clap_event_note_t* event) {
-    return on_plugin_noteChoke(event);
+    bool result = on_plugin_noteChoke(event);
+    if (result) return true;
+    return false;
   }
 
   //----------
 
   bool handleNoteExpressionEvent(clap_event_note_expression_t* event) {
-    return on_plugin_noteExpression(event);
-
-    // uint32_t expression = event->expression_id;
-    // double value = event->value;
-    // switch (expression) {
-    //   case CLAP_NOTE_EXPRESSION_VOLUME:     SAT_Print("NOTE VOLUME EXPRESSION %.3f\n",value);     break; // with 0 < x <= 4, plain = 20 * log(x)
-    //   case CLAP_NOTE_EXPRESSION_PAN:        SAT_Print("NOTE PAN EXPRESSION %.3f\n",value);        break; // pan, 0 left, 0.5 center, 1 right
-    //   case CLAP_NOTE_EXPRESSION_TUNING:     SAT_Print("NOTE TUNING EXPRESSION %.3f\n",value);     break; // relative tuning in semitone, from -120 to +120
-    //   case CLAP_NOTE_EXPRESSION_VIBRATO:    SAT_Print("NOTE VIBRATO EXPRESSION %.3f\n",value);    break; // 0..1
-    //   case CLAP_NOTE_EXPRESSION_EXPRESSION: SAT_Print("NOTE EXPRESSION EXPRESSION %.3f\n",value); break; // 0..1
-    //   case CLAP_NOTE_EXPRESSION_BRIGHTNESS: SAT_Print("NOTE BRIGHTNESS EXPRESSION %.3f\n",value); break; // 0..1
-    //   case CLAP_NOTE_EXPRESSION_PRESSURE:   SAT_Print("NOTE PRESSURE EXPRESSION %.3f\n",value);   break; // 0..1
-    // }
+    bool result = on_plugin_noteExpression(event);
+    if (result) return true;
+    else {
+      // uint32_t expression = event->expression_id;
+      // double value = event->value;
+      // switch (expression) {
+      //   case CLAP_NOTE_EXPRESSION_VOLUME:     SAT_Print("NOTE VOLUME EXPRESSION %.3f\n",value);     break; // with 0 < x <= 4, plain = 20 * log(x)
+      //   case CLAP_NOTE_EXPRESSION_PAN:        SAT_Print("NOTE PAN EXPRESSION %.3f\n",value);        break; // pan, 0 left, 0.5 center, 1 right
+      //   case CLAP_NOTE_EXPRESSION_TUNING:     SAT_Print("NOTE TUNING EXPRESSION %.3f\n",value);     break; // relative tuning in semitone, from -120 to +120
+      //   case CLAP_NOTE_EXPRESSION_VIBRATO:    SAT_Print("NOTE VIBRATO EXPRESSION %.3f\n",value);    break; // 0..1
+      //   case CLAP_NOTE_EXPRESSION_EXPRESSION: SAT_Print("NOTE EXPRESSION EXPRESSION %.3f\n",value); break; // 0..1
+      //   case CLAP_NOTE_EXPRESSION_BRIGHTNESS: SAT_Print("NOTE BRIGHTNESS EXPRESSION %.3f\n",value); break; // 0..1
+      //   case CLAP_NOTE_EXPRESSION_PRESSURE:   SAT_Print("NOTE PRESSURE EXPRESSION %.3f\n",value);   break; // 0..1
+      // }
+    }
+    return false;
 
   }
 
@@ -679,6 +683,7 @@ public: // events
 
   bool handleTransportEvent(clap_event_transport_t* event) {
     bool result = on_plugin_transport(event);
+    if (result) return true;
 
     if (event->flags & CLAP_TRANSPORT_HAS_TEMPO) {
       //MProcessContext.tempo     = event->tempo;             // in bpm
@@ -705,115 +710,115 @@ public: // events
     if (event->flags & CLAP_TRANSPORT_IS_LOOP_ACTIVE) {}
     if (event->flags & CLAP_TRANSPORT_IS_WITHIN_PRE_ROLL) {}
 
-    return result;
+    return false;
 
   }
 
   //----------
 
   bool handleMidiEvent(clap_event_midi_t* event) {
-    return on_plugin_midi(event); // data1,data2,data3
+    bool result = on_plugin_midi(event); // data1,data2,data3
+    if (result) return true;
+    else {
 
-    // #ifdef SAT_PLUGIN_CONVERT_MIDI
-    //   uint8_t data1 = event->data[0];
-    //   uint8_t data2 = event->data[1];
-    //   uint8_t data3 = event->data[2];
-    //   uint8_t msg   = (data1 & 0xf0);
-    //   uint8_t chan  = (data1 & 0x0f);
-    //   switch (msg) {
-    //     case SAT_MIDI_NOTE_OFF: break;
-    //     case SAT_MIDI_NOTE_ON: break;
-    //     case SAT_MIDI_POLY_AFTERTOUCH: break;
-    //     case SAT_MIDI_CONTROL_CHANGE: break;
-    //     case SAT_MIDI_PROGRAM_CHANGE: break;
-    //     case SAT_MIDI_CHANNEL_AFTERTOUCH: break;
-    //     case SAT_MIDI_PITCHBEND: break;
-    //     case SAT_MIDI_SYS: break;
-    //   }
-    // #endif
+      #ifdef SAT_PLUGIN_CONVERT_MIDI
 
-    //
+        uint8_t msg0 = event->data[0];
+        //uint8_t index = event->data[1];
+        //uint8_t value = event->data[2];
+        uint32_t msg  = msg0 & 0xf0;
+        //uint32_t chan = msg0 & 0x0f;
+        switch (msg) {
+          case SAT_MIDI_NOTE_OFF: {
+            //SAT_Print("MIDI NOTE OFF. chan %i key %i vel %i\n",chan,data2,data3);
+            //clap_event_note_t note_event;
+            //note_event.header.size     = sizeof(clap_event_note_t);
+            //note_event.header.time     = 0;
+            //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+            //note_event.header.type     = CLAP_EVENT_NOTE_OFF;
+            //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+            //note_event.note_id         = (chan * 128) + index;
+            //note_event.port_index      = event->port_index;
+            //note_event.channel         = chan;
+            //note_event.key             = index;
+            //note_event.velocity        = value * (double)SAT_INV127;
+            //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
+            break;
+          }
+          case SAT_MIDI_NOTE_ON: {
+            //SAT_Print("MIDI NOTE ON. chan %i key %i vel %i\n",chan,data2,data3);
+            //clap_event_note_t note_event;
+            //note_event.header.size     = sizeof(clap_event_note_t);
+            //note_event.header.time     = 0;
+            //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+            //note_event.header.type     = CLAP_EVENT_NOTE_ON;
+            //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+            //note_event.note_id         = (chan * 128) + index;
+            //note_event.port_index      = event->port_index;
+            //note_event.channel         = chan;
+            //note_event.key             = index;
+            //note_event.velocity        = value * (double)SAT_INV127;
+            //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
+            break;
+          }
+          case SAT_MIDI_POLY_AFTERTOUCH: {
+            //SAT_Print("MIDI POLY AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
+            // pressure note expression
+            break;
+          }
+          case SAT_MIDI_CONTROL_CHANGE: {
+            //SAT_Print("MIDI CONTROL_CHANGE. chan %i index %i val %i\n",chan,data2,data3);
+            // cc74: brightness
+            break;
+          }
+          case SAT_MIDI_PROGRAM_CHANGE: {
+            //SAT_Print("MIDI PROGRAM CHANGE. chan %i data1 %i data2 %i\n",chan,data2,data3);
+            break;
+          }
+          case SAT_MIDI_CHANNEL_AFTERTOUCH: {
+            //SAT_Print("MIDI CHANNEL AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
+            // pressure note expression
+            break;
+          }
+          case SAT_MIDI_PITCHBEND: {
+            //SAT_Print("MIDI PITCH BEND. chan %i data1 %i data2 %i\n",chan,data2,data3);
+            // tuning note expression
+            break;
+          }
+          case SAT_MIDI_SYS: {
+            //SAT_Print("MIDI SYS. chan %i data1 %i data2 %i\n",chan,data2,data3);
+            break;
+          }
+        } // switch msg
 
-    // uint8_t msg0 = event->data[0];
-    // //uint8_t index = event->data[1];
-    // //uint8_t value = event->data[2];
-    // uint32_t msg  = msg0 & 0xf0;
-    // //uint32_t chan = msg0 & 0x0f;
-    // switch (msg) {
-    //   case SAT_MIDI_NOTE_OFF: {
-    //     //SAT_Print("MIDI NOTE OFF. chan %i key %i vel %i\n",chan,data2,data3);
-    //     //clap_event_note_t note_event;
-    //     //note_event.header.size     = sizeof(clap_event_note_t);
-    //     //note_event.header.time     = 0;
-    //     //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    //     //note_event.header.type     = CLAP_EVENT_NOTE_OFF;
-    //     //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-    //     //note_event.note_id         = (chan * 128) + index;
-    //     //note_event.port_index      = event->port_index;
-    //     //note_event.channel         = chan;
-    //     //note_event.key             = index;
-    //     //note_event.velocity        = value * (double)SAT_INV127;
-    //     //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
-    //     break;
-    //   }
-    //   case SAT_MIDI_NOTE_ON: {
-    //     //SAT_Print("MIDI NOTE ON. chan %i key %i vel %i\n",chan,data2,data3);
-    //     //clap_event_note_t note_event;
-    //     //note_event.header.size     = sizeof(clap_event_note_t);
-    //     //note_event.header.time     = 0;
-    //     //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    //     //note_event.header.type     = CLAP_EVENT_NOTE_ON;
-    //     //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-    //     //note_event.note_id         = (chan * 128) + index;
-    //     //note_event.port_index      = event->port_index;
-    //     //note_event.channel         = chan;
-    //     //note_event.key             = index;
-    //     //note_event.velocity        = value * (double)SAT_INV127;
-    //     //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
-    //     break;
-    //   }
-    //   case SAT_MIDI_POLY_AFTERTOUCH: {
-    //     //SAT_Print("MIDI POLY AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
-    //     // pressure note expression
-    //     break;
-    //   }
-    //   case SAT_MIDI_CONTROL_CHANGE: {
-    //     //SAT_Print("MIDI CONTROL_CHANGE. chan %i index %i val %i\n",chan,data2,data3);
-    //     // cc74: brightness
-    //     break;
-    //   }
-    //   case SAT_MIDI_PROGRAM_CHANGE: {
-    //     //SAT_Print("MIDI PROGRAM CHANGE. chan %i data1 %i data2 %i\n",chan,data2,data3);
-    //     break;
-    //   }
-    //   case SAT_MIDI_CHANNEL_AFTERTOUCH: {
-    //     //SAT_Print("MIDI CHANNEL AFTERTOUCH. chan %i data1 %i data2 %i\n",chan,data2,data3);
-    //     // pressure note expression
-    //     break;
-    //   }
-    //   case SAT_MIDI_PITCHBEND: {
-    //     //SAT_Print("MIDI PITCH BEND. chan %i data1 %i data2 %i\n",chan,data2,data3);
-    //     // tuning note expression
-    //     break;
-    //   }
-    //   case SAT_MIDI_SYS: {
-    //     //SAT_Print("MIDI SYS. chan %i data1 %i data2 %i\n",chan,data2,data3);
-    //     break;
-    //   }
-    // } // switch msg
+        return true;
+
+      #else
+
+        return false;
+
+      #endif //convert midi
+
+    } // result
+
+    return false;
 
   }
 
   //----------
 
   bool handleMidiSysexEvent(clap_event_midi_sysex_t* event) {
-    return on_plugin_midiSysex(event);
+    bool result = on_plugin_midiSysex(event);
+    if (result) return true;
+    return false;
   }
 
   //----------
 
   bool handleMidi2Event(clap_event_midi2_t* event) {
-    return on_plugin_midi2(event);
+    bool result = on_plugin_midi2(event);
+    if (result) return true;
+    return false;
   }
 
 //------------------------------
