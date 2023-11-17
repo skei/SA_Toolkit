@@ -3,7 +3,7 @@
 
 // hover/drag state: 0=none, 1=left, 2=right, 3=both
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 class SAT_RangeBarWidget

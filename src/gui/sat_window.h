@@ -116,7 +116,7 @@ private:
 public:
 //------------------------------
 
-  SAT_Window(uint32_t AWidth, uint32_t AHeight, double AScale, SAT_WindowListener* AListener, intptr_t AParent)
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, SAT_WindowListener* AListener=nullptr, intptr_t AParent=0)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
 
     //setInitialSize(AWidth,AHeight);
@@ -396,7 +396,7 @@ private:
   }
 
 //------------------------------
-public: // base window
+public: // window
 //------------------------------
 
   SAT_Painter* getPainter() override {
@@ -447,7 +447,7 @@ public: // base window
     //SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
     MScale = recalcScale(AWidth,AHeight);
     if (MRootWidget) {
-      MRootWidget->scaleWidget(MScale);
+      //MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(SAT_Point(AWidth,AHeight));
       MRootWidget->realignChildWidgets();
       //MDirtyGuiWidgets.write(MRootWidget);
@@ -519,6 +519,8 @@ public: // base window
       while (MPaintWidgets.read(&widget)) {}
       
       if (MRootWidget) {
+
+        // huh? this isn't needed.. we're resized!
         if (MRootWidget->getLastPainted() != MPaintContext.counter) {
 
           //painter->resetClip();

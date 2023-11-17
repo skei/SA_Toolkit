@@ -2,7 +2,7 @@
 #define sat_lv2_entry_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 //#include "plugin/sat_registry.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/lv2/sat_lv2.h"

@@ -2,7 +2,7 @@
 #define sat_vst3_host_implementation_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/sat_host_implementation.h"
 
 class SAT_Vst3HostImplementation

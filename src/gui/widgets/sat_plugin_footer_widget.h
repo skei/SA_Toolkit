@@ -2,7 +2,7 @@
 #define sat_plugin_footer_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/widgets/sat_text_widget.h"
 
 class SAT_PluginFooterWidget

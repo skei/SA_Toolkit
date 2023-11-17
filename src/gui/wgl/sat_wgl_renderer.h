@@ -49,7 +49,7 @@
 //
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 
 #define SOGL_MAJOR_VERSION SAT_OPENGL_MAJOR
 #define SOGL_MINOR_VERSION SAT_OPENGL_MINOR

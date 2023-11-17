@@ -4,7 +4,7 @@
 
 #ifdef SAT_DEBUG_WINDOW
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/sat_window.h"
 #include "gui/sat_widgets.h"
 

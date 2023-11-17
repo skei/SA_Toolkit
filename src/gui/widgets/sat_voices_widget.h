@@ -2,7 +2,7 @@
 #define sat_voices_widget_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 #define MAX_VOICES 1024

@@ -2,7 +2,7 @@
 #define sat_waveform_widget_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/sat_paint_context.h"
 #include "gui/widgets/sat_panel_widget.h"
 

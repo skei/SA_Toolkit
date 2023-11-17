@@ -2,7 +2,7 @@
 #define sat_debug_observer_widget_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/sat_parameter.h"
 #include "gui/widgets/sat_movable_widget.h"
 #include "gui/widgets/sat_panel_widget.h"

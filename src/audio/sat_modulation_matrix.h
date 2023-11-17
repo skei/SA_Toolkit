@@ -6,7 +6,7 @@
 // dst = ((amount * scale) + offset
 // then use dst as amount in calculations
 
-#include "base/sat.h"
+#include "sat.h"
 
 //----------------------------------------------------------------------
 

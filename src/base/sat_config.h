@@ -181,7 +181,7 @@
 #if !defined (SAT_PLUGIN_FORMAT_DEFINED)
   //#define SAT_PLUGIN_ALL
   #define SAT_PLUGIN_CLAP
-  #define SAT_PLUGIN
+  //#define SAT_PLUGIN
 #endif
 
 #ifdef SAT_PLUGIN

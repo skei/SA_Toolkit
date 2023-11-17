@@ -246,8 +246,8 @@ public:
     'rescale' to new..
   */
 
-  void scaleWidget(double AScale, bool ARecursive=true) override {
-    SAT_PanelWidget::scaleWidget(AScale,ARecursive);
+  void scaleWidget(double AScale, bool ARecursive=true) /*override*/ {
+    //SAT_PanelWidget::scaleWidget(AScale,ARecursive);
     SAT_ListNode* node = MModules.head();
     while (node) {
       SAT_GraphModule* module = (SAT_GraphModule*)node;

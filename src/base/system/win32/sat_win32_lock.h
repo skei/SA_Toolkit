@@ -2,7 +2,7 @@
 #define sat_win32_lock_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 
 //#ifdef SAT_WIN32
 //

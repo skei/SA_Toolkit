@@ -4,7 +4,7 @@
 
 // ladspa-as-clap
 
-#include "base/sat.h"
+#include "sat.h"
 //#include "plugin/clap/sat_clap_host.h"
 #include "plugin/ladspa/sat_ladspa.h"
 

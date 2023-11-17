@@ -2,7 +2,7 @@
 #define sat_vst2_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 
 //#ifdef SAT_PLUGIN_VST2_VESTIGE
 //  typedef int32_t   VstInt32;

@@ -44,25 +44,17 @@ public: // widget
     if (MListener) MListener->on_widgetListener_update(AWidget);
   }
 
-  //----------
-
   void do_widget_redraw(SAT_Widget* AWidget) override {
     if (MListener) MListener->on_widgetListener_redraw(AWidget);
   }
-
-  //----------
 
   void do_widget_realign(SAT_Widget* AWidget) override {
     if (MListener) MListener->on_widgetListener_realign(AWidget);
   }
 
-  //----------
-
   void do_widget_setCursor(SAT_Widget* AWidget, int32_t ACursor) override {
     if (MListener) MListener->on_widgetListener_setCursor(AWidget,ACursor);
   }
-
-  //----------
 
   void do_widget_setHint(SAT_Widget* AWidget, const char* AHint) override {
     if (MListener) MListener->on_widgetListener_setHint(AWidget,AHint);
@@ -87,20 +79,6 @@ public: // widget
   //void do_widgetListener_resized(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
   //  if (MListener) MListener->on_widgetListener_resized(AWidget,ADeltaX,ADeltaY);
   //}
-
-//------------------------------
-public: // widget listener
-//------------------------------
-
-  // virtual void on_widgetListener_update(SAT_Widget* AWidget) {}
-  // virtual void on_widgetListener_redraw(SAT_Widget* AWidget) {}
-  // virtual void on_widgetListener_realign(SAT_Widget* AFrAWidgetom) {}
-  // virtual void on_widgetListener_setCursor(SAT_Widget* AWidget, int32_t ACursor) {}
-  // virtual void on_widgetListener_setHint(SAT_Widget* AWidget, const char* AHint) {}
-  // virtual void on_widgetListener_setModal(SAT_Widget* AWidget) {}
-  // virtual void on_widgetListener_captureKeys(SAT_Widget* ASender) {}
-  // virtual void on_widgetListener_close(SAT_Widget* ASender) {}
-  // virtual void do_widgetListener_select(SAT_Widget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) {}
 
 };
 

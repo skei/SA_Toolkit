@@ -58,6 +58,7 @@ public:
     
     if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - (5*S);
     if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - (5*S);
+    
     setRectAndBase(rect);
     
     #ifdef SAT_POPUP_WIDGET_USE_TWEENING

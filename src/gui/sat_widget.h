@@ -55,6 +55,7 @@ private:
 
   SAT_Rect            MInitialRect                    = {};
   SAT_Rect            MBaseRect                       = {};
+  SAT_Point           MBaseOffset                     = {};
   SAT_Rect            MContentRect                    = {};
 
   SAT_Point           MMouseClickedPos                = {0,0};
@@ -85,14 +86,20 @@ private:
 
   int32_t             MSelectedIndex                  = 0;
 
+  //SAT_Rect MLayoutDiff = SAT_Rect(0,0,0,0);
+
 //------------------------------
 public:
 //------------------------------
 
+  // we need to keep the initial rect, in case the base rect changes
+  // (movable,popup), and we use percentage sizes (for realigning)
+ 
   SAT_Widget(SAT_Rect ARect) {
     MRect = ARect;
     MBaseRect = ARect;
     MInitialRect = ARect;
+    MBaseOffset = {0,0};
   }
 
   //----------
@@ -145,13 +152,15 @@ public:
   virtual double              getWidth()                                  { return MRect.w; }
   virtual double              getHeight()                                 { return MRect.h; }
   virtual SAT_Rect            getBaseRect()                               { return MBaseRect; }
-  virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
+  virtual SAT_Point           getBaseOffset()                             { return MBaseOffset; }
   virtual SAT_Rect            getContentRect()                            { return MContentRect; }
+  virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
 
   virtual void                setPos(SAT_Point APos)                      { MRect.setPos(APos); }
   virtual void                setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
   virtual void                setRect(SAT_Rect ARect)                     { MRect = ARect; }
   virtual void                setBaseRect(SAT_Rect ARect)                 { MBaseRect = ARect; }
+  virtual void                setBaseOffset(SAT_Point AOffset)            { MBaseOffset = AOffset; }
 
   virtual void                setWidth(double AWidth)                     { MRect.w = AWidth; }
   virtual void                setHeight(double AHeight)                   { MRect.h = AHeight; }
@@ -276,6 +285,17 @@ public:
   }
 
   //----------
+
+  /*
+    widgers could have an base_moved, which is set here..
+    instead of modifying baserect directly
+    the difference between the designed base rect, and the runtime modified
+    when realigning we could take this account (calling getBaseRect,
+    which returns base rect + offset)
+
+    getBaseRect called from:
+      realignChildWidgets, SAT_MovableWidget.on_widget_mouseMove
+  */
 
   virtual void setRectAndBase(SAT_Rect ARect/*, double AScale=1.0*/) {
     double scale = getWindowScale();
@@ -402,18 +422,21 @@ public:
   
   //----------
 
+  // called from: SAT_Window.on_window_resize (on root window)
+  // also called (override) by SAT_GraphWidget
+  // (doesn't end up in anything)
   // scales from base rect
+
   
-  virtual void scaleWidget(double AScale, bool ARecursive=true) {
-    //MRect.scale(AScale);
-    MRect = MBaseRect;
-    MRect.scale(AScale);
-    if (ARecursive) {
-      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-        MChildWidgets[i]->scaleWidget(AScale);
-      }
-    }
-  }
+  // virtual void scaleWidget(double AScale, bool ARecursive=true) {
+  //   MRect = getBaseRect();
+  //   MRect.scale(AScale);
+  //   if (ARecursive) {
+  //     for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+  //       MChildWidgets[i]->scaleWidget(AScale);
+  //     }
+  //   }
+  // }
 
 
   //----------
@@ -451,11 +474,11 @@ public:
 
       SAT_Widget* child = MChildWidgets[i];
 
-      SAT_Rect child_rect; // = child->getBaseRect();
+      SAT_Rect child_rect;
 
       SAT_WidgetState*  child_state   = child->getState();
       uint32_t          child_layout  = child->getLayout()->flags;
-      SAT_Point         child_offset; // = child_rect.getPos();
+      SAT_Point         child_offset;
 
       if (child_state->visible) {
         child->on_widget_prealign();
@@ -464,13 +487,19 @@ public:
 
         if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
           child_rect = SAT_Rect(parent_rect.w,parent_rect.h,parent_rect.w,parent_rect.h);
-          child_rect.scale(child->getInitialRect());
+          child_rect.scale(child->getBaseRect());
           child_rect.scale(0.01);
         }
         else {
-          child_rect = child->getBaseRect();
+
+          // initial rect, so we don't risk using rect thas has been moved
+          // (popup, movable, etc)..
+
+          child_rect = child->getInitialRect();
           child_rect.scale(scale);
         }
+
+        //child->MLayoutDiff = child_rect;
 
         //SAT_Print("%.f,%.f,%.f,%.f\n",child_rect.x,child_rect.y,child_rect.w,child_rect.h);
 
@@ -545,6 +574,8 @@ public:
         //child_offset.y += child_rect.y;
         //SAT_Print("offset %.f,%.f\n",child_offset.x,child_offset.y);
         //child->MLayoutOffset = child_offset;
+
+        //child->MLayoutDiff -= child_rect;
 
         child->setRect(child_rect);
 

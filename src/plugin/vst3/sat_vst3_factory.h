@@ -2,7 +2,7 @@
 #define sat_vst3_factory_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "base/utils/sat_strutils.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/clap/sat_clap.h"
@@ -157,7 +157,12 @@ public: // IPluginFactory
     const char* long_id = getLongId(descriptor);
     memcpy(info->cid,long_id,16);
     info->cardinality = PClassInfo::kManyInstances;
+
     //TODO: if (SAT_ClapIsInstrument(descriptor)) .. ??
+    //if (SAT_ClapIsInstrument(descriptor)) strcpy(info->subCategories,Vst::PlugType::kInstrument);
+    //else strcpy(info->subCategories,Vst::PlugType::kFx);
+
+
     strncpy(info->category,kVstAudioEffectClass,PClassInfo::kCategorySize);
     
     // ugly..

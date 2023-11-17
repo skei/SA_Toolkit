@@ -11,7 +11,7 @@
 #pragma GCC diagnostic ignored "-Wsign-compare"
 
   #define XJSON_H_IMPLEMENTATION
-  #include "extern/xjson.h"
+  #include "extern/xjson/xjson.h"
 
 #pragma GCC diagnostic pop
 

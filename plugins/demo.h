@@ -5,8 +5,6 @@
 #include "plugin/sat_editor.h"
 #include "gui/sat_widgets.h"
 
-#include "base/utils/sat_inifile.h"
-
 //----------
 
 #define EDITOR_WIDTH  640
@@ -92,9 +90,8 @@ public:
     appendClapNoteInputPort("input");
     appendStereoAudioInputPort("input");
     appendStereoAudioOutputPort("output");
-    appendParameter( new SAT_Parameter("param1",0.5));
+    appendParameter( new SAT_Parameter("param1",0.5) );
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
-
     return SAT_Plugin::init();
   }
 

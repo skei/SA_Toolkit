@@ -178,8 +178,7 @@ public:
 
   void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) override {
     if (MIsMoving) {
-      //SAT_Rect mrect = getRect();
-      SAT_Rect mrect = getBaseRect();
+      SAT_Rect mrect = getRect();
       double deltax = AXpos - MPrevX;
       double deltay = AYpos - MPrevY;
       if (MMovableDirections & SAT_DIRECTION_HORIZ) mrect.x += deltax;
@@ -193,8 +192,7 @@ public:
       do_widget_realign(this);
     }
     else if (MIsResizing) {
-      //SAT_Rect mrect = getRect();
-      SAT_Rect mrect = getBaseRect();
+      SAT_Rect mrect = getRect();
       double deltax = AXpos - MPrevX;
       double deltay = AYpos - MPrevY;
       if (MResizeEdge & SAT_EDGE_LEFT)    { mrect.removeLeft(deltax); }

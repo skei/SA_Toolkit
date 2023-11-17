@@ -4,7 +4,7 @@
 
 #ifdef SAT_DEBUG_OBSERVER
 
-  #include "base/sat.h"
+  #include "sat.h"
 
   //----------------------------------------------------------------------
 

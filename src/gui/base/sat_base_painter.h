@@ -151,6 +151,7 @@ public:
 
   virtual void            pushClip(SAT_Rect ARect) {}
   virtual void            pushOverlappingClip(SAT_Rect ARect) {}
+  virtual void            pushNoClip() {}
   virtual SAT_Rect        popClip() { return SAT_Rect(0,0,0,0); }
   virtual void            resetClipStack() {}
   virtual void            setClipRect(SAT_Rect ARect)  {}

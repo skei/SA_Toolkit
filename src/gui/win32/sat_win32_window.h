@@ -87,7 +87,7 @@ public:
 
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "base/utils/sat_strutils.h"
 #include "gui/sat_base_window.h"
 #include "gui/win32/sat_win32.h"

@@ -15,7 +15,7 @@
 
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/sat_parameter.h"
 #include "gui/widgets/sat_panel_widget.h"
 

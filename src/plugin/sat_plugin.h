@@ -116,9 +116,7 @@ public:
 
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
-
     MProcessContext.plugin = this;
-
   }
 
   //----------
@@ -147,6 +145,12 @@ public: // extensions
   virtual void registerExtension(const char* AId, const void* APtr) {
     if (!MExtensions.hasItem(AId)) {
       MExtensions.addItem(AId,APtr);
+    }
+  }
+
+  virtual void unregisterExtension(const char* AId) {
+    if (MExtensions.hasItem(AId)) {
+      MExtensions.removeItem(AId);
     }
   }
 
@@ -884,6 +888,7 @@ private: // queues
   // - SAT_Plugin.handleParamModEvent
 
   void queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+    // todo: is_gui_open?
     //SAT_Print("%i = %f\n",AIndex,AValue);
     SAT_ParamQueueItem item;
     item.type   = CLAP_EVENT_PARAM_MOD;
@@ -1294,12 +1299,12 @@ public: // process
     queueModulationToGui();
   }
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
 
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 
 //------------------------------
@@ -1326,6 +1331,12 @@ protected: // SAT_EditorListener
 
 #endif // nogui
 
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 
 //------------------------------

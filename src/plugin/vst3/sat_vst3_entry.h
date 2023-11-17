@@ -2,7 +2,7 @@
 #define sat_vst3_entry_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/vst3/sat_vst3.h"
 #include "plugin/vst3/sat_vst3_factory.h"
 

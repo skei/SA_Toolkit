@@ -863,17 +863,17 @@ private:
 
         //SAT_Print("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i (MWindowWidth/Height %i,%i)\n",x,y,w,h,MWindowWidth,MWindowHeight);
 
-        //if ((x != MWindowXpos) || (y != MWindowYpos)) {
+        if ((x != MWindowXpos) || (y != MWindowYpos)) {
           on_window_move(x,y);
           MWindowXpos = x;
           MWindowYpos = y;
-        //}
+        }
 
-        //if ((w != MWindowWidth) || (h != MWindowHeight)) {
+        if ((w != MWindowWidth) || (h != MWindowHeight)) {
           on_window_resize(w,h);
           MWindowWidth  = w;
           MWindowHeight = h;
-        //}
+        }
 
         break;
       }

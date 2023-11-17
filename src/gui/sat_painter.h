@@ -92,6 +92,15 @@ public: // clip
 
   //----------
 
+  void pushNoClip() override {
+    MClipStack.push(MClipRect);
+    //MClipRect = ARect;
+    resetClip();
+    //setClip(MClipRect.x,MClipRect.y,MClipRect.w,MClipRect.h);
+  }
+
+  //----------
+
   /*
     - pop rect
     - set clip rect to popped rect

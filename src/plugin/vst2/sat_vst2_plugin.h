@@ -9,7 +9,7 @@
 
 //----------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "base/types/sat_queue.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/vst2/sat_vst2.h"

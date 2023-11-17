@@ -4,7 +4,7 @@
 
 // clap-as-lv2
 
-#include "base/sat.h"
+#include "sat.h"
 //#include "plugin/sat_editor.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/lv2/sat_lv2.h"

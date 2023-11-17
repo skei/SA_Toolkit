@@ -6,7 +6,7 @@
 
 //
 
-#include "base/sat.h"
+#include "sat.h"
 #include "plugin/vst2/sat_vst2.h"
 #include "plugin/sat_host_implementation.h"
 

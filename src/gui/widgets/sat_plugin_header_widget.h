@@ -2,7 +2,7 @@
 #define sat_plugin_header_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 class SAT_PluginHeaderWidget

@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-// #include "plugin/sat_registry.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_factory.h"
 

@@ -2,7 +2,7 @@
 #define sat_knob2_widget_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/widgets/sat_knob_widget.h"
 #include "gui/widgets/sat_panel_widget.h"
 #include "gui/widgets/sat_text_widget.h"
