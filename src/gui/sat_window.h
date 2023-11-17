@@ -79,6 +79,8 @@ private:
 
   int32_t             MInitialWidth         = 0;
   int32_t             MInitialHeight        = 0;
+  uint32_t            MWidth                = 0;
+  uint32_t            MHeight               = 0;
   double              MScale                = 1.0;
 
   SAT_WidgetQueue     MDirtyGuiWidgets      = {};
@@ -114,13 +116,21 @@ private:
 public:
 //------------------------------
 
-  SAT_Window(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener=nullptr, intptr_t AParent=0)
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, double AScale, SAT_WindowListener* AListener, intptr_t AParent)
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+
+    //setInitialSize(AWidth,AHeight);
+
+    MWidth = AWidth;
+    MHeight = AHeight;
+    MScale = AScale;
 
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
-
     MListener = AListener;
+
+    MScale = recalcScale(AWidth,AHeight);
+    //SAT_Print("MScale %f\n",MScale);
 
     SAT_Assert(AWidth > 0);
     SAT_Assert(AHeight > 0);
@@ -260,7 +270,11 @@ public: // scale
   virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
+
     MScale = recalcScale(getWidth(),getHeight());
+//    MScale = recalcScale(AWidth,AHeight);
+
+    //SAT_Print("MScale %f\n",MScale);
   }
 
   //----------
@@ -397,8 +411,9 @@ public: // base window
     startTimer(SAT_WINDOW_TIMER_MS);
     if (MRootWidget) {
       MRootWidget->ownerWindowOpened(this);
-      uint32_t w = getWidth();
-      uint32_t h = getHeight();
+      uint32_t w = getWidth();// * MScale;
+      uint32_t h = getHeight();// * MScale;
+      SAT_Print("w %i h %i\n",w,h);
       MRootWidget->setSize(SAT_Point(w,h));
       MRootWidget->realignChildWidgets();
       //MDirtyGuiWidgets.write(MRootWidget);
@@ -424,14 +439,15 @@ public: // base window
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-    //MWidth = AWidth;
-    //MHeight = AHeight;
+
+    MWidth = AWidth;
+    MHeight = AHeight;
+    MScale = recalcScale(AWidth,AHeight);
+
     //SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
     MScale = recalcScale(AWidth,AHeight);
     if (MRootWidget) {
-
-//      MRootWidget->scaleWidget(MScale);
-
+      MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(SAT_Point(AWidth,AHeight));
       MRootWidget->realignChildWidgets();
       //MDirtyGuiWidgets.write(MRootWidget);
@@ -570,6 +586,8 @@ public: // base window
   // we can safely write to MPaintWidgets during timer handling (?)
 
   void on_window_timer(SAT_Timer* ATimer, double AElapsed) override {
+
+    if (!ATimer->isRunning()) return;
 
     if (MListener) MListener->on_windowListener_timer(ATimer,AElapsed);
     for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(ATimer,AElapsed);
@@ -748,14 +766,17 @@ public: // widget owner
   }
 
   double on_widgetOwner_getWidth() override {
-    return getWidth();
+    //return getWidth();
+    return MWidth;
   }
 
   double on_widgetOwner_getHeight() override {
-    return getHeight();
+    //return getHeight();
+    return MHeight;
   }
 
   double on_widgetOwner_getScale() override {
+    //SAT_Print("MScale %f\n",MScale);
     return MScale;
   }
 

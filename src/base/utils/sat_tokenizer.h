@@ -8,7 +8,7 @@
 
 //----------
 
-class SAT_Parser {
+class SAT_Tokenizer {
 
   private:
     uint32_t          MBufLen;
@@ -17,14 +17,14 @@ class SAT_Parser {
 
   public:
 
-    SAT_Parser() {
+    SAT_Tokenizer() {
       MBufLen = 0;
       MBuffer = nullptr;
     }
 
     //----------
 
-    ~SAT_Parser() {
+    ~SAT_Tokenizer() {
       if (MBuffer) free(MBuffer);
     }
 
@@ -100,12 +100,12 @@ class SAT_Parser {
 
   public:
 
-    void dumpTokens(void) {
-      int32_t num = MTokens.size();
-      for (int32_t i=0; i<num; i++) {
-        SAT_DPrint("%i '%s'\n",i,MTokens[i]);
-      }
-    }
+    //void dumpTokens(void) {
+    //  int32_t num = MTokens.size();
+    //  for (int32_t i=0; i<num; i++) {
+    //    SAT_DPrint("%i '%s'\n",i,MTokens[i]);
+    //  }
+    //}
 
 };
 

@@ -443,8 +443,7 @@ public:
       // if MOwner == null, this will return 1.0
 
       double S = AContext->scale; // getWindowScale();
-      
-      SAT_Print("S %f\n",S);
+      //SAT_Print("S %f\n",S);
 
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);

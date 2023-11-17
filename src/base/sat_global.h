@@ -1,6 +1,13 @@
 #ifndef sat_global_included
 #define sat_global_included
 //----------------------------------------------------------------------
+/*
+
+  * 'global' destructor.. cleanup things for stuff that might go wrong..
+    final safe-keeping, dbl check pointers? (be sure to null when deleting)
+
+*/
+//----------------------------------------------------------------------
 
 #include "base/debug/sat_debug_print.h"
 #include "base/utils/sat_strutils.h"
@@ -138,6 +145,8 @@ void sat_crash_handler_callback(int sig) {
     static __thread char*         sat_memtrace_prefix_file;
     static __thread unsigned int  sat_memtrace_prefix_line;
 
+    // NOT threadsafe!
+    
     unsigned int sat_memtrace_prefix(const char* file, const unsigned int line) {
       sat_memtrace_prefix_file = (char*)file;
       sat_memtrace_prefix_line = line;

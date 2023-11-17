@@ -4,6 +4,7 @@
 
 #include "sat.h"
 #include "base/debug/sat_debug_print.h"
+#include "base/utils/sat_inifile.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_plugin.h"
 
@@ -32,6 +33,8 @@ private:
   SAT_FactoryArray      MFactories      = {};
   SAT_ConstCharPtrArray MFactoryIds     = {};
 
+//SAT_IniFile           MIniFile        = {};
+
 //------------------------------
 public:
 //------------------------------
@@ -50,6 +53,7 @@ public:
 
   void initialize(SAT_DebugPrint* APrint) {
     if (MIsInitialized) return;
+    //MIniFile.load();
     if (SAT_Register) SAT_Register(this);
     MIsInitialized = true;
   }
@@ -64,6 +68,7 @@ public:
 
   void cleanup() {
     if (MIsInitialized) {
+      //MIniFile.save();
     }
   }
 

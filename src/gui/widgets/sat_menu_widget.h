@@ -41,7 +41,11 @@ public:
   SAT_MenuWidget(SAT_Rect ARect)
   : SAT_PopupWidget(ARect) {
     setName("SAT_MenuWidget");
+
 //    setAlignment(SAT_WIDGET_ALIGN_PARENT);
+    setLayoutFlags(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    setLayoutFlags(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
+
   }
 
   //----------
@@ -56,6 +60,8 @@ public:
   virtual void setRightClickClose(bool AClose=true) {
     MRightClickClose = AClose;
   }
+
+  //----------
   
   virtual void setMenuListener(SAT_MenuListener* AListener) {
     MMenuListener = AListener;

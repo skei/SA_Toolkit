@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "base/utils/sat_parser.h"
+#include "base/utils/sat_tokenizer.h"
 
 //----------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ private:
   //
   
   SAT_File            MSourceFile           = {};
-  SAT_Parser          MParser               = {};
+  SAT_Tokenizer       MTokenizer            = {};
   
 //------------------------------
 public:
@@ -297,8 +297,8 @@ public:
   */
   
   bool tokenize() {
-    MParser.tokenize(MSourceCode,MSourceCodeSize);
-    MParser.dumpTokens();
+    MTokenizer.tokenize(MSourceCode,MSourceCodeSize);
+    MTokenizer.dumpTokens();
     return true;
   }
   
@@ -325,11 +325,11 @@ public:
     size += x86_enc_push(code, SAT_JIT2_X86_REG_RDX);  code += size;
     SAT_Print("encoding pushes.. (new size %i)\n",size);
     
-    uint32_t num_tokens = MParser.getNumTokens();
+    uint32_t num_tokens = MTokenizer.getNumTokens();
     SAT_Print("num_tokens %i\n",num_tokens);
 
     for (uint32_t i=0; i<num_tokens; i++) {
-      char* opcode = MParser.getToken(i);
+      char* opcode = MTokenizer.getToken(i);
       int32_t op = get_opcode(opcode);
       if (op >= 0) {
         SAT_Print("token %i opcode %s op %i\n",i,opcode,op);

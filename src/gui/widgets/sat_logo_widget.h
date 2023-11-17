@@ -2,7 +2,7 @@
 #define sat_logo_widget_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 #include "../data/img/logo_svg.h"
@@ -45,6 +45,7 @@ public:
   //----------
 
   virtual ~SAT_LogoWidget() {
+    if (MBuffer) free(MBuffer);
     nsvgDelete(MLogoImage);
   }
 

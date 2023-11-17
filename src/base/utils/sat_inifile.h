@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/system/sat_file.h"
-#include "base/utils/sat_parser.h"
+#include "base/utils/sat_tokenizer.h"
 #include "base/utils/sat_strutils.h"
 #include "base/system/sat_paths.h"
 
@@ -65,6 +65,9 @@ public:
 //------------------------------
 
   void appendSection(const char* ASection) {
+
+printf("appendSection: %s\n",ASection);
+
     SAT_IniSection* section = new SAT_IniSection();
     strncpy(section->name,ASection,SAT_INI_SECTION_NAME_LENGTH);
     MSections.append(section);
@@ -99,6 +102,9 @@ public:
   //----------
 
   void appendKey(const char* ASection, const char* AName, const char* AValue) {
+
+printf("appendKey: section '%s' name '%s' value '%s'\n",ASection,AName,AValue);
+
     SAT_IniSection* section = findSection(ASection);
     SAT_IniKey* key = new SAT_IniKey();
     strncpy(key->name,AName,SAT_INI_KEY_NAME_LENGTH);
@@ -180,6 +186,9 @@ public:
     SAT_GetBaseFilename(filename);
     SAT_StripFileExt(filename);
     strcat(filename,".ini");
+
+    printf("loading '%s'\n",filename);
+
     return load(filename);
   }
 
@@ -217,9 +226,9 @@ public:
 
   bool save(const char* filename) {
     SAT_File file;
-    if (file.exists(filename)) {
-      SAT_DPrint("%s already exists. overwriting\n",filename);
-    }
+    //if (file.exists(filename)) {
+    //  SAT_DPrint("%s already exists. overwriting\n",filename);
+    //}
     file.open(filename,SAT_FILE_WRITE_TEXT);
     for (uint32_t i=0; i<MSections.size(); i++) {
       SAT_IniSection* section = MSections[i];
@@ -294,13 +303,13 @@ public:
   // parser->getNameValuePair(..)
 
   void parse(void* ABuffer, uint32_t ABufferSize) {
-    SAT_Parser* parser = new SAT_Parser();
-    parser->tokenize((const char*)ABuffer,ABufferSize);
+    SAT_Tokenizer* tokenizer = new SAT_Tokenizer();
+    tokenizer->tokenize((const char*)ABuffer,ABufferSize);
 
     const char* section = "";
     uint32_t t = 0;
-    while (t < parser->getNumTokens()) {
-      char* token = parser->getToken(t++);
+    while (t < tokenizer->getNumTokens()) {
+      char* token = tokenizer->getToken(t++);
       uint32_t tlen = strlen(token);
       if ((token[0] == '[') && (token[tlen-1] == ']')) {
         token[tlen-1] = 0;
@@ -308,9 +317,9 @@ public:
         appendSection(section);
       }
       else {
-        const char* equal = parser->getToken(t++);
+        const char* equal = tokenizer->getToken(t++);
         if ((equal[0] == '=') && (equal[1] == 0)) {
-          const char* value = parser->getToken(t++);
+          const char* value = tokenizer->getToken(t++);
           appendKey(section,token,value);
         }
       }

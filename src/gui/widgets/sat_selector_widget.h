@@ -51,14 +51,22 @@ public:
     if (AListener) MMenu->setMenuListener(AListener);
     else MMenu->setMenuListener(this);
     
-    setLayoutOuterBorder(SAT_Rect(2,2));
+    setLayoutOuterBorder(SAT_Rect(2,2,2,2));
+
+    setDrawText(true);
+    setText(AText);
+
     setDrawValue(false);
     //setTextSize(6);
     
     if (MDrawArrow) {
       MArrow = new SAT_SymbolWidget(SAT_Rect(7,6),SAT_SYMBOL_FILLED_TRI_DOWN);
       appendChildWidget(MArrow);
+
 //      MArrow->setAlignment(SAT_WIDGET_ALIGN_RIGHT_BOTTOM);
+      MArrow->setLayoutFlags(SAT_WIDGET_LAYOUT_ANCHOR_RIGHT);
+      MArrow->setLayoutFlags(SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM);
+
       MArrow->setColor(SAT_DarkerGrey);
       MArrow->setActive(false);
     }

@@ -93,8 +93,9 @@ private:
 
 #if !defined (SAT_GUI_NOGUI)
   SAT_Editor*                     MEditor                   = nullptr;
-  //uint32_t                        MEditorWidth              = 256;
-  //uint32_t                        MEditorHeight             = 256;
+  uint32_t                        MInitialEditorWidth       = 512;
+  uint32_t                        MInitialEditorHeight      = 512;
+  double                          MInitialEditorScale       = 1.0;
 
   SAT_ParamFromHostToGuiQueue     MParamFromHostToGuiQueue  = {};   // when the host changes a parameter, we need to redraw it
   SAT_ModFromHostToGuiQueue       MModFromHostToGuiQueue    = {};   // --"-- modulation
@@ -105,10 +106,6 @@ private:
   // checked in handleParamValueEvent, handleParamModEvent
 
   std::atomic<bool>               MIsEditorClosing          {false};
-
-  uint32_t                        MInitialEditorWidth       = 512;
-  uint32_t                        MInitialEditorHeight      = 512;
-  double                          MInitialEditorScale       = 1.0;
 
 #endif
 
@@ -127,7 +124,7 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
-    SAT_PRINT;
+    //SAT_PRINT;
     #ifndef SAT_NO_AUTODELETE
       deleteAudioPorts();
       deleteNotePorts();
@@ -456,8 +453,8 @@ public: // editor
 
 #if !defined (SAT_GUI_NOGUI)
 
-  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight) {
-    return new SAT_Editor(AListener,AWidth,AHeight);
+  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale) {
+    return new SAT_Editor(AListener,AWidth,AHeight,AScale,0);
     //return nullptr;
   }
 
@@ -476,7 +473,7 @@ public: // editor
   //virtual void cleanupEditor(SAT_Editor* AEditor) {
   //}
 
-  virtual void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0) {
+  virtual void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale) {
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
     MInitialEditorScale = AScale;
@@ -1548,14 +1545,14 @@ protected: // gui
   bool gui_create(const char *api, bool is_floating) override {
     MIsEditorClosing = false;
 
-    // if (is_floating == true) return false;
-    //
-    // #ifdef SAT_LINUX
-    //   if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
-    // #endif
-    // #ifdef SAT_WIN32
-    //   if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
-    // #endif
+    if (is_floating == true) return false;
+
+    #ifdef SAT_LINUX
+      if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
+    #endif
+    #ifdef SAT_WIN32
+      if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
+    #endif
 
     // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
     // if ((MInitialEditorWidth <= 0) || (MInitialEditorHeight <= 0)) {
@@ -1571,11 +1568,12 @@ protected: // gui
     //   setInitialEditorSize(w,h,s);
     // }
 
-    uint32_t w = (double)MInitialEditorWidth * MInitialEditorScale;
-    uint32_t h = (double)MInitialEditorHeight * MInitialEditorScale;
+//    uint32_t w = (double)MInitialEditorWidth;// * MInitialEditorScale;
+//    uint32_t h = (double)MInitialEditorHeight;// * MInitialEditorScale;
 
     //SAT_Print("api %s is_floating %i",api,is_floating);
-    MEditor = createEditor(this,w,h);
+    //MEditor = createEditor(this,w,h,MInitialEditorScale);
+    MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale);
     MEditor->create(api,is_floating);
     if (MEditor) {
       //setupEditor(MEditor);

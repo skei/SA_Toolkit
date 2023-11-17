@@ -163,7 +163,7 @@ public: // crash handler
       // //#ifdef sat_debug_observer_included
       // SAT_PrintObservers();
       // #endif
-      if (MPrint) MPrint->print("\n");
+      //if (MPrint) MPrint->print("\n");
       exit(1); //_exit(1);
     #endif
   }  

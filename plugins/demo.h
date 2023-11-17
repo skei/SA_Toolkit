@@ -5,13 +5,13 @@
 #include "plugin/sat_editor.h"
 #include "gui/sat_widgets.h"
 
-#include "plugin/clap/sat_clap_host_implementation.h"
+#include "base/utils/sat_inifile.h"
 
 //----------
 
-#define EDITOR_WIDTH  800
-#define EDITOR_HEIGHT 600
-#define EDITOR_SCALE  1.0
+#define EDITOR_WIDTH  640
+#define EDITOR_HEIGHT 480
+#define EDITOR_SCALE  1.5
 
 //----------------------------------------------------------------------
 //
@@ -40,6 +40,14 @@ const char* tabs_txt[5] = {
   "5"
 };
 
+const char* buttonrow_txt[5] = {
+  "One",
+  "Two",
+  "3",
+  "IV",
+  "V"
+};
+
 //----------------------------------------------------------------------
 //
 // plugin
@@ -53,13 +61,26 @@ class sat_demo_plugin
 public:
 //------------------------------
 
+    SAT_MenuWidget* MSelectorMenu = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
   sat_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
+    SAT_PRINT;
+
+    //int* ptr = nullptr;
+    //int val = *ptr;
+    //SAT_Print("%p = %i\n",ptr,val);
+
   }
 
   //----------
 
   virtual ~sat_demo_plugin() {
+    SAT_PRINT;
   }
 
 //------------------------------
@@ -91,6 +112,14 @@ private: // editor
 //------------------------------
 
   void init_editor(SAT_Editor* AEditor, SAT_Window* AWindow, SAT_RootWidget* root) {
+
+    MSelectorMenu = new SAT_MenuWidget(SAT_Rect(0,0,170,15*5));
+      MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 1") );
+      MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 2") );
+      MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 3") );
+      MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 4") );
+      MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 5") );
+
     SAT_TabsWidget* tabs = new SAT_TabsWidget(SAT_Rect(10,10,100,100),32,20);
     root->appendChildWidget(tabs);
     tabs->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_ALL);
@@ -98,6 +127,9 @@ private: // editor
     tabs->appendPage("parameters",create_params_page(AEditor,AWindow)  );
     tabs->appendPage("host",      create_host_page(AEditor,AWindow)  );
     tabs->selectPage(0);
+
+    root->appendChildWidget(MSelectorMenu);
+
   }
 
 //------------------------------
@@ -239,6 +271,11 @@ private: // widget page
           panel->setTextDropShadowOffset(SAT_Point(2,2));
           panel->setTextDropShadowColor(SAT_Black);
 
+        SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(10,320,40,40));
+        scrollbox->appendChildWidget(logo);
+
+        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),370,16,16), i    ));
+        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),390,16,16), i + 9));
 
         //--------------------
         // column 2
@@ -309,7 +346,7 @@ private: // widget page
           knob2->setSnap(true);
           knob2->setSnapPos(0.5);
 
-        // knpb: quantize
+        // knob: quantize
 
         SAT_KnobWidget* knob3 = new SAT_KnobWidget(SAT_Rect(360,210,60,60),"%",0.4);
         scrollbox->appendChildWidget(knob3);
@@ -326,25 +363,48 @@ private: // widget page
         SAT_CurveWidget* curve2 = new SAT_CurveWidget(SAT_Rect(260,280,30,30),true);
         scrollbox->appendChildWidget(curve2);
 
+        // button
+
+        SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(220,320,95,20),true);
+        scrollbox->appendChildWidget(button1);
+        button1->setTexts("Toggle ON","Toggle OFF");
+
+        SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(325,320,95,20),false);
+        scrollbox->appendChildWidget(button2);
+        button2->setTexts("Switch ON","Switch OFF");
+
+        // buttonrow
+
+        SAT_ButtonRowWidget* buttonrow1 = new SAT_ButtonRowWidget(SAT_Rect(220,350,200,20),5,buttonrow_txt,SAT_BUTTON_ROW_SINGLE,false);
+        scrollbox->appendChildWidget(buttonrow1);
+
+        SAT_ButtonRowWidget* buttonrow2 = new SAT_ButtonRowWidget(SAT_Rect(220,380,200,20),5,buttonrow_txt,SAT_BUTTON_ROW_MULTI,false);
+        scrollbox->appendChildWidget(buttonrow2);
 
         //--------------------
-        // column 1
+        // column 3
         //--------------------
+
 
         SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(430,10,170,40));
         scrollbox->appendChildWidget(keyboard);
 
-        SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(430,70,170,40),10);
+        SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(430,60,170,40),10);
         scrollbox->appendChildWidget(sliderbank);
 
-        SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(430,120,170,40),10);
+        SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(430,110,170,40),10);
         scrollbox->appendChildWidget(valuegraph);
 
-        //SAT_TextEditWidget* textedit = new SAT_TextEditWidget(SAT_Rect(430,170,170,20),"TextEdit");
-        //scrollbox->appendChildWidget(textedit);
+        SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(430,160,170,20),"Selector",MSelectorMenu);
+        scrollbox->appendChildWidget(selector);
 
 
 
+
+        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,190,170,100),20,true);
+        scrollbox->appendChildWidget(groupbox);
+          groupbox->getContainer()->setFillBackground(true);
+          groupbox->getContainer()->setBackgroundColor(SAT_Orange);
 
     return page;
   }

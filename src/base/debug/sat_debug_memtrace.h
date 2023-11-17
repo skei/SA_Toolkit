@@ -63,6 +63,7 @@ public:
   //----------
 
   void cleanup() {
+    //MPrint->print("memtrace cleanup\n");
     print_memtrace();
   }
 
@@ -96,6 +97,17 @@ public:
     void* realloc(void* ptr, const unsigned int size, const char* file, const unsigned int line) {
       //print("realloc\n");
       void* p = ::realloc(ptr,size);
+      bool found = false;
+      for (uint32_t i=0; i<MMemTraceNodes.size(); i++) {
+        if (MMemTraceNodes[i].ptr == ptr) {
+          found = true;
+          MMemTraceNodes[i].ptr = p;
+          MMemTraceNodes[i].size = size;
+        }
+      }
+      if (!found) {
+        //SAT_DPrint("Error! allocation %p not found (%s/%i)\n",ptr,strip_path(file),line);
+      }
       return p;
     }
 

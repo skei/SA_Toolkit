@@ -1,6 +1,22 @@
 #ifndef sat_debug_included
 #define sat_debug_included
 //----------------------------------------------------------------------
+/*
+
+  * flagging mechanisms for fake positives?
+    (if ptr == defined_false_positive) print("false positive..")
+  * max memory allocated
+  * max events in queues
+  * timing
+  * reality checks (did we quit normally?)
+  * memtrace: destructors mark themselves in separate list (destroyed objects)
+    maybe new to? ([un-]registerAllocation(classname,ptr)
+    then we can compare lists..
+
+  * can we have line pos, etc from signal, crash handler?
+
+*/
+//----------------------------------------------------------------------
 
 #include "sat.h"
 #include "base/debug/sat_debug_assert.h"
@@ -62,6 +78,7 @@ public:
   //----------
 
   void cleanup() {
+    //MPrint->print("debug cleanup\n");
     #if defined (SAT_DEBUG)
       MEMTRACE.cleanup();
       CRASHHANDLER.cleanup();

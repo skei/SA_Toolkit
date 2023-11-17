@@ -37,18 +37,20 @@ private:
 public:
 //------------------------------
 
-  SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0) {
+  SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale, intptr_t AParent) {
     //if (AListener) MListener = AListener;
     MListener = AListener;
-    MWidth = AWidth;
-    MHeight = AHeight;
+
+    MWidth =  (double)AWidth * AScale;
+    MHeight = (double)AHeight * AScale;
+    MScale = AScale;
 
     #if defined (SAT_GUI_WAYLAND)
       MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
     #elif defined (SAT_GUI_WIN32)
       MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
     #elif defined (SAT_GUI_X11)
-      MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
+      MWindow = new SAT_Window(AWidth,AHeight,AScale,this,AParent);
     #endif
 
     //MWindow->setListener(this);
@@ -264,7 +266,7 @@ public: // clap_plugin
     MHeight = height;
     if (MWindow) {
       MWindow->setSize(width,height);
-//      /*if (MIsOpen)*/ { MWindow->on_window_resize(width,height); }
+      /*if (MIsOpen)*/ { MWindow->on_window_resize(width,height); }
     }
     return true;
   }

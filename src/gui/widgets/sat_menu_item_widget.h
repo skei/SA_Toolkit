@@ -30,9 +30,16 @@ public:
     //setBorderColor(SAT_DarkerGrey);
     setFillBackground(true);
     //setBackgroundColor(MBackgroundColor);
+    setDrawText(true);
+    setText(AText);
     //setTextColor(MTextColor);
+
 //    setAlignment(SAT_WIDGET_ALIGN_TOP_LEFT);
 //    setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+    addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
+    addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+    addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
     
   }
 

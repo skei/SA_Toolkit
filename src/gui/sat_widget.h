@@ -313,8 +313,10 @@ public:
   // asks owner window about its scale
 
   virtual double getWindowScale() {
-    if (MOwner) return MOwner->on_widgetOwner_getScale();
-    else return 1.0;
+    double scale = 1.0;
+    if (MOwner) scale = MOwner->on_widgetOwner_getScale();
+    //SAT_Print("scale %f\n",scale);
+    return scale;
   }
 
   //----------
@@ -422,6 +424,7 @@ public:
   virtual void realignChildWidgets(bool ARecursive=true) {
 
     double scale = getWindowScale();
+    //SAT_Print("scale %f\n",scale);
 
     SAT_Rect inner_border = MLayout.inner_border;
     inner_border.scale(scale);
