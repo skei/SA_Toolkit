@@ -5,6 +5,7 @@
 #ifdef SAT_DEBUG_MEMTRACE
 
   #include "sat.h"
+  #include "base/types/sat_array.h"
 
   #include <stdarg.h>       // va_
   #include <sys/unistd.h>

@@ -9,7 +9,7 @@
 
 #define EDITOR_WIDTH  640
 #define EDITOR_HEIGHT 480
-#define EDITOR_SCALE  1.5
+#define EDITOR_SCALE  1.0
 
 //----------------------------------------------------------------------
 //

@@ -279,6 +279,9 @@ public: // scale
 
   //----------
 
+  // calculates the maximal (or minimal) scale to use for the gui,
+  // that will fit inside the given width/height
+
   virtual double recalcScale(int32_t AWidth, int32_t AHeight) {
     double scale = 1.0;
     if ((MInitialWidth > 0) && (MInitialHeight > 0)) {

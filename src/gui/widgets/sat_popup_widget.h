@@ -22,8 +22,8 @@ class SAT_PopupWidget
 private:
 //------------------------------
 
-  SAT_Rect        MSavedRect  = {};
-  SAT_TweenChain* MTween      = nullptr;
+//  SAT_Rect        MSavedRectMSavedRect  = {};
+//  SAT_TweenChain* MTween      = nullptr;
 
 //------------------------------
 public:
@@ -34,7 +34,7 @@ public:
     setName("SAT_PopupWidget");
     setActive(false);
     setVisible(false);
-    MSavedRect = ARect;
+//    MSavedRect = ARect;
   }
 
   //----------
@@ -50,7 +50,7 @@ public:
     SAT_Rect rect = ARect;
     double S = getWindowScale();
     //setRectAndBasis(MSavedRect);
-    MSavedRect = rect;
+//    MSavedRect = rect;
     uint32_t winw = getWindowWidth();
     uint32_t winh = getWindowHeight();
     
@@ -59,6 +59,7 @@ public:
     if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - (5*S);
     if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - (5*S);
     
+    //setRect(rect);
     setRectAndBase(rect);
     
     #ifdef SAT_POPUP_WIDGET_USE_TWEENING
@@ -76,6 +77,8 @@ public:
     #endif
     
     realignChildWidgets();
+//    do_widget_realign(this);
+
     //do_widgetListener_set_state(this,SAT_WIDGET_STATE_MODAL);
     do_widget_setModal(this);
     setActive(true);

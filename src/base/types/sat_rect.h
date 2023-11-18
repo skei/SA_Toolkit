@@ -375,15 +375,15 @@ struct SAT_Rect {
     h -= (P.y * 2.0);
   }
 
-  void addLeft(double ASize)    { x -= ASize; w += ASize; }
-  void addRight(double ASize)   { w += ASize; }
-  void addTop(double ASize)     { y -= ASize; h += ASize; }
-  void addBottom(double ASize)  { h += ASize; }
+  void addLeft(double ASize)      { x -= ASize; w += ASize; }
+  void addTop(double ASize)       { y -= ASize; h += ASize; }
+  void addRight(double ASize)     { w += ASize; }
+  void addBottom(double ASize)    { h += ASize; }
 
-  void removeLeft(double ASize)    { x += ASize; w -= ASize; }
-  void removeRight(double ASize)   { w -= ASize; }
-  void removeTop(double ASize)     { y += ASize; h -= ASize; }
-  void removeBottom(double ASize)  { h -= ASize; }
+  void removeLeft(double ASize)   { x += ASize; w -= ASize; }
+  void removeTop(double ASize)    { y += ASize; h -= ASize; }
+  void removeRight(double ASize)  { w -= ASize; }
+  void removeBottom(double ASize) { h -= ASize; }
 
 //------------------------------
 //public:

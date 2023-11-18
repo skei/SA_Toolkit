@@ -2,6 +2,11 @@
 #define sat_array_included
 //----------------------------------------------------------------------
 
+// included in sat_debug_memtrace
+// sat_print not defined yet..
+
+//----------------------------------------------------------------------
+
 //#include <vector>
 //#define SAT_Array std::vector
 
@@ -85,9 +90,9 @@ private:
 
   //----------
 
-  void deleteItems(void) {
-    for (uint32_t i=0; i<MSize; i++) delete MBuffer[i];
-  }
+  //void deleteItems(void) {
+  //  for (uint32_t i=0; i<MSize; i++) delete MBuffer[i];
+  //}
 
   //----------
 

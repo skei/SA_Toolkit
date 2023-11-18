@@ -188,7 +188,9 @@ public:
       //mrect.x -= offset.x;
       //mrect.y -= offset.y;
 
+      //setRect(mrect);
       setRectAndBase(mrect);
+
       do_widget_realign(this);
     }
     else if (MIsResizing) {
@@ -199,7 +201,10 @@ public:
       if (MResizeEdge & SAT_EDGE_RIGHT)   { mrect.addRight(deltax);   }
       if (MResizeEdge & SAT_EDGE_TOP)     { mrect.removeTop(deltay);  }
       if (MResizeEdge & SAT_EDGE_BOTTOM)  { mrect.addBottom(deltay);  }
+
+      setRect(mrect);
       setRectAndBase(mrect);
+      
       do_widget_realign(this);
     }
     else {

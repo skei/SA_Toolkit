@@ -7,13 +7,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <array>
 #include <atomic>
+#include <cassert>
 #include <malloc.h>
 #include <math.h>
 #include <memory.h>
 #include <string.h>
 #include <time.h>
 //#include <vector>
+
 
 //----------------------------------------------------------------------
 
@@ -50,20 +53,21 @@
 //----------
 
 // gcc, mingw
-#if defined ( __GNUC__)
-  #define SAT_GCC
-#endif
 
-#if (__cplusplus >= 201103L)
-  #define SAT_CPP11
-#endif
+//#if defined ( __GNUC__)
+//  #define SAT_GCC
+//#endif
+
+//#if (__cplusplus >= 201103L)
+//  #define SAT_CPP11
+//#endif
 
 //----------------------------------------------------------------------
 
 #include "base/sat_config.h"
 #include "base/sat_attributes.h"
 #include "base/sat_const.h"
-#include "base/sat_types.h"
+//#include "base/sat_types.h"
 
 //----------------------------------------------------------------------
 
@@ -78,6 +82,8 @@
 //----------------------------------------------------------------------
 
 #include "base/sat_global.h"
+#include "base/sat_types.h"
+//#include "base/sat_utils.h"
 
 //----------------------------------------------------------------------
 #endif

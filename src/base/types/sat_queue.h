@@ -221,7 +221,7 @@ public:
 
   //----------
 
-  SAT_AtomicQueue(const SAT_AtomicQueue& src) = delete;
+  //SAT_AtomicQueue(const SAT_AtomicQueue& src) = delete;
 
   //----------
 

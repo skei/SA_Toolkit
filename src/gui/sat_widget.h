@@ -53,40 +53,35 @@ class SAT_Widget {
 private:
 //------------------------------
 
-  SAT_Rect            MInitialRect                    = {};
-  SAT_Rect            MBaseRect                       = {};
-  SAT_Point           MBaseOffset                     = {};
-  SAT_Rect            MContentRect                    = {};
+  const char*         MName                           = "SAT_Widget";
 
-  SAT_Point           MMouseClickedPos                = {0,0};
-  uint32_t            MMouseClickedButton             = SAT_BUTTON_NONE;
-  bool                MMouseWaitingForMovement        = false;
-
-//------------------------------
-private:
-//------------------------------
+  SAT_WidgetOwner*    MOwner                          = nullptr;
+  SAT_Widget*         MParent                         = nullptr;
+  uint32_t            MParentIndex                    = 0;
+  SAT_WidgetArray     MChildWidgets                   = {};
 
   SAT_WidgetLayout    MLayout                         = {};
   SAT_WidgetState     MState                          = {};
   SAT_WidgetOptions   MOptions                        = {};
 
-  const char*         MName                           = "MWidget";
-  SAT_WidgetOwner*    MOwner                          = nullptr;
-  SAT_Widget*         MParent                         = nullptr;
-  uint32_t            MParentIndex                    = 0;
-  SAT_WidgetArray     MChildWidgets                   = {};
-  double              MValues[SAT_WIDGET_MAX_VALUES]  = {};
-  double              MModulation                     = 0;
-  SAT_Rect            MRect                           = {};
-  void*               MParameter                      = nullptr;
-  uint32_t            MLastPainted                    = 0;
+  SAT_Rect            MRect                           = {0,0,0,0};
+  SAT_Rect            MInitialRect                    = {0,0,0,0};
+  SAT_Rect            MBaseRect                       = {0,0,0,0};
+  SAT_Rect            MContentRect                    = {0,0,0,0};
 
   int32_t             MMouseCursor                    = SAT_CURSOR_DEFAULT;
+  SAT_Point           MMouseClickedPos                = {0,0};
+  uint32_t            MMouseClickedButton             = SAT_BUTTON_NONE;
+  bool                MMouseWaitingForMovement        = false;
+
   const char*         MHint                           = "";
 
-  int32_t             MSelectedIndex                  = 0;
+  double              MValues[SAT_WIDGET_MAX_VALUES]  = {};
+  double              MModulation                     = 0;
+  void*               MParameter                      = nullptr;
 
-  //SAT_Rect MLayoutDiff = SAT_Rect(0,0,0,0);
+  int32_t             MSelectedIndex                  = 0;
+  uint32_t            MLastPainted                    = 0;
 
 //------------------------------
 public:
@@ -99,7 +94,6 @@ public:
     MRect = ARect;
     MBaseRect = ARect;
     MInitialRect = ARect;
-    MBaseOffset = {0,0};
   }
 
   //----------
@@ -152,7 +146,6 @@ public:
   virtual double              getWidth()                                  { return MRect.w; }
   virtual double              getHeight()                                 { return MRect.h; }
   virtual SAT_Rect            getBaseRect()                               { return MBaseRect; }
-  virtual SAT_Point           getBaseOffset()                             { return MBaseOffset; }
   virtual SAT_Rect            getContentRect()                            { return MContentRect; }
   virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
 
@@ -160,7 +153,6 @@ public:
   virtual void                setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
   virtual void                setRect(SAT_Rect ARect)                     { MRect = ARect; }
   virtual void                setBaseRect(SAT_Rect ARect)                 { MBaseRect = ARect; }
-  virtual void                setBaseOffset(SAT_Point AOffset)            { MBaseOffset = AOffset; }
 
   virtual void                setWidth(double AWidth)                     { MRect.w = AWidth; }
   virtual void                setHeight(double AHeight)                   { MRect.h = AHeight; }
@@ -191,9 +183,9 @@ public:
   virtual bool                isVisible()                                 { return MState.visible; }
   virtual bool                isInteracting()                             { return MState.interacting; }
 
+  virtual void                setInteracting(bool AInteracting=true)      { MState.interacting = AInteracting; }
 //virtual void                setActive(bool AActive=true)                { MState.active = AActive; }    // see later down
 //virtual void                setVisible(bool AVisible=true)              { MState.visible = AVisible; }  // see later down
-  virtual void                setInteracting(bool AInteracting=true)      { MState.interacting = AInteracting; }
 
   // options
 
@@ -286,18 +278,7 @@ public:
 
   //----------
 
-  /*
-    widgers could have an base_moved, which is set here..
-    instead of modifying baserect directly
-    the difference between the designed base rect, and the runtime modified
-    when realigning we could take this account (calling getBaseRect,
-    which returns base rect + offset)
-
-    getBaseRect called from:
-      realignChildWidgets, SAT_MovableWidget.on_widget_mouseMove
-  */
-
-  virtual void setRectAndBase(SAT_Rect ARect/*, double AScale=1.0*/) {
+  virtual void setRectAndBase(SAT_Rect ARect) {
     double scale = getWindowScale();
     setRect(ARect);
     ARect.scale(1.0 / scale);//AScale);
@@ -312,7 +293,7 @@ public:
 
   //----------
 
-  // asks /owner window about its width
+  // asks owner window about its width
 
   virtual double getWindowWidth() {
     if (MOwner) return MOwner->on_widgetOwner_getWidth();
@@ -472,12 +453,10 @@ public:
 
     for (uint32_t i=0; i<MChildWidgets.size(); i++) {
 
-      SAT_Widget* child = MChildWidgets[i];
-
-      SAT_Rect child_rect;
-
+      SAT_Widget*       child         = MChildWidgets[i];
       SAT_WidgetState*  child_state   = child->getState();
       uint32_t          child_layout  = child->getLayout()->flags;
+      SAT_Rect          child_rect;
       SAT_Point         child_offset;
 
       if (child_state->visible) {
@@ -487,20 +466,15 @@ public:
 
         if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
           child_rect = SAT_Rect(parent_rect.w,parent_rect.h,parent_rect.w,parent_rect.h);
-          child_rect.scale(child->getBaseRect());
+          child_rect.scale(child->getInitialRect());
           child_rect.scale(0.01);
         }
         else {
-
-          // initial rect, so we don't risk using rect thas has been moved
-          // (popup, movable, etc)..
-
-          child_rect = child->getInitialRect();
+          child_rect = child->getBaseRect();
           child_rect.scale(scale);
         }
 
         //child->MLayoutDiff = child_rect;
-
         //SAT_Print("%.f,%.f,%.f,%.f\n",child_rect.x,child_rect.y,child_rect.w,child_rect.h);
 
         //-----
@@ -527,6 +501,7 @@ public:
 
         bool xanchored = false;
         bool yanchored = false;
+
         if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { xanchored = true; child_rect.x += layout_rect.x; }
         if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_TOP)          { yanchored = true; child_rect.y += layout_rect.y; }
         if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)        { xanchored = true; child_rect.x += (layout_rect.x2()  - child_rect.w); }
@@ -575,7 +550,7 @@ public:
         //SAT_Print("offset %.f,%.f\n",child_offset.x,child_offset.y);
         //child->MLayoutOffset = child_offset;
 
-        //child->MLayoutDiff -= child_rect;
+//child_rect.add(child->getBaseOffset());
 
         child->setRect(child_rect);
 
