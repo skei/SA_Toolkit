@@ -43,8 +43,8 @@ public:
     setName("SAT_MenuWidget");
 
 //    setAlignment(SAT_WIDGET_ALIGN_PARENT);
-    setLayoutFlags(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
-    setLayoutFlags(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
+    addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
 
   }
 

@@ -102,8 +102,9 @@ public:
       SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
         double pv = getValue(0);
-        double dpv = param->denormalizeValue(pv);
-        param->valueToText(dpv,MValue1Text,255);
+        double dpv = param->denormalize(pv);
+        const char* txt = param->valueToText(dpv);
+        strcpy(MValue1Text,txt);
       }
       else {
         double v = getValue(0);
@@ -125,8 +126,9 @@ public:
       param = (SAT_Parameter*)getParameter(1);
       if (param) {
         double pv = getValue(1);
-        double dpv = param->denormalizeValue(pv);
-        param->valueToText(dpv,MValue2Text,255);
+        double dpv = param->denormalize(pv);
+        const char* txt = param->valueToText(dpv);
+        strcpy(MValue2Text,txt);
       }
       else {
         double v = getValue(1);

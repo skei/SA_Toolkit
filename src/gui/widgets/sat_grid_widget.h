@@ -261,7 +261,7 @@ public:
           float hh = yn - S;
           x  += mrect.x;
           y  += mrect.y;
-          painter->setDrawColor(SAT_White);
+          painter->setDrawColor(SAT_LightGrey);
           painter->setLineWidth(MGridLineWidth * S);
           painter->drawRect( x,y,ww,hh );
         }

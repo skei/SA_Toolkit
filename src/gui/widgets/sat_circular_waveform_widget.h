@@ -4,7 +4,7 @@
 
 #include "sat.h"
 #include "base/utils/sat_interpolation.h"
-#include "gui/sat_paint_context.h"
+//#include "gui/sat_paint_context.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 //----------------------------------------------------------------------

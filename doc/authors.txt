@@ -1,0 +1,25 @@
+[todo] !!!
+in the meanwhile, some quick notes-to-self:
+
+/ara
+/clap - MIT, Alexandre Bique, https://github.com/free-audio/clap
+/nanosvg - zlib, Mikko Mononen, https://github.com/memononen/nanosvg
+/nanovg - zlib, Mikko Mononen, https://github.com/memononen/nanovg
+/reaper - bsd?, Cockos Incorporated
+/signalsmith - mit, Geraint Luff
+/sogl - mit, Tarek Sherif
+/stb - pd, Sean Barrett
+/vst2/fst - gpl3, IOhannes m zmölnig
+/vst2/vestige - gpl2, Javier Serrano Polo
+/vst2/xaymar - bsd?, Michael Fabian
+/vst3/travesty - bsd?, Filipe Coelho
+/wayland
+/xjson - zlib/libpng, Stefan Bachmann, https://github.com/stbachmann/xjson
+
+
+
+all other code, unless marked otherwise: Tor-Helge Skei (tor.helge.skei@gmail.com)
+
+my wrapping/abstraction code is MIT, but the code being 'wrapped' might have different
+licenses or other obligations, so look into the respective files/folders for more info,
+if you use any of it

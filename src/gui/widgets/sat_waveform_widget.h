@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/sat_paint_context.h"
+//#include "gui/sat_paint_context.h"
 #include "gui/widgets/sat_panel_widget.h"
 
 #define NUM_MARKERS 16

@@ -7,9 +7,9 @@
 
 //----------
 
-#define TRACK_HEIGHT      20
-#define TRACK_WIDTH       100
-#define PIXELS_PER_SECOND 10.0
+#define TRACK_HEIGHT      15
+#define TRACK_WIDTH       50
+#define PIXELS_PER_SECOND 7.0
 #define SECONDS_PER_PIXEL (1.0 / PIXELS_PER_SECOND)
 #define DRAG_HANDLE_SIZE  4
 
@@ -479,7 +479,7 @@ private:
 public:
 //------------------------------
 
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) override {
+  void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) override {
     bool changed = false;
     if (AButton == SAT_BUTTON_LEFT) {
       MPrevMouseX = AXpos;
@@ -489,13 +489,13 @@ public:
       MDraggingLeft = MHoverLeft;
       MDraggingRight = MHoverRight;
     }
-    if (changed) do_widgetListener_redraw(this,0);
+    if (changed) do_widget_redraw(this);
     //KWidget::on_widgetMouseDown(AWidget,AXpos,AYpos,AButton,AState);
   }
 
   //----------
 
-  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) override {
+  void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) override {
     bool changed = false;
     if (AButton == SAT_BUTTON_LEFT) {
       //if (!MDraggingSegment) return;
@@ -503,13 +503,13 @@ public:
       MDraggingLeft = false;
       MDraggingRight = false;
     }
-    if (changed) do_widgetListener_redraw(this,0);
+    if (changed) do_widget_redraw(this);
     //KWidget::on_widgetMouseUp(AWidget,AXpos,AYpos,AButton,AState);
   }
 
   //----------
 
-  void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) override {
+  void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) override {
     double S = getWindowScale();
     SAT_Rect mrect = getRect();
     bool changed = false;
@@ -570,7 +570,7 @@ public:
         changed = true;
       }
     } // not dragging
-    if (changed) do_widgetListener_redraw(this,0);
+    if (changed) do_widget_redraw(this);
     MPrevMouseX = AXpos;
     MPrevMouseY = AYpos;
   }
@@ -588,7 +588,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
+  void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) override {
     bool changed = false;
     if (MHoverTrack) {
       MHoverTrack = nullptr;
@@ -598,7 +598,7 @@ public:
       MHoverSegment = nullptr;
       changed = true;
     }
-    if (changed) do_widgetListener_redraw(this,0);
+    if (changed) do_widget_redraw(this);
     //KWidget::on_widgetLeave(AWidget, int32_t AXpos, int32_t AYpos);
   }
 

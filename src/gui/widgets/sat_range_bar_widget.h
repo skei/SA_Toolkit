@@ -137,14 +137,14 @@ public:
 public:
 //------------------------------
 
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MPrevX = AXpos;
       MPrevY = AYpos;
       MDragState = MHoverState;
-      parentRedraw();
-      do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
-      do_widgetListener_set_cursor(this,SAT_CURSOR_HIDE);
+      do_widget_redraw(this);
+      do_widget_setCursor(this,SAT_CURSOR_LOCK);
+      do_widget_setCursor(this,SAT_CURSOR_HIDE);
     }
   }
   
@@ -155,16 +155,16 @@ public:
   
   //----------
   
-  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MDragState = 0;
-    parentRedraw();
-    do_widgetListener_set_cursor(this,SAT_CURSOR_UNLOCK);
-    do_widgetListener_set_cursor(this,SAT_CURSOR_SHOW);
+    do_widget_redraw(this);
+    do_widget_setCursor(this,SAT_CURSOR_UNLOCK);
+    do_widget_setCursor(this,SAT_CURSOR_SHOW);
   }
 
   //----------
   
-  void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
     
     double xdiff = AXpos - MPrevX;
     MPrevX = AXpos;
@@ -179,7 +179,7 @@ public:
       case 0: {
         int32_t prev_state = MHoverState;
         update_hover(AXpos,AYpos);
-        if (MHoverState != prev_state) parentRedraw();
+        if (MHoverState != prev_state) do_widget_redraw(this);
         break;
       }
       case 1: {
@@ -212,7 +212,7 @@ public:
         v = SAT_Clamp(v,0,1);
         setValue(v);
         //SAT_Print("v %.3f thumb %.3f\n",v,MThumbSize);
-        parentRedraw();
+        do_widget_redraw(this);
         //double v = (AXpos - mrect.x) / (mrect.w * (1.0 - MThumbSize));
         //setValue(v);
         //redraw();
@@ -228,10 +228,10 @@ public:
 
   //----------
   
-  void on_widget_mouse_leave(SAT_BaseWidget* ATo, double AXpos, double AYpos, uint32_t ATime) override {
+  void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) override {
     if (MHoverState != 0) {
       MHoverState = 0;
-      parentRedraw();
+      do_widget_redraw(this);
     }
   }
   

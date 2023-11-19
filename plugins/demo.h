@@ -9,7 +9,7 @@
 
 #define EDITOR_WIDTH  640
 #define EDITOR_HEIGHT 480
-#define EDITOR_SCALE  1.0
+#define EDITOR_SCALE  1.3
 
 //----------------------------------------------------------------------
 //
@@ -60,6 +60,7 @@ public:
 //------------------------------
 
     SAT_MenuWidget* MSelectorMenu = nullptr;
+    float           MBuffer[2048];
 
 //------------------------------
 public:
@@ -92,6 +93,7 @@ public:
     appendStereoAudioOutputPort("output");
     appendParameter( new SAT_Parameter("param1",0.5) );
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+    for (uint32_t i=0; i<2048; i++) MBuffer[i] = SAT_RandomRange( -0.8, 0.8 );
     return SAT_Plugin::init();
   }
 
@@ -268,11 +270,38 @@ private: // widget page
           panel->setTextDropShadowOffset(SAT_Point(2,2));
           panel->setTextDropShadowColor(SAT_Black);
 
-        SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(10,320,40,40));
+        // logo
+
+        SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(10,320,60,60));
         scrollbox->appendChildWidget(logo);
 
-        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),370,16,16), i    ));
-        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),390,16,16), i + 9));
+        // circular waveform
+
+        SAT_CircularWaveformWidget* circular_waveform = new SAT_CircularWaveformWidget(SAT_Rect(80,320,60,60), 128 );
+        scrollbox->appendChildWidget(circular_waveform);
+          circular_waveform->setBackgroundColor(0.375);
+          circular_waveform->setWaveformBackgroundColor(0.35);
+          circular_waveform->setZeroLineColor(0.2);
+          circular_waveform->setAudioBuffer(2048,MBuffer,false);
+          circular_waveform->setWaveformWidth(1);
+
+        // grid
+
+        SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(150,320,60,60),5,5);
+        scrollbox->appendChildWidget(grid);
+
+        // symbols
+
+        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),390,16,16), i    ));
+        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),410,16,16), i + 9));
+
+        // waveform
+
+        SAT_WaveformWidget* waveform = new SAT_WaveformWidget(SAT_Rect(10,440,200,50));
+        scrollbox->appendChildWidget(waveform);
+          waveform->setNumGrid(4);
+          waveform->setNumSubGrid(2);
+          waveform->setBuffer(MBuffer,2048);
 
         //--------------------
         // column 2
@@ -378,30 +407,81 @@ private: // widget page
         SAT_ButtonRowWidget* buttonrow2 = new SAT_ButtonRowWidget(SAT_Rect(220,380,200,20),5,buttonrow_txt,SAT_BUTTON_ROW_MULTI,false);
         scrollbox->appendChildWidget(buttonrow2);
 
+        SAT_DualSliderWidget* dual_slider = new SAT_DualSliderWidget(SAT_Rect(220,410,200,20),"Dual",0.2,0.7);
+        scrollbox->appendChildWidget(dual_slider);
+
+        SAT_DualValueWidget* dual_value = new SAT_DualValueWidget(SAT_Rect(220,440,200,20),0.2,0.7);
+        scrollbox->appendChildWidget(dual_value);
+
+        SAT_RangeBarWidget* range_bar = new SAT_RangeBarWidget(SAT_Rect(220,470,200,20));
+        scrollbox->appendChildWidget(range_bar);
+
         //--------------------
         // column 3
         //--------------------
 
 
-        SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(430,10,170,40));
+        SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(430,10,200,40));
         scrollbox->appendChildWidget(keyboard);
 
-        SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(430,60,170,40),10);
+        SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(430,60,200,40),10);
         scrollbox->appendChildWidget(sliderbank);
 
-        SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(430,110,170,40),10);
+        SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(430,110,200,40),10);
         scrollbox->appendChildWidget(valuegraph);
 
-        SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(430,160,170,20),"Selector",MSelectorMenu);
+        SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(430,160,200,20),"Selector",MSelectorMenu);
         scrollbox->appendChildWidget(selector);
 
 
 
 
-        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,190,170,100),20,true);
+        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,190,200,100),20,true);
         scrollbox->appendChildWidget(groupbox);
           groupbox->getContainer()->setFillBackground(true);
           groupbox->getContainer()->setBackgroundColor(SAT_Orange);
+
+
+        //--------------------
+        // column 4
+        //--------------------
+
+        SAT_GraphWidget* graph = new SAT_GraphWidget(SAT_Rect(640,10,300,300));
+        scrollbox->appendChildWidget(graph);
+          graph->setFillBackground(true);
+          //graph->setAlignment(SAT_EDGE_BOTTOM);
+          //graph->setStretching(SAT_EDGE_RIGHT | SAT_EDGE_BOTTOM);
+          for (uint32_t i=0; i<6; i++) {
+            SAT_GraphModule* module = new SAT_GraphModule();
+            module->numInputs = 2;
+            module->inputs[0] = SAT_PIN_SIGNAL;
+            module->outputs[0] = SAT_PIN_SIGNAL;
+            module->numOutputs = 2;
+            graph->addModule(module,i*15,i*15,"module");
+          }
+
+        SAT_TimelineWidget* timeline = new SAT_TimelineWidget(SAT_Rect(640,320,300,100));
+        scrollbox->appendChildWidget(timeline);
+          timeline->setDrawBorder(true);
+          timeline->setBorderColor(SAT_LightGrey);
+          timeline->setBorderWidth(0.5);
+          SAT_TimelineTrack* track1 = new SAT_TimelineTrack("Track 1");
+          timeline->addTrack(track1);
+            SAT_TimelineSegment* segment1 = new SAT_TimelineSegment("Clip1",0,10);
+            track1->addSegment(segment1);
+            SAT_TimelineSegment* segment2 = new SAT_TimelineSegment("C2",11,15);
+            track1->addSegment(segment2);
+          SAT_TimelineTrack* track2 = new SAT_TimelineTrack("Track 2");
+          timeline->addTrack(track2);
+            SAT_TimelineSegment* segment3 = new SAT_TimelineSegment("3",13.2,17);
+            track2->addSegment(segment3);
+          SAT_TimelineTrack* track3 = new SAT_TimelineTrack("Track 3");
+          timeline->addTrack(track3);
+
+        // dummy
+
+        SAT_Widget* dummy1 = new SAT_Widget(SAT_Rect(940,490,10,10));
+        scrollbox->appendChildWidget(dummy1);
 
     return page;
   }

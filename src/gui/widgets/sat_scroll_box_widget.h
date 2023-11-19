@@ -48,7 +48,7 @@ public:
 
   void setup(SAT_Rect ARect) {
     setName("SAT_ScrollBoxWidget");
-    setFillBackground(false);;
+    setFillBackground(false);
     setDrawBorder(true);
     //Layout.spacing = 5;
     
@@ -157,8 +157,8 @@ public:
     //SAT_GLOBAL.DEBUG.print_callstack();
     SAT_PanelWidget::realignChildWidgets(ARecursive);
     SAT_Rect content = MContent->getContentRect();
-    float rect_w = MContent->getRect().w;
 
+    float rect_w = MContent->getRect().w;
     float rect_h = MContent->getRect().h;
 
     if (showVerticalScrollBar) {

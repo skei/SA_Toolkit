@@ -246,19 +246,20 @@ public:
     'rescale' to new..
   */
 
-  void scaleWidget(double AScale, bool ARecursive=true) /*override*/ {
-    //SAT_PanelWidget::scaleWidget(AScale,ARecursive);
+ void on_widget_prealign() {
+    double scale = getWindowScale();
     SAT_ListNode* node = MModules.head();
     while (node) {
       SAT_GraphModule* module = (SAT_GraphModule*)node;
-      module->S = AScale;
-      module->xpos = (module->xpos / MCurrentScale) * AScale;
-      module->ypos = (module->ypos / MCurrentScale) * AScale;
+      module->S = scale;
+      module->xpos = (module->xpos / MCurrentScale) * scale;
+      module->ypos = (module->ypos / MCurrentScale) * scale;
       //drawModule(module);
       node = node->next();
     }
-    MCurrentScale = AScale;
-  }
+    MCurrentScale = scale;
+ }
+
 
 //------------------------------
 public: // modules
@@ -754,7 +755,7 @@ public:
   // AXpos, AYpos = 'world' coordinates
   // x,y = local coords (graph)
 
-  void on_widget_mouse_click(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
       SAT_ListNode* node;
       SAT_GraphModule* module;
       int32_t pin;
@@ -826,13 +827,13 @@ public:
 
         } // node
       }
-      if (changed) do_widgetListener_redraw(this,0);
-      SAT_PanelWidget::on_widget_mouse_click(AButton,AState,AXpos,AYpos,ATime);
+      if (changed) do_widget_redraw(this);
+      SAT_PanelWidget::on_widget_mouseClick(AButton,AState,AXpos,AYpos,ATime);
   }
 
   //----------
 
-  void on_widget_mouse_release(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
 
       SAT_GraphWire* wire;
       bool changed;
@@ -898,14 +899,14 @@ public:
 
       }
 
-      if (changed) do_widgetListener_redraw(this,0);
+      if (changed) do_widget_redraw(this);
       //inherited;
-      SAT_PanelWidget::on_widget_mouse_release(AButton,AState,AXpos,AYpos,ATime);
+      SAT_PanelWidget::on_widget_mouseRelease(AButton,AState,AXpos,AYpos,ATime);
   }
 
   //----------
 
-  void on_widget_mouse_move(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
       double x = AXpos - getRect().x;
       double y = AYpos - getRect().y;
       bool changed = false;
@@ -990,11 +991,11 @@ public:
         changed = true;
       }
 
-      if (changed) do_widgetListener_redraw(this,0);
+      if (changed) do_widget_redraw(this);
       MMousePrevX = AXpos;
       MMousePrevY = AYpos;
 
-      SAT_PanelWidget::on_widget_mouse_move(AState,AXpos,AYpos,ATime);
+      SAT_PanelWidget::on_widget_mouseMove(AState,AXpos,AYpos,ATime);
   }
 
   //----------

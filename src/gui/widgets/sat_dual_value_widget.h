@@ -25,8 +25,8 @@ private:
   SAT_DragValueWidget*  MDragValue1 = nullptr;
   SAT_DragValueWidget*  MDragValue2 = nullptr;
   
-  bool MPushOther = true;
-  bool MStopOther = false;
+  bool MPushOther = false;
+  bool MStopOther = true;
 
 //------------------------------
 public:
@@ -38,16 +38,28 @@ public:
     //strcpy(MText,AText);
     //setFillBackground(true);
     
-    MDragValue1 = new SAT_DragValueWidget(SAT_Rect(-50,0),"",AValue1);
+    MDragValue1 = new SAT_DragValueWidget(SAT_Rect(50,0),"",AValue1);
     appendChildWidget(MDragValue1);
-    MDragValue1->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
+
+    //MDragValue1->setLayout(SAT_WIDGET_ALIGN_LEFT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
+    MDragValue1->addLayoutFlag(SAT_WIDGET_LAYOUT_PERCENT_PARENT);
+    MDragValue1->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    MDragValue1->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
+    MDragValue1->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_VERT);
+    //MDragValue1->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
+
     MDragValue1->setValueAlignment(SAT_TEXT_ALIGN_LEFT);
     MDragValue1->setValueOffset(SAT_Rect(5,0,0,0));    
 
-    MDragValue2 = new SAT_DragValueWidget(SAT_Rect(-50,0),"",AValue2);
+    MDragValue2 = new SAT_DragValueWidget(SAT_Rect(50,0),"",AValue2);
     appendChildWidget(MDragValue2);
-    MDragValue2->setLayout(SAT_WIDGET_ALIGN_RIGHT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
-    
+
+    //MDragValue2->setLayout(SAT_WIDGET_ALIGN_RIGHT_TOP,SAT_WIDGET_STRETCH_VERTICAL);
+    MDragValue2->addLayoutFlag(SAT_WIDGET_LAYOUT_PERCENT_PARENT);
+    MDragValue2->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    MDragValue2->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_RIGHT);
+    MDragValue2->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_VERT);
+    //MDragValue2->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
     
   }
   
@@ -111,15 +123,19 @@ public:
 public:
 //------------------------------
 
-  void do_widgetListener_update(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {
+  void do_widget_update(SAT_Widget* ASender) override {
     if (ASender == MDragValue1) {
       double v1 = MDragValue1->getValue();
       double v2 = MDragValue2->getValue();
       if (v1 > v2) {
         if (MPushOther) {
           MDragValue2->setValue(v1);
-          MDragValue2->parentUpdate();
-          MDragValue2->parentRedraw();
+// !!!
+          //MDragValue2->parentUpdate();
+          //MDragValue2->parentRedraw();
+          do_widget_update(MDragValue2);  // parent...
+          do_widget_redraw(MDragValue2);
+
         }
         else if (MStopOther) {
           MDragValue1->setValue(v2);
@@ -134,8 +150,12 @@ public:
       if (v2 < v1) {
         if (MPushOther) {
           MDragValue1->setValue(v2);
-          MDragValue1->parentUpdate();
-          MDragValue1->parentRedraw();
+// !!!
+          //MDragValue1->parentUpdate();
+          //MDragValue1->parentRedraw();
+          do_widget_update(MDragValue1);  // parent...
+          do_widget_redraw(MDragValue1);
+
         }
         else if (MStopOther) {
           MDragValue2->setValue(v1);
@@ -144,7 +164,7 @@ public:
         }
       }
     }
-    SAT_PanelWidget::do_widgetListener_update(ASender,AMode,AIndex);
+    SAT_PanelWidget::do_widget_update(ASender);
   }
   
   //void do_widgetListener_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {

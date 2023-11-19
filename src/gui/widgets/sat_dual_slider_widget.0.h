@@ -12,7 +12,7 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_DualSliderWidget
+class SAT_DualSliderWidget0
 : public SAT_PanelWidget {
   
 //------------------------------
@@ -63,7 +63,7 @@ private:
 public:
 //------------------------------
 
-  SAT_DualSliderWidget(SAT_Rect ARect, const char* AText, double AValue1, double AValue2)
+  SAT_DualSliderWidget0(SAT_Rect ARect, const char* AText, double AValue1, double AValue2)
   : SAT_PanelWidget(ARect) {
     setName("SAT_DualSliderWidget");
     setValue(AValue1,0);
@@ -75,7 +75,7 @@ public:
   
   //----------
 
-  virtual ~SAT_DualSliderWidget() {
+  virtual ~SAT_DualSliderWidget0() {
   }
   
 //------------------------------

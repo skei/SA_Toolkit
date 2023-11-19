@@ -158,13 +158,13 @@ void sat_crash_handler_callback(int sig) {
     void  operator  delete    (void* ptr)                                               { return SAT_GLOBAL.DEBUG.MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
     void  operator  delete[]  (void* ptr)                                               { return SAT_GLOBAL.DEBUG.MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
 
+    #define new     new(__FILE__, __LINE__)
+    #define delete  if (sat_memtrace_prefix(__FILE__, __LINE__)) delete
+
     #define malloc(s)     SAT_GLOBAL.DEBUG.MEMTRACE.malloc(  s,    __FILE__, __LINE__ )
     #define calloc(n,s)   SAT_GLOBAL.DEBUG.MEMTRACE.calloc(  n, s, __FILE__, __LINE__ )
     #define realloc(p,s)  SAT_GLOBAL.DEBUG.MEMTRACE.realloc( p, s, __FILE__, __LINE__ )
     #define free(p)       SAT_GLOBAL.DEBUG.MEMTRACE.free(    p,    __FILE__, __LINE__ )
-
-    #define new           new(__FILE__, __LINE__)
-    #define delete        if (sat_memtrace_prefix(__FILE__, __LINE__)) delete
 
   #endif
 
