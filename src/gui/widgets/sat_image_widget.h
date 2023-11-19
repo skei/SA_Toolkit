@@ -29,6 +29,7 @@ protected:
   const char* MFilename       = nullptr;
   double      MAlpha          = 1.0;
   double      MAngle          = 0.0;
+  double      MScale          = 1.0;
   bool        MMipMapped      = false;
 
 //------------------------------
@@ -65,19 +66,7 @@ public:
   virtual void setImageOffset(SAT_Rect AOffset)         { MImageOffset = AOffset; }
   virtual void setAlpha(double AAlpha)                  { MAlpha = AAlpha; }
   virtual void setAngle(double AAngle)                  { MAlpha = AAngle; }
-
-//------------------------------
-public:
-//------------------------------
-
-
-//  void cleanup(SAT_Painter* APainter, bool ARecursive=true) override {
-//    if (MInitialized) {
-//      APainter->deleteImage(MImage);
-//      MInitialized = false;
-//    }
-//    SAT_PanelWidget::cleanup(APainter,ARecursive);
-//  }
+  virtual void setScale(double AScale)                  { MScale = AScale; }
 
 //------------------------------
 public:
@@ -86,6 +75,7 @@ public:
   virtual void drawImage(SAT_PaintContext* AContext) {
     if (MDrawImage) {
       double S = getWindowScale();
+      S *= MScale;
       SAT_Painter* painter = AContext->painter;
       SAT_Rect mrect = getRect();
       if (!MInitialized) {
@@ -112,7 +102,19 @@ public:
 public:
 //------------------------------
 
+  void on_widget_close(SAT_WidgetOwner* AOwner) override {
+    if (MInitialized) {
+      SAT_Window* window = AOwner->on_widgetOwner_getWindow();
+      SAT_Painter* painter = window->getPainter();
+      painter->deleteImage(MImage);
+      MInitialized = false;
+    }
+  }
+
+  //----------
+
   void on_widget_paint(SAT_PaintContext* AContext) override {
+    //drawDropShadow(AContext);
     fillBackground(AContext);
     drawImage(AContext);
     paintChildWidgets(AContext);

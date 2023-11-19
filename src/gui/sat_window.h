@@ -429,6 +429,9 @@ public: // window
   //----------
 
   void on_window_close() override {
+    if (MRootWidget) {
+      MRootWidget->ownerWindowClosed(this);
+    }
     //SAT_Print("\n");
     stopTimer();
   }

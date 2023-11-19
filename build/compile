@@ -43,20 +43,16 @@ FLAGS+=" -Wall"
 FLAGS+=" -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-narrowing"
 FLAGS+=" -pthread"
 FLAGS+=" -Wl,--as-needed"
-FLAGS+=" -static-libstdc++"
 FLAGS+=" -static-libgcc"
+FLAGS+=" -static-libstdc++"
 
 INC=""
 INC+=" -I../src"
-#INC+=" -I../src/extern/vst3/vst3sdk"
 
 PRELIB=""
 
 LIB=""
-LIB+=" -ldl -lrt"
-#LIB+=" -lX11 -lX11-xcb -lxcb -lxcb-util -lxcb-image -lxcb-cursor -lxkbcommon -lxcb-keysyms"
-#LIB+=" -lGL -lGLU -lGLX -lEGL"
-#LIB+=" -lwayland-client -lwayland-egl"
+LIB+=" -lm -ldl -lrt"
 
 #----------------------------------------------------------------------
 #

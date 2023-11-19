@@ -51,7 +51,7 @@ public:
     if (AListener) MMenu->setMenuListener(AListener);
     else MMenu->setMenuListener(this);
     
-    setLayoutOuterBorder(SAT_Rect(2,2,2,2));
+    //setLayoutOuterBorder(SAT_Rect(2,2,2,2));
 
     setDrawText(true);
     setText(AText);

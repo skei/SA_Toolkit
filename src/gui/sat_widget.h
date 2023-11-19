@@ -36,9 +36,10 @@ struct SAT_WidgetState {
 //----------
 
 struct SAT_WidgetOptions {
-  bool autoClip         = true;
-  bool autoHoverCursor  = true;
-  bool autoHoverHint    = true;
+  bool autoClip                 = true;
+  bool autoHoverCursor          = true;
+  bool autoHoverHint            = true;
+  bool realignEvenIfNotVisible  = false;
 };
 
 //----------------------------------------------------------------------
@@ -68,6 +69,7 @@ private:
   SAT_Rect            MInitialRect                    = {0,0,0,0};
   SAT_Rect            MBaseRect                       = {0,0,0,0};
   SAT_Rect            MContentRect                    = {0,0,0,0};
+  SAT_Point           MLayoutOffset                   = {0,0};
 
   int32_t             MMouseCursor                    = SAT_CURSOR_DEFAULT;
   SAT_Point           MMouseClickedPos                = {0,0};
@@ -149,11 +151,13 @@ public:
   virtual SAT_Rect            getBaseRect()                               { return MBaseRect; }
   virtual SAT_Rect            getContentRect()                            { return MContentRect; }
   virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
+  virtual SAT_Point           getLayoutOffset()                           { return MLayoutOffset; }
 
   virtual void                setPos(SAT_Point APos)                      { MRect.setPos(APos); }
   virtual void                setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
   virtual void                setRect(SAT_Rect ARect)                     { MRect = ARect; }
   virtual void                setBaseRect(SAT_Rect ARect)                 { MBaseRect = ARect; }
+  virtual void                setLayoutOffset(SAT_Point AOffset)          { MLayoutOffset = AOffset; }
 
   virtual void                setWidth(double AWidth)                     { MRect.w = AWidth; }
   virtual void                setHeight(double AHeight)                   { MRect.h = AHeight; }
@@ -223,6 +227,18 @@ public:
 
   //----------
 
+  virtual void ownerWindowClosed(SAT_WidgetOwner* AOwner, bool ARecursive=true) {
+    MOwner = AOwner;
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+        MChildWidgets[i]->ownerWindowClosed(AOwner,ARecursive);
+      }
+    }
+    on_widget_close(AOwner);
+  }
+
+  //----------
+
   // called from:
   // appendChildWidget()
 
@@ -280,10 +296,16 @@ public:
   //----------
 
   virtual void setRectAndBase(SAT_Rect ARect) {
-    double scale = getWindowScale();
     setRect(ARect);
-    ARect.scale(1.0 / scale);//AScale);
-    setBaseRect(ARect);
+    double scale = getWindowScale();
+    SAT_Rect rect = ARect;
+
+rect.x -= MLayoutOffset.x;
+rect.y -= MLayoutOffset.y;
+
+    rect.scale(1.0 / scale);
+    setBaseRect(rect);
+
   }
 
   //----------
@@ -445,7 +467,10 @@ public:
       uint32_t          child_layout  = child->getLayout()->flags;
       SAT_Rect          child_rect;
 
-      if (child_state->visible) {
+      bool need_realign = child_state->visible || child->MOptions.realignEvenIfNotVisible;
+      //if (child_state->visible) {
+        
+      if (need_realign) {
         child->on_widget_prealign();
 
         if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
@@ -467,6 +492,8 @@ public:
           child_rect = child->getBaseRect();
           child_rect.scale(scale);
         }
+
+SAT_Rect orig_rect = child_rect;
 
         bool xanchored = false;
         bool yanchored = false;
@@ -494,6 +521,9 @@ public:
         SAT_Rect outer_border = child->getLayoutOuterBorder();
         outer_border.scale(scale);
         child_rect.shrink(outer_border);
+
+child->MLayoutOffset.x = child_rect.x - orig_rect.x;
+child->MLayoutOffset.y = child_rect.y - orig_rect.y;
 
         child->setRect(child_rect);
         child->on_widget_postalign();
@@ -542,6 +572,14 @@ public: // on_ (downwards)
   // SAT_Window.on_window_open() -> SAT_Widget.ownerWindowOpened
 
   virtual void on_widget_open(SAT_WidgetOwner* AOwner) {
+  }
+
+  //----------
+
+  // called from
+  // SAT_Window.on_window_close() -> SAT_Widget.ownerWindowClosed
+
+  virtual void on_widget_close(SAT_WidgetOwner* AOwner) {
   }
 
   //----------

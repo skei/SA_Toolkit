@@ -1,6 +1,16 @@
 #ifndef sat_plugin_included
 #define sat_plugin_included
 //----------------------------------------------------------------------
+/*
+  TODO:
+
+  * split in two:
+    - SAT_NoGuiPlugin : public SAT_Plugin
+    - SAT_GuiPlugin : public SAT_NoGuiPlugin
+
+  
+*/
+//----------------------------------------------------------------------
 
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
@@ -22,6 +32,8 @@
 
 //----------------------------------------------------------------------
 
+#if !defined (SAT_GUI_NOGUI)
+
 // 128 bit
 struct SAT_ParamQueueItem {
   uint32_t    type;
@@ -36,6 +48,15 @@ typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK
 typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
 typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
 typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
+
+#endif // nogui
+
+//----------
+
+#define SAT_DEFAULT_PLUGIN_CONSTRUCTOR(PLUGIN)                                  \
+  PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
+  : SAT_Plugin(ADescriptor,AHost) {                                             \
+  };
 
 //----------------------------------------------------------------------
 //
@@ -91,7 +112,8 @@ private:
   bool                            MTrackIsMaster              = false;
 
 
-#if !defined (SAT_GUI_NOGUI)
+  #if !defined (SAT_GUI_NOGUI)
+
   SAT_Editor*                     MEditor                   = nullptr;
   uint32_t                        MInitialEditorWidth       = 512;
   uint32_t                        MInitialEditorHeight      = 512;
@@ -104,10 +126,9 @@ private:
 
   // set in gui_create (false), gui_destroy (true)
   // checked in handleParamValueEvent, handleParamModEvent
-
   std::atomic<bool>               MIsEditorClosing          {false};
 
-#endif
+  #endif // nogui
 
 
 //------------------------------
@@ -396,13 +417,17 @@ public: // parameters
     return MParameters[AIndex];
   }
 
+  virtual sat_param_t getParameterValue(uint32_t AIndex) {
+    return MParameters[AIndex]->getValue();
+  }
+
   //----------
 
-  virtual void updateParameterFromGui(SAT_Parameter* AParameter) {
-    uint32_t index = AParameter->getIndex();
-    sat_param_t value = AParameter->getValue();
-    SAT_Print("index %i value %f\n",index,value);
-  }
+  // virtual void updateParameterFromGui(SAT_Parameter* AParameter) {
+  //   uint32_t index = AParameter->getIndex();
+  //   sat_param_t value = AParameter->getValue();
+  //   SAT_Print("index %i value %f\n",index,value);
+  // }
 
 //------------------------------
 //
@@ -425,6 +450,8 @@ public: // parameters
   
   //----------
   
+  #if !defined (SAT_GUI_NOGUI)
+
   void initEditorParameterValues() {
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
@@ -434,14 +461,19 @@ public: // parameters
       // widgets are 0..1
       uint32_t sub = 0;//param->getWidgetIndex();
       //SAT_Print("sub %i\n",sub);
-       
       MEditor->initParameterValue(param,i,sub,value); // (arg value  = clap space)
     }
   }
 
+  #endif // nogui
+
 //------------------------------
 public: // modulation
 //------------------------------
+
+  virtual sat_param_t getParameterModulation(uint32_t AIndex) {
+    return MParameters[AIndex]->getModulation();
+  }
 
   // void resetAllModulations() {
   //   uint32_t num_params = getNumParameters();
@@ -455,12 +487,22 @@ public: // modulation
 public: // editor
 //------------------------------
 
-#if !defined (SAT_GUI_NOGUI)
+  #if !defined (SAT_GUI_NOGUI)
+
+  virtual void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale) {
+    MInitialEditorWidth = AWidth;
+    MInitialEditorHeight = AHeight;
+    MInitialEditorScale = AScale;
+  }
+
+  //----------
 
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale) {
     return new SAT_Editor(AListener,AWidth,AHeight,AScale,0);
     //return nullptr;
   }
+
+  //----------
 
   virtual void deleteEditor(SAT_Editor* AEditor) {
     delete AEditor;
@@ -469,7 +511,7 @@ public: // editor
   //----------
 
   virtual void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
   //----------
@@ -477,13 +519,7 @@ public: // editor
   //virtual void cleanupEditor(SAT_Editor* AEditor) {
   //}
 
-  virtual void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale) {
-    MInitialEditorWidth = AWidth;
-    MInitialEditorHeight = AHeight;
-    MInitialEditorScale = AScale;
-  }
-
-#endif // nogui
+  #endif // nogui
 
 //------------------------------
 public: // presets
@@ -653,6 +689,8 @@ public: // events
     //SAT_Print("from host (event).. index %i value %.3f\n",index,value);
     MParameters[index]->setValue(value);
 
+    #if !defined (SAT_GUI_NOGUI)
+
     if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
         //queueParamFromHostToGui(index,value);
@@ -660,6 +698,8 @@ public: // events
         MParameters[index]->setLastAutomatedValue(value);
       }
     }
+
+    #endif
 
     return on_plugin_paramValue(event);
   }
@@ -672,6 +712,8 @@ public: // events
     //SAT_Print("from host (event).. index %i amount %.3f\n",index,amount);
     MParameters[index]->setModulation(amount);
 
+    #if !defined (SAT_GUI_NOGUI)
+    
     if (!MIsEditorClosing) {
       if (MEditor && MEditor->isOpen()) {
         //queueModFromHostToGui(index,value);
@@ -679,6 +721,8 @@ public: // events
         MParameters[index]->setLastModulatedValue(amount);
       }
     }
+
+    #endif
 
     return on_plugin_paramMod(event);
   }
@@ -841,6 +885,8 @@ private: // queues
   // called from:
   // - SAT_Plugin.handleParamValueEvent
 
+  #if !defined (SAT_GUI_NOGUI)
+
   void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
     SAT_ParamQueueItem item;
@@ -877,6 +923,8 @@ private: // queues
     //if (count > 0) { SAT_Print("flushParamFromHostToGui: %i events\n",count); }
   }
 
+  #endif // nogui
+
 //------------------------------
 //
 //------------------------------
@@ -886,6 +934,8 @@ private: // queues
   //
   // called from:
   // - SAT_Plugin.handleParamModEvent
+
+  #if !defined (SAT_GUI_NOGUI)
 
   void queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
     // todo: is_gui_open?
@@ -921,6 +971,7 @@ private: // queues
     //if (count > 0) { SAT_Print("flushModFromHostToGui: %i events\n",count); }
   }
 
+  #endif // nogui
 
 //------------------------------
 //
@@ -931,6 +982,8 @@ private: // queues
   //
   // called from:
   // - SAT_Plugin.do_editorListener_parameter_update
+
+  #if !defined (SAT_GUI_NOGUI)
 
   void queueParamFromGuiToAudio(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
@@ -977,6 +1030,7 @@ private: // queues
     //if (count > 0) { SAT_Print("flushParamFromGuiToAudio: %i events\n",count); }
   }
 
+  #endif // nogui
 
 //------------------------------
 //
@@ -987,6 +1041,8 @@ private: // queues
   //
   // called from:
   // - SAT_Plugin.do_editorListener_parameter_update
+
+  #if !defined (SAT_GUI_NOGUI)
 
   void queueParamFromGuiToHost(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
@@ -1060,9 +1116,13 @@ private: // queues
     //if (count > 0) { SAT_Print("flushParamFromGuiToHost: %i events\n",count); }
   }
 
+  #endif // nogui
+
 //------------------------------
 private:
 //------------------------------
+
+  #if !defined (SAT_GUI_NOGUI)
 
   // don't send ALL param value/mods to gui.. only last one in block
   // set flag, and check at end of process
@@ -1111,6 +1171,8 @@ private:
     }
   }
 
+  #endif // nogui
+
 //------------------------------
 private:
 //------------------------------
@@ -1123,8 +1185,10 @@ public: // process
     //SAT_PRINT;
     if (!in_events) return;
     //if (!out_events) return;
+    #if !defined (SAT_GUI_NOGUI)
     clearAutomationToGui();
     clearModulationToGui();
+    #endif
     uint32_t prev_time = 0;
     uint32_t size = in_events->size(in_events);
     for (uint32_t i=0; i<size; i++) {
@@ -1137,8 +1201,10 @@ public: // process
         prev_time = header->time;
       }
     }
+    #if !defined (SAT_GUI_NOGUI)
     queueAutomationToGui();
     queueModulationToGui();
+    #endif
   }
 
   //----------
@@ -1210,8 +1276,10 @@ public: // process
     uint32_t num_events = in_events->size(in_events);
     uint32_t current_time = 0;
     uint32_t current_event = 0;
+    #if !defined (SAT_GUI_NOGUI)
     clearAutomationToGui();
     clearModulationToGui();
+    #endif
     while (remaining > 0) {
       if (current_event < num_events) {
         const clap_event_header_t* header = in_events->get(in_events,current_event);
@@ -1235,8 +1303,10 @@ public: // process
       }
     }
     //SAT_Assert( events.read(&event) == false );
+    #if !defined (SAT_GUI_NOGUI)
     queueAutomationToGui();
     queueModulationToGui();
+    #endif
   }
 
   //----------
@@ -1252,8 +1322,10 @@ public: // process
     uint32_t current_time = 0;
     uint32_t current_event = 0;
     uint32_t next_event_time = 0;
+    #if !defined (SAT_GUI_NOGUI)
     clearAutomationToGui();
     clearModulationToGui();
+    #endif
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t num_events = in_events->size(in_events);
     if (num_events > 0) {
@@ -1295,8 +1367,10 @@ public: // process
         remaining -= SAT_AUDIO_QUANTIZED_SIZE;
       } while (remaining > 0);
     }
+    #if !defined (SAT_GUI_NOGUI)
     queueAutomationToGui();
     queueModulationToGui();
+    #endif
   }
 
 
@@ -1311,7 +1385,7 @@ public: // process
 protected: // SAT_EditorListener
 //------------------------------
 
-#if !defined (SAT_GUI_NOGUI)
+  #if !defined (SAT_GUI_NOGUI)
 
   void on_editorListener_timer(SAT_Timer* ATimer, double AElapsed) override {
     //SAT_PRINT;
@@ -1503,7 +1577,7 @@ protected: // audio_ports_config
 protected: // gui
 //------------------------------
 
-#if !defined (SAT_GUI_NOGUI)
+  #if !defined (SAT_GUI_NOGUI)
 
   bool gui_is_api_supported(const char *api, bool is_floating) override {
     //SAT_Print("api %s is_floating %i",api,is_floating);
@@ -1712,7 +1786,7 @@ protected: // gui
     return false;
   }
 
-#endif // nogui
+  #endif // nogui
 
 //------------------------------
 protected: // latency

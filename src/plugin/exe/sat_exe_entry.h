@@ -9,13 +9,18 @@
 #include "plugin/clap/sat_clap_entry.h"
 
 #include "plugin/exe/sat_exe_host_implementation.h"
-#include "plugin/exe/sat_exe_window.h"
+
+#if !defined (SAT_GUI_NOGUI)
+  #include "plugin/exe/sat_exe_window.h"
+#endif
 
 //----------------------------------------------------------------------
 //
 // editor
 //
 //----------------------------------------------------------------------
+
+#if !defined (SAT_GUI_NOGUI)
 
 void handle_editor(const clap_plugin_t* plugin) {
   const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)plugin->get_extension(plugin,CLAP_EXT_GUI);
@@ -53,6 +58,8 @@ void handle_editor(const clap_plugin_t* plugin) {
   }
 }
 
+#endif // nogui
+
 //----------------------------------------------------------------------
 //
 // plugin
@@ -80,7 +87,9 @@ void handle_plugin(const clap_plugin_t* plugin) {
   //process.transport           = nullptr;
   //plugin->process(plugin,&process); // will probably crash..
   
-  handle_editor(plugin);
+  #if !defined (SAT_GUI_NOGUI)
+    handle_editor(plugin);
+  #endif
   
   plugin->stop_processing(plugin);
   plugin->deactivate(plugin);

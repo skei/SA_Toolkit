@@ -35,6 +35,10 @@ public:
     setActive(false);
     setVisible(false);
 //    MSavedRect = ARect;
+
+    //MOptions.realignEvenIfNotVisible = true;
+    getOptions()->realignEvenIfNotVisible = true;
+
   }
 
   //----------
@@ -75,16 +79,14 @@ public:
       //MTween->appendNode( new SAT_TweenNode(this,666,0,SAT_WIDGET_TWEEN_CLOSE) );
       MTween->start();
     #endif
-    
-    realignChildWidgets();
-//    do_widget_realign(this);
 
-    //do_widgetListener_set_state(this,SAT_WIDGET_STATE_MODAL);
-    do_widget_setModal(this);
     setActive(true);
     setVisible(true);
-    //parentRedraw();
+    do_widget_realign(this);
+    realignChildWidgets();
     do_widget_redraw(this);
+    do_widget_setModal(this);
+
     return true;
   }
 

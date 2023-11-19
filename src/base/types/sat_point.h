@@ -60,6 +60,40 @@ public:
     return *this;
   }
 
+  SAT_Point& operator *= (double P) {
+    mul(P);
+    return *this;
+  }
+
+  SAT_Point& operator /= (double P) {
+    div(P);
+    return *this;
+  }
+
+  //
+
+  SAT_Point& operator += (SAT_Point P) {
+    add(P);
+    return *this;
+  }
+
+  SAT_Point& operator -= (SAT_Point P) {
+    sub(P);
+    return *this;
+  }
+
+  SAT_Point& operator *= (SAT_Point P) {
+    mul(P);
+    return *this;
+  }
+
+  SAT_Point& operator /= (SAT_Point P) {
+    div(P);
+    return *this;
+  }
+
+  //
+
 //  MIP_Rect& operator += (double P) {
 //    add(P);
 //    return *this;
@@ -101,6 +135,11 @@ public:
     y += ay;
   }
 
+  void add(SAT_Point p) {
+    x += p.x;
+    y += p.y;
+  }
+
   void sub(double AValue) {
     x -= AValue;
     y -= AValue;
@@ -109,6 +148,43 @@ public:
   void sub(double ax, double ay) {
     x -= ax;
     y -= ay;
+  }
+
+  void sub(SAT_Point p) {
+    x -= p.x;
+    y -= p.y;
+  }
+
+  //----------
+
+  void mul(double AValue) {
+    x *= AValue;
+    y *= AValue;
+  }
+
+  void mul(double ax, double ay) {
+    x *= ax;
+    y *= ay;
+  }
+
+  void mul(SAT_Point p) {
+    x *= p.x;
+    y *= p.y;
+  }
+
+  void div(double AValue) {
+    x /= AValue;
+    y /= AValue;
+  }
+
+  void div(double ax, double ay) {
+    x /= ax;
+    y /= ay;
+  }
+
+  void div(SAT_Point p) {
+    x /= p.x;
+    y /= p.y;
   }
 
 };

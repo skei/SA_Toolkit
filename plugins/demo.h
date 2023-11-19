@@ -5,11 +5,13 @@
 #include "plugin/sat_editor.h"
 #include "gui/sat_widgets.h"
 
+#include "../data/img/SA.h"
+
 //----------
 
 #define EDITOR_WIDTH  640
 #define EDITOR_HEIGHT 480
-#define EDITOR_SCALE  1.3
+#define EDITOR_SCALE  1.333
 
 //----------------------------------------------------------------------
 //
@@ -112,7 +114,7 @@ private: // editor
 
   void init_editor(SAT_Editor* AEditor, SAT_Window* AWindow, SAT_RootWidget* root) {
 
-    MSelectorMenu = new SAT_MenuWidget(SAT_Rect(0,0,170,15*5));
+    MSelectorMenu = new SAT_MenuWidget(SAT_Rect(0,0,200,15*5));
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 1") );
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 2") );
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 3") );
@@ -275,20 +277,22 @@ private: // widget page
         SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(10,320,60,60));
         scrollbox->appendChildWidget(logo);
 
+        // image
+
+        //SAT_ImageWidget* image = new SAT_ImageWidget(SAT_Rect(80,320,60,60),"../data/img/sa.png");
+        SAT_ImageWidget* image = new SAT_ImageWidget(SAT_Rect(80,320,60,60),(void*)SA,SA_size);
+        scrollbox->appendChildWidget(image);
+        image->setScale(0.6);
+
         // circular waveform
 
-        SAT_CircularWaveformWidget* circular_waveform = new SAT_CircularWaveformWidget(SAT_Rect(80,320,60,60), 128 );
+        SAT_CircularWaveformWidget* circular_waveform = new SAT_CircularWaveformWidget(SAT_Rect(150,320,60,60), 128 );
         scrollbox->appendChildWidget(circular_waveform);
           circular_waveform->setBackgroundColor(0.375);
           circular_waveform->setWaveformBackgroundColor(0.35);
           circular_waveform->setZeroLineColor(0.2);
           circular_waveform->setAudioBuffer(2048,MBuffer,false);
           circular_waveform->setWaveformWidth(1);
-
-        // grid
-
-        SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(150,320,60,60),5,5);
-        scrollbox->appendChildWidget(grid);
 
         // symbols
 
@@ -407,11 +411,17 @@ private: // widget page
         SAT_ButtonRowWidget* buttonrow2 = new SAT_ButtonRowWidget(SAT_Rect(220,380,200,20),5,buttonrow_txt,SAT_BUTTON_ROW_MULTI,false);
         scrollbox->appendChildWidget(buttonrow2);
 
+        // dual slider
+
         SAT_DualSliderWidget* dual_slider = new SAT_DualSliderWidget(SAT_Rect(220,410,200,20),"Dual",0.2,0.7);
         scrollbox->appendChildWidget(dual_slider);
 
+        // dual value
+
         SAT_DualValueWidget* dual_value = new SAT_DualValueWidget(SAT_Rect(220,440,200,20),0.2,0.7);
         scrollbox->appendChildWidget(dual_value);
+
+        // range bar
 
         SAT_RangeBarWidget* range_bar = new SAT_RangeBarWidget(SAT_Rect(220,470,200,20));
         scrollbox->appendChildWidget(range_bar);
@@ -433,13 +443,16 @@ private: // widget page
         SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(430,160,200,20),"Selector",MSelectorMenu);
         scrollbox->appendChildWidget(selector);
 
+        SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(430,190,95,50));
+        scrollbox->appendChildWidget(movable);
 
+        SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(535,190,95,50),8,4);
+        scrollbox->appendChildWidget(grid);
 
-
-        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,190,200,100),20,true);
+        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,250,200,100),20,false);
         scrollbox->appendChildWidget(groupbox);
           groupbox->getContainer()->setFillBackground(true);
-          groupbox->getContainer()->setBackgroundColor(SAT_Orange);
+          groupbox->getContainer()->setBackgroundColor(SAT_DarkGreen);
 
 
         //--------------------
