@@ -611,7 +611,7 @@ public: // FUnknown
   */
 
   uint32 PLUGIN_API addRef() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     MRefCount++;
     return MRefCount;
   }
@@ -625,7 +625,7 @@ public: // FUnknown
   */
 
   uint32 PLUGIN_API release() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     uint32_t r = --MRefCount;
     if (r == 0) {
       SAT_Print("deleting\n");
@@ -1182,7 +1182,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API canProcessSampleSize(int32 symbolicSampleSize) override {
-    SAT_PRINT;
+    //SAT_PRINT;
     if (symbolicSampleSize==kSample32) {
       return kResultTrue;
     }
@@ -1869,7 +1869,7 @@ public: // IUnitInfo
   // Gets the current selected unit.
 
   UnitID PLUGIN_API getSelectedUnit() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     return 0;
   }
 
@@ -1878,7 +1878,7 @@ public: // IUnitInfo
   // Sets a new selected unit.
 
   tresult PLUGIN_API selectUnit(UnitID unitId) override {
-    SAT_PRINT;
+    //SAT_PRINT;
     return kResultOk;
   }
 
@@ -2117,7 +2117,7 @@ public: // IEditController
       double v = param->getValue();
 
       //float v = 0;
-      return param->normalizeValue(v);
+      return param->normalize(v);
     }
     else {
       return 0;
@@ -2400,9 +2400,9 @@ public: // IPlugView
     SAT_PRINT;
     uint32_t width = 0;
     uint32_t height = 0;
-    const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
-    const clap_plugin_t* plugin = MPlugin->getClapPlugin();
     //SAT_Editor* editor = MPlugin->getEditor();
+    const clap_plugin_t* plugin = MPlugin->getClapPlugin();
+    const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
     gui->get_size(plugin,&width,&height);
     size->left    = 0;
     size->top     = 0;

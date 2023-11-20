@@ -198,7 +198,7 @@ case $FORMAT in
     #OUTPUT+=".so"
     LIBRARY=true
     FLAGS+=" -DSAT_PLUGIN_VST3"
-    INC+=" -I../extern/vst3/vst3sdk"
+    INC+=" -I../src/extern/vst3/vst3sdk"
     ;;
   *)
     echo "unknown format:" $FORMAT

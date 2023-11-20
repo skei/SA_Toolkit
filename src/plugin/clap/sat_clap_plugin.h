@@ -13,6 +13,9 @@
 
 class SAT_ClapPlugin {
 
+  friend class SAT_Vst3Plugin;
+  friend class SAT_Vst3Factory;
+
 //------------------------------
 private:
 //------------------------------
@@ -36,6 +39,12 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  const clap_plugin_descriptor_t* getClapDescriptor() {
+    return MPlugin.desc;
+  }
+
+  //----------
 
   const clap_plugin_t* getClapPlugin() {
     return &MPlugin;

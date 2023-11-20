@@ -6,7 +6,7 @@
 
 #include "sat.h"
 #include "base/system/sat_paths.h"
-#include "plugin/sat_registry.h"
+//#include "plugin/sat_registry.h"
 #include "plugin/clap/sat_clap.h"
 //#include "plugin/clap/sat_clap_host.h"
 #include "plugin/vst2/sat_vst2.h"
@@ -62,8 +62,8 @@ public:
         //SAT_Print("host supports shellCategory\n");
         current_id = audioMaster(nullptr,audioMasterCurrentId,0,0,nullptr,0);
         SAT_Print("shellCategory.. current_id: %i\n",current_id);
-        for (int32_t i=0; i<SAT_REGISTRY.getNumDescriptors(); i++) {
-          const clap_plugin_descriptor_t* desc = SAT_REGISTRY.getDescriptor(i);
+        for (int32_t i=0; i<(int32_t)SAT_GLOBAL.REGISTRY.getNumDescriptors(); i++) {
+          const clap_plugin_descriptor_t* desc = SAT_GLOBAL.REGISTRY.getDescriptor(i);
           if (current_id == sat_vst2_create_unique_id(desc)) {
             SAT_Print("found plugin %i = '%s'\n",i,desc->name);
             index = i;
@@ -91,9 +91,16 @@ public:
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);        // deleted in SAT_Vst2Plugin destructor
     const clap_host_t* claphost = vst2_host->getClapHost();
-    const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,claphost);              // destroy() called in SAT_Vst2Plugin destructor
-    SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
+
+//    const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,claphost);              // destroy() called in SAT_Vst2Plugin destructor
+//    SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
+
+    SAT_ClapPlugin* satclapplugin = SAT_CreatePlugin(index,descriptor,claphost);              // destroy() called in SAT_Vst2Plugin destructor
+    const clap_plugin_t* clapplugin = satclapplugin->getClapPlugin();
+    SAT_Plugin* plugin = (SAT_Plugin*)satclapplugin;
+
     plugin->setPluginFormat("VST2");
+
     plugin->init();
     //SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(plugin);
     SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(claphost,clapplugin,audioMaster);           // deleted in vst2_dispatcher_callback/effClose

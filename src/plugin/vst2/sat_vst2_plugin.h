@@ -35,7 +35,7 @@ struct SAT_VstEvents {
 
 class SAT_Vst2Plugin {
   
-  //friend class SAT_Vst2Entry;
+  friend class SAT_Vst2Entry;
 
 //------------------------------
 private:
@@ -933,7 +933,7 @@ public:
 
         #ifndef SAT_PLUGIN_VST2_NO_SHELL
           if (MShellPluginCurrentId == 0) {
-            if (SAT_REGISTRY.getNumDescriptors() > 1) {
+            if (SAT_GLOBAL.REGISTRY.getNumDescriptors() > 1) {
               //SAT_Print("effGetPlugCategory -> shell\n");
               res = kPlugCategShell;
               MShellPluginLastQueried = 0;
@@ -1412,8 +1412,8 @@ public:
 
       case effShellGetNextPlugin: { // 70
         #ifndef SAT_PLUGIN_VST2_NO_SHELL
-          if (MShellPluginLastQueried >= SAT_REGISTRY.getNumDescriptors()) return 0;
-          const clap_plugin_descriptor_t* descriptor = SAT_REGISTRY.getDescriptor(MShellPluginLastQueried);
+          if (MShellPluginLastQueried >= (int32_t)SAT_GLOBAL.REGISTRY.getNumDescriptors()) return 0;
+          const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(MShellPluginLastQueried);
           MShellPluginLastQueried += 1;
           const char* name = descriptor->name;
           uint32_t unique_id = sat_vst2_create_unique_id(descriptor);

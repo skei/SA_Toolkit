@@ -6,6 +6,7 @@
 #include "base/utils/sat_strutils.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/clap/sat_clap.h"
+#include "plugin/clap/sat_clap_utils.h"
 #include "plugin/vst3/sat_vst3.h"
 #include "plugin/vst3/sat_vst3_host_implementation.h"
 #include "plugin/vst3/sat_vst3_plugin.h"
@@ -186,9 +187,17 @@ public: // IPluginFactory
     if (index < 0) return kNotImplemented;
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     SAT_Vst3HostImplementation* vst3_host = new SAT_Vst3HostImplementation();
-    const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,vst3_host->getClapHost());
-    SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
-    plugin->setPluginFormat("VST3");
+
+    //const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,vst3_host->getClapHost());
+    //SAT_Plugin* plugin = (SAT_Plugin*)clapplugin->plugin_data;
+
+    SAT_ClapPlugin* plugin = SAT_CreatePlugin(index,descriptor,vst3_host->getClapHost());
+
+    const clap_plugin_t* clapplugin = plugin->getClapPlugin();
+    SAT_Plugin* satplugin = (SAT_Plugin*)clapplugin->plugin_data;
+
+    satplugin->setPluginFormat("VST3");
+
     plugin->init();
     SAT_Vst3Plugin* vst3plugin = new SAT_Vst3Plugin(plugin);
 

@@ -73,6 +73,11 @@ class SAT_Plugin
 
 {
 
+  friend class SAT_Vst3Plugin;
+
+  friend class SAT_Vst2Entry;
+  friend class SAT_Vst2Plugin;
+
 //------------------------------
 private:
 //------------------------------
@@ -1209,7 +1214,7 @@ public: // process
 
   //----------
 
-  virtual void processSample(float* spl0, float* spl1) {
+  virtual void processStereoSample(float* spl0, float* spl1) {
   }
 
   //----------
@@ -1230,7 +1235,7 @@ public: // process
     for (uint32_t i=0; i<ALength; i++) {
       float spl0 = *input0++;
       float spl1 = *input1++;
-      processSample(&spl0,&spl1);
+      processStereoSample(&spl0,&spl1);
       *output0++ = spl0;
       *output1++ = spl1;
     }
@@ -1260,7 +1265,7 @@ public: // process
       //*output1++ = *input1++;
       float spl0 = *input0++;
       float spl1 = *input1++;
-      processSample(&spl0,&spl1);
+      processStereoSample(&spl0,&spl1);
       *output0++ = spl0;
       *output1++ = spl1;
     }
@@ -1696,7 +1701,12 @@ protected: // gui
   //----------
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
-    bool result = MEditor->get_size(width,height);
+    bool result = false;
+    if (MEditor) result = MEditor->get_size(width,height);
+    else {
+      *width = MInitialEditorWidth;// * MInitialEditorScale;
+      *height = MInitialEditorHeight;// * MInitialEditorScale;
+    }
     //SAT_Print("(*width %i *height %i)\n",*width,*height);
     return result;
   }
