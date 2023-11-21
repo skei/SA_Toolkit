@@ -73,10 +73,12 @@ class SAT_Plugin
 
 {
 
+  friend class SAT_LadspaPlugin;
   friend class SAT_Vst3Plugin;
-
-  friend class SAT_Vst2Entry;
   friend class SAT_Vst2Plugin;
+
+  friend class SAT_LadspaEntry;
+  friend class SAT_Vst2Entry;
 
 //------------------------------
 private:
@@ -115,7 +117,6 @@ private:
   bool                            MTrackIsReturnTrack         = false;
   bool                            MTrackIsBus                 = false;
   bool                            MTrackIsMaster              = false;
-
 
   #if !defined (SAT_GUI_NOGUI)
 

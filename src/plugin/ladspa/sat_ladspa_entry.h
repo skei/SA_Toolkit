@@ -90,10 +90,11 @@ public:
     SAT_HostImplementation* host = new SAT_HostImplementation();
     const clap_host_t* clap_host = host->getClapHost();
     
-    const clap_plugin_t* clap_plugin = SAT_CreatePlugin(AIndex,clap_descriptor,clap_host);
-    clap_plugin->init(clap_plugin);
+    SAT_ClapPlugin* clap_plugin = SAT_CreatePlugin(AIndex,clap_descriptor,clap_host);
+    SAT_Plugin* plugin = (SAT_Plugin*)clap_plugin;
+
+    plugin->init();
     
-    SAT_Plugin* plugin = (SAT_Plugin*)clap_plugin->plugin_data;
 
     uint32_t numin = 0;
     uint32_t numout = 0;

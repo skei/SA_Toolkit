@@ -334,7 +334,6 @@ public:
     paintChildWidgets(AContext);
     drawBorder(AContext);
     drawHostIndicators(AContext);
-
   }
 
 

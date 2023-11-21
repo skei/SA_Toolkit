@@ -105,11 +105,12 @@ public:
     uint32_t index = descriptor_info->index;
     const clap_plugin_descriptor_t* clap_descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
     
-    MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
-    MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
+    //MClapPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
+    //MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
 
-    //MPlugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
-    //MClapPlugin = MPlugin->getClapPlugin();
+    SAT_ClapPlugin* plugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
+    MClapPlugin = plugin->getClapPlugin();
+    MPlugin = (SAT_Plugin*)MClapPlugin;
     
     MClapPlugin->init(MClapPlugin);
     

@@ -37,12 +37,11 @@ private:
   void*             MWidget                         = nullptr;
   uint32_t          MWidgetIndex                    = 0;  // connect..
 
-  bool              MGuiAutomationDirty = false;
-  sat_param_t       MLastAutomatedValue = 0.0;
+  bool              MGuiAutomationDirty             = false;
+  sat_param_t       MLastAutomatedValue             = 0.0;
 
-  bool              MGuiModulationDirty = false;
-  sat_param_t       MLastModulatedValue = 0.0;
-
+  bool              MGuiModulationDirty             = false;
+  sat_param_t       MLastModulatedValue             = 0.0;
 
 //------------------------------
 public:
@@ -138,15 +137,21 @@ public:
     return 0.0;
   }
 
+  //----------
+
   virtual sat_param_t denormalize(sat_param_t AValue) {
     sat_param_t range = MInfo.max_value - MInfo.min_value;
     return MInfo.min_value + (AValue * range);
   }
 
+  //----------
+
   virtual const char* valueToText(sat_param_t AValue) {
     sprintf(MValueText,MValueFormat,getValue());
     return MValueText;
   }
+
+  //----------
 
   virtual sat_param_t textToValue(const char* AText) {
     return atof(AText);
