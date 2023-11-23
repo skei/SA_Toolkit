@@ -20,7 +20,7 @@ class SAT_ClapPlugin {
 private:
 //------------------------------
 
-  const clap_host_t*  MHost = nullptr;
+  const clap_host_t*  MClapHost = nullptr;
 
 //------------------------------
 public:
@@ -28,7 +28,7 @@ public:
 
   SAT_ClapPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
     MPlugin.desc = ADescriptor;
-    MHost = AHost;
+    MClapHost = AHost;
   }
 
   //----------
@@ -53,7 +53,7 @@ public:
   //----------
 
   const clap_host_t* getClapHost() {
-    return MHost;
+    return MClapHost;
   }
 
 //------------------------------

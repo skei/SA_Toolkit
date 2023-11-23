@@ -16,6 +16,7 @@
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_plugin.h"
 #include "plugin/sat_audio_port.h"
+#include "plugin/sat_host.h"
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_note.h"
@@ -87,6 +88,7 @@ private:
   const char*                     MPluginFormat               = "";
 
   const clap_plugin_descriptor_t* MDescriptor                 = nullptr;
+  SAT_Host*                       MHost                       = nullptr;
 
   SAT_ParameterArray              MParameters                 = {};
   SAT_AudioPortArray              MAudioInputPorts            = {};
@@ -144,6 +146,7 @@ public:
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
     MProcessContext.plugin = this;
+    MHost = new SAT_Host(AHost);
   }
 
   //----------
@@ -155,15 +158,16 @@ public:
       deleteNotePorts();
       deleteParameters();
     #endif
+    delete MHost;
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  void setPluginFormat(const char* AFormat) {
-    MPluginFormat = AFormat;
-  }
+  void setEventMode(uint32_t AMode) { MEventMode = AMode; }
+  void setPluginFormat(const char* AFormat) { MPluginFormat = AFormat; }
+  //void setProcessThreaded(bool AThreaded=true)  { MProcessThreaded = AThreaded; }
 
 //------------------------------
 public: // extensions
@@ -595,16 +599,16 @@ public: // presets
 public: // events
 //------------------------------
 
-  virtual bool on_plugin_noteOn(clap_event_note_t* event) { return false; }
-  virtual bool on_plugin_noteOff(clap_event_note_t* event) { return false; }
-  virtual bool on_plugin_noteChoke(clap_event_note_t* event) { return false; }
-  virtual bool on_plugin_noteExpression(clap_event_note_expression_t* headeventer) { return false; }
-  virtual bool on_plugin_paramValue(clap_event_param_value_t* event) { return false; }
-  virtual bool on_plugin_paramMod(clap_event_param_mod_t* event) { return false; }
-  virtual bool on_plugin_transport(clap_event_transport_t* event) { return false; }
-  virtual bool on_plugin_midi(clap_event_midi_t* event) { return false; }
-  virtual bool on_plugin_midiSysex(clap_event_midi_sysex_t* event) { return false; }
-  virtual bool on_plugin_midi2(clap_event_midi2_t* event) { return false; }
+  virtual bool on_plugin_noteOn(const clap_event_note_t* event) { return false; }
+  virtual bool on_plugin_noteOff(const clap_event_note_t* event) { return false; }
+  virtual bool on_plugin_noteChoke(const clap_event_note_t* event) { return false; }
+  virtual bool on_plugin_noteExpression(const clap_event_note_expression_t* headeventer) { return false; }
+  virtual bool on_plugin_paramValue(const clap_event_param_value_t* event) { return false; }
+  virtual bool on_plugin_paramMod(const clap_event_param_mod_t* event) { return false; }
+  virtual bool on_plugin_transport(const clap_event_transport_t* event) { return false; }
+  virtual bool on_plugin_midi(const clap_event_midi_t* event) { return false; }
+  virtual bool on_plugin_midiSysex(const clap_event_midi_sysex_t* event) { return false; }
+  virtual bool on_plugin_midi2(const clap_event_midi2_t* event) { return false; }
 
 //------------------------------
 //
@@ -735,7 +739,7 @@ public: // events
 
   //----------
 
-  bool handleTransportEvent(clap_event_transport_t* event) {
+  bool handleTransportEvent(const clap_event_transport_t* event) {
     bool result = on_plugin_transport(event);
     if (result) return true;
 
@@ -865,7 +869,7 @@ public: // events
 
   //----------
 
-  bool handleMidiSysexEvent(clap_event_midi_sysex_t* event) {
+  bool handleMidiSysexEvent(const clap_event_midi_sysex_t* event) {
     bool result = on_plugin_midiSysex(event);
     if (result) return true;
     return false;
@@ -1424,6 +1428,14 @@ protected: // clap_plugin
 //------------------------------
 
   bool init() override {
+
+    // #ifdef SAT_DEBUG_WINDOW
+    //   MDebugWindow = new SAT_DebugWindow(640,480);
+    //   MDebugWindow->setTitle("SAT_DebugWindow");
+    //   MDebugWindow->show();
+    //   MDebugWindow->startEventThread();
+    // #endif
+
     setDefaultParameterValues();
     MIsInitialized = true;
     return true;
@@ -1433,6 +1445,14 @@ protected: // clap_plugin
 
   void destroy() override {
     SAT_PRINT;
+
+    // #ifdef SAT_DEBUG_WINDOW
+    //   if (MDebugWindow) {
+    //     MDebugWindow->stopEventThread();
+    //     delete MDebugWindow;
+    //   }
+    // #endif
+
     MIsInitialized = false;
 
     #ifdef SAT_PLUGIN_DELETE_IN_DESTROY
@@ -1484,21 +1504,42 @@ protected: // clap_plugin
   //----------
 
   clap_process_status process(const clap_process_t *process) override {
+
     MProcessContext.process = process;
+    //MProcessContext.parameters = &MParameters;
     MProcessContext.samplerate = MSampleRate;
     MProcessContext.minbufsize = MMinBufferSize;
     MProcessContext.maxbufsize = MMaxBufferSize;
     MProcessContext.process_counter += 1;
     //MProcessContext.voice_buffer
     //MProcessContext.voice_length
+
     #if !defined (SAT_GUI_NOGUI)
       flushParamFromGuiToAudio();
     #endif
-    processEvents(process->in_events,process->out_events);
-    processAudio(&MProcessContext);
+
+    //preProcessEvents(process->in_events,process->out_events);
+
+    if (process->transport) handleTransportEvent(process->transport);
+    switch (MEventMode) {
+      case SAT_PLUGIN_EVENT_MODE_BLOCK:
+        processEvents(process->in_events,process->out_events);
+        processAudio(&MProcessContext);
+        break;
+      case SAT_PLUGIN_EVENT_MODE_INTERLEAVED:
+        processAudioInterleaved(&MProcessContext);
+        break;
+      case SAT_PLUGIN_EVENT_MODE_QUANTIZED:
+        processAudioQuantized(&MProcessContext);
+        break;
+    }
+
+    //postProcessEvents(process->in_events,process->out_events);
+
     #if !defined (SAT_GUI_NOGUI)
       flushParamFromGuiToHost(process->out_events);
     #endif
+
     MProcessContext.sample_counter += process->frames_count;
     return CLAP_PROCESS_CONTINUE;
   }
@@ -1659,8 +1700,8 @@ protected: // gui
     //   setInitialEditorSize(w,h,s);
     // }
 
-//    uint32_t w = (double)MInitialEditorWidth;// * MInitialEditorScale;
-//    uint32_t h = (double)MInitialEditorHeight;// * MInitialEditorScale;
+    //uint32_t w = (double)MInitialEditorWidth;// * MInitialEditorScale;
+    //uint32_t h = (double)MInitialEditorHeight;// * MInitialEditorScale;
 
     //SAT_Print("api %s is_floating %i",api,is_floating);
     //MEditor = createEditor(this,w,h,MInitialEditorScale);
@@ -1830,22 +1871,18 @@ protected: // note_ports
 //------------------------------
 
   uint32_t note_ports_count(bool is_input) override {
-    return 1;
+    if (is_input) return MNoteInputPorts.size();
+    else return MNoteOutputPorts.size();
   }
 
   //----------
 
   bool note_ports_get(uint32_t index, bool is_input, clap_note_port_info_t *info) override {
-    switch (index) {
-      case 0: {
-        info->id                  = 0; // index;
-        SAT_Strlcpy(info->name,"",CLAP_NAME_SIZE);
-        info->preferred_dialect   = CLAP_NOTE_DIALECT_CLAP;
-        info->supported_dialects  = CLAP_NOTE_DIALECT_CLAP;// | CLAP_NOTE_DIALECT_MIDI | CLAP_NOTE_DIALECT_MIDI_MPE | CLAP_NOTE_DIALECT_MIDI2;
-        return true;
-      }
-    }
-    return false;
+    const clap_note_port_info_t* port_info = nullptr;
+    if (is_input) port_info = MNoteInputPorts[index]->getInfo();
+    else port_info = MNoteOutputPorts[index]->getInfo();
+    memcpy(info,port_info,sizeof(clap_note_port_info_t));
+    return true;
   }
 
 //------------------------------
@@ -1889,7 +1926,7 @@ protected: // params
   // on main/gui thread?
 
   void params_flush(const clap_input_events_t *in, const clap_output_events_t *out) override {
-    //handleEvents(in,out);
+    //processEvents(in,out);
     for (uint32_t i=0; i<in->size(in); i++) {
       const clap_event_header_t* header;
       header = in->get(in,i);
@@ -2146,8 +2183,12 @@ protected: // draft: param_indication
 //------------------------------
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
-    MParameters[param_id]->setIsMapped(has_mapping);
-    MParameters[param_id]->setMappedColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
+    SAT_Parameter* param = MParameters[param_id];
+//    param->setMappingIndication(has_mapping,color,label,description);
+    param->setIsMapped(has_mapping);
+    param->setMappedColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
+    SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+    if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
   }
   
   //----------
@@ -2155,9 +2196,13 @@ protected: // draft: param_indication
 
 
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
-    //MParameters[param_id]->setAutomationIndication(automation_state,color);
-    MParameters[param_id]->setAutomationState(automation_state);
-    MParameters[param_id]->setAutomationColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
+    SAT_Parameter* param = MParameters[param_id];
+//    param->setAutomationIndication(automation_state,color);
+    //param->setAutomationIndication(automation_state,color);
+    param->setAutomationState(automation_state);
+    param->setAutomationColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
+    SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+    if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
   }
   
 //------------------------------
@@ -2166,26 +2211,19 @@ protected: // draft: preset_load
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
 
-    const clap_host_t* host = getClapHost();
-    const clap_host_preset_load_t* preset_load = (const clap_host_preset_load_t*)host->get_extension(host,CLAP_EXT_PRESET_LOAD);
-    
-    //return loadPresetFromFile(location,load_key);
+    const clap_host_t* host = MHost->getHost();
+    //const clap_host_preset_load_t* preset_load = (const clap_host_preset_load_t*)host->get_extension(host,CLAP_EXT_PRESET_LOAD);
 
+    //return loadPresetFromFile(location,load_key);
     switch (location_kind) {
       case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
-
-//        MHost->preset_load_loaded(location_kind,location,load_key);
-        preset_load->loaded(host,location_kind,location,load_key);
-
+        if (MHost->ext.preset_load) MHost->ext.preset_load->loaded(host,location_kind,location,load_key);
         return true;
       }
       case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
         SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
-
-//        MHost->preset_load_loaded(location_kind,location,load_key);
-        preset_load->loaded(host,location_kind,location,load_key);
-
+        if (MHost->ext.preset_load) MHost->ext.preset_load->loaded(host,location_kind,location,load_key);
         return true;
       }
       default: {
@@ -2287,23 +2325,31 @@ protected: // draft: track_info
 
   void track_info_changed() override {
     const clap_host_t* host = getClapHost();
-    const clap_host_track_info_t* track_info = (const clap_host_track_info_t*)host->get_extension(host,CLAP_EXT_TRACK_INFO);
+    //const clap_host_track_info_t* track_info = (const clap_host_track_info_t*)host->get_extension(host,CLAP_EXT_TRACK_INFO);
     clap_track_info_t info;
-    if (track_info->get(host,&info)) {
-      MTrackFlags = info.flags;
-      if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME) {
-        SAT_Strlcpy(MTrackName,info.name,CLAP_NAME_SIZE);
+    //if (track_info->get(host,&info)) {
+    if (MHost->ext.track_info) {
+      if (MHost->ext.track_info->get(host,&info)) {
+        MTrackFlags = info.flags;
+        if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_NAME) {
+          SAT_Strlcpy(MTrackName,info.name,CLAP_NAME_SIZE);
+          SAT_Print("%s\n",MTrackName);
+        }
+        if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR) {
+          MTrackColor = SAT_Color(info.color.red,info.color.green,info.color.blue,info.color.alpha);
+        }
+        if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL) {
+          MTrackChannelCount = info.audio_channel_count;
+          MTrackPortType = info.audio_port_type;
+        }
+        MTrackIsReturnTrack = ((info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK)  != 0);
+        MTrackIsBus         = ((info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)           != 0);
+        MTrackIsMaster      = ((info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)        != 0);
+
+        //SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+        //if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+
       }
-      if (info.flags & CLAP_TRACK_INFO_HAS_TRACK_COLOR) {
-        MTrackColor = SAT_Color(info.color.red,info.color.green,info.color.blue,info.color.alpha);
-      }
-      if (info.flags & CLAP_TRACK_INFO_HAS_AUDIO_CHANNEL) {
-        MTrackChannelCount = info.audio_channel_count;
-        MTrackPortType = info.audio_port_type;
-      }
-      MTrackIsReturnTrack = ((info.flags & CLAP_TRACK_INFO_IS_FOR_RETURN_TRACK)  != 0);
-      MTrackIsBus         = ((info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)           != 0);
-      MTrackIsMaster      = ((info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)        != 0);
     }
   }
 

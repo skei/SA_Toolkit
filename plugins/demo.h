@@ -89,7 +89,9 @@ public:
 //------------------------------
 
   bool init() final {
-    registerDefaultSynthExtensions();
+    //registerDefaultSynthExtensions();
+    registerAllExtension();
+    registerDraftExtension();
     appendClapNoteInputPort("input");
     appendStereoAudioInputPort("input");
     appendStereoAudioOutputPort("output");
