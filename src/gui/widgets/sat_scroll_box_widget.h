@@ -197,7 +197,7 @@ public:
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget) override {
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
     if (AWidget == MVerticalScrollBar) {
       //SAT_Print("vscroll\n");
       float visible = MVerticalScrollBar->getThumbSize();
@@ -214,7 +214,7 @@ public: // child to parent
     }
     else {
       //SAT_Print("%s\n",AWidget->getName());
-      SAT_PanelWidget::do_widget_update(AWidget);
+      SAT_PanelWidget::do_widget_update(AWidget,AMode);
     }
   }
   

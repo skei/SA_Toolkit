@@ -138,7 +138,7 @@ public:
   
   // gradient
 
-  virtual void setFillGradient(bool AGradient=true) {
+  virtual void setFillLinearGradient(bool AGradient=true) {
     MFillGradient = AGradient;
   }
   
@@ -373,7 +373,7 @@ public:
 
       if (MFillGradient) {
         // down
-        painter->setFillGradient(mrect.x,mrect.y,mrect.x,mrect.y2(),MGradientColor1,MGradientColor2);
+        painter->setFillLinearGradient(mrect.x,mrect.y,mrect.x,mrect.y2(),MGradientColor1,MGradientColor2);
       }
       else {
         painter->setFillColor(MBackgroundColor);

@@ -151,7 +151,7 @@ public:
   virtual SAT_Rect            getBaseRect()                               { return MBaseRect; }
   virtual SAT_Rect            getContentRect()                            { return MContentRect; }
   virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
-  virtual SAT_Point           getLayoutOffset()                           { return MLayoutOffset; }
+  //virtual SAT_Point           getLayoutOffset()                           { return MLayoutOffset; }
 
   virtual void                setPos(SAT_Point APos)                      { MRect.setPos(APos); }
   virtual void                setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
@@ -522,6 +522,8 @@ SAT_Rect orig_rect = child_rect;
         outer_border.scale(scale);
         child_rect.shrink(outer_border);
 
+// layout offset = pre/post alignment rect diff
+// see also setRectAndBase()
 child->MLayoutOffset.x = child_rect.x - orig_rect.x;
 child->MLayoutOffset.y = child_rect.y - orig_rect.y;
 
@@ -688,8 +690,8 @@ public: // do_ (upwards)
   // widget value have changed
   // (redrawing is handled separately)
 
-  virtual void do_widget_update(SAT_Widget* AWidget) {
-    if (MParent) MParent->do_widget_update(AWidget);
+  virtual void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=0) {
+    if (MParent) MParent->do_widget_update(AWidget,AMode);
   }
 
   //----------

@@ -38,8 +38,10 @@ void handle_editor(const clap_plugin_t* plugin) {
     SAT_ExeWindow* window = new SAT_ExeWindow(width,height,0,plugin,gui);
     //printf("host window created\n");
     #ifdef SAT_LINUX
+
       xcb_window_t x11window = window->getX11Window();
       const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
+
     #endif
     #ifdef SAT_WIN32
       HWND win32window = window->getWin32Window();

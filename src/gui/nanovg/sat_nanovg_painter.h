@@ -255,7 +255,7 @@ public: // set
 
   //----------
 
-  void setFillGradient(double AX1, double AY1, double AX2, double AY2, SAT_Color AColor1, SAT_Color AColor2) final {
+  void setFillLinearGradient(double AX1, double AY1, double AX2, double AY2, SAT_Color AColor1, SAT_Color AColor2) final {
     NVGcolor icol = nvg_color(AColor1);
     NVGcolor ocol = nvg_color(AColor2);
     NVGpaint paint = nvgLinearGradient(MContext,AX1,AY1,AX2,AY2,icol,ocol);

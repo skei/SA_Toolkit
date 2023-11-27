@@ -111,33 +111,49 @@ public:
 public:
 //------------------------------
 
-//  void on_widget_paint(SAT_PaintContext* AContext) override {
-//    drawDropShadow(AContext);
-//    fillBackground(AContext);
-//    drawText(AContext);
-//    paintChildWidgets(AContext);
-//    drawBorder(AContext);
-//  }
+  //void on_widget_paint(SAT_PaintContext* AContext) override {
+  //  drawDropShadow(AContext);
+  //  fillBackground(AContext);
+  //  drawText(AContext);
+  //  paintChildWidgets(AContext);
+  //  drawBorder(AContext);
+  //}
+
+  //----------
+
+  // we won't receive events, since the child widgets fill the entire rect,
+  // and 'takes over' the event..
+  //
+  //virtual void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) override {
+  //  SAT_PRINT;
+  //  SAT_PanelWidget::on_widget_mouseMove(AXpos,AYpos,AState,ATimeStamp);
+  //}
+
 
 //------------------------------
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender) override {
+  void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0) override {
+    bool push = MPushOther;
+    bool stop = MStopOther;
+    if (AMode == SAT_STATE_SHIFT) push = true;
+
     if (ASender == MDragValue1) {
       double v1 = MDragValue1->getValue();
       double v2 = MDragValue2->getValue();
+      if (AMode == SAT_STATE_SHIFT) push = true;
       if (v1 > v2) {
-        if (MPushOther) {
+        if (push) {
           MDragValue2->setValue(v1);
 // !!!
           //MDragValue2->parentUpdate();
           //MDragValue2->parentRedraw();
-          do_widget_update(MDragValue2);  // parent...
+          do_widget_update(MDragValue2,AMode);  // parent...
           do_widget_redraw(MDragValue2);
 
         }
-        else if (MStopOther) {
+        else if (stop) {
           MDragValue1->setValue(v2);
           //MDragValue1->parentUpdate();
           //MDragValue1->parentRedraw();
@@ -148,7 +164,7 @@ public:
       double v1 = MDragValue1->getValue();
       double v2 = MDragValue2->getValue();
       if (v2 < v1) {
-        if (MPushOther) {
+        if (push) {
           MDragValue1->setValue(v2);
 // !!!
           //MDragValue1->parentUpdate();
@@ -157,7 +173,7 @@ public:
           do_widget_redraw(MDragValue1);
 
         }
-        else if (MStopOther) {
+        else if (stop) {
           MDragValue2->setValue(v1);
           //MDragValue2->parentUpdate();
           //MDragValue2->parentRedraw();

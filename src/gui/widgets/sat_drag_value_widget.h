@@ -307,7 +307,7 @@ public:
             if (AState & SAT_STATE_ALT) {
               // push
               setValue(value,index2);
-              do_widget_update(this);
+              do_widget_update(this,AState);
               do_widget_redraw(this);
             }
             else {
@@ -321,7 +321,7 @@ public:
             if (AState & SAT_STATE_ALT) {
               // push
               setValue(value,index2);
-              do_widget_update(this);
+              do_widget_update(this,AState);
               do_widget_redraw(this);
             }
             else {
@@ -337,7 +337,7 @@ public:
       
         //setSelectedValue(value);
         setValue(value,index);
-        do_widget_update(this);
+        do_widget_update(this,AState);
         do_widget_redraw(this);
         
       }

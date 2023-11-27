@@ -179,14 +179,15 @@ public:
   void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) override {
     if (MIsMoving) {
       SAT_Rect mrect = getRect();
+      double S = getWindowScale();
       double deltax = AXpos - MPrevX;
       double deltay = AYpos - MPrevY;
       if (MMovableDirections & SAT_DIRECTION_HORIZ) mrect.x += deltax;
       if (MMovableDirections & SAT_DIRECTION_VERT)  mrect.y += deltay;
 
-      //SAT_Point offset = getLayoutOffset();
-      //mrect.x -= offset.x;
-      //mrect.y -= offset.y;
+//SAT_Point offset = getLayoutOffset();
+//mrect.x -= offset.x;
+//mrect.y -= offset.y;
 
       //setRect(mrect);
       setRectAndBase(mrect);

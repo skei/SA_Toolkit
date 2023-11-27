@@ -46,9 +46,9 @@ public:
     MScale = AScale;
 
     #if defined (SAT_GUI_WAYLAND)
-      MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
+      MWindow = new SAT_Window(AWidth,AHeight,AScale,this,AParent);
     #elif defined (SAT_GUI_WIN32)
-      MWindow = new SAT_Window(AWidth,AHeight,this,AParent);
+      MWindow = new SAT_Window(AWidth,AHeight,AScale,this,AParent);
     #elif defined (SAT_GUI_X11)
       MWindow = new SAT_Window(AWidth,AHeight,AScale,this,AParent);
     #endif
@@ -155,7 +155,7 @@ public:
 public: // window listener
 //------------------------------
 
-  void on_windowListener_update(SAT_Widget* AWidget) override {
+  void on_windowListener_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
     if (MListener) {
       //SAT_Print("%s\n",AWidget->getName());
       sat_param_t value = AWidget->getValue();

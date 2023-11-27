@@ -40,8 +40,8 @@ public:
 public: // widget
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget) override {
-    if (MListener) MListener->on_widgetListener_update(AWidget);
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
+    if (MListener) MListener->on_widgetListener_update(AWidget,AMode);
   }
 
   void do_widget_redraw(SAT_Widget* AWidget) override {

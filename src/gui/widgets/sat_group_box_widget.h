@@ -45,7 +45,7 @@ public:
     MTitleBar->setIsToggle(true);
     MTitleBar->setTexts("Open","Closed");
     MTitleBar->setFillBackground(true);
-    //MTitleBar->setFillGradient(true);
+    //MTitleBar->setFillLinearGradient(true);
     MTitleBar->setDrawBorder(true);
 
 //    MTitleBar->setInnerBorder(2);
@@ -191,16 +191,16 @@ public:
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender) override {
+  void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0) override {
     if (ASender == MTitleBar) {
       if (MClosable) {
-        SAT_Widget::do_widget_update(this);
+        SAT_Widget::do_widget_update(this,AMode);
         if (MTitleBar->getValue() >= 0.5f) open();
         else close();
       }
     }
     else {
-      SAT_Widget::do_widget_update(ASender);
+      SAT_Widget::do_widget_update(ASender,AMode);
     }
   }
   

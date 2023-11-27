@@ -26,6 +26,7 @@
 #
 #----------------------------------------------------------------------
 
+CC="g++"
 INPUT="build.cpp"
 OUTPUT="build.exe"
 FORMAT="EXE"
@@ -36,6 +37,7 @@ TEST=false
 VERBOSE=false
 ADDITIONAL=""
 LIBRARY=false
+WIN32=false
 
 FLAGS=""
 FLAGS+=" -std=gnu++17"
@@ -66,6 +68,7 @@ function print_help_and_exit {
   echo "  -o <path>   output file name/path"
   echo "  -f <type>   format (all,clap,dssi,exe,ladspa,lv2,vst2,vst3)"
   echo "  -g <type>   gui (nogui,wayland,win32,x11)"
+  echo "  -w          win32"
   echo "  -d          debug mode"
   echo "  -s          sanitize"
   echo "  -t          include tests"
@@ -85,7 +88,7 @@ if [ "$#" -eq 0 ]; then
   print_help_and_exit
 fi
 
-while getopts i:o:f:g:a:dstvh? arg
+while getopts i:o:f:g:wdstva:h? arg
 do
   A=""
   case $arg in
@@ -93,11 +96,12 @@ do
     o)    OUTPUT=$OPTARG;;
     f)    FORMAT=${OPTARG^^};;
     g)    GUI=${OPTARG^^};;
-    a)    ADDITIONAL=$OPTARG;;
+    w)    WIN32=true;;
     d)    DEBUG=true;;
     s)    SANITIZE=true;;
     t)    TEST=true;;
     v)    VERBOSE=true;;
+    a)    ADDITIONAL=$OPTARG;;
     h|?)  print_help_and_exit;;
     *)    exit 1;;
   esac
@@ -281,6 +285,24 @@ if $DEBUG
 fi
 
 #------------------------------
+# -w win32
+#------------------------------
+
+if $WIN32
+  then
+    CC="/usr/bin/x86_64-w64-mingw32-g++"
+#    FLAGS+=" -DSAT_DEBUG"
+#    FLAGS+=" -g"
+#    FLAGS+=" -export-dynamic"
+#    #FLAGS+=" -Wl,-Bsymbolic"
+#  else
+#    FLAGS+=" -DNDEBUG"
+#    FLAGS+=" -O3"
+#    FLAGS+=" -ffast-math"
+#    FLAGS+=" -s"
+fi
+
+#------------------------------
 # -s sanitize
 #------------------------------
 
@@ -317,9 +339,9 @@ fi
 #echo
 
 if $VERBOSE; then
-  echo g++ $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+  echo $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
 fi  
 
-g++ $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+$CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
 
 

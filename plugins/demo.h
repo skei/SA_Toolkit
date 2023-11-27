@@ -9,8 +9,8 @@
 
 //----------
 
-#define EDITOR_WIDTH  640
-#define EDITOR_HEIGHT 480
+#define EDITOR_WIDTH  1000
+#define EDITOR_HEIGHT 600
 #define EDITOR_SCALE  1.333
 
 //----------------------------------------------------------------------
@@ -95,7 +95,17 @@ public:
     appendClapNoteInputPort("input");
     appendStereoAudioInputPort("input");
     appendStereoAudioOutputPort("output");
-    appendParameter( new SAT_Parameter("param1",0.5) );
+
+    appendParameter( new SAT_Parameter("param1",0.1) );
+    appendParameter( new SAT_Parameter("param2",0.2) );
+    appendParameter( new SAT_Parameter("param3",0.3) );
+    appendParameter( new SAT_Parameter("param4",0.4) );
+    appendParameter( new SAT_Parameter("param5",0.5) );
+    appendParameter( new SAT_Parameter("param6",0.6) );
+    appendParameter( new SAT_Parameter("param7",0.7) );
+    appendParameter( new SAT_Parameter("param8",0.8) );
+    appendParameter( new SAT_Parameter("param9",0.9) );
+
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     for (uint32_t i=0; i<2048; i++) MBuffer[i] = SAT_RandomRange( -0.8, 0.8 );
     return SAT_Plugin::init();
@@ -106,7 +116,7 @@ public:
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
     AWindow->setRootWidget(root);
-    root->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
+    //root->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
     init_editor(AEditor,AWindow,root);
   }
   
@@ -123,8 +133,19 @@ private: // editor
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 4") );
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 5") );
 
+    SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(30,"demo");
+    root->appendChildWidget(header);
+    
+    SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(20,"...");
+    root->appendChildWidget(footer);
+
+    SAT_Widget* middle = new SAT_Widget(0);
+    root->appendChildWidget(middle);
+    middle->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_ALL);
+    middle->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
+    
     SAT_TabsWidget* tabs = new SAT_TabsWidget(SAT_Rect(10,10,100,100),32,20);
-    root->appendChildWidget(tabs);
+    middle->appendChildWidget(tabs);
     tabs->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_ALL);
     tabs->appendPage("widgets",   create_widgets_page(AEditor,AWindow) );
     tabs->appendPage("parameters",create_params_page(AEditor,AWindow)  );
@@ -204,7 +225,7 @@ private: // widget page
 
         panel = new SAT_PanelWidget(SAT_Rect(10,130,200,20));
         scrollbox->appendChildWidget(panel);
-          panel->setFillGradient(true);
+          panel->setFillLinearGradient(true);
           panel->setGradientColors(SAT_Grey,0.45,0.55);
           panel->setRoundedCorners(true);
           panel->setCornerSize(8);
@@ -215,7 +236,7 @@ private: // widget page
         scrollbox->appendChildWidget(panel);
           panel->setFillBackground(true);
           //panel->setBackgroundColor(SAT_Grey);
-          panel->setFillGradient(true);
+          panel->setFillLinearGradient(true);
           panel->setGradientColors(SAT_Grey,0.2,0.2);
           panel->setDrawBorder(true);
           panel->setBorderColor(SAT_Black);
@@ -399,11 +420,11 @@ private: // widget page
 
         SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(220,320,95,20),true);
         scrollbox->appendChildWidget(button1);
-        button1->setTexts("Toggle ON","Toggle OFF");
+        button1->setTexts("Switch ON","Switch OFF");
 
         SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(325,320,95,20),false);
         scrollbox->appendChildWidget(button2);
-        button2->setTexts("Switch ON","Switch OFF");
+        button2->setTexts("Toggle ON","Toggle OFF");
 
         // buttonrow
 
@@ -413,45 +434,50 @@ private: // widget page
         SAT_ButtonRowWidget* buttonrow2 = new SAT_ButtonRowWidget(SAT_Rect(220,380,200,20),5,buttonrow_txt,SAT_BUTTON_ROW_MULTI,false);
         scrollbox->appendChildWidget(buttonrow2);
 
-        // dual slider
+        // selector
 
-        SAT_DualSliderWidget* dual_slider = new SAT_DualSliderWidget(SAT_Rect(220,410,200,20),"Dual",0.2,0.7);
-        scrollbox->appendChildWidget(dual_slider);
-
-        // dual value
-
-        SAT_DualValueWidget* dual_value = new SAT_DualValueWidget(SAT_Rect(220,440,200,20),0.2,0.7);
-        scrollbox->appendChildWidget(dual_value);
-
-        // range bar
-
-        SAT_RangeBarWidget* range_bar = new SAT_RangeBarWidget(SAT_Rect(220,470,200,20));
-        scrollbox->appendChildWidget(range_bar);
+        SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(220,410,200,20),"Selector",MSelectorMenu);
+        scrollbox->appendChildWidget(selector);
 
         //--------------------
         // column 3
         //--------------------
 
+        // dual slider
 
-        SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(430,10,200,40));
+        SAT_DualSliderWidget* dual_slider = new SAT_DualSliderWidget(SAT_Rect(430,10,200,20),"Dual",0.2,0.7);
+        scrollbox->appendChildWidget(dual_slider);
+
+        // dual value
+
+        SAT_DualValueWidget* dual_value = new SAT_DualValueWidget(SAT_Rect(430,40,200,20),0.2,0.7);
+        scrollbox->appendChildWidget(dual_value);
+
+        // range bar
+
+        SAT_RangeBarWidget* range_bar = new SAT_RangeBarWidget(SAT_Rect(430,70,200,20));
+        scrollbox->appendChildWidget(range_bar);
+
+
+
+
+
+        SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(430,130,200,40));
         scrollbox->appendChildWidget(keyboard);
 
-        SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(430,60,200,40),10);
+        SAT_SliderBankWidget* sliderbank = new SAT_SliderBankWidget(SAT_Rect(430,180,200,40),10);
         scrollbox->appendChildWidget(sliderbank);
 
-        SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(430,110,200,40),10);
+        SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(430,230,200,40),10);
         scrollbox->appendChildWidget(valuegraph);
 
-        SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(430,160,200,20),"Selector",MSelectorMenu);
-        scrollbox->appendChildWidget(selector);
+//        SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(430,190,95,50));
+//        scrollbox->appendChildWidget(movable);
 
-        SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(430,190,95,50));
-        scrollbox->appendChildWidget(movable);
-
-        SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(535,190,95,50),8,4);
+        SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(430,280,200,50),10,5);
         scrollbox->appendChildWidget(grid);
 
-        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,250,200,100),20,false);
+        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,340,200,100),20,false);
         scrollbox->appendChildWidget(groupbox);
           groupbox->getContainer()->setFillBackground(true);
           groupbox->getContainer()->setBackgroundColor(SAT_DarkGreen);
@@ -488,7 +514,7 @@ private: // widget page
             track1->addSegment(segment2);
           SAT_TimelineTrack* track2 = new SAT_TimelineTrack("Track 2");
           timeline->addTrack(track2);
-            SAT_TimelineSegment* segment3 = new SAT_TimelineSegment("3",13.2,17);
+            SAT_TimelineSegment* segment3 = new SAT_TimelineSegment("3",5.2,17);
             track2->addSegment(segment3);
           SAT_TimelineTrack* track3 = new SAT_TimelineTrack("Track 3");
           timeline->addTrack(track3);
@@ -509,9 +535,42 @@ private: // params page
     SAT_PanelWidget* page = new SAT_PanelWidget(0);
     //page->setBackgroundColor(SAT_Grey);
 
-      SAT_SliderWidget* slider1 = new SAT_SliderWidget(SAT_Rect(10,10,200,20),"p value",0.5);
-      page->appendChildWidget(slider1);
-      AEditor->connect(slider1,getParameter(0));
+      SAT_SliderWidget* slider;
+      slider = new SAT_SliderWidget(SAT_Rect(10,10,200,20),"param1",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(0));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,40,200,20),"param2",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(1));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,70,200,20),"param3",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(2));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,100,200,20),"param4",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(3));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,130,200,20),"param5",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(4));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,160,200,20),"param6",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(5));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,190,200,20),"param7",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(6));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,220,200,20),"param8",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(7));
+
+      slider = new SAT_SliderWidget(SAT_Rect(10,250,200,20),"param9",0);
+      page->appendChildWidget(slider);
+      AEditor->connect(slider,getParameter(8));
 
     return page;
   }
