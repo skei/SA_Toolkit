@@ -11,13 +11,13 @@
 
 #include "sat.h"
 
-#if defined(SAT_WIN32)
-  #undef SAT_DEBUG_CRASH_HANDLER
-#endif
+// #if defined(SAT_WIN32)
+//   #undef SAT_DEBUG_CRASH_HANDLER
+// #endif
 
-#if !defined (SAT_LINUX)
-  #error only linux supported..
-#endif
+// #if !defined (SAT_LINUX)
+//   #error only linux supported..
+// #endif
 
   //----------
 

@@ -157,7 +157,7 @@ public:
     
     //
 
-    //painter->selectFont(default_font);
+    painter->selectFont(default_font);
     paintChildWidgets(AContext);
     drawBorder(AContext);
 

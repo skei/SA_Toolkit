@@ -61,6 +61,7 @@
 //#define SAT_DEBUG_PRINT_SOCKET
 //#define SAT_DEBUG_WINDOW
 //#define SAT_FAST_MATH_EXTRA_PRECISION
+#define SAT_GUI_DEFAULT_EDITOR
 //#define SAT_GUI_NOGUI
 //#define SAT_GUI_WAYLAND
 //#define SAT_GUI_WIN32
@@ -121,15 +122,20 @@
 // debug
 //------------------------------
 
+#if defined (SAT_WIN32)
+  #undef SAT_DEBUG_CALLSTACK
+  #undef SAT_DEBUG_CRASH_HANDLER
+#endif
+
 #if !defined (SAT_DEBUG)
-  #undef AT_DEBUG_ASSERT
-  #undef AT_DEBUG_BREAKPOINT
-  #undef AT_DEBUG_CALLSTACK
-  #undef AT_DEBUG_CRASH_HANDLER
-  #undef AT_DEBUG_MEMTRACE
-  #undef AT_DEBUG_OBSERVER
-  //#undef AT_DEBUG_PRINT
-  #undef AT_DEBUG_WINDOW
+  #undef SAT_DEBUG_ASSERT
+  #undef SAT_DEBUG_BREAKPOINT
+  #undef SAT_DEBUG_CALLSTACK
+  #undef SAT_DEBUG_CRASH_HANDLER
+  #undef SAT_DEBUG_MEMTRACE
+  #undef SAT_DEBUG_OBSERVER
+  //#undef SAT_DEBUG_PRINT
+  #undef SAT_DEBUG_WINDOW
 #endif
 
 //------------------------------

@@ -284,7 +284,7 @@ public: // clap_plugin
       MWindow->setParent((intptr_t)MParent->ptr);
       return true;
     #elif defined (SAT_GUI_WIN32)
-      MWindow->setParent(MParent->win32);
+      MWindow->setParent((intptr_t)MParent->win32);
       return true;
     #elif defined (SAT_GUI_X11)
       //SAT_PRINT;

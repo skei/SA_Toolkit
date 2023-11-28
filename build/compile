@@ -54,7 +54,8 @@ INC+=" -I../src"
 PRELIB=""
 
 LIB=""
-LIB+=" -lm -ldl -lrt"
+LIB+=" -lm"
+#LIB+=" -ldl -lrt"
 
 #----------------------------------------------------------------------
 #
@@ -275,8 +276,15 @@ if $DEBUG
   then
     FLAGS+=" -DSAT_DEBUG"
     FLAGS+=" -g"
-    FLAGS+=" -export-dynamic"
+
+    if ! $WIN32
+      then
+        FLAGS+=" -export-dynamic"
+    fi
+
+    #FLAGS+=" -export-dynamic"
     #FLAGS+=" -Wl,-Bsymbolic"
+
   else
     FLAGS+=" -DNDEBUG"
     FLAGS+=" -O3"
@@ -291,15 +299,10 @@ fi
 if $WIN32
   then
     CC="/usr/bin/x86_64-w64-mingw32-g++"
-#    FLAGS+=" -DSAT_DEBUG"
-#    FLAGS+=" -g"
-#    FLAGS+=" -export-dynamic"
-#    #FLAGS+=" -Wl,-Bsymbolic"
-#  else
-#    FLAGS+=" -DNDEBUG"
-#    FLAGS+=" -O3"
-#    FLAGS+=" -ffast-math"
-#    FLAGS+=" -s"
+    LIB+=" -lgdi32 -lmsimg32 -lopengl32"
+  else
+    CC="g++"
+    LIB+=" -ldl -lrt"
 fi
 
 #------------------------------

@@ -1,7 +1,5 @@
-#if 0
-
-#ifndef sat_win32_opengl_included
-#define sat_win32_opengl_included
+#ifndef sat_wgl_renderer_included
+#define sat_wgl_renderer_included
 //----------------------------------------------------------------------
 
 /*
@@ -50,9 +48,10 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/base/sat_renderer_owner.h"
 
-#define SOGL_MAJOR_VERSION SAT_OPENGL_MAJOR
-#define SOGL_MINOR_VERSION SAT_OPENGL_MINOR
+#define SOGL_MAJOR_VERSION SAT_RENDERER_MAJOR_VERSION
+#define SOGL_MINOR_VERSION SAT_RENDERER_MINOR_VERSION
 #define SOGL_IMPLEMENTATION_WIN32
 
 #include "extern/sogl/simple-opengl-loader.h"
@@ -147,9 +146,8 @@ PIXELFORMATDESCRIPTOR SAT_WglSurfacePFD = {
     rc = wglCreateContext(dc);
   */
 
-class SAT_Win32OpenGL {
-
-  //friend class SAT_NvgPainter;
+class SAT_WGLRenderer
+: public SAT_BaseRenderer {
 
 //------------------------------
 private:
@@ -168,29 +166,34 @@ private:
 public:
 //------------------------------
 
-  SAT_Win32OpenGL(HWND AWindow) {
+  //SAT_Win32OpenGL(HWND AWindow) {
+  //}
+
+  SAT_WGLRenderer(SAT_RendererOwner* AOwner)
+  : SAT_BaseRenderer(AOwner) {
+
+    HWND hwnd = AOwner->on_rendererOwner_getHWND();
 
     //MTarget = ATarget;
 
     // pixel format
 
-    //if (MTarget->tgtIsWindow()) {
-    if (AWindow) {
-      HWND hwnd = AWindow;
+    //if (AOwner->isWindow()) {
+      //HWND hwnd = AWindow;
       MDC = GetDC(hwnd);
       if (!MDC) SAT_Win32PrintError("GetDC");
       int pf = ChoosePixelFormat(MDC, &SAT_WglWindowPFD);
       SetPixelFormat(MDC, pf, &SAT_WglWindowPFD);
-    }
-    else {
-      //SAT_Print("opengl rendering to buffer not supported in windows (yet)..\n");
-      //exit(1);
-      HDC tempdc = GetDC(0);
-      MDC = CreateCompatibleDC(tempdc);
-      ReleaseDC(0,tempdc);
-      int pf = ChoosePixelFormat(MDC, &SAT_WglSurfacePFD);
-      SetPixelFormat(MDC, pf, &SAT_WglSurfacePFD);
-    }
+    //}
+    //else {
+    //  //SAT_Print("opengl rendering to buffer not supported in windows (yet)..\n");
+    //  //exit(1);
+    //  HDC tempdc = GetDC(0);
+    //  MDC = CreateCompatibleDC(tempdc);
+    //  ReleaseDC(0,tempdc);
+    //  int pf = ChoosePixelFormat(MDC, &SAT_WglSurfacePFD);
+    //  SetPixelFormat(MDC, pf, &SAT_WglSurfacePFD);
+    //}
 
     // temp context
 
@@ -279,8 +282,8 @@ public:
     }
 
     const int ctx_attribs[] = {
-      WGL_CONTEXT_MAJOR_VERSION_ARB, SAT_OPENGL_MAJOR,
-      WGL_CONTEXT_MINOR_VERSION_ARB, SAT_OPENGL_MINOR,
+      WGL_CONTEXT_MAJOR_VERSION_ARB, SAT_RENDERER_MAJOR_VERSION,
+      WGL_CONTEXT_MINOR_VERSION_ARB, SAT_RENDERER_MINOR_VERSION,
       WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
       0
     };
@@ -303,11 +306,12 @@ public:
     wglMakeCurrent(MDC, MGLRC);
 
     MIsCurrent = true;
+
   }
 
   //----------
 
-  virtual ~SAT_Win32OpenGL() {
+  virtual ~SAT_WGLRenderer() {
     //SAT_PRINT;
     //SAT_UnloadOpenGL();
     unloadExtensions();
@@ -319,33 +323,37 @@ public:
 public:
 //------------------------------
 
-  void setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
-    glViewport(AXpos,AYpos,AWidth,AHeight);
+  uint32_t getType() override {
+    return 0;
   }
 
-  //----------
+  const char* getTypeName() {
+    return "";
+  }
 
-  void beginPaint() {
+  bool beginRendering() {
     makeCurrent();
+    return true;
   }
 
-  //----------
-  
   // w/h = viewport size (not update rect!)
 
-  void beginPaint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
-    makeCurrent();
-    setViewport(0,0,AWidth,AHeight);
+  bool beginRendering(int32_t AWidth, int32_t AHeight) {
+     makeCurrent();
+     setViewport(0,0,AWidth,AHeight);
+    return true;
   }
 
-  //----------
-
-  void endPaint() {
+  bool endRendering() {
     swapBuffers();
     resetCurrent();
+    return true;
   }
 
-  //----------
+  bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
+    glViewport(AXpos,AYpos,AWidth,AHeight);
+    return true;
+  }
 
   /*
     The wglMakeCurrent function makes a specified OpenGL rendering context the
@@ -369,8 +377,6 @@ public:
     return true;
   }
 
-  //----------
-
   /*
     you have to make it UN-current in one thread
     before you can make it current in another..
@@ -385,28 +391,31 @@ public:
     return true;
   }
 
-  //----------
-
   /*
     The SwapBuffers function exchanges the front and back buffers if the
     current pixel format for the window referenced by the specified device
     context includes a back buffer.
   */
 
-  void swapBuffers() {
+  // void swapBuffers() {
+  // }
+
+  bool swapBuffers() {
     //SAT_Print("\n");
     SwapBuffers(MDC);
+    return true;
   }
-
-  //----------
 
   // TODO:
   //   - bool argument -> setVSync(bool AState)
   //   - add the other variants..
 
-  //----------
+  bool disableVSync() {
+    return false;
+  }
 
-  void disableVSync() {
+  bool enableVSync() {
+    return false;
   }
 
 //------------------------------
@@ -462,53 +471,41 @@ public: // extensions
     sogl_cleanup();
   }
 
-//------------------------------
-public:
-//------------------------------
 
 //------------------------------
-private:
+public: // utils
 //------------------------------
+
+  #define SAT_GL_ERROR_CHECK {    \
+    GLint err = glGetError();     \
+    if (err != GL_NO_ERROR) {     \
+      SAT_Print("");              \
+      SAT_PrintGLError(err);      \
+    }                             \
+  }
+
+  //#define SAT_OPENGL_ERROR_CHECK { SAT_Print("gl error: %i\n",glGetError()); }
+
+  void SAT_PrintGLError(GLint err) {
+    switch (err) {
+      case GL_NO_ERROR:                       SAT_DPrint("OpenGL Error: No error has been recorded. The value of this symbolic constant is guaranteed to be 0.\n"); break;
+      case GL_INVALID_ENUM:                   SAT_DPrint("OpenGL Error: An unacceptable value is specified for an enumerated argument. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_INVALID_VALUE:                  SAT_DPrint("OpenGL Error: A numeric argument is out of range. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_INVALID_OPERATION:              SAT_DPrint("OpenGL Error: The specified operation is not allowed in the current state. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_INVALID_FRAMEBUFFER_OPERATION:  SAT_DPrint("OpenGL Error: The framebuffer object is not complete. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_OUT_OF_MEMORY:                  SAT_DPrint("OpenGL Error: There is not enough memory left to execute the command. The state of the GL is undefined, except for the state of the error flags, after this error is recorded.\n"); break;
+      case GL_STACK_UNDERFLOW:                SAT_DPrint("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to underflow.\n"); break;
+      case GL_STACK_OVERFLOW:                 SAT_DPrint("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to overflow.\n"); break;
+      default:                                SAT_DPrint("OpenGL Error: Unknown error %i\n",err); break;
+    }
+  }
 
 };
 
 //----------------------------------------------------------------------
-//
-// utils
-//
-//----------------------------------------------------------------------
-
-#define SAT_GL_ERROR_CHECK {    \
-  GLint err = glGetError();     \
-  if (err != GL_NO_ERROR) {     \
-    SAT_Print("");              \
-    SAT_PrintGLError(err);      \
-  }                             \
-}
-
-//#define SAT_OPENGL_ERROR_CHECK { SAT_Print("gl error: %i\n",glGetError()); }
-
-void SAT_PrintGLError(GLint err) {
-  switch (err) {
-    case GL_NO_ERROR:                       SAT_DPrint("OpenGL Error: No error has been recorded. The value of this symbolic constant is guaranteed to be 0.\n"); break;
-    case GL_INVALID_ENUM:                   SAT_DPrint("OpenGL Error: An unacceptable value is specified for an enumerated argument. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-    case GL_INVALID_VALUE:                  SAT_DPrint("OpenGL Error: A numeric argument is out of range. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-    case GL_INVALID_OPERATION:              SAT_DPrint("OpenGL Error: The specified operation is not allowed in the current state. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-    case GL_INVALID_FRAMEBUFFER_OPERATION:  SAT_DPrint("OpenGL Error: The framebuffer object is not complete. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-    case GL_OUT_OF_MEMORY:                  SAT_DPrint("OpenGL Error: There is not enough memory left to execute the command. The state of the GL is undefined, except for the state of the error flags, after this error is recorded.\n"); break;
-    case GL_STACK_UNDERFLOW:                SAT_DPrint("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to underflow.\n"); break;
-    case GL_STACK_OVERFLOW:                 SAT_DPrint("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to overflow.\n"); break;
-    default:                                SAT_DPrint("OpenGL Error: Unknown error %i\n",err); break;
-  }
-}
-
-//----------------------------------------------------------------------
 #endif
+
 
 //HMODULE gl_module = LoadLibrary(TEXT("opengl32.dll"));
 //wgl_GetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)GetProcAddress(gl_module,"wglGetExtensionsStringEXT");
 //FreeLibrary(gl_module);
-
-
-
-#endif // 0

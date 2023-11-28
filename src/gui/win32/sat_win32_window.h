@@ -2,55 +2,6 @@
 #define sat_win32_window_included
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "gui/base/sat_base_window.h"
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-class SAT_Win32Window
-: public SAT_BaseWindow {
-
-//------------------------------
-public:
-//------------------------------
-
-  SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_BaseWindow(AWidth,AHeight,AParent) {
-  }
-
-  //----------
-
-  virtual ~SAT_Win32Window() {
-  }
-
-
-};
-
-//----------------------------------------------------------------------
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-#ifndef sat_win32_window_included
-#define sat_win32_window_included
-//----------------------------------------------------------------------
-
 /*
   not working in wine: (?)
     window class styles:
@@ -89,8 +40,10 @@ public:
 
 #include "sat.h"
 #include "base/utils/sat_strutils.h"
-#include "gui/sat_base_window.h"
+#include "gui/base/sat_base_window.h"
+#include "gui/base/sat_renderer_owner.h"
 #include "gui/win32/sat_win32.h"
+#include "gui/sat_renderer.h"
 
 //----------------------------------------------------------------------
 
@@ -110,7 +63,7 @@ public:
 #define SAT_WIN32_STANDALONE_STYLE    ( WS_OVERLAPPEDWINDOW )
 #define SAT_WIN32_EMBEDDED_STYLE      ( WS_CHILD | WS_VISIBLE )
 #define SAT_WIN32_EX_STANDALONE_STYLE ( 0 /*WS_EX_OVERLAPPEDWINDOW*/ )
-#define SAT_WIN32_EX_EMBEDDED_STYLE   ( 0 /* WS_EX_TOOLWINDOW */ )
+#define SAT_WIN32_EX_EMBEDDED_STYLE   ( 0 /*WS_EX_TOOLWINDOW*/ )
 
 char* SAT_Win32ClassName(void);
 LRESULT CALLBACK sat_eventproc_win32(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -155,7 +108,8 @@ const char* sat_win32_cursors[] = {
 //----------------------------------------------------------------------
 
 class SAT_Win32Window
-: public SAT_BaseWindow {
+: public SAT_BaseWindow
+, public SAT_RendererOwner {
 
   friend LRESULT CALLBACK sat_win32_eventproc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -186,6 +140,8 @@ private:
   HCURSOR     MWinCursor        = nullptr;
   HCURSOR     MUserCursors[128] = {0};
 
+  SAT_Renderer* MRenderer = nullptr;
+
 //------------------------------
 protected:
 //------------------------------
@@ -200,7 +156,7 @@ protected:
 public:
 //------------------------------
 
-  SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent)
+  SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_BaseWindow(AWidth,AHeight,AParent) {
     MWindowXpos   = 0;
     MWindowYpos   = 0;
@@ -217,6 +173,8 @@ public:
     setTitle(MWindowTitle);
     memset(MUserCursors,0,sizeof(MUserCursors));
     setMouseCursor(SAT_CURSOR_DEFAULT);
+
+    MRenderer = new SAT_Renderer(this);
   }
 
   //----------
@@ -227,6 +185,48 @@ public:
     ReleaseDC(MWindow,MWindowDC);
     DestroyWindow(MWindow);
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  HWND getWin32Window() {
+    return MWindow;
+  }
+
+  SAT_Renderer* getRenderer() override {
+    return MRenderer;
+  }
+
+  uint32_t getWindowType() override {
+    return SAT_WINDOW_TYPE_WIN32;
+  }
+
+  const char* getWindowTypeName() override {
+    return SAT_WINDOW_TYPE_NAME_WIN32;
+  }
+
+
+  
+  uint32_t  getScreenWidth()   override { return MScreenWidth; }
+  uint32_t  getScreenHeight()  override { return MScreenHeight; }
+  uint32_t  getScreenDepth()   override { return MScreenDepth; }
+  
+  uint32_t  getWidth()         override { return MWindowWidth; }
+  uint32_t  getHeight()        override { return MWindowWidth; }
+
+//HDC       getWinPaintDC(void)   { return MWinPaintDC; }
+//HDC       getScreenDC(void)     { return MScreenDC; }
+//HDC       getWindowDC(void)     { return MWindowDC; }
+//uint32_t  getScreenWidth()      { return MScreenWidth; }
+//uint32_t  getScreenHeight()     { return MScreenHeight; }
+//int32_t   getScreenDepth()      { return MScreenDepth; }
+
+//------------------------------
+public: // renderer owner
+//------------------------------
+
+  HWND on_rendererOwner_getHWND() override { return MWindow; }
 
 //------------------------------
 private:
@@ -315,57 +315,7 @@ private:
 public:
 //------------------------------
 
-  HWND      getWin32Window()      { return MWindow;}
-  
-//  HDC       getWinPaintDC(void)   { return MWinPaintDC; }
-//  HDC       getScreenDC(void)     { return MScreenDC; }
-//  HDC       getWindowDC(void)     { return MWindowDC; }
-//  uint32_t  getScreenWidth()      { return MScreenWidth; }
-//  uint32_t  getScreenHeight()     { return MScreenHeight; }
-//  int32_t   getScreenDepth()      { return MScreenDepth; }
-
-  uint32_t getScreenWidth()   override { return MScreenWidth; }
-  uint32_t getScreenHeight()  override { return MScreenHeight; }
-  uint32_t getScreenDepth()   override { return MScreenDepth; }
-  
-  //----------
-  
-  uint32_t getWidth() override {
-    return MWindowWidth;
-  }
-  
-  //----------
-
-  uint32_t getHeight() override {
-    return MWindowWidth;
-  }
-  
-
-
-
-//------------------------------
-public:
-//------------------------------
-
-//  virtual void on_window_open() {}
-//  virtual void on_window_close() {}
-//  virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
-//  virtual void on_window_resize(int32_t AWidth, int32_t AHeight) {}
-//  virtual void on_window_paint(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {}
-//  virtual void on_window_key_press(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_key_release(uint8_t AKey, uint32_t AKeySym, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-//  virtual void on_window_mouse_enter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-//  virtual void on_window_mouse_leave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-//  virtual void on_window_client_message(uint32_t AData) {}
-
-//------------------------------
-public:
-//------------------------------
-
-  void setPos(uint32_t AXpos, uint32_t AYpos) override {
+  void setPos(int32_t AXpos, int32_t AYpos) override {
     MWindowXpos = AXpos;
     MWindowYpos = AYpos;
     SetWindowPos(MWindow,0,AXpos,AYpos,0,0,SWP_NOSIZE|SWP_NOACTIVATE|SWP_NOZORDER);
@@ -373,7 +323,7 @@ public:
 
   //----------
 
-  void setSize(uint32_t AWidth, uint32_t AHeight) override {
+  void setSize(int32_t AWidth, int32_t AHeight) override {
     MWindowWidth = AWidth;
     MWindowHeight = AHeight;
     MWindowWidth = AWidth;
@@ -397,7 +347,7 @@ public:
 
   //----------
 
-  void show() override {
+  void open() override {
     on_window_open();
     ShowWindow(MWindow,SW_SHOW); // sende WM_SIZE
     //#ifdef SAT_GUI_IDLE_TIMER
@@ -407,7 +357,7 @@ public:
 
   //----------
 
-  void hide() override {
+  void close() override {
     //#ifdef SAT_GUI_IDLE_TIMER
     //  stopTimer(SAT_GUI_IDLE_TIMER_ID);
     //#endif
@@ -464,7 +414,7 @@ public:
     WM_UPDATEUISTATE.
   */
 
-  void reparent(intptr_t AParent) override {
+  void setParent(intptr_t AParent) override {
     
     LONG_PTR style   = GetWindowLongPtr(MWindow,GWL_STYLE);
     LONG_PTR exstyle = GetWindowLongPtr(MWindow,GWL_EXSTYLE);
@@ -612,30 +562,30 @@ public:
 
   // only valid inside begin/endPaint
 
-  void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor) override {
-    RECT R;
-    R.left    = AXpos;
-    R.top     = AYpos;
-    R.right   = AXpos + AWidth;
-    R.bottom  = AYpos + AHeight;
-    HPEN pen = CreatePen(PS_NULL,0,0);
-    HGDIOBJ old_pen = SelectObject(MWinPaintDC,pen);
-    HBRUSH brush = CreateSolidBrush(AColor);
-    HGDIOBJ old_brush = SelectObject(MWinPaintDC,brush);
-    Rectangle(MWinPaintDC,R.left,R.top,R.right+1,R.bottom+1);
-    SelectObject(MWinPaintDC,old_pen);
-    DeleteObject(pen);
-    SelectObject(MWinPaintDC,old_brush);
-    DeleteObject(brush);
-  }
+  // void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor) override {
+  //   RECT R;
+  //   R.left    = AXpos;
+  //   R.top     = AYpos;
+  //   R.right   = AXpos + AWidth;
+  //   R.bottom  = AYpos + AHeight;
+  //   HPEN pen = CreatePen(PS_NULL,0,0);
+  //   HGDIOBJ old_pen = SelectObject(MWinPaintDC,pen);
+  //   HBRUSH brush = CreateSolidBrush(AColor);
+  //   HGDIOBJ old_brush = SelectObject(MWinPaintDC,brush);
+  //   Rectangle(MWinPaintDC,R.left,R.top,R.right+1,R.bottom+1);
+  //   SelectObject(MWinPaintDC,old_pen);
+  //   DeleteObject(pen);
+  //   SelectObject(MWinPaintDC,old_brush);
+  //   DeleteObject(brush);
+  // }
 
   //----------
 
   // only valid inside begin/endPaint
 
-  void fill(uint32_t AColor) override {
-    fill(0,0,MWindowWidth,MWindowHeight,AColor);
-  }
+  // void fill(uint32_t AColor) override {
+  //   fill(0,0,MWindowWidth,MWindowHeight,AColor);
+  // }
   
   //----------
   
@@ -759,7 +709,7 @@ public: // mouse
   // Moves the cursor to the specified screen coordinates
   // will fire a WM_MOUSEMOVE event..
 
-  void setMouseCursorPos(int32_t AXpos, int32_t AYpos) override {
+  void setMousePos(int32_t AXpos, int32_t AYpos) override {
     POINT pos;
     pos.x = AXpos;
     pos.y = AYpos;
@@ -771,7 +721,7 @@ public: // mouse
 
   //----------
 
-  void hideMouseCursor(void) override {
+  void hideMouse(void) override {
     if (!MIsCursorHidden) {
       MIsCursorHidden = true;
       ShowCursor(false);
@@ -780,7 +730,7 @@ public: // mouse
 
   //----------
 
-  void showMouseCursor(void) override {
+  void showMouse(void) override {
     if (MIsCursorHidden) {
       MIsCursorHidden = false;
       ShowCursor(true);
@@ -789,13 +739,13 @@ public: // mouse
 
   //----------
 
-  void grabMouseCursor(void) override {
+  void grabMouse(void) override {
     SetCapture(MWindow);
   }
 
   //----------
 
-  void releaseMouseCursor(void) override {
+  void releaseMouse(void) override {
     ReleaseCapture();
   }
 
@@ -1191,7 +1141,7 @@ private: // remap
       case WM_MOUSEMOVE: {
         int32_t x = short(LOWORD(lParam));
         int32_t y = short(HIWORD(lParam));
-        on_window_mouse_move(x,y,remapMouseKey(wParam),0);
+        on_window_mouseMove(x,y,remapMouseKey(wParam),0);
         MMouseXpos = x;
         MMouseYpos = y;
         break;
@@ -1215,7 +1165,7 @@ private: // remap
         int32_t x = short(LOWORD(lParam));
         int32_t y = short(HIWORD(lParam));
       //if (MWindowListener) MWindowListener->on_mouseDown(this,x,y,b,remapKey(wParam));
-        on_window_mouse_click(x,y,b,remapMouseKey(wParam),time);
+        on_window_mouseClick(x,y,b,remapMouseKey(wParam),time);
         //        if (MFlags & s3_wf_capture) grabCursor();
         break;
       }
@@ -1237,7 +1187,7 @@ private: // remap
         int32_t x = short(LOWORD(lParam));
         int32_t y = short(HIWORD(lParam));
         //if (MWindowListener) MWindowListener->on_mouseUp(this,x,y,b,remapKey(wParam));
-        on_window_mouse_release(x,y,b,remapMouseKey(wParam),time);
+        on_window_mouseRelease(x,y,b,remapMouseKey(wParam),time);
         //        if (MFlags&s3_wf_capture) releaseCursor();
         break;
       }
@@ -1300,7 +1250,7 @@ private: // remap
       case WM_KEYDOWN: {
         //if (MWindowListener) MWindowListener->on_keyDown(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-        on_window_key_press(wParam,0,lParam,time);
+        on_window_keyPress(wParam,0,lParam,time);
         break;
       }
 
@@ -1309,7 +1259,7 @@ private: // remap
       case WM_KEYUP: {
         //if (MWindowListener) MWindowListener->on_keyUp(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-        on_window_key_release(wParam,0,lParam,time);
+        on_window_keyRelease(wParam,0,lParam,time);
         break;
       }
 
@@ -1340,8 +1290,6 @@ private: // remap
   }
 
 };
-
-
 
 //----------------------------------------------------------------------
 //
@@ -1457,9 +1405,37 @@ char* SAT_Win32ClassName() {
   return SAT_GLOBAL_WIN32_WINDOW_CLASS.getWindowClass();
 }
 
-
 //----------------------------------------------------------------------
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
 
 
 #endif // 0

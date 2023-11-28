@@ -21,7 +21,7 @@ struct SAT_VoiceEvent {
   }
 };
 
-typedef SAT_LockFreeQueue<SAT_VoiceEvent,SAT_VOICE_MAX_EVENTS_PER_BLOCK> SAT_VoiceEventQueue;
+typedef SAT_Queue<SAT_VoiceEvent,SAT_VOICE_MAX_EVENTS_PER_BLOCK> SAT_VoiceEventQueue;
 
 //----------------------------------------------------------------------
 //

@@ -90,7 +90,7 @@ private:
   uint32_t                        MLastNoteId         = 0;
   SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS] = {};
   
-  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
+  SAT_Queue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
   double  MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
 //------------------------------

@@ -48,7 +48,7 @@ private:
   uint32_t                  MNumEvents         = 0;
   char                      MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
   
-  SAT_LockFreeQueue<uint32_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
+  SAT_Queue<uint32_t,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
   double                    MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
   //float*                    MHostValues       = nullptr;

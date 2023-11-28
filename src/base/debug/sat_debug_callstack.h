@@ -17,13 +17,13 @@
   (linker flag, not a compiler flag. You might need to try -Wl,--export-dynamic)
 */
 
-#if defined (SAT_WIN32)
-  #undef SAT_DEBUG_CALLSTACK
-#endif
+// #if defined (SAT_WIN32)
+//   #undef SAT_DEBUG_CALLSTACK
+// #endif
 
-#if !defined (SAT_LINUX)
-  #error only linux supported..
-#endif
+// #if !defined (SAT_LINUX)
+//   #error only linux supported..
+// #endif
 
 #if defined(SAT_DEBUG_CALLSTACK)
   #include <execinfo.h>  // for backtrace

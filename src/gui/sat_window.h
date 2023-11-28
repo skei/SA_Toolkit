@@ -46,7 +46,7 @@
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 
-typedef SAT_LockFreeQueue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS> SAT_WidgetQueue;
+typedef SAT_Queue<SAT_Widget*,SAT_WINDOW_MAX_DIRTY_WIDGETS> SAT_WidgetQueue;
 
 //----------
 
@@ -239,7 +239,14 @@ public:
   // on_window_open()
 
   virtual void startTimer(uint32_t AMSInterval, bool AOneShot=false) {
-    MTimer.start(AMSInterval,AOneShot);
+    //HWND hwnd,     
+    #ifdef SAT_LINUX
+      MTimer.start(AMSInterval,AOneShot);
+    #endif
+    #ifdef SAT_WIN32
+      HWND hwnd = getWin32Window();
+      MTimer.start(AMSInterval,hwnd,AOneShot);
+    #endif
   }
 
   //----------

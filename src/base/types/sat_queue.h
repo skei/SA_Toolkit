@@ -32,7 +32,7 @@
 //----------
 
 template<class T, int SIZE>
-class SAT_LockFreeQueue {
+class SAT_Queue {
 
 //------------------------------
 private:
@@ -48,7 +48,7 @@ private:
 public:
 //------------------------------
 
-  SAT_LockFreeQueue() {
+  SAT_Queue() {
     MBuffer     = (T*)malloc(SIZE*sizeof(T));
     MBufferSize = SIZE;
     MBufferMask = SIZE - 1;
@@ -58,7 +58,7 @@ public:
 
   //----------
 
-  ~SAT_LockFreeQueue() {
+  ~SAT_Queue() {
     free(MBuffer);
   }
 
@@ -121,7 +121,7 @@ public:
 // write single, read buffer (all)
 
 template<class _T, int SIZE>
-class SAT_LockFreeQueueBuffer {
+class SAT_QueueBuffer {
 
 //------------------------------
 private:
@@ -135,7 +135,7 @@ private:
   public:
 //------------------------------
 
-  SAT_LockFreeQueueBuffer() {
+  SAT_QueueBuffer() {
     memset(MData,0,SIZE*(sizeof(_T)));
     MWritePos = 0;
     MReadPos = 0;

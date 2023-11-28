@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------
 
 
-typedef SAT_LockFreeQueue<uint32_t,SAT_VST2_MESSAGE_QUEUE_SIZE> SAT_Vst2MsgQueue; // was SAT_IntQueue;
+typedef SAT_Queue<uint32_t,SAT_VST2_MESSAGE_QUEUE_SIZE> SAT_Vst2MsgQueue; // was SAT_IntQueue;
 
 struct SAT_VstEvents {
   VstInt32  numEvents;

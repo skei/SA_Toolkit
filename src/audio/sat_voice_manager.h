@@ -15,7 +15,7 @@
 
 //----------
 
-typedef SAT_LockFreeQueue<SAT_Note,SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
+typedef SAT_Queue<SAT_Note,SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 
 //----------------------------------------------------------------------
 //
@@ -101,7 +101,7 @@ public:
     MClapHost = AHost;
     if (MClapHost) {
       MThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-      SAT_Log("VOICE MANAGER: thread-pool: %s\n", MThreadPool ? "true" : "false" );
+      //SAT_Log("VOICE MANAGER: thread-pool: %s\n", MThreadPool ? "true" : "false" );
     }
   }
 

@@ -265,38 +265,12 @@ public: // SAT_BaseWindow
 
   //----------
 
-  /*
-    wl_display_dispatch
-    Dispatch events on the default event queue.
-    If the default event queue is empty, this function blocks until there are events to be read
-    from the display fd. Events are read and queued on the appropriate event queues. Finally, events
-    on the default event queue are dispatched. On failure -1 is returned and errno set appropriately.
-    In a multi threaded environment, do not manually wait using poll() (or equivalent) before
-    calling this function, as doing so might cause a dead lock. If external reliance on poll()
-    (or equivalent) is required, see wl_display_prepare_read_queue() of how to do so.
-    This function is thread safe as long as it dispatches the right queue on the right thread.
-    It is also compatible with the multi thread event reading preparation API (see wl_display_prepare_read_queue()),
-    and uses the equivalent functionality internally. It is not allowed to call this function while
-    the thread is being prepared for reading events, and doing so will cause a dead lock.    
-  */
-
-  /*
-    wl_display_dispatch_pending
-    This function dispatches events on the main event queue. It does not attempt to read the
-    display fd and simply returns zero if the main queue is empty, i.e., it doesn't block.    
-  */
-
-  //----------
-
   uint32_t eventLoop() override {
     SAT_PRINT;
     wl_surface_commit(MSurface);
     wl_display_dispatch_pending(MDisplay);
-
     renderFrame(0);
-
     while (wl_display_dispatch(MDisplay) != -1) {
-      //SAT_PRINT;
       ;
     }
     return 0;
@@ -341,7 +315,7 @@ public: // SAT_BaseWindow
   }
 
 //------------------------------
-private:
+private: // render frame
 //------------------------------
 
   // Make eglSwapBuffers non-blocking, we manage frame callbacks manually
@@ -366,29 +340,6 @@ private:
 //------------------------------
 private: // wl_registry
 //------------------------------
-
-  /*
-    Global registry object
-    The singleton global registry object. The server has a number of global objects that are
-    available to all clients. These objects typically represent an actual object in the server
-    (for example, an input device) or they are singleton objects that provide extension functionality.
-    When a client creates a registry object, the registry object will emit a global event for each
-    global currently in the registry. Globals come and go as a result of device or monitor hotplugs,
-    reconfiguration or other events, and the registry will send out global and global_remove events
-    to keep the client up to date with the changes. To mark the end of the initial burst of events,
-    the client can use the wl_display.sync request immediately after calling wl_display.get_registry.
-    A client can bind to a global object by using the bind request. This creates a client-side handle
-    that lets the object emit events to the client and lets the client invoke requests on the object.
-  */
-
-  //------------------------------
-
-  /*
-    Announce global object
-    Notify the client of global objects.
-    The event notifies the client that a global object with the given name is now available,
-    and it implements the given version of the given interface.  
-  */
 
   void sat_wl_registry_global(struct wl_registry* registry, uint32_t id, const char* interface, uint32_t version) {
     //SAT_Print("id %i interface %s version %i\n",id,interface,version);
@@ -427,15 +378,6 @@ private: // wl_registry
 
   //----------
 
-  /*
-    Announce removal of global object
-    Notify the client of removed global objects.
-    This event notifies the client that the global identified by name is no longer available.
-    If the client bound to the global using the bind request, the client should now destroy that object.
-    The object remains valid and requests to the object will be ignored until the client destroys it,
-    to avoid races between the global going away and a client sending a request to it.  
-  */
-
   void sat_wl_registry_global_remove(struct wl_registry* registry, uint32_t id) {
     //SAT_Print("id %i\n",id);
   }
@@ -456,7 +398,7 @@ private: // wl_registry
     window->sat_wl_registry_global_remove(registry,id);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct wl_registry_listener sat_wl_registry_listener = {
@@ -467,27 +409,6 @@ private: // wl_registry
 //------------------------------
 private: // xdg_wm_base
 //------------------------------
-
-  /*
-    Create desktop-style surfaces
-    The xdg_wm_base interface is exposed as a global object enabling clients to turn their
-    wl_surfaces into windows in a desktop environment. It defines the basic functionality needed
-    for clients and the compositor to create windows that can be dragged, resized, maximized,
-    etc, as well as creating transient windows such as popup menus.
-  */
-
-  //------------------------------
-
-  /*
-    Check if the client is alive
-    The ping event asks the client if it's still alive. Pass the serial specified in the event
-    back to the compositor by sending a "pong" request back with the specified serial. See xdg_wm_base.pong.
-    Compositors can use this to determine if the client is still alive. It's unspecified what
-    will happen if the client doesn't respond to the ping request, or in what timeframe.
-    Clients should try to respond in a reasonable amount of time. The “unresponsive” error is provided
-    for compositors that wish to disconnect unresponsive clients.
-    A compositor is free to ping in any way it wants, but a client must always respondto any xdg_wm_base object it created.  
-  */
 
   void sat_xdg_wm_base_ping(struct xdg_wm_base *xdg_wm_base, uint32_t serial) {
     //SAT_Print("serial %i\n",serial);
@@ -504,7 +425,7 @@ private: // xdg_wm_base
     window->sat_xdg_wm_base_ping(xdg_wm_base,serial);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct xdg_wm_base_listener sat_xdg_wm_base_listener {
@@ -514,57 +435,6 @@ private: // xdg_wm_base
 //------------------------------
 private: // xdg_surface
 //------------------------------
-
-  /*
-    Desktop user interface surface base interface
-    An interface that may be implemented by a wl_surface, for implementations that provide a desktop-style user interface.
-    It provides a base set of functionality required to construct user interface elements requiring
-    management by the compositor, such as toplevel windows, menus, etc. The types of functionality are
-    split into xdg_surface roles.
-
-    Creating an xdg_surface does not set the role for a wl_surface. In order to map an xdg_surface,
-    the client must create a role-specific object using, e.g., get_toplevel, get_popup.
-    The wl_surface for any given xdg_surface can have at most one role, and may not be assigned any role not based on xdg_surface.
-    A role must be assigned before any other requests are made to the xdg_surface object.
-    The client must call wl_surface.commit on the corresponding wl_surface for the xdg_surface state to take effect.
-    Creating an xdg_surface from a wl_surface which has a buffer attached or committed is a client error, and any attempts
-    by a client to attach or manipulate a buffer prior to the first xdg_surface.configure call must also be treated as errors.
-    After creating a role-specific object and setting it up, the client must perform an initial commit without any buffer attached.
-    The compositor will reply with initial wl_surface state such as wl_surface.preferred_buffer_scale followed by an
-    xdg_surface.configure event. The client must acknowledge it and is then allowed to attach a buffer to map the surface.
-
-    Mapping an xdg_surface-based role surface is defined as making it possible for the surface to be shown by the compositor.
-    Note that a mapped surface is not guaranteed to be visible once it is mapped.
-    For an xdg_surface to be mapped by the compositor, the following conditions must be met: (1) the client has assigned an
-    xdg_surface-based role to the surface (2) the client has set and committed the xdg_surface state and the role-dependent
-    state to the surface (3) the client has committed a buffer to the surface
-    A newly-unmapped surface is considered to have met condition (1) out of the 3 required conditions for mapping a surface
-    if its role surface has not been destroyed, i.e. the client must perform the initial commit again before attaching a buffer.
-*/
-
-  //----------
-
-  /*
-    Suggest a surface change
-    The configure event marks the end of a configure sequence. A configure sequence is a set of one or more events
-    configuring the state of the xdg_surface, including the final xdg_surface.configure event.
-    Where applicable, xdg_surface surface roles will during a configure sequence extend this event as a latched state
-    sent as events before the xdg_surface.configure event. Such events should be considered to make up a set of
-    atomically applied configuration states, where the xdg_surface.configure commits the accumulated state.
-    Clients should arrange their surface for the new states, and then send an ack_configure request
-    with the serial sent in this configure event at some point before committing the new surface.
-    If the client receives multiple configure events before it can respond to one,
-    it is free to discard all but the last event it received.  
-  */
-
-  /*
-    ..each subclass of xdg_surface (xdg_toplevel and xdg_popup) have additional events that the server
-    can send ahead of "configure", to make each of the suggestions we've mentioned so far. The server
-    will send all of this state; maximized, focused, a suggested size; then a configure event with a serial.
-    When the client has assumed a state consistent with these suggestions, it sends an ack_configure request with the
-    same serial to indicate this. Upon the next commit to the associated wl_surface,
-    the compositor will consider the state consistent.
-  */
 
   void sat_xdg_surface_configure(struct xdg_surface *xdg_surface, uint32_t serial) {
     SAT_Print("xdg_surface %p serial %i\n",xdg_surface,serial);
@@ -579,7 +449,7 @@ private: // xdg_surface
     SAT_WaylandPendingChanges* changes = &MPendingChanges;
 
     //SAT_Print("MPendingChanges %p\n",changes);                // prints 0x10/0x88 ?????
-    memset(&MPendingChanges,0,size);                          // so this crashes....
+    memset(&MPendingChanges,0,size);                            // so this crashes....
 
     //SAT_PRINT;
 
@@ -598,7 +468,7 @@ private: // xdg_surface
     window->sat_xdg_surface_configure(xdg_surface,serial);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct xdg_surface_listener sat_xdg_surface_listener = {
@@ -608,38 +478,6 @@ private: // xdg_surface
 //------------------------------
 private: // xdg_toplevel
 //------------------------------
-
-  /*
-    Toplevel surface
-    This interface defines an xdg_surface role which allows a surface to, among other things,
-    set window-like properties such as maximize, fullscreen, and minimize, set application-specific
-    metadata like title and id, and well as trigger user interactive operations such as
-    interactive resize and move.
-    Unmapping an xdg_toplevel means that the surface cannot be shown by the compositor until it is
-    explicitly mapped again. All active operations (e.g., move, resize) are canceled and all attributes
-    (e.g. title, state, stacking, ...) are discarded for an xdg_toplevel surface when it is unmapped.
-    The xdg_toplevel returns to the state it had right after xdg_surface.get_toplevel. The client can
-    re-map the toplevel by perfoming a commit without any buffer attached, waiting for a configure
-    event and handling it as usual (see xdg_surface description).
-    Attaching a null buffer to a toplevel unmaps the surface.
-  */
-
-  //------------------------------
-
-  /*
-    Suggest a surface change
-    This configure event asks the client to resize its toplevel surface or to change its state.
-    The configured state should not be applied immediately. See xdg_surface.configure for details.
-    The width and height arguments specify a hint to the window about how its surface should be resized
-    in window geometry coordinates. See set_window_geometry.
-    If the width or height arguments are zero, it means the client should decide its own window dimension.
-    This may happen when the compositor needs to configure the state of the surface but doesn't have any
-    information about any previous or expected dimension.
-    The states listed in the event specify how the width/height arguments should be interpreted,
-    and possibly how it should be drawn.
-    Clients must send an ack_configure in response to this event.
-    See xdg_surface.configure and xdg_surface.ack_configure for details.  
-  */
 
   void sat_xdg_toplevel_configure(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height, struct wl_array *states) {
 
@@ -677,39 +515,10 @@ private: // xdg_toplevel
 
   }
 
-  //----------
-
-  /*
-    Surface wants to be closed
-    The close event is sent by the compositor when the user wants the surface to be closed.
-    This should be equivalent to the user clicking the close button in client-side decorations,
-    if your application has any.
-    This is only a request that the user intends to close the window.
-    The client may choose to ignore this request, or show a dialog to ask the user to save their data, etc.
-  */
-
   void sat_xdg_toplevel_close(struct xdg_toplevel *xdg_toplevel) {
     SAT_PRINT;
     //on_window_close();
   }
-
-	/*
-	  recommended window geometry bounds
-	  The configure_bounds event may be sent prior to a
-	  xdg_toplevel.configure event to communicate the bounds a window
-	  geometry size is recommended to constrain to.
-	  The passed width and height are in surface coordinate space. If
-	  width and height are 0, it means bounds is unknown and
-	  equivalent to as if no configure_bounds event was ever sent for
-	  this surface.
-	  The bounds can for example correspond to the size of a monitor
-	  excluding any panels or other shell components, so that a
-	  surface isn't created in a way that it cannot fit.
-	  The bounds may change at any point, and in such a case, a new
-	  xdg_toplevel.configure_bounds will be sent, followed by
-	  xdg_toplevel.configure and xdg_surface.configure.
-	  since 4
-	*/
 
   void sat_xdg_toplevel_configure_bounds(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height) {
     SAT_Print("width %i height %i\n",width,height);
@@ -737,7 +546,7 @@ private: // xdg_toplevel
     window->sat_xdg_toplevel_configure_bounds(xdg_toplevel,width,height);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct xdg_toplevel_listener sat_xdg_toplevel_listener = {
@@ -815,7 +624,7 @@ private: // wl_output
     window->sat_wl_output_description(wl_output,description);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct wl_output_listener sat_wl_output_listener = {
@@ -831,27 +640,12 @@ private: // wl_output
 private: // wl_surface
 //------------------------------
 
-  /*
-    surface enters an output
-    This is emitted whenever a surface's creation, movement, or resizing
-    results in some part of it being within the scanout region of an output.
-    Note that a surface may be overlapping with zero or more outputs.
-  */
-
   void sat_wl_surface_enter(struct wl_surface *wl_surface, struct wl_output *output) {
     SAT_PRINT;
 //    wl_output_add_listener(MOutout,&sat_wl_output_listener,this);
   }
 
-  /*
-    surface leaves an output
-    This is emitted whenever a surface's creation, movement, or resizing results in
-    it no longer having any part of it within the scanout region of an output.
-    Clients should not use the number of outputs the surface is on for frame throttling purposes.
-    The surface might be hidden even if no leave event has been sent, and the compositor might expect
-    new surface content updates even if no enter event has been sent.
-    The frame event should be used instead.
-  */
+  //----------
 
   void sat_wl_surface_leave(struct wl_surface *wl_surface, struct wl_output *output) {
     SAT_PRINT;
@@ -874,7 +668,7 @@ private: // wl_surface
     window->sat_wl_surface_leave(wl_surface,output);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct wl_surface_listener sat_wl_surface_listener = {
@@ -885,41 +679,6 @@ private: // wl_surface
 //------------------------------
 private: // wl_seat
 //------------------------------
-
-  /*
-    Group of input devices
-    A seat is a group of keyboards, pointer and touch devices.
-    This object is published as a global during start up, or when such a device is hot plugged.
-    A seat typically has a pointer and maintains a keyboard focus and a pointer focus.
-  */
-
-  //------------------------------
-
-  /*
-    Seat capabilities changed
-    This is emitted whenever a seat gains or loses the pointer, keyboard or touch capabilities.
-    The argument is a capability enum containing the complete set of capabilities this seat has.
-    When the pointer capability is added, a client may create a wl_pointer object using the
-    wl_seat.get_pointer request.
-    This object will receive pointer events until the capability is removed in the future.
-    When the pointer capability is removed, a client should destroy the wl_pointer objects associated
-    with the seat where the capability was removed, using the wl_pointer.release request.
-    No further pointer events will be received on these objects.
-    In some compositors, if a seat regains the pointer capability and a client has a previously
-    obtained wl_pointer object of version 4 or less, that object may start sending pointer events again.
-    This behavior is considered a misinterpretation of the intended behavior and must not
-    be relied upon by the client. wl_pointer objects of version 5 or later must not send events
-    if created before the most recent event notifying the client of an added pointer capability.
-    The above behavior also applies to wl_keyboard and wl_touch with the keyboard and touch
-    capabilities, respectively.  
-  */
-
-  /*
-    capabilities:
-    1 the seat has pointer devices
-    2 the seat has one or more keyboards
-    4 the seat has touch devices  
-  */
 
   void sat_wl_seat_capabilities(struct wl_seat* seat, uint32_t capabilities) {
     SAT_Print("capabilities %08x\n",capabilities);
@@ -934,18 +693,7 @@ private: // wl_seat
     //}
   }
 
-  /*
-    Unique identifier for this seat
-    In a multi-seat configuration the seat name can be used by clients to help identify which
-    physical devices the seat represents.
-    The seat name is a UTF-8 string with no convention defined for its contents. Each name is unique
-    among all wl_seat globals. The name is only guaranteed to be unique for the current compositor instance.
-    The same seat names are used for all clients. Thus, the name can be shared across processes
-    to refer to a specific wl_seat global.
-    The name event is sent after binding to the seat global. This event is only sent once per seat object,
-    and the name does not change over the lifetime of the wl_seat global.
-    Compositors may re-use the same seat name if the wl_seat global is destroyed and re-created later.  
-  */
+  //----------
 
   void sat_wl_seat_name(struct wl_seat* seat, const char* name) {
     SAT_Print("name %s\n",name);
@@ -967,7 +715,7 @@ private: // wl_seat
     window->sat_wl_seat_name(seat,name);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct wl_seat_listener sat_wl_seat_listener = {
@@ -978,28 +726,6 @@ private: // wl_seat
 //------------------------------
 private: // wl_pointer
 //------------------------------
-
-  /*
-    Pointer input device
-    The wl_pointer interface represents one or more input devices, such as mice, which control the
-    pointer location and pointer_focus of a seat.
-
-    The wl_pointer interface generates motion, enter and leave events for the surfaces that the
-    pointer is located over, and button and axis events for button presses, button releases and scrolling.
-
-    enter, leave, button : have serial
-  */
-
-  //
-
-  /*
-    ".. if you buffer up all of the input events you receive from a device, then wait for the
-    frame event to signal that you've received all events for a single input "frame", you can
-    interpret the buffered up Wayland events as a single input event, then reset the buffer
-    and start collecting events for the next frame."
-  */
-
-  //----------
 
   void sat_wl_pointer_enter(struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t surface_x, wl_fixed_t surface_y) {
     double xpos = wl_fixed_to_double(surface_x);
@@ -1100,7 +826,7 @@ private: // wl_pointer
     window->sat_wl_pointer_axis_discrete(wl_pointer,axis,discrete);
   }
 
-  //------------------------------
+  //----------
 
   const
   struct wl_pointer_listener sat_wl_pointer_listener = {
@@ -1136,7 +862,7 @@ private: // wl_callback
     wl_callback_destroy(callback);
   }
   
-  //------------------------------
+  //----------
 
   const
   struct wl_callback_listener sat_wl_callback_listener = {

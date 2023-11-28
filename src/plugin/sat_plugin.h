@@ -25,6 +25,9 @@
 #if !defined (SAT_GUI_NOGUI)
   #include "plugin/sat_editor.h"
   #include "plugin/sat_editor_listener.h"
+  #if defined (SAT_GUI_DEFAULT_EDITOR)
+    #include "gui/sat_widgets.h"
+  #endif
 #endif
 
 //#include "plugin/sat_audio_processor.h"
@@ -45,10 +48,10 @@ struct SAT_ParamQueueItem {
   };
 };
 
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
-typedef SAT_LockFreeQueue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
+typedef SAT_Queue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
+typedef SAT_Queue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
+typedef SAT_Queue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
+typedef SAT_Queue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
 
 #endif // nogui
 
@@ -85,56 +88,56 @@ class SAT_Plugin
 private:
 //------------------------------
 
-  const char*                     MPluginFormat               = "";
+  const char*                       MPluginFormat               = "";
 
-  const clap_plugin_descriptor_t* MDescriptor                 = nullptr;
-  SAT_Host*                       MHost                       = nullptr;
+  const clap_plugin_descriptor_t*   MDescriptor                 = nullptr;
+  SAT_Host*                         MHost                       = nullptr;
 
-  SAT_ParameterArray              MParameters                 = {};
-  SAT_AudioPortArray              MAudioInputPorts            = {};
-  SAT_NotePortArray               MNoteInputPorts             = {};
-  SAT_AudioPortArray              MAudioOutputPorts           = {};
-  SAT_NotePortArray               MNoteOutputPorts            = {};
+  SAT_ParameterArray                MParameters                 = {};
+  SAT_AudioPortArray                MAudioInputPorts            = {};
+  SAT_NotePortArray                 MNoteInputPorts             = {};
+  SAT_AudioPortArray                MAudioOutputPorts           = {};
+  SAT_NotePortArray                 MNoteOutputPorts            = {};
 
-  SAT_ProcessContext              MProcessContext             = {};
-  SAT_Dictionary<const void*>     MExtensions                 = {};
+  SAT_ProcessContext                MProcessContext             = {};
+  SAT_Dictionary<const void*>       MExtensions                 = {};
 
-  uint32_t                        MEventMode                  = SAT_PLUGIN_EVENT_MODE_BLOCK;
+  uint32_t                          MEventMode                  = SAT_PLUGIN_EVENT_MODE_BLOCK;
 
-  bool                            MIsInitialized              = false;
-  bool                            MIsActivated                = false;
-  bool                            MIsProcessing               = false;
-  double                          MSampleRate                 = 0.0;
-  uint32_t                        MMinBufferSize              = 0;
-  uint32_t                        MMaxBufferSize              = 0;
-  int32_t                         MRenderMode                 = CLAP_RENDER_REALTIME;
-  const char*                     MResourceDirectory          = "";
-  bool                            MResourceDirectoryShared    = false;
+  bool                              MIsInitialized              = false;
+  bool                              MIsActivated                = false;
+  bool                              MIsProcessing               = false;
+  double                            MSampleRate                 = 0.0;
+  uint32_t                          MMinBufferSize              = 0;
+  uint32_t                          MMaxBufferSize              = 0;
+  int32_t                           MRenderMode                 = CLAP_RENDER_REALTIME;
+  const char*                       MResourceDirectory          = "";
+  bool                              MResourceDirectoryShared    = false;
 
-  uint64_t                        MTrackFlags                 = 0;
-  char                            MTrackName[CLAP_NAME_SIZE]  = {0};
-  SAT_Color                       MTrackColor                 = SAT_Black;
-  int32_t                         MTrackChannelCount          = 0;
-  const char*                     MTrackPortType              = nullptr;
-  bool                            MTrackIsReturnTrack         = false;
-  bool                            MTrackIsBus                 = false;
-  bool                            MTrackIsMaster              = false;
+  uint64_t                          MTrackFlags                 = 0;
+  char                              MTrackName[CLAP_NAME_SIZE]  = {0};
+  SAT_Color                         MTrackColor                 = SAT_Black;
+  int32_t                           MTrackChannelCount          = 0;
+  const char*                       MTrackPortType              = nullptr;
+  bool                              MTrackIsReturnTrack         = false;
+  bool                              MTrackIsBus                 = false;
+  bool                              MTrackIsMaster              = false;
 
   #if !defined (SAT_GUI_NOGUI)
 
-  SAT_Editor*                     MEditor                   = nullptr;
-  uint32_t                        MInitialEditorWidth       = 512;
-  uint32_t                        MInitialEditorHeight      = 512;
-  double                          MInitialEditorScale       = 1.0;
+    SAT_Editor*                     MEditor                     = nullptr;
+    uint32_t                        MInitialEditorWidth         = 0;//512;
+    uint32_t                        MInitialEditorHeight        = 0;//512;
+    double                          MInitialEditorScale         = 1.0;
 
-  SAT_ParamFromHostToGuiQueue     MParamFromHostToGuiQueue  = {};   // when the host changes a parameter, we need to redraw it
-  SAT_ModFromHostToGuiQueue       MModFromHostToGuiQueue    = {};   // --"-- modulation
-  SAT_ParamFromGuiToAudioQueue    MParamFromGuiToAudioQueue = {};   // twweak knob, send parameter value to audio process
-  SAT_ParamFromGuiToHostQueue     MParamFromGuiToHostQueue  = {};   // tell host about parameter change
+    SAT_ParamFromHostToGuiQueue     MParamFromHostToGuiQueue    = {};   // when the host changes a parameter, we need to redraw it
+    SAT_ModFromHostToGuiQueue       MModFromHostToGuiQueue      = {};   // --"-- modulation
+    SAT_ParamFromGuiToAudioQueue    MParamFromGuiToAudioQueue   = {};   // twweak knob, send parameter value to audio process
+    SAT_ParamFromGuiToHostQueue     MParamFromGuiToHostQueue    = {};   // tell host about parameter change
 
-  // set in gui_create (false), gui_destroy (true)
-  // checked in handleParamValueEvent, handleParamModEvent
-  std::atomic<bool>               MIsEditorClosing          {false};
+    // set in gui_create (false), gui_destroy (true)
+    // checked in handleParamValueEvent, handleParamModEvent
+    std::atomic<bool>               MIsEditorClosing            {false};
 
   #endif // nogui
 
@@ -507,6 +510,8 @@ public: // editor
 
   //----------
 
+  // called from gui_create()
+
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale) {
     return new SAT_Editor(AListener,AWidth,AHeight,AScale,0);
     //return nullptr;
@@ -520,14 +525,61 @@ public: // editor
 
   //----------
 
+  // called from gui_set_parent()
+
   virtual void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) {
     //SAT_PRINT;
+    setupDefaultEditor(AEditor,AWindow);
   }
 
   //----------
 
   //virtual void cleanupEditor(SAT_Editor* AEditor) {
   //}
+
+  //----------
+
+  virtual SAT_Point getDefaultEditorSize() {
+    SAT_Point p;
+    uint32_t numparams = getNumParameters();
+    p.w = 200;
+    p.h = 30 + 10 + (numparams * 20) + 10 + 20;
+    return p;
+  }
+
+  //----------
+
+  
+  virtual void setupDefaultEditor(SAT_Editor* AEditor, SAT_Window* AWindow) {
+    #if defined (SAT_GUI_DEFAULT_EDITOR)
+      uint32_t numparams = getNumParameters();
+      SAT_Point size = getDefaultEditorSize();
+      SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
+      AWindow->setRootWidget(root);
+      const clap_plugin_descriptor_t* descriptor = getClapDescriptor();
+      SAT_Print("descriptor %p\n",descriptor);
+      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(30,descriptor->name);
+      root->appendChildWidget(header);
+      SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(20,"...");
+      root->appendChildWidget(footer);
+      SAT_Widget* middle = new SAT_Widget(0);
+      root->appendChildWidget(middle);
+      middle->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_ALL);
+      middle->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
+      for (uint32_t i=0; i<numparams; i++) {
+        SAT_Parameter* param = getParameter(i);
+        double x = 10;
+        double y = 10 + (i * 20);
+        double w = 180;
+        double h = 20;
+        SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(x,y,w,h),param->getName(),param->getValue());
+        slider->setTextOffset(SAT_Rect(5,0,0,0));
+        slider->setValueOffset(SAT_Rect(0,0,5,0));
+        middle->appendChildWidget(slider);
+      }
+    #endif // default editor
+  }
+
 
   #endif // nogui
 
@@ -602,7 +654,7 @@ public: // events
   virtual bool on_plugin_noteOn(const clap_event_note_t* event) { return false; }
   virtual bool on_plugin_noteOff(const clap_event_note_t* event) { return false; }
   virtual bool on_plugin_noteChoke(const clap_event_note_t* event) { return false; }
-  virtual bool on_plugin_noteExpression(const clap_event_note_expression_t* headeventer) { return false; }
+  virtual bool on_plugin_noteExpression(const clap_event_note_expression_t* event) { return false; }
   virtual bool on_plugin_paramValue(const clap_event_param_value_t* event) { return false; }
   virtual bool on_plugin_paramMod(const clap_event_param_mod_t* event) { return false; }
   virtual bool on_plugin_transport(const clap_event_transport_t* event) { return false; }
@@ -614,13 +666,13 @@ public: // events
 //
 //------------------------------
 
-  // virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  // }
+  virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
 
   //----------
 
-  // virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
-  // }
+  virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+  }
 
 //------------------------------
 //
@@ -1534,7 +1586,7 @@ protected: // clap_plugin
         break;
     }
 
-    //postProcessEvents(process->in_events,process->out_events);
+    postProcessEvents(process->in_events,process->out_events);
 
     #if !defined (SAT_GUI_NOGUI)
       flushParamFromGuiToHost(process->out_events);
@@ -1686,19 +1738,20 @@ protected: // gui
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
 
-    // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
-    // if ((MInitialEditorWidth <= 0) || (MInitialEditorHeight <= 0)) {
-    //   uint32_t num = MParameters.size();
-    //   double w =  300 +             // slider width
-    //               10 + 10;          // inner border (top/bottom)
-    //   double h =  40 +              // header
-    //               20 +              // footer
-    //               10 + 10 +         // inner border
-    //               (num * 20) +      // sliders
-    //               ((num - 1) * 5);  // spacing
-    //   double s =  2.0;
-    //   setInitialEditorSize(w,h,s);
-    // }
+    #if defined (SAT_GUI_DEFAULT_EDITOR)
+    
+      // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
+      if ((MInitialEditorWidth == 0) || (MInitialEditorHeight == 0)) {
+        SAT_Point size = getDefaultEditorSize();
+        double scale = 1.0;
+        setInitialEditorSize(size.w,size.h,scale);
+      }
+
+    #else
+
+      setInitialEditorSize(512,512,1.0);
+
+    #endif
 
     //uint32_t w = (double)MInitialEditorWidth;// * MInitialEditorScale;
     //uint32_t h = (double)MInitialEditorHeight;// * MInitialEditorScale;
