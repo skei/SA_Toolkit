@@ -172,6 +172,8 @@ public:
   void setPluginFormat(const char* AFormat) { MPluginFormat = AFormat; }
   //void setProcessThreaded(bool AThreaded=true)  { MProcessThreaded = AThreaded; }
 
+  SAT_Host* getHost() { return MHost; }
+
 //------------------------------
 public: // extensions
 //------------------------------
