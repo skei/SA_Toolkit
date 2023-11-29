@@ -1,6 +1,7 @@
 
 //----------------------------------------------------------------------
 
+#include "sat.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/sat_editor.h"
 #include "gui/sat_widgets.h"

@@ -156,6 +156,8 @@ public:
     //parentRealignParent();
     do_widget_realign(this);
 
+//do_widget_redraw(this);
+
   }
 
   //----------
@@ -170,6 +172,9 @@ public:
     setBaseHeight(MClosedSize);
     //parentRealignParent();
     do_widget_realign(this);
+
+//do_widget_redraw(this);
+
   }
 
   //----------
@@ -212,7 +217,7 @@ public:
   void do_widget_redraw(SAT_Widget* ASender) override {
     if (ASender == MTitleBar) {
 //      SAT_Print("\n");
-//      SAT_Widget::do_widgetListener_redraw(this,AMode,AIndex);
+//      SAT_Widget::do_widget_redraw(this);
     }
     else {
       SAT_Widget::do_widget_redraw(ASender);

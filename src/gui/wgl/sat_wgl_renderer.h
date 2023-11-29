@@ -49,31 +49,8 @@
 
 #include "sat.h"
 #include "gui/base/sat_renderer_owner.h"
+#include "gui/wgl/sat_wgl.h"
 
-#define SOGL_MAJOR_VERSION SAT_RENDERER_MAJOR_VERSION
-#define SOGL_MINOR_VERSION SAT_RENDERER_MINOR_VERSION
-#define SOGL_IMPLEMENTATION_WIN32
-
-#include "extern/sogl/simple-opengl-loader.h"
-
-//----------
-
-#include <GL/gl.h>
-#include <GL/wgl.h>
-#include <GL/wglext.h>
-
-//----------------------------------------------------------------------
-
-//#include "base/mip.h"
-//#include "gui/sat_paint_target.h"
-//#include "gui/base/sat_base_painter.h"
-//#include "gui/wgl/sat_wgl.h"
-//#include "gui/wgl/sat_wgl_utils.h"
-
-//----------------------------------------------------------------------
-//
-//
-//
 //----------------------------------------------------------------------
 
 PIXELFORMATDESCRIPTOR SAT_WglWindowPFD = {
@@ -160,8 +137,6 @@ private:
   HDC               MDC               = nullptr;
   HGLRC             MGLRC             = nullptr;
   
-  //SAT_PaintTarget*  MTarget           = nullptr;
-
 //------------------------------
 public:
 //------------------------------
@@ -173,8 +148,6 @@ public:
   : SAT_BaseRenderer(AOwner) {
 
     HWND hwnd = AOwner->on_rendererOwner_getHWND();
-
-    //MTarget = ATarget;
 
     // pixel format
 
@@ -254,7 +227,6 @@ public:
     //      //SAT_Print("loaded opengl functions (sogl_loadOpenGL)\n");
     //    }
 
-    //SAT_LoadOpenGL();
     loadExtensions();
 
     // check version
@@ -303,7 +275,7 @@ public:
 
     wglMakeCurrent(MDC,NULL);
     wglDeleteContext(temp_ctx);
-    wglMakeCurrent(MDC, MGLRC);
+    wglMakeCurrent(MDC,MGLRC);
 
     MIsCurrent = true;
 
@@ -313,7 +285,6 @@ public:
 
   virtual ~SAT_WGLRenderer() {
     //SAT_PRINT;
-    //SAT_UnloadOpenGL();
     unloadExtensions();
     ReleaseDC(0,MDC);
     wglDeleteContext(MGLRC);
@@ -336,7 +307,7 @@ public:
     return true;
   }
 
-  // w/h = viewport size (not update rect!)
+  // w/h = viewport size (not update rect)
 
   bool beginRendering(int32_t AWidth, int32_t AHeight) {
      makeCurrent();

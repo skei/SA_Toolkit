@@ -205,15 +205,13 @@ public:
   const char* getWindowTypeName() override {
     return SAT_WINDOW_TYPE_NAME_WIN32;
   }
-
-
   
   uint32_t  getScreenWidth()   override { return MScreenWidth; }
   uint32_t  getScreenHeight()  override { return MScreenHeight; }
   uint32_t  getScreenDepth()   override { return MScreenDepth; }
   
   uint32_t  getWidth()         override { return MWindowWidth; }
-  uint32_t  getHeight()        override { return MWindowWidth; }
+  uint32_t  getHeight()        override { return MWindowHeight; }
 
 //HDC       getWinPaintDC(void)   { return MWinPaintDC; }
 //HDC       getScreenDC(void)     { return MScreenDC; }
@@ -226,7 +224,9 @@ public:
 public: // renderer owner
 //------------------------------
 
-  HWND on_rendererOwner_getHWND() override { return MWindow; }
+  HWND on_rendererOwner_getHWND() override {
+    return MWindow;
+  }
 
 //------------------------------
 private:
@@ -1408,34 +1408,3 @@ char* SAT_Win32ClassName() {
 //----------------------------------------------------------------------
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-#endif // 0

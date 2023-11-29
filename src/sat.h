@@ -17,7 +17,6 @@
 #include <time.h>
 //#include <vector>
 
-
 //----------------------------------------------------------------------
 
 #if defined (__gnu_linux__)
@@ -69,7 +68,7 @@
 #include "base/sat_const.h"
 //#include "base/sat_types.h"
 
-//----------------------------------------------------------------------
+//----------
 
 #if defined (SAT_LINUX)
   #include "base/sat_linux.h"
@@ -79,12 +78,11 @@
   #include "base/sat_win32.h"
 #endif
 
-//----------------------------------------------------------------------
+//----------
 
 #include "base/sat_global.h"
 
 #include "base/sat_types.h"
-
 //#include "base/sat_utils.h"
 
 //----------------------------------------------------------------------

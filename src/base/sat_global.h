@@ -35,7 +35,7 @@ public:
   char            binary_path[SAT_MAX_PATH_LENGTH]  = {0};  // our binary
   char            plugin_path[SAT_MAX_PATH_LENGTH]  = {0};  // path received from host
 
-  // HINSTANCE
+  // HINSTANCE WIN32_INSTANCE = 0;
   
 public:
 
