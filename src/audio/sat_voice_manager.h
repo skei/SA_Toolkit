@@ -375,7 +375,7 @@ public:
     uint32_t num_released = 0;
     for (uint32_t i=0; i<COUNT; i++) {
         
-//      if isActive(i) {
+      //if isActive(i) ..
       
       if ((MVoices[i].state == SAT_VOICE_WAITING)
        || (MVoices[i].state == SAT_VOICE_PLAYING)

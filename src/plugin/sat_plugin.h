@@ -155,13 +155,16 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
-    //SAT_PRINT;
+    SAT_PRINT;
     #ifndef SAT_NO_AUTODELETE
+      SAT_PRINT;
       deleteAudioPorts();
       deleteNotePorts();
       deleteParameters();
+      SAT_PRINT;
     #endif
     delete MHost;
+    SAT_PRINT;
   }
 
 //------------------------------
@@ -215,7 +218,7 @@ public: // extensions
   virtual void registerAllExtension() {
     registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
     registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig);
-    #ifndef SAT_NO_GUI
+    #ifndef SAT_GUI_NOGUI
       registerExtension(CLAP_EXT_GUI,                     &MExtGui);
     #endif
     registerExtension(CLAP_EXT_LATENCY,                   &MExtLatency);
@@ -545,7 +548,7 @@ public: // editor
     SAT_Point p;
     uint32_t numparams = getNumParameters();
     p.w = 200;
-    p.h = 30 + 10 + (numparams * 20) + 10 + 20;
+    p.h = 30 + 10 + (numparams * 25) + 10 + 20;
     return p;
   }
 
@@ -571,13 +574,14 @@ public: // editor
       for (uint32_t i=0; i<numparams; i++) {
         SAT_Parameter* param = getParameter(i);
         double x = 10;
-        double y = 10 + (i * 20);
+        double y = 10 + (i * 25);
         double w = 180;
         double h = 20;
         SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(x,y,w,h),param->getName(),param->getValue());
         slider->setTextOffset(SAT_Rect(5,0,0,0));
         slider->setValueOffset(SAT_Rect(0,0,5,0));
         middle->appendChildWidget(slider);
+        AEditor->connect(slider,param);
       }
     #endif // default editor
   }
@@ -1513,6 +1517,8 @@ protected: // clap_plugin
       delete this;
     #endif
     
+    SAT_PRINT;
+
   }
 
   //----------
@@ -2245,8 +2251,10 @@ protected: // draft: param_indication
 //    param->setMappingIndication(has_mapping,color,label,description);
     param->setIsMapped(has_mapping);
     param->setMappedColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
-    SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-    if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+    #if !defined (SAT_GUI_NOGUI)
+      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+    #endif
   }
   
   //----------
@@ -2259,8 +2267,10 @@ protected: // draft: param_indication
     //param->setAutomationIndication(automation_state,color);
     param->setAutomationState(automation_state);
     param->setAutomationColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
-    SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-    if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+    #if !defined (SAT_GUI_NOGUI)
+      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+    #endif
   }
   
 //------------------------------

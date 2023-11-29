@@ -1,19 +1,22 @@
 
 
-#include "plugin/sat_editor.h"
 #include "plugin/sat_plugin.h"
-#include "gui/sat_widgets.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_voice_manager.h"
 
+#if !defined (SAT_GUI_NOGUI)
+  #include "plugin/sat_editor.h"
+  #include "gui/sat_widgets.h"
+#endif
+
 //----------
 
-#define EDITOR_WIDTH  256
-#define EDITOR_HEIGHT 256
-#define EDITOR_SCALE  1.0
+  #define EDITOR_WIDTH  256
+  #define EDITOR_HEIGHT 256
+  #define EDITOR_SCALE  1.0
 
-#define MAX_VOICES    32
-#define VOICE_SCALE   0.1
+  #define MAX_VOICES    32
+  #define VOICE_SCALE   0.1
 
 //----------------------------------------------------------------------
 //
@@ -46,7 +49,6 @@ private:
 
   uint32_t              MIndex      = 0;
   SAT_VoiceContext*     MContext    = nullptr;
-  //SAT_ParameterArray*   MParameters = nullptr;
   
   float                 MSampleRate = 0.0;
   double                MKey        = 0.0;
@@ -178,7 +180,16 @@ private:
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(mySynth);
+  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(mySynth);
+
+  mySynth(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+    SAT_PRINT;
+  };
+
+  virtual ~mySynth() {
+    SAT_PRINT;
+  }
 
 //------------------------------
 public:
@@ -191,20 +202,16 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS,&MExtRemoteControls);
     registerExtension(CLAP_EXT_TRACK_INFO,&MExtTrackInfo);
     appendClapNoteInputPort("Input");
-    //appendStereoAudioInputPort("Input");
     appendStereoAudioOutputPort("Output");
-
-//    appendParameter( new SAT_Parameter("Gain",0.5) );
-
     clap_param_info_flags flags = CLAP_PARAM_IS_AUTOMATABLE
                                 | CLAP_PARAM_IS_MODULATABLE
                                 | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;
-
     appendParameter(new SAT_Parameter("Gain",   1,  0, 1, flags));  // 0
     appendParameter(new SAT_Parameter("Tuning", 0, -1, 1, flags));  // 1
     appendParameter(new SAT_Parameter("Filter", 1,  0, 1, flags));  // 2
-
-    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+    #if !defined (SAT_GUI_NOGUI)
+      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+    #endif
     MVoiceManager.init(getClapPlugin(),getClapHost());
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
@@ -261,7 +268,6 @@ public:
     }
     return false;
   }
-
 
 //------------------------------
 public: // events
@@ -349,15 +355,19 @@ public: // process
 public: // gui
 //------------------------------
 
-  void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-    SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
-    AWindow->setRootWidget(root);
-    //SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(50,50,100,100),"Gain",0.1);
-    //root->appendChildWidget(knob);
-    //knob->setTextSize(15);
-    //knob->setValueSize(25);
-    //AEditor->connect(knob,getParameter(0));
-  }
+  // #if !defined (SAT_GUI_NOGUI)  
+  //  
+  // void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+  //   SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
+  //   AWindow->setRootWidget(root);
+  //   //SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(50,50,100,100),"Gain",0.1);
+  //   //root->appendChildWidget(knob);
+  //   //knob->setTextSize(15);
+  //   //knob->setValueSize(25);
+  //   //AEditor->connect(knob,getParameter(0));
+  // }
+  //
+  // #endif // nogui
 
 };
 
@@ -370,4 +380,19 @@ public: // gui
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,mySynth);
 
+  // void SAT_Register(SAT_Registry* ARegistry) {
+  //   uint32_t index = ARegistry->getNumDescriptors();
+  //   /*SAT_Print("index %i = id %s\n",index,myDescriptor.id);*/
+  //   ARegistry->registerDescriptor(&myDescriptor);
+  // }
 
+  // /* ----- */
+
+  // SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
+  //   /*SAT_Print("index %i\n",AIndex);*/
+  //   if (AIndex == 0) {
+  //     SAT_Plugin* plugin = new mySynth(ADescriptor,AHost); /* deleted in: ... */
+  //     return plugin;
+  //   }
+  //   return nullptr;
+  // }

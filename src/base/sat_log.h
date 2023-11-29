@@ -111,13 +111,13 @@ public:
       const char* painter = "";
 
 
-// SAT_GUI_NONE
+// SAT_GUI_NOGUI
 // SAT_GUI_SOFTWARE
 // SAT_GUI_WAYLAND
 // SAT_GUI_WIN32
 // SAT_GUI_X11
 
-      #ifdef SAT_GUI_NONE
+      #ifdef SAT_GUI_NOGUI
         gui = "NONE";
       #endif
       #ifdef SAT_GUI_SOFTWARE
