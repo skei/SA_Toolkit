@@ -67,7 +67,7 @@ private:
   sat_atomic_bool_t   MIsPainting           = false;
   SAT_PaintContext    MPaintContext         = {};
   SAT_Painter*        MPainter              = nullptr;
-  SAT_TweenManager    MTweenManager         = {};
+//SAT_TweenManager    MTweenManager         = {};
 
   void*               MRenderBuffer         = nullptr;
   uint32_t            MBufferWidth          = 0;
@@ -85,14 +85,18 @@ private:
 
   SAT_WidgetQueue     MDirtyGuiWidgets      = {};
   SAT_WidgetQueue     MDirtyHostWidgets     = {};
-  SAT_WidgetQueue     MDirtyTimerWidgets    = {};
+  SAT_WidgetQueue     MDirtyListenerWidgets = {};
   SAT_WidgetQueue     MPaintWidgets         = {};
+
+  //todo? move all these below to SAT_RootWidget?
 
   SAT_Widget*         MHoverWidget          = nullptr;
   SAT_Widget*         MModalWidget          = nullptr;
-  SAT_Widget*         MInteractiveWidget    = nullptr;
+//SAT_Widget*         MInteractiveWidget    = nullptr;
   SAT_Widget*         MMouseCaptureWidget   = nullptr;
   SAT_Widget*         MKeyCaptureWidget     = nullptr;
+
+//SAT_PanelWidget*    MOverlayWidget        = nullptr;
 
   int32_t             MMouseCurrentXpos     = 0;
   int32_t             MMouseCurrentYpos     = 0;
@@ -180,8 +184,13 @@ public:
 public:
 //------------------------------
 
-  SAT_TweenManager* getTweenManager() { return &MTweenManager; }
-  bool              isPainting()      { return MIsPainting; }
+  //SAT_TweenManager* getTweenManager() {
+  //  return &MTweenManager;
+  //}
+
+  bool isPainting() {
+    return MIsPainting;
+  }
 
 //------------------------------
 public:
@@ -220,10 +229,10 @@ public:
   //----------
 
   // called from:
-  // timer functions..
+  // on_widgetListener_realign
 
-  virtual bool markWidgetDirtyFromTimer(SAT_Widget* AWidget) {
-    return MDirtyTimerWidgets.write(AWidget);
+  virtual bool markWidgetDirtyFromListener(SAT_Widget* AWidget) {
+    return MDirtyListenerWidgets.write(AWidget);
   }
 
   //----------
@@ -378,9 +387,10 @@ private:
 
   //----------
 
-  void updateHoverWidget(int32_t AXpos, int32_t AYpos) {
-    if (MRootWidget) {
-      SAT_Widget* hover = MRootWidget->findChildWidget(AXpos,AYpos);
+  void updateHoverWidget(int32_t AXpos, int32_t AYpos, SAT_Widget* ARoot=nullptr) {
+    if (ARoot == nullptr) ARoot = MRootWidget;
+    if (ARoot) {
+      SAT_Widget* hover = ARoot->findChildWidget(AXpos,AYpos);
       if (hover) {
         //SAT_Print("%s\n",hover->getName());
         if (hover != MHoverWidget) {
@@ -416,14 +426,14 @@ public: // window
   //----------
 
   void on_window_open() override {
-    SAT_PRINT;
+    //SAT_PRINT;
     //MRootWidget->on_widget_open(this);
     startTimer(SAT_WINDOW_TIMER_MS);
     if (MRootWidget) {
       MRootWidget->ownerWindowOpened(this);
       uint32_t w = getWidth();// * MScale;
       uint32_t h = getHeight();// * MScale;
-      SAT_Print("w %i h %i\n",w,h);
+      //SAT_Print("w %i h %i\n",w,h);
       MRootWidget->setSize(SAT_Point(w,h));
       MRootWidget->realignChildWidgets();
       //MDirtyGuiWidgets.write(MRootWidget);
@@ -607,7 +617,7 @@ public: // window
     if (MListener) MListener->on_windowListener_timer(ATimer,AElapsed);
     for (uint32_t i=0; i<MTimerWidgets.size(); i++) MTimerWidgets[i]->on_widget_timer(ATimer,AElapsed);
 
-    MTweenManager.process(AElapsed);
+//    MTweenManager.process(AElapsed);
 
     // don't add new widgets to paintqueue, if we're still painting the previous batch
     // timer runs in separate thread than gui/painting
@@ -619,8 +629,8 @@ public: // window
     SAT_Rect rect = SAT_Rect(0,0,0,0);
     SAT_Widget* widget;
 
-    while (MDirtyTimerWidgets.read(&widget)) {
-      //SAT_Print("dirty from timer: %s\n",widget->getName());
+    while (MDirtyListenerWidgets.read(&widget)) {
+      //SAT_Print("dirty from listener: %s\n",widget->getName());
       MPaintWidgets.write(widget);
       rect.combine(widget->getRect());
     }
@@ -703,7 +713,7 @@ public: // window
       y = MLockedCurrentY;
     }
     if (MModalWidget) {
-      updateHoverWidget(AXpos,AYpos);
+      updateHoverWidget(AXpos,AYpos,MModalWidget);
       MModalWidget->on_widget_mouseMove(x,y,AState,ATime);
     }
     else if (MMouseCaptureWidget) {
@@ -818,7 +828,7 @@ public: // widget listener
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
       parent->realignChildWidgets();
-      markWidgetDirtyFromTimer(parent);
+//      markWidgetDirtyFromListener(parent);
     }
   }
 

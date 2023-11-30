@@ -208,6 +208,10 @@ public:
 public:
 //------------------------------
 
+  virtual void realignParent() {
+    if (MParent) MParent->do_widget_realign(MParent);
+  }
+
   virtual void redrawParent() {
     if (MParent) MParent->do_widget_redraw(MParent);
   }

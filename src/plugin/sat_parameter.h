@@ -47,7 +47,7 @@ private:
 public:
 //------------------------------
 
-  SAT_Parameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0, uint32_t AFlags=0) {
+  SAT_Parameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0, uint32_t AFlags=CLAP_PARAM_IS_AUTOMATABLE) {
     MInfo.id                  = 0;      // !!!
     MInfo.flags               = AFlags;
     MInfo.cookie              = this;
@@ -81,8 +81,8 @@ public:
   virtual clap_param_info_t*    getInfo()                 { return &MInfo; }
   virtual sat_param_t           getValue()                { return MValue; }
   virtual sat_param_t           getModulation()           { return MModulation; }
-  virtual sat_param_t           getNormalizedValue()      { return normalize(MValue); }
-  virtual sat_param_t           getNormalizedModulation() { return normalize(MModulation); }
+  //virtual sat_param_t           getNormalizedValue()      { return normalize(MValue); }
+  //virtual sat_param_t           getNormalizedModulation() { return normalize(MModulation); }
   virtual uint32_t              getAutomationState()      { return MAutomationState; }
   virtual SAT_Color             getAutomationColor()      { return MAutomationColor; }
   virtual bool                  getIsMapped()             { return MIsMapped; }
@@ -118,6 +118,9 @@ public:
   virtual void        setGuiModulationDirty(bool ADirty=true)   { MGuiModulationDirty = ADirty; }
   virtual void        setLastModulatedValue(sat_param_t AValue) { MLastModulatedValue = AValue; }
 
+  virtual void        setFlag(clap_param_info_flags AFlag)      { MInfo.flags |= AFlag; }
+  virtual void        clearFlag(clap_param_info_flags AFlag)    { MInfo.flags &= ~AFlag; }
+
 //------------------------------
 public:
 //------------------------------
@@ -145,6 +148,20 @@ public:
   }
 
   //----------
+
+  virtual sat_param_t getNormalizedValue() {
+    return normalize(MValue);
+  }
+  
+  //----------
+  
+  virtual sat_param_t getNormalizedModulation() {
+    sat_param_t range = MInfo.max_value - MInfo.min_value;
+    if (range <= 0.0) return MModulation;
+    return MModulation / range;
+  }
+  
+  //----------  
 
   virtual const char* valueToText(sat_param_t AValue) {
     sprintf(MValueText,MValueFormat,getValue());

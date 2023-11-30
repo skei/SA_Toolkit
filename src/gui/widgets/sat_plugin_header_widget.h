@@ -47,11 +47,11 @@ public:
   : SAT_PanelWidget(ARect) {
     setName("SAT_PluginHeaderWidget");
     
-    // if ( ((AName[0] == 's') || (AName[0] == 'S'))
-    //   && ((AName[1] == 'a') || (AName[1] == 'A'))
-    //   &&  (AName[2] == '_')) {
-    //   AName += 3;
-    // }
+    if ( ((AName[0] == 's') || (AName[0] == 'S'))
+      && ((AName[1] == 'a') || (AName[1] == 'A'))
+      &&  (AName[2] == '_')) {
+      AName += 3;
+    }
 
     strcpy(MPluginName,AName);
     

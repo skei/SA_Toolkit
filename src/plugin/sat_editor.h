@@ -155,15 +155,16 @@ public:
 public: // window listener
 //------------------------------
 
+
   void on_windowListener_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
     if (MListener) {
       //SAT_Print("%s\n",AWidget->getName());
       sat_param_t value = AWidget->getValue();
       SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter();
       if (parameter) {
-        //SAT_Print("parameter %p\n",parameter);
-        //SAT_Print("listener %p\n",MListener);
-        MListener->on_editorListener_update(parameter,value);
+        // widget value = 0..1
+        double v = parameter->denormalize(value);
+        MListener->on_editorListener_update(parameter,v);
       }
     }
   }

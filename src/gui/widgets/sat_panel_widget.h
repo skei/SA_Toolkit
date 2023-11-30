@@ -550,11 +550,15 @@ if (MTextFont != -1) {
         double pv = getValue();
         //double pv = getSelectedValue();
 
-        double dpv = param->denormalize(pv);
+//        double dpv = param->denormalize(pv);
+
         //double wv = param->getValue();
         //double dwv = param->denormalizeValue(wv);
         //SAT_Print("denormalize. param %f -> dpv %f. widget %i ->  dwv %f\n",pv,dpv,wv,dwv);
-        const char* txt = param->valueToText(dpv);
+
+//        const char* txt = param->valueToText(dpv);
+        const char* txt = param->valueToText(pv);
+
         strcpy(MValueText,txt);
       }
       else {

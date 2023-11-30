@@ -192,7 +192,8 @@ public:
       //setRect(mrect);
       setRectAndBase(mrect);
 
-      do_widget_realign(this);
+      //do_widget_realign(this);
+      realignParent();
     }
     else if (MIsResizing) {
       SAT_Rect mrect = getRect();
@@ -206,7 +207,8 @@ public:
       setRect(mrect);
       setRectAndBase(mrect);
       
-      do_widget_realign(this);
+      //do_widget_realign(this);
+      realignParent();
     }
     else {
       checkHover(AXpos,AYpos);

@@ -125,17 +125,7 @@ public:
   : SAT_BaseRenderer(AOwner) {
 
     MOwner = AOwner;
-
-    #if defined(SAT_GUI_WAYLAND)
-      ;
-    #elif defined(SAT_GUI_WIN32)
-      ;
-    #elif defined(SAT_GUI_X11)
-      MDisplay = AOwner->on_rendererOwner_getX11Display();
-    #endif
-
-    // MDisplay = AOwner->on_rendererOwner_getX11Display();
-    // //MDisplay = XOpenDisplay(nullptr);
+    MDisplay = AOwner->on_rendererOwner_getX11Display();
     //SAT_Print("MDisplay: %p\n",MDisplay);
 
     MFBConfig = findFBConfig(SAT_GLXWindowAttribs);

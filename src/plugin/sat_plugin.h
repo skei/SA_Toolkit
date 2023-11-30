@@ -155,16 +155,16 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
-    SAT_PRINT;
+    //SAT_PRINT;
     #ifndef SAT_NO_AUTODELETE
-      SAT_PRINT;
+      //SAT_PRINT;
       deleteAudioPorts();
       deleteNotePorts();
       deleteParameters();
-      SAT_PRINT;
+      //SAT_PRINT;
     #endif
     delete MHost;
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
 //------------------------------
@@ -463,6 +463,32 @@ public: // parameters
     for (uint32_t i=0; i<num; i++) {
       double value = MParameters[i]->getDefaultValue();
       MParameters[i]->setValue(value);
+    }
+  }
+  
+  //----------
+  
+  void setAllParameterFlags(clap_param_info_flags AFlag) {
+    for (uint32_t i=0; i<MParameters.size(); i++) {
+      MParameters[i]->setFlag(AFlag);
+    }
+  }
+  
+  //----------
+  
+  void clearAllParameterFlags(clap_param_info_flags AFlag) {
+    for (uint32_t i=0; i<MParameters.size(); i++) {
+      MParameters[i]->clearFlag(AFlag);
+    }
+  }
+  
+  //----------
+  
+  void setAllParameters(sat_param_t* AValues) {
+    uint32_t num_params = getNumParameters();
+    for (uint32_t i=0; i<num_params; i++) {
+      SAT_Print("%i : %f\n",i,AValues[i]);
+      //setParameter(i,AValues[i]);
     }
   }
   
@@ -1463,6 +1489,8 @@ protected: // SAT_EditorListener
 
   //----------
 
+  // value = denormalized
+
   void on_editorListener_update(SAT_Parameter* AParameter, sat_param_t AValue) override {
     uint32_t index = AParameter->getIndex();
     //SAT_Print("from gui.. AParameter %p index %i AValue %f\n",AParameter,index,AValue);
@@ -1502,7 +1530,7 @@ protected: // clap_plugin
   //----------
 
   void destroy() override {
-    SAT_PRINT;
+    //SAT_PRINT;
 
     // #ifdef SAT_DEBUG_WINDOW
     //   if (MDebugWindow) {
@@ -1517,7 +1545,7 @@ protected: // clap_plugin
       delete this;
     #endif
     
-    SAT_PRINT;
+    //SAT_PRINT;
 
   }
 

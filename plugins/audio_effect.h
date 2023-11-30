@@ -1,6 +1,6 @@
 
 
-#if 0
+//#if 0
 
 
 #include "plugin/sat_plugin.h"
@@ -44,8 +44,8 @@ public:
 
   void processStereoSample(float* spl0, float* spl1) final {
     sat_param_t gain = getParameterValue(0);
-    *spl0 *= 0.1;
-    *spl1  = 0.0;
+    *spl0 *= getParameterValue(0);
+    *spl1 *= getParameterValue(0);
   }
 
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
@@ -62,12 +62,14 @@ public:
 
 //----------
 
-#include "plugin/sat_entry.h"
-SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+#if !defined (SAT_NO_ENTRY)
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+#endif // no entry
 
 
 
-#endif // 0
+//#endif // 0
 
 //----------------------------------------------------------------------
 //
@@ -77,7 +79,9 @@ SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
 
 
-//#if 0
+#if 0
+
+
 
 #include "plugin/sat_plugin.h"
 const clap_plugin_descriptor_t myDescriptor = { CLAP_VERSION, "me/myPlugin", "my plugin", "me", "", "", "", "0.0.0", "", (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr } };
@@ -100,5 +104,7 @@ public:
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
 
-//#endif // 0
+
+
+#endif // 0
 

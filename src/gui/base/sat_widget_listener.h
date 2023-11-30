@@ -2,7 +2,7 @@
 #define sat_widget_listener_included
 //----------------------------------------------------------------------
 
-// widget -> window
+// root widget -> window
 
 #include "sat.h"
 //#include "gui/sat_widget.h"

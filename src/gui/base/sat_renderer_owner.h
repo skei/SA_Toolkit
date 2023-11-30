@@ -2,6 +2,8 @@
 #define sat_renderer_owner_included
 //----------------------------------------------------------------------
 
+// window
+
   #if defined(SAT_GUI_WAYLAND)
     #include "gui/wayland/sat_wayland.h"
 
@@ -22,7 +24,7 @@ public:
     virtual struct wl_display*  on_rendererOwner_getWaylandDisplay() { return nullptr; }
 
   #elif defined(SAT_GUI_WIN32)
-    virtual HWND on_rendererOwner_getHWND() { return nullptr; }
+    virtual HWND                on_rendererOwner_getHWND() { return nullptr; }
 
   #elif defined(SAT_GUI_X11)
     virtual Display*            on_rendererOwner_getX11Display() { return nullptr; }

@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
   args.init(argc,argv);
   
   if (args.hasOption("-?") || args.hasOption("-h")) {
-    printf("PLUGIN.EXE <optioins>\n");
+    printf("PLUGIN.EXE <options>\n");
     printf("  -l          list plugins\n");
     printf("  -i <index>  select plugin index (default 0)\n");
     return 0;

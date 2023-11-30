@@ -121,6 +121,7 @@ public: // child to parent
       MPages->setPage(sel/*,true*/);
       MPages->realignChildWidgets();
       do_widget_redraw(MPages);
+      //redrawParent();
     }
     SAT_Widget::do_widget_update(AWidget,AMode);
   }

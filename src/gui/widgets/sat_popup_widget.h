@@ -83,7 +83,7 @@ public:
     setActive(true);
     setVisible(true);
     do_widget_realign(this);
-    realignChildWidgets();
+//    realignChildWidgets();
     do_widget_redraw(this);
     do_widget_setModal(this);
 
@@ -106,6 +106,7 @@ public:
       }
     #endif
     //parentRealign();
+    realignParent();
     redrawParent(); // redraw entire parent
     
   }

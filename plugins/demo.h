@@ -71,7 +71,7 @@ public:
 
   sat_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
-    SAT_PRINT;
+    //SAT_PRINT;
 
     //int* ptr = nullptr;
     //int val = *ptr;
@@ -82,7 +82,7 @@ public:
   //----------
 
   virtual ~sat_demo_plugin() {
-    SAT_PRINT;
+    //SAT_PRINT;
   }
 
 //------------------------------

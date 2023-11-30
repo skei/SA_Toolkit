@@ -75,6 +75,7 @@
 //#define SAT_NO_BITMAP_PNG
 //#define SAT_NO_BITMAP_PNG_FILE
 //#define SAT_NO_BITMAP_PROC
+//#define SAT_NO_ENTRY
 //#define SAT_NO_LOG
 //#define SAT_NO_STDLIB
 //#define SAT_PLUGIN_ALL

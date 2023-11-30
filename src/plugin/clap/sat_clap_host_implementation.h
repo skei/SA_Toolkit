@@ -41,140 +41,93 @@ public:
 
   //------------------------------
 
-  virtual const void* get_extension(const char *extension_id) {
-    //SAT_Print("id %s\n",extension_id);
-    //if (strcmp(extension_id,CLAP_EXT_AMBISONIC)           == 0) return &MAmbisonicExt;
-    //if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS)         == 0) return &MAudioPortsExt;
-    //if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS_CONFIG)  == 0) return &MAudioPortsExt;
-    //if (strcmp(extension_id,CLAP_EXT_CHECK_FOR_UPDATE)    == 0) return &MCheckForUpdateExt;
-    //if (strcmp(extension_id,CLAP_EXT_CV)                  == 0) return &MCVExt;
-    //if (strcmp(extension_id,CLAP_EXT_EVENT_REGISTRY)      == 0) return &MEventRegistryExt;
-    //if (strcmp(extension_id,CLAP_EXT_GUI)                 == 0) return &MGuiExt;
-    //if (strcmp(extension_id,CLAP_EXT_LATENCY)             == 0) return &MLatencyExt;
-    //if (strcmp(extension_id,CLAP_EXT_LOG)                 == 0) return &MLogExt;
-    //if (strcmp(extension_id,CLAP_EXT_MIDI_MAPPINGS)       == 0) return &MMidiMappingsExt;
-    //if (strcmp(extension_id,CLAP_EXT_NOTE_NAME)           == 0) return &MNoteNameExt;
-    //if (strcmp(extension_id,CLAP_EXT_NOTE_PORTS)          == 0) return &MNotePortsExt;
-    //if (strcmp(extension_id,CLAP_EXT_PARAMS)              == 0) return &MParamsExt;
-    //if (strcmp(extension_id,CLAP_EXT_POSIX_FD_SUPPORT)    == 0) return &MPosixFdSupportExt;
-    //if (strcmp(extension_id,CLAP_EXT_PRESET_LOAD)         == 0) return &MPresetLoadExt;
-    //if (strcmp(extension_id,CLAP_EXT_REMOTE_CONTROLS)     == 0) return &MRemoteControlsExt;
-    //if (strcmp(extension_id,CLAP_EXT_RESOURCE_DIRECTORY)  == 0) return &MResourceDirectoryExt;
-    //if (strcmp(extension_id,CLAP_EXT_STATE)               == 0) return &MStateExt;
-    //if (strcmp(extension_id,CLAP_EXT_SURROUND)            == 0) return &MSurroundExt;
-    //if (strcmp(extension_id,CLAP_EXT_TAIL)                == 0) return &MTailExt;
-    //if (strcmp(extension_id,CLAP_EXT_THREAD_CHECK)        == 0) return &MThreadCheckExt;
-    //if (strcmp(extension_id,CLAP_EXT_THREAD_POOL)         == 0) return &MThreadPoolExt;
-    //if (strcmp(extension_id,CLAP_EXT_TIMER_SUPPORT)       == 0) return &MTimerSupportExt;
-    //if (strcmp(extension_id,CLAP_EXT_TRACK_INFO)          == 0) return &MTrackInfoExt;
-    //if (strcmp(extension_id,CLAP_EXT_TRANSPORT_CONTROL)   == 0) return &MTransportControlExt;
-    //if (strcmp(extension_id,CLAP_EXT_TRIGGERS)            == 0) return &MTriggersExt;
-    //if (strcmp(extension_id,CLAP_EXT_TUNING)              == 0) return &MTuningExt;
-    //if (strcmp(extension_id,CLAP_EXT_VOICE_INFO)          == 0) return &MVoiceInfoExt;
-    return nullptr;
-  }
-
-  //----------
-
-  virtual void request_restart() {
-  }
-
-  //----------
-
-  virtual void request_process() {
-  }
-
-  //----------
-
-  virtual void request_callback() {
-  }
+  virtual const void* get_extension(const char *extension_id) { return nullptr; }
+  virtual void        request_restart() {}
+  virtual void        request_process() {}
+  virtual void        request_callback() {}
 
 //------------------------------
 public: // extensions
 //------------------------------
 
-  virtual bool      audio_ports_is_rescan_flag_supported(uint32_t flag) { return false; }
-  virtual void      audio_ports_rescan(uint32_t flags) {}
-  virtual void      audio_ports_config_rescan() {}
-  virtual bool      event_registry_query(const char *space_name, uint16_t *space_id) { return false; }
-  virtual void      gui_resize_hints_changed() {}
-  virtual bool      gui_request_resize(uint32_t width, uint32_t height) { return false; }
-  virtual bool      gui_request_show() { return false; }
-  virtual bool      gui_request_hide() { return false; }
-  virtual void      gui_closed(bool was_destroyed) {}
-  virtual void      latency_changed() {}
-  virtual void      log_log(clap_log_severity severity, const char *msg) {}
-  virtual void      note_name_changed() {}
-  virtual uint32_t  note_ports_supported_dialects() { return 0; }
-  virtual void      note_ports_rescan(uint32_t flags) {}
-  virtual void      params_rescan(clap_param_rescan_flags flags) {}
-  virtual void      params_clear(clap_id param_id, clap_param_clear_flags flags) {}
-  virtual void      params_request_flush() {}
-  virtual bool      posix_fd_support_register_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
-  virtual bool      posix_fd_support_modify_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
-  virtual bool      posix_fd_support_unregister_fd(int fd) { return false; }
-  virtual void      state_mark_dirty() {}
-  virtual void      tail_changed() {}
-  virtual bool      thread_check_is_main_thread() { return false; }
-  virtual bool      thread_check_is_audio_thread() { return false; }
-  virtual bool      thread_pool_request_exec(uint32_t num_tasks) { return false; }
-  virtual bool      timer_support_register_timer(uint32_t period_ms, clap_id *timer_id) { return false; }
-  virtual bool      timer_support_unregister_timer(clap_id timer_id) { return false; }
-  virtual void      voice_info_changed() {}
+  virtual bool        audio_ports_is_rescan_flag_supported(uint32_t flag) { return false; }
+  virtual void        audio_ports_rescan(uint32_t flags) {}
+  virtual void        audio_ports_config_rescan() {}
+  virtual bool        event_registry_query(const char *space_name, uint16_t *space_id) { return false; }
+  virtual void        gui_resize_hints_changed() {}
+  virtual bool        gui_request_resize(uint32_t width, uint32_t height) { return false; }
+  virtual bool        gui_request_show() { return false; }
+  virtual bool        gui_request_hide() { return false; }
+  virtual void        gui_closed(bool was_destroyed) {}
+  virtual void        latency_changed() {}
+  virtual void        log_log(clap_log_severity severity, const char *msg) {}
+  virtual void        note_name_changed() {}
+  virtual uint32_t    note_ports_supported_dialects() { return 0; }
+  virtual void        note_ports_rescan(uint32_t flags) {}
+  virtual void        params_rescan(clap_param_rescan_flags flags) {}
+  virtual void        params_clear(clap_id param_id, clap_param_clear_flags flags) {}
+  virtual void        params_request_flush() {}
+  virtual bool        posix_fd_support_register_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
+  virtual bool        posix_fd_support_modify_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
+  virtual bool        posix_fd_support_unregister_fd(int fd) { return false; }
+  virtual void        state_mark_dirty() {}
+  virtual void        tail_changed() {}
+  virtual bool        thread_check_is_main_thread() { return false; }
+  virtual bool        thread_check_is_audio_thread() { return false; }
+  virtual bool        thread_pool_request_exec(uint32_t num_tasks) { return false; }
+  virtual bool        timer_support_register_timer(uint32_t period_ms, clap_id *timer_id) { return false; }
+  virtual bool        timer_support_unregister_timer(clap_id timer_id) { return false; }
+  virtual void        voice_info_changed() {}
 
 //------------------------------
 public: // drafts
 //------------------------------
 
-  virtual void      ambisonic_changed() {}
-  virtual void      check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) {}
-  virtual bool      context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) { return false; }
-  virtual bool      context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
-  virtual bool      context_menu_can_popup() { return false; }
-  virtual bool      context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) { return false; }
-  virtual void      cv_changed() {}
-  virtual void      midi_mappings_changed() {}
-  virtual void      preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {}
-  virtual void      preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) {}
-  virtual void      remote_controls_changed() {}
-  virtual void      remote_controls_suggest_page(clap_id page_id) {}
-  virtual bool      resource_directory_request_directory(bool is_shared) { return false; }
-  virtual void      resource_directory_release_directory(bool is_shared) {}
-  virtual void      surround_changed() {}
-  virtual bool      track_info_get(clap_track_info_t *info) { return false; }
-  virtual void      transport_control_request_start() {}
-  virtual void      transport_control_request_stop() {}
-  virtual void      transport_control_request_continue() {}
-  virtual void      transport_control_request_pause() {}
-  virtual void      transport_control_request_toggle_play() {}
-  virtual void      transport_control_request_jump(clap_beattime position) {}
-  virtual void      transport_control_request_loop_region(clap_beattime start, clap_beattime duration) {}
-  virtual void      transport_control_request_toggle_loop() {}
-  virtual void      transport_control_request_enable_loop(bool is_enabled) {}
-  virtual void      transport_control_request_record(bool is_recording) {}
-  virtual void      transport_control_request_toggle_record() {}
-  virtual void      triggers_rescan(clap_trigger_rescan_flags flags) {}
-  virtual void      triggers_clear(clap_id trigger_id, clap_trigger_clear_flags flags) {}
-  virtual double    tuning_get_relative(clap_id tuning_id, int32_t channel, int32_t key, uint32_t sample_offset) { return 0.0; }
-  virtual bool      tuning_should_play(clap_id tuning_id, int32_t channel, int32_t key) { return false; }
-  virtual uint32_t  tuning_get_tuning_count() { return 0; }
-  virtual bool      tuning_get_info(uint32_t tuning_index, clap_tuning_info_t *info) { return false; }
+  virtual void        ambisonic_changed() {}
+  virtual void        check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) {}
+  virtual bool        context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) { return false; }
+  virtual bool        context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
+  virtual bool        context_menu_can_popup() { return false; }
+  virtual bool        context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) { return false; }
+  virtual void        cv_changed() {}
+  virtual void        midi_mappings_changed() {}
+  virtual void        preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {}
+  virtual void        preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) {}
+  virtual void        remote_controls_changed() {}
+  virtual void        remote_controls_suggest_page(clap_id page_id) {}
+  virtual bool        resource_directory_request_directory(bool is_shared) { return false; }
+  virtual void        resource_directory_release_directory(bool is_shared) {}
+  virtual void        surround_changed() {}
+  virtual bool        track_info_get(clap_track_info_t *info) { return false; }
+  virtual void        transport_control_request_start() {}
+  virtual void        transport_control_request_stop() {}
+  virtual void        transport_control_request_continue() {}
+  virtual void        transport_control_request_pause() {}
+  virtual void        transport_control_request_toggle_play() {}
+  virtual void        transport_control_request_jump(clap_beattime position) {}
+  virtual void        transport_control_request_loop_region(clap_beattime start, clap_beattime duration) {}
+  virtual void        transport_control_request_toggle_loop() {}
+  virtual void        transport_control_request_enable_loop(bool is_enabled) {}
+  virtual void        transport_control_request_record(bool is_recording) {}
+  virtual void        transport_control_request_toggle_record() {}
+  virtual void        triggers_rescan(clap_trigger_rescan_flags flags) {}
+  virtual void        triggers_clear(clap_id trigger_id, clap_trigger_clear_flags flags) {}
+  virtual double      tuning_get_relative(clap_id tuning_id, int32_t channel, int32_t key, uint32_t sample_offset) { return 0.0; }
+  virtual bool        tuning_should_play(clap_id tuning_id, int32_t channel, int32_t key) { return false; }
+  virtual uint32_t    tuning_get_tuning_count() { return 0; }
+  virtual bool        tuning_get_info(uint32_t tuning_index, clap_tuning_info_t *info) { return false; }
   
-//------------------------------
-private:
-//------------------------------
-
 //----------------------------------------------------------------------
 private: // host
 //----------------------------------------------------------------------
 
   clap_host_t MHost = {
-    .clap_version   = CLAP_VERSION,
-    .host_data      = this,
-    .name           = "SAT_ClapHostImplementation",
-    .vendor         = SAT_VENDOR,
-    .url            = SAT_URL,
-    .version        = SAT_VERSION,
+    .clap_version     = CLAP_VERSION,
+    .host_data        = this,
+    .name             = "SAT_ClapHostImplementation",
+    .vendor           = SAT_VENDOR,
+    .url              = SAT_URL,
+    .version          = SAT_VERSION,
     .get_extension    = clap_host_get_extension_callback,
     .request_restart  = clap_host_request_restart_callback,
     .request_process  = clap_host_request_process_callback,

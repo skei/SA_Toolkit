@@ -2,6 +2,8 @@
 #define sat_surface_owner_included
 //----------------------------------------------------------------------
 
+// window?
+
   #if defined(SAT_GUI_WAYLAND)
     ;
 

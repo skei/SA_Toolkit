@@ -190,7 +190,7 @@ public: // widget
         const char* text = widget->getText();
         //SAT_Print("%s\n",text);
         setText(text);
-        //parentRedraw();
+        //redrawParent();
         do_widget_redraw(this);
       }
     }
@@ -231,7 +231,7 @@ public: // menu listener
       const char* text = widget->getText();
       //SAT_Print("%s\n",text);
       setText(text);
-      //parentRedraw();
+      //redrawParent();
       do_widget_redraw(this);
     }
   }

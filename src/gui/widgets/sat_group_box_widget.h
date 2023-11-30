@@ -154,9 +154,10 @@ public:
     setHeight(MOpenSize * S);
     setBaseHeight(MOpenSize);
     //parentRealignParent();
-    do_widget_realign(this);
-
-//do_widget_redraw(this);
+    //do_widget_realign(this);
+    realignParent();
+    //do_widget_redraw(this);
+    redrawParent();
 
   }
 
@@ -171,9 +172,10 @@ public:
     setHeight(MClosedSize * S);
     setBaseHeight(MClosedSize);
     //parentRealignParent();
-    do_widget_realign(this);
-
-//do_widget_redraw(this);
+    //do_widget_realign(this);
+    realignParent();
+    //do_widget_redraw(this);
+    redrawParent();
 
   }
 
@@ -218,6 +220,7 @@ public:
     if (ASender == MTitleBar) {
 //      SAT_Print("\n");
 //      SAT_Widget::do_widget_redraw(this);
+//      redrawParent();
     }
     else {
       SAT_Widget::do_widget_redraw(ASender);
