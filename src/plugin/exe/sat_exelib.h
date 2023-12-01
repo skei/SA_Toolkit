@@ -1,18 +1,99 @@
-
-#if 0
-
 #ifndef sat_exelib_included
 #define sat_exelib_included
 //----------------------------------------------------------------------
 
+//#define MIP_EXECUTABLE_SHARED_LIBRARY
+//-Wl,-e,exelib_entry_point
+
+#include <unistd.h>
+#include <sys/types.h>
+
+int main(int argc, char** argv); // , char** env);
+
+//----------
+
+#if defined (__LP64__)
+  const char interp_section[] __attribute__((section(".interp"))) = "/lib64/ld-linux-x86-64.so.2";
+#else
+  const char interp_section[] __attribute__((section(".interp"))) = "/lib/ld-linux.so.2";
+#endif
+
+//----------------------------------------------------------------------
+
+extern "C" {
+
+  int main_result;
+
+  int* main_trampoline(int argc, char** argv, char** env) {
+    main_result = main(argc,argv);//,env);
+    return &main_result;
+  }
+
+  extern int __libc_start_main(int *(main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end));
+
+  __attribute__ ((visibility ("default")))
+  __attribute__((force_align_arg_pointer))
+  void exelib_entry_point() {
+
+    // todo: read these from environment variables?
+    int         argc    = 0;
+    const char* argv[]  = { "", 0 };
+
+    //SAT_REGISTRY.initialize();
+    //__libc_start_main(main_trampoline,argc,(char**)argv,my_init,my_fini,my_rtld_fini,0);//&my_stack[500000]);
+    //__libc_start_main(main,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
+
+    __libc_start_main(main_trampoline,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
+    _exit(0); // (EXIT_SUCCESS);
+  }
+
+} // extern c
+  
+//----------------------------------------------------------------------
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
   ugh..
   crashes with optimization settings above -O0
+  did? or still does?
 */
 
 
-
-
+#if 0
 #ifndef SAT_WIN32
 #ifdef SAT_PLUGIN_EXECUTABLE_LIBRARY
 
@@ -119,9 +200,7 @@
 
 #endif // SAT_PLUGIN_EXECUTABLE_LIBRARY
 #endif // SAT_WIN32
-
-//----------------------------------------------------------------------
-#endif
+#endif // 0
 
 
 
@@ -170,20 +249,11 @@
 
 
 
-
-
-
-#if 0
-
-
-
-
-#include "mip.h"
 
 //#define MIP_EXECUTABLE_SHARED_LIBRARY
 //-Wl,-e,entry_point
 
-
+#if 0
 #ifdef MIP_PLUGIN
 #ifdef MIP_EXECUTABLE_SHARED_LIBRARY
 
@@ -400,11 +470,4 @@ extern "C" {
 
 #endif // MIP_EXECUTABLE_SHARED_LIBRARY
 #endif // MIP_PLUGIN
-
-
-
-
-#endif // 0
-
-
 #endif // 0
