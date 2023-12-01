@@ -373,6 +373,8 @@ public: // keyboard
 private:
 //------------------------------
 
+  // called from: on_window_paint
+
   SAT_Rect calcClipRect(SAT_Widget* AWidget) {
     SAT_Rect rect = AWidget->getRect();
     SAT_Widget* parent = AWidget->getParent();
@@ -386,6 +388,8 @@ private:
   }
 
   //----------
+
+  // called from: on_window_mouseMove, on_window_mouseEnter
 
   void updateHoverWidget(int32_t AXpos, int32_t AYpos, SAT_Widget* ARoot=nullptr) {
     if (ARoot == nullptr) ARoot = MRootWidget;

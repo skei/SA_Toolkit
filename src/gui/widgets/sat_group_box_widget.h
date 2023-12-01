@@ -36,11 +36,16 @@ public:
     //setAutoClip(true);
 
     MTitleBar = new SAT_ButtonWidget( SAT_Rect(0,AHeaderHeight) );
-//    MTitleBar->setAlignment(SAT_WIDGET_ALIGN_TOP);
-//    MTitleBar->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
-      MTitleBar->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
-      MTitleBar->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
-      MTitleBar->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+    //MTitleBar->setAlignment(SAT_WIDGET_ALIGN_TOP);
+    //MTitleBar->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+    MTitleBar->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    MTitleBar->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
+    MTitleBar->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+
+    //MTitleBar->setFillLinearGradient(true);
+    MTitleBar->setRoundedCorners(true);
+    MTitleBar->setCornerSizes(6,6,0,0);
+    //MTitleBar->setBorderCorners(SAT_CORNER_UPPER);
 
     MTitleBar->setIsToggle(true);
     MTitleBar->setTexts("Open","Closed");
@@ -48,21 +53,21 @@ public:
     //MTitleBar->setFillLinearGradient(true);
     MTitleBar->setDrawBorder(true);
 
-//    MTitleBar->setInnerBorder(2);
+    //MTitleBar->setInnerBorder(2);
     MTitleBar->setLayoutInnerBorder(SAT_Rect(2,2,2,2));
 
     //MTitleBar->setDrawRoundedCorners(true);
     //MTitleBar->setCornerRadius(5,5,0,0);
     
-      MTitleBarSymbol = new SAT_SymbolWidget(SAT_Rect(7,6),SAT_SYMBOL_FILLED_TRI_DOWN);
-      MTitleBar->appendChildWidget(MTitleBarSymbol);
+    MTitleBarSymbol = new SAT_SymbolWidget(SAT_Rect(7,6),SAT_SYMBOL_FILLED_TRI_DOWN);
+    MTitleBar->appendChildWidget(MTitleBarSymbol);
 
-//      MTitleBarSymbol->setAlignment(SAT_WIDGET_ALIGN_RIGHT_BOTTOM);
-      MTitleBarSymbol->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_RIGHT);
-      MTitleBarSymbol->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM);
-      //MTitleBarSymbol->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_RIGHT);
+    //MTitleBarSymbol->setAlignment(SAT_WIDGET_ALIGN_RIGHT_BOTTOM);
+    MTitleBarSymbol->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_RIGHT);
+    MTitleBarSymbol->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM);
+    //MTitleBarSymbol->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_RIGHT);
 
-      MTitleBarSymbol->setColor(0.4);
+    MTitleBarSymbol->setColor(0.4);
 
     MContainer = new SAT_PanelWidget( SAT_Rect());
     //MContainer->setAlignment();
@@ -73,6 +78,10 @@ public:
     MContainer->setFillBackground(false);
     MContainer->setDrawBorder(false);
     //MContainer->setCursor(SAT_CURSOR_CROSS);
+
+    MContainer->setRoundedCorners(true);
+    MContainer->setCornerSizes(0,0,6,6);
+
 
     SAT_Widget::appendChildWidget( MTitleBar );
     SAT_Widget::appendChildWidget( MContainer );

@@ -31,6 +31,7 @@ struct SAT_WidgetState {
   bool active       = true;
   bool visible      = true;
   bool interacting  = false;
+  bool enabled      = true;
 };
 
 //----------
@@ -54,37 +55,36 @@ class SAT_Widget {
 private:
 //------------------------------
 
-  const char*         MName                           = "SAT_Widget";
+  const char*         MName                               = "SAT_Widget";
 
-  SAT_WidgetOwner*    MOwner                          = nullptr;
-  SAT_Widget*         MParent                         = nullptr;
-  uint32_t            MParentIndex                    = 0;
-  SAT_WidgetArray     MChildWidgets                   = {};
+  SAT_WidgetOwner*    MOwner                              = nullptr;
+  SAT_Widget*         MParent                             = nullptr;
+  uint32_t            MParentIndex                        = 0;
+  SAT_WidgetArray     MChildWidgets                       = {};
 
-  SAT_WidgetLayout    MLayout                         = {};
-  SAT_WidgetState     MState                          = {};
-  SAT_WidgetOptions   MOptions                        = {};
+  SAT_WidgetLayout    MLayout                             = {};
+  SAT_WidgetState     MState                              = {};
+  SAT_WidgetOptions   MOptions                            = {};
 
-  SAT_Rect            MRect                           = {0,0,0,0};
-  SAT_Rect            MInitialRect                    = {0,0,0,0};
-  SAT_Rect            MBaseRect                       = {0,0,0,0};
-  SAT_Rect            MContentRect                    = {0,0,0,0};
-  SAT_Point           MLayoutOffset                   = {0,0};
+  SAT_Rect            MRect                               = {0,0,0,0};
+  SAT_Rect            MInitialRect                        = {0,0,0,0};
+  SAT_Rect            MBaseRect                           = {0,0,0,0};
+  SAT_Rect            MContentRect                        = {0,0,0,0};
+  SAT_Point           MLayoutOffset                       = {0,0};
 
-  int32_t             MMouseCursor                    = SAT_CURSOR_DEFAULT;
-  SAT_Point           MMouseClickedPos                = {0,0};
-  uint32_t            MMouseClickedButton             = SAT_BUTTON_NONE;
-  bool                MMouseWaitingForMovement        = false;
+  int32_t             MMouseCursor                        = SAT_CURSOR_DEFAULT;
+  SAT_Point           MMouseClickedPos                    = {0,0};
+  uint32_t            MMouseClickedButton                 = SAT_BUTTON_NONE;
+  bool                MMouseWaitingForMovement            = false;
 
-  const char*         MHint                           = "";
+  const char*         MHint                               = "";
 
   double              MValues[SAT_WIDGET_MAX_VALUES]      = {};
   double              MModulations[SAT_WIDGET_MAX_VALUES] = {};
   void*               MParameters[SAT_WIDGET_MAX_VALUES]  = {0};
-//  void*               MParameter                          = nullptr;
 
-  int32_t             MSelectedIndex                  = 0;
-  uint32_t            MLastPainted                    = 0;
+  int32_t             MSelectedIndex                      = 0;
+  uint32_t            MLastPainted                        = 0;
 
 //------------------------------
 public:
@@ -111,19 +111,19 @@ public:
 public:
 //------------------------------
 
-  virtual const char*         getName()                                   { return MName; }
-  virtual int32_t             getCursor()                                 { return MMouseCursor; }
-  virtual const char*         getHint()                                   { return MHint; }
-  virtual SAT_Widget*         getParent()                                 { return MParent; }
-  virtual int32_t             getParentIndex()                            { return MParentIndex; }
-  virtual void*               getParameter(uint32_t AIndex=0)             { return MParameters[AIndex]; }
-  virtual SAT_WidgetOwner*    getOwner()                                  { return MOwner; }
+  virtual const char*         getName()                                         { return MName; }
+  virtual int32_t             getCursor()                                       { return MMouseCursor; }
+  virtual const char*         getHint()                                         { return MHint; }
+  virtual SAT_Widget*         getParent()                                       { return MParent; }
+  virtual int32_t             getParentIndex()                                  { return MParentIndex; }
+  virtual void*               getParameter(uint32_t AIndex=0)                   { return MParameters[AIndex]; }
+  virtual SAT_WidgetOwner*    getOwner()                                        { return MOwner; }
   
   //----------
 
 
-  virtual uint32_t            getNumChildWidgets()                        { return MChildWidgets.size(); }
-  virtual SAT_Widget*         getChildWidget(uint32_t AIndex)             { return MChildWidgets[AIndex]; }
+  virtual uint32_t            getNumChildWidgets()                              { return MChildWidgets.size(); }
+  virtual SAT_Widget*         getChildWidget(uint32_t AIndex)                   { return MChildWidgets[AIndex]; }
 
   virtual void                setName(const char* AName)                        { MName = AName; }
   virtual void                setCursor(int32_t ACursor)                        { MMouseCursor = ACursor; }
@@ -132,10 +132,10 @@ public:
 
   // value
 
-  virtual double              getSelectedValue()                          { return MValues[MSelectedIndex]; }
-  virtual int32_t             getSelectedValueIndex()                     { return MSelectedIndex; }
-  virtual double              getValue(uint32_t AIndex=0)                 { return MValues[AIndex]; }
-  virtual double              getModulation(uint32_t AIndex=0)            { return MModulations[AIndex]; }
+  virtual double              getSelectedValue()                                { return MValues[MSelectedIndex]; }
+  virtual int32_t             getSelectedValueIndex()                           { return MSelectedIndex; }
+  virtual double              getValue(uint32_t AIndex=0)                       { return MValues[AIndex]; }
+  virtual double              getModulation(uint32_t AIndex=0)                  { return MModulations[AIndex]; }
 
   virtual void                selectValue(int32_t AIndex)                       { MSelectedIndex = AIndex; }
   virtual void                setValue(double AValue, uint32_t AIndex=0)        { MValues[AIndex] = AValue; }
@@ -143,78 +143,88 @@ public:
 
   // rect
 
-  virtual SAT_Point           getPos()                                    { return SAT_Point(MRect.x,MRect.y); }
-  virtual SAT_Point           getSize()                                   { return SAT_Point(MRect.w,MRect.h); }
-  virtual SAT_Rect            getRect()                                   { return MRect; }
-  virtual double              getWidth()                                  { return MRect.w; }
-  virtual double              getHeight()                                 { return MRect.h; }
-  virtual SAT_Rect            getBaseRect()                               { return MBaseRect; }
-  virtual SAT_Rect            getContentRect()                            { return MContentRect; }
-  virtual SAT_Rect            getInitialRect()                            { return MInitialRect; }
-  //virtual SAT_Point           getLayoutOffset()                           { return MLayoutOffset; }
+  virtual SAT_Point           getPos()                                          { return SAT_Point(MRect.x,MRect.y); }
+  virtual SAT_Point           getSize()                                         { return SAT_Point(MRect.w,MRect.h); }
+  virtual SAT_Rect            getRect()                                         { return MRect; }
+  virtual double              getWidth()                                        { return MRect.w; }
+  virtual double              getHeight()                                       { return MRect.h; }
+  virtual SAT_Rect            getBaseRect()                                     { return MBaseRect; }
+  virtual SAT_Rect            getContentRect()                                  { return MContentRect; }
+  virtual SAT_Rect            getInitialRect()                                  { return MInitialRect; }
+//virtual SAT_Point           getLayoutOffset()                                 { return MLayoutOffset; }
 
-  virtual void                setPos(SAT_Point APos)                      { MRect.setPos(APos); }
-  virtual void                setSize(SAT_Point ASize)                    { MRect.setSize(ASize); }
-  virtual void                setRect(SAT_Rect ARect)                     { MRect = ARect; }
-  virtual void                setBaseRect(SAT_Rect ARect)                 { MBaseRect = ARect; }
-  virtual void                setLayoutOffset(SAT_Point AOffset)          { MLayoutOffset = AOffset; }
+  virtual void                setPos(SAT_Point APos)                            { MRect.setPos(APos); }
+  virtual void                setSize(SAT_Point ASize)                          { MRect.setSize(ASize); }
+  virtual void                setRect(SAT_Rect ARect)                           { MRect = ARect; }
+  virtual void                setBaseRect(SAT_Rect ARect)                       { MBaseRect = ARect; }
+  virtual void                setLayoutOffset(SAT_Point AOffset)                { MLayoutOffset = AOffset; }
 
-  virtual void                setWidth(double AWidth)                     { MRect.w = AWidth; }
-  virtual void                setHeight(double AHeight)                   { MRect.h = AHeight; }
-  virtual void                setBaseWidth(double AWidth)                 { MBaseRect.w = AWidth; }
-  virtual void                setBaseHeight(double AHeight)               { MBaseRect.h = AHeight; }
+  virtual void                setWidth(double AWidth)                           { MRect.w = AWidth; }
+  virtual void                setHeight(double AHeight)                         { MRect.h = AHeight; }
+  virtual void                setBaseWidth(double AWidth)                       { MBaseRect.w = AWidth; }
+  virtual void                setBaseHeight(double AHeight)                     { MBaseRect.h = AHeight; }
 
   // layout
 
-  virtual SAT_WidgetLayout*   getLayout()                                 { return &MLayout; }
-  virtual uint32_t            getLayoutFlags()                            { return MLayout.flags; }
-  virtual SAT_Rect            getLayoutInnerBorder()                      { return MLayout.inner_border; }
-  virtual SAT_Rect            getLayoutOuterBorder()                      { return MLayout.outer_border; }
-  virtual SAT_Point           getLayoutSpacing()                          { return MLayout.spacing; }
+  virtual SAT_WidgetLayout*   getLayout()                                       { return &MLayout; }
+  virtual uint32_t            getLayoutFlags()                                  { return MLayout.flags; }
+  virtual SAT_Rect            getLayoutInnerBorder()                            { return MLayout.inner_border; }
+  virtual SAT_Rect            getLayoutOuterBorder()                            { return MLayout.outer_border; }
+  virtual SAT_Point           getLayoutSpacing()                                { return MLayout.spacing; }
 
-  virtual void                setLayoutFlags(uint32_t AFlags)             { MLayout.flags = AFlags; }
-  virtual void                setLayoutInnerBorder(SAT_Rect ABorder)      { MLayout.inner_border = ABorder; }
-  virtual void                setLayoutOuterBorder(SAT_Rect ABorder)      { MLayout.outer_border = ABorder; }
-  virtual void                setLayoutSpacing(SAT_Point ASpacing)        { MLayout.spacing = ASpacing; }
+  virtual void                setLayoutFlags(uint32_t AFlags)                   { MLayout.flags = AFlags; }
+  virtual void                setLayoutInnerBorder(SAT_Rect ABorder)            { MLayout.inner_border = ABorder; }
+  virtual void                setLayoutOuterBorder(SAT_Rect ABorder)            { MLayout.outer_border = ABorder; }
+  virtual void                setLayoutSpacing(SAT_Point ASpacing)              { MLayout.spacing = ASpacing; }
 
-  virtual bool                hasLayoutFlag(uint32_t AFlag)               { return (MLayout.flags & AFlag); }
-  virtual void                addLayoutFlag(uint32_t AFlag)               { MLayout.flags |= AFlag; }
-  virtual void                clearLayoutFlag(uint32_t AFlag)             { MLayout.flags &= ~AFlag; }
+  virtual bool                hasLayoutFlag(uint32_t AFlag)                     { return (MLayout.flags & AFlag); }
+  virtual void                addLayoutFlag(uint32_t AFlag)                     { MLayout.flags |= AFlag; }
+  virtual void                clearLayoutFlag(uint32_t AFlag)                   { MLayout.flags &= ~AFlag; }
 
   // state
 
-  virtual SAT_WidgetState*    getState()                                  { return &MState; }
-  virtual bool                isActive()                                  { return MState.active; }
-  virtual bool                isVisible()                                 { return MState.visible; }
-  virtual bool                isInteracting()                             { return MState.interacting; }
+  virtual SAT_WidgetState*    getState()                                        { return &MState; }
+  virtual bool                isActive()                                        { return MState.active; }
+  virtual bool                isVisible()                                       { return MState.visible; }
+  virtual bool                isInteracting()                                   { return MState.interacting; }
+  virtual bool                isEnabled()                                       { return MState.enabled; }
 
-  virtual void                setInteracting(bool AInteracting=true)      { MState.interacting = AInteracting; }
-//virtual void                setActive(bool AActive=true)                { MState.active = AActive; }    // see later down
-//virtual void                setVisible(bool AVisible=true)              { MState.visible = AVisible; }  // see later down
+  virtual void                setInteracting(bool AInteracting=true)            { MState.interacting = AInteracting; }
+//virtual void                setEnabled(bool AEnabled=true)                    { MState.enabled = AEnabled; }  // see later down
+//virtual void                setActive(bool AActive=true)                      { MState.active = AActive; }    // see later down
+//virtual void                setVisible(bool AVisible=true)                    { MState.visible = AVisible; }  // see later down
 
   // options
 
-  virtual SAT_WidgetOptions*  getOptions()                                { return &MOptions; }
-  virtual bool                autoClip()                                  { return MOptions.autoClip; }
-  virtual bool                autoHoverCursor()                           { return MOptions.autoHoverCursor; }
-  virtual bool                autoHoverHint()                             { return MOptions.autoHoverHint; }
+  virtual SAT_WidgetOptions*  getOptions()                                      { return &MOptions; }
+  virtual bool                autoClip()                                        { return MOptions.autoClip; }
+  virtual bool                autoHoverCursor()                                 { return MOptions.autoHoverCursor; }
+  virtual bool                autoHoverHint()                                   { return MOptions.autoHoverHint; }
 
-  // ---
+  // painting
 
-  virtual uint32_t            getLastPainted()                            { return MLastPainted; }
-  virtual void                setLastPainted(uint32_t ALast)              { MLastPainted = ALast; }
+  virtual uint32_t            getLastPainted()                                  { return MLastPainted; }
+  virtual void                setLastPainted(uint32_t ALast)                    { MLastPainted = ALast; }
 
 //------------------------------
 public:
 //------------------------------
 
+  // tell parent to realign its children
+
   virtual void realignParent() {
     if (MParent) MParent->do_widget_realign(MParent);
   }
 
+  //----------
+
+  // tell parent to redraw itself (and its children)
+
   virtual void redrawParent() {
     if (MParent) MParent->do_widget_redraw(MParent);
   }
+
+  //----------
 
   // called from:
   // SAT_Window.on_window_open()
@@ -299,11 +309,31 @@ public:
 
   //----------
 
+  virtual void setEnabled(bool AState=true, bool ARecursive=true) {
+    MState.enabled = AState;
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+        MChildWidgets[i]->setEnabled(AState,ARecursive);
+      }
+    }
+  }
+  
+  //----------
+
+  virtual bool isRecursivelyEnabled() {
+    if (!isEnabled()) return false;
+    if (!MParent) return true;
+    return MParent->isRecursivelyEnabled();
+  }
+
+  //----------
+
   virtual void setRectAndBase(SAT_Rect ARect) {
     setRect(ARect);
     double scale = getWindowScale();
     SAT_Rect rect = ARect;
 
+// ???
 rect.x -= MLayoutOffset.x;
 rect.y -= MLayoutOffset.y;
 
@@ -497,6 +527,7 @@ rect.y -= MLayoutOffset.y;
           child_rect.scale(scale);
         }
 
+// ???
 SAT_Rect orig_rect = child_rect;
 
         bool xanchored = false;
@@ -587,20 +618,6 @@ public: // on_ (downwards)
 
   virtual void on_widget_close(SAT_WidgetOwner* AOwner) {
   }
-
-  //----------
-
-  // never called
-
-  //virtual void on_widget_move(double AXpos, double AYpos) {
-  //}
-
-  //----------
-
-  // never called
-
-  //virtual void on_widget_resize(double AWidth, double AHeight) {
-  //}
 
   //----------
 

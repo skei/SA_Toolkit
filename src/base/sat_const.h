@@ -17,7 +17,7 @@ const char  SAT_CSYMBOLS[]      = "________________________________"
                                 "________________0123456789______"
                                 "_ABCDEFGHIJKLMNOPQRSTUVWXYZ_____"
                                 "_abcdefghijklmnopqrstuvwxyz_____";
-const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" };
+const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec", "errorember" };
 
 //----------------------------------------------------------------------
 //
@@ -105,11 +105,11 @@ const char* SAT_MONTH_NAMES[12] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_CORNER_LOWER_RIGHT                  0x04
 #define SAT_CORNER_LOWER_LEFT                   0x08
 
-// #define SAT_CORNER_UPPER                        (SAT_CORNER_UPPER_LEFT  | SAT_CORNER_UPPER_RIGHT)
-// #define SAT_CORNER_LOWER                        (SAT_CORNER_LOWER_LEFT  | SAT_CORNER_LOWER_RIGHT)
-// #define SAT_CORNER_LEFT                         (SAT_CORNER_UPPER_LEFT  | SAT_CORNER_LOWER_LEFT)
-// #define SAT_CORNER_RIGHT                        (SAT_CORNER_UPPER_RIGHT | SAT_CORNER_LOWER_RIGHT)
-// #define SAT_CORNER_ALL                          (SAT_CORNER_UPPER       | SAT_CORNER_LOWER)
+#define SAT_CORNER_UPPER                        (SAT_CORNER_UPPER_LEFT  | SAT_CORNER_UPPER_RIGHT)
+#define SAT_CORNER_LOWER                        (SAT_CORNER_LOWER_LEFT  | SAT_CORNER_LOWER_RIGHT)
+#define SAT_CORNER_LEFT                         (SAT_CORNER_UPPER_LEFT  | SAT_CORNER_LOWER_LEFT)
+#define SAT_CORNER_RIGHT                        (SAT_CORNER_UPPER_RIGHT | SAT_CORNER_LOWER_RIGHT)
+#define SAT_CORNER_ALL                          (SAT_CORNER_UPPER       | SAT_CORNER_LOWER)
 
 #define SAT_CURSOR_LOCK                        -4
 #define SAT_CURSOR_UNLOCK                      -3

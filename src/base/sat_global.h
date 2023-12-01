@@ -40,6 +40,7 @@ public:
 public:
 
   SAT_Global() {
+
     //#if defined(SAT_PLUGIN_EXE)
     //  SAT_GetExePath(binary_path);
     //  DEBUG.print("exe path '%s'\n",binary_path);
@@ -47,7 +48,9 @@ public:
     //  SAT_GetLibPath(binary_path);
     //  DEBUG.print("lib path '%s'\n",binary_path);
     //#endif
+
     initialize();
+
   }
 
   //----------
@@ -109,6 +112,7 @@ public:
 
 
 
+//static?
 
 SAT_Global SAT_GLOBAL = {};
 
@@ -121,6 +125,10 @@ SAT_Global SAT_GLOBAL = {};
 //
 //
 //----------------------------------------------------------------------
+
+
+
+
 
 //------------------------------
 // debug

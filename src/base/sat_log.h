@@ -61,7 +61,10 @@ public:
       if (file.direxists(MDesktopPath)) {
         SAT_CurrentTime time = {0};
         SAT_GetLocalTime(&time);
-        sprintf(MLogfileName,"%02i-%s-%04i_%02i-%02i-%02i",time.day, SAT_MONTH_NAMES[time.month], time.year, time.hour, time.minutes, time.seconds);
+
+//        printf("month: %i\n",time.month);
+        
+        sprintf(MLogfileName,"%02i-%s-%04i_%02i-%02i-%02i",time.day, SAT_MONTH_NAMES[time.month - 1], time.year, time.hour, time.minutes, time.seconds);
         #ifdef SAT_LINUX
           sprintf(MFilename,"%s/%s",MDesktopPath,MLogfileName);
         #else

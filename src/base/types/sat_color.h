@@ -130,6 +130,13 @@ public:
     a = 1;//(color.a * alpha) + (a * (1.0 - alpha));
   }
 
+  void blendA(SAT_Color color, double alpha) {
+    r = (color.r * alpha) + (r * (1.0 - alpha));
+    g = (color.g * alpha) + (g * (1.0 - alpha));
+    b = (color.b * alpha) + (b * (1.0 - alpha));
+    a = (color.a * alpha) + (a * (1.0 - alpha));
+  }
+
   //----------
 
   void blend(SAT_Color color) {

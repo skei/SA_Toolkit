@@ -71,7 +71,12 @@ public:
 
   sat_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
+
+    SAT_LOG("hello world!\n");
+
     //SAT_PRINT;
+    //SAT_Print("we can add some text.. %i %p\n",123,nullptr);
+    //SAT_DPrint("..or only text..\n");
 
     //int* ptr = nullptr;
     //int val = *ptr;
@@ -236,7 +241,7 @@ private: // widget page
         panel = new SAT_PanelWidget(SAT_Rect(10,160,200,30));
         scrollbox->appendChildWidget(panel);
           panel->setFillBackground(true);
-          //panel->setBackgroundColor(SAT_Grey);
+          panel->setBackgroundColor(SAT_Grey);
           panel->setFillLinearGradient(true);
           panel->setGradientColors(SAT_Grey,0.2,0.2);
           panel->setDrawBorder(true);
@@ -263,7 +268,6 @@ private: // widget page
           panel->setDropShadowInner(true);
           panel->setDropShadowFeather(5);
           panel->setDropShadowOffset(3,2);
-          panel->setDropShadowColors( SAT_Color(0.0, 0.0, 0.0, 0.5 ), SAT_Color(0.33, 0.33, 0.33, 0.5 ));
 
         // panel : font
 
@@ -279,8 +283,6 @@ private: // widget page
           panel->setTextColor(SAT_LighterGrey);
           panel->setTextSize(24);
           panel->setTextOffset(SAT_Rect(0,10,0,0));
-
-
 
         // panel: text + text shadow
 
@@ -425,7 +427,7 @@ private: // widget page
 
         SAT_ButtonWidget* button2 = new SAT_ButtonWidget(SAT_Rect(325,320,95,20),false);
         scrollbox->appendChildWidget(button2);
-        button2->setTexts("Toggle ON","Toggle OFF");
+        button2->setTexts("ON","OFF");
 
         // buttonrow
 

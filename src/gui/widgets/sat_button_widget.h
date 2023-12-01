@@ -39,6 +39,11 @@ public:
     setName("SAT_ButtonWidget");
     setCursor(SAT_CURSOR_FINGER);
     MIsToggle = AIsToggle;
+
+//    setFillLinearGradient(true);
+    setRoundedCorners(true);
+    setCornerSize(3);
+
   }
 
   //----------
@@ -124,14 +129,17 @@ public:
       setBackgroundColor(MOnBackgroundColor);
       setTextColor(MOnTextColor);
       SAT_PanelWidget::setText(MOnText);
+//      setGradientColors( getBackgroundColor(), 0.2, 0.2);
     }
     else {
       setBackgroundColor(MOffBackgroundColor);
       setTextColor(MOffTextColor);
       SAT_PanelWidget::setText(MOffText);
+//      setGradientColorsInv( getBackgroundColor(), 0.2, 0.2);
     }
     
     fillBackground(AContext);
+
     //if (getValue() > 0.5) SAT_TextWidget::setText(MOnText);
     //else SAT_TextWidget::setText(MOffText);
     drawText(AContext);

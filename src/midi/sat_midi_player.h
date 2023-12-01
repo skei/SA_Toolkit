@@ -5,6 +5,7 @@
 // "plays" a MidiSequence
 // keeps track of 'blocksize' window into event stream
 
+#include "sat.h"
 #include "midi/sat_midi_file.h"
 
 typedef void (*append_event_callback)(SAT_MidiEvent* event, void* ptr);
