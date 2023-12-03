@@ -161,8 +161,30 @@ void sat_crash_handler_callback(int sig) {
       return 1;
     }
 
+    /*
+      void* operator new  (std::size_t count );
+      void* operator new[](std::size_t count );
+      void* operator new  (std::size_t count, const std::nothrow_t& tag);
+      void* operator new[](std::size_t count, const std::nothrow_t& tag);
+
+      void operator delete  (void* ptr); 	
+      void operator delete[](void* ptr);
+      void operator delete  (void* ptr, const std::nothrow_t& tag);
+      void operator delete[](void* ptr, const std::nothrow_t& tag);
+      void operator delete  (void* ptr, std::size_t sz);
+      void operator delete[](void* ptr, std::size_t sz);
+    */
+
+    // //void operator delete (void* ptr) /*throw()*/ {}
+    // void operator delete (void* ptr) _GLIBCXX_USE_NOEXCEPT {}
+
+    // //void operator delete[] (void* ptr) /*throw()*/ {0
+    // void operator delete [] (void* ptr) _GLIBCXX_USE_NOEXCEPT {0
+
+
     void* operator  new       (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL.DEBUG.MEMTRACE.malloc(size, file, line, 1); }
     void* operator  new[]     (const size_t size, const char* file, unsigned int line)  { return SAT_GLOBAL.DEBUG.MEMTRACE.malloc(size, file, line, 1); }
+
     void  operator  delete    (void* ptr)                                               { return SAT_GLOBAL.DEBUG.MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
     void  operator  delete[]  (void* ptr)                                               { return SAT_GLOBAL.DEBUG.MEMTRACE.free(ptr, sat_memtrace_prefix_file, sat_memtrace_prefix_line, 1); }
 

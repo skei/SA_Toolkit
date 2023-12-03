@@ -34,15 +34,12 @@ extern "C" {
   __attribute__ ((visibility ("default")))
   __attribute__((force_align_arg_pointer))
   void exelib_entry_point() {
-
-    // todo: read these from environment variables?
+    // todo: read from environment variables?
     int         argc    = 0;
     const char* argv[]  = { "", 0 };
-
     //SAT_REGISTRY.initialize();
     //__libc_start_main(main_trampoline,argc,(char**)argv,my_init,my_fini,my_rtld_fini,0);//&my_stack[500000]);
     //__libc_start_main(main,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
-
     __libc_start_main(main_trampoline,argc,(char**)argv,nullptr,nullptr,nullptr,0);//&my_stack[500000]);
     _exit(0); // (EXIT_SUCCESS);
   }

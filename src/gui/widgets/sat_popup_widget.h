@@ -51,15 +51,16 @@ public:
 //------------------------------
 
   virtual bool open(SAT_Rect ARect) {
+
     SAT_Rect rect = ARect;
     double S = getWindowScale();
+
     //setRectAndBasis(MSavedRect);
-//    MSavedRect = rect;
+    //MSavedRect = rect;
     uint32_t winw = getWindowWidth();
     uint32_t winh = getWindowHeight();
     
     //SAT_Print("winw %i winh %i,%i\n",winw,winh);
-    
     if ((rect.x + rect.w) >= winw) rect.x = winw - rect.w - (5*S);
     if ((rect.y + rect.h) >= winh) rect.y = winh - rect.h - (5*S);
     

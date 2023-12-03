@@ -395,6 +395,42 @@ public: // set
 //  }
 
 //------------------------------
+public:
+//------------------------------
+
+  void beginPath() final {
+    nvgBeginPath(MContext);
+  }
+
+  void stroke() final {
+    nvgStroke(MContext);
+  }
+
+  void fill() final {
+    nvgFill(MContext);
+  }
+
+  void moveTo(double x, double y) final {
+    nvgMoveTo(MContext,x,y);
+  }
+
+  void lineTo(double x, double y) final {
+    nvgLineTo(MContext,x,y);
+  }
+
+  void arcTo(double x1, double y1, double x2, double y2, double r) final {
+    nvgArcTo(MContext,x1,y1,x2,y2,r);
+  }
+
+  void quadTo(double c1x, double c1y, double x2, double y2) final {
+    nvgQuadTo(MContext,c1x,c1y,x2,y2);
+  }
+
+  void bezierTo(double c1x, double c1y, double c2x, double c2y, double x2, double y2) final {
+    nvgBezierTo(MContext,c1x,c1y,c2x,c2y,x2,y2);
+  }
+
+//------------------------------
 public: // draw
 //------------------------------
 
@@ -974,10 +1010,168 @@ public: // render buffer
 //    MOpenGL->setViewport(xpos,ypos,width,height);
 //  }
 
+//------------------------------
+public:
+//------------------------------
+
+  // #define BND_INLINE inline
+  // #define bnd_fminf(a, b) fminf(a, b)
+  // #define bnd_fmaxf(a, b) fmaxf(a, b)
+  // #define bnd_fmin(a, b) fmin(a, b)
+  // #define bnd_fmax(a, b) fmax(a, b)
+
+  // #define BND_TRANSPARENT_ALPHA 0.643
+  // #define BND_BEVEL_SHADE       30
+  // #define BND_INSET_BEVEL_SHADE 30
+
+  // NVGcolor backgroundColor = { 0.447, 0.447, 0.447, 1.0 };
+
+  // //BND_INLINE
+  // float bnd_clamp(float v, float mn, float mx) {
+  //   return (v > mx) ? mx : (v < mn) ? mn : v;
+  // }
+
+  // void bndRoundedBox(float x, float y, float w, float h, float cr0, float cr1, float cr2, float cr3) {
+  //   float d;
+  //   w = fmaxf(0, w);
+  //   h = fmaxf(0, h);
+  //   d = fminf(w, h);
+  //   nvgMoveTo(MContext, x,y+h*0.5f);
+  //   nvgArcTo(MContext, x,y, x+w,y, fminf(cr0, d/2));
+  //   nvgArcTo(MContext, x+w,y, x+w,y+h, fminf(cr1, d/2));
+  //   nvgArcTo(MContext, x+w,y+h, x,y+h, fminf(cr2, d/2));
+  //   nvgArcTo(MContext, x,y+h, x,y, fminf(cr3, d/2));
+  //   nvgClosePath(MContext);
+  // }
+
+  // NVGcolor bndTransparent(NVGcolor color) {
+  //   color.a *= BND_TRANSPARENT_ALPHA;
+  //   return color;
+  // }
+
+  // NVGcolor bndOffsetColor(NVGcolor color, int delta) {
+  //   float offset = (float)delta / 255.0f;
+  //   return delta ? ( nvgRGBAf( bnd_clamp(color.r+offset,0,1), bnd_clamp(color.g+offset,0,1), bnd_clamp(color.b+offset,0,1), color.a) ) : color;
+  // }
+
+  // void bndBevel(float x, float y, float w, float h) {
+  //   nvgStrokeWidth(MContext, 1);
+  //   x += 0.5f;
+  //   y += 0.5f;
+  //   w -= 1;
+  //   h -= 1;
+  //   nvgBeginPath(MContext);
+  //   nvgMoveTo(MContext, x, y+h);
+  //   nvgLineTo(MContext, x+w, y+h);
+  //   nvgLineTo(MContext, x+w, y);
+  //   nvgStrokeColor(MContext, bndTransparent( bndOffsetColor(backgroundColor, -BND_BEVEL_SHADE)));
+  //   nvgStroke(MContext);
+  //   nvgBeginPath(MContext);
+  //   nvgMoveTo(MContext, x, y+h);
+  //   nvgLineTo(MContext, x, y);
+  //   nvgLineTo(MContext, x+w, y);
+  //   nvgStrokeColor(MContext, bndTransparent( bndOffsetColor(backgroundColor, BND_BEVEL_SHADE)));
+  //   nvgStroke(MContext);
+  // }
+
+  // void bndBevelInset(float x, float y, float w, float h, float cr2, float cr3) {
+  //   float d;
+  //   y -= 0.5f;
+  //   d = fminf(w, h);
+  //   cr2 = fminf(cr2, d/2);
+  //   cr3 = fminf(cr3, d/2);
+  //   nvgBeginPath(MContext);
+  //   nvgMoveTo(MContext, x+w,y+h-cr2);
+  //   nvgArcTo(MContext, x+w,y+h, x,y+h, cr2);
+  //   nvgArcTo(MContext, x,y+h, x,y, cr3);
+  //   NVGcolor bevelColor = bndOffsetColor(backgroundColor, BND_INSET_BEVEL_SHADE);
+  //   nvgStrokeWidth(MContext, 1);
+  //   nvgStrokePaint(MContext, nvgLinearGradient(MContext, x,y+h-fmaxf(cr2,cr3)-1, x,y+h-1, nvgRGBAf(bevelColor.r, bevelColor.g, bevelColor.b, 0), bevelColor));
+  //   nvgStroke(MContext);
+  // }
+
+
 };
 
 //----------------------------------------------------------------------
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #if 0

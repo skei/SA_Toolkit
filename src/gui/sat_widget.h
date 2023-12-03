@@ -6,6 +6,7 @@
 #include "base/system/sat_timer.h"
 #include "gui/base/sat_paint_context.h"
 #include "gui/base/sat_widget_owner.h"
+#include "gui/sat_skin.h"
 
 //----------
 
@@ -20,9 +21,9 @@ typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 
 struct SAT_WidgetLayout {
   uint32_t  flags           = SAT_WIDGET_LAYOUT_DEFAULT;
-  SAT_Rect  inner_border    = {};
-  SAT_Rect  outer_border    = {};
-  SAT_Point spacing         = {};
+  SAT_Rect  inner_border    = {0,0,0,0};
+  SAT_Rect  outer_border    = {0,0,0,0};
+  SAT_Point spacing         = {0,0};
 };
 
 //----------
@@ -85,6 +86,8 @@ private:
 
   int32_t             MSelectedIndex                      = 0;
   uint32_t            MLastPainted                        = 0;
+
+  SAT_Skin*           MSkin                               = nullptr;
 
 //------------------------------
 public:
@@ -157,7 +160,7 @@ public:
   virtual void                setSize(SAT_Point ASize)                          { MRect.setSize(ASize); }
   virtual void                setRect(SAT_Rect ARect)                           { MRect = ARect; }
   virtual void                setBaseRect(SAT_Rect ARect)                       { MBaseRect = ARect; }
-  virtual void                setLayoutOffset(SAT_Point AOffset)                { MLayoutOffset = AOffset; }
+//virtual void                setLayoutOffset(SAT_Point AOffset)                { MLayoutOffset = AOffset; }
 
   virtual void                setWidth(double AWidth)                           { MRect.w = AWidth; }
   virtual void                setHeight(double AHeight)                         { MRect.h = AHeight; }
@@ -253,6 +256,17 @@ public:
 
   //----------
 
+  virtual void setSkin(SAT_Skin* ASkin, bool ARecursive=true) {
+    MSkin = ASkin;
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildWidgets.size(); i++) {
+        MChildWidgets[i]->setSkin(ASkin,ARecursive);
+      }
+    }
+  }
+
+  //----------
+
   // called from:
   // appendChildWidget()
 
@@ -329,13 +343,18 @@ public:
   //----------
 
   virtual void setRectAndBase(SAT_Rect ARect) {
-    setRect(ARect);
+
     double scale = getWindowScale();
+
+    //SAT_Rect mrect = getRect();
     SAT_Rect rect = ARect;
 
-// ???
+    setRect(ARect);
+
 rect.x -= MLayoutOffset.x;
 rect.y -= MLayoutOffset.y;
+//rect.x -= (MLayoutOffset.x * scale);
+//rect.y -= (MLayoutOffset.y * scale);
 
     rect.scale(1.0 / scale);
     setBaseRect(rect);
@@ -460,6 +479,12 @@ rect.y -= MLayoutOffset.y;
   
   //----------
 
+  /*
+    todo (maybe):
+    - snap coords to pixels
+      (to get rid of clipping and half-pixel issues)
+  */
+
   // realigns from base rect
   // (sets rect, and content)
 
@@ -500,9 +525,12 @@ rect.y -= MLayoutOffset.y;
       SAT_WidgetState*  child_state   = child->getState();
       uint32_t          child_layout  = child->getLayout()->flags;
       SAT_Rect          child_rect;
+      SAT_Rect          orig_rect;
 
       bool need_realign = child_state->visible || child->MOptions.realignEvenIfNotVisible;
       //if (child_state->visible) {
+
+      // child_rect
         
       if (need_realign) {
         child->on_widget_prealign();
@@ -527,9 +555,11 @@ rect.y -= MLayoutOffset.y;
           child_rect.scale(scale);
         }
 
-// ???
-SAT_Rect orig_rect = child_rect;
+          orig_rect = child_rect;
+        orig_rect = child_rect; // before scaling...
 
+        // anchor
+        
         bool xanchored = false;
         bool yanchored = false;
         if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { xanchored = true; child_rect.x += layout_rect.x; }
@@ -541,11 +571,15 @@ SAT_Rect orig_rect = child_rect;
         if (!xanchored) child_rect.x += mrect.x;
         if (!yanchored) child_rect.y += mrect.y;
 
+      // stretch
+        
         if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_LEFT)        { child_rect.setX1( layout_rect.x   ); }
         if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_TOP)         { child_rect.setY1( layout_rect.y   ); }
         if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_RIGHT)       { child_rect.setX2( layout_rect.x2()); }
         if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_BOTTOM)      { child_rect.setY2( layout_rect.y2()); }
 
+      // crop
+        
         if (child_layout & SAT_WIDGET_LAYOUT_CROP_LEFT)           { layout_rect.setX1( child_rect.x2()); layout_rect.x += spacing.x; layout_rect.w -= spacing.x; }
         if (child_layout & SAT_WIDGET_LAYOUT_CROP_TOP)            { layout_rect.setY1( child_rect.y2()); layout_rect.y += spacing.y; layout_rect.h -= spacing.y; }
         if (child_layout & SAT_WIDGET_LAYOUT_CROP_RIGHT)          { layout_rect.setX2( child_rect.x   ); layout_rect.w -= spacing.x; }
@@ -553,14 +587,21 @@ SAT_Rect orig_rect = child_rect;
 
         MContentRect.combine(child_rect);
 
+        // outer border
+
         SAT_Rect outer_border = child->getLayoutOuterBorder();
         outer_border.scale(scale);
         child_rect.shrink(outer_border);
 
+        //
+
 // layout offset = pre/post alignment rect diff
 // see also setRectAndBase()
-child->MLayoutOffset.x = child_rect.x - orig_rect.x;
-child->MLayoutOffset.y = child_rect.y - orig_rect.y;
+
+child->MLayoutOffset.x = (child_rect.x - orig_rect.x); //(orig_rect.x * scale));
+child->MLayoutOffset.y = (child_rect.y - orig_rect.y); //(orig_rect.y * scale));
+
+        //
 
         child->setRect(child_rect);
         child->on_widget_postalign();

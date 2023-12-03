@@ -19,28 +19,11 @@ class SAT_PanelWidget
 protected:
 //------------------------------
 
-  // indicators
-
-  SAT_Rect  MMappedIndicatorOffset        = SAT_Rect();
-  SAT_Rect  MAutomationIndicatorOffset    = SAT_Rect();
-
   // background
   
-  bool      MFillBackground               = true;
-  SAT_Color MBackgroundColor              = SAT_DarkGrey;
-  SAT_Color MIBackgroundColor             = SAT_DarkCyan2;
-
-  // gradient
-  
-  bool      MFillGradient                 = false;
-  SAT_Color MGradientColor1               = SAT_LightGrey;
-  SAT_Color MGradientColor2               = SAT_DarkGrey;
-  double    MGradientFactor1              = 0.2;
-  double    MGradientFactor2              = 0.2;
-
-  // diaabled
-  SAT_Color MDisabledColor                = SAT_DarkGrey;
-  double    MDisabledFactor               = 0.6;
+  bool        MFillBackground             = true;
+  SAT_Color   MBackgroundColor            = SAT_DarkGrey;
+  SAT_Color   MIBackgroundColor           = SAT_DarkCyan2;
 
   // border
   
@@ -59,6 +42,22 @@ protected:
   double      MBRCorner                   = 0.0;
   double      MBLCorner                   = 0.0;
 
+  // gradient
+  
+  bool      MFillGradient                 = false;
+  SAT_Color MGradientColor1               = SAT_LightGrey;
+  SAT_Color MGradientColor2               = SAT_DarkGrey;
+  double    MGradientFactor1              = 0.2;
+  double    MGradientFactor2              = 0.2;
+
+  // bevel
+
+  bool        MDrawBevel                  = false;
+  bool        MBevelInset                 = false;
+  double      MBevelWidth                 = 0.75;
+  SAT_Color   MBevelLight                 = SAT_Color(1,1,1, 0.5);
+  SAT_Color   MBevelDark                  = SAT_Color(0,0,0, 0.5);
+
   // drop shadow
   
   bool        MDrawDropShadow             = false;
@@ -69,7 +68,6 @@ protected:
   SAT_Color   MDropShadowIColor           = SAT_Color(0.0, 0.0, 0.0, 0.5 );
   SAT_Color   MDropShadowOColor           = SAT_Color(0.33, 0.33, 0.33, 0.5 );
   bool        MDropShadowInner            = false;
-
   double      MDropShadowXOffsetTMP       = 0.0;
   double      MDropShadowYOffsetTMP       = 0.0;
 
@@ -77,17 +75,15 @@ protected:
 
   bool        MDrawText                   = true;
   SAT_Color   MTextColor                  = SAT_White;
-  double      MTextSize                   = 12.0;
+  double      MTextSize                   = 10.0;
   uint32_t    MTextAlignment              = SAT_TEXT_ALIGN_CENTER;
   SAT_Rect    MTextOffset                 = {};
   char        MText[1024]                 = {0};
   int32_t     MTextFont                   = -1;
-  
   bool        MAutoSize                   = false;
   SAT_Rect    MAutoSizeBorder             = SAT_Rect(0,0,0,0);
   bool        MAutoTextSize               = false;
   bool        MDrawParamText              = false;
-
   bool        MDrawTextDropShadow         = false;
   double      MTextDropShadowSize         = 4.0;
   SAT_Color   MTextDropShadowColor        = SAT_Black;
@@ -97,15 +93,24 @@ protected:
 
   bool        MDrawValue                  = false;
   SAT_Color   MValueColor                 = SAT_White;
-  double      MValueSize                  = 12.0;
+  double      MValueSize                  = 10.0;
   uint32_t    MValueAlignment             = SAT_TEXT_ALIGN_RIGHT;
   SAT_Rect    MValueOffset                = {0,0,0,0};
   char        MValueText[256]             = {0};
-
   bool        MDrawValueDropShadow        = false;
   double      MValueDropShadowSize        = 4.0;
   SAT_Color   MValueDropShadowColor       = SAT_Black;
   SAT_Point   MValueDropShadowOffset      = {2,2};
+
+  // disabled
+
+  SAT_Color MDisabledColor                = SAT_DarkGrey;
+  double    MDisabledFactor               = 0.6;
+
+  // indicators
+
+  SAT_Rect  MMappedIndicatorOffset        = SAT_Rect();
+  SAT_Rect  MAutomationIndicatorOffset    = SAT_Rect();
 
 //------------------------------
 public:
@@ -261,50 +266,73 @@ public:
 
   // text
 
-  virtual void setDrawText(bool ADraw=true)               { MDrawText = ADraw; }
-  virtual void setTextColor(SAT_Color AColor)             { MTextColor = AColor; }
-  virtual void setTextSize(double ASize)                  { MTextSize = ASize; }
-  virtual void setTextAlignment(uint32_t AAlign)          { MTextAlignment = AAlign; }
-  virtual void setTextOffset(SAT_Rect AOffset)            { MTextOffset = AOffset; }
+  virtual void        setDrawText(bool ADraw=true)                { MDrawText = ADraw; }
+  virtual void        setTextColor(SAT_Color AColor)              { MTextColor = AColor; }
+  virtual void        setTextSize(double ASize)                   { MTextSize = ASize; }
+  virtual void        setTextAlignment(uint32_t AAlign)           { MTextAlignment = AAlign; }
+  virtual void        setTextOffset(SAT_Rect AOffset)             { MTextOffset = AOffset; }
   
-  virtual void setText(const char* AText)                 { strcpy(MText,AText); }
-  virtual void setTextFont(int32_t AFont)                 { MTextFont = AFont; }
+  virtual void        setText(const char* AText)                  { strcpy(MText,AText); }
+  virtual void        setTextFont(int32_t AFont)                  { MTextFont = AFont; }
   
-  virtual void setAutoSize(bool AAuto=true)               { MAutoSize = AAuto; }
-  virtual void setAutoTextSize(bool AAuto=true)           { MAutoTextSize = AAuto; }
+  virtual void        setAutoSize(bool AAuto=true)                { MAutoSize = AAuto; }
+  virtual void        setAutoTextSize(bool AAuto=true)            { MAutoTextSize = AAuto; }
 
-  virtual void setDrawTextDropShadow(bool ADraw=true)     { MDrawTextDropShadow = ADraw; }
-  virtual void setTextDropShadowSize(double ASize)        { MTextDropShadowSize = ASize; }
-  virtual void setTextDropShadowColor(SAT_Color AColor)   { MTextDropShadowColor  = AColor; }
-  virtual void setTextDropShadowOffset(SAT_Point AOffset) { MTextDropShadowOffset = AOffset; }
+  virtual void        setDrawTextDropShadow(bool ADraw=true)      { MDrawTextDropShadow = ADraw; }
+  virtual void        setTextDropShadowSize(double ASize)         { MTextDropShadowSize = ASize; }
+  virtual void        setTextDropShadowColor(SAT_Color AColor)    { MTextDropShadowColor  = AColor; }
+  virtual void        setTextDropShadowOffset(SAT_Point AOffset)  { MTextDropShadowOffset = AOffset; }
   
   //
 
-  virtual const char* getText()     { return MText; }
-  virtual double      getTextSize() { return MTextSize; }
-  
-  virtual SAT_Color   getTextColor()        { return MTextColor; }
-  virtual SAT_Color   getBackgroundColor()  { return MBackgroundColor; }
+  virtual const char* getText()                                   { return MText; }
+  virtual double      getTextSize()                               { return MTextSize; }
+  virtual SAT_Color   getTextColor()                              { return MTextColor; }
+  virtual SAT_Color   getBackgroundColor()                        { return MBackgroundColor; }
 
   // value
 
-  virtual void      setDrawValue(bool ADraw=true)               { MDrawValue = ADraw; }
-  virtual void      setValueColor(SAT_Color AColor)             { MValueColor = AColor; }
-  virtual void      setValueSize(double ASize)                  { MValueSize = ASize; }
-  virtual void      setValueAlignment(uint32_t AAlign)          { MValueAlignment = AAlign; }
-  virtual void      setValueOffset(SAT_Rect AOffset)            { MValueOffset = AOffset; }
-  virtual void      setDrawValueDropShadow(bool ADraw=true)     { MDrawValueDropShadow = ADraw; }
-  virtual void      setValueDropShadowSize(double ASize)        { MValueDropShadowSize = ASize; }
-  virtual void      setValueDropShadowColor(SAT_Color AColor)   { MValueDropShadowColor  = AColor; }
-  virtual void      setValueDropShadowOffset(SAT_Point AOffset) { MValueDropShadowOffset = AOffset; }
+  virtual void        setDrawValue(bool ADraw=true)               { MDrawValue = ADraw; }
+  virtual void        setValueColor(SAT_Color AColor)             { MValueColor = AColor; }
+  virtual void        setValueSize(double ASize)                  { MValueSize = ASize; }
+  virtual void        setValueAlignment(uint32_t AAlign)          { MValueAlignment = AAlign; }
+  virtual void        setValueOffset(SAT_Rect AOffset)            { MValueOffset = AOffset; }
+  virtual void        setDrawValueDropShadow(bool ADraw=true)     { MDrawValueDropShadow = ADraw; }
+  virtual void        setValueDropShadowSize(double ASize)        { MValueDropShadowSize = ASize; }
+  virtual void        setValueDropShadowColor(SAT_Color AColor)   { MValueDropShadowColor  = AColor; }
+  virtual void        setValueDropShadowOffset(SAT_Point AOffset) { MValueDropShadowOffset = AOffset; }
 
-  virtual bool      getDrawValue()      { return MDrawValue; }
+  virtual bool        getDrawValue()                              { return MDrawValue; }
 
+  // bevel
+
+  virtual void        setDrawBevel(bool ABevel)                   { MDrawBevel = ABevel; }
+  virtual void        setBevelInset(bool AInset)                  { MBevelInset = AInset; }
+  virtual void        setBevelLightColor(SAT_Color AColor)        { MBevelLight = AColor; }
+  virtual void        setBevelDarkColor(SAT_Color AColor)         { MBevelDark = AColor; }
 
 
 //------------------------------
 public:
 //------------------------------
+
+//------------------------------
+public:
+//------------------------------
+
+  // void drawBevel(SAT_PaintContext* AContext) {
+  //   double S = AContext->scale;
+  //   SAT_Painter* painter = AContext->painter;
+  //   SAT_Assert(painter);
+  //   SAT_Rect mrect = getRect();
+  //   if (mrect.w <= 0.0) return;
+  //   if (mrect.h <= 0.0) return;
+  //   mrect.shrink(1);
+  //   painter->bndBevelInset(mrect.x,mrect.y,mrect.w,mrect.h,1,1);
+  //   painter->bndBevel(mrect.x,mrect.y,mrect.w,mrect.h);
+  // }
+
+  //----------
 
   virtual void drawDropShadow(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
@@ -405,11 +433,9 @@ public:
         mrect.x -= (MDropShadowXOffset*S);
         mrect.y -= (MDropShadowYOffset*S);
       }
-
       SAT_Color color = MBorderColor;
       if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
       painter->setDrawColor(color);
-
       painter->setLineWidth(MBorderWidth * S);
       if (MRoundedCorners) {
         painter->drawRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
@@ -420,6 +446,117 @@ public:
         if (MBorderEdges & SAT_EDGE_LEFT)   painter->drawLine( mrect.x,    mrect.y,    mrect.x,    mrect.y2() );
         if (MBorderEdges & SAT_EDGE_RIGHT)  painter->drawLine( mrect.x2(), mrect.y,    mrect.x2(), mrect.y2() );
       }
+    }
+  }
+
+  //----------
+
+  virtual void drawBevel(SAT_PaintContext* AContext) {
+
+    SAT_Assert(AContext);
+    if (MDrawBevel) {
+      double S = AContext->scale;
+      SAT_Painter* painter = AContext->painter;
+      SAT_Assert(painter);
+      SAT_Rect mrect = getRect();
+      if (mrect.w <= 0.0) return;
+      if (mrect.h <= 0.0) return;
+
+      //mrect.x -= MBorderWidth;
+      //mrect.y -= MBorderWidth;
+      //mrect.w += MBorderWidth;
+      //mrect.h += MBorderWidth;
+
+      // if (MDrawDropShadow && !MDropShadowInner) {
+      //   mrect.shrink(MDropShadowFeather * (S*0.5));
+      //   mrect.x -= (MDropShadowXOffset*S);
+      //   mrect.y -= (MDropShadowYOffset*S);
+      // }
+
+      painter->setLineWidth(MBevelWidth * S);
+      SAT_Color color;
+
+      if (MRoundedCorners) {
+        //painter->drawRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
+        /*
+          void drawRoundedRectangle(KODE_FRect ARect, float ARadius, uint32_t ACorners, KODE_Color AColor, uint32_t AWidth=1) override {
+            //set_color(AColor);
+            //set_line_width(AWidth);
+            float r  = ARadius;// - 1;
+            float r2 = r*2;
+            float AX1 = ARect.x;
+            float AY1 = ARect.y;
+            float AX2 = ARect.x2();
+            float AY2 = ARect.y2();
+            drawArc(  KODE_FRect(AX1,      AY1,      AX1+r2-2, AY1+r2-3), 0.75, 0.25, AColor, AWidth ); // upper left
+            drawArc(  KODE_FRect(AX2-r2+1, AY1,      AX2-1,    AY1+r2-2), 0.00, 0.25, AColor, AWidth ); // upper right
+            drawArc(  KODE_FRect(AX1,      AY2-r2+1, AX1+r2-2, AY2-1),    0.50, 0.25, AColor, AWidth ); // lower left
+            drawArc(  KODE_FRect(AX2-r2+1, AY2-r2+2, AX2-1,    AY2-1),    0.25, 0.25, AColor, AWidth ); // lower right
+            drawLine( AX1+r,    AY1,      AX2-r,    AY1,   AColor, AWidth );  // top
+            drawLine( AX1+r,    AY2,      AX2-r,    AY2,   AColor, AWidth );  // bottom
+            drawLine( AX1,      AY1+r,    AX1,      AY2-r, AColor, AWidth );  // left
+            drawLine( AX2,      AY1+r,    AX2,      AY2-r, AColor, AWidth );  // right
+          }        
+        */
+
+        double x1 = mrect.x;
+        double y1 = mrect.y;
+        double x2 = mrect.x2();
+        double y2 = mrect.y2();
+
+        double tl = MTLCorner * S;
+        double tr = MTRCorner * S;
+        double br = MBRCorner * S;
+        double bl = MBLCorner * S;
+
+        double bx1 = x1 + tl;
+        double by1 = y1 + tl;
+        double bx2 = x2 - tr;
+        double by2 = y1 + tr;
+
+        double bx3 = x1 + bl;
+        double by3 = y2 - bl;
+        double bx4 = x2 - br;
+        double by4 = y2 - br;
+
+        // 12
+        // 34
+
+        if (MBevelInset) color = MBevelLight;
+        else color = MBevelDark;
+        if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
+        painter->setDrawColor(color);
+        painter->drawLine( bx3, y2,  bx4, y2  ); // bottom, 3-4
+        painter->drawLine( x2,  by2, x2,  by4 ); // right,  2-4
+        painter->drawArc( bx2,by2, br, 0.875*SAT_PI2, 1.000*SAT_PI2); // half of top-right
+        painter->drawArc( bx4,by4, br, 0.000*SAT_PI2, 0.250*SAT_PI2); // bottom right
+        painter->drawArc( bx3,by3, br, 0.250*SAT_PI2, 0.375*SAT_PI2); // half of bottom-left
+        if (MBevelInset) color = MBevelDark;
+        else color = MBevelLight;
+        if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
+        painter->setDrawColor(color);
+        painter->drawLine( bx1, y1,  bx2, y1  ); // top,    1-2
+        painter->drawLine( x1,  by1, x1,  by3 ); // left,   1-3
+        painter->drawArc( bx3,by3, br, 0.375*SAT_PI2, 0.500*SAT_PI2); // half of bottom-left
+        painter->drawArc( bx1,by1, br, 0.500*SAT_PI2, 0.750*SAT_PI2); // top-left
+        painter->drawArc( bx2,by2, br, 0.750*SAT_PI2, 0.875*SAT_PI2); // half of top-right
+
+      }
+      else {
+        if (MBevelInset) color = MBevelLight;        
+        else color = MBevelDark;
+        if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
+        painter->setDrawColor(color);
+        painter->drawLine( mrect.x,    mrect.y2(), mrect.x2(), mrect.y2() );
+        painter->drawLine( mrect.x2(), mrect.y,    mrect.x2(), mrect.y2() );
+        if (MBevelInset) color = MBevelDark;
+        else color = MBevelLight;
+        if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
+        painter->setDrawColor(color);
+        painter->drawLine( mrect.x,    mrect.y,    mrect.x2(), mrect.y    );
+        painter->drawLine( mrect.x,    mrect.y,    mrect.x,    mrect.y2() );
+      }
+
     }
   }
 
@@ -583,6 +720,7 @@ public:
     drawValue(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
+    drawBevel(AContext);
     drawHostIndicators(AContext);
   }
 

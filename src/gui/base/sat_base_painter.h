@@ -82,6 +82,19 @@ public:
   virtual void            setLineJoin(int join) {}
 //virtual void            setLineStyle(int style) {} //nanovg-rgb2hsv
 
+//----------
+
+  virtual void            beginPath() {}
+  virtual void            stroke() {}
+  virtual void            fill() {}
+  virtual void            moveTo(double x, double y) {}
+  virtual void            lineTo(double x, double y) {}
+  virtual void            arcTo(double x1, double y1, double x2, double y2, double r) {}
+  virtual void            quadTo(double c1x, double c1y, double x2, double y2) {}
+  virtual void            bezierTo(double c1x, double c1y, double c2x, double c2y, double x2, double y2) {}
+
+//----------
+
   virtual void            drawLine(double x1, double y1, double x2, double y2) {}
   virtual void            drawLines(uint32_t num, double* coords) {}
   virtual void            drawLineStrip(uint32_t num, double* coords) {}
@@ -148,6 +161,8 @@ public:
   virtual void            selectRenderBuffer(void* buffer) {}
 //virtual void            selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) {}
 //virtual void            selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) {}
+
+  //--------------------
 
   // painter
 

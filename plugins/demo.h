@@ -132,7 +132,9 @@ private: // editor
 
   void init_editor(SAT_Editor* AEditor, SAT_Window* AWindow, SAT_RootWidget* root) {
 
-    MSelectorMenu = new SAT_MenuWidget(SAT_Rect(0,0,200,15*5));
+    MSelectorMenu = new SAT_MenuWidget(SAT_Rect(0,0,200,15*5+2+2));
+      MSelectorMenu->setLayoutInnerBorder(SAT_Rect(2,2,2,2));
+      //MSelectorMenu->setLayoutSpacing(SAT_Point(1,1));
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 1") );
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 2") );
       MSelectorMenu->appendChildWidget( new SAT_MenuItemWidget(15,"Item 3") );
@@ -204,6 +206,13 @@ private: // widget page
           panel->setValue(0.5);
           panel->setValueAlignment(SAT_TEXT_ALIGN_RIGHT);
           panel->setValueOffset(SAT_Rect(0,0,5,0));
+          panel->setDrawBorder(false);//true);
+          //panel->setBorderColor(SAT_Grey);
+          //panel->setBorderWidth(1);
+          panel->setRoundedCorners(true);
+          panel->setCornerSize(6);
+          panel->setDrawBevel(true);
+          panel->setBevelInset(true);
 
         // panel : color
 
@@ -524,8 +533,16 @@ private: // widget page
 
         // dummy
 
-        SAT_Widget* dummy1 = new SAT_Widget(SAT_Rect(940,490,10,10));
+        SAT_Widget* dummy1 = new SAT_Widget(SAT_Rect(1150,490,10,10));
         scrollbox->appendChildWidget(dummy1);
+
+        //--------------------
+        // column 5
+        //--------------------
+
+        SAT_PanelWidget* p5 = new SAT_GraphWidget(SAT_Rect(950,10,200,200));
+        scrollbox->appendChildWidget(p5);
+
 
     return page;
   }

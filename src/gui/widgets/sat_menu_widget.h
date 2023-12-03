@@ -46,6 +46,8 @@ public:
     addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
     addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
 
+
+
   }
 
   //----------

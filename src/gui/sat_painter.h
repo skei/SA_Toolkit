@@ -143,7 +143,7 @@ public: // clip
   }
 
 //------------------------------
-public: // paint
+public: // text
 //------------------------------
 
   SAT_Point getTextPos(SAT_Rect ARect, const char* AText, uint32_t AAlignment) override {

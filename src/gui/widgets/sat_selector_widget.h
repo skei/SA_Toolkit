@@ -108,18 +108,17 @@ public: // widget
     if (AButton == SAT_BUTTON_LEFT) {
       if (MMenu) {
         
-        double width = 0;//MMenu->getWidth();
-        double height = 0;//MMenu->getHeight();
         SAT_Rect rect = getRect();
 
+        double width = 0;//MMenu->getWidth();
+        double height = 0;//MMenu->getHeight();
+
         if (MAutoSizeMenu) {
-        
           SAT_Window* window = getOwner()->on_widgetOwner_getWindow();
-          double S = getWindowScale(); // window->getScale();
           SAT_Painter* painter = window->getPainter();
+          double S = getWindowScale(); // window->getScale();
           SAT_Rect border = getLayoutInnerBorder(); // MMenu->getInnerBorder();
           border.scale(S);
-          
           uint32_t num_items = MMenu->getNumChildWidgets();
           double bounds[4];
           for (uint32_t i=0; i<num_items; i++) {
@@ -127,18 +126,14 @@ public: // widget
             const char* text = widget->getText();
             double text_size = widget->getTextSize();
             painter->setTextSize(text_size * S);
-
             double w = painter->getTextBounds(text,bounds);
             //w += (border.x + border.w);
-            
             //SAT_Print("item %i w %.f h %.f\n",i,w,widget->getHeight());
             if (w > width) width = w;
             height += widget->getHeight();
           }
-          
           width  += (border.x + border.w);
           height += (border.y + border.h);
-        
         }
         else {
           width = MMenu->getWidth();
@@ -163,7 +158,6 @@ public: // widget
               break;
           }
         }
-        
         else {
           rect.x = AXpos;
           rect.y = AYpos;
@@ -171,7 +165,6 @@ public: // widget
         
         rect.w = width;//MMenu->getWidth();
         rect.h = height;//MMenu->getHeight();
-        
         MMenu->open(rect);
       }
     }
