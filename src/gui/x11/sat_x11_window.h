@@ -788,16 +788,17 @@ private:
     //  SAT_DPrint("%i\n",buffer[i]);
     //}
     uint32_t ks = keysym;
-//    switch (keysym) {
-//      case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
-//      case XKB_KEY_KP_Space:    ks = SAT_KEY_ESC;       break;
-//      case XKB_KEY_Home:        ks = SAT_KEY_HOME;      break;
-//      case XKB_KEY_End:         ks = SAT_KEY_END;       break;
-//      case XKB_KEY_Left:        ks = SAT_KEY_LEFT;      break;
-//      case XKB_KEY_Right:       ks = SAT_KEY_RIGHT;     break;
-//      case XKB_KEY_Delete:      ks = SAT_KEY_DELETE;    break;
-//      case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
-//    }
+    switch (keysym) {
+      case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
+      case XKB_KEY_KP_Space:    ks = SAT_KEY_SPACE;     break;
+      case XKB_KEY_Home:        ks = SAT_KEY_HOME;      break;
+      case XKB_KEY_End:         ks = SAT_KEY_END;       break;
+      case XKB_KEY_Left:        ks = SAT_KEY_LEFT;      break;
+      case XKB_KEY_Right:       ks = SAT_KEY_RIGHT;     break;
+      case XKB_KEY_Delete:      ks = SAT_KEY_DELETE;    break;
+      case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
+      case XKB_KEY_Escape:      ks = SAT_KEY_ESC;       break;
+    }
     return ks;
   }
 

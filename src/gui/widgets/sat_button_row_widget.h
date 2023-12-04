@@ -49,7 +49,7 @@ public:
   SAT_ButtonRowWidget(SAT_Rect ARect, int32_t ANum, const char** ATxt=nullptr, int32_t AMode=SAT_BUTTON_ROW_SINGLE, bool AVertical=false)
   : SAT_GridWidget(ARect, AVertical?1:ANum, AVertical?ANum:1 ) {
     setName("SAT_ButtonRowWidget");
-    
+   
     MVertical = AVertical;
 
 //    setNumParameters(1);

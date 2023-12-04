@@ -72,15 +72,17 @@ public:
   sat_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
 
-    SAT_LOG("hello world!\n");
+    // SAT_PRINT;
+    // SAT_Print("some text.. %i %p\n",123,nullptr);
+    // SAT_DPrint("..or colored " SAT_TERM_FG_LIGHT_GREEN " text..\n" SAT_TERM_RESET );
 
-    //SAT_PRINT;
-    //SAT_Print("we can add some text.. %i %p\n",123,nullptr);
-    //SAT_DPrint("..or only text..\n");
+    // SAT_LOG("hello world!\n");
 
-    //int* ptr = nullptr;
-    //int val = *ptr;
-    //SAT_Print("%p = %i\n",ptr,val);
+    // int* ptr = nullptr;
+    // int val = *ptr;
+    // SAT_Print("%p = %i\n",ptr,val);
+
+    // void* memleak = malloc(666);
 
   }
 
@@ -428,6 +430,19 @@ private: // widget page
         SAT_CurveWidget* curve2 = new SAT_CurveWidget(SAT_Rect(260,280,30,30),true);
         scrollbox->appendChildWidget(curve2);
 
+        // frequency response
+
+        SAT_FrequencyResponseWidget<SAT_FRTestFilter>* freqresp = new SAT_FrequencyResponseWidget<SAT_FRTestFilter>(SAT_Rect(300,280,30,30));
+        scrollbox->appendChildWidget(freqresp);
+        freqresp->do_fft();
+
+        // movable
+
+        SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(340,280,80,30));
+        scrollbox->appendChildWidget(movable);
+        movable->setIsMovable(true);
+        movable->setIsSizable(true);
+
         // button
 
         SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(220,320,95,20),true);
@@ -451,6 +466,9 @@ private: // widget page
         SAT_SelectorWidget* selector = new SAT_SelectorWidget(SAT_Rect(220,410,200,20),"Selector",MSelectorMenu);
         scrollbox->appendChildWidget(selector);
 
+        SAT_TextEditWidget* textedit = new SAT_TextEditWidget(SAT_Rect(220,440,200,20),"edit me..");
+        scrollbox->appendChildWidget(textedit);
+
         //--------------------
         // column 3
         //--------------------
@@ -470,10 +488,6 @@ private: // widget page
         SAT_RangeBarWidget* range_bar = new SAT_RangeBarWidget(SAT_Rect(430,70,200,20));
         scrollbox->appendChildWidget(range_bar);
 
-
-
-
-
         SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(SAT_Rect(430,130,200,40));
         scrollbox->appendChildWidget(keyboard);
 
@@ -482,9 +496,6 @@ private: // widget page
 
         SAT_ValueGraphWidget* valuegraph = new SAT_ValueGraphWidget(SAT_Rect(430,230,200,40),10);
         scrollbox->appendChildWidget(valuegraph);
-
-//        SAT_MovableWidget* movable = new SAT_MovableWidget(SAT_Rect(430,190,95,50));
-//        scrollbox->appendChildWidget(movable);
 
         SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(430,280,200,50),10,5);
         scrollbox->appendChildWidget(grid);
@@ -539,6 +550,9 @@ private: // widget page
         //--------------------
         // column 5
         //--------------------
+
+        // SAT_TextBoxWidget* textedit = new SAT_TextBoxWidget(SAT_Rect());
+        // scrollbox->appendChildWidget(textbox);
 
         SAT_PanelWidget* p5 = new SAT_GraphWidget(SAT_Rect(950,10,200,200));
         scrollbox->appendChildWidget(p5);

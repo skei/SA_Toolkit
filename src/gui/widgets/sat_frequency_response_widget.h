@@ -1,5 +1,5 @@
-#ifndef sat_freq_resp_widget_included
-#define sat_freq_resp_widget_included
+#ifndef sat_frequency_response_widget_included
+#define sat_frequency_response_widget_included
 //----------------------------------------------------------------------
 
 // a mess..
@@ -13,11 +13,11 @@
 
 //----------------------------------------------------------------------
 //
-//
+// filter
 //
 //----------------------------------------------------------------------
 
-class SAT_TestFreqRes {
+class SAT_FRTestFilter {
 private:
   float value   = 0.0;
   float factor  = 0.3;
@@ -28,9 +28,8 @@ public:
   float process(float AInput) {
     value += (AInput - value) * factor;
     return value;
-    //float result = (value + AInput) * 0.5;
-    //value = AInput;
-    //return result; // (AInput - result);
+    //return AInput - value;
+    //return (value + AInput) * 0.5;
   }
 };
 
@@ -42,45 +41,47 @@ public:
 //----------------------------------------------------------------------
 
 template <class PROC>
-class SAT_FreqRespWidget
+class SAT_FrequencyResponseWidget
 : public SAT_PanelWidget {
 
 //------------------------------
 private:
 //------------------------------
 
-  bool      MDrawFreqResp = true;
-  bool      MIsBipolar    = false;
-  SAT_Color MLineColor    = SAT_White;
-  SAT_Color MFillColor    = SAT_Grey;
-  PROC      MProcessor    = {};
+  bool      MDrawFrequencyResponse  = true;
+  bool      MIsBipolar              = false;
+  SAT_Color MLineColor              = SAT_White;
+  SAT_Color MFillColor              = SAT_Grey;
+  PROC      MProcessor              = {};
 
-  float rbuffer[FFT_SIZE]  = {0};
-  float ibuffer[FFT_SIZE]  = {0};
-  float  buffer[FFT_SIZE]  = {0};
+  float     MBuffer[FFT_SIZE]       = {0};
+  float     MRBuffer[FFT_SIZE]      = {0};
+  float     MIBuffer[FFT_SIZE]      = {0};
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_FreqRespWidget(SAT_Rect ARect)
+  SAT_FrequencyResponseWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
-    setName("SAT_FreqRespWidget");
-    do_fft();
+    setName("SAT_FrequencyResponseWidget");
+
+    //do_fft();
+
   }
   
   //----------
 
-  virtual ~SAT_FreqRespWidget() {
+  virtual ~SAT_FrequencyResponseWidget() {
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void setDrawFreqResp(bool ADraw=true)   { MDrawFreqResp = ADraw; }
-  virtual void setLineColor(SAT_Color AColor)     { MLineColor = AColor; }
-  virtual void setFillColor(SAT_Color AColor)     { MFillColor = AColor; }
+  virtual void setDrawFrequencyResponse(bool ADraw=true)  { MDrawFrequencyResponse = ADraw; }
+  virtual void setLineColor(SAT_Color AColor)             { MLineColor = AColor; }
+  virtual void setFillColor(SAT_Color AColor)             { MFillColor = AColor; }
 
 //------------------------------
 private:
@@ -147,30 +148,30 @@ private:
     }
   }
   
-  //----------
-  
+//------------------------------
+public:
+//------------------------------
+
   void do_fft() {
     MProcessor.reset();
     for (uint32_t i=0; i<FFT_SIZE; i++) {
       float v = 0.0;
       if (i == 0) v = 1.0;
-      rbuffer[i] = MProcessor.process(v);
-      ibuffer[i] = 0.0;
+      MRBuffer[i] = MProcessor.process(v);
+      MIBuffer[i] = 0.0;
     }
-    fft(FFT_SIZE,rbuffer,ibuffer);
+    fft(FFT_SIZE,MRBuffer,MIBuffer);
     for (uint32_t i=0; i<FFT_SIZE; i++) {
-      buffer[i] = sqrt((rbuffer[i] * rbuffer[i]) + (ibuffer[i] * ibuffer[i]));
+      MBuffer[i] = sqrt((MRBuffer[i] * MRBuffer[i]) + (MIBuffer[i] * MIBuffer[i]));
     }
   }
 
-//------------------------------
-public:
-//------------------------------
-
-  virtual void drawFreqResp(SAT_PaintContext* AContext) {
+  //----------
+  
+  virtual void drawFrequencyResponse(SAT_PaintContext* AContext) {
     //SAT_PRINT;
     SAT_Assert(AContext);
-    if (MDrawFreqResp) {
+    if (MDrawFrequencyResponse) {
       double S = getWindowScale();
       SAT_Painter* painter = AContext->painter;
       SAT_Assert(painter);
@@ -198,7 +199,7 @@ public:
         //float X = width * log( F / freqMin) / log(freqMax / freqMin);
         float fr = SAT_Fract(F);
         uint32_t p = (uint32_t)SAT_Trunc(F);
-        float v = (buffer[p]   * (1.0 - fr)) + (buffer[p+1] * fr);
+        float v = (MBuffer[p]   * (1.0 - fr)) + (MBuffer[p+1] * fr);
         float y;
         if (MIsBipolar) y = mrect.y + h05 - (v * h05);
         else y = mrect.y2() - (v * mrect.h);
@@ -219,7 +220,7 @@ public:
   void on_widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
-    drawFreqResp(AContext);
+    drawFrequencyResponse(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
   }

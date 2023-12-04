@@ -88,6 +88,8 @@ private:
   SAT_WidgetQueue     MDirtyListenerWidgets = {};
   SAT_WidgetQueue     MPaintWidgets         = {};
 
+  SAT_Skin            MDefaultSkin          = {};
+
   //todo? move all these below to SAT_RootWidget?
 
   SAT_Widget*         MHoverWidget          = nullptr;
@@ -211,7 +213,7 @@ public:
   //----------
 
   // called from:
-  // on_widgetListener_redraw()
+  // on_widgetListener_redraw(), _realign
 
   virtual bool markWidgetDirtyFromGui(SAT_Widget* AWidget) {
     return MDirtyGuiWidgets.write(AWidget);
@@ -430,18 +432,14 @@ public: // window
   //----------
 
   void on_window_open() override {
-    //SAT_PRINT;
-    //MRootWidget->on_widget_open(this);
     startTimer(SAT_WINDOW_TIMER_MS);
     if (MRootWidget) {
       MRootWidget->ownerWindowOpened(this);
+      MRootWidget->setSkin(&MDefaultSkin,true,true);
       uint32_t w = getWidth();// * MScale;
       uint32_t h = getHeight();// * MScale;
-      //SAT_Print("w %i h %i\n",w,h);
       MRootWidget->setSize(SAT_Point(w,h));
       MRootWidget->realignChildWidgets();
-      //MDirtyGuiWidgets.write(MRootWidget);
-      //markWidgetDirtyFromGui(MRootWidget);
       markRootWidgetDirty();
     }
 
@@ -453,7 +451,6 @@ public: // window
     if (MRootWidget) {
       MRootWidget->ownerWindowClosed(this);
     }
-    //SAT_Print("\n");
     stopTimer();
   }
   
@@ -466,19 +463,13 @@ public: // window
   //----------
 
   void on_window_resize(int32_t AWidth, int32_t AHeight) override {
-
     MWidth = AWidth;
     MHeight = AHeight;
     MScale = recalcScale(AWidth,AHeight);
-
-    //SAT_Print("AWidth %i AHeight %i\n",AWidth,AHeight);
     MScale = recalcScale(AWidth,AHeight);
     if (MRootWidget) {
-      //MRootWidget->scaleWidget(MScale);
       MRootWidget->setSize(SAT_Point(AWidth,AHeight));
       MRootWidget->realignChildWidgets();
-      //MDirtyGuiWidgets.write(MRootWidget);
-      //markWidgetDirtyFromGui(MRootWidget);
       markRootWidgetDirty();
     }
     else {
@@ -832,7 +823,9 @@ public: // widget listener
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
       parent->realignChildWidgets();
-//      markWidgetDirtyFromListener(parent);
+
+      markWidgetDirtyFromGui(parent);
+      
     }
   }
 

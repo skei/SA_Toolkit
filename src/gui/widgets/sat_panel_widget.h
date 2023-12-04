@@ -477,51 +477,24 @@ public:
       SAT_Color color;
 
       if (MRoundedCorners) {
-        //painter->drawRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
-        /*
-          void drawRoundedRectangle(KODE_FRect ARect, float ARadius, uint32_t ACorners, KODE_Color AColor, uint32_t AWidth=1) override {
-            //set_color(AColor);
-            //set_line_width(AWidth);
-            float r  = ARadius;// - 1;
-            float r2 = r*2;
-            float AX1 = ARect.x;
-            float AY1 = ARect.y;
-            float AX2 = ARect.x2();
-            float AY2 = ARect.y2();
-            drawArc(  KODE_FRect(AX1,      AY1,      AX1+r2-2, AY1+r2-3), 0.75, 0.25, AColor, AWidth ); // upper left
-            drawArc(  KODE_FRect(AX2-r2+1, AY1,      AX2-1,    AY1+r2-2), 0.00, 0.25, AColor, AWidth ); // upper right
-            drawArc(  KODE_FRect(AX1,      AY2-r2+1, AX1+r2-2, AY2-1),    0.50, 0.25, AColor, AWidth ); // lower left
-            drawArc(  KODE_FRect(AX2-r2+1, AY2-r2+2, AX2-1,    AY2-1),    0.25, 0.25, AColor, AWidth ); // lower right
-            drawLine( AX1+r,    AY1,      AX2-r,    AY1,   AColor, AWidth );  // top
-            drawLine( AX1+r,    AY2,      AX2-r,    AY2,   AColor, AWidth );  // bottom
-            drawLine( AX1,      AY1+r,    AX1,      AY2-r, AColor, AWidth );  // left
-            drawLine( AX2,      AY1+r,    AX2,      AY2-r, AColor, AWidth );  // right
-          }        
-        */
-
         double x1 = mrect.x;
         double y1 = mrect.y;
         double x2 = mrect.x2();
         double y2 = mrect.y2();
-
         double tl = MTLCorner * S;
         double tr = MTRCorner * S;
         double br = MBRCorner * S;
         double bl = MBLCorner * S;
-
         double bx1 = x1 + tl;
         double by1 = y1 + tl;
         double bx2 = x2 - tr;
         double by2 = y1 + tr;
-
         double bx3 = x1 + bl;
         double by3 = y2 - bl;
         double bx4 = x2 - br;
         double by4 = y2 - br;
-
         // 12
         // 34
-
         if (MBevelInset) color = MBevelLight;
         else color = MBevelDark;
         if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
@@ -540,7 +513,6 @@ public:
         painter->drawArc( bx3,by3, br, 0.375*SAT_PI2, 0.500*SAT_PI2); // half of bottom-left
         painter->drawArc( bx1,by1, br, 0.500*SAT_PI2, 0.750*SAT_PI2); // top-left
         painter->drawArc( bx2,by2, br, 0.750*SAT_PI2, 0.875*SAT_PI2); // half of top-right
-
       }
       else {
         if (MBevelInset) color = MBevelLight;        
@@ -603,11 +575,9 @@ public:
           painter->drawText(p.x + MTextDropShadowOffset.x, p.y + MTextDropShadowOffset.y, text);
           painter->setFontBlur(0);
         }
-
         SAT_Color color = MTextColor;
         if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
         painter->setTextColor(color);
-
         painter->drawText(p.x,p.y,text);
       }
       else {
@@ -661,8 +631,8 @@ public:
       SAT_Point p = painter->getTextPos(mrect,MValueText,MValueAlignment);
       if (MDrawValueDropShadow) {
         painter->setFontBlur(MValueDropShadowSize);
-          SAT_Color color = MValueDropShadowColor;
-          if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
+        SAT_Color color = MValueDropShadowColor;
+        if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
         painter->setTextColor(color);
         painter->drawText(p.x + MValueDropShadowOffset.x, p.y + MValueDropShadowOffset.y, MValueText);
         painter->setFontBlur(0);
@@ -691,6 +661,7 @@ public:
         double x = mrect.x2() - (4.0 * S);
         double y = mrect.y + (4.0 * S);
         SAT_Color color = param->getAutomationColor();
+        if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
         painter->setFillColor(color);
         painter->fillCircle(x,y,3*S);
       }
@@ -703,6 +674,7 @@ public:
           mrect.x + (1.0 * S),        mrect.y + (1.0 * S)
         };
         SAT_Color color = param->getMappedColor();
+        if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
         painter->setFillColor(color);
         painter->fillLineStrip(4,coords);
       }

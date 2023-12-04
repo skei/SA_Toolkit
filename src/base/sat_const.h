@@ -197,6 +197,7 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_KEY_NONE                            0
 #define SAT_KEY_ENTER                           13
 #define SAT_KEY_ESC                             27
+#define SAT_KEY_SPACE                           32
 #define SAT_KEY_HOME                            36
 #define SAT_KEY_END                             35
 #define SAT_KEY_LEFT                            37

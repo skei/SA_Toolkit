@@ -19,14 +19,14 @@ private:
 //------------------------------
 
   bool      MIsMovable          = true;
-  SAT_Rect  MMovableOffset      = SAT_Rect(0,50,0,0);
+  SAT_Rect  MMovableOffset      = SAT_Rect(0,0,0,0);
   uint32_t  MMovableDirections  = SAT_DIRECTION_ALL;
-  uint32_t  MMovableFlags       = 2; // 1 = limit_to_parent, 2 = invert_pffset
+  uint32_t  MMovableFlags       = 0; // 1 = invert_offset, (todo: limit_to_parent)
 
   bool      MIsSizable          = true;
-  SAT_Rect  MSizableBorder      = SAT_Rect(10,10,10,10);
+  SAT_Rect  MSizableBorder      = SAT_Rect(5,5,5,5);
   uint32_t  MSizableEdges       = SAT_EDGE_ALL;
-  uint32_t  MSizableFlags       = 0; // 1 =limit_to_parent
+  uint32_t  MSizableFlags       = 0; // not used.. (todo: limit_to_parent)
 
 //------------------------------
 private:
@@ -74,7 +74,7 @@ public:
   void      setMovableDirections(uint32_t ADirections)  { MMovableDirections = ADirections; }
   void      setMovableFlags(uint32_t AFlags)            { MMovableFlags = AFlags; }
 
-  void      setIsSizable(bool ASizable=true)            { MIsMovable = ASizable; }
+  void      setIsSizable(bool ASizable=true)            { MIsSizable = ASizable; }
   void      setSizableBorder(SAT_Rect ABorder)          { MSizableBorder = ABorder; }
   void      setSizableEdges(uint32_t AEdges)            { MSizableEdges = AEdges; }
   void      setSizableFlags(uint32_t AFlags)            { MSizableFlags = AFlags; }
@@ -113,11 +113,11 @@ private:
       //offset.scale(S);
       mrect.shrink(offset);
       if (mrect.contains(AXpos,AYpos)) {
-        if (MMovableFlags & 2) return false;
+        if (MMovableFlags & 1) return false;
         else return true;
       }
     }
-    if (MMovableFlags & 2) return true;
+    if (MMovableFlags & 1) return true;
     else return false;
   }
 
@@ -138,6 +138,7 @@ private:
       else if (MMovableDirections == SAT_DIRECTION_VERT)  { do_widget_setCursor(this,SAT_CURSOR_ARROW_UP_DOWN);     return; }
     }
     do_widget_setCursor(this,SAT_CURSOR_DEFAULT);
+
   }
 
 //------------------------------
@@ -192,8 +193,8 @@ public:
       //setRect(mrect);
       setRectAndBase(mrect);
 
-      //do_widget_realign(this);
-      realignParent();
+      do_widget_realign(this);
+      //realignParent();
     }
     else if (MIsResizing) {
       SAT_Rect mrect = getRect();
@@ -207,8 +208,8 @@ public:
       setRect(mrect);
       setRectAndBase(mrect);
       
-      //do_widget_realign(this);
-      realignParent();
+      do_widget_realign(this);
+      //realignParent();
     }
     else {
       checkHover(AXpos,AYpos);

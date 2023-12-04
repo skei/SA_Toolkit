@@ -209,6 +209,8 @@ public:
   virtual uint32_t            getLastPainted()                                  { return MLastPainted; }
   virtual void                setLastPainted(uint32_t ALast)                    { MLastPainted = ALast; }
 
+  virtual SAT_Skin*           getSkin()                                         { return MSkin; }
+
 //------------------------------
 public:
 //------------------------------
@@ -256,11 +258,13 @@ public:
 
   //----------
 
-  virtual void setSkin(SAT_Skin* ASkin, bool ARecursive=true) {
+  virtual void setSkin(SAT_Skin* ASkin, bool AOnlyIfNull=true, bool ARecursive=true) {
     MSkin = ASkin;
     if (ARecursive) {
       for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-        MChildWidgets[i]->setSkin(ASkin,ARecursive);
+        if (MChildWidgets[i]->getSkin() == nullptr) {
+          MChildWidgets[i]->setSkin(ASkin,ARecursive);
+        }
       }
     }
   }

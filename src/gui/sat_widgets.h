@@ -16,7 +16,7 @@
 #include "gui/widgets/sat_dual_slider_widget.h"
 //#include "gui/widgets/sat_dual_slider_widget.0.h"
 #include "gui/widgets/sat_dual_value_widget.h"
-#include "gui/widgets/sat_freq_resp_widget.h"
+#include "gui/widgets/sat_frequency_response_widget.h"
 #include "gui/widgets/sat_graph_widget.h"
 #include "gui/widgets/sat_grid_widget.h"
 #include "gui/widgets/sat_group_box_widget.h"

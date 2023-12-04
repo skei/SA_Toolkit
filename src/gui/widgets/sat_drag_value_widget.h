@@ -151,21 +151,34 @@ private:
   // todo: check if we're on the left or right side if values are equal (or similar)
   // todo: ..ClosestValueHorizontal
 
-  int32_t findClosestValue(double AXpos, double AYpos) {
+  int32_t findClosestValue(double AXpos, double AYpos, bool AHorizontal=true) {
     if (MNumValues == 0) return 0;
     else {
       double S = getWindowScale();
       SAT_Rect mrect = getRect();
       if (!mrect.contains(AXpos,AYpos)) return -2;
       double hoverdist = MHoverDistance * S;
-      double range = mrect.w;
-      if (range <= 0.0) return -2;
+
+      double range;
+      double pos;
+
+      if (AHorizontal) {
+        range = mrect.w;
+        if (range <= 0.0) return -2;
+        pos = (AXpos - mrect.x) / range;
+      }
+      else {
+        range = mrect.h;
+        if (range <= 0.0) return -2;
+        pos = (AYpos - mrect.y) / range;
+      }
+
       double min_dist = range;
       int32_t index = -1;
+
       for (uint32_t i=0; i<MNumValues; i++) {
-        double v = getValue(i);
-        double mx = (AXpos - mrect.x) / range;
-        double dist = abs(mx - v);
+        double val = getValue(i);
+        double dist = abs(pos - val);
         if (dist < hoverdist) {
           if (dist < min_dist) {
             min_dist = dist;
@@ -173,6 +186,7 @@ private:
           }
         }
       }
+
       return index;
     }
   }

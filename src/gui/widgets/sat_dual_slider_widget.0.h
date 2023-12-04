@@ -65,7 +65,7 @@ public:
 
   SAT_DualSliderWidget0(SAT_Rect ARect, const char* AText, double AValue1, double AValue2)
   : SAT_PanelWidget(ARect) {
-    setName("SAT_DualSliderWidget");
+    setName("SAT_DualSliderWidget0");
     setValue(AValue1,0);
     setValue(AValue2,1);
     strcpy(MText,AText);
