@@ -181,6 +181,7 @@ public:
 
   virtual ~SAT_Win32Window() {
     //if (MIsMapped) hide();
+    delete MRenderer;
     ReleaseDC(0,MScreenDC);
     ReleaseDC(MWindow,MWindowDC);
     DestroyWindow(MWindow);
