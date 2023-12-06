@@ -60,13 +60,13 @@ public:
     setDrawValue(true);
     setValueAlignment(SAT_TEXT_ALIGN_CENTER);
     setValueOffset(0);
-    setValueSize(12);
+    setValueSize(11);
 
     //setDrawText(false);
     setDrawText(true);
     setTextAlignment(SAT_TEXT_ALIGN_BOTTOM);
     setTextOffset(0);
-    setTextSize(10);
+    setTextSize(9);
 
     //setDrawIndicator(true);
 
@@ -107,6 +107,9 @@ public:
       
       if (param) {
         value = param->getNormalizedValue();//  normalizeValue(value);
+
+//SAT_Print("value %f\n",value);
+
         modulation = param->getNormalizedModulation();
       }
       

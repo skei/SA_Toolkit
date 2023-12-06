@@ -17,7 +17,7 @@ typedef SAT_Array<SAT_Parameter*> SAT_ParameterArray;
 class SAT_Parameter {
 
 //------------------------------
-private:
+protected:
 //------------------------------
 
   clap_param_info_t MInfo                           = {};
@@ -63,6 +63,7 @@ public:
 
   SAT_Parameter(const clap_param_info_t* AInfo) {
     memcpy(&MInfo,AInfo,sizeof(clap_param_info_t));
+    MInfo.cookie = this;
     setValue(AInfo->default_value);
   }
 

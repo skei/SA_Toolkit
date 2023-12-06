@@ -620,7 +620,8 @@ public:
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
         double pv = getValue();
-        const char* txt = param->valueToText(pv);
+        double depv = param->denormalize(pv);
+        const char* txt = param->valueToText(depv);
         strcpy(MValueText,txt);
       }
       else {

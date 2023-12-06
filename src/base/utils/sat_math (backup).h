@@ -9,14 +9,14 @@
 
 //----------------------------------------------------------------------
 
-//bool SAT_AlmostEqual(double f1, double f2) {
-//  double diff = fabs(f2 - f1);
+//bool SAT_AlmostEqual(float f1, float f2) {
+//  float diff = fabs(f2 - f1);
 //  if (diff < SAT_VERY_TINY) return true;
 //  return false;
 //}
 
-bool SAT_AlmostEqual(double f1, double f2, double tol) {
-  double diff = fabs(f2 - f1);
+bool SAT_AlmostEqual(float f1, float f2, float tol) {
+  float diff = fabs(f2 - f1);
   if (diff < tol) return true;
   return false;
 }
@@ -31,8 +31,8 @@ bool SAT_AlmostEqual(double f1, double f2, double tol) {
   ar - array of floats
 */
 
-double SAT_Average(const unsigned int n, const double* ar) {
-  double total = 0;
+float SAT_Average(const unsigned int n, const float* ar) {
+  float total = 0;
   unsigned int i=0;
   while (i<n) {
     total += ar[i];   i++;
@@ -44,8 +44,8 @@ double SAT_Average(const unsigned int n, const double* ar) {
 
 // limits a floating point number to [-limit, limit]
 
-double SAT_Clamp(const double input, const double limit) {
-  const double _t = (input > -limit) ? input : -limit;
+float SAT_Clamp(const float input, const float limit) {
+  const float _t = (input > -limit) ? input : -limit;
   //return (_t > limit) ? _t : limit;
   return (_t < limit) ? _t : limit;
 }
@@ -54,14 +54,14 @@ double SAT_Clamp(const double input, const double limit) {
 
 // limits a floating point number to [-limit, limit]
 
-double SAT_Clamp(const double input, const double minval, const double maxval ) {
-  const double _t = (input > minval) ? input : minval;
+float SAT_Clamp(const float input, const float minval, const float maxval ) {
+  const float _t = (input > minval) ? input : minval;
   return           (_t    < maxval) ? _t : maxval;
 }
 
 //----------
 
-double SAT_Clip(double x, double l, double h) {
+float SAT_Clip(float x, float l, float h) {
   return  (abs(x-l) + (l+h) - abs(x-h)) * 0.5;
 }
 
@@ -94,11 +94,11 @@ double SAT_Clip(double x, double l, double h) {
 
 //return x / (x+(1-1/t)*(x-1));
 
-double SAT_Curve(double x, double t) {
+float SAT_Curve(float x, float t) {
   if (t < 0.001) t = 0.001;
   if (t > 0.999) t = 0.999;
   //t = (t*0.990f) + 0.005f;
-  double a = ( 1.0f - 1.0f/t );
+  float a = ( 1.0f - 1.0f/t );
   return x / (x+a * (x-1) );
 }
 
@@ -131,21 +131,21 @@ double SAT_Curve(double x, double t) {
   SAT_Fract(-1.9)  = -0.9
 */
 
-double SAT_Fract(const double value) {
-  double intpart = (double)(int)value;
+float SAT_Fract(const float value) {
+  float intpart = (float)(int)value;
   return (value - intpart);
 }
 
 //----------
 
-double SAT_Fract(const double value, double* intpart) {
-  *intpart = (double)(int)value;
+float SAT_Fract(const float value, float* intpart) {
+  *intpart = (float)(int)value;
   return (value - *intpart);
 }
 
 //----------
 
-double SAT_Max(const double a, const double b) {
+float SAT_Max(const float a, const float b) {
   return (a > b) ? a : b;
 }
 
@@ -153,7 +153,7 @@ double SAT_Max(const double a, const double b) {
 
 // returns the smaller of two floating point numbers
 
-double SAT_Min(const double a, const double b) {
+float SAT_Min(const float a, const float b) {
   return (a < b) ? a : b;
 }
 
@@ -177,8 +177,8 @@ double SAT_Min(const double a, const double b) {
 
 //----------
 
-double SAT_Modulo(double x, double y) {
-  return x - (y * double(floor(x / y)));
+float SAT_Modulo(float x, float y) {
+  return x - (y * float(floor(x / y)));
 }
 
 //----------
@@ -191,20 +191,20 @@ double SAT_Modulo(double x, double y) {
 
 //float SAT_Trunc(const float v); // see below
 
-double SAT_Quantize(double AValue, int32_t ASteps) {
+float SAT_Quantize(float AValue, int32_t ASteps) {
   if (ASteps < 2) return AValue;
   if (ASteps == 2) {
     if (AValue < 0.5f) return 0.0f;
     else return 1.0f;
   }
-  double v = AValue * (double)(ASteps/*-1*/);
+  float v = AValue * (float)(ASteps/*-1*/);
   //int32_t i = SAT_Trunc(v);
-  double i = floorf(v);
+  float i = floorf(v);
 
   //SAT_Print("i %f\n",i);
 
   //int i = (int)v;
-  double res = i / (double)(ASteps);
+  float res = i / (float)(ASteps);
   return SAT_Clamp(res,0,1);
 }
 
@@ -221,8 +221,8 @@ double SAT_Quantize(double AValue, int32_t ASteps) {
   ar - array of floats
 */
 
-double SAT_Rms(const unsigned int n, const double* ar) {
-  double numr = 0;
+float SAT_Rms(const unsigned int n, const float* ar) {
+  float numr = 0;
   unsigned int i=0;
   while (i<n) {
     numr += ar[i]*ar[i];
@@ -244,9 +244,9 @@ double SAT_Rms(const unsigned int n, const double* ar) {
   SAT_Round(-1.9)  = -2.0
 */
 
-double SAT_Round(const double v) {
-  if (v < 0.f) return (double)(int)(v - 0.5f);
-  else return (double)(int)(v + 0.5f);
+float SAT_Round(const float v) {
+  if (v < 0.f) return (float)(int)(v - 0.5f);
+  else return (float)(int)(v + 0.5f);
 }
 
 //----------
@@ -262,7 +262,7 @@ double SAT_Round(const double v) {
 */
 
 
-double SAT_Sigmoid(double x) {
+float SAT_Sigmoid(float x) {
   if ( abs(x) < 1.0f ) return x * (1.5f - 0.5f * x * x);
   else {
     if (x < 0.0f) return -1.0f;
@@ -287,7 +287,7 @@ template <typename T> int sgn(T val) {
   SAT_Sign(-1.5) = -1
 */
 
-double SAT_Sign(const double v, const double def=0.0f) {
+float SAT_Sign(const float v, const float def=0.0f) {
   //union {
   //  int32_t i;
   //  float f;
@@ -319,10 +319,10 @@ double SAT_Sign(const double v, const double def=0.0f) {
 //  }
 //}
 
-double SAT_Sinc(double x) {
+float SAT_Sinc(float x) {
   if (x==0) return 1;
   else {
-    double pix = SAT_PI * x;
+    float pix = SAT_PI * x;
     return sin(pix) / pix;
   }
 }
@@ -330,7 +330,7 @@ double SAT_Sinc(double x) {
 
 //----------
 
-double SAT_Sqr(double x) {
+float SAT_Sqr(float x) {
   return x*x;
 }
 
@@ -349,21 +349,25 @@ double SAT_Sqr(double x) {
 
 //----------
 
+float SAT_Trunc(const float v) {
+  return (float)(int)v;
+}
+
 double SAT_Trunc(const double v) {
   return (double)(int)v;
 }
 
 //----------
 
-double SAT_Wrap(double v, double lo, double hi) {
+float SAT_Wrap(float v, float lo, float hi) {
   if (lo > hi) {
     //SAT_Swap(lo,hi);
-    double temp = lo;
+    float temp = lo;
     lo = hi;
     hi = temp;
   }
   v -= lo; // adjust to 0
-  double range = hi - lo;
+  float range = hi - lo;
   if (range == 0) { return hi; } // avoid dividing by 0
   return v - (range * floor(v/range)) + lo;
 }

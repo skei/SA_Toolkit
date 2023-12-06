@@ -331,7 +331,14 @@ public:
       }
 
       if (MCellFillBackground) {
-        painter->setFillColor(c1);
+        if (MFillGradient) {
+          SAT_Color g1 = MGradientColor1;
+          SAT_Color g2 = MGradientColor2;
+          painter->setFillLinearGradient(ARect.x,ARect.y,ARect.x,ARect.y2(),g1,g2);
+        }
+        else {
+          painter->setFillColor(c1);
+        }
         painter->fillRoundedRect(ARect.x,ARect.y,ARect.w,ARect.h,ul,ur,lr,ll);
       }
       if (MCellDrawBorder) {
@@ -343,7 +350,14 @@ public:
     }
     else {
       if (MCellFillBackground) {
-        painter->setFillColor(c1);
+        if (MFillGradient) {
+          SAT_Color g1 = MGradientColor1;
+          SAT_Color g2 = MGradientColor2;
+          painter->setFillLinearGradient(ARect.x,ARect.y,ARect.x,ARect.y2(),g1,g2);
+        }
+        else {
+          painter->setFillColor(c1);
+        }
         painter->fillRect(ARect.x,ARect.y,ARect.w,ARect.h);
       }
       if (MCellDrawBorder) {

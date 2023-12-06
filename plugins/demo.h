@@ -35,10 +35,10 @@ const clap_plugin_descriptor_t sat_demo_descriptor = {
 
 const char* tabs_txt[5] = {
   "widgets",
-  "2",
-  "3",
-  "4",
-  "5"
+  "parameters",
+  "host",
+  "voices",
+  "events"
 };
 
 const char* buttonrow_txt[5] = {
@@ -104,15 +104,18 @@ public:
     appendStereoAudioInputPort("input");
     appendStereoAudioOutputPort("output");
 
-    appendParameter( new SAT_Parameter("param1",0.1) );
-    appendParameter( new SAT_Parameter("param2",0.2) );
-    appendParameter( new SAT_Parameter("param3",0.3) );
-    appendParameter( new SAT_Parameter("param4",0.4) );
-    appendParameter( new SAT_Parameter("param5",0.5) );
-    appendParameter( new SAT_Parameter("param6",0.6) );
-    appendParameter( new SAT_Parameter("param7",0.7) );
-    appendParameter( new SAT_Parameter("param8",0.8) );
-    appendParameter( new SAT_Parameter("param9",0.9) );
+    appendParameter( new SAT_Parameter("p1",0.1) );
+    appendParameter( new SAT_Parameter("p2",0.2) );
+    appendParameter( new SAT_Parameter("p3",0.3) );
+    appendParameter( new SAT_Parameter("p4",0.4) );
+    appendParameter( new SAT_Parameter("p5",0.5) );
+    appendParameter( new SAT_Parameter("p6",0.6) );
+    appendParameter( new SAT_Parameter("p7",0.7) );
+    appendParameter( new SAT_Parameter("p8",0.8) );
+    appendParameter( new SAT_Parameter("p9",0.9) );
+
+    setAllParameterFlags(CLAP_PARAM_IS_AUTOMATABLE);
+    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
 
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     for (uint32_t i=0; i<2048; i++) MBuffer[i] = SAT_RandomRange( -0.8, 0.8 );
@@ -160,6 +163,8 @@ private: // editor
     tabs->appendPage("widgets",   create_widgets_page(AEditor,AWindow) );
     tabs->appendPage("parameters",create_params_page(AEditor,AWindow)  );
     tabs->appendPage("host",      create_host_page(AEditor,AWindow)  );
+    tabs->appendPage("voices",    create_voices_page(AEditor,AWindow)  );
+    tabs->appendPage("events",    create_events_page(AEditor,AWindow)  );
     tabs->selectPage(0);
 
     root->appendChildWidget(MSelectorMenu);
@@ -348,7 +353,6 @@ private: // widget page
         // column 2
         //--------------------
 
-
         // drag value
 
         SAT_DragValueWidget* dragvalue1 = new SAT_DragValueWidget(SAT_Rect(220,10,200,20),"DragValue",0.1);
@@ -457,9 +461,14 @@ private: // widget page
 
         SAT_ButtonRowWidget* buttonrow1 = new SAT_ButtonRowWidget(SAT_Rect(220,350,200,20),5,buttonrow_txt,SAT_BUTTON_ROW_SINGLE,false);
         scrollbox->appendChildWidget(buttonrow1);
+        buttonrow1->setFillLinearGradient(true);
+        buttonrow1->setGradientColors(SAT_Grey,0.2,0.2);
+
 
         SAT_ButtonRowWidget* buttonrow2 = new SAT_ButtonRowWidget(SAT_Rect(220,380,200,20),5,buttonrow_txt,SAT_BUTTON_ROW_MULTI,false);
         scrollbox->appendChildWidget(buttonrow2);
+        buttonrow2->setRoundedCorners(true);
+        buttonrow2->setCornerSize(7);
 
         // selector
 
@@ -500,10 +509,17 @@ private: // widget page
         SAT_GridWidget* grid = new SAT_GridWidget(SAT_Rect(430,280,200,50),10,5);
         scrollbox->appendChildWidget(grid);
 
-        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,340,200,100),20,false);
+        SAT_TextBoxWidget* textbox = new SAT_TextBoxWidget(SAT_Rect(430,340,200,100));
+        scrollbox->appendChildWidget(textbox);
+        textbox->appendLine("Hello world!");
+        textbox->appendLine("The quick brown fox jumps over the lazy dog");
+
+        SAT_GroupBoxWidget* groupbox = new SAT_GroupBoxWidget(SAT_Rect(430,450,200,100),20,false);
         scrollbox->appendChildWidget(groupbox);
-          groupbox->getContainer()->setFillBackground(true);
-          groupbox->getContainer()->setBackgroundColor(SAT_DarkGreen);
+        groupbox->getContainer()->setFillBackground(true);
+        groupbox->getContainer()->setBackgroundColor(SAT_DarkGreen);
+
+
 
 
         //--------------------
@@ -544,15 +560,12 @@ private: // widget page
 
         // dummy
 
-        SAT_Widget* dummy1 = new SAT_Widget(SAT_Rect(1150,490,10,10));
-        scrollbox->appendChildWidget(dummy1);
+//        SAT_Widget* dummy1 = new SAT_Widget(SAT_Rect(1150,490,10,10));
+//        scrollbox->appendChildWidget(dummy1);
 
         //--------------------
         // column 5
         //--------------------
-
-        // SAT_TextBoxWidget* textedit = new SAT_TextBoxWidget(SAT_Rect());
-        // scrollbox->appendChildWidget(textbox);
 
         SAT_PanelWidget* p5 = new SAT_GraphWidget(SAT_Rect(950,10,200,200));
         scrollbox->appendChildWidget(p5);
@@ -569,42 +582,47 @@ private: // params page
     SAT_PanelWidget* page = new SAT_PanelWidget(0);
     //page->setBackgroundColor(SAT_Grey);
 
-      SAT_SliderWidget* slider;
-      slider = new SAT_SliderWidget(SAT_Rect(10,10,200,20),"param1",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(0));
+      SAT_KnobWidget* knob;
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,40,200,20),"param2",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(1));
+      knob = new SAT_KnobWidget(SAT_Rect(10,10,60,60),"p 1",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(0));
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,70,200,20),"param3",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(2));
+      knob = new SAT_KnobWidget(SAT_Rect(80,10,60,60),"p 2",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(1));
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,100,200,20),"param4",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(3));
+      knob = new SAT_KnobWidget(SAT_Rect(150,10,60,60),"p 3",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(2));
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,130,200,20),"param5",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(4));
+      knob = new SAT_KnobWidget(SAT_Rect(220,10,60,60),"p 4",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(3));
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,160,200,20),"param6",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(5));
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,190,200,20),"param7",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(6));
+      knob = new SAT_KnobWidget(SAT_Rect(10,80,60,60),"p 5",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(4));
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,220,200,20),"param8",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(7));
+      knob = new SAT_KnobWidget(SAT_Rect(80,80,60,60),"p 6",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(5));
 
-      slider = new SAT_SliderWidget(SAT_Rect(10,250,200,20),"param9",0);
-      page->appendChildWidget(slider);
-      AEditor->connect(slider,getParameter(8));
+      knob = new SAT_KnobWidget(SAT_Rect(150,80,60,60),"p 7",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(6));
+
+      knob = new SAT_KnobWidget(SAT_Rect(220,80,60,60),"p 8",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(7));
+
+
+      knob = new SAT_KnobWidget(SAT_Rect(300,10,60,60),"p 9",0);
+      page->appendChildWidget(knob);
+      AEditor->connect(knob,getParameter(8));
+      knob->setTextColor(SAT_DarkerGrey);
+      knob->setTextSize(12);
 
     return page;
   }
@@ -616,7 +634,26 @@ private: // host page
   SAT_PanelWidget* create_host_page(SAT_Editor* AEditor, SAT_Window* AWindow) {
     SAT_PanelWidget* page = new SAT_PanelWidget(0);
     //page->setBackgroundColor(SAT_Grey);
+    return page;
+  }
 
+//------------------------------
+private: // voices page
+//------------------------------
+
+  SAT_PanelWidget* create_voices_page(SAT_Editor* AEditor, SAT_Window* AWindow) {
+    SAT_PanelWidget* page = new SAT_PanelWidget(0);
+    //page->setBackgroundColor(SAT_Grey);
+    return page;
+  }
+
+//------------------------------
+private: // events page
+//------------------------------
+
+  SAT_PanelWidget* create_events_page(SAT_Editor* AEditor, SAT_Window* AWindow) {
+    SAT_PanelWidget* page = new SAT_PanelWidget(0);
+    //page->setBackgroundColor(SAT_Grey);
     return page;
   }
 

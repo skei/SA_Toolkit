@@ -412,6 +412,14 @@ public: // parameters
 
   //----------
 
+  virtual void appendParameters(const clap_param_info_t* AInfo, uint32_t ACount) {
+    for (uint32_t i=0; i<ACount; i++) {
+      appendParameter( &AInfo[i] );
+    }
+  }
+
+  //----------
+
   virtual void deleteParameters() {
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
@@ -1542,6 +1550,7 @@ protected: // clap_plugin
     MIsInitialized = false;
 
     #ifdef SAT_PLUGIN_DELETE_IN_DESTROY
+      SAT_Print("delete this\n");
       delete this;
     #endif
     

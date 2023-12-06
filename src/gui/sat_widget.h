@@ -127,6 +127,7 @@ public:
 
   virtual uint32_t            getNumChildWidgets()                              { return MChildWidgets.size(); }
   virtual SAT_Widget*         getChildWidget(uint32_t AIndex)                   { return MChildWidgets[AIndex]; }
+  virtual SAT_WidgetArray*    getChildWidgets()                                 { return &MChildWidgets; }
 
   virtual void                setName(const char* AName)                        { MName = AName; }
   virtual void                setCursor(int32_t ACursor)                        { MMouseCursor = ACursor; }
@@ -347,24 +348,26 @@ public:
   //----------
 
   virtual void setRectAndBase(SAT_Rect ARect) {
-
     double scale = getWindowScale();
-
     //SAT_Rect mrect = getRect();
     SAT_Rect rect = ARect;
-
     setRect(ARect);
-
 rect.x -= MLayoutOffset.x;
 rect.y -= MLayoutOffset.y;
 //rect.x -= (MLayoutOffset.x * scale);
 //rect.y -= (MLayoutOffset.y * scale);
-
     rect.scale(1.0 / scale);
     setBaseRect(rect);
-
   }
 
+  virtual void setWidthAndBase(double AWidth) {
+    double scale = getWindowScale();
+    double w = AWidth;
+    setWidth(AWidth);
+    w *= (1.0 / scale);
+    setBaseWidth(w);
+  }
+  
   //----------
 
   virtual void connect(void* AParameter, uint32_t AIndex=0) {

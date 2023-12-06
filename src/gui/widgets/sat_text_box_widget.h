@@ -18,7 +18,7 @@ protected:
 //SAT_Window* MWindow         = nullptr;
 //float         MTextHeight = 20.0;
 
-  SAT_Painter*  MPainter       = nullptr;
+  SAT_Painter*  MPainter        = nullptr;
   float         MTextSize       = 10.0;
   uint32_t      MTextAlignment  = SAT_TEXT_ALIGN_LEFT;
   uint32_t      MNumLines       = 0;
@@ -62,10 +62,10 @@ public:
     so we can measure the string length)..
     so we go throgh them all here, and readjust their widths..
   */
-  
-  void prepare(SAT_WidgetOwner* AOwner) override {
+
+  void on_widget_open(SAT_WidgetOwner* AOwner) override {
     //SAT_PRINT;
-    SAT_ScrollBoxWidget::prepare(AOwner);
+    //SAT_ScrollBoxWidget::prepare(AOwner);
     SAT_Window* window = (SAT_Window*)AOwner;
     double S = getWindowScale();
     if (window) {
@@ -75,16 +75,20 @@ public:
         //double widest = 0.0;
         uint32_t num = MContent->getNumChildWidgets();
         for (uint32_t i=0; i<num; i++) {
-          SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChildWidget(i);
+          SAT_PanelWidget* textwidget = (SAT_PanelWidget*)MContent->getChildWidget(i);
           const char* text = textwidget->getText();
           double bounds[4];
           //if (MPainter->getTextBounds(text,bounds)) {
           //  double width = bounds[2] - bounds[0];
             double width = MPainter->getTextBounds(text,bounds);
-            if (width > 0) width /= S;
-            //if (width > widest) widest = width;
-            textwidget->setWidth(width);
-            textwidget->setBasisWidth(width);
+
+            // textwidget->setWidth(width);
+            // if (width > 0) width /= S;
+            // //if (width > widest) widest = width;
+            // textwidget->setBaseWidth(width);
+
+            textwidget->setWidthAndBase(width);
+
           //}
         }
 //        SAT_Widget* context = getContentWidget();
@@ -96,7 +100,7 @@ public:
 public:
 //------------------------------
 
-  virtual void appendLine(const char* AText, bool ARedraw=true) {
+  virtual void appendLine(const char* AText, bool ARedraw=false) {
 
     if (MNumLines >= MMaxLines) { removeOldestLine(); }
     
@@ -120,10 +124,17 @@ public:
 //    else {
 //      SAT_Print("no painter\n");
 //    }
-    
-    SAT_TextWidget* textwidget = new SAT_TextWidget( SAT_Rect(width,MTextSize*S),AText);
-    textwidget->setAlignment(SAT_WIDGET_ALIGN_TOP);
-    //textwidget->setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
+
+    SAT_Print("%.2f, %.2f\n",width,MTextSize*S);
+
+    SAT_PanelWidget* textwidget = new SAT_PanelWidget( SAT_Rect(width,MTextSize*S));
+    MContent->appendChildWidget(textwidget);
+    MNumLines += 1;
+
+    textwidget->setText(AText);
+    textwidget->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    //textwidget->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
+    textwidget->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
 
     textwidget->setFillBackground(false);
     textwidget->setDrawBorder(false);
@@ -134,13 +145,9 @@ public:
 //    textwidget->setFillBackground(true);
 //    textwidget->setBackgroundColor(SAT_LightGreen);
     //textwidget->setBackgroundColor(0.55);
-    MContent->appendChildWidget(textwidget);
-    MNumLines += 1;
 
-    if (ARedraw) {
-      MContent->realignChildWidgets();
-      do_widgetListener_redraw(MContent,0); // only if visible?
-    }
+//    MContent->realignChildWidgets();
+//    if (ARedraw) do_widget_redraw(MContent); // only if visible?
   }
 
   //----------
