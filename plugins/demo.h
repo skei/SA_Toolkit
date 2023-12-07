@@ -1,4 +1,5 @@
-
+#ifndef demo_included
+#define demo_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
@@ -665,6 +666,11 @@ private: // events page
 //
 //----------------------------------------------------------------------
 
-#include "plugin/sat_entry.h"
-SAT_PLUGIN_ENTRY(sat_demo_descriptor,sat_demo_plugin);
+#ifndef SAT_GUI_NOGUI
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(sat_demo_descriptor,sat_demo_plugin);
+#endif
 
+
+//----------------------------------------------------------------------
+#endif
