@@ -61,6 +61,37 @@ class SAT_Window
 private:
 //------------------------------
 
+  //todo? move all these below to SAT_RootWidget?
+
+  SAT_Widget*         MHoverWidget          = nullptr;
+  SAT_Widget*         MModalWidget          = nullptr;
+  SAT_Widget*         MMouseCaptureWidget   = nullptr;
+  SAT_Widget*         MKeyCaptureWidget     = nullptr;
+//SAT_Widget*         MInteractiveWidget    = nullptr;
+//SAT_PanelWidget*    MOverlayWidget        = nullptr;
+
+  int32_t             MMouseCurrentXpos     = 0;
+  int32_t             MMouseCurrentYpos     = 0;
+  int32_t             MMousePreviousXpos    = 0;
+  int32_t             MMousePreviousYpos    = 0;
+  int32_t             MMouseCurrentCursor   = 0;
+
+  int32_t             MMouseClickedXpos     = 0;
+  int32_t             MMouseClickedYpos     = 0;
+  uint32_t            MMouseClickedButton   = SAT_BUTTON_NONE;
+  uint32_t            MMouseClickedState    = SAT_STATE_NONE;
+  uint32_t            MMouseClickedTime     = 0;
+
+  bool                MMouseIsLocked        = false;
+  int32_t             MLockedCurrentX       = 0;
+  int32_t             MLockedCurrentY       = 0;
+  int32_t             MLockedClickedX       = 0;
+  int32_t             MLockedClickedY       = 0;
+
+//------------------------------
+private:
+//------------------------------
+
   SAT_RootWidget*     MRootWidget           = nullptr;
   SAT_WindowListener* MListener             = nullptr;
 
@@ -89,34 +120,6 @@ private:
   SAT_WidgetQueue     MPaintWidgets         = {};
 
   SAT_Skin            MDefaultSkin          = {};
-
-  //todo? move all these below to SAT_RootWidget?
-
-  SAT_Widget*         MHoverWidget          = nullptr;
-  SAT_Widget*         MModalWidget          = nullptr;
-//SAT_Widget*         MInteractiveWidget    = nullptr;
-  SAT_Widget*         MMouseCaptureWidget   = nullptr;
-  SAT_Widget*         MKeyCaptureWidget     = nullptr;
-
-//SAT_PanelWidget*    MOverlayWidget        = nullptr;
-
-  int32_t             MMouseCurrentXpos     = 0;
-  int32_t             MMouseCurrentYpos     = 0;
-  int32_t             MMousePreviousXpos    = 0;
-  int32_t             MMousePreviousYpos    = 0;
-  int32_t             MMouseCurrentCursor   = 0;
-
-  int32_t             MMouseClickedXpos     = 0;
-  int32_t             MMouseClickedYpos     = 0;
-  uint32_t            MMouseClickedButton   = SAT_BUTTON_NONE;
-  uint32_t            MMouseClickedState    = SAT_STATE_NONE;
-  uint32_t            MMouseClickedTime     = 0;
-
-  bool                MMouseIsLocked        = false;
-  int32_t             MLockedCurrentX       = 0;
-  int32_t             MLockedCurrentY       = 0;
-  int32_t             MLockedClickedX       = 0;
-  int32_t             MLockedClickedY       = 0;
 
 //------------------------------
 public:
@@ -509,6 +512,7 @@ public: // window
     if ((width2 != MBufferWidth) || (height2 != MBufferHeight)) {
       void* buffer = painter->createRenderBuffer(width2,height2);
       SAT_Assert(buffer);
+      // potentially copy buffer here..
       painter->deleteRenderBuffer(MRenderBuffer);
       MRenderBuffer = buffer;
       MBufferWidth  = width2;
@@ -530,45 +534,33 @@ public: // window
     MIsPainting = true;
 
     if (resized) {
-
       // root widget
-
       SAT_Widget* widget;
       while (MPaintWidgets.read(&widget)) {}
-      
       if (MRootWidget) {
-
         // huh? this isn't needed.. we're resized!
         if (MRootWidget->getLastPainted() != MPaintContext.counter) {
-
           //painter->resetClip();
-
           //SAT_Print("root widget\n");
           MRootWidget->on_widget_paint(&MPaintContext);
-
           MRootWidget->setLastPainted(MPaintContext.counter);
         }
       }
     }
+
     else {
-
       // paint queue
-
       SAT_Widget* widget;
       while (MPaintWidgets.read(&widget)) {
         if (widget->isRecursivelyVisible()) {
         //if (widget->isVisible()) {
           if (widget->getLastPainted() != MPaintContext.counter) {
-
             SAT_Rect cliprect = calcClipRect(widget);
             // if cliprect visible?
             painter->pushClip(cliprect);
-
             //SAT_Print("%s\n",widget->getName());
             widget->on_widget_paint(&MPaintContext);
-
             painter->popClip();
-
             widget->setLastPainted(MPaintContext.counter);
           }
         }

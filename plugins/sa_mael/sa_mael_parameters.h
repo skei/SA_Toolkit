@@ -8,6 +8,7 @@
 //----------------------------------------------------------------------
 
 enum sa_mael_parameter_e {
+
   SA_MAEL_PARAM_GAIN = 0,
   SA_MAEL_PARAM_OSC1_TYPE,
   SA_MAEL_PARAM_OSC1_SHAPE,
@@ -28,6 +29,8 @@ enum sa_mael_parameter_e {
 #define SE (CLAP_PARAM_IS_STEPPED | CLAP_PARAM_IS_ENUM )
 #define H   CLAP_PARAM_IS_HIDDEN
 
+//----------
+
 //const
 clap_param_info_t sa_mael_Parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_GAIN,       A,    nullptr, "Gain",  "Global",   0.0, 1.0, 0.5 },
@@ -36,7 +39,7 @@ clap_param_info_t sa_mael_Parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_OSC1_WIDTH, A|MN, nullptr, "Width", "Osc1",     0.0, 1.0, 0.5 },
   { SA_MAEL_PARAM_FLT1_TYPE,  A|SE, nullptr, "Type",  "Flt1",     0,   9,   0   },
   { SA_MAEL_PARAM_FLT1_FREQ,  A|MN, nullptr, "Freq",  "Flt1",     0.0, 1.0, 0.5 },
-  { SA_MAEL_PARAM_FLT1_BW,    A|MN, nullptr, "BW",    "Flt1",     0.0, 1.0, 1.0 },
+  { SA_MAEL_PARAM_FLT1_BW,    A|MN, nullptr, "BW",    "Flt1",     0.0, 1.0, 1.0 }
 };
 
 const char* osc_types_txt[] = {
@@ -46,6 +49,8 @@ const char* osc_types_txt[] = {
 const char* flt_types_txt[] = {
   "Off", "Lowpass", "Bandpass", "Highpass", "Notch", "Peak", "Allpass", "Bell", "Lowshelf", "Highshelf"
 };
+
+//----------
 
 #undef A
 #undef M

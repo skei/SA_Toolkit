@@ -593,7 +593,7 @@ public: // editor
     #if defined (SAT_GUI_DEFAULT_EDITOR)
       uint32_t numparams = getNumParameters();
       SAT_Point size = getDefaultEditorSize();
-      SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
+      SAT_RootWidget* root = new SAT_RootWidget(AWindow);
       AWindow->setRootWidget(root);
       const clap_plugin_descriptor_t* descriptor = getClapDescriptor();
       SAT_Print("descriptor %p\n",descriptor);
@@ -780,7 +780,6 @@ public: // events
       // }
     }
     return false;
-
   }
 
   //----------
@@ -1610,13 +1609,10 @@ protected: // clap_plugin
     MProcessContext.process_counter += 1;
     //MProcessContext.voice_buffer
     //MProcessContext.voice_length
-
     #if !defined (SAT_GUI_NOGUI)
       flushParamFromGuiToAudio();
     #endif
-
-    //preProcessEvents(process->in_events,process->out_events);
-
+    preProcessEvents(process->in_events,process->out_events);
     if (process->transport) handleTransportEvent(process->transport);
     switch (MEventMode) {
       case SAT_PLUGIN_EVENT_MODE_BLOCK:
@@ -1630,13 +1626,10 @@ protected: // clap_plugin
         processAudioQuantized(&MProcessContext);
         break;
     }
-
     postProcessEvents(process->in_events,process->out_events);
-
     #if !defined (SAT_GUI_NOGUI)
       flushParamFromGuiToHost(process->out_events);
     #endif
-
     MProcessContext.sample_counter += process->frames_count;
     return CLAP_PROCESS_CONTINUE;
   }

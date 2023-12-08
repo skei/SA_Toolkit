@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------
 
 void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-  SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
+  SAT_RootWidget* root = new SAT_RootWidget(AWindow);
   AWindow->setRootWidget(root);
 
   SAT_KnobWidget* knob;

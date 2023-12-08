@@ -394,7 +394,7 @@ private: // events
 //    }
 //  }
 
-//  void processAudioBlock(const clap_process_t* process) {
+//  void processAudio(const clap_process_t* process) {
 //  }
 
 //------------------------------

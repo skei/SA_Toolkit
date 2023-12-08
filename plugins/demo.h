@@ -126,7 +126,7 @@ public:
   //----------
 
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-    SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
+    SAT_RootWidget* root = new SAT_RootWidget(AWindow);
     AWindow->setRootWidget(root);
     //root->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
     init_editor(AEditor,AWindow,root);
@@ -360,6 +360,8 @@ private: // widget page
         scrollbox->appendChildWidget(dragvalue1);
           dragvalue1->setTextOffset(SAT_Rect(5,0,0,0));
           dragvalue1->setValueOffset(SAT_Rect(0,0,5,0));
+          //dragvalue1->setAutoLockCursor(false);
+          //dragvalue1->setAutoHideCursor(false);
 
         // drag value : snap
 

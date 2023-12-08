@@ -74,10 +74,6 @@ public:
     MIndex = AIndex;
     MContext = AContext;
     MSampleRate = AContext->sample_rate;
-    //SAT_Assert(MContext);
-    //SAT_Assert(MContext->process_context);
-    //SAT_Assert(MContext->process_context->parameters);
-    //MParameters = MContext->process_context->parameters;
   }
 
   sat_sample_t getVoiceLevel() {
@@ -114,8 +110,6 @@ public:
   }
 
   uint32_t noteOn(uint32_t AIndex, double AValue) {
-    //SAT_ParameterArray* parameters = plugin->getParameters();//MContext->process_context->parameters;
-    //SAT_Parameter* par_tuning = parameters->getItem(1);
     SAT_Plugin*     plugin      = MContext->process_context->plugin;
     SAT_Parameter*  par_tuning  = plugin->getParameter(1);
     MKey      = AIndex;
@@ -180,16 +174,7 @@ private:
 public:
 //------------------------------
 
-  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(mySynth);
-
-  mySynth(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
-  : SAT_Plugin(ADescriptor,AHost) {
-    SAT_PRINT;
-  };
-
-  virtual ~mySynth() {
-    SAT_PRINT;
-  }
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(mySynth);
 
 //------------------------------
 public:
@@ -330,23 +315,15 @@ public: // events
 public: // process
 //------------------------------
 
+  // block
   void processAudio(SAT_ProcessContext* AContext) final {
-    // MVoiceManager.processAudio(AContext);
-    // MVoiceManager.mixActiveVoices();
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     float** outputs = process->audio_outputs[0].data32;
-    // voices
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
-    // we could process the voice buffers individually...
     MVoiceManager.mixActiveVoices();
-    // gain
-    //sat_param_t scale = getParameterValue(14) + getModulationValue(14);   // Gain
-    //scale = SAT_Clamp(scale,0,1);
-    //SAT_ScaleStereoBuffer(outputs,scale,length);
-
   }
 
 //------------------------------
@@ -356,7 +333,7 @@ public: // gui
   // #if !defined (SAT_GUI_NOGUI)  
   //  
   // void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-  //   SAT_RootWidget* root = new SAT_RootWidget(0,AWindow);
+  //   SAT_RootWidget* root = new SAT_RootWidget(AWindow);
   //   AWindow->setRootWidget(root);
   //   //SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(50,50,100,100),"Gain",0.1);
   //   //root->appendChildWidget(knob);
@@ -377,20 +354,3 @@ public: // gui
 
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,mySynth);
-
-  // void SAT_Register(SAT_Registry* ARegistry) {
-  //   uint32_t index = ARegistry->getNumDescriptors();
-  //   /*SAT_Print("index %i = id %s\n",index,myDescriptor.id);*/
-  //   ARegistry->registerDescriptor(&myDescriptor);
-  // }
-
-  // /* ----- */
-
-  // SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
-  //   /*SAT_Print("index %i\n",AIndex);*/
-  //   if (AIndex == 0) {
-  //     SAT_Plugin* plugin = new mySynth(ADescriptor,AHost); /* deleted in: ... */
-  //     return plugin;
-  //   }
-  //   return nullptr;
-  // }

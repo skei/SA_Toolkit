@@ -80,11 +80,13 @@ public:
 //------------------------------
 
   bool init() final {
+
     registerDefaultSynthExtensions();
     registerExtension(CLAP_EXT_PARAM_INDICATION,&MExtParamIndication);
     registerExtension(CLAP_EXT_PRESET_LOAD,&MExtPresetLoad);
     registerExtension(CLAP_EXT_REMOTE_CONTROLS,&MExtRemoteControls);
     registerExtension(CLAP_EXT_TRACK_INFO,&MExtTrackInfo);
+
     appendClapNoteInputPort("Input");
     appendStereoAudioOutputPort("Output");
 
@@ -95,9 +97,11 @@ public:
     MVoiceManager.init(getClapPlugin(),getClapHost());
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
+
     #if !defined (SAT_GUI_NOGUI)
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     #endif
+
     return SAT_Plugin::init();
   }
 
@@ -130,6 +134,8 @@ public:
   }  
   
   //----------
+
+  //TODO
 
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) final {
     switch (page_index) {
@@ -228,21 +234,13 @@ public: // process
 //------------------------------
 
   void processAudio(SAT_ProcessContext* AContext) final {
-
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
     float** outputs = process->audio_outputs[0].data32;
-    
     AContext->voice_buffer = outputs;
     AContext->voice_length = length;
-
     MVoiceManager.processAudio(AContext);
     MVoiceManager.mixActiveVoices();
-
-    //sat_param_t scale = getParameterValue(14) + getModulationValue(14);   // Gain
-    //scale = SAT_Clamp(scale,0,1);
-    //SAT_ScaleStereoBuffer(outputs,scale,length);
-
   }
 
 //------------------------------
@@ -269,8 +267,10 @@ public: // gui
 //
 //----------------------------------------------------------------------
 
-#include "plugin/sat_entry.h"
-SAT_PLUGIN_ENTRY(sa_mael_Descriptor,sa_mael_Plugin);
+#if !defined (SAT_NO_ENTRY)
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(sa_mael_Descriptor,sa_mael_Plugin);
+#endif
 
   // void SAT_Register(SAT_Registry* ARegistry) {
   //   uint32_t index = ARegistry->getNumDescriptors();

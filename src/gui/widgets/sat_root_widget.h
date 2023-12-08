@@ -25,8 +25,8 @@ private:
 public:
 //------------------------------
 
-  SAT_RootWidget(SAT_Rect ARect, SAT_WidgetListener* AListener)
-  : SAT_PanelWidget(ARect) {
+  SAT_RootWidget(SAT_WidgetListener* AListener)
+  : SAT_PanelWidget(SAT_Rect(0,0,0,0)) {
     MListener = AListener;
     setName("MRootWidget");
   }
