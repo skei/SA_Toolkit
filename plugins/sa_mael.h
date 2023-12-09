@@ -32,7 +32,7 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t sa_mael_Descriptor = {
+const clap_plugin_descriptor_t sa_mael_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/" PLUGIN_NAME,
   .name         = PLUGIN_NAME,
@@ -51,7 +51,7 @@ const clap_plugin_descriptor_t sa_mael_Descriptor = {
 //
 //----------------------------------------------------------------------
 
-class sa_mael_Plugin
+class sa_mael_plugin
 : public SAT_Plugin {
 
 //------------------------------
@@ -66,12 +66,12 @@ public:
 
   //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(mySynth);
 
-  sa_mael_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  sa_mael_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
     SAT_PRINT;
   };
 
-  virtual ~sa_mael_Plugin() {
+  virtual ~sa_mael_plugin() {
     SAT_PRINT;
   }
 
@@ -267,9 +267,9 @@ public: // gui
 //
 //----------------------------------------------------------------------
 
-#if !defined (SAT_NO_ENTRY)
+#ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(sa_mael_Descriptor,sa_mael_Plugin);
+  SAT_PLUGIN_ENTRY(sa_mael_descriptor,sa_mael_plugin);
 #endif
 
   // void SAT_Register(SAT_Registry* ARegistry) {

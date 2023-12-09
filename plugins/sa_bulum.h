@@ -12,6 +12,7 @@
 //----------------------------------------------------------------------
 
 #include "plugin/sat_plugin.h"
+#include "plugin/sat_parameters.h"
 #include "gui/sat_widgets.h"
 
 //----------------------------------------------------------------------
@@ -117,15 +118,15 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_bulum_plugin);
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_bulum_plugin);
 
 //------------------------------
 public: // plugin
 //------------------------------
 
   bool init() final {
-    appendStereoAudioInputPort();
-    appendStereoAudioOutputPort();
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
     registerDefaultExtensions();
     appendParameter(new SAT_Parameter(      "Master",            -6,   -60,  6                  ));
     appendParameter(new SAT_IntParameter(   "Number of grains",   10,   1,   MAX_GRAINS         ));
@@ -182,7 +183,7 @@ private:
 private:
 //------------------------------
 
-  bool handleParamValue(const clap_event_param_value_t* param_value) final {
+  bool on_plugin_paramValue(const clap_event_param_value_t* param_value) final {
     uint32_t index = param_value->param_id;
     float value = param_value->value;
     switch (index) {

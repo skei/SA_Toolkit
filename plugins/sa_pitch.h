@@ -2,7 +2,7 @@
 #define sa_pitch_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
@@ -67,14 +67,14 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_pitch_plugin)
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_pitch_plugin)
 
   //----------
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoAudioInputPort();
-    appendStereoAudioOutputPort();
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
     appendParameter(new SAT_Parameter( "Pitch",     0,    -1, 1   ));
     appendParameter(new SAT_Parameter( "Window",    100,   1, 200 ));
     appendParameter(new SAT_Parameter( "CrossFade", 100,   0, 100 ));
@@ -90,7 +90,7 @@ public:
 
   //----------
 
-  bool handleParamValue(const clap_event_param_value_t* param_value) final {
+  bool on_plugin_paramValue(const clap_event_param_value_t* param_value) final {
     need_recalc = true;
     return true;
   }

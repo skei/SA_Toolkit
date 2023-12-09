@@ -668,7 +668,7 @@ private: // events page
 //
 //----------------------------------------------------------------------
 
-#ifndef SAT_GUI_NOGUI
+#ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sat_demo_descriptor,sat_demo_plugin);
 #endif

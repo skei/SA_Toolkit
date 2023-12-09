@@ -7,6 +7,7 @@
 #include "sat.h"
 #include "base/system/sat_paths.h"
 //#include "plugin/sat_registry.h"
+#include "plugin/sat_plugin.h"
 #include "plugin/clap/sat_clap.h"
 //#include "plugin/clap/sat_clap_host.h"
 #include "plugin/vst2/sat_vst2.h"

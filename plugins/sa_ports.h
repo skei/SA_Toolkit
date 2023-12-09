@@ -2,12 +2,9 @@
 #define sa_ports_included
 //----------------------------------------------------------------------
 
-//#define SAT_PLUGIN_CLAP
-//#define SAT_PLUGIN_VST3
-
 #include "sat.h"
-#include "plugin/sat_entry.h"
 #include "base/sat_registry.h"
+#include "plugin/sat_entry.h"
 
 #define SAT_NO_ENTRY
 #include "ports/sa_compciter.h"
@@ -21,7 +18,6 @@
 #include "ports/sa_large_room_reverb.h"
 #include "ports/sa_limiter.h"
 #include "ports/sa_phaser.h"
-//#include "ports/sa_reverb.h"
 #include "ports/sa_saturation.h"
 #include "ports/sa_small_room_reverb.h"
 #include "ports/sa_sonic_maximizer.h"
@@ -47,7 +43,6 @@ void SAT_Register(SAT_Registry* ARegistry) {
   ARegistry->registerDescriptor(&sa_large_room_reverb_descriptor);
   ARegistry->registerDescriptor(&sa_limiter_descriptor);
   ARegistry->registerDescriptor(&sa_phaser_descriptor);
-  //ARegistry->registerDescriptor(&sa_reverb_descriptor);
   ARegistry->registerDescriptor(&sa_saturation_descriptor);
   ARegistry->registerDescriptor(&sa_small_room_reverb_descriptor);
   ARegistry->registerDescriptor(&sa_sonic_maximizer_descriptor);
@@ -72,7 +67,6 @@ SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t
     case 8:   return new sa_large_room_reverb_plugin(ADescriptor,AHost);
     case 9:   return new sa_limiter_plugin(ADescriptor,AHost);
     case 10:  return new sa_phaser_plugin(ADescriptor,AHost);
-    //case 10:  return new sa_reverb_plugin(ADescriptor,AHost);
     case 11:  return new sa_saturation_plugin(ADescriptor,AHost);
     case 12:  return new sa_small_room_reverb_plugin(ADescriptor,AHost);
     case 13:  return new sa_sonic_maximizer_plugin(ADescriptor,AHost);
