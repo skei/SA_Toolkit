@@ -10,11 +10,11 @@
 //----------------------------------------------------------------------
 
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
+#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
 
 const char* filter_types_txt[] = {
@@ -403,14 +403,14 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_iirfilter_plugin)
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_iirfilter_plugin)
 
   //----------
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoAudioInputPort();
-    appendStereoAudioOutputPort();
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
     
     appendParameter( new SAT_TextParameter( "Mode", 0,      0,   11, filter_types_txt ));
     appendParameter( new SAT_Parameter(     "Freq", 1024,   50,  16000 ));
@@ -432,9 +432,9 @@ public:
 
   //----------
 
-  bool handleParamValue(const clap_event_param_value_t* param_value) final {
-    uint32_t index = param_value->param_id;
-    double   value = param_value->value;
+  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+    uint32_t index = event->param_id;
+    double   value = event->value;
     switch (index) {
       case 0: MLFilter.setMode(value);      MRFilter.setMode(value);      break;
       case 1: MLFilter.setFrequency(value); MRFilter.setFrequency(value); break;

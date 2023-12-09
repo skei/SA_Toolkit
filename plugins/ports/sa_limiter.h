@@ -9,7 +9,7 @@
 //
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
@@ -82,14 +82,14 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_limiter_plugin)
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_limiter_plugin)
 
   //----------
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoAudioInputPort();
-    appendStereoAudioOutputPort();
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
     
     appendParameter(new SAT_Parameter( "Threshold", 0,  -30, 0 ));
     appendParameter(new SAT_Parameter( "Ceiling",   0,  -30, 0 ));
@@ -108,7 +108,7 @@ public:
 
   //----------
 
-  bool handleParamValue(const clap_event_param_value_t* param_value) final {
+  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
     need_recalc = true;
     return true;
   }

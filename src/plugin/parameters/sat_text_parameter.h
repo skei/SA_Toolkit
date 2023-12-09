@@ -24,8 +24,8 @@ private:
 public:
 //------------------------------
 
-  SAT_TextParameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMin=0.0, sat_param_t AMax=1.0, const char** AText=nullptr)
-  : SAT_IntParameter(AName,AValue,AMin,AMax) {
+  SAT_TextParameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMin=0.0, sat_param_t AMax=1.0, const char** AText=nullptr, uint32_t AFlags=CLAP_PARAM_IS_AUTOMATABLE)
+  : SAT_IntParameter(AName,AValue,AMin,AMax,AFlags) {
     MText = AText;
   }
 

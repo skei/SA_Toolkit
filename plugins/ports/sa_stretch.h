@@ -15,9 +15,7 @@
 // gcc complained about Complex
 #define prev_complex Complex
 #undef Complex
-
 #include "extern/signalsmith/signalsmith-stretch.h"
-
 #define Complex prev_complex
 #undef prev_complex
 

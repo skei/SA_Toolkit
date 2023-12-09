@@ -23,7 +23,7 @@
 //
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
@@ -97,14 +97,14 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_sonic_maximizer_plugin)
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_sonic_maximizer_plugin)
 
   //----------
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoAudioInputPort();
-    appendStereoAudioOutputPort();
+    appendStereoAudioInputPort("Input");
+    appendStereoAudioOutputPort("Output");
     appendParameter(new SAT_Parameter( "Low Cont",  1.0,   0.0, 10.0 ));
     appendParameter(new SAT_Parameter( "Process",   1.0,   0.0, 10.0 ));
     appendParameter(new SAT_Parameter( "Output",   -3.0, -30.0,  0.0 ));
@@ -128,10 +128,10 @@ public:
 
   //----------
 
-  bool handleParamValue(const clap_event_param_value_t* param_value) final {
+  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
     //SAT_Plugin::processParamValueEvent(param_value);
-    uint32_t index = param_value->param_id;
-    float value = param_value->value;
+    uint32_t index = event->param_id;
+    float value = event->value;
     switch (index) {
       case 0:
         param1 = value;

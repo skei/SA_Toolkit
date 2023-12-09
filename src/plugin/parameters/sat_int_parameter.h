@@ -18,9 +18,9 @@ class SAT_IntParameter
 public:
 //------------------------------
 
-  SAT_IntParameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0, uint32_t AFlags=0)
+  SAT_IntParameter(const char* AName, sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0, uint32_t AFlags=CLAP_PARAM_IS_AUTOMATABLE)
   : SAT_Parameter(AName,AValue,AMinValue,AMaxValue,AFlags) {
-    setValueFormat("%i");
+    setValueFormat("%.f");
   }
 
   SAT_IntParameter(const clap_param_info_t* AInfo)
@@ -55,10 +55,10 @@ public:
 public:
 //------------------------------
 
-  //const char* valueToText(sat_param_t AValue) override {
-  //  sprintf(MValueText,MValueFormat,getValue());
-  //  return MValueText;
-  //}
+  const char* valueToText(sat_param_t AValue) override {
+    sprintf(MValueText,MValueFormat,getValue());
+    return MValueText;
+  }
 
   sat_param_t textToValue(const char* AText) override {
     return atoi(AText);

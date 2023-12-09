@@ -176,6 +176,7 @@ public:
   //void setProcessThreaded(bool AThreaded=true)  { MProcessThreaded = AThreaded; }
 
   SAT_Host* getHost() { return MHost; }
+    SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
 
 //------------------------------
 public: // extensions

@@ -11,11 +11,11 @@
 //
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_audio_utils.h"
 //#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
+#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
 
 const char* mode_txt[] = { "Normal", "Freeze" };
@@ -462,14 +462,14 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_freeverb_plugin)
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_freeverb_plugin)
 
   //----------
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoAudioInputPort();
-    appendStereoAudioOutputPort();
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
     
     appendParameter( new SAT_Parameter(     "Roomsize", 0.56, 0.01, 2.0 ));
     appendParameter( new SAT_Parameter(     "Damp",     0.45, 0.01, 2.0 ));
@@ -492,9 +492,9 @@ public:
 
   //----------
   
-  bool handleParamValue(const clap_event_param_value_t* param_value) final {
-    uint32_t index = param_value->param_id;
-    double   value = param_value->value;
+  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+    uint32_t index = event->param_id;
+    double   value = event->value;
     switch (index) {
       case 0: MReverbL.setroomsize(value);  MReverbR.setroomsize(value);  break;
       case 1: MReverbL.setdamp(value);      MReverbR.setdamp(value);      break;

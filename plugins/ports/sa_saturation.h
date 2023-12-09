@@ -14,10 +14,10 @@
 //
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
+#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
 
 #define scale_ ( 1.1 / 3.0 )
@@ -69,14 +69,14 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_saturation_plugin)
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_saturation_plugin)
 
   //----------
   
   bool init() final {
     registerDefaultExtensions();    
-    appendStereoAudioInputPort();
-    appendStereoAudioOutputPort();
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
     
     appendParameter(new SAT_Parameter(     "Saturation", 0,  0,   1 ));
     appendParameter(new SAT_IntParameter(  "Stages",     1,  1,   10 ));
@@ -96,7 +96,7 @@ public:
 
   //----------
 
-  bool handleParamValue(const clap_event_param_value_t* param_value) final {
+  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
     need_recalc = true;
     return true;
   }

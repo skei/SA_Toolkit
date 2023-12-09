@@ -2,9 +2,10 @@
 #define sa_cred_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/sat_entry.h"
+#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
 #include "gui/sat_widgets.h"
 
@@ -68,7 +69,7 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_cred_plugin)
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_cred_plugin)
   
 //------------------------------
 public: // fibonacci
@@ -102,8 +103,8 @@ public:
 
   bool init() final {
     registerDefaultExtensions();    
-    appendClapNoteInputPort();
-    appendClapNoteOutputPort();
+    appendClapNoteInputPort("In");
+    appendClapNoteOutputPort("Out");
     appendParameter( new SAT_IntParameter( "Value1", 0, -12, 12 ));
     appendParameter( new SAT_IntParameter( "Value2", 1, -12, 12 ));
     appendParameter( new SAT_IntParameter( "Modulo", 12,  1, 24 ));
@@ -113,7 +114,7 @@ public:
   
   //----------
 
-  bool handleNoteOn(const clap_event_note_t* event) final {
+  bool on_plugin_noteOn(const clap_event_note_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
@@ -130,7 +131,7 @@ public:
 
   //----------
 
-  bool handleNoteOff(const clap_event_note_t* event) final {
+  bool on_plugin_noteOff(const clap_event_note_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
@@ -147,7 +148,7 @@ public:
 
   //----------
 
-  bool handleNoteChoke(const clap_event_note_t* event) final {
+  bool on_plugin_noteChoke(const clap_event_note_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
@@ -164,7 +165,7 @@ public:
 
   //----------
 
-  bool handleNoteExpression(const clap_event_note_expression_t* event) final {
+  bool on_plugin_noteExpression(const clap_event_note_expression_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
@@ -181,7 +182,7 @@ public:
 
   //----------
 
-  bool handleParamValue(const clap_event_param_value_t* event) final {
+  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
     uint32_t index = event->param_id;
     double value = event->value;
     switch (index) {
@@ -203,7 +204,7 @@ public:
 
   //----------
 
-  bool handleParamMod(const clap_event_param_mod_t* event) final {
+  bool on_plugin_paramMod(const clap_event_param_mod_t* event) final {
     uint32_t index = event->param_id;
     double value = event->amount;
     switch (index) {
@@ -225,7 +226,7 @@ public:
 
   //----------
 
-  bool handleTransport(const clap_event_transport_t* event) final {
+  bool on_plugin_transport(const clap_event_transport_t* event) final {
     bool is_playing = (event->flags & CLAP_TRANSPORT_IS_PLAYING);
     if (is_playing && !MWasPlaying) {
       SAT_Print("start\n");

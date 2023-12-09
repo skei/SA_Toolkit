@@ -6,8 +6,8 @@
 
 #include "base/utils/sat_arguments.h"
 #include "plugin/sat_host_implementation.h"
+#include "plugin/sat_plugin.h"
 #include "plugin/clap/sat_clap_entry.h"
-
 #include "plugin/exe/sat_exe_host_implementation.h"
 
 #if !defined (SAT_GUI_NOGUI)
