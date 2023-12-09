@@ -1,18 +1,20 @@
 [todo] !!!
 in the meanwhile, some quick notes-to-self:
 
-/ara
+/ara - 
 /clap - MIT, Alexandre Bique, https://github.com/free-audio/clap
 /nanosvg - zlib, Mikko Mononen, https://github.com/memononen/nanosvg
 /nanovg - zlib, Mikko Mononen, https://github.com/memononen/nanovg
 /reaper - bsd?, Cockos Incorporated
-/signalsmith - mit, Geraint Luff
+/signalsmith - mit, Geraint Luff, https://github.com/Signalsmith-Audio
 /sogl - mit, Tarek Sherif
 /stb - pd, Sean Barrett
 /vst2/fst - gpl3, IOhannes m zmölnig
 /vst2/vestige - gpl2, Javier Serrano Polo
+/vst2/vst2sdk - 
 /vst2/xaymar - bsd?, Michael Fabian
 /vst3/travesty - bsd?, Filipe Coelho
+/vst3/vst3sdk - 
 /wayland
 /xjson - zlib/libpng, Stefan Bachmann, https://github.com/stbachmann/xjson
 

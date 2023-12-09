@@ -37,6 +37,9 @@ class SignalsmithReverb {
 
   //----------
 
+  // double delayMs = 80;
+  // double decayGain = 0.85;
+
   // struct SingleChannelFeedback {
   //   double delayMs = 80;
   //   double decayGain = 0.85;
@@ -56,6 +59,9 @@ class SignalsmithReverb {
   // };
 
   //----------
+
+  // double delayMs = 150;
+  // double decayGain = 0.85;
 
   // struct MultiChannelFeedback {
   //   using Array = std::array<double, channels>;
@@ -87,6 +93,9 @@ class SignalsmithReverb {
   // };
 
   //----------
+
+  // double delayMs = 150;
+  // double decayGain = 0.85;
 
   struct MultiChannelMixedFeedback {
     using Array = std::array<double, channels>;
@@ -120,6 +129,8 @@ class SignalsmithReverb {
   };
 
   //----------
+
+  // double delayMsRange = 50;
 
   struct DiffusionStep {
     using Array = std::array<double, channels>;
@@ -400,12 +411,12 @@ class sa_reverb_plugin
 private:
 //------------------------------
 
-  SAT_SignalsmithReverb* reverb = nullptr;//SAT_SignalsmithReverb(100,3,1,0.25);
-
-  double p_roomsize = 0.0;
-  double p_rt60 = 0.0;
-  double p_dry = 0.0;
-  double p_wet = 0.0;
+  SAT_SignalsmithReverb*  reverb      = nullptr;
+  bool                    need_recalc = false;
+  double                  p_roomsize  = 0.0;
+  double                  p_rt60      = 0.0;
+  double                  p_dry       = 0.0;
+  double                  p_wet       = 0.0;
 
 //------------------------------
 public:
@@ -444,7 +455,13 @@ public:
     appendParameter( new SAT_Parameter( "dry",      1,    0,    1     ));
     appendParameter( new SAT_Parameter( "wet",      0.5,  0,    1     ));
     //setAllParameterFlags(CLAP_PARAM_IS_AUTOMATABLE);
-    reverb = new SAT_SignalsmithReverb(100,10,1,0.75);
+
+    p_roomsize  = 100;
+    p_rt60      = 1.5;
+    p_dry       = 1.5;
+    p_wet       = 0.5;
+
+    reverb = new SAT_SignalsmithReverb(100,1,1,0.5);
     return SAT_Plugin::init();
   }
 
@@ -474,12 +491,22 @@ public:
     double  v  = event->value;
     int32_t iv = SAT_Trunc(event->value);
     switch (event->param_id) {
-      case 0: p_roomsize = v; return true;
-      case 1: p_rt60 = v;     return true;
-      case 2: p_dry = v;      return true;
-      case 3: p_wet = v;      return true;
+      case 0: p_roomsize = v; need_recalc = true;   break;
+      case 1: p_rt60 = v;     need_recalc = true;   break;
+      case 2: p_dry = v;      need_recalc = true;   break;
+      case 3: p_wet = v;      need_recalc = true;   break;
+      default:                need_recalc = false;  break;
     }
-    return false;
+    //if (need_recalc) {
+    //  SAT_SignalsmithReverb* old_reverb = reverb;
+    //  SAT_SignalsmithReverb* new_reverb = new SAT_SignalsmithReverb(p_roomsize,p_rt60,p_dry,p_wet);
+    //  reverb = new_reverb;
+    //  delete old_reverb;
+      return true;
+    //}
+    //else {
+    //  return false;
+    //}
   }
   
   //----------
@@ -488,8 +515,6 @@ public:
     float** inputs  = AContext->process->audio_inputs[0].data32;
     float** outputs = AContext->process->audio_outputs[0].data32;
     uint32_t length = AContext->process->frames_count;
-    //SAT_CopyStereoBuffer(outputs,inputs,length);
-    // MStretch.process(inputs,length,outputs,length);
 
     reverb->process(inputs,outputs,length);
 

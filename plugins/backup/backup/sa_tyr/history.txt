@@ -1,0 +1,32 @@
+
+alpha 1 (17.dec.2022)
+* initial version
+
+alpha 2 (19.dec.2022)
+* much improved opengl repainting and resizing
+* fixed x11 gui initially coming up blank
+
+alpha 3 (20.dec.2022)
+* gui shows probabilities/randomization values
+
+alpha 4 (21.dec.2022)
+* slice offset now doesn't reset during loop wraparound
+* slice offset adjustments in slices (not %)
+
+0.1.5 (21.dec.2022)
+* new version number scheme (minor.major.revision)
+* don't draw indicators if not looping
+
+0.1.6
+* slightly improved activity indicators
+* some repainting changes
+* added preliminary logging
+  (create a folder called "skei.audio" on your desktop to enable it)
+
+0.1.7
+* fixed initial black window
+* better repainting whwn resizing editor
+
+0.1.8
+* improved/fixed popup menu handling
+

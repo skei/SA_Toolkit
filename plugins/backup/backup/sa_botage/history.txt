@@ -1,0 +1,20 @@
+
+0.1.7 - 30.dec.2023
+* better gui
+
+0.1.8 - 31.dec.2022
+* various
+* colors
+
+0.1.9
+* buffered painting
+  - better handling of gui timers & repainting
+* improved waveform drawing
+* preliminary effect widgets
+  - removed effect page/tab
+  - filter
+
+0.1.10a - 6.jan.2023
+
+0.1.11
+- envelopes are normal sliders now

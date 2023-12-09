@@ -1,0 +1,3 @@
+#!/bin/bash
+gcc plugin.cpp -o plugin.clap -std=c++14 -faligned-new -Wall -fPIC -shared -O3 -Wl,--as-needed -I. -I../../src -DSAT_PLUGIN -lpthread -lrt -ldl -lX11 -lX11-xcb -lxcb -lxcb-util -lxcb-image -lxcb-cursor -lxcb-keysyms -lxkbcommon -lGL -lGLX -lGLU
+
