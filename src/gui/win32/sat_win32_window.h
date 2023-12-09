@@ -1321,6 +1321,9 @@ LRESULT CALLBACK sat_win32_eventproc(HWND hWnd, UINT message, WPARAM wParam, LPA
 
 /*
   this one is a bit messy..
+
+  (todo: move to SAT_GLOBAL.WIN32 ?)
+  
   we need:
   - HINSTANCE (from DLL)
   - callback function (which calls the window class)

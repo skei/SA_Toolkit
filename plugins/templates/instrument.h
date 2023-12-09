@@ -1,5 +1,4 @@
 
-
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_voice_manager.h"
@@ -11,12 +10,12 @@
 
 //----------
 
-  #define EDITOR_WIDTH  256
-  #define EDITOR_HEIGHT 256
-  #define EDITOR_SCALE  1.0
+#define EDITOR_WIDTH  256
+#define EDITOR_HEIGHT 256
+#define EDITOR_SCALE  1.0
 
-  #define MAX_VOICES    32
-  #define VOICE_SCALE   0.1
+#define MAX_VOICES    32
+#define VOICE_SCALE   0.1
 
 //----------------------------------------------------------------------
 //
@@ -196,6 +195,7 @@ public:
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     #endif
     MVoiceManager.init(getClapPlugin(),getClapHost());
+    //MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
     return SAT_Plugin::init();
@@ -354,3 +354,11 @@ public: // gui
 
 #include "plugin/sat_entry.h"
 SAT_PLUGIN_ENTRY(myDescriptor,mySynth);
+
+//----------
+
+// #undef EDITOR_WIDTH
+// #undef EDITOR_HEIGHT
+// #undef EDITOR_SCALE
+// #undef MAX_VOICES
+// #undef VOICE_SCALE
