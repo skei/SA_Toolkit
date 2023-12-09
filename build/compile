@@ -40,7 +40,6 @@ LIBRARY=false
 WIN32=false
 
 FLAGS=""
-#FLAGS+=" -std=gnu++17"
 FLAGS+=" -std=gnu++17"
 FLAGS+=" -Wall"
 FLAGS+=" -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-narrowing"
@@ -291,6 +290,7 @@ if $DEBUG
     FLAGS+=" -O3"
     FLAGS+=" -ffast-math"
     FLAGS+=" -s"
+    #FLAGS+=" -flto"
 fi
 
 #------------------------------
