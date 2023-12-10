@@ -123,9 +123,14 @@
 // debug
 //------------------------------
 
+#if defined (SAT_PLUGIN)
+  #define SAT_DEBUG_PRINT_SOCKET
+#endif
+
 #if defined (SAT_WIN32)
   #undef SAT_DEBUG_CALLSTACK
   #undef SAT_DEBUG_CRASH_HANDLER
+  #undef SAT_DEBUG_PRINT_SOCKET
 #endif
 
 #if !defined (SAT_DEBUG)
@@ -204,9 +209,9 @@
   //#define SAT_PLUGIN
 #endif
 
-#ifdef SAT_PLUGIN
-  #define SAT_DEBUG_PRINT_SOCKET
-#endif
+//#ifdef SAT_PLUGIN
+//  #define SAT_DEBUG_PRINT_SOCKET
+//#endif
 
 //------------------------------
 // gui
