@@ -21,12 +21,14 @@ protected:
 //------------------------------
 
   bool        MInitialized    = false;
-  bool        MDrawImage      = true;
-  SAT_Rect    MImageOffset    = SAT_Rect(0);
-  int32_t     MImage          = -1;
   void*       MBuffer         = nullptr;
   uint32_t    MBufferSize     = 0;
   const char* MFilename       = nullptr;
+
+  int32_t     MImage          = -1;
+
+  bool        MDrawImage      = true;
+  SAT_Rect    MImageOffset    = SAT_Rect(0);
   double      MAlpha          = 1.0;
   double      MAngle          = 0.0;
   double      MScale          = 1.0;
@@ -78,6 +80,7 @@ public:
       S *= MScale;
       SAT_Painter* painter = AContext->painter;
       SAT_Rect mrect = getRect();
+
       if (!MInitialized) {
         if (MBuffer && (MBufferSize > 0)) {
           MImage = painter->loadImage(MBuffer,MBufferSize);

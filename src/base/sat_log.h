@@ -113,7 +113,6 @@ public:
       const char* gui = "";
       const char* painter = "";
 
-
 // SAT_GUI_NOGUI
 // SAT_GUI_SOFTWARE
 // SAT_GUI_WAYLAND
@@ -174,6 +173,10 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  //TODO: prefix, time..
+
+  //----------
 
   //void operator () (const char* format, ...) {
   //}

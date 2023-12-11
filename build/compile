@@ -250,6 +250,7 @@ case $GUI in
     ;;
   "WIN32")
     #echo "gui = win32"
+    LIB+=" -lgdi32 -lmsimg32 -lopengl32"
     FLAGS+=" -DSAT_GUI_WIN32"
     ;;
   "X11")
@@ -294,19 +295,6 @@ if $DEBUG
 fi
 
 #------------------------------
-# -w win32
-#------------------------------
-
-if $WIN32
-  then
-    CC="/usr/bin/x86_64-w64-mingw32-g++"
-    LIB+=" -lgdi32 -lmsimg32 -lopengl32"
-  else
-    CC="g++"
-    LIB+=" -ldl -lrt"
-fi
-
-#------------------------------
 # -s sanitize
 #------------------------------
 
@@ -325,6 +313,18 @@ fi
 if $TEST
   then
     FLAGS+=" -DSAT_TESTS"
+fi
+
+#------------------------------
+# -w win32
+#------------------------------
+
+if $WIN32
+  then
+    CC="/usr/bin/x86_64-w64-mingw32-g++"
+  else
+    CC="g++"
+    LIB+=" -ldl -lrt"
 fi
 
 #----------------------------------------------------------------------

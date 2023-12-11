@@ -1,6 +1,5 @@
 yapf - yet another plugin framework
-
-(toolkit/framework for rapid & simple plugin development )
+(plugin development toolkit/framework)
 
 clap, vst2, vst3, lv2, ladspa, standalone
 linux, win32

@@ -2,6 +2,9 @@
 #define sat_editor_included
 //----------------------------------------------------------------------
 
+// 'direct-connect' editor (pointers..)
+// todo/maydo: remote editors (process, hardware, floating?)
+
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_editor_listener.h"

@@ -56,7 +56,7 @@
 
 //----------
 
-//#include "../plugins/sa_plugins.h"
+//#include "../plugins/sa_plug  ins.h"
 //#include "../plugins/sa_ports.h"
 
 //----------------------------------------------------------------------
@@ -65,5 +65,5 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/demo.h"
+#include "../plugins/demo.h"
 //#include "../plugins/minimal.h"

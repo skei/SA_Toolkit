@@ -1,0 +1,10 @@
+todo:
+
+* download from github
+* install dependencies
+* download/install external sdks
+* config
+* copy template
+* build
+* run/test
+
