@@ -66,5 +66,5 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/demo.h"
+#include "../plugins/demo.h"
 //#include "../plugins/minimal.h"

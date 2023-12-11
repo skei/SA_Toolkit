@@ -669,10 +669,10 @@ public:
       bool mapped = param->getIsMapped();
       if (mapped) {
         double coords[] = {
-          mrect.x + (1.0 * S),        mrect.y + (1.0 * S),
-          mrect.x + (5.0 * S),        mrect.y + (1.0 * S),
-          mrect.x + (1.0 * S),        mrect.y + (5.0 * S),
-          mrect.x + (1.0 * S),        mrect.y + (1.0 * S)
+          mrect.x + (1.0 * S),  mrect.y + (1.0 * S),
+          mrect.x + (5.0 * S),  mrect.y + (1.0 * S),
+          mrect.x + (1.0 * S),  mrect.y + (5.0 * S),
+          mrect.x + (1.0 * S),  mrect.y + (1.0 * S)
         };
         SAT_Color color = param->getMappedColor();
         if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
