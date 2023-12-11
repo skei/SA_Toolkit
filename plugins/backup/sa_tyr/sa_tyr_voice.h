@@ -2,15 +2,15 @@
 #define sa_tyr_voice_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "audio/sat_audio_math.h"
-#include "audio/old/filters/sat_allpass_filter.h"
-#include "audio/old/filters/sat_rc_filter.h"
-#include "audio/old/filters/sat_svf_filter.h"
-#include "audio/old/processing/sat_delay.h"
-#include "audio/old/synthesis/sat_oscillator2.h"
-#include "audio/old/modulation/sat_envelope.h"
-#include "audio/old/waveforms/sat_polyblep_waveform.h"
+#include "audio/backup/filters/sat_allpass_filter.h"
+#include "audio/backup/filters/sat_rc_filter.h"
+#include "audio/backup/filters/sat_svf_filter.h"
+#include "audio/backup/processing/sat_delay.h"
+#include "audio/backup/synthesis/sat_oscillator2.h"
+#include "audio/backup/modulation/sat_envelope.h"
+#include "audio/backup/waveforms/sat_polyblep_waveform.h"
 #include "audio/sat_voice_manager.h"
 
 //----------------------------------------------------------------------

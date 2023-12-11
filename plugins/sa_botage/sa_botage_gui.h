@@ -4,7 +4,7 @@
 
   const char* txt_eight[8] = { "1", "2", "3", "4", "5", "6", "7", "8" };
   
-  SAT_PanelWidget*              root_panel            = nullptr;
+  SAT_RootWidget*               root_panel            = nullptr;
   SAT_MenuWidget*               fx_type_menu          = nullptr;
   sa_botage_header_widget*      header_widget         = nullptr;
   sa_botage_footer_widget*      footer_widget         = nullptr;
@@ -32,13 +32,11 @@
 
   //----------
 
-  bool initEditorWindow(SAT_Editor* AEditor) final {
-    SAT_Window* window = AEditor->getWindow();
+  void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     
     // root panel
-    
-    root_panel = new SAT_PanelWidget(0);
-    window->appendRootWidget(root_panel);
+    root_panel = new SAT_RootWidget(AWindow);
+    AWindow->setRootWidget(root_panel);
     root_panel->setBackgroundColor(SAT_Black);
     
     // menu
@@ -119,7 +117,6 @@
     // menu
     
     root_panel->appendChildWidget(fx_type_menu);
-    return true;
   }
 
 //----------------------------------------------------------------------

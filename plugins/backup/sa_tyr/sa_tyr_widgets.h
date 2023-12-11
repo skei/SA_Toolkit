@@ -2,7 +2,7 @@
 #define sa_tyr_widgets_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/sat_widgets.h"
 
 //----------------------------------------------------------------------
@@ -102,7 +102,8 @@ public:
     setFillBackground(true);
     setBackgroundColor(0.55);
 
-    SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(ARect.x,ARect.y,ARect.w,AHeaderHeight),AText);
+    SAT_PanelWidget* text = new SAT_PanelWidget(SAT_Rect(ARect.x,ARect.y,ARect.w,AHeaderHeight));
+    text->setText(AText);
     appendChildWidget(text);
     text->setTextAlignment(SAT_TEXT_ALIGN_CENTER);
     text->setTextSize(15);
@@ -158,9 +159,11 @@ public:
       setSnapDist(ASnapDist);
       setBipolar(true);
     }
-    setDrawModulation(true);
-//    setModulationColor(SAT_Color(1,0,0,0.25));
-//    setModulationOffset(SAT_Rect( 4,4,4,4 ));
+
+//    setDrawModulation(true);
+
+    //    setModulationColor(SAT_Color(1,0,0,0.25));
+    //    setModulationOffset(SAT_Rect( 4,4,4,4 ));
   }
 
 };
@@ -198,12 +201,12 @@ public:
 //----------------------------------------------------------------------
 
 class sa_tyr_BigKnobWidget
-: public SAT_Knob2Widget {
+: public SAT_KnobWidget {
 
 public:
 
   sa_tyr_BigKnobWidget(SAT_Rect ARect, const char* AText, double AValue=0.0, bool ABipolar=false, double ASnapPos=0.5, double ASnapDist=0.05)
-  : SAT_Knob2Widget(ARect,AText,AValue) { // ,true,false) {
+  : SAT_KnobWidget(ARect,AText,AValue) { // ,true,false) {
     if (ABipolar) {
       MKnobWidget->setSnap(true);
       MKnobWidget->setSnapPos(ASnapPos);
@@ -227,12 +230,12 @@ public:
 //----------
 
 class sa_tyr_SmallKnobWidget
-: public SAT_Knob2Widget {
+: public SAT_KnobWidget {
 
 public:
 
   sa_tyr_SmallKnobWidget(SAT_Rect ARect, const char* AText, double AValue=0.0, bool ABipolar=false, double ASnapPos=0.5, double ASnapDist=0.05)
-  : SAT_Knob2Widget(ARect,AText,AValue) { // ,true,false) {
+  : SAT_KnobWidget(ARect,AText,AValue) { // ,true,false) {
     if (ABipolar) {
       MKnobWidget->setSnap(true);
       MKnobWidget->setSnapPos(ASnapPos);

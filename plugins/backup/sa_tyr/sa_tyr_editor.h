@@ -4,7 +4,7 @@
 
 // we need some visual tool to do all of this..
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/sat_widgets.h"
 #include "plugin/sat_editor.h"
 

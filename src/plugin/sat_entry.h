@@ -10,6 +10,10 @@
    #include "plugin/clap/sat_clap_entry.h"
 #endif
 
+#ifdef SAT_PLUGIN_DSSI
+   #include "plugin/dssi/sat_dssi_entry.h"
+#endif
+
 #ifdef SAT_PLUGIN_EXE
   #include "plugin/exe/sat_exe_entry.h"
 #endif

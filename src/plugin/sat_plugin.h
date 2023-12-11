@@ -1889,9 +1889,7 @@ protected: // gui
       bool result = MEditor->set_parent(window);
       SAT_Window* window = MEditor->getWindow();
       if (window) setupEditorWindow(MEditor,window);
-
       initEditorParameterValues();
-      
       return result;
     }
     //SAT_Print("MEditor = null\n");

@@ -49,6 +49,7 @@
 //
 //----------------------------------------------------------------------
 
+//#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_mael.h"
@@ -56,7 +57,7 @@
 
 //----------
 
-//#include "../plugins/sa_plug  ins.h"
+//#include "../plugins/sa_plugins.h"
 //#include "../plugins/sa_ports.h"
 
 //----------------------------------------------------------------------
@@ -65,5 +66,5 @@
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/demo.h"
+//#include "../plugins/demo.h"
 //#include "../plugins/minimal.h"

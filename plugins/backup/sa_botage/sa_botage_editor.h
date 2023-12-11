@@ -2,7 +2,7 @@
 #define sa_botage_editor_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/sat_widgets.h"
 //#include "plugin/sat_editor.h"
 

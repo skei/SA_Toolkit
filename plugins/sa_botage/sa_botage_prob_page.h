@@ -2,7 +2,7 @@
 #define sa_botage_prob_page_included
 //----------------------------------------------------------------------
 
-#include "base/sat.h"
+#include "sat.h"
 #include "gui/sat_widgets.h"
   
 //----------------------------------------------------------------------

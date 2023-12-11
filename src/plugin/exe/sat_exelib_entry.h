@@ -1,5 +1,5 @@
-#ifndef sat_exelib_included
-#define sat_exelib_included
+#ifndef sat_exelib_entry_included
+#define sat_exelib_entry_included
 //----------------------------------------------------------------------
 
 //#define MIP_EXECUTABLE_SHARED_LIBRARY
@@ -7,6 +7,8 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+//#include "plugin/exe/sat_exe_entry.h"
+
 
 int main(int argc, char** argv); // , char** env);
 

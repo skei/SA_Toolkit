@@ -6,7 +6,7 @@ x11, win32, wayland, opengl/gles, nanovg
 
 ---
 
-(todo, sketch]
+(sketch)
 
 * entirely clap-based
 * sample accurate automation

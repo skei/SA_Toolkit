@@ -8,7 +8,7 @@
 #include "audio/sat_audio_utils.h"
 #include "audio/sat_voice.h"
 #include "audio/sat_voice_manager.h"
-#include "audio/old/filters/sat_decimator_filter.h"
+#include "audio/backup/filters/sat_decimator_filter.h"
 #include "plugin/sat_note.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/sat_editor.h"

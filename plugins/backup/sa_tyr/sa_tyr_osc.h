@@ -4,8 +4,8 @@
 
 #include "base/utils/sat_fast_math.h"
 #include "base/utils/sat_interpolation.h"
-#include "audio/old/waveforms/sat_dsf_waveform.h"
-#include "audio/old/filters/sat_allpass_filter.h"
+#include "audio/backup/waveforms/sat_dsf_waveform.h"
+#include "audio/backup/filters/sat_allpass_filter.h"
 
 template <class T>
 class sa_tyr_osc {
