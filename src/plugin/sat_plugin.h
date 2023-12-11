@@ -2279,7 +2279,13 @@ protected: // draft: param_indication
     SAT_Parameter* param = MParameters[param_id];
 //    param->setMappingIndication(has_mapping,color,label,description);
     param->setIsMapped(has_mapping);
-    param->setMappedColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
+    SAT_Color C = SAT_Color(
+      (double)color->red    * SAT_INV255,
+      (double)color->green  * SAT_INV255,
+      (double)color->blue   * SAT_INV255,
+      (double)color->alpha  * SAT_INV255
+    );
+    param->setMappedColor(C);
     #if !defined (SAT_GUI_NOGUI)
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
       if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
@@ -2295,7 +2301,13 @@ protected: // draft: param_indication
 //    param->setAutomationIndication(automation_state,color);
     //param->setAutomationIndication(automation_state,color);
     param->setAutomationState(automation_state);
-    param->setAutomationColor(SAT_Color(color->red,color->green,color->blue,color->alpha));
+    SAT_Color C = SAT_Color(
+      (double)color->red    * SAT_INV255,
+      (double)color->green  * SAT_INV255,
+      (double)color->blue   * SAT_INV255,
+      (double)color->alpha  * SAT_INV255
+    );
+    param->setAutomationColor(C);
     #if !defined (SAT_GUI_NOGUI)
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
       if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
