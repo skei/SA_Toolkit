@@ -43,6 +43,10 @@
 //#include "../plugins/ports/sa_tilteq.h"
 //#include "../plugins/ports/sa_transient_killer.h"
 
+//----------
+
+//#include "../plugins/sa_ports.h"
+
 //----------------------------------------------------------------------
 //
 // plugins
@@ -58,7 +62,6 @@
 //----------
 
 //#include "../plugins/sa_plugins.h"
-//#include "../plugins/sa_ports.h"
 
 //----------------------------------------------------------------------
 //
@@ -66,5 +69,5 @@
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/demo.h"
+//#include "../plugins/demo.h"
 //#include "../plugins/minimal.h"

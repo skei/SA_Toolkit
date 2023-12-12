@@ -545,7 +545,7 @@ uint32_t SAT_RGBA_RgbToHsl(uint32_t color) {
   float r = (float)((color & 0xff0000) >> 16) * SAT_INV255;
   float g = (float)((color & 0xff00  ) >> 8 ) * SAT_INV255;
   float b = (float)((color & 0xff    )      ) * SAT_INV255;
-  // r,b and b are assumed to be in the range 0...1
+  // r,g and b are assumed to be in the range 0...1
   //float l =  r * 0.299 + g * 0.587 + b * 0.114;
   float u = - r * 0.1471376975169300226 - g * 0.2888623024830699774 + b * 0.436;
   float v =   r * 0.615                 - g * 0.514985734664764622  - b * 0.100014265335235378;

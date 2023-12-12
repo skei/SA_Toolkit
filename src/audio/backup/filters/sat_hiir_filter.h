@@ -49,7 +49,7 @@
   operations.
 */
 
-#include "audio/_backup/filters/mip_allpass_filter.h"
+#include "audio/backup/filters/mip_allpass_filter.h"
 
 //----------------------------------------------------------------------
 

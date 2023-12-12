@@ -227,9 +227,9 @@ public:
         strcpy(page->section_name,"Section");
         page->page_id = 0;
         strcpy(page->page_name,"SA_Synth parameters");
-        page->param_ids[0] = CLAP_INVALID_ID;
-        page->param_ids[1] = CLAP_INVALID_ID;
-        page->param_ids[2] = CLAP_INVALID_ID;
+        page->param_ids[0] = 0;//CLAP_INVALID_ID;
+        page->param_ids[1] = 1;//CLAP_INVALID_ID;
+        page->param_ids[2] = 2;//CLAP_INVALID_ID;
         page->param_ids[3] = CLAP_INVALID_ID;
         page->param_ids[4] = CLAP_INVALID_ID;
         page->param_ids[5] = CLAP_INVALID_ID;
