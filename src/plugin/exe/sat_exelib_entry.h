@@ -10,7 +10,7 @@
 //#include "plugin/exe/sat_exe_entry.h"
 
 
-int main(int argc, char** argv); // , char** env);
+// int main(int argc, char** argv); // , char** env);
 
 //----------
 

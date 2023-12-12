@@ -67,7 +67,7 @@ function print_help_and_exit {
   echo "usage: ./compile.sh <options>"
   echo "  -i <path>   input file name/path"
   echo "  -o <path>   output file name/path"
-  echo "  -f <types>  format (all,clap,dssi,exe,ladspa,lv2,vst2,vst3)"
+  echo "  -f <types>  format (all,clap,dssi,exe,ex_lib,ladspa,lv2,vst2,vst3)"
   echo "  -g <type>   gui (nogui,wayland,win32,x11)"
   echo "  -w          win32 (else linux)"
   echo "  -d          debug mode (else release)"
@@ -159,60 +159,43 @@ OUTPUT_DIR=${OUTPUT%$OUTPUT_FILE}
 
 # assume LIBRARY = true
 LIBRARY=true
+EXELIB=false
 
 if [[ "$FORMAT" == *"ALL"* ]]; then
-  #echo "format = all"
-  #OUTPUT+=".bin"
-  #LIBRARY=true
   FLAGS+=" -DSAT_PLUGIN_ALL"
 fi
 
 if [[ "$FORMAT" == *"CLAP"* ]]; then
-  #echo "format = clap"
-  #OUTPUT+=".clap"
-  #LIBRARY=true
   FLAGS+=" -DSAT_PLUGIN_CLAP"
 fi
 
 if [[ "$FORMAT" == *"DSSI"* ]]; then
-  #echo "format = dssi"
-  #OUTPUT+=".so"
-  #LIBRARY=true
   FLAGS+=" -DSAT_PLUGIN_DSSI"
 fi
 
 if [[ "$FORMAT" == *"EXE"* ]]; then
-  #echo "format = exe"
-  #OUTPUT+=".exe"
   LIBRARY=false
   FLAGS+=" -DSAT_PLUGIN_EXE"
 fi
 
+if [[ "$FORMAT" == *"EX_LIB"* ]]; then
+  EXELIB=true
+  FLAGS+=" -DSAT_PLUGIN_EXECUTABLE_LIBRARY"
+fi
+
 if [[ "$FORMAT" == *"LADSPA"* ]]; then
-  #echo "format = ladspa"
-  #OUTPUT+=".so"
-  #LIBRARY=true
   FLAGS+=" -DSAT_PLUGIN_LADSPA"
 fi
 
 if [[ "$FORMAT" == *"LV2"* ]]; then
-  #echo "format = lv2"
-  #OUTPUT+=".so"
-  #LIBRARY=true
   FLAGS+=" -DSAT_PLUGIN_LV2"
 fi
 
 if [[ "$FORMAT" == *"VST2"* ]]; then
-  #echo "format = vst2"
-  #OUTPUT+=".so"
-  #LIBRARY=true
   FLAGS+=" -DSAT_PLUGIN_VST2"
 fi
 
 if [[ "$FORMAT" == *"VST3"* ]]; then
-  #echo "format = vst3"
-  #OUTPUT+=".so"
-  #LIBRARY=true
   FLAGS+=" -DSAT_PLUGIN_VST3"
   INC+=" -I../src/extern/vst3/vst3sdk"
 fi
@@ -221,15 +204,21 @@ fi
 
 if $LIBRARY
   then
-    #echo "library"
-    FLAGS+=" -shared"
-    FLAGS+=" -fPIC"
-    FLAGS+=" -DSAT_LIBRARY"
+    if $EXELIB
+      then
+        FLAGS+=" -shared"
+        FLAGS+=" -fPIC"
+        #FLAGS+=" -fPIE"
+        FLAGS+=" -Wl,-e,exelib_entry_point"
+        FLAGS+=" -DSAT_PLUGIN_EXE"
+      else
+        FLAGS+=" -shared"
+        FLAGS+=" -fPIC"
+        FLAGS+=" -DSAT_LIBRARY"
+    fi
   #else
-  #  #echo "application"
-  #  FLAGS+=" -DSAT_EXE"
+  #  FLAGS+=" -DSAT_PLUGIN_EXE"
 fi
-
 
 #------------------------------
 # -g gui
