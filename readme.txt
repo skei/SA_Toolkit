@@ -5,11 +5,12 @@ yapf, yet another plugin framework
 * linux, win32
 * x11, win32, wayland, opengl/gles, nanovg
 
-* clap-based (internal plugin format is clap, wrappers for other formats))
+* clap-based (internal plugin format is clap, wrappers for other formats)
 * scalable/vector gui
+
 * sample accurate automation
 * mono/polyphonic modulation
-* note expressions, mpe
+* note expressions, (mpe)
 * voice stacking
 * overlapping notes
 * multi threaded voice processing
