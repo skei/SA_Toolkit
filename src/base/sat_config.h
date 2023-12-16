@@ -111,13 +111,13 @@
 //
 //----------------------------------------------------------------------
 
-// #if defined (SAT_PLUGIN_EXE)
-//   #undef SAT_DEBUG_PRINT_SOCKET
-//   #define SAT_DEBUG_MEMTRACE
-// #else
-//   #define SAT_DEBUG_PRINT_SOCKET
-//   #undef SAT_DEBUG_MEMTRACE
-// #endif
+#if defined (SAT_PLUGIN_EXE)
+  #undef SAT_DEBUG_PRINT_SOCKET
+  //#define SAT_DEBUG_MEMTRACE
+#else
+  #define SAT_DEBUG_PRINT_SOCKET
+  //#undef SAT_DEBUG_MEMTRACE
+#endif
 
 //------------------------------
 // debug
@@ -140,7 +140,6 @@
   #undef SAT_DEBUG_CRASH_HANDLER
   #undef SAT_DEBUG_MEMTRACE
   #undef SAT_DEBUG_OBSERVER
-  //#undef SAT_DEBUG_PRINT
   #undef SAT_DEBUG_WINDOW
 #endif
 

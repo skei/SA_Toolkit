@@ -15,7 +15,7 @@
 //----------------------------------------------------------------------
 
 //#include "../plugins/templates/audio_effect.h"
-//#include "../plugins/templates/instrument.h"
+#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
 //----------------------------------------------------------------------
@@ -69,5 +69,5 @@
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/demo.h"
+//#include "../plugins/demo.h"
 //#include "../plugins/minimal.h"

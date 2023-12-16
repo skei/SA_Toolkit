@@ -83,7 +83,7 @@ public:
     // int val = *ptr;
     // SAT_Print("%p = %i\n",ptr,val);
 
-    // void* memleak = malloc(666);
+    void* memleak = malloc(666);
 
   }
 
