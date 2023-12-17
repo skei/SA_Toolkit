@@ -108,16 +108,7 @@ public:
 //
 //----------------------------------------------------------------------
 
-/*
-  http://linux-audio.4202.n7.nabble.com/Realtime-inter-thread-communication-td99157.html
-  thread-safe, lock/wait-free queue
-  single producer, single consumer..
-  todo: MReadPos/MWritePos volatile?
-  can something be optimized by the compiler?
-  reordering of instructions?
-*/
-
-
+// http://linux-audio.4202.n7.nabble.com/Realtime-inter-thread-communication-td99157.html
 // write single, read buffer (all)
 
 template<class _T, int SIZE>
@@ -382,12 +373,3 @@ public:
 
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-
-#if 0
-
-
-#endif // 0

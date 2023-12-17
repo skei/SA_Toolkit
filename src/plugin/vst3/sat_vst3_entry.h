@@ -24,7 +24,7 @@ bool vst3_module_exit(void) asm ("ModuleExit");
 
 // host deletes it?
 // or else it leaks..
-// shouldn't we just have a global/static factory, and return a ptr to this?
+// should we just have a global/static factory, and return a ptr to this?
 
 //__EXPORT
 __attribute__ ((visibility ("default")))

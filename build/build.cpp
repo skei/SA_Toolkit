@@ -15,7 +15,7 @@
 //----------------------------------------------------------------------
 
 //#include "../plugins/templates/audio_effect.h"
-#include "../plugins/templates/instrument.h"
+//#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
 //----------------------------------------------------------------------
@@ -56,7 +56,7 @@
 //#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
-//#include "../plugins/sa_mael.h"
+#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_pitch.h"
 
 //----------

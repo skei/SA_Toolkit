@@ -22,8 +22,8 @@
   #define PLUGIN_NAME   "sa_mael"
   #define MAX_VOICES    32
 
-  #define EDITOR_WIDTH  640
-  #define EDITOR_HEIGHT 480
+  #define EDITOR_WIDTH  420
+  #define EDITOR_HEIGHT 280
   #define EDITOR_SCALE  1.33
 
 //----------------------------------------------------------------------
@@ -94,6 +94,7 @@ public:
     sa_mael_SetupParameters(this);
 
     //setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
+    
     MVoiceManager.init(getClapPlugin(),getClapHost());
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
@@ -195,6 +196,7 @@ public: // events
   }
 
   bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+    SAT_PRINT;
     MVoiceManager.handleParamValue(event);
     return true;
   }

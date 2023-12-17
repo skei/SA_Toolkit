@@ -4,6 +4,7 @@
 
 #define VOICE_SCALE   0.1
 
+#include "audio/synthesis/sat_dsf_waveform.h"
 #include "audio/synthesis/sat_morph_oscillator.h"
 #include "audio/filters/sat_svf_filter.h"
 #include "audio/modulation/sat_curved_envelope.h"
@@ -44,9 +45,13 @@ private:
   sat_sample_t                      MPhase      = 0.0;
   sat_sample_t                      MPhaseAdd   = 0.0;
 
+  //SAT_DsfWaveform<sat_sample_t>     MDsf        = {};
   SAT_MorphOscillator<sat_sample_t> MOscillator = {};
   SAT_SVFFilter<sat_sample_t>       MFilter     = {};
   SAT_CurvedEnvelope<sat_sample_t>  MEnvelope   = {};
+
+  //sat_param_t p_shape = 0.0;
+  //sat_param_t p_width = 0.0;
 
 //------------------------------
 public:
@@ -74,9 +79,16 @@ public:
 
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
+
         MPhase = SAT_Fract(MPhase);
 
         sat_sample_t v = (MPhase * 2.0) - 1.0;  // 0..1 -> -1..1
+
+        // sat_sample_t phase2 = SAT_Trunc(MPhase + 0.25);
+        // sat_sample_t a      = p_shape * 10;
+        // uint32_t     N      = p_width * 16;
+        // sat_sample_t v = MDsf.process(MPhase,phase2,a,N);
+
         sat_sample_t env = 1.0;
         *buffer++ = v * env * VOICE_SCALE;
 
@@ -141,8 +153,11 @@ public:
   //----------
 
   void parameter(uint32_t AIndex, sat_param_t AValue) {
+    SAT_Print("%i = %f\n",AIndex,AValue);
     switch (AIndex) {
-      case SA_MAEL_PARAM_GAIN: MPGain    = AValue; break;
+      case SA_MAEL_PARAM_GAIN:        MPGain  = AValue; break;
+      //case SA_MAEL_PARAM_OSC1_SHAPE:  p_shape = AValue; break;
+      //case SA_MAEL_PARAM_OSC1_WIDTH:  p_width = AValue; break;
     }
   }
 

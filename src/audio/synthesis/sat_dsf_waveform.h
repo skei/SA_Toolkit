@@ -23,7 +23,6 @@
 
 //----------
 
-
 /*
   http://www.musicdsp.org/showArchiveComment.php?ArchiveID=68http://www.kvraudio.com/forum/viewtopic.php?p=5152613#p5152613
   Discrete Summation Formula (DSF)
@@ -50,6 +49,7 @@
 
 //----------------------------------------------------------------------
 
+template <typename T>
 class SAT_DsfWaveform {
 
   private:
@@ -65,9 +65,19 @@ class SAT_DsfWaveform {
 
     // calculate max N
 
-    float findMaxPartials(float dt1,float dt2) {
-      float n = 0;
-      float t = dt1 + dt2;
+    // float findMaxPartials(float dt1,float dt2) {
+    //   float n = 0;
+    //   float t = dt1 + dt2;
+    //   while (t <= 0.5) {
+    //     t += dt2;
+    //     n += 1;
+    //   }
+    //   return n;
+    // }
+
+    uint32_t findMaxPartials(T dt1, T dt2) {
+      uint32_t n = 0;
+      T t = dt1 + dt2;
       while (t <= 0.5) {
         t += dt2;
         n += 1;
@@ -77,21 +87,21 @@ class SAT_DsfWaveform {
 
     //----------
 
-    float process(float t1, float t2, float a, float N) {
-      t1               *= SAT_PI2;
-      t2               *= SAT_PI2;
-      float N1          = N + 1;
-      float aa          = a * a;
-      float a2          = a * 2;
-      float sin_t1      = sin(t1);
-      float cos_t2      = cos(t2);
-      float sin_t2t1    = sin(t2 -    t1);
-      float sin_t1nt2   = sin(t1 + N *t2);
-      float sin_t1n1t2  = sin(t1 + N1*t2);
-      float pow_an1     = pow(a,N1);
-      float result      = ((a*sin_t2t1+sin_t1) + pow_an1 * (a*sin_t1nt2-sin_t1n1t2)) / (1+aa-a2*cos_t2);
+    T process(T t1, T t2, T a, uint32_t N) {
+      t1           *= SAT_PI2;
+      t2           *= SAT_PI2;
+      T N1          = N + 1;
+      T aa          = a * a;
+      T a2          = a * 2;
+      T sin_t1      = sin(t1);
+      T cos_t2      = cos(t2);
+      T sin_t2t1    = sin(t2 -    t1);
+      T sin_t1nt2   = sin(t1 + N *t2);
+      T sin_t1n1t2  = sin(t1 + N1*t2);
+      T pow_an1     = pow(a,N1);
+      T result      = ((a*sin_t2t1+sin_t1) + pow_an1 * (a*sin_t1nt2-sin_t1n1t2)) / (1+aa-a2*cos_t2);
       /*
-      float result      = (a*sin_t2t1  + sin_t1)
+      T result      = (a*sin_t2t1  + sin_t1)
       result           += pow_an1 * (a*sin_t1nt2 - sin_t1n1t2)
       result           /= (1+aa-a2*cos_t2);
       */
@@ -107,25 +117,25 @@ class SAT_DsfWaveform {
     //----------
 
     /*
-    float processF(float t1, float t2, float a, float N) {
+    T processF(T t1, T t2, T a, uint32_t N) {
       t1               *= SAT_PI2;
       t2               *= SAT_PI2;
-      float N1          = N + 1.0f;
-      float aa          = a * a;
-      float a2          = a * 2.0f;
-      float w_t1      = KWrap(t1,         -SAT_PI,SAT_PI);
-      float w_t2      = KWrap(t2,         -SAT_PI,SAT_PI);
-      float w_t2t1    = KWrap((t2-t1),    -SAT_PI,SAT_PI);
-      float w_t1nt2   = KWrap((t1+N*t2),  -SAT_PI,SAT_PI);
-      float w_t1n1t2  = KWrap((t1+N1*t2), -SAT_PI,SAT_PI);
-      float sin_t1      = KSinF2(w_t1);
-      float cos_t2      = KCosF2(w_t2);
-      float sin_t2t1    = KSinF2(w_t2t1);
-      float sin_t1nt2   = KSinF2(w_t1nt2);
-      float sin_t1n1t2  = KSinF2(w_t1n1t2);
+      T N1          = N + 1.0f;
+      T aa          = a * a;
+      T a2          = a * 2.0f;
+      T w_t1      = KWrap(t1,         -SAT_PI,SAT_PI);
+      T w_t2      = KWrap(t2,         -SAT_PI,SAT_PI);
+      T w_t2t1    = KWrap((t2-t1),    -SAT_PI,SAT_PI);
+      T w_t1nt2   = KWrap((t1+N*t2),  -SAT_PI,SAT_PI);
+      T w_t1n1t2  = KWrap((t1+N1*t2), -SAT_PI,SAT_PI);
+      T sin_t1      = KSinF2(w_t1);
+      T cos_t2      = KCosF2(w_t2);
+      T sin_t2t1    = KSinF2(w_t2t1);
+      T sin_t1nt2   = KSinF2(w_t1nt2);
+      T sin_t1n1t2  = KSinF2(w_t1n1t2);
       //int32 iN1         = (int32)KTrunc(N1);
-      //float pow_an1     = KPowF(a,iN1);
-      float pow_an1     = pow(a,N1);
+      //T pow_an1     = KPowF(a,iN1);
+      T pow_an1     = pow(a,N1);
       return ((a*sin_t2t1+sin_t1) + pow_an1 * (a*sin_t1nt2-sin_t1n1t2)) / (1+aa-a2*cos_t2);
     }
     */
@@ -135,18 +145,18 @@ class SAT_DsfWaveform {
     // the following didn't work properly?
 
     /*
-    float process2(float t1, float t2, float a, float N) {
+    T process2(T t1, T t2, T a, uint32_t N) {
       t1 *= SAT_PI2;
       t2 *= SAT_PI2;
-      float N1          = N + 1;
-      float aa          = a * a;
-      float a2          = a * 2;
-      float sin_t1      = sin(t1);
-      float cos_t2      = cos(t2);
-      float cos_nt2     = cos(N*t2);
-      float cos_n1t2    = cos(N1*t2);
-      float pow_a2n1    = pow(a2,N1);
-      float result      = sin_t1 * ( 1 - aa - pow_a2n1 * ( cos_n1t2 - a * cos_nt2 ))  /  (1 + aa - a2 * cos_t2);
+      T N1          = N + 1;
+      T aa          = a * a;
+      T a2          = a * 2;
+      T sin_t1      = sin(t1);
+      T cos_t2      = cos(t2);
+      T cos_nt2     = cos(N*t2);
+      T cos_n1t2    = cos(N1*t2);
+      T pow_a2n1    = pow(a2,N1);
+      T result      = sin_t1 * ( 1 - aa - pow_a2n1 * ( cos_n1t2 - a * cos_nt2 ))  /  (1 + aa - a2 * cos_t2);
       // normalization
       //result *= sqrt( (1-a*a) / (1+a*a) );
       return result;

@@ -7,7 +7,6 @@
 # $@    = arguments
 # $#    = number of arguments?
 
-
 #VAR_1="to uppercase"
 #echo ${VAR_1^}
 #echo ${VAR_1^^}
