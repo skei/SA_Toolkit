@@ -152,11 +152,10 @@ public:
 
   bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
     //SAT_Print("index %i noteid %i port %i channel %i key %i = %i,%i,%i,%i",index,noteid,port,channel,key, MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key);
-    if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   { /*SAT_DPrint(" -> false\n");*/ return false; }
-    if ((port    != -1) && (MVoices[index].note.port    != port))     { /*SAT_DPrint(" -> false\n");*/ return false; }
-    if ((channel != -1) && (MVoices[index].note.channel != channel))  { /*SAT_DPrint(" -> false\n");*/ return false; }
-    if ((key     != -1) && (MVoices[index].note.key     != key))      { /*SAT_DPrint(" -> false\n");*/ return false; }
-    //SAT_DPrint(" -> true\n"); 
+    if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   return false;
+    if ((port    != -1) && (MVoices[index].note.port    != port))     return false;
+    if ((channel != -1) && (MVoices[index].note.channel != channel))  return false;
+    if ((key     != -1) && (MVoices[index].note.key     != key))      return false;
     return true;
   }
   
@@ -339,11 +338,12 @@ public:
         // still waiting, not started? something is wrong..
         MVoices[i].state = SAT_VOICE_OFF;
         queueNoteEnd(MVoices[i].note);      // ???
-        //SAT_Print("voice %i -> OFF\n",i);
+        SAT_Print("voice %i -> OFF\n",i);
       }
       if (MVoices[i].state == SAT_VOICE_FINISHED) {
         MVoices[i].state = SAT_VOICE_OFF;
         queueNoteEnd(MVoices[i].note);
+        SAT_Print("voice %i -> OFF\n",i);
       }
     }
     flushNoteEnds(out_events);

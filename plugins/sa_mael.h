@@ -196,7 +196,6 @@ public: // events
   }
 
   bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    SAT_PRINT;
     MVoiceManager.handleParamValue(event);
     return true;
   }

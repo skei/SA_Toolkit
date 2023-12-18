@@ -17,41 +17,41 @@ class sa_mael_Voice {
 private:
 //------------------------------
 
-  SAT_VoiceContext*                 MContext    = nullptr;
-  uint32_t                          MIndex      = 0;
-  sat_sample_t                      MSampleRate = 0.0;
+  //SAT_Plugin*                       MPlugin     = nullptr;
+
+  SAT_VoiceContext*                 MContext      = nullptr;
+  uint32_t                          MIndex        = 0;
+  sat_sample_t                      MSampleRate   = 0.0;
 
   // note on
-  sat_param_t                       MKey        = 0.0;    // aka note
-  sat_param_t                       MVelocity   = 1.0;
+  sat_param_t                       MKey          = 0.0;    // aka note
+  sat_param_t                       MVelocity     = 1.0;
 
   // param
-  sat_param_t                       MPGain      = 1.0;
-  sat_param_t                       MPTuning    = 0.0;    // aka pitchbend
-  sat_param_t                       MPFilter    = 1.0;
+  sat_param_t                       p_gain        = 1.0;
+  sat_param_t                       p_tuning      = 0.0;    // aka pitchbend
+  sat_param_t                       p_osc1_shape  = 0.0;
+  sat_param_t                       p_osc1_width  = 0.0;
 
   // mod
-  sat_param_t                       MMGain      = 0.0;
-  sat_param_t                       MMTuning    = 0.0;
-  sat_param_t                       MMFilter    = 0.0;
+  sat_param_t                       m_gain        = 0.0;
+  sat_param_t                       m_tuning      = 0.0;
 
   // note expr
-  sat_param_t                       MEPress     = 0.0;
-  sat_param_t                       METuning    = 0.0;
-  sat_param_t                       MEBright    = 0.0;
+  sat_param_t                       e_press       = 0.0;
+  sat_param_t                       e_tuning      = 0.0;
+  sat_param_t                       e_brightness  = 0.0;
 
   //
 
-  sat_sample_t                      MPhase      = 0.0;
-  sat_sample_t                      MPhaseAdd   = 0.0;
+  sat_sample_t                      MPhase        = 0.0;
+  sat_sample_t                      MPhaseAdd     = 0.0;
 
-  //SAT_DsfWaveform<sat_sample_t>     MDsf        = {};
-  SAT_MorphOscillator<sat_sample_t> MOscillator = {};
-  SAT_SVFFilter<sat_sample_t>       MFilter     = {};
-  SAT_CurvedEnvelope<sat_sample_t>  MEnvelope   = {};
+  SAT_MorphOscillator<sat_sample_t> MOscillator   = {};
+  SAT_SVFFilter<sat_sample_t>       MFilter       = {};
+  SAT_CurvedEnvelope<sat_sample_t>  MEnvelope     = {};
 
-  //sat_param_t p_shape = 0.0;
-  //sat_param_t p_width = 0.0;
+  //
 
 //------------------------------
 public:
@@ -61,12 +61,25 @@ public:
     MIndex = AIndex;
     MContext = AContext;
     MSampleRate = AContext->sample_rate;
+
+    //MPlugin = AContext->process_context->plugin;
+
+    MOscillator.reset();
+    MOscillator.setSampleRate(MSampleRate);
+    //MOscillator.setMorph(p_osc1_shape);
+    //MOscillator.setPulseWidth(p_osc1_width);
+
+    MEnvelope.init(MSampleRate);
+    MEnvelope.addSegment( 1, 1, 1.0, 0.5 );
+    MEnvelope.addSegment( 1, 0, 3.0, 0.5 );
+    MEnvelope.setSustain(0);
+
   }
 
   //----------
 
   sat_sample_t getVoiceLevel() {
-    return 1.0;
+    return MEnvelope.getValue();
   }
 
   //----------
@@ -82,19 +95,22 @@ public:
 
         MPhase = SAT_Fract(MPhase);
 
-        sat_sample_t v = (MPhase * 2.0) - 1.0;  // 0..1 -> -1..1
+//        sat_sample_t v = (MPhase * 2.0) - 1.0;  // 0..1 -> -1..1
 
-        // sat_sample_t phase2 = SAT_Trunc(MPhase + 0.25);
-        // sat_sample_t a      = p_shape * 10;
-        // uint32_t     N      = p_width * 16;
-        // sat_sample_t v = MDsf.process(MPhase,phase2,a,N);
+        MOscillator.setPhase(MPhase);
+        MOscillator.setPhaseAdd(MPhaseAdd);
+        MOscillator.setMorph(p_osc1_shape);
+        MOscillator.setPulseWidth(p_osc1_width);
+        sat_sample_t v = MOscillator.process();
 
-        sat_sample_t env = 1.0;
+        //sat_sample_t env = 1.0;
+        sat_sample_t env = MEnvelope.processSample();
+
         *buffer++ = v * env * VOICE_SCALE;
 
-        sat_param_t tuning = MPTuning + MMTuning;
+        sat_param_t tuning = p_tuning + m_tuning;
         tuning = SAT_Clamp(tuning,-1,1);
-        tuning +=  METuning;
+        tuning +=  e_tuning;
         sat_sample_t hz = SAT_NoteToHz(MKey + tuning);
 
         MPhaseAdd = 1.0 / SAT_HzToSamples(hz,MSampleRate);
@@ -105,7 +121,11 @@ public:
     else {
       memset(buffer,0,ALength * sizeof(sat_sample_t));
     }
-    return AState;
+
+    if (MEnvelope.getState() == SAT_ENV_FINISHED) {
+      return SAT_VOICE_FINISHED;
+    }
+    else return AState;
   }
 
   //----------
@@ -117,22 +137,31 @@ public:
   //----------
 
   uint32_t noteOn(uint32_t AIndex, double AValue) {
+
     SAT_Plugin*     plugin      = MContext->process_context->plugin;
     SAT_Parameter*  par_tuning  = plugin->getParameter(1);
+
     MKey      = AIndex;
     MVelocity = AValue;
     MPhase    = 0.0;
-    MPTuning  = par_tuning->getValue();
-    MMTuning  = 0.0;
-    METuning  = 0.0;
+    p_tuning  = par_tuning->getValue();
+    m_tuning  = 0.0;
+    e_tuning  = 0.0;
+
+    p_osc1_shape = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_SHAPE);
+    p_osc1_width = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_WIDTH);
+    MOscillator.reset();
+    MEnvelope.noteOn(MVelocity);
     return SAT_VOICE_PLAYING;
   }
 
   //----------
 
   uint32_t noteOff(uint32_t AIndex, sat_param_t AValue) {
-    return SAT_VOICE_FINISHED;
-    //return SAT_VOICE_RELEASED;
+    //MOscillator.noteOff(AValue);
+    MEnvelope.noteOff(AValue);
+    //return SAT_VOICE_FINISHED;
+    return SAT_VOICE_RELEASED;
   }
 
   //----------
@@ -144,20 +173,20 @@ public:
 
   void noteExpression(uint32_t AIndex, sat_param_t AValue) {
     switch (AIndex) {
-      case CLAP_NOTE_EXPRESSION_PRESSURE:   MEPress  = AValue; break;
-      case CLAP_NOTE_EXPRESSION_TUNING:     METuning = AValue; break;
-      case CLAP_NOTE_EXPRESSION_BRIGHTNESS: MEBright = AValue; break;
+      case CLAP_NOTE_EXPRESSION_PRESSURE:   e_press       = AValue; break;
+      case CLAP_NOTE_EXPRESSION_TUNING:     e_tuning      = AValue; break;
+      case CLAP_NOTE_EXPRESSION_BRIGHTNESS: e_brightness  = AValue; break;
     }
   }
 
   //----------
 
   void parameter(uint32_t AIndex, sat_param_t AValue) {
-    SAT_Print("%i = %f\n",AIndex,AValue);
+    //SAT_Print("%i = %f\n",AIndex,AValue);
     switch (AIndex) {
-      case SA_MAEL_PARAM_GAIN:        MPGain  = AValue; break;
-      //case SA_MAEL_PARAM_OSC1_SHAPE:  p_shape = AValue; break;
-      //case SA_MAEL_PARAM_OSC1_WIDTH:  p_width = AValue; break;
+      case SA_MAEL_PARAM_GAIN:        p_gain        = AValue; break;
+      case SA_MAEL_PARAM_OSC1_SHAPE:  p_osc1_shape  = AValue; break;
+      case SA_MAEL_PARAM_OSC1_WIDTH:  p_osc1_width  = AValue; break;
     }
   }
 
@@ -165,9 +194,9 @@ public:
 
   void modulation(uint32_t AIndex, sat_param_t AValue) {
     switch (AIndex) {
-      case 0: MMGain    = AValue; break;
-      case 1: MMTuning  = AValue; break;
-      case 2: MMFilter  = AValue; break;
+      case SA_MAEL_PARAM_GAIN: m_gain    = AValue; break;
+      //case 1: MMTuning  = AValue; break;
+      //case 2: MMFilter  = AValue; break;
     }
   }
 
