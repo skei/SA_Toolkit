@@ -144,14 +144,14 @@ public:
         strcpy(page->section_name,"Section");
         page->page_id = 0;
         strcpy(page->page_name,"SA_Synth parameters");
-        page->param_ids[0] = CLAP_INVALID_ID;
-        page->param_ids[1] = CLAP_INVALID_ID;
-        page->param_ids[2] = CLAP_INVALID_ID;
-        page->param_ids[3] = CLAP_INVALID_ID;
-        page->param_ids[4] = CLAP_INVALID_ID;
-        page->param_ids[5] = CLAP_INVALID_ID;
-        page->param_ids[6] = CLAP_INVALID_ID;
-        page->param_ids[7] = CLAP_INVALID_ID;
+        page->param_ids[0] = SA_MAEL_PARAM_OSC1_TYPE;
+        page->param_ids[1] = SA_MAEL_PARAM_OSC1_SHAPE;
+        page->param_ids[2] = SA_MAEL_PARAM_OSC1_WIDTH;
+        page->param_ids[3] = SA_MAEL_PARAM_GAIN;
+        page->param_ids[4] = SA_MAEL_PARAM_FLT1_TYPE;
+        page->param_ids[5] = SA_MAEL_PARAM_FLT1_FREQ;
+        page->param_ids[6] = SA_MAEL_PARAM_FLT1_Q;
+        page->param_ids[7] = SA_MAEL_PARAM_TUNING;
         page->is_for_preset = false;
         return true;
       }

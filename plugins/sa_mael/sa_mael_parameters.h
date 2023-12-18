@@ -10,6 +10,7 @@
 enum sa_mael_parameter_e {
 
   SA_MAEL_PARAM_GAIN = 0,
+  SA_MAEL_PARAM_TUNING,
 
   SA_MAEL_PARAM_OSC1_TYPE,
   SA_MAEL_PARAM_OSC1_SHAPE,
@@ -44,11 +45,12 @@ enum sa_mael_parameter_e {
 //const
 clap_param_info_t sa_mael_Parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_GAIN,           A,    nullptr, "Gain",      "Global",   0.0, 1.0, 0.5 },
+  { SA_MAEL_PARAM_TUNING,         A|MN, nullptr, "Tuning",    "Global",  -1.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_OSC1_TYPE,      A|SE, nullptr, "Type",      "Osc1",     0,   4,   1   },
   { SA_MAEL_PARAM_OSC1_SHAPE,     A|MN, nullptr, "Shape",     "Osc1",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_OSC1_WIDTH,     A|MN, nullptr, "Width",     "Osc1",     0.0, 1.0, 0.5 },
   { SA_MAEL_PARAM_FLT1_TYPE,      A|SE, nullptr, "Type",      "Flt1",     0,   9,   1   },
-  { SA_MAEL_PARAM_FLT1_FREQ,      A|MN, nullptr, "Freq",      "Flt1",     0.0, 1.0, 0.5 },
+  { SA_MAEL_PARAM_FLT1_FREQ,      A|MN, nullptr, "Freq",      "Flt1",     0.0, 1.0, 0.75 },
   { SA_MAEL_PARAM_FLT1_Q,         A|MN, nullptr, "Q",         "Flt1",     0.0, 1.0, 0.2325 },
   { SA_MAEL_PARAM_ENV1_ATT,       A,    nullptr, "All",       "Env1",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_ENV1_DEC,       A,    nullptr, "Dec",       "Env1",     0.0, 1.0, 0.0 },
@@ -85,6 +87,7 @@ const char* flt_types_txt[num_flt_types] = {
 bool sa_mael_SetupParameters(SAT_Plugin* APlugin) {
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_GAIN]           ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_TUNING]         ));
 
   APlugin->appendParameter( new SAT_TextParameter(&sa_mael_Parameters[SA_MAEL_PARAM_OSC1_TYPE], osc_types_txt ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_OSC1_SHAPE]     ));
@@ -92,7 +95,7 @@ bool sa_mael_SetupParameters(SAT_Plugin* APlugin) {
 
   APlugin->appendParameter( new SAT_TextParameter(&sa_mael_Parameters[SA_MAEL_PARAM_FLT1_TYPE], flt_types_txt ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_FLT1_FREQ]      ));
-  APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_FLT1_Q]        ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_FLT1_Q]         ));
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_ENV1_ATT]       ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_Parameters[SA_MAEL_PARAM_ENV1_DEC]       ));

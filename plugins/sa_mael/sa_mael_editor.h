@@ -41,6 +41,14 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   global_panel->appendChildWidget(gain_knob);
   AEditor->connect(gain_knob,getParameter(SA_MAEL_PARAM_GAIN));
 
+  SAT_KnobWidget* tuning_knob = new SAT_KnobWidget(SAT_Rect(70,30,50,50),"Tun",0.1);
+  global_panel->appendChildWidget(tuning_knob);
+  AEditor->connect(tuning_knob,getParameter(SA_MAEL_PARAM_TUNING));
+  tuning_knob->setBipolar(true);
+  tuning_knob->setBipolarCenter(0.5);
+  tuning_knob->setSnap(true);
+  tuning_knob->setSnapPos(0.5);
+
   //------------------------------
   // osc1
   //------------------------------
@@ -59,14 +67,19 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   SAT_KnobWidget* shape_knob = new SAT_KnobWidget(SAT_Rect(10,55,50,50),"Sh",0);
   osc1_panel->appendChildWidget(shape_knob);
   AEditor->connect(shape_knob,getParameter(SA_MAEL_PARAM_OSC1_SHAPE));
-  //shape_knob->setQuantize(true);
-  //shape_knob->setQuantizeSteps(4);
+  shape_knob->setQuantize(true);
+  shape_knob->setQuantizeSteps(4);
 
   SAT_KnobWidget* width_knob = new SAT_KnobWidget(SAT_Rect(70,55,50,50),"Wi",0);
   osc1_panel->appendChildWidget(width_knob);
   AEditor->connect(width_knob,getParameter(SA_MAEL_PARAM_OSC1_WIDTH));
   width_knob->setBipolar(true);
   width_knob->setBipolarCenter(0.5);
+  width_knob->setBipolar(true);
+  width_knob->setBipolarCenter(0.5);
+  width_knob->setSnap(true);
+  width_knob->setSnapPos(0.5);
+
 
   //------------------------------
   // flt1
