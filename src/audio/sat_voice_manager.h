@@ -97,6 +97,8 @@ public:
 //------------------------------
 
   void init(const clap_plugin_t* APlugin, const clap_host_t* AHost) {
+    //SAT_Plugin* plugin = (SAT_Plugin*)APlugin->plugin_data;
+    //MVoiceContext.plugin = plugin;
     MClapPlugin = APlugin;
     MClapHost = AHost;
     if (MClapHost) {
@@ -232,7 +234,7 @@ public:
   }
 
   //----------
-  
+
   //#ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
   void handleParamValue(const clap_event_param_value_t* event) {
@@ -338,12 +340,12 @@ public:
         // still waiting, not started? something is wrong..
         MVoices[i].state = SAT_VOICE_OFF;
         queueNoteEnd(MVoices[i].note);      // ???
-        SAT_Print("voice %i -> OFF\n",i);
+        //SAT_Print("voice %i -> OFF\n",i);
       }
       if (MVoices[i].state == SAT_VOICE_FINISHED) {
         MVoices[i].state = SAT_VOICE_OFF;
         queueNoteEnd(MVoices[i].note);
-        SAT_Print("voice %i -> OFF\n",i);
+        //SAT_Print("voice %i -> OFF\n",i);
       }
     }
     flushNoteEnds(out_events);

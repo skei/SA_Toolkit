@@ -96,14 +96,29 @@ public:
   //----------
 
   void reset() {
+    MNumSegments        = 0;
     MState              = SAT_ENV_OFF;
+    MCurrentValue       = 0.0;
+    //MSamplesPerSecond   = 
+    //MSecondsPerSample   = 
+    MSustainSegment     = 0;
     MCurrentSegment     = 0;
     MSegmentType        = 0;
     MTimeInSegment      = 0.0;
     MSegmentStartValue  = 0.0;
     MSegmentDelta       = 0.0;
     MSegmentLength      = 0;
-    MCurrentValue       = 0.0;
+  }
+
+  //----------
+
+  void setADSR(sat_param_t AAttack, sat_param_t ADecay, sat_param_t ASustain, sat_param_t ARelease) {
+    reset();
+    //MStartValue= 0.0;
+    addSegment( 1, 1,        AAttack,  0.5 );
+    addSegment( 1, ASustain, ADecay,   0.5 );
+    addSegment( 1, 0,        ARelease, 0.5 );
+    setSustain(1);
   }
 
   //----------
@@ -198,19 +213,25 @@ private:
   //----------
 
   void next() {
-    MCurrentSegment += 1;
-    if (MCurrentSegment >= MNumSegments) {
-      MState = SAT_ENV_FINISHED;
-      MCurrentValue = 0.0;
-    }
-    else {
-      MSegmentType        = MSegments[MCurrentSegment].type;
-      //MTimeInSegment      = 0.0 + (MTimeInSegment - MSegmentLength);
-      MTimeInSegment      = 0.0;
-      MSegmentStartValue  = MSegments[MCurrentSegment-1].target;
-      MSegmentDelta       = (MSegments[MCurrentSegment].target - MCurrentValue) * MSegments[MCurrentSegment].length;
-      MSegmentLength      = MSegments[MCurrentSegment].length;
-   } // end
+    T length = 0.0;
+    while (length <= 0) {
+      MCurrentSegment += 1;
+      if (MCurrentSegment >= MNumSegments) {
+        MState = SAT_ENV_FINISHED;
+        MCurrentValue = 0.0;
+      }
+      else {
+        length              = MSegments[MCurrentSegment].length;
+        if (length > 0) {
+          MSegmentType        = MSegments[MCurrentSegment].type;
+          //MTimeInSegment      = 0.0 + (MTimeInSegment - MSegmentLength);
+          MTimeInSegment      = 0.0;
+          MSegmentStartValue  = MSegments[MCurrentSegment-1].target;
+          MSegmentDelta       = (MSegments[MCurrentSegment].target - MCurrentValue) * length;
+          MSegmentLength      = MSegments[MCurrentSegment].length;
+        }
+      }
+    } // end
   }
 
   //----------

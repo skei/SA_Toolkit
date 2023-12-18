@@ -87,9 +87,9 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   flt1_panel->appendChildWidget(freq_knob);
   AEditor->connect(freq_knob,getParameter(SA_MAEL_PARAM_FLT1_FREQ));
 
-  SAT_KnobWidget* bw_knob = new SAT_KnobWidget(SAT_Rect(70,55,50,50),"BW",0);
-  flt1_panel->appendChildWidget(bw_knob);
-  AEditor->connect(bw_knob,getParameter(SA_MAEL_PARAM_FLT1_BW));
+  SAT_KnobWidget* q_knob = new SAT_KnobWidget(SAT_Rect(70,55,50,50),"Q",0);
+  flt1_panel->appendChildWidget(q_knob);
+  AEditor->connect(q_knob,getParameter(SA_MAEL_PARAM_FLT1_Q));
 
   //------------------------------
   // env1
@@ -102,11 +102,11 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   env1_panel->appendChildWidget(env1_text);
   env1_text->setText("ENV1");
 
-  SAT_CurveWidget* curve_a = new SAT_CurveWidget(SAT_Rect(10,30,20,20),false);
-  env1_panel->appendChildWidget(curve_a);
-  AEditor->connect(curve_a,getParameter(SA_MAEL_PARAM_ENV1_ATT_CURVE));
-  //curve_a->setSnap(true);
-  //curve_a->setSnapPos(0.5);
+  // SAT_CurveWidget* curve_a = new SAT_CurveWidget(SAT_Rect(10,30,20,20),false);
+  // env1_panel->appendChildWidget(curve_a);
+  // AEditor->connect(curve_a,getParameter(SA_MAEL_PARAM_ENV1_ATT_CURVE));
+  // //curve_a->setSnap(true);
+  // //curve_a->setSnapPos(0.5);
 
   SAT_SliderWidget* slider_a = new SAT_SliderWidget(SAT_Rect(10,55,20,50),"A",0);
   env1_panel->appendChildWidget(slider_a);
@@ -117,11 +117,11 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   slider_a->setDrawValue(false);
   slider_a->setTextAlignment(SAT_TEXT_ALIGN_TOP);
 
-  SAT_CurveWidget* curve_d = new SAT_CurveWidget(SAT_Rect(35,30,20,20),true);
-  env1_panel->appendChildWidget(curve_d);
-  AEditor->connect(curve_d,getParameter(SA_MAEL_PARAM_ENV1_DEC_CURVE));
-  //curve_d->setSnap(true);
-  //curve_d->setSnapPos(0.5);
+  // SAT_CurveWidget* curve_d = new SAT_CurveWidget(SAT_Rect(35,30,20,20),true);
+  // env1_panel->appendChildWidget(curve_d);
+  // AEditor->connect(curve_d,getParameter(SA_MAEL_PARAM_ENV1_DEC_CURVE));
+  // //curve_d->setSnap(true);
+  // //curve_d->setSnapPos(0.5);
 
   SAT_SliderWidget* slider_d = new SAT_SliderWidget(SAT_Rect(35,55,20,50),"D",0);
   env1_panel->appendChildWidget(slider_d);
@@ -141,11 +141,11 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   slider_s->setDrawValue(false);
   slider_s->setTextAlignment(SAT_TEXT_ALIGN_TOP);
 
-  SAT_CurveWidget* curve_r = new SAT_CurveWidget(SAT_Rect(85,30,20,20),true);
-  env1_panel->appendChildWidget(curve_r);
-  AEditor->connect(curve_r,getParameter(SA_MAEL_PARAM_ENV1_REL_CURVE));
-  //curve_r->setSnap(true);
-  //curve_r->setSnapPos(0.5);
+  // SAT_CurveWidget* curve_r = new SAT_CurveWidget(SAT_Rect(85,30,20,20),true);
+  // env1_panel->appendChildWidget(curve_r);
+  // AEditor->connect(curve_r,getParameter(SA_MAEL_PARAM_ENV1_REL_CURVE));
+  // //curve_r->setSnap(true);
+  // //curve_r->setSnapPos(0.5);
 
   SAT_SliderWidget* slider_r = new SAT_SliderWidget(SAT_Rect(85,55,20,50),"R",0);
   env1_panel->appendChildWidget(slider_r);

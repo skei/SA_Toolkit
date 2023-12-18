@@ -110,6 +110,7 @@ private:
 //------------------------------
 
   void handleEvent(SAT_VoiceEvent event) {
+    //SAT_Print("voice index %i\n",index);
     switch(event.type) {
       case CLAP_EVENT_NOTE_ON: {
         state = voice.noteOn(event.index,event.value);
