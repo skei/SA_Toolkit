@@ -4,9 +4,9 @@
 
 #define VOICE_SCALE   0.1
 
-#include "audio/synthesis/sat_dsf_waveform.h"
-#include "audio/synthesis/sat_morph_oscillator.h"
 #include "audio/filters/sat_svf_filter.h"
+//#include "audio/synthesis/sat_dsf_waveform.h"
+#include "audio/synthesis/sat_morph_oscillator.h"
 //#include "audio/modulation/sat_curved_envelope.h"
 #include "audio/modulation/sat_exp_envelope.h"
 
@@ -64,9 +64,11 @@ private:
 
   SAT_MorphOscillator<sat_sample_t> MOscillator   = {};
   SAT_SVFFilter<sat_sample_t>       MFilter       = {};
-  //SAT_CurvedEnvelope<sat_sample_t>  MEnvelope     = {};
   SAT_ExpEnvelope<sat_sample_t>     MEnvelope     = {};
 
+//SAT_DsfWaveform<sat_sample_t>     MDsf          = {};
+//SAT_CurvedEnvelope<sat_sample_t>  MEnvelope     = {};
+  
   //
 
 //------------------------------
@@ -93,66 +95,7 @@ public:
   }
 
   //----------
-
-  uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
-    sat_sample_t* buffer = MContext->voice_buffer;
-    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
-    buffer += AOffset;
-    if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
-      for (uint32_t i=0; i<ALength; i++) {
-
-        MPhase = SAT_Fract(MPhase);
-
-        MOscillator.setPhase(MPhase);
-        MOscillator.setPhaseAdd(MPhaseAdd);
-
-        sat_param_t osc1_shape = SAT_Clamp( (p_osc1_shape + m_osc1_shape),  0, 1 );
-        sat_param_t osc1_width = SAT_Clamp( (p_osc1_width + m_osc1_width), -1, 1 );
-
-        MOscillator.setMorph(osc1_shape);
-        MOscillator.setPulseWidth(osc1_width);
-
-        sat_sample_t v = MOscillator.process();
-        
-        //MFilter.resetState();
-
-        sat_param_t flt1_freq = SAT_Clamp( (p_flt1_freq + m_flt1_freq), 0, 1 );
-        sat_param_t flt1_q = SAT_Clamp( (p_flt1_q + m_flt1_q), 0, 1 );
-        
-        flt1_freq *= (MSampleRate * 0.5);
-        flt1_q     = SAT_Clamp( (flt1_q * 40), 0.025, 40.0 );
-        MFilter.updateCoefficients(flt1_freq,flt1_q,p_flt1_type,MSampleRate);
-        v = MFilter.tick(v);
-
-        sat_sample_t env = MEnvelope.process();
-        *buffer++ = v * env * VOICE_SCALE;
-
-        sat_param_t tuning = SAT_Clamp( (p_tuning + m_tuning), -1, 1 );
-        tuning += e_tuning;
-
-        sat_sample_t hz = SAT_NoteToHz(MKey + tuning);
-        MPhaseAdd = 1.0 / SAT_HzToSamples(hz,MSampleRate);
-        MPhase += MPhaseAdd;
-
-      }
-    }
-    else {
-      memset(buffer,0,ALength * sizeof(sat_sample_t));
-    }
-    if (MEnvelope.getStage() == SAT_ENVELOPE_FINISHED) {
-      return SAT_VOICE_FINISHED;
-    }
-    else return AState;
-  }
-
-  //----------
-
-  uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
-    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
-  }
-
-  //----------
-
+  
   uint32_t noteOn(uint32_t AIndex, double AValue) {
     SAT_Plugin*     plugin      = MContext->process_context->plugin;
     SAT_Parameter*  par_tuning  = plugin->getParameter(1);
@@ -225,9 +168,8 @@ public:
       case SA_MAEL_PARAM_OSC1_TYPE:   p_osc1_type   = AValue;   break;
       case SA_MAEL_PARAM_OSC1_SHAPE:  p_osc1_shape  = AValue;   break;
       case SA_MAEL_PARAM_OSC1_WIDTH:  p_osc1_width  = AValue;   break;
-      case SA_MAEL_PARAM_FLT1_TYPE:   p_flt1_type   = AValue;   SAT_Print("%i\n",p_flt1_type); break;
+      case SA_MAEL_PARAM_FLT1_TYPE:   p_flt1_type   = AValue;   break;
       case SA_MAEL_PARAM_FLT1_FREQ:   p_flt1_freq   = a3;       break;
-      //case SA_MAEL_PARAM_FLT1_Q:      p_flt1_q      = SAT_Clamp( (a3*40), 0.025, 40.0 );        break;
       case SA_MAEL_PARAM_FLT1_Q:      p_flt1_q      = a3;       break;
       case SA_MAEL_PARAM_ENV1_ATT:    p_env1_att    = AValue*5; MEnvelope.setAttack(AValue*5);  break;
       case SA_MAEL_PARAM_ENV1_DEC:    p_env1_dec    = AValue*5; MEnvelope.setDecay(AValue*5);   break;
@@ -247,6 +189,77 @@ public:
       case SA_MAEL_PARAM_FLT1_Q:      m_flt1_q      = AValue; break;
     }
   }
+
+//----------
+
+  uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
+    sat_sample_t* buffer = MContext->voice_buffer;
+    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
+    buffer += AOffset;
+    if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
+      for (uint32_t i=0; i<ALength; i++) {
+
+        MPhase = SAT_Fract(MPhase);
+
+        // osc
+
+        sat_param_t osc1_shape = SAT_Clamp( (p_osc1_shape + m_osc1_shape),  0, 1 );
+        sat_param_t osc1_width = SAT_Clamp( (p_osc1_width + m_osc1_width), -1, 1 );
+
+        MOscillator.setPhase(MPhase);
+        MOscillator.setPhaseAdd(MPhaseAdd);
+        MOscillator.setMorph(osc1_shape);
+        MOscillator.setPulseWidth(osc1_width);
+        sat_sample_t v = MOscillator.process();
+
+        // sat_sample_t t2 = SAT_Trunc( MPhase * osc1_shape );
+        // sat_sample_t v = MDsf.process(MPhase,t2,osc1_width,16);
+
+        // flt
+        
+        sat_param_t flt1_freq = SAT_Clamp( (p_flt1_freq + m_flt1_freq), 0, 1 );
+        sat_param_t flt1_q = SAT_Clamp( (p_flt1_q + m_flt1_q), 0, 1 );
+        
+        flt1_freq *= (MSampleRate * 0.5);
+        flt1_q     = SAT_Clamp( (flt1_q * 40), 0.025, 40.0 );
+        MFilter.updateCoefficients(flt1_freq,flt1_q,p_flt1_type,MSampleRate);
+        v = MFilter.tick(v);
+
+        // env
+
+        sat_sample_t env = MEnvelope.process();
+        *buffer++ = v * env * VOICE_SCALE;
+
+        // tuning
+
+        sat_param_t tuning = SAT_Clamp( (p_tuning + m_tuning), -1, 1 );
+        tuning += e_tuning;
+
+        //
+
+        sat_sample_t hz = SAT_NoteToHz(MKey + tuning);
+        MPhaseAdd = 1.0 / SAT_HzToSamples(hz,MSampleRate);
+        MPhase += MPhaseAdd;
+
+      }
+    }
+    else {
+      memset(buffer,0,ALength * sizeof(sat_sample_t));
+    }
+    if (MEnvelope.getStage() == SAT_ENVELOPE_FINISHED) {
+      return SAT_VOICE_FINISHED;
+    }
+    else return AState;
+  }
+
+  //----------
+
+  uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
+    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
+  }
+
+  //----------
+
 
 };
 
