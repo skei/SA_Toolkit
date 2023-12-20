@@ -70,4 +70,5 @@
 //----------------------------------------------------------------------
 
 //#include "../plugins/demo.h"
+//#include "../plugins/interceptor.h"
 //#include "../plugins/minimal.h"

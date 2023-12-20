@@ -165,11 +165,11 @@ public:
     T t1 = ph + 0.5;
     t1 = SAT_Fract(t1);
     T saw1 = 2.0f * t1 - 1.0;
-    saw1 -= SAT_PolyBlep<T>(t1,phadd);
+//    saw1 -= SAT_PolyBlep<T>(t1,phadd);
     T t2 = t1 + MPulseWidth;
     t2 = SAT_Fract(t2);
     T saw2 = 2.0 * t2 - 1.0;
-    saw2 -= SAT_PolyBlep<T>(t2,phadd);
+//    saw2 -= SAT_PolyBlep<T>(t2,phadd);
     T squ = saw1 - (saw2*MSawSqu);
     z1 = (phadd * squ) + ((1.0 - phadd) * z1);
     //TODO: SAT_InterpolateLinear

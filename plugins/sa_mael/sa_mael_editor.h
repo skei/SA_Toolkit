@@ -64,11 +64,13 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   osc1_panel->appendChildWidget(osc1_type);
   AEditor->connect(osc1_type,getParameter(SA_MAEL_PARAM_OSC1_TYPE));
 
+  //sa_mael_osc_knob_widget* shape_knob = new sa_mael_osc_knob_widget(SAT_Rect(10,55,50,50),"Sh",0);
   SAT_KnobWidget* shape_knob = new SAT_KnobWidget(SAT_Rect(10,55,50,50),"Sh",0);
   osc1_panel->appendChildWidget(shape_knob);
   AEditor->connect(shape_knob,getParameter(SA_MAEL_PARAM_OSC1_SHAPE));
-  shape_knob->setQuantize(true);
-  shape_knob->setQuantizeSteps(4);
+  //shape_knob->setValueOffset(SAT_Rect(15,20,15,20));
+  //shape_knob->setQuantize(true);
+  //shape_knob->setQuantizeSteps(4);
 
   SAT_KnobWidget* width_knob = new SAT_KnobWidget(SAT_Rect(70,55,50,50),"Wi",0);
   osc1_panel->appendChildWidget(width_knob);

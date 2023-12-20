@@ -1,33 +1,15 @@
 #!/bin/bash
 
-# work in progress!
-
-# $PWD  = current path
-# $0    = script name/executable
-# $@    = arguments
-# $#    = number of arguments?
-
-#VAR_1="to uppercase"
-#echo ${VAR_1^}
-#echo ${VAR_1^^}
-
-#VAR_2="TO  LOWERCASE!"
-#echo ${VAR_2,}
-#echo ${VAR_2,,}
-
-#VAR_3="Reverse Cases"
-#echo ${VAR_3~}
-#echo ${VAR_3~~}
-
 #----------------------------------------------------------------------
 #
-#
+# defaults
 #
 #----------------------------------------------------------------------
 
 CC="g++"
 INPUT="build.cpp"
 OUTPUT="build.exe"
+BUILD_COUNT="build_count"
 FORMAT="EXE"
 GUI="X11"
 DEBUG=false
@@ -66,7 +48,8 @@ function print_help_and_exit {
   echo "usage: ./compile.sh <options>"
   echo "  -i <path>   input file name/path"
   echo "  -o <path>   output file name/path"
-  echo "  -f <types>  format (all,clap,dssi,exe,ex_lib,ladspa,lv2,vst2,vst3)"
+  echo "  -b <path>   build_count file name/path"
+  echo "  -f <types>  format (all,clap,dssi,exe,exlib,ladspa,lv2,vst2,vst3)"
   echo "  -g <type>   gui (nogui,wayland,win32,x11)"
   echo "  -w          win32 (else linux)"
   echo "  -d          debug mode (else release)"
@@ -88,12 +71,13 @@ if [ "$#" -eq 0 ]; then
   print_help_and_exit
 fi
 
-while getopts i:o:f:g:wdstva:h? arg
+while getopts i:o:b:f:g:wdstva:h? arg
 do
   A=""
   case $arg in
     i)    INPUT=$OPTARG;;
     o)    OUTPUT=$OPTARG;;
+    b)    BUILD_COUNT=$OPTARG;;
     f)    FORMAT=${OPTARG^^};;
     g)    GUI=${OPTARG^^};;
     w)    WIN32=true;;
@@ -147,6 +131,20 @@ OUTPUT_DIR=${OUTPUT%$OUTPUT_FILE}
 #fi
 
 #------------------------------
+# build count
+#------------------------------
+
+build_count=0
+
+if test -f $BUILD_COUNT
+  then
+    read build_count < $BUILD_COUNT
+fi
+
+((build_count=build_count+1))  
+echo $build_count > $BUILD_COUNT
+
+#------------------------------
 # -f format
 #------------------------------
 
@@ -177,7 +175,7 @@ if [[ "$FORMAT" == *"EXE"* ]]; then
   FLAGS+=" -DSAT_PLUGIN_EXE"
 fi
 
-if [[ "$FORMAT" == *"EX_LIB"* ]]; then
+if [[ "$FORMAT" == *"EXLIB"* ]]; then
   EXELIB=true
   FLAGS+=" -DSAT_PLUGIN_EXECUTABLE_LIBRARY"
 fi
@@ -336,4 +334,25 @@ fi
 
 $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
 
+#----------------------------------------------------------------------
+#
+#
+#
+#----------------------------------------------------------------------
 
+# $PWD  = current path
+# $0    = script name/executable
+# $@    = arguments
+# $#    = number of arguments?
+
+#VAR_1="to uppercase"
+#echo ${VAR_1^}
+#echo ${VAR_1^^}
+
+#VAR_2="TO  LOWERCASE!"
+#echo ${VAR_2,}
+#echo ${VAR_2,,}
+
+#VAR_3="Reverse Cases"
+#echo ${VAR_3~}
+#echo ${VAR_3~~}

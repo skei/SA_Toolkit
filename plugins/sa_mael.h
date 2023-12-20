@@ -18,6 +18,7 @@
   //#include "sa_mael/sa_mael_editor.h"
   #include "sa_mael/sa_mael_parameters.h"
   #include "sa_mael/sa_mael_voice.h"
+  #include "sa_mael/sa_mael_widgets.h"
 
   #define PLUGIN_NAME   "sa_mael"
   #define MAX_VOICES    32
