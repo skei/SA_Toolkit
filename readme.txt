@@ -1,3 +1,5 @@
+[in progress]
+
 yapf, yet another plugin framework
 (plugin development toolkit/framework)
 
@@ -17,3 +19,6 @@ yapf, yet another plugin framework
 * parameter indication
 * preset discovery
 * ..
+
+https://discord.gg/KMNea8P6Pe
+https://www.youtube.com/@torhelgeskei
