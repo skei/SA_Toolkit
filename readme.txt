@@ -12,7 +12,6 @@ yapf, yet another plugin framework
 * mono/polyphonic modulation
 * note expressions, (mpe)
 * voice stacking
-* overlapping notes
 * multi threaded voice processing
 * remote controls
 * parameter indication
