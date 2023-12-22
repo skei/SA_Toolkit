@@ -163,7 +163,7 @@ public: // factories
   /* #include "plugin/sat_entry.h" */                                                                                         \
                                                                                                                               \
   void SAT_Register(SAT_Registry* ARegistry) {                                                                                \
-    uint32_t index = ARegistry->getNumDescriptors();                                                                          \
+    /*uint32_t index = ARegistry->getNumDescriptors();*/                                                                      \
     /*SAT_Print("index %i = id %s\n",index,DESC.id);*/                                                                        \
     ARegistry->registerDescriptor(&DESC);                                                                                     \
   }                                                                                                                           \

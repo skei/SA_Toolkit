@@ -2,6 +2,10 @@
 #define sat_exelib_entry_included
 //----------------------------------------------------------------------
 
+// doesn't work in release builds... (?)
+
+//----------
+
 //#define MIP_EXECUTABLE_SHARED_LIBRARY
 //-Wl,-e,exelib_entry_point
 

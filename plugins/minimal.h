@@ -6,7 +6,7 @@ public:
 public:
   bool init() final {
     registerDefaultExtensions();
-    appendStereoAudioInputPort("int");
+    appendStereoAudioInputPort("in");
     appendStereoAudioOutputPort("out");
     appendParameter( new SAT_Parameter("gain",0.5) );
     return SAT_Plugin::init();

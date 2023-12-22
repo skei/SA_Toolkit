@@ -15,7 +15,7 @@ in the meanwhile, some quick notes-to-self:
 /vst2/xaymar - bsd?, Michael Fabian
 /vst3/travesty - bsd?, Filipe Coelho
 /vst3/vst3sdk - 
-/wayland
+/wayland - 
 /xjson - zlib/libpng, Stefan Bachmann, https://github.com/stbachmann/xjson
 
 

@@ -2,6 +2,11 @@
 #define sat_symbol_widget_included
 //----------------------------------------------------------------------
 
+// /DISKS/sda3/download/code/audio/fontaudio-1.1
+// SAT_LogoWidget
+
+//----------------------------------------------------------------------
+
 #include "sat.h"
 #include "gui/widgets/sat_panel_widget.h"
 

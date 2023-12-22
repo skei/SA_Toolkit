@@ -3,8 +3,11 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/clap/sat_clap_plugin.h"
+#include "plugin/clap/sat_clap.h"
+#include "plugin/clap/sat_clap_host.h"
 #include "plugin/clap/sat_clap_host_implementation.h"
+#include "plugin/clap/sat_clap_hosted_plugin.h"
+#include "plugin/clap/sat_clap_plugin.h"
 
 //----------------------------------------------------------------------
 //
@@ -14,10 +17,6 @@
 
 class SA_InterceptorHost
 : public SAT_ClapHostImplementation {
-
-//------------------------------
-private:
-//------------------------------
 
 //------------------------------
 public:
@@ -126,7 +125,8 @@ class SA_InterceptorPlugin
 private:
 //------------------------------
 
-  SA_InterceptorHost  MHost = {};
+  SA_InterceptorHost        MHost       = {};
+  SAT_ClapHostedPlugin*     MPlugin     = nullptr;
 
 //------------------------------
 public:
@@ -134,11 +134,10 @@ public:
 
   SA_InterceptorPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
+    //MPlugin = new SAT_ClapHostedPlugin(AHost,APlugin);
   }
 
   //----------
-
-  // note: we're calling 'delete this' in SAT_Plugin,destroy()
 
   virtual ~SA_InterceptorPlugin() {
   }
@@ -239,9 +238,50 @@ protected:
 
 //----------------------------------------------------------------------
 //
-// factory
+// descriptor
 //
 //----------------------------------------------------------------------
+
+//const
+clap_plugin_descriptor_t interceptor_descriptor = {
+  .clap_version = CLAP_VERSION,
+  .id           = "skei.audio/sa_interceptor",
+  .name         = "sa_interceptor",
+  .vendor       = "skei.audio",
+  .url          = "",
+  .manual_url   = "",
+  .support_url  = "",
+  .version      = SAT_VERSION,
+  .description  = "",
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+};
+
+//----------------------------------------------------------------------
+//
+// plugin factory
+//
+//----------------------------------------------------------------------
+
+uint32_t interceptor_clap_plugin_factory_get_plugin_count_callback(const struct clap_plugin_factory *factory) {
+  SAT_PRINT;
+  return 1;
+}
+
+const clap_plugin_descriptor_t* interceptor_clap_plugin_factory_get_plugin_descriptor_callback(const struct clap_plugin_factory *factory, uint32_t index) {
+  SAT_Print("index: %i\n",index);
+  return nullptr;
+}
+
+const clap_plugin_t* interceptor_clap_plugin_factory_create_plugin_callback(const struct clap_plugin_factory *factory, const clap_host_t *host, const char *plugin_id) {
+  SAT_Print("plugin_id: %s\n",plugin_id);
+  return nullptr;
+}
+
+const clap_plugin_factory_t interceptor_plugin_factory {
+  .get_plugin_count      = interceptor_clap_plugin_factory_get_plugin_count_callback,
+  .get_plugin_descriptor = interceptor_clap_plugin_factory_get_plugin_descriptor_callback,
+  .create_plugin         = interceptor_clap_plugin_factory_create_plugin_callback
+};
 
 //----------------------------------------------------------------------
 //
@@ -249,6 +289,32 @@ protected:
 //
 //----------------------------------------------------------------------
 
+bool interceptor_clap_entry_init_callback(const char *plugin_path) {
+  SAT_Print("plugin_path: %s\n",plugin_path);
+  // load real plugin
+  //features[0] = CLAP_PLUGIN_FEATURE_AUDIO_EFFECT;
+  return true;
+}
+
+void interceptor_clap_entry_deinit_callback(void) {
+  SAT_PRINT;
+}
+
+const void* interceptor_clap_entry_get_factory_callback(const char* factory_id) {
+  SAT_Print("factory_id: %s\n",factory_id);
+  if (strcmp(factory_id,CLAP_PLUGIN_FACTORY_ID) == 0) {
+    return &interceptor_plugin_factory;
+  }
+  return nullptr;
+}
+
+//__SAT_EXPORT
+CLAP_EXPORT extern const clap_plugin_entry_t clap_entry {
+  .clap_version = CLAP_VERSION,
+  .init         = interceptor_clap_entry_init_callback,
+  .deinit       = interceptor_clap_entry_deinit_callback,
+  .get_factory  = interceptor_clap_entry_get_factory_callback
+};
 
 //----------------------------------------------------------------------
 #endif

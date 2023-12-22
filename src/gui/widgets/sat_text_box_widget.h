@@ -133,6 +133,7 @@ public:
 
     textwidget->setText(AText);
     textwidget->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP);
+    textwidget->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
     //textwidget->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_LEFT);
     textwidget->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
 

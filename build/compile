@@ -134,15 +134,15 @@ OUTPUT_DIR=${OUTPUT%$OUTPUT_FILE}
 # build count
 #------------------------------
 
-build_count=0
+#todo: if build_count != "" ...
 
-if test -f $BUILD_COUNT
-  then
-    read build_count < $BUILD_COUNT
-fi
-
-((build_count=build_count+1))  
-echo $build_count > $BUILD_COUNT
+#build_count=0
+#if test -f $BUILD_COUNT
+#  then
+#    read build_count < $BUILD_COUNT
+#fi
+#((build_count=build_count+1))  
+#echo $build_count > $BUILD_COUNT
 
 #------------------------------
 # -f format
