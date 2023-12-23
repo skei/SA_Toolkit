@@ -25,6 +25,7 @@ public:
 
   SAT_IntParameter(const clap_param_info_t* AInfo)
   : SAT_Parameter(AInfo) {
+    setValueFormat("%.f");
   }
 
 //------------------------------
@@ -36,7 +37,10 @@ public:
   //}
 
   virtual sat_param_t getValue() {
-    return (int)MValue;
+    //return (int)MValue;
+    sat_param_t value = SAT_Trunc(MValue);
+    //SAT_Print("%f\n",value);
+    return value;
   }
 
 //------------------------------
@@ -57,6 +61,7 @@ public:
 
   const char* valueToText(sat_param_t AValue) override {
     sprintf(MValueText,MValueFormat,getValue());
+    //SAT_Print("AValue %f (fmt %s) -> %s\n",AValue,MValueFormat,MValueText);
     return MValueText;
   }
 

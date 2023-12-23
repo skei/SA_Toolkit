@@ -27,33 +27,10 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     };
 
   //------------------------------
-  // global
-  //------------------------------
-  
-  SAT_PanelWidget* global_panel = new SAT_PanelWidget(SAT_Rect(10,10,130,115));
-  root->appendChildWidget(global_panel);
-  
-  SAT_PanelWidget* global_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
-  global_panel->appendChildWidget(global_text);
-  global_text->setText("Global");
-
-  SAT_KnobWidget* gain_knob = new SAT_KnobWidget(SAT_Rect(10,30,50,50),"G",0.1);
-  global_panel->appendChildWidget(gain_knob);
-  AEditor->connect(gain_knob,getParameter(SA_MAEL_PARAM_GAIN));
-
-  SAT_KnobWidget* tuning_knob = new SAT_KnobWidget(SAT_Rect(70,30,50,50),"Tun",0.1);
-  global_panel->appendChildWidget(tuning_knob);
-  AEditor->connect(tuning_knob,getParameter(SA_MAEL_PARAM_TUNING));
-  tuning_knob->setBipolar(true);
-  tuning_knob->setBipolarCenter(0.5);
-  tuning_knob->setSnap(true);
-  tuning_knob->setSnapPos(0.5);
-
-  //------------------------------
   // osc1
   //------------------------------
 
-  SAT_PanelWidget* osc1_panel = new SAT_PanelWidget(SAT_Rect(10,135,130,115));
+  SAT_PanelWidget* osc1_panel = new SAT_PanelWidget(SAT_Rect(10,10,130+100,115));
   root->appendChildWidget(osc1_panel);
 
   SAT_PanelWidget* osc1_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
@@ -82,12 +59,23 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   width_knob->setSnap(true);
   width_knob->setSnapPos(0.5);
 
+  SAT_DragValueWidget* osc1_oct_knob  = new SAT_DragValueWidget(SAT_Rect(130,55,      60,16 ),"Oct", 0);
+  SAT_DragValueWidget* osc1_semi_knob = new SAT_DragValueWidget(SAT_Rect(130,55+16+1, 60,16 ),"Semi",0);
+  SAT_DragValueWidget* osc1_cent_knob = new SAT_DragValueWidget(SAT_Rect(130,55+32+2, 60,16 ),"Cent",0);
+
+  osc1_panel->appendChildWidget(osc1_oct_knob);
+  osc1_panel->appendChildWidget(osc1_semi_knob);
+  osc1_panel->appendChildWidget(osc1_cent_knob);
+
+  AEditor->connect(osc1_oct_knob,getParameter(SA_MAEL_PARAM_OSC1_OCT));
+  AEditor->connect(osc1_semi_knob,getParameter(SA_MAEL_PARAM_OSC1_SEMI));
+  AEditor->connect(osc1_cent_knob,getParameter(SA_MAEL_PARAM_OSC1_CENT));
 
   //------------------------------
   // flt1
   //------------------------------
 
-  SAT_PanelWidget* flt1_panel = new SAT_PanelWidget(SAT_Rect(150,135,130,115));
+  SAT_PanelWidget* flt1_panel = new SAT_PanelWidget(SAT_Rect(10,135,130,115));
   root->appendChildWidget(flt1_panel);
   
   SAT_PanelWidget* flt1_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
@@ -110,7 +98,7 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   // env1
   //------------------------------
 
-  SAT_PanelWidget* env1_panel = new SAT_PanelWidget(SAT_Rect(290,135,120,115));
+  SAT_PanelWidget* env1_panel = new SAT_PanelWidget(SAT_Rect(10,260,120,115));
   root->appendChildWidget(env1_panel);
   
   SAT_PanelWidget* env1_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
@@ -170,6 +158,29 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   slider_r->setDrawDirection(SAT_DIRECTION_UP);
   slider_r->setDrawValue(false);
   slider_r->setTextAlignment(SAT_TEXT_ALIGN_TOP);
+
+  //------------------------------
+  // global
+  //------------------------------
+  
+  SAT_PanelWidget* global_panel = new SAT_PanelWidget(SAT_Rect(10,385,130,115));
+  root->appendChildWidget(global_panel);
+  
+  SAT_PanelWidget* global_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
+  global_panel->appendChildWidget(global_text);
+  global_text->setText("Global");
+
+  SAT_KnobWidget* gain_knob = new SAT_KnobWidget(SAT_Rect(10,30,50,50),"G",0.1);
+  global_panel->appendChildWidget(gain_knob);
+  AEditor->connect(gain_knob,getParameter(SA_MAEL_PARAM_GAIN));
+
+  // SAT_KnobWidget* tuning_knob = new SAT_KnobWidget(SAT_Rect(70,30,50,50),"Tun",0.1);
+  // global_panel->appendChildWidget(tuning_knob);
+  // AEditor->connect(tuning_knob,getParameter(SA_MAEL_PARAM_TUNING));
+  // tuning_knob->setBipolar(true);
+  // tuning_knob->setBipolarCenter(0.5);
+  // tuning_knob->setSnap(true);
+  // tuning_knob->setSnapPos(0.5);
 
   //------------------------------
   // menus 

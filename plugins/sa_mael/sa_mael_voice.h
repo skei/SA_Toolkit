@@ -30,11 +30,14 @@ private:
 
   // param
   sat_param_t                       p_gain        = 1.0;
-  sat_param_t                       p_tuning      = 0.0;    // aka pitchbend
+//sat_param_t                       p_tuning      = 0.0;    // aka pitchbend
 
   uint32_t                          p_osc1_type   = 0;
   sat_param_t                       p_osc1_shape  = 0.0;
   sat_param_t                       p_osc1_width  = 0.0;
+  sat_param_t                       p_osc1_oct    = 0.0;
+  sat_param_t                       p_osc1_semi   = 0.0;
+  sat_param_t                       p_osc1_cent   = 0.0;
 
   uint32_t                          p_flt1_type   = 0;
   sat_param_t                       p_flt1_freq   = 0.0;
@@ -46,9 +49,12 @@ private:
   sat_param_t                       p_env1_rel    = 0.0;
 
   // mod
-  sat_param_t                       m_tuning      = 0.0;
+//sat_param_t                       m_tuning      = 0.0;
   sat_param_t                       m_osc1_shape  = 0.0;
   sat_param_t                       m_osc1_width  = 0.0;
+  sat_param_t                       m_osc1_oct    = 0.0;
+  sat_param_t                       m_osc1_semi   = 0.0;
+  sat_param_t                       m_osc1_cent   = 0.0;
   sat_param_t                       m_flt1_freq   = 0.0;
   sat_param_t                       m_flt1_q      = 0.0;
 
@@ -98,13 +104,23 @@ public:
   
   uint32_t noteOn(uint32_t AIndex, double AValue) {
     SAT_Plugin*     plugin      = MContext->process_context->plugin;
-    SAT_Parameter*  par_tuning  = plugin->getParameter(1);
     MKey      = AIndex;
     MVelocity = AValue;
     MPhase    = 0.0;
 
-    p_tuning  = par_tuning->getValue();
-    m_tuning  = 0.0;
+//    p_tuning  = par_tuning->getValue();
+//    m_tuning  = 0.0;
+
+    SAT_Parameter*  par_tuning  = plugin->getParameter(1);
+
+    p_osc1_oct  = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_OCT);
+    p_osc1_semi = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_SEMI);
+    p_osc1_cent = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_CENT);
+
+    m_osc1_oct = 0.0;
+    m_osc1_semi = 0.0;
+    m_osc1_cent = 0.0;
+
     e_tuning  = 0.0;
 
     p_osc1_type  = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_TYPE);
@@ -164,10 +180,13 @@ public:
     sat_param_t a3 = (AValue*AValue*AValue);
     switch (AIndex) {
       case SA_MAEL_PARAM_GAIN:        p_gain        = AValue;   break;
-      case SA_MAEL_PARAM_TUNING:      p_tuning      = AValue;   break;
+    //case SA_MAEL_PARAM_TUNING:      p_tuning      = AValue;   break;
       case SA_MAEL_PARAM_OSC1_TYPE:   p_osc1_type   = AValue;   break;
       case SA_MAEL_PARAM_OSC1_SHAPE:  p_osc1_shape  = AValue;   break;
       case SA_MAEL_PARAM_OSC1_WIDTH:  p_osc1_width  = AValue;   break;
+      case SA_MAEL_PARAM_OSC1_OCT:    p_osc1_oct    = AValue;   break;
+      case SA_MAEL_PARAM_OSC1_SEMI:   p_osc1_semi   = AValue;   break;
+      case SA_MAEL_PARAM_OSC1_CENT:   p_osc1_cent   = AValue;   break;
       case SA_MAEL_PARAM_FLT1_TYPE:   p_flt1_type   = AValue;   break;
       case SA_MAEL_PARAM_FLT1_FREQ:   p_flt1_freq   = a3;       break;
       case SA_MAEL_PARAM_FLT1_Q:      p_flt1_q      = a3;       break;
@@ -182,9 +201,12 @@ public:
 
   void modulation(uint32_t AIndex, sat_param_t AValue) {
     switch (AIndex) {
-      case SA_MAEL_PARAM_TUNING:      m_tuning      = AValue; break;
+    //case SA_MAEL_PARAM_TUNING:      m_tuning      = AValue; break;
       case SA_MAEL_PARAM_OSC1_SHAPE:  m_osc1_shape  = AValue; break;
       case SA_MAEL_PARAM_OSC1_WIDTH:  m_osc1_width  = AValue; break;
+      case SA_MAEL_PARAM_OSC1_OCT:    m_osc1_oct    = AValue; break;
+      case SA_MAEL_PARAM_OSC1_SEMI:   m_osc1_semi   = AValue; break;
+      case SA_MAEL_PARAM_OSC1_CENT:   m_osc1_cent   = AValue; break;
       case SA_MAEL_PARAM_FLT1_FREQ:   m_flt1_freq   = AValue; break;
       case SA_MAEL_PARAM_FLT1_Q:      m_flt1_q      = AValue; break;
     }
@@ -232,7 +254,14 @@ public:
 
         // tuning
 
-        sat_param_t tuning = SAT_Clamp( (p_tuning + m_tuning), -1, 1 );
+        // sat_param_t tuning = SAT_Clamp( (p_tuning + m_tuning), -1, 1 );
+        // tuning += e_tuning;
+        sat_param_t osc1_oct  = SAT_Clamp( (p_osc1_oct  + m_osc1_oct),  -4,  4  );
+        sat_param_t osc1_semi = SAT_Clamp( (p_osc1_semi + m_osc1_semi), -12, 12 );
+        sat_param_t osc1_cent = SAT_Clamp( (p_osc1_cent + m_osc1_cent), -1,  1  );
+        osc1_oct = SAT_Trunc(osc1_oct);
+        osc1_semi = SAT_Trunc(osc1_semi);
+        sat_param_t tuning = (osc1_oct * 12.0) + osc1_semi + osc1_cent;
         tuning += e_tuning;
 
         //

@@ -151,15 +151,17 @@ public:
   //----------
 
   virtual sat_param_t getNormalizedValue() {
-    return normalize(MValue);
+    sat_param_t value = getValue();
+    return normalize(value);
   }
   
   //----------
   
   virtual sat_param_t getNormalizedModulation() {
+    sat_param_t modulation = getModulation();
     sat_param_t range = MInfo.max_value - MInfo.min_value;
-    if (range <= 0.0) return MModulation;
-    return MModulation / range;
+    if (range <= 0.0) return modulation;
+    return modulation / range;
   }
   
   //----------  

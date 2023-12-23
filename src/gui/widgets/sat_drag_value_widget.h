@@ -54,12 +54,12 @@ public:
     setBackgroundColor(0.25);
     setDrawText(true);
     setText(AText);
-    setTextSize(12);
+    setTextSize(10);
     setTextColor(SAT_LightGrey);
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
     setDrawValue(true);
     setValue(AValue);
-    setValueSize(12);
+    setValueSize(10);
     setValueColor(SAT_LightestGrey);
     setDrawBorder(false);
     switch (MDragDirection) {
