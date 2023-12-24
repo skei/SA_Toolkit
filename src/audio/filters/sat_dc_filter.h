@@ -1,5 +1,5 @@
-#ifndef mip_dc_filter_included
-#define mip_dc_filter_included
+#ifndef sat_dc_filter_included
+#define sat_dc_filter_included
 //----------------------------------------------------------------------
 
 // original author: lubomir i ivanov (for axonlib)
@@ -7,8 +7,7 @@
 
 //----------------------------------------------------------------------
 
-#include "base/mip.h"
-#include "base/mip_const.h"
+#include "sat.h"
 
 /*
   DC offset filter.
@@ -16,16 +15,17 @@
   http://www-ccrma.stanford.edu/~jos/filters/
 */
 
-class MIP_DcFilter {
+template <typename T>
+class SAT_DcFilter {
 
   private:
 
-    float x1,y1;
-    float R;
+    T x1,y1;
+    T R;
 
   public:
 
-    MIP_DcFilter() {
+    SAT_DcFilter() {
       x1 = 0;
       y1 = 0;
       R = 0.999;
@@ -33,11 +33,11 @@ class MIP_DcFilter {
 
     //----------
 
-    float process(float AValue) {
-      float y = AValue - x1 + (R*y1) + MIP_FLOAT_DENORM;
+    T process(T AValue) {
+      T y = AValue - x1 + (R*y1);// + SAT_FLOAT_DENORM;
       x1 = AValue;
       y1 = y;
-      return y - MIP_FLOAT_DENORM;
+      return y;// - SAT_FLOAT_DENORM;
     }
 
 };
@@ -54,13 +54,13 @@ class MIP_DcFilter {
   void DCBlocker::clear() {
     x1 = y1 = 0.0f;
   }
-  void DCBlocker::setSamplerate(float r) {
+  void DCBlocker::setSamplerate(T r) {
     R = 1.0f - (M_PI * 2.0f * 20.0f / r);
   }
-  void DCBlocker::process(float* input, float* output, int samples) {
+  void DCBlocker::process(T* input, T* output, int samples) {
     for (uint i = 0; i < samples; i++) {
       // y(n) = x(n) - x(n - 1) + R * y(n - 1)
-      float y = input[i] - x1 + R * y1;
+      T y = input[i] - x1 + R * y1;
       x1 = input[i];
       y1 = y;
       output[i] = y;
@@ -68,29 +68,30 @@ class MIP_DcFilter {
   }
 */
 
-class MIP_Dc2Filter {
+template <typename T>
+class SAT_Dc2Filter {
 
   private:
-    float R;
-    float x1,y1;
+    T R;
+    T x1,y1;
 
   public:
 
-    MIP_Dc2Filter() {
+    SAT_Dc2Filter() {
       x1 = 0.0f;
       y1 = 0.0f;
     }
 
     //----------
 
-    void setSamplerate(float r) {
-      R = 1.0f - (MIP_PI2 * 20.0f / r);
+    void setSamplerate(T r) {
+      R = 1.0f - (SAT_PI2 * 20.0f / r);
     }
 
     //----------
 
-    float process(float AInput) {
-      float y = AInput - x1 + R * y1;
+    T process(T AInput) {
+      T y = AInput - x1 + R * y1;
       x1 = AInput;
       y1 = y;
       return y;

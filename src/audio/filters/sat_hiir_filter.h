@@ -49,17 +49,18 @@
   operations.
 */
 
-#include "audio/backup/filters/mip_allpass_filter.h"
+#include "audio/filters/sat_allpass_filter.h"
 
 //----------------------------------------------------------------------
 
 //rejection=104dB, transition band=0.01
 
+template <typename T>
 class MIP_Hiir12SteepFilter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2,a3,a4,a5;
-    MIP_AllpassFilter b0,b1,b2,b3,b4,b5;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2,a3,a4,a5;
+    SAT_AllpassFilter<T> b0,b1,b2,b3,b4,b5;
   public:
     MIP_Hiir12SteepFilter() {
       FPrevious = 0;
@@ -76,8 +77,8 @@ class MIP_Hiir12SteepFilter {
       b4.setCoefficient(0.9315419599631839);
       b5.setCoefficient(0.9878163707328971);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
@@ -85,7 +86,7 @@ class MIP_Hiir12SteepFilter {
       a = a4.process(a);
       a = a5.process(a);
 //      a = MIP_KillDenormal(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
@@ -93,17 +94,17 @@ class MIP_Hiir12SteepFilter {
       b = b4.process(b);
       b = b5.process(b);
 //      b = SKillDenorm(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
@@ -112,11 +113,12 @@ class MIP_Hiir12SteepFilter {
 
 //rejection=86dB, transition band=0.01
 
+template <typename T>
 class MIP_Hiir10SteepFilter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2,a3,a4;
-    MIP_AllpassFilter b0,b1,b2,b3,b4;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2,a3,a4;
+    SAT_AllpassFilter<T> b0,b1,b2,b3,b4;
   public:
     MIP_Hiir10SteepFilter() {
       FPrevious = 0;
@@ -131,32 +133,32 @@ class MIP_Hiir10SteepFilter {
       b3.setCoefficient(0.9141815687605308);
       b4.setCoefficient(0.985475023014907);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
       a = a3.process(a);
       a = a4.process(a);
 //      a = SKillDenorm(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
       b = b3.process(b);
       b = b4.process(b);
 //      b = SKillDenorm(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
@@ -165,11 +167,12 @@ class MIP_Hiir10SteepFilter {
 
 //rejection=69dB, transition band=0.01
 
+template <typename T>
 class MIP_Hiir8SteepFilter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2,a3;
-    MIP_AllpassFilter b0,b1,b2,b3;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2,a3;
+    SAT_AllpassFilter<T> b0,b1,b2,b3;
   public:
     MIP_Hiir8SteepFilter() {
       FPrevious = 0;
@@ -182,30 +185,30 @@ class MIP_Hiir8SteepFilter {
       b2.setCoefficient(0.8841015085506159);
       b3.setCoefficient(0.9820054141886075);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
       a = a3.process(a);
 //      a = SKillDenorm(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
       b = b3.process(b);
 //      b = SKillDenorm(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
@@ -214,11 +217,12 @@ class MIP_Hiir8SteepFilter {
 
 //rejection=51dB, transition band=0.01
 
+template <typename T>
 class MIP_Hiir6SteepFilter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2;
-    MIP_AllpassFilter b0,b1,b2;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2;
+    SAT_AllpassFilter<T> b0,b1,b2;
   public:
     MIP_Hiir6SteepFilter() {
       FPrevious = 0;
@@ -229,28 +233,28 @@ class MIP_Hiir6SteepFilter {
       b1.setCoefficient(0.8204163891923343);
       b2.setCoefficient(0.9763114515836773);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
 //      a = SKillDenorm(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
 //      b = SKillDenorm(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
@@ -259,11 +263,12 @@ class MIP_Hiir6SteepFilter {
 
 //rejection=53dB, transition band=0.05
 
+template <typename T>
 class MIP_Hiir4SteepFilter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1;
-    MIP_AllpassFilter b0,b1;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1;
+    SAT_AllpassFilter<T> b0,b1;
   public:
     MIP_Hiir4SteepFilter() {
       FPrevious = 0;
@@ -272,26 +277,26 @@ class MIP_Hiir4SteepFilter {
       b0.setCoefficient(0.3903621872345006);
       b1.setCoefficient(0.890786832653497);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
 //      a = SKillDenorm(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
 //      b = SKillDenorm(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
@@ -300,35 +305,36 @@ class MIP_Hiir4SteepFilter {
 
 //rejection=36dB, transition band=0.1
 
+template <typename T>
 class MIP_Hiir2SteepFilter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0;
-    MIP_AllpassFilter b0;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0;
+    SAT_AllpassFilter<T> b0;
   public:
     MIP_Hiir2SteepFilter() {
       FPrevious = 0;
       a0.setCoefficient(0.23647102099689224);
       b0.setCoefficient(0.7145421497126001);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
 //      a = SKillDenorm(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
 //      b = SKillDenorm(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
@@ -340,11 +346,12 @@ class MIP_Hiir2SteepFilter {
 
 //rejection=150dB, transition band=0.05
 
+template <typename T>
 class MIP_Hiir12Filter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2,a3,a4,a5;
-    MIP_AllpassFilter b0,b1,b2,b3,b4,b5;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2,a3,a4,a5;
+    SAT_AllpassFilter<T> b0,b1,b2,b3,b4,b5;
   public:
     MIP_Hiir12Filter() {
       FPrevious = 0;
@@ -361,8 +368,8 @@ class MIP_Hiir12Filter {
       b4.setCoefficient(0.80378086794111226);
       b5.setCoefficient(0.9599687404800694);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
@@ -370,7 +377,7 @@ class MIP_Hiir12Filter {
       a = a4.process(a);
       a = a5.process(a);
       a = MIP_KillDenormal(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
@@ -378,28 +385,29 @@ class MIP_Hiir12Filter {
       b = b4.process(b);
       b = b5.process(b);
       b = MIP_KillDenormal(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
 
 //rejection=133dB, transition band=0.05
 
+template <typename T>
 class MIP_Hiir10Filter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2,a3,a4;
-    MIP_AllpassFilter b0,b1,b2,b3,b4;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2,a3,a4;
+    SAT_AllpassFilter<T> b0,b1,b2,b3,b4;
   public:
     MIP_Hiir10Filter() {
       FPrevious = 0;
@@ -414,43 +422,44 @@ class MIP_Hiir10Filter {
       b3.setCoefficient(0.7652146863779808);
       b4.setCoefficient(0.95247728378667541);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
       a = a3.process(a);
       a = a4.process(a);
       a = MIP_KillDenormal(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
       b = b3.process(b);
       b = b4.process(b);
       b = MIP_KillDenormal(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
 
 //rejection=106dB, transition band=0.05
 
+template <typename T>
 class MIP_Hiir8Filter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2,a3;
-    MIP_AllpassFilter b0,b1,b2,b3;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2,a3;
+    SAT_AllpassFilter<T> b0,b1,b2,b3;
   public:
     MIP_Hiir8Filter() {
       FPrevious = 0;
@@ -463,41 +472,42 @@ class MIP_Hiir8Filter {
       b2.setCoefficient(0.7062921421386394);
       b3.setCoefficient(0.9415030941737551);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
       a = a3.process(a);
       a = MIP_KillDenormal(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
       b = b3.process(b);
       b = MIP_KillDenormal(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
 
 //rejection=80dB, transition band=0.05
 
+template <typename T>
 class MIP_Hiir6Filter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1,a2;
-    MIP_AllpassFilter b0,b1,b2;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1,a2;
+    SAT_AllpassFilter<T> b0,b1,b2;
   public:
     MIP_Hiir6Filter() {
       FPrevious = 0;
@@ -508,39 +518,40 @@ class MIP_Hiir6Filter {
       b1.setCoefficient(0.6043586264658363);
       b2.setCoefficient(0.9238861386532906);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = a2.process(a);
       a = MIP_KillDenormal(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = b2.process(b);
       b = MIP_KillDenormal(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
 
 //rejection=70dB, transition band=0.1
 
+template <typename T>
 class MIP_Hiir4Filter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0,a1;
-    MIP_AllpassFilter b0,b1;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0,a1;
+    SAT_AllpassFilter<T> b0,b1;
   public:
     MIP_Hiir4Filter() {
       FPrevious = 0;
@@ -549,74 +560,70 @@ class MIP_Hiir4Filter {
       b0.setCoefficient(0.28382934487410993);
       b1.setCoefficient(0.8344118914807379);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = a1.process(a);
       a = MIP_KillDenormal(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = b1.process(b);
       b = MIP_KillDenormal(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
 
 //rejection=36dB, transition band=0.1
 
+template <typename T>
 class MIP_Hiir2Filter {
   private:
-    float FPrevious;
-    MIP_AllpassFilter a0;//,a1,a2;
-    MIP_AllpassFilter b0;//,b1,b2;
+    T FPrevious;
+    SAT_AllpassFilter<T> a0;//,a1,a2;
+    SAT_AllpassFilter<T> b0;//,b1,b2;
   public:
     MIP_Hiir2Filter() {
       FPrevious = 0;
       a0.setCoefficient(0.23647102099689224);
       b0.setCoefficient(0.7145421497126001);
     }
-    float process(float AInput) {
-      float a = AInput;
+    T process(T AInput) {
+      T a = AInput;
       a = a0.process(a);
       a = MIP_KillDenormal(a);
-      float b = AInput;
+      T b = AInput;
       b = b0.process(b);
       b = MIP_KillDenormal(b);
-      float result = ( a + FPrevious ) * 0.5;
+      T result = ( a + FPrevious ) * 0.5;
       FPrevious = b;
       return result;
     }
-    //float process0(void) {
+    //T process0(void) {
     //  return 0;
     //}
     //void processDrop(void) {
     //}
-    void upsample(float AInput, float* AOutput1, float* AOutput2) {
+    void upsample(T AInput, T* AOutput1, T* AOutput2) {
       *AOutput1 = process(AInput);
       *AOutput2 = process(0.0f);
     }
-    float downsample(float AInput1, float AInput2) {
-      float out0 = process(AInput1);
-      /*float out1 =*/ process(AInput2);
+    T downsample(T AInput1, T AInput2) {
+      T out0 = process(AInput1);
+      /*T out1 =*/ process(AInput2);
       return out0;
     }
 };
-
-
-//----------------------------------------------------------------------
-//
-//----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
 #endif

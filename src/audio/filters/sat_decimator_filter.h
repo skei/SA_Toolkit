@@ -1,5 +1,5 @@
-#ifndef mip_decimator_filter_included
-#define mip_decimator_filter_included
+#ifndef sat_decimator_filter_included
+#define sat_decimator_filter_included
 //----------------------------------------------------------------------
 
 // Hiqh quality /2 decimators
@@ -25,12 +25,13 @@
 
 //----------------------------------------------------------------------
 
-class MIP_Decimator5Filter {
+template <typename T>
+class SAT_Decimator5Filter {
   private:
-    float R1,R2,R3,R4,R5;
-    float h0, h1, h3, h5;
+    T R1,R2,R3,R4,R5;
+    T h0, h1, h3, h5;
   public:
-    MIP_Decimator5Filter() {
+    SAT_Decimator5Filter() {
       h0 = 346/692.0;
       h1 = 208/692.0;
       h3 = -44/692.0;
@@ -41,11 +42,11 @@ class MIP_Decimator5Filter {
       R4 = 0;
       R5 = 0;
     }
-    float process(float x0, float x1) {
-      float h5x0 = h5 * x0;
-      float h3x0 = h3 * x0;
-      float h1x0 = h1 * x0;
-      float R6   = R5 + h5x0;
+    T process(T x0, T x1) {
+      T h5x0 = h5 * x0;
+      T h3x0 = h3 * x0;
+      T h1x0 = h1 * x0;
+      T R6   = R5 + h5x0;
       R5 = R4 + h3x0;
       R4 = R3 + h1x0;
       R3 = R2 + h1x0 + h0 * x1;
@@ -80,12 +81,13 @@ local(h5x0 h3x0 h1x0) (
 
 //----------------------------------------------------------------------
 
-class MIP_Decimator7Filter {
+template <typename T>
+class SAT_Decimator7Filter {
   private:
-    float R1,R2,R3,R4,R5,R6,R7;
-    float h0,h1,h3,h5,h7;
+    T R1,R2,R3,R4,R5,R6,R7;
+    T h0,h1,h3,h5,h7;
   public:
-    MIP_Decimator7Filter() {
+    SAT_Decimator7Filter() {
       h0 = 802/1604.0;
       h1 = 490/1604.0;
       h3 = -116/1604.0;
@@ -99,12 +101,12 @@ class MIP_Decimator7Filter {
       R6 = 0;
       R7 = 0;
     }
-    float process(float x0, float x1) {
-      float h7x0 = h7 * x0;
-      float h5x0 = h5 * x0;
-      float h3x0 = h3 * x0;
-      float h1x0 = h1 * x0;
-      float R8   = R7 + h7x0;
+    T process(T x0, T x1) {
+      T h7x0 = h7 * x0;
+      T h5x0 = h5 * x0;
+      T h3x0 = h3 * x0;
+      T h1x0 = h1 * x0;
+      T R8   = R7 + h7x0;
       R7 = R6 + h5x0;
       R6 = R5 + h3x0;
       R5 = R4 + h1x0;
@@ -118,12 +120,13 @@ class MIP_Decimator7Filter {
 
 //----------------------------------------------------------------------
 
-class MIP_Decimator9Filter {
+template <typename T>
+class SAT_Decimator9Filter {
   private:
-    float R1,R2,R3,R4,R5,R6,R7,R8,R9;
-    float h0,h1,h3,h5,h7,h9;
+    T R1,R2,R3,R4,R5,R6,R7,R8,R9;
+    T h0,h1,h3,h5,h7,h9;
   public:
-    MIP_Decimator9Filter() {
+    SAT_Decimator9Filter() {
       h0 = 8192/16384.0;
       h1 = 5042/16384.0;
       h3 = -1277/16384.0;
@@ -140,13 +143,13 @@ class MIP_Decimator9Filter {
       R8 = 0;
       R9 = 0;
     }
-    float process(float x0, float x1) {
-      float h9x0 = h9 * x0;
-      float h7x0 = h7 * x0;
-      float h5x0 = h5 * x0;
-      float h3x0 = h3 * x0;
-      float h1x0 = h1 * x0;
-      float R10  = R9 + h9x0;
+    T process(T x0, T x1) {
+      T h9x0 = h9 * x0;
+      T h7x0 = h7 * x0;
+      T h5x0 = h5 * x0;
+      T h3x0 = h3 * x0;
+      T h1x0 = h1 * x0;
+      T R10  = R9 + h9x0;
       R9 = R8 + h7x0;
       R8 = R7 + h5x0;
       R7 = R6 + h3x0;
@@ -196,16 +199,17 @@ local(h9x0 h7x0 h5x0 h3x0 h1x0)
 
 // T.Rochebois
 
-class MIP_Decimator17Filter {
+template <typename T>
+class SAT_Decimator17Filter {
 
   private:
 
-    float h0,h1,h3,h5,h7,h9,h11,h13,h15,h17;
-    float R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13,R14,R15,R16,R17;
+    T h0,h1,h3,h5,h7,h9,h11,h13,h15,h17;
+    T R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13,R14,R15,R16,R17;
 
   public:
 
-    MIP_Decimator17Filter() {
+    SAT_Decimator17Filter() {
       reset();
       //h17 = (5.18944944e-005);
       //h15 = (-0.000572688237);
@@ -234,17 +238,17 @@ class MIP_Decimator17Filter {
       R1=R2=R3=R4=R5=R6=R7=R8=R9=R10=R11=R12=R13=R14=R15=R16=R17=0;
     }
 
-    float process(float x0,float x1) {
-      float h17x0 = h17 * x0;
-      float h15x0 = h15 * x0;
-      float h13x0 = h13 * x0;
-      float h11x0 = h11 * x0;
-      float h9x0  = h9 * x0;
-      float h7x0  = h7 * x0;
-      float h5x0  = h5 * x0;
-      float h3x0  = h3 * x0;
-      float h1x0  = h1 * x0;
-      float R18   = R17 + h17x0;
+    T process(T x0,T x1) {
+      T h17x0 = h17 * x0;
+      T h15x0 = h15 * x0;
+      T h13x0 = h13 * x0;
+      T h11x0 = h11 * x0;
+      T h9x0  = h9 * x0;
+      T h7x0  = h7 * x0;
+      T h5x0  = h5 * x0;
+      T h3x0  = h3 * x0;
+      T h1x0  = h1 * x0;
+      T R18   = R17 + h17x0;
       R17 = R16 + h15x0;
       R16 = R15 + h13x0;
       R15 = R14 + h11x0;
@@ -330,16 +334,17 @@ local(h1x0 h3x0 h5x0 h7x0 h9x0 h11x0 h13x0 h15x0 h17x0 h19x0 h21x0 h23x0 h25x0 h
 );
 */
 
-class MIP_Decimator59Filter {
+template <typename T>
+class SAT_Decimator59Filter {
 
   private:
 
-    float h1,h3,h5,h7,h9,h11,h13,h15,h17,h19,h21,h23,h25,h27,h29;
-    float R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,R20,R21,R22,R23,R24,R25,R26,R27,R28,R29;
+    T h1,h3,h5,h7,h9,h11,h13,h15,h17,h19,h21,h23,h25,h27,h29;
+    T R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13,R14,R15,R16,R17,R18,R19,R20,R21,R22,R23,R24,R25,R26,R27,R28,R29;
 
   public:
 
-    MIP_Decimator59Filter() {
+    SAT_Decimator59Filter() {
       reset();
     }
 
@@ -361,23 +366,23 @@ class MIP_Decimator59Filter {
       R1=R2=R3=R4=R5=R6=R7=R8=R9=R10=R11=R12=R13=R14=R15=R16=R17=R18=R19=R20=R21=R22=R23=R24=R25=R26=R27=R28=R29=0;
     }
 
-    float process(float x0,float x1) {
-      float h1x0  = x0*h1;
-      float h3x0  = x0*h3;
-      float h5x0  = x0*h5;
-      float h7x0  = x0*h7;
-      float h9x0  = x0*h9;
-      float h11x0 = x0*h11;
-      float h13x0 = x0*h13;
-      float h15x0 = x0*h15;
-      float h17x0 = x0*h17;
-      float h19x0 = x0*h19;
-      float h21x0 = x0*h21;
-      float h23x0 = x0*h23;
-      float h25x0 = x0*h25;
-      float h27x0 = x0*h27;
-      float h29x0 = x0*h29;
-      float R30 = R29 + h29x0;
+    T process(T x0,T x1) {
+      T h1x0  = x0*h1;
+      T h3x0  = x0*h3;
+      T h5x0  = x0*h5;
+      T h7x0  = x0*h7;
+      T h9x0  = x0*h9;
+      T h11x0 = x0*h11;
+      T h13x0 = x0*h13;
+      T h15x0 = x0*h15;
+      T h17x0 = x0*h17;
+      T h19x0 = x0*h19;
+      T h21x0 = x0*h21;
+      T h23x0 = x0*h23;
+      T h25x0 = x0*h25;
+      T h27x0 = x0*h27;
+      T h29x0 = x0*h29;
+      T R30 = R29 + h29x0;
       R29 = R28 + h27x0;
       R28 = R27 + h25x0;
       R27 = R26 + h23x0;
