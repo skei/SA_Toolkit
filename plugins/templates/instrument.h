@@ -195,9 +195,9 @@ public:
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     #endif
     MVoiceManager.init(getClapPlugin(),getClapHost());
-    //MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
+    //MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     return SAT_Plugin::init();
   }
 

@@ -71,6 +71,9 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   AEditor->connect(osc1_semi_knob,getParameter(SA_MAEL_PARAM_OSC1_SEMI));
   AEditor->connect(osc1_cent_knob,getParameter(SA_MAEL_PARAM_OSC1_CENT));
 
+  osc1_cent_knob->setSnap(true);
+  osc1_cent_knob->setSnapPos(0.5);
+
   //------------------------------
   // flt1
   //------------------------------

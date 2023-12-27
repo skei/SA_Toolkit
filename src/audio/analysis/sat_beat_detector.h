@@ -19,15 +19,16 @@ end;
 
 // http://www.musicdsp.org/showArchiveComment.php?ArchiveID=200
 
+template <typename T>
 class SAT_BeatDetector {
 
   private:
 
-    float MBeatFilter;    // Filter coefficient
-    float MFilter1Out;
-    float MFilter2Out;
-    float MBeatRelease;    // Release time coefficient
-    float MPeakEnv;        // Peak enveloppe follower
+    T MBeatFilter;    // Filter coefficient
+    T MFilter1Out;
+    T MFilter2Out;
+    T MBeatRelease;    // Release time coefficient
+    T MPeakEnv;        // Peak enveloppe follower
     bool  MBeatTrigger;    // Schmitt trigger output
     bool  MPrevBeatPulse;  // Rising edge memory
 
@@ -53,15 +54,15 @@ class SAT_BeatDetector {
 
     //----------
 
-    void setSampleRate(float ASampleRate) {
+    void setSampleRate(T ASampleRate) {
       MBeatFilter = 1.0 / (ASampleRate*T_FILTER);
       MBeatRelease = exp( -1.0 / (ASampleRate*BEAT_RTIME) );
     }
 
     //----------
 
-    void process(float AInput) {
-      float EnvIn;
+    void process(T AInput) {
+      T EnvIn;
       // Step 1 : 2nd order low pass filter (made of two 1st order RC filter)
       MFilter1Out = MFilter1Out + ( MBeatFilter * (AInput-MFilter1Out) );
       MFilter2Out = MFilter2Out + ( MBeatFilter * (MFilter1Out-MFilter2Out) );

@@ -45,11 +45,11 @@
 
 //----------
 
-//#include "../plugins/ports/loser/0XMaximizer.h"
-
-//----------
-
 //#include "../plugins/sa_ports.h"
+
+//
+
+//#include "../plugins/ports/loser/0XMaximizer.h"
 
 //----------------------------------------------------------------------
 //
@@ -60,7 +60,7 @@
 //#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
-  #include "../plugins/sa_mael.h"
+#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_tyr.h"
 

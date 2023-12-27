@@ -1,5 +1,5 @@
-#ifndef mip_rms_included
-#define mip_rms_included
+#ifndef sat_rms_included
+#define sat_rms_included
 //----------------------------------------------------------------------
 
 // original author: lubomir i ivanov (for axonlib)
@@ -16,15 +16,16 @@
     rmsfilter.reset();                        // to reset the rms value
 */
 
-class MIP_Rms {
+template <typename T>
+class SAT_Rms {
 
   private:
 
-    float win,fout,a0,b1;
+    T win,fout,a0,b1;
 
   public:
 
-    MIP_Rms() {
+    SAT_Rms() {
       reset();
       setup(300, 44100);
     }
@@ -37,7 +38,7 @@ class MIP_Rms {
       srate   : sample rate
     */
 
-    void setup(float winlen, float srate) {
+    void setup(T winlen, T srate) {
       b1 = exp(-1/(winlen*srate*0.001));
       a0 = 1 - b1;
     }
@@ -53,8 +54,8 @@ class MIP_Rms {
 
     //----------
 
-    float process(float input) {
-      fout = a0*input*input + b1*fout + MIP_FLOAT_DENORM;
+    T process(T input) {
+      fout = a0*input*input + b1*fout;// + MIP_FLOAT_DENORM;
       return sqrt(fout);
     }
 

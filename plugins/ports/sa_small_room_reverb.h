@@ -320,6 +320,188 @@ private:
 
 
 
+#if 0
 
+/* Small Room Reverberator
+ * 
+ * Implemented as proposed in "The Virtual Acoustic Room" by William Grant Gardner
+ *                            (http://www.media.mit.edu/~billg/docs/ms-thesis.ps.gz)
+ */
+
+desc:Small Room Reverberator (Gardner)
+
+slider1:0<-120,0,1>Dry (dB)
+slider2:-6<-120,0,1>Wet (dB)
+slider3:50<0,100,1>Damping (%)
+
+@init
+a0_pos = 0;
+a1_pos = 0;
+a2_pos = 0;
+a3_pos = 0;
+a4_pos = 0;
+a0r_pos = 0;
+a1r_pos = 0;
+a2r_pos = 0;
+a3r_pos = 0;
+a4r_pos = 0;
+tmp = 0;
+tmpr = 0;
+t = 0;
+tr = 0;
+
+@slider
+wet = exp(slider2/8.65617);
+dry = exp(slider1/8.65617);
+g = 1-slider3/100;
+
+a0 = 0;
+a0_len = (srate*35/1000)|0;
+a0_g = 0.3;
+
+a1 = a0+a0_len+1;
+a1_len = (srate*22/1000)|0;
+a1_g = 0.4;
+
+a2 = a1+a1_len+1;
+a2_len = (srate*8.3/1000)|0;
+a2_g = 0.6;
+
+a3 = a2+a2_len+1;
+a3_len = (srate*66/1000)|0;
+a3_g = 0.1;
+
+a4 = a3+a3_len+1;
+a4_len = (srate*30/1000)|0;
+a4_g = 0.4;
+
+/* scatter second channels delay length's to give stereo spread */
+rndcoef = 50;
+
+a0r = a4+a4_len+1;
+a0r_len = ((srate*35/1000)|0)+rndcoef;
+
+a1r = a0r+a0r_len+1;
+a1r_len = ((srate*22/1000)|0)-rndcoef;
+
+a2r = a1r+a1r_len+1;
+a2r_len = ((srate*8.3/1000)|0)+rndcoef;
+
+a3r = a2r+a2r_len+1;
+a3r_len = ((srate*66/1000)|0)-rndcoef;
+
+a4r = a3r+a3r_len+1;
+a4r_len = ((srate*30/1000)|0)+rndcoef;
+
+/* the lowpass isn't sepcified any further so we use a simple RC filter */
+c = exp(-2*3.14*4200/srate);
+
+@sample
+
+// left channel
+
+in = spl0 + tmp*g;
+
+// ---- AP 1
+a0_in = in;
+a0_out = -a0_in*a0_g + a2_out;
+a1_in = a0_in + a0_out*a0_g;
+
+// -> nested
+  a1_out = -a1_in*a1_g + a1[a1_pos];
+  a1[a1_pos] = a1_in + a1_out*a1_g;
+  (a1_pos+=1) >= a1_len ? a1_pos = 0;
+
+  a2_in = a1_out;
+  a2_out = -a2_in*a2_g + a2[a2_pos];
+  a2[a2_pos] = a2_in + a2_out*a2_g;
+  (a2_pos+=1) >= a2_len ? a2_pos = 0;
+
+  // delay
+  a0[a0_pos] = a2_out;
+  (a0_pos+=1) >= a0_len ? a0_pos = 0;
+  a2_out = a0[a0_pos];
+// <-
+
+// ---- end AP 1
+
+// ---- AP 2
+a3_in = a0_out;
+a3_out = -a3_in*a3_g + a4_out;
+a4_in = a3_in + a3_out*a3_g;
+
+// -> nested 
+  a4_out = -a4_in*a4_g + a4[a4_pos];
+  a4[a4_pos] = a4_in + a4_out*a4_g;
+  (a4_pos+=1) >= a4_len ? a4_pos = 0;
+
+  // delay
+  a3[a3_pos] = a4_out;
+  (a3_pos+=1) >= a3_len ? a3_pos = 0;
+  a4_out = a3[a3_pos];
+// <-
+
+// ---- end AP 2
+
+tmp = a3_out;
+tmp = (t = tmp + c*(t-tmp));
+
+out = a0_out*0.5 + a3_out*0.5;
+
+spl0 = spl0*dry + out*wet;
+
+
+
+// right channel
+
+in = spl1 + tmpr*g;
+
+// ---- AP 1
+a0r_in = in;
+a0r_out = -a0r_in*a0_g + a2r_out;
+a1r_in = a0r_in + a0r_out*a0_g;
+
+// -> nested
+  a1r_out = -a1r_in*a1_g + a1r[a1r_pos];
+  a1r[a1r_pos] = a1r_in + a1r_out*a1_g;
+  (a1r_pos+=1) >= a1r_len ? a1r_pos = 0;
+
+  a2r_in = a1r_out;
+  a2r_out = -a2r_in*a2_g + a2r[a2r_pos];
+  a2r[a2r_pos] = a2r_in + a2r_out*a2_g;
+  (a2r_pos+=1) >= a2r_len ? a2r_pos = 0;
+
+  // delay
+  a0r[a0r_pos] = a2r_out;
+  (a0r_pos+=1) >= a0r_len ? a0r_pos = 0;
+  a2r_out = a0r[a0r_pos];
+// <-
+
+// AP 2
+a3r_in = a0r_out;
+a3r_out = -a3r_in*a3_g + a4r_out;
+a4r_in = a3r_in + a3r_out*a3_g;
+
+// -> nested 
+  a4r_out = -a4r_in*a4_g + a4r[a4r_pos];
+  a4r[a4r_pos] = a4r_in + a4r_out*a4_g;
+  (a4r_pos+=1) >= a4r_len ? a4r_pos = 0;
+
+  // delay
+  a3r[a3r_pos] = a4r_out;
+  (a3r_pos+=1) >= a3r_len ? a3r_pos = 0;
+  a4r_out = a3r[a3r_pos];
+// <-
+
+tmpr = a3r_out;
+tmpr = (tr = tmpr + c*(tr-tmpr));
+
+out = a0r_out*0.5 + a3r_out*0.5;
+
+spl1 = spl1*dry + out*wet;
+
+
+
+#endif // 0
 
 

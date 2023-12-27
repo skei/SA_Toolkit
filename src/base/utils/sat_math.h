@@ -221,7 +221,7 @@ double SAT_Quantize(double AValue, int32_t ASteps) {
   ar - array of floats
 */
 
-double SAT_Rms(const unsigned int n, const double* ar) {
+double SAT_CalcRMS(const unsigned int n, const double* ar) {
   double numr = 0;
   unsigned int i=0;
   while (i<n) {

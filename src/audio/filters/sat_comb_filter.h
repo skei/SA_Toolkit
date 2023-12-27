@@ -1,5 +1,5 @@
-#ifndef mip_comb_filter_included
-#define mip_comb_filter_included
+#ifndef sat_comb_filter_included
+#define sat_comb_filter_included
 //----------------------------------------------------------------------
 
 // https://github.com/rjeschke/cetonesynths/blob/master/cetoneorg/reverb.h
@@ -15,17 +15,18 @@
 
 //----------
 
-class MIP_CombFilter {
+template <typename T>
+class SAT_CombFilter {
 
   private:
 
-    float   _Buffer[MAX_BUFFER]; // was 8192
+    T   _Buffer[MAX_BUFFER]; // was 8192
     int32_t _Pos;
-    float   _History;
+    T   _History;
     int32_t _Size;
-    float   _Damp1;
-    float   _Damp2;
-    float   _Feedback;
+    T   _Damp1;
+    T   _Damp2;
+    T   _Feedback;
 
   //------------------------------
   //
@@ -33,7 +34,7 @@ class MIP_CombFilter {
 
   public:
 
-    MIP_CombFilter() {
+    SAT_CombFilter() {
       //_Size;
       //_Damp1;
       //_Damp2;
@@ -43,7 +44,7 @@ class MIP_CombFilter {
 
     //----------
 
-    ~MIP_CombFilter() {
+    ~SAT_CombFilter() {
     }
 
   //------------------------------
@@ -54,7 +55,7 @@ class MIP_CombFilter {
 
     void reset(void) {
       _History = 0.0f;
-      MIP_Memset(_Buffer, 0, MAX_BUFFER * sizeof(float));
+      memset(_Buffer, 0, MAX_BUFFER * sizeof(T));
     }
 
     //----------
@@ -68,13 +69,13 @@ class MIP_CombFilter {
 
     //----------
 
-    void feedback(float AValue) {
+    void feedback(T AValue) {
       _Feedback = AValue;
     }
 
     //----------
 
-    void damp(float AValue) {
+    void damp(T AValue) {
       _Damp1 = AValue;
       _Damp2 = 1.0f - AValue;
     }
@@ -85,9 +86,9 @@ class MIP_CombFilter {
 
   public:
 
-    float process(float input) {
+    T process(T input) {
       //KDTrace("%i ",_Size);
-      float output = _Buffer[_Pos];
+      T output = _Buffer[_Pos];
       _History = (output * _Damp2) + (_History * _Damp1);
       //KKillDenorm(_History);
       _Buffer[_Pos] = input + (_History * _Feedback);

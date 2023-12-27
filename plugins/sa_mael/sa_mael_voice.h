@@ -5,10 +5,10 @@
 #define VOICE_SCALE   0.1
 
 #include "audio/filters/sat_svf_filter.h"
-//#include "audio/synthesis/sat_dsf_waveform.h"
 #include "audio/synthesis/sat_morph_oscillator.h"
-//#include "audio/modulation/sat_curved_envelope.h"
 #include "audio/modulation/sat_exp_envelope.h"
+
+#include "audio/filters/sat_karlsen_filter.h"
 
 //----------------------------------------------------------------------
 

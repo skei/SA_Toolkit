@@ -20,7 +20,7 @@ struct SAT_NoDelayFx {
 //----------------------------------------------------------------------
 
 
-template <typename T, int MAX_DELAY, typename FBLOOPFX=SAT_NoDelayFx<T>>
+template <typename T, int MAX_DELAY, typename FBLOOPFX=SAT_NoDelayFx<T>> // , typename CLIPFX=SAT_NoDelayFx<T>
 class SAT_InterpolatedDelay {
 
 //------------------------------
@@ -32,6 +32,7 @@ private:
   T               MDelayPos           = 0.0f;
   bool            MWrapped            = false;
   FBLOOPFX        MFBLoopFX           = {};
+  CLIPFX          MClipFX           = {};
   T               MPhase              = 0.0;
 
   //SAT_DcFilter  MDC;
@@ -142,14 +143,16 @@ public:
     if (out >  1.0f) out =  1.0f;
     if (out < -1.0f) out = -1.0f;
 
+//    out = MClipFX.process(out);
+
     //-----
 
     SAT_Assert( MCounter >= 0 );
     SAT_Assert( MCounter < MAX_DELAY );
 
     // if only part of next sample 'fits' inside delay length...
-    //if ((/*MPhase*/MDelayPos + 1.0) >= ADelay) {
-    //  T diff = ADelay - /*MPhase*/MDelayPos;
+    //if ((MDelayPos + 1.0) >= ADelay) {
+    //  T diff = ADelay - MDelayPos;
     //  out *= diff;
     //}
 
@@ -160,10 +163,10 @@ public:
       MCounter -= MAX_DELAY;// 0;
     }
 
-    /*MPhase*/MDelayPos += 1.0f;
-    if (/*MPhase*/MDelayPos >= ADelay) {
+    MDelayPos += 1.0f;
+    if (MDelayPos >= ADelay) {
       MWrapped = true;
-      while (/*MPhase*/MDelayPos >= ADelay) /*MPhase*/MDelayPos -= ADelay;
+      while (MDelayPos >= ADelay) MDelayPos -= ADelay;
     }
 
     MPhase = MDelayPos / ADelay;

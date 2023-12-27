@@ -176,3 +176,87 @@ private:
 //----------------------------------------------------------------------
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+/* Pitch shifting via overlap and add
+ * Copyright (c) 2012
+ * All rights reserved.
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ * NOTE: This is not Pitch Synchronous Overlap and Add but just Overlap
+ *       and Add!
+ */
+
+desc:Pitch (OLA)
+slider1:100<50,200,1>Pitch (%)
+slider2:100<0,200,1>Window (ms)
+slider3:100<0,100,1>Cross-Fade (%)
+
+@init
+in_pos = 0;
+out_pos = 0;
+base = 0;
+old_base = 0;
+
+@slider
+inc = slider1/100;
+
+/* len must be multiple of 2 otherwise there will be drift due to floating
+ * point math in 1sdft93hgosdh
+ */
+len = floor(slider2/1000*srate/2)*2;
+
+fade = slider3/100 * len/2;
+
+@sample
+in = spl0;
+
+/* fill buffer */
+0[in_pos] = in;
+
+/* increment in_pos */
+in_pos = (in_pos+1)%len;
+
+/* generate the output; first calculate the xfade gain; then mix the to
+ * from both base and old_base and xfade
+ */
+gain = min(out_pos/fade, 1);
+out = 0[(base+out_pos)%len] * gain + 0[(fade_base+out_pos)%len] * (1-gain);
+
+/* increment the out_pos by inc (pitch!) ref 1sdft93hgosdh and check whether
+ * we need to initialize a fade
+ */
+(out_pos+=inc) >= len-1-fade ? (
+	fade_base = base+len-1-fade;
+	out_pos = 0; base = in_pos;
+);
+
+spl0 = spl1 = out;
+
+
+#endif // 0

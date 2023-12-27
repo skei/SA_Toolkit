@@ -1,15 +1,16 @@
-#ifndef mip_goertzel_included
-#define mip_goertzel_included
+#ifndef sat_goertzel_included
+#define sat_goertzel_included
 //----------------------------------------------------------------------
 
 // http://www.musicdsp.org/showArchiveComment.php?ArchiveID=107
 
-float MIP_Goertzel(float* ABuffer, uint32_t ALength, float AFrequency, float ASamplerate) {
-  float skn = 0;
-  float skn1 = 0;
-  float skn2 = 0;
-  float temp1 = MIP_PI2 * AFrequency / ASamplerate;
-  float temp2 = cosf(temp1);
+template <typename T>
+T SAT_Goertzel(T* ABuffer, uint32_t ALength, T AFrequency, T ASamplerate) {
+  T skn = 0;
+  T skn1 = 0;
+  T skn2 = 0;
+  T temp1 = SAT_PI2 * AFrequency / ASamplerate;
+  T temp2 = cosf(temp1);
   for (uint32_t i=0; i<ALength; i++) {
     skn2 = skn1;
     skn1 = skn;
@@ -23,13 +24,14 @@ float MIP_Goertzel(float* ABuffer, uint32_t ALength, float AFrequency, float ASa
 // Here's a variant on the theme that compensates for harmonics:
 // http://www.musicdsp.org/showArchiveComment.php?ArchiveID=172
 
-float MIP_GoertzelHarmonics(float* ABuffer, uint32_t ALength, float AFrequency, float ASamplerate) {
-  float qkn = 0;
-  float qkn1 = 0;
-  float wkn = MIP_PI2 * AFrequency / ASamplerate;
-  float mk = 2 * cos(wkn);
+template <typename T>
+T SAT_GoertzelHarmonics(T* ABuffer, uint32_t ALength, T AFrequency, T ASamplerate) {
+  T qkn = 0;
+  T qkn1 = 0;
+  T wkn = SAT_PI2 * AFrequency / ASamplerate;
+  T mk = 2 * cos(wkn);
   for (uint32_t i=0; i<ALength; i++) {
-    float qkn2 = qkn1;
+    T qkn2 = qkn1;
     qkn1 = qkn;
     qkn  = ABuffer[i] + mk*qkn1 - qkn2;
   }

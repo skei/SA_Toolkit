@@ -1,5 +1,5 @@
-#ifndef mip_rbj_filter_included
-#define mip_rbj_filter_included
+#ifndef sat_rbj_filter_included
+#define sat_rbj_filter_included
 //----------------------------------------------------------------------
 
 // biquad
@@ -45,14 +45,15 @@
 
 //----------------------------------------------------------------------
 
-class MIP_RbjFilter {
+template <typename T>
+class SAT_RbjFilter {
 
   private:
 
-    float   b0a0,b1a0,b2a0,a1a0,a2a0;
-    float   in1,in2,out1,out2;
+    T   b0a0,b1a0,b2a0,a1a0,a2a0;
+    T   in1,in2,out1,out2;
     uint32_t  MFilterType;
-    float   MFreq,MQ,MDBGain;
+    T   MFreq,MQ,MDBGain;
     bool    MQIsBandWidth;
     //fSampleRate : single;
     //fMaxBlockSize : integer;
@@ -62,13 +63,13 @@ class MIP_RbjFilter {
 
   private:
 
-    void setQ(float NewQ) {
+    void setQ(T NewQ) {
       MQ = (1-NewQ) * 0.98;
     }
 
   public:
 
-    MIP_RbjFilter() {
+    SAT_RbjFilter() {
       MFilterType = 0;
       MFreq = 500;
       MQ = 0.3;
@@ -82,7 +83,7 @@ class MIP_RbjFilter {
 
     //----------
 
-    void calcFilterCoeffs(float ASampleRate, uint32_t AFilterType, float AFreq, float AQ, float ADBGain, bool AQIsBandWidth) {
+    void calcFilterCoeffs(T ASampleRate, uint32_t AFilterType, T AFreq, T AQ, T ADBGain, bool AQIsBandWidth) {
       MFilterType = AFilterType;
       MFreq = AFreq;
       MQ = AQ;
@@ -93,16 +94,16 @@ class MIP_RbjFilter {
 
     //----------
 
-    void CalcFilterCoeffs(float ASampleRate) {
-      float a0,a1,a2,b0,b1,b2;
-      float alpha,beta,omega;
-      float tsin,tcos;
+    void CalcFilterCoeffs(T ASampleRate) {
+      T a0,a1,a2,b0,b1,b2;
+      T alpha,beta,omega;
+      T tsin,tcos;
 
       //peaking, LowShelf or HiShelf
 
       if (MFilterType>=6) {
-        float A = pow(10.0,(MDBGain/40.0));
-        omega = MIP_PI2*MFreq/ASampleRate;
+        T A = pow(10.0,(MDBGain/40.0));
+        omega = SAT_PI2*MFreq/ASampleRate;
         tsin = sin(omega);
         tcos = cos(omega);
         if (MQIsBandWidth) alpha = tsin*sinh(log2(2.0)/2.0*MQ*omega/tsin);
@@ -147,7 +148,7 @@ class MIP_RbjFilter {
       //other filter types
 
       else {
-        omega = MIP_PI2*MFreq/ASampleRate;
+        omega = SAT_PI2*MFreq/ASampleRate;
         tsin = sin(omega);
         tcos = cos(omega);
         if (MQIsBandWidth) alpha = tsin*sinh(log2(2)/2*MQ*omega/tsin);
@@ -234,8 +235,8 @@ class MIP_RbjFilter {
 
     //----------
 
-    float process(float AInput) {
-      float n =  b0a0*AInput + b1a0*in1 + b2a0*in2 - a1a0*out1 - a2a0*out2;
+    T process(T AInput) {
+      T n =  b0a0*AInput + b1a0*in1 + b2a0*in2 - a1a0*out1 - a2a0*out2;
       in2 = in1;
       in1 = AInput;
       out2 = out1;
@@ -280,16 +281,16 @@ class MIP_RbjFilter {
   public:
 
     uint32_t  filterType(void)    { return MFilterType; }
-    float   freq(void)          { return MFreq; }
-    float   q(void)             { return MQ; }
-    float   dbGain(void)        { return MDBGain; }
+    T   freq(void)          { return MFreq; }
+    T   q(void)             { return MQ; }
+    T   dbGain(void)        { return MDBGain; }
     bool    qIsBandWidth(void)  { return MQIsBandWidth; }
 
     void    filterType(uint32_t AType)          { MFilterType = AType; }
-    void    freq(float AFreq)                 { MFreq = AFreq; }
-    void    q(float AQ)                       { MQ = AQ; }
-    void    dbGain(float ADBGain)             { MDBGain = ADBGain; }
-    void    qIsBandWidth(float AQisBandwidth) { MQIsBandWidth = AQisBandwidth; }
+    void    freq(T AFreq)                 { MFreq = AFreq; }
+    void    q(T AQ)                       { MQ = AQ; }
+    void    dbGain(T ADBGain)             { MDBGain = ADBGain; }
+    void    qIsBandWidth(T AQisBandwidth) { MQIsBandWidth = AQisBandwidth; }
 
 };
 

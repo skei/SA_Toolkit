@@ -1,5 +1,5 @@
-#ifndef mip_onepole_filter_included
-#define mip_onepole_filter_included
+#ifndef sat_onepole_filter_included
+#define sat_onepole_filter_included
 //----------------------------------------------------------------------
 
 // original author: lubomir i ivanov (for axonlib)
@@ -18,17 +18,18 @@
   4: hs
 */
 
-class MIP_OnePoleFilter {
+template <typename T>
+class SAT_OnePoleFilter {
 
   private:
 
     uint32_t  FType;
     bool      FInterpolate;
-    float     a0, b1, y;
-    float     _gain, _gain2;
-    float     i_a0, i_b1;
-    float     d_a0, d_b1;
-    float     s_a0, s_b1;
+    T     a0, b1, y;
+    T     _gain, _gain2;
+    T     i_a0, i_b1;
+    T     d_a0, d_b1;
+    T     s_a0, s_b1;
 
   private:
 
@@ -43,7 +44,7 @@ class MIP_OnePoleFilter {
 
   public:
 
-    MIP_OnePoleFilter() {
+    SAT_OnePoleFilter() {
       reset_p();
       FInterpolate = false;
       FType = 0;
@@ -66,7 +67,7 @@ class MIP_OnePoleFilter {
       intrp bool - parameter interpolation (on / off)
     */
 
-    void setup(uint32_t AType=0, float ASRate=44100, float AFreq=11000, float AGain=1, bool AInterp=false) {
+    void setup(uint32_t AType=0, T ASRate=44100, T AFreq=11000, T AGain=1, bool AInterp=false) {
       //gain
       _gain = 1; //axDB2Lin(gain);
       _gain2 = _gain - 1;
@@ -76,7 +77,7 @@ class MIP_OnePoleFilter {
       FType = AType;
       if ((FType < 0) || (FType > 4)) FType = 0;
       // coeff
-      b1 = exp(-MIP_PI2*AFreq / ASRate);
+      b1 = exp(-SAT_PI2*AFreq / ASRate);
       a0 = 1 - b1;
       // has interpolation
       FInterpolate = true;
@@ -95,7 +96,7 @@ class MIP_OnePoleFilter {
 
     void interpolate(uint32_t AFrames) {
       if ((FInterpolate) && (FType > 0)) {  // ! > ?
-        float inv_sb = 1.0f / AFrames;
+        T inv_sb = 1.0f / AFrames;
         // ---
         d_a0 = (a0 - s_a0)*inv_sb;
         i_a0 = s_a0;
@@ -107,7 +108,7 @@ class MIP_OnePoleFilter {
       }
     }
 
-    float process(float AInput) {
+    T process(T AInput) {
       if (FInterpolate) {
         i_a0 += d_a0;
         i_b1 += d_b1;
@@ -117,20 +118,20 @@ class MIP_OnePoleFilter {
           return AInput * _gain;
           break;
         case 1: // lp
-          y = (i_a0 * AInput) + (i_b1*y) + MIP_FLOAT_DENORM;
-          return (y - MIP_FLOAT_DENORM) * _gain;
+          y = (i_a0 * AInput) + (i_b1*y) + SAT_FLOAT_DENORM;
+          return (y - SAT_FLOAT_DENORM) * _gain;
           break;
         case 2: // hp
-          y = (i_a0 * AInput) + (i_b1*y) + MIP_FLOAT_DENORM;
-          return (AInput - y - MIP_FLOAT_DENORM) * _gain;
+          y = (i_a0 * AInput) + (i_b1*y) + SAT_FLOAT_DENORM;
+          return (AInput - y - SAT_FLOAT_DENORM) * _gain;
           break;
         case 3: // ls
-          y = (i_a0*AInput) + (i_b1*y) + MIP_FLOAT_DENORM;
-          return AInput + ((y - MIP_FLOAT_DENORM) * _gain2);
+          y = (i_a0*AInput) + (i_b1*y) + SAT_FLOAT_DENORM;
+          return AInput + ((y - SAT_FLOAT_DENORM) * _gain2);
           break;
         case 4: // hs
-          y = (i_a0*AInput) + (i_b1*y) + MIP_FLOAT_DENORM;
-          return AInput + ((AInput - y - MIP_FLOAT_DENORM) * _gain2);
+          y = (i_a0*AInput) + (i_b1*y) + SAT_FLOAT_DENORM;
+          return AInput + ((AInput - y - SAT_FLOAT_DENORM) * _gain2);
           break;
       }
     }

@@ -96,7 +96,6 @@ public:
   virtual sat_param_t           getMinValue()             { return MInfo.min_value; }
   virtual sat_param_t           getMaxValue()             { return MInfo.max_value; }
   virtual sat_param_t           getDefaultValue()         { return MInfo.default_value; }
-
   virtual sat_param_t           getLastAutomatedValue()   { return MLastAutomatedValue; }
   virtual sat_param_t           getLastModulatedValue()   { return MLastModulatedValue; }
   virtual bool                  isGuiAutomationDirty()    { return MGuiAutomationDirty; }
@@ -118,9 +117,17 @@ public:
   virtual void        setLastAutomatedValue(sat_param_t AValue) { MLastAutomatedValue = AValue; }
   virtual void        setGuiModulationDirty(bool ADirty=true)   { MGuiModulationDirty = ADirty; }
   virtual void        setLastModulatedValue(sat_param_t AValue) { MLastModulatedValue = AValue; }
-
   virtual void        setFlag(clap_param_info_flags AFlag)      { MInfo.flags |= AFlag; }
   virtual void        clearFlag(clap_param_info_flags AFlag)    { MInfo.flags &= ~AFlag; }
+
+  // virtual void        setSmoothFactor(sat_param_t AFactor)      { MSmoothFactor = AFactor; }
+  // virtual void        setSmoothValue(sat_param_t AValue)        { MSmoothValue = AValue; }
+  // virtual void        setSmoothTarget(sat_param_t ATarget)      { MSmoothValue = AValue; }
+  // virtual sat_param_t getSmoothValue() { return MSmoothValue; }
+  // virtual sat_param_t updateSmoothValue() {
+  //   MSmoothValue += (MSmoothTarget - MSmoothValue) * MSmoothFactor;
+  //   return MSmoothValue;
+  // }
 
 //------------------------------
 public:
