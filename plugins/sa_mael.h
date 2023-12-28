@@ -23,9 +23,9 @@
   #define PLUGIN_NAME   "sa_mael"
   #define MAX_VOICES    32
 
-  #define EDITOR_WIDTH  420
+  #define EDITOR_WIDTH  430
   #define EDITOR_HEIGHT 280 + 250
-  #define EDITOR_SCALE  1.33
+  #define EDITOR_SCALE  2 /*1.33*/
 
 //----------------------------------------------------------------------
 //
@@ -145,14 +145,14 @@ public:
         strcpy(page->section_name,"Section");
         page->page_id = 0;
         strcpy(page->page_name,"SA_Synth parameters");
-        page->param_ids[0] = SA_MAEL_PARAM_OSC1_TYPE;
-        page->param_ids[1] = SA_MAEL_PARAM_OSC1_SHAPE;
-        page->param_ids[2] = SA_MAEL_PARAM_OSC1_WIDTH;
-        page->param_ids[3] = SA_MAEL_PARAM_OSC1_CENT;
-        page->param_ids[4] = SA_MAEL_PARAM_FLT1_TYPE;
-        page->param_ids[5] = SA_MAEL_PARAM_FLT1_FREQ;
-        page->param_ids[6] = SA_MAEL_PARAM_FLT1_Q;
-        page->param_ids[7] = SA_MAEL_PARAM_GAIN;
+        page->param_ids[0] = SA_MAEL_PARAM_OSC1_SQU;
+        page->param_ids[1] = SA_MAEL_PARAM_OSC1_TRI;
+        page->param_ids[2] = SA_MAEL_PARAM_OSC1_SIN;
+        page->param_ids[3] = SA_MAEL_PARAM_OSC1_WIDTH;
+        page->param_ids[4] = SA_MAEL_PARAM_OSC2_SQU;
+        page->param_ids[5] = SA_MAEL_PARAM_OSC2_TRI;
+        page->param_ids[6] = SA_MAEL_PARAM_OSC2_SIN;
+        page->param_ids[7] = SA_MAEL_PARAM_OSC2_WIDTH;
         page->is_for_preset = false;
         return true;
       }
