@@ -215,8 +215,9 @@ private: // plugin
     plug->on_main_thread();
   }
 
-  //------------------------------
-  protected:
+//------------------------------
+protected:
+//------------------------------
 
   //const
   clap_plugin_t MPlugin {

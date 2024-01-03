@@ -60,14 +60,19 @@
 //#define SAT_DEBUG_PRINT_PRETTY_FUNCTION
 //#define SAT_DEBUG_PRINT_SOCKET
 //#define SAT_DEBUG_WINDOW
+
 //#define SAT_FAST_MATH_EXTRA_PRECISION
+
   #define SAT_GUI_DEFAULT_EDITOR
 //#define SAT_GUI_NOGUI
 //#define SAT_GUI_WAYLAND
 //#define SAT_GUI_WIN32
 //#define SAT_GUI_X11
+
 //#define SAT_LV2_EXPORT_TTL
+
 //#define SAT_MOUSE_DOUBLECLICK
+
 //#define SAT_NO_AUTODELETE
 //#define SAT_NO_BITMAP_DRAW
 //#define SAT_NO_BITMAP_FONT
@@ -78,6 +83,7 @@
 //#define SAT_NO_ENTRY
 //#define SAT_NO_LOG
 //#define SAT_NO_STDLIB
+
 //#define SAT_PLUGIN_ALL
 //#define SAT_PLUGIN_CLAP
 //#define SAT_PLUGIN_DSSI
@@ -95,14 +101,19 @@
 //#define SAT_PLUGIN_USE_INVALIDATION_FACTORY
   #define SAT_PLUGIN_USE_PLUGIN_FACTORY
 //#define SAT_PLUGIN_USE_PRESET_DISCOVERY_FACTORY
+
 //#define SAT_TESTS
   #define SAT_TESTS_EXIT_ON_FAILURE
+
 //#define SAT_VOICE_MANAGER_CONVERT_MIDI
   #define SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
   #define SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
+
 //#define SAT_WAVETABLE_LINEAR_INTERPOLATION
+
 //#define SAT_WIN32_GDIPLUS
 //#define SAT_WIN32_INVALIDATE_WHEN_RESIZING
+
   #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 //----------------------------------------------------------------------
@@ -205,7 +216,7 @@
 #if !defined (SAT_PLUGIN_FORMAT_DEFINED)
   //#define SAT_PLUGIN_ALL
   #define SAT_PLUGIN_CLAP
-  //#define SAT_PLUGIN
+  #define SAT_PLUGIN
 #endif
 
 //#ifdef SAT_PLUGIN

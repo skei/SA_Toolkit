@@ -7,11 +7,12 @@
 #include "plugin/sat_entry.h"
 
 #define SAT_NO_ENTRY
+
 #include "sa_botage.h"
 #include "sa_bulum.h"
 #include "sa_cred.h"
 #include "sa_mael.h"
-#include "sa_pitch.h"
+//#include "sa_pitch.h"
 
 //----------------------------------------------------------------------
 //
@@ -24,7 +25,7 @@ void SAT_Register(SAT_Registry* ARegistry) {
   ARegistry->registerDescriptor(&sa_bulum_descriptor);
   ARegistry->registerDescriptor(&sa_cred_descriptor);
   ARegistry->registerDescriptor(&sa_mael_descriptor);
-  ARegistry->registerDescriptor(&sa_pitch_descriptor);
+  //ARegistry->registerDescriptor(&sa_pitch_descriptor);
 }
 
 //----------
@@ -36,7 +37,7 @@ SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t
     case 1: return new sa_bulum_plugin(ADescriptor,AHost);
     case 2: return new sa_cred_plugin(ADescriptor,AHost);
     case 3: return new sa_mael_plugin(ADescriptor,AHost);
-    case 4: return new sa_pitch_plugin(ADescriptor,AHost);
+    //case 4: return new sa_pitch_plugin(ADescriptor,AHost);
   }
   return nullptr;
 }

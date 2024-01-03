@@ -1,4 +1,3 @@
-
 #include "plugin/sat_plugin.h"
 #include "gui/sat_widgets.h"
 

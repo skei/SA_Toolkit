@@ -66,10 +66,14 @@ public:
     SAT_MenuWidget* MSelectorMenu = nullptr;
     float           MBuffer[2048];
 
+    //void* memleak = nullptr;
+
 //------------------------------
 public:
 //------------------------------
 
+  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sat_demo_plugin)
+  
   sat_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
 
@@ -83,7 +87,7 @@ public:
     // int val = *ptr;
     // SAT_Print("%p = %i\n",ptr,val);
 
-    void* memleak = malloc(666);
+    //memleak = malloc(666);
 
   }
 
@@ -91,6 +95,8 @@ public:
 
   virtual ~sat_demo_plugin() {
     //SAT_PRINT;
+    
+    //free(memleak);
   }
 
 //------------------------------
@@ -187,25 +193,38 @@ private: // widget page
       scrollbox->setFillBackground(true);
       //scrollbox->setBackgroundColor(SAT_Grey);
 
-
         //--------------------
         // column 1
         //--------------------
 
+        SAT_PanelWidget* column1 = new SAT_PanelWidget(210);
+        scrollbox->appendChildWidget(column1);
+        column1->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+        column1->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_VERT);
+        column1->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
+        column1->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
+        column1->setLayoutSpacing(SAT_Point(5,5));
 
         SAT_PanelWidget* panel;
 
         // panel : text
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,10,200,20));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(20);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setDrawText("Text");
           panel->setText("Text");
 
+
         // panel : text + value
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,40,200,20));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(20);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setDrawText(true);
           panel->setText("Value");
           panel->setTextAlignment(SAT_TEXT_ALIGN_LEFT);
@@ -224,8 +243,11 @@ private: // widget page
 
         // panel : color
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,70,200,20));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(20);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setFillBackground(true);
           panel->setBackgroundColor(SAT_Cyan);
           panel->setDrawBorder(true);
@@ -234,20 +256,26 @@ private: // widget page
 
         // panel : rounded corners
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,100,200,20));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(20);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setDrawBorder(true);
           panel->setBorderColor(SAT_LightGrey);
           panel->setBorderWidth(2);
           panel->setRoundedCorners(true);
           //panel->setCornerSize(8);
           panel->setCornerSizes(8,8,0,8);
-          //panel->setBorderCorners(/*SAT_CORNER_UPPER_LEFT +*/ SAT_CORNER_UPPER_RIGHT + SAT_CORNER_LOWER_RIGHT + SAT_CORNER_LOWER_LEFT);
+          //panel->setBorderCorners(SAT_CORNER_UPPER_RIGHT + SAT_CORNER_LOWER_RIGHT + SAT_CORNER_LOWER_LEFT);
 
         // panel : gradient
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,130,200,20));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(20);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setFillLinearGradient(true);
           panel->setGradientColors(SAT_Grey,0.45,0.55);
           panel->setRoundedCorners(true);
@@ -255,8 +283,11 @@ private: // widget page
 
         // panel : drop shadow
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,160,200,30));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(30);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setFillBackground(true);
           panel->setBackgroundColor(SAT_Grey);
           panel->setFillLinearGradient(true);
@@ -272,8 +303,11 @@ private: // widget page
 
         // panel : inner drop shadow
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,200,200,30));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(30);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setFillBackground(false);
           panel->setBackgroundColor(SAT_Grey);
           panel->setDrawBorder(true);
@@ -288,8 +322,11 @@ private: // widget page
 
         // panel : font
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,240,200,30));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(30);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           SAT_Painter* painter = AWindow->getPainter();
           int32_t font = painter->getHeaderFont();
           panel->setDrawBorder(false);
@@ -303,8 +340,11 @@ private: // widget page
 
         // panel: text + text shadow
 
-        panel = new SAT_PanelWidget(SAT_Rect(10,280,200,30));
-        scrollbox->appendChildWidget(panel);
+        panel = new SAT_PanelWidget(30);
+        column1->appendChildWidget(panel);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          panel->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           panel->setDrawBorder(false);
           panel->setDrawText(true);
           panel->setText("Text Shadow");
@@ -317,20 +357,28 @@ private: // widget page
 
         // logo
 
-        SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(10,320,60,60));
-        scrollbox->appendChildWidget(logo);
+        SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(60,60));
+        column1->appendChildWidget(logo);
+          logo->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          //logo->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          //logo->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
 
         // image
 
-        //SAT_ImageWidget* image = new SAT_ImageWidget(SAT_Rect(80,320,60,60),"../data/img/sa.png");
-        SAT_ImageWidget* image = new SAT_ImageWidget(SAT_Rect(80,320,60,60),(void*)SA,SA_size);
-        scrollbox->appendChildWidget(image);
-        image->setScale(0.6);
+        SAT_ImageWidget* image = new SAT_ImageWidget(SAT_Rect(65,0,60,60),(void*)SA,SA_size);
+        column1->appendChildWidget(image);
+          image->setScale(0.6);
+          image->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          //image->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          //image->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
 
         // circular waveform
 
-        SAT_CircularWaveformWidget* circular_waveform = new SAT_CircularWaveformWidget(SAT_Rect(150,320,60,60), 128 );
-        scrollbox->appendChildWidget(circular_waveform);
+        SAT_CircularWaveformWidget* circular_waveform = new SAT_CircularWaveformWidget(SAT_Rect(130,0,60,60), 128 );
+        column1->appendChildWidget(circular_waveform);
+          circular_waveform->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          //circular_waveform->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          circular_waveform->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
           circular_waveform->setBackgroundColor(0.375);
           circular_waveform->setWaveformBackgroundColor(0.35);
           circular_waveform->setZeroLineColor(0.2);
@@ -339,16 +387,32 @@ private: // widget page
 
         // symbols
 
-        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),390,16,16), i    ));
-        for (uint32_t i=0; i<8; i++) scrollbox->appendChildWidget( new SAT_SymbolWidget(SAT_Rect(10 + (i*(16+7)),410,16,16), i + 9));
+        for (uint32_t i=0; i<9; i++) {
+          double x = i * 20;
+          double y = 0;
+          SAT_SymbolWidget* widget = new SAT_SymbolWidget(SAT_Rect(x,y,16,16),i);
+          widget->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          column1->appendChildWidget(widget);
+        }
+
+        for (uint32_t i=0; i<9; i++) {
+          double x = i * 20;
+          double y = 20;
+          SAT_SymbolWidget* widget = new SAT_SymbolWidget(SAT_Rect(x,y,16,16), i + 9);
+          widget->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          column1->appendChildWidget(widget);
+        }
 
         // waveform
 
-        SAT_WaveformWidget* waveform = new SAT_WaveformWidget(SAT_Rect(10,440,200,50));
-        scrollbox->appendChildWidget(waveform);
+        SAT_WaveformWidget* waveform = new SAT_WaveformWidget(SAT_Rect(0,45,200,50));
+        column1->appendChildWidget(waveform);
           waveform->setNumGrid(4);
           waveform->setNumSubGrid(2);
           waveform->setBuffer(MBuffer,2048);
+          waveform->addLayoutFlag(SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT);
+          waveform->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_HORIZ);
+          waveform->addLayoutFlag(SAT_WIDGET_LAYOUT_CROP_TOP);
 
         //--------------------
         // column 2

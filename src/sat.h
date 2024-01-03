@@ -2,10 +2,6 @@
 #define sat_included
 //----------------------------------------------------------------------
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include <array>
 #include <atomic>
@@ -13,6 +9,10 @@
 #include <malloc.h>
 #include <math.h>
 #include <memory.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 //#include <vector>

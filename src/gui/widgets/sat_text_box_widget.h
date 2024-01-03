@@ -125,7 +125,7 @@ public:
 //      SAT_Print("no painter\n");
 //    }
 
-    SAT_Print("%.2f, %.2f\n",width,MTextSize*S);
+//    SAT_Print("%.2f, %.2f\n",width,MTextSize*S);
 
     SAT_PanelWidget* textwidget = new SAT_PanelWidget( SAT_Rect(width,MTextSize*S));
     MContent->appendChildWidget(textwidget);

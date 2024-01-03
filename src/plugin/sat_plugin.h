@@ -7,7 +7,6 @@
   * split in two:
     - SAT_NoGuiPlugin : public SAT_Plugin
     - SAT_GuiPlugin : public SAT_NoGuiPlugin
-
   
 */
 //----------------------------------------------------------------------
@@ -1276,10 +1275,6 @@ private:
   #endif // nogui
 
 //------------------------------
-private:
-//------------------------------
-
-//------------------------------
 public: // process
 //------------------------------
 
@@ -1510,11 +1505,27 @@ protected: // SAT_EditorListener
 #endif // nogui
 
 
+
+
+
+
+
+
+
+
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 //------------------------------
@@ -1549,8 +1560,11 @@ protected: // clap_plugin
 
     MIsInitialized = false;
 
+    // hmmmm....
+    // never liked the look of 'delete this;'... :-/
+
     #ifdef SAT_PLUGIN_DELETE_IN_DESTROY
-      SAT_Print("delete this\n");
+      //SAT_Print("delete this\n");
       delete this;
     #endif
     
