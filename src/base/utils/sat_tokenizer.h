@@ -2,7 +2,16 @@
 #define sat_parser_included
 //----------------------------------------------------------------------
 
-// TODO: tokenizer..
+// TODO
+
+/*
+  - everything below (and including) ascii 32 is set to 0
+  - but keep everything inside "" as-is
+  - loop through buffer:
+  - if current char is not 0, and prev char was 0 -> start of new token
+  
+    'a=5' would fail (seen as 1 token)
+*/
 
 #include "base/types/sat_array.h"
 

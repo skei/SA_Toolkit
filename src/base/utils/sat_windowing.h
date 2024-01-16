@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include <math.h>
+#include "sat.h"
 
 /*
 float SAT_Windowing_Rect(float pos);

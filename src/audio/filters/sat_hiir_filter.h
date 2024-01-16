@@ -8,33 +8,7 @@
   http://www.musicdsp.org/archive.php?classid=3#39
 */
 
-/*
-  TODO:
-  - inline allpass filters (up to 12*6 = 72 state vars.. :-/
-  - try to get rid of memory load/stores
-  - zeroes?
-  - each allpass: 6 state vars + coeff
-    6*6 + 6*6 VARS..
 
-    !!!
-
-    how much of this will the compiler/optimizer do automagically?
-
-
-    out = allpass(input)
-
-    x2 := x1;
-    x1 := x0;
-    x0 := input;
-    y2 := y1;
-    y1 := y0;
-    y0 := x2 + ( (input-y2) * a );
-    out = y0;
-
-    at the end, instead of returning 'out', and then passing it as sn
-    argument to the next allpass, we can just use it directly...
-
-*/
 
 /*
   It is worth noting that if these filters are being used for upsampling/

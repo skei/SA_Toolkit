@@ -63,7 +63,7 @@ public:
     }
     MIndex = (MIndex + 1) & FIR_MASK;
     out = s;
-    for(uint32_t i=1; i<FACTOR; i++) {
+    for (uint32_t i=1; i<FACTOR; i++) {
       MInput[MIndex] = buffer[i];
       MIndex = (MIndex + 1) & FIR_MASK;
     }

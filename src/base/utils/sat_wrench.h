@@ -14,8 +14,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "extern/wrench/wrench.cpp"
 //#include "extern/wrench/wrench.h"
+#include "extern/wrench/wrench.cpp.h"
 
 //----------------------------------------------------------------------
 //

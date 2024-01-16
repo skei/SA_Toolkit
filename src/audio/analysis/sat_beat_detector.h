@@ -24,11 +24,11 @@ class SAT_BeatDetector {
 
   private:
 
-    T MBeatFilter;    // Filter coefficient
-    T MFilter1Out;
-    T MFilter2Out;
-    T MBeatRelease;    // Release time coefficient
-    T MPeakEnv;        // Peak enveloppe follower
+    T     MBeatFilter;    // Filter coefficient
+    T     MFilter1Out;
+    T     MFilter2Out;
+    T     MBeatRelease;    // Release time coefficient
+    T     MPeakEnv;        // Peak enveloppe follower
     bool  MBeatTrigger;    // Schmitt trigger output
     bool  MPrevBeatPulse;  // Rising edge memory
 

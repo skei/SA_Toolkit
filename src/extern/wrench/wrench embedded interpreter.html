@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://home.workshopfriends.com/wrench/www/#intro -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>wrench embedded interpreter</title>
+  <link rel="stylesheet" href="./wrench embedded interpreter_files/css-pro-layout.css">
+  <link rel="stylesheet" href="./wrench embedded interpreter_files/remixicon.css">
+  <link rel="stylesheet" href="./wrench embedded interpreter_files/style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+
+
+<style>
+a:visited {
+  color: #007F7F;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #0F9F0F;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: #3F3F1F;
+  background-color: transparent;
+  text-decoration: underline;
+}
+</style>
+
+<style type="text/css">
+pre code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 20px;
+}
+
+	table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+
+
+<div class="layout has-sidebar fixed-sidebar fixed-header">
+
+
+
+
+  <aside id="sidebar" class="sidebar break-point-lg has-bg-image">
+
+    <div class="image-wrapper">
+      <img src="./wrench embedded interpreter_files/core.jpg" alt="sidebar background">
+    </div>
+    <div class="sidebar-layout">
+      <div class="sidebar-header">
+        <span style="
+                text-transform: uppercase;
+                font-size: 15px;
+                letter-spacing: 3px;
+                font-weight: bold;
+              ">wrench
+
+<img src="./wrench embedded interpreter_files/small_icon_white.png"></span>
+      </div>
+      <div class="sidebar-content">
+        <nav class="menu open-current-submenu">
+          <ul>
+            <li class="menu-item">
+
+
+                <span class="menu-title"><a href="https://home.workshopfriends.com/wrench/www/#intro" style="">Intro</a></span>
+                <span class="menu-title"><a href="https://home.workshopfriends.com/wrench/www/#integration">Integration</a></span>
+                <span class="menu-title"><a href="https://home.workshopfriends.com/wrench/www/#language">Language Reference</a></span>
+                <span class="menu-title"><a href="https://home.workshopfriends.com/wrench/www/#extending">Extending
+Wrench</a></span>
+                <span class="menu-title"><a href="https://home.workshopfriends.com/wrench/www/#library">Lib Reference</a></span>
+                <span class="menu-title"><a href="https://home.workshopfriends.com/wrench/www/#benchmarks">Benchmarks</a></span>
+                <span class="menu-title"><a href="https://home.workshopfriends.com/wrench/www/#faq">FAQ</a></span>
+                <span class="menu-title"><a href="https://github.com/jingoro2112/wrench">Download</a></span>
+                <span class="menu-title"><a href="mailto:%20curt.hartung@gmail.com">Email Me</a></span>
+
+
+
+
+
+
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="sidebar-footer"><span><a href="https://opensource.org/licenses/MIT">MIT Licence</a></span></div>
+    </div>
+  </aside>
+  <div id="overlay" class="overlay"></div>
+  <div class="layout">
+
+    <main class="content">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr><h1><a id="intro"></a>1.0 Introduction</h1>
+
+"The difficulty is that things almost always start with some guy
+doing something that at the time looks totally useless" <cr>- <small>James Burke</small>
+
+<h3><p>wrench solves the problem of needing an easy-to-understand
+scripting language that can fit into a very small space but
+retain full power, flexibility, and speed.</p></h3>
+
+<ul>
+<li><b>Embedable:</b>Fits into less than 30K of Flash, and runs with
+a ~1k memory footprint
+</li><li><p><b>Comprehensible:</b>c-like syntax, weakly typed, garbage
+collected.
+
+</p></li><li><p><b>Fast:</b>Two to three times faster than other interpreters
+
+</p></li><li><p><b>Compact:</b>Bytecode images a small fraction of other
+interpreters
+</p></li><li><b>Easy To Integrate:</b>
+ <ul>
+  <li>two source files: <code>wrench.cpp and wrench.h</code>
+  </li><li>architecture neutral, compile anywhere run anywhere else
+  </li><li>c++98 clean and compliant, nothing fancy.
+  </li><li>no third-party libs, its all included.
+ </li></ul>
+
+</li><li><p><b>Bare-Metal:</b>Wrench can address native c/c++ data and arrays
+directly from script.
+</p></li></ul>
+
+<p><b>Short Version:</b>
+I didn't need a whole workshop with all the bells and whistles. I just
+needed a wrench. So I built one.
+
+
+
+
+
+</p><hr><h1><a name="integration"></a>2.0 Integration</h1>
+
+Wrench [the project] is kept current on
+<a href="https://github.com/jingoro2112/wrench">GitHub, download it
+here.</a>
+
+<p>
+Now the easy part, wrench packages itself into two source files:
+
+I have to credit <a href="https://wren.io/">Wren</a> for this idea (at
+least that's where I saw it), it's brilliant and makes
+integration a breeze.
+</p><p>
+add:
+</p><pre><code>/src/wrench.h
+/src/wrench.cpp
+</code></pre>
+to your project and compile. That's it, here is a complete
+
+<h2>example</h2>
+<pre><code>#include "wrench.h"
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+
+void print( WRState* w, const WRValue* argv, const int argn, WRValue&amp; retVal, void* usr )
+{
+	char buf[1024];
+	for( int i=0; i&lt;argn; ++i )
+	{
+		printf( "%s", argv[i].asString(buf, 1024) );
+	}
+}
+
+const char* wrenchCode = 
+"print( \"Hello World!\\n\" );"
+"for( i=0; i&lt;10; i++ )        "
+"{                            "
+"    print( i );              "
+"}                            "
+"print(\"\\n\");              ";
+
+
+int main( int argn, char** argv )
+{
+	WRState* w = wr_newState(); // create the state
+
+	wr_registerFunction( w, "print", print ); // bind a function
+
+	unsigned char* outBytes; // compiled code is alloc'ed
+	int outLen;
+
+	int err = wr_compile( wrenchCode, strlen(wrenchCode), &amp;outBytes, &amp;outLen ); // compile it
+	if ( err == 0 )
+	{
+		wr_run( w, outBytes, outLen ); // load and run the code!
+		delete[] outBytes; // clean up 
+	}
+
+	wr_destroyState( w );
+
+	return 0;
+}
+</code></pre>
+
+<h2>command line</h2>
+<p>
+A command-line utility is included, to compile it under linux just
+<code>make</code> in the root dir. For windows a visual studio project is included under
+<code>/win32</code>
+</p><p>
+For PC-ish stuff this is all you have to do, the full-blown wrench
+compiler and interpreter are fine as they are, but for an embedded
+target there are a few slight changes you might want to make:
+
+</p><p>
+In <code>src/wrench.h</code> you might want
+to tweak
+
+
+</p><h2>build flags</h2>
+
+<pre><code>#define WRENCH_WITHOUT_COMPILER
+</code></pre>
+
+
+<p>Build wrench without it's compiler. this will minimize
+the code size at the cost of being able to only load/run bytecode.
+For embedded projects the command line tool actually compiles to c
+header .h code for super-easy addition to the source.
+
+
+</p><pre><code>#define WRENCH_COMPACT
+#define WRENCH_REALLY_COMPACT
+</code></pre>
+
+<p>This causes wrench to compile into the smallest program size
+possible at the cost of some interpreter speed (due to the removal of
+unrolled loops, cache optimizations, and additional 'shared' code with
+some goto spaghetti)
+</p><p>REALLY_COMPACT switches the main message pump from computed-goto to
+a giant switch. This saves a few K of ram but is a constant
+performance hit so only use it if absolutely necessary
+
+
+</p><pre><code>#define WRENCH_DEFAULT_STACK_SIZE 64
+</code></pre>
+<p>wrench allocates a static stack and does not bounds-check it, this
+is done for speed an simplicity. The stack is used only for function
+calls and local data so it need not be large, the default 90 should be
+more than enough.
+</p><p>Each stack entry consumes 8 bytes, so embedded devices that have
+very limited ram (like the Uno Mini) might want to reduce this.
+The arduino example provided has a stack of 32, which
+should be plenty to run even a pretty intricate script.
+
+
+</p><p>To add functions to extend wrench, as well as calling into it are
+dead simple and super low overhead. Some examples are provided, but
+frankly if you actually got this far and are interested, the code in
+wrench.h is very clear and well commented, and there are quite a few
+examples.
+</p><p>[TODO]-- actually document this instead of phoning it in :P
+
+
+</p><h2>Creating data to pass to wrench</h2>
+
+<p>Data can be created outsid eof wrench, this includes containers,
+structures and strings and values and such but care must be taken,
+since some values allocate memory that wrench expects to be garbage
+collected.
+</p><p>This is pretty easy to handle, just use the provided methods to
+create the values, and then destroy them after the script runs and you
+won't have any trouble.
+
+</p><p>Creating simple values allocates no memory and requires no cleanup:
+<code></code></p><pre><code>void wr_makeInt( WRValue* val, int i );
+void wr_makeFloat( WRValue* val, float f );
+</code></pre>
+
+<br> a string has to exist in a context so it can be worked with, but the
+memory is managed by the caller, so wr_freeString() must be called
+<code></code><pre><code>void wr_makeString( WRContext* context, WRValue* val, const unsigned char* data, const int len );
+void wr_freeString( WRValue* val );
+</code></pre>
+
+Turning a value into a container allocates a hash table which must be released with destroy!
+<code></code><pre><code>void wr_makeContainer( WRValue* val, const uint16_t sizeHint =0 );
+void wr_destroyContainer( WRValue* val );
+</code></pre>
+
+<code></code><pre><code>void wr_addValueToContainer( WRValue* container, const char* name, WRValue* value );
+void wr_addIntToContainer( WRValue* container, const char* name, const int32_t value );
+void wr_addFloatToContainer( WRValue* container, const char* name, const float value );
+void wr_addArrayToContainer( WRValue* container, const char* name, char* array, const uint32_t size );
+</code></pre>
+
+<p>Example (as seen in wrench_cli.cpp test code):
+<code></code></p><pre><code>WRValue container;
+wr_makeContainer( &amp;container );
+
+WRValue integer;
+wr_makeInt( &amp;integer, 0 );
+wr_addValueToContainer( &amp;container, "integer", &amp;integer );
+
+char someArray[10] = "hello";
+wr_addArrayToContainer( &amp;container, "name", someArray, 10 );
+
+char* someBigArray = new char[0x1FFFFF];
+someBigArray[0] = 10;
+someBigArray[10000] = 20;
+someBigArray[100000] = 30;
+someBigArray[0x1FFFFE] = 40;
+
+char byte = (char)0x99;
+char byte2 = (char)0x99;
+wr_addArrayToContainer( &amp;container, "b", &amp;byte, 1 );
+wr_addArrayToContainer( &amp;container, "c", &amp;byte2, 1 );
+		
+wr_addArrayToContainer( &amp;container, "big", someBigArray, 0x1FFFFF );
+
+// at this point 'container' can be used inside wrench as if it were a
+// struct, refer to tests/008_userData.c for complete usage
+
+.
+.
+.
+
+   // create a state and get a calling context
+   WRState* w = wr_newState( 128 );
+   WRContext* context = wr_run( w, somScript, someScriptLen );
+
+   unsigned char testString[12] = "test string";  // create a string
+   WRValue val;
+   wr_makeString( context, &amp;val, testString, 11 ); // this allocates structures inside context!
+   wr_callFunction( w, context, "stringCheck", &amp;val, 1 ); // call the function 
+
+   // NOTE: we must know that stringCheck did not store the value
+   // locally or call a function that did, otherwise freeing
+   // it here could segfault when wrench is called again in the future
+   // (and tries to work with it).
+   // Since we're not using 'w' again this is 100% safe, we're not giving wrench a chance
+   // to behave badly :)
+
+   wr_freeString( &amp;val );
+   wr_destroyState( w );
+</code></pre>
+
+
+
+
+
+<hr><h1><a name="language"></a>3.0 Language Reference</h1>
+
+
+
+Wrench is designed to be intuitive and c-like, the syntax should be
+very familiar.
+
+<p><b>variables</b>
+</p><p>no special declaration is required to introduce a variable:
+<code></code></p><pre><code>a = 10;
+b = 3.4;
+string = "some string";
+</code></pre>
+wrench natively handles 32 bit ints, floats and 8 bit character
+strings. Variable
+names follow c-syntax for legality, the must start with a letter or
+'_' and can contain letters, numbers and more '_' characters.
+
+
+<p><b>operators</b>
+</p><p>all of these are supported, with their c-defined precedence:
+</p><pre><code>//binary:
+a + b;
+a - b;
+a / b;
+a * b;
+a | b; // or
+a &amp; b; // and
+a ^ b; // xor
+a % b; // mod
+a &gt;&gt; b; // right-shift
+a &lt;&lt; b; // left-shift
+
+a += b;
+a -= b;
+a /= b;
+a *= b;
+a |= b;
+a &amp;= b;
+a ^= b;
+a %= b;
+a &gt;&gt;= b;
+a &lt;&lt;= b;
+
+// pre and post:
+a++;
+a--
+++a;
+--a;
+
+// as well as the c logical operators:
+a == b
+a != b
+a &gt;= b
+a &lt;= b
+a || b
+a &amp;&amp; b
+</code></pre>
+
+<p><b>comments</b>
+<code></code></p><pre><code>a = 10; // single-line c++ comments are supported
+/*
+     as well as block-comment style
+*/
+</code></pre>
+
+
+<p><b>arrays</b>
+</p><p>arrays can be declared with [] syntax, and can contain any legal
+type
+<code></code></p><pre><code>arrayOne[] = { 0, 1, 2 };
+arrayTwo[] = { "zero", 1, 3.55 };
+
+print( arrayOne[1] ); // will print "1"
+
+</code></pre>
+
+<p><b>for</b>
+
+</p><p>follows the standard c syntax:
+<code></code></p><pre><code>for( a=0; a&lt;10; ++a )
+{
+
+}
+</code></pre>
+
+<p><b>foreach</b>
+</p><p>wrench also supports "foreach" in two flavors, value only and
+key/value:
+
+<code></code></p><pre><code>somArray[] = {"zero", "one", "two" };
+for( v : somArray )
+{
+   // this loop will run 3 times, with v taking on "zero", "one" and "two"
+}
+
+for( k,v : somArray )
+{
+   // same as above but k will take on the value 0, 1 and 2
+}
+</code></pre>
+
+
+<p><b>while</b>
+<code></code></p><pre><code>while( condition )
+{
+}
+</code></pre>
+
+
+<p><b>switch</b>
+</p><p>switch works the same as c, there is an optimized code path for a
+list of cases (including default) that are between 0 and 254. wrench
+also supports fall-through.
+<code></code></p><pre><code>switch( expression )
+{
+    case 0:
+        break;
+    defalt:
+        break;
+}
+</code></pre>
+
+
+<p><b>do/while</b>
+<code></code></p><pre><code>do
+{
+} while( condition );
+</code></pre>
+
+<p><b>break/continue</b>
+</p><p>inside any looping structure (do/while/for) continue and break
+function as they do in c
+
+
+</p><p><b>if/else</b>
+</p><p>work exactly the same as c:
+<code></code></p><pre><code>if( a == true )
+{
+}
+else if ( b == true ) // or whatever
+{
+}
+else
+{
+}
+</code></pre>
+
+<p><b>function</b>
+</p><p>Functions can be called with any number of arguments, extra arguments
+are ignored, un-specified arguments are set to zero (0)
+<code></code></p><pre><code>function f( arg )
+{
+   if ( arg &gt; 10 )
+   {
+	  return true;
+   }
+   else
+   {
+	  return false;
+   }
+}
+
+first = f(20); // first will be 'true' or '1'
+second = f(); // second will be 'false' because 'arg' was not
+              // specified, so set to 0
+</code></pre>
+
+<p>If a variable is declared in a function, it will be local unless a
+global version is encountered first. Global scope can be forced with
+the '::' operator:
+<code></code></p><pre><code>g = 20;
+
+function foo()
+{
+   g = 30;
+   ::n = 40;
+}
+
+foo(); // after foo is called the global 'g' will be set to 30,
+       // and global variable 'n' will be set to 40
+</code></pre>
+
+<p><b>struct</b>
+</p><p>In wrench structs are actually functions that preserve their stack
+frames.
+</p><p>Another way to put it is structs are "called" so they are their own
+constructors, and all the variables they declare are preserved:
+<code></code></p><pre><code>struct S
+{
+   member1;
+   member2;
+};
+
+s = new S(); // s will be a struct with two uninitialized members (member1 and member2) 
+
+// members are dereferenced with '.' notation:
+s.member1 = 20;
+s.member2 = 50 + s.member1;
+// s.member2 is now 70
+</code></pre>
+
+A more complete example:
+<code></code><pre><code>struct S(arg1)
+{
+   member1 = arg1;
+   if ( arg1 &gt; 20 )
+   {
+	  member2 = 0;
+   }
+   else
+   {
+	  member2 = 555;
+   }
+}
+
+instance = new S(40); // s.member1 will be 40, s.member2 will be 0
+</code></pre>
+
+<p>Structs can also be initialized when created:
+<code></code></p><pre><code>struct S
+{
+   a;
+   b;
+}
+
+bill = new S()
+{
+   a = 20,
+   b = "some string",
+};
+</code></pre>
+
+<p><b>constants</b>
+some constants that are compiler-defined:
+<code></code></p><pre><code>true == 1
+false == 0
+null == 0
+</code></pre>
+
+
+
+
+
+
+
+<p><b>enums</b>
+</p><p>enums are syntactic sugar, when invoked they introduce variables
+into the namespace with automatic initliazation
+<code></code></p><pre><code>enum
+{
+	n1,
+	n2,
+	n3
+}
+
+// n1 is 0, n2 is 1 and n3 is 2
+</code></pre>
+
+
+
+
+<p><b>hash tables</b>
+</p><p>wrench uses hash tables internally so this language feature kind of
+comes along "for free". Any valid value can be used as a key or value
+
+<code></code></p><pre><code>hashTable = { 1:"one", 2:"two", 3:3, "str":6 };
+print( hashTable[1] ); // "one"
+print( hashTable[2] ); // "two"
+print( hashTable[3] ); // 3
+print( hashTable["str"] ); // 6
+
+// and this also works (syntactic sugar for string-keys only)
+print( hashTable.str ); // 6
+</code></pre>
+
+<p><b>compiler-intrinsics</b>
+Some compiler directives are included for working with arrays and hash
+tables:
+
+<code></code></p><pre><code>hashTable = { 1:"one", 2:"two", 3:3, "str":6 };
+
+//  ._count
+print( hashTable._count ); // prints 4
+
+// ._exists
+hashTable._exists( 2 ); // returns 'true'
+hashTable._exists( 20 ); // returns 'false
+
+// ._remove
+hashTable._exists( 2 ); // returns 'true'
+hashTable._remove( 2 );
+hashTable._exists( 2 ); // now false
+</code></pre>
+
+
+
+
+<p><b>casting/coersion</b>
+</p><p>it is often handy to force wrench to convert a float to an int or
+vice-versa, for example:
+<code></code></p><pre><code>divisor = 1000;
+result = 10 / divisor; // the result of this is '0' since divisor is an int
+
+result = 10 / (float)divisor; // now result will be 0.01
+
+// NOTE: divisor will also NOT be converted to a float.
+//       to accomplish that:
+divisor = (float)divisor;
+</code></pre>
+
+
+
+
+
+
+
+<hr><h1><a name="extending"></a>3.5 Extending Wrench</h1>
+
+There are three ways wrench interacts with "native" c/c++ code:
+
+
+<ul>
+<li><a href="https://home.workshopfriends.com/wrench/www/#callbacks"><b>Callbacks</b> wrench calls a registered
+function directly</a>
+</li><li><a href="https://home.workshopfriends.com/wrench/www/#libcalls"><b>Library Callbacks</b> These are like callbacks but trimmed down for
+absolute maximum speed.</a>
+</li><li><a href="https://home.workshopfriends.com/wrench/www/#calls"><b>Calls</b> any wrench <code>function</code> can be called
+directly</a>
+</li></ul>
+
+
+<hr><h2><a name="callbacks"></a>Callbacks</h2>
+
+A callback appears inside wrench as an ordinary function, they take
+arguments and return a value:
+<pre><code>retval = myFunction( 25 );
+</code></pre>
+
+in order to receive the "myFunction(...)" callback the c program needs
+to register the callback with<br>
+<br>void <b>wr_registerFunction</b>( WRState* <b>w</b>, const char* <b>name</b>,
+WR_C_CALLBACK <b>function</b>, void* <b>usr</b> )
+
+<br><br><b>w</b> state to be installed in
+<br><b>name</b> name the function will appear as inside
+wrench
+<br><b>function</b> pointer to callback function (see below)
+<br><b>usr</b> opaque pointer that will be passed when the
+function is called (may be null)
+
+
+<pre><code>void myFunction( WRState* w, const WRValue* argv, const int argn, WRValue&amp; retVal, void* usr )
+{
+    // do something
+}
+
+void main()
+{
+    WRState* w = wr_newState( 128 );
+    wr_registerFunction( w, "myFunction", myFunction, 0 );
+
+    // and then run wrench
+}
+</code></pre>
+Every time <code>myFunction()</code> is called from wrench the
+external c function will be called.
+
+<p>void <b>myFunction</b>( WRState* <b>w</b>, const WRValue* <b>argv</b>, const
+int <b>argn</b>, WRValue&amp; <b>retVal</b>, void* <b>usr</b> )
+<br><br>WRState* <b>w</b> Pointer to the state that made the call
+<br>const WRValue* <b>argv</b> a list of zero or more
+<code>WRValue</code> that are the arguments the function was called
+with
+<br>const int <b>argn</b> the number of arguments passed in argv
+<br>WRValue&amp; <b>retVal</b> this value is returned to the caller
+(default integer zero) 
+<br>void* <b>usr</b> value passed when the function was registered
+
+<br>
+The arguments passed are directly from the wrench stack for speed,
+because of this their values should never be accessed directly, but
+with the built-in accessors:
+</p><p>asInt();
+<br>asFloat();
+<br>asString(...);
+<br>c_str();
+<br>array(...);
+
+</p><p>For safety the return value should use the value constructors
+</p><p>void wr_makeInt( WRValue* val, int i );
+<br>void wr_makeFloat( WRValue* val, float f );
+
+
+
+</p><p>Also since functions in wrench can be called with any number of
+arguments (including zero) that should be checked for safety, as in:
+
+</p><pre><code>void openDoor( WRState* w, const WRValue* argv, const int argn, WRValue&amp; retVal, void* usr )
+{
+    if ( argn != 2 )
+    {
+        // log an error or something
+        return;
+    }
+
+    const char* name = argv[0].c_str();
+    if ( !name )
+    {
+        // was not passed a string!
+        return;
+    }
+	
+    int door = argv[1].asInt(); 
+
+    OpenDoor( name, door ); // some function to do the work
+
+    wr_makeInt( &amp;retVal, 1 ); // return a '1' indicating success
+}
+</code></pre>
+
+<hr><h2><a name="libcalls"></a>Library Callbacks</h2>
+<p>The good news is these are very similair to regular callbacks. The
+function signature is a bit different, though, to facilitate very fast
+calls, minimizing the work wrench has to do.
+</p><p>The assumption here is that if you're writing library calls then
+you are likely familiar and comfortable with some of the wrench
+internals and don't mind looking at examples and source code
+
+</p><p>There are many examples of library calls in std_math.c,
+std_string.c, and std_io.c.
+
+<br>library functions are registered with a different function, and
+their names must conform to the "x::y" format for them to be
+recognized by wrench code:
+</p><p>void <b>wr_registerLibraryFunction</b>( WRState* <b>w</b>, const char*
+   <b>signature</b>, WR_LIB_CALLBACK <b>function</b> );
+<br><br>WRState* <b>w</b> Pointer to the state that made the call
+<br>const char* <b>signature</b> "x::y" formatted lib call name
+<br>WR_LIB_CALLBACK <b>function</b> c-function to callback
+
+</p><p>The WR_LIB_CALLBACK looks like this:
+</p><p>void libFunc( WRValue* stackTop, const int argn, WRContext* c )
+</p><p>The idea is to get in and out of a
+library call as fast as possible, so yeah, you gotta know how to use
+it.
+</p><p>
+If any arguments were passed, they are below the stack pointer,
+examples:
+
+</p><p>argn = 1:
+<br><code>stackTop[-1].asInt(); // or .asFloat() or whatever</code>
+
+</p><p>argn = 2:
+<br><code>stackTop[-2].asInt(); // first argument</code>
+<br><code>stackTop[-1].asInt(); // second argument</code>
+
+</p><p>It might be easier to think about it this way:
+</p><pre><code>WRValue* args = stackTop - argn;
+
+args[0].asInt(); // first
+args[1].asInt(); // second
+args[2].asInt(); // third
+args[3].asInt(); // fourth
+</code></pre>
+
+<p>The return value is quite a bit easier to explain, it's
+<code>stackTop</code> itself, so for example returning 5.4:
+</p><p><code>wr_makeFloat( stackTop, 5.4f );</code>
+</p><p><b>NOTE:</b> The return value is defaulted to integer-0 so it is safe
+to install an integer value directly in the interest of speed, ie:
+<code></code></p><pre><code>stackTop-&gt;i = returnValue; // we're all friends here
+stackTop[0].i = returnValue; // exactly the same as the above code
+</code></pre>
+
+<p>The WRContext value is provided to save a dereference on the wrench
+side for a rarely used (but necessary!) parameter; the WRState* value contained inside it if necessary as
+</p><p><code>c-&gt;w</code>
+
+
+
+
+
+</p><hr><h2><a name="calls"></a>Calls</h2>
+
+<p>once wrench code is run for the first time with wr_run() the state
+is preserved and can be re-entered.
+<br>given this simple script:
+
+</p><pre><code>a = 20;
+function wrenchFunction()
+{
+    ::a += 30;
+}</code></pre>
+
+<p>A program that would call "wrenchFunction()" might look like this:
+
+</p><pre><code>WRState* w = wr_newState();
+WRContext* context = wr_run( w, someByteCode ); // 'a' will be 20
+
+wr_callFunction( w, context, "wrenchFunction" ); // 'a' will now be 50
+</code></pre>
+
+<p>An array of arguments can be passed to the function:
+
+</p><pre><code>a = 20;
+function wrenchFunction( b, c )
+{
+    ::a += b * c;
+}</code></pre>
+<pre><code>WRState* w = wr_newState();
+WRContext* context = wr_run( w, someByteCode ); // 'a' will be 20
+
+WRValue values[2];
+wr_makeInt( &amp;value[0], 2 );
+wr_makeInt( &amp;value[1], 3 );
+wr_callFunction( w, context, "wrenchFunction", values, 2 ); // 'a' will now be 26
+</code></pre>
+
+<p> the return value from any call is available with <code>WRValue*
+wr_returnValueFromLastCall( WRState* w )</code>
+
+
+</p><pre><code>function wrenchFunction( b, c )
+{
+    return b * c;
+}</code></pre>
+<pre><code>WRState* w = wr_newState();
+WRContext* context = wr_run( w, someByteCode ); // must run to establish context
+
+WRValue values[2];
+wr_makeInt( &amp;value[0], 4 );
+wr_makeInt( &amp;value[1], 5 );
+wr_callFunction( w, context, "wrenchFunction", values, 2 );
+
+WRValue* ret = wr_returnValueFromLastCall( w ); // ret-&gt;asInt() will contain 20
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr><h1><a name="library"></a>4.0 Library</h1>
+library functions are provided as well. These functions are only
+available if loaded.
+
+
+<code></code><pre><code>math::sin( f );
+math::cos( f );
+math::tan( f );
+math::sinh( f );
+math::cosh( f );
+math::tanh( f );
+math::asin( f );
+math::acos( f );
+math::atan( f );
+math::atan2( x, y );
+math::log( f );
+math::ln( f );
+math::log10( f );
+math::exp( f );
+math::pow( a, b );
+math::fmod( a, b );
+math::trunc( f );
+math::sqrt( f );
+math::ceil( f );
+math::floor( f );
+math::abs( f );
+math::ldexp( a, b );
+math::deg2rad( f );
+math::rad2deg( f );
+
+str::strlen( str );
+str::sprintf( str, fmt, ... );
+str::printf( fmt, ... );
+str::format( fmt, ... );
+str::isspace( char );
+str::isdigit( char );
+str::isalpha( char );
+str::mid( str, start, len ); // return the middle of a string starting
+                             // at 'start' for 'len' chars
+str::strchr( str, char ); // returns -1 if not found
+str::tolower( str );
+str::toupper( str );
+
+file::read( name ); // returns an array representing the data
+file::write( name, data[] );
+
+io::getline(); // return a line of text input with fgetc(stdin)
+
+// messages are global to all contexts currently running, this allows
+// inter-context communication.
+msg::read( key, [clear default:false] )  // read a message, optionally clear
+msg::write( key, message )
+msg::clear( key )
+msg::peek( key ) // return true if the key has a message
+
+</code></pre>
+
+<hr><h1><a name="benchmarks"></a>5.0 Benchmarks</h1>
+
+<h2>Memory Benchmarks</h2>
+<p>The whole point of this interpreter is to run on small embedded
+systems. Here is a list of compiled image sizes on various processors.
+</p><p>NOTE 1: optimizations are always in progress to shrink the compiled
+image, I do not keep these numbers up to date but I can assure you
+they are cielings, the actual value of the latest version will be the
+same or <b>less.</b>
+</p><p>NOTE 2: compiled with <code>WRENCH_REALLY_COMPACT</code> 
+
+</p><table>
+  <tbody><tr>
+    <th><center>Architecture</center></th>
+    <th><center>Compiler</center></th>
+    <th><center>Footprint</center></th>
+  </tr>
+
+  <tr>
+    <td><center>Arduino UNO, UNO Mini</center>
+    </td><td><center>Arduino 1.8.19</center>
+    </td><td><center>27028 bytes</center>
+  </td></tr>
+
+  <tr>
+    <td><center>Arduino Mega</center>
+    </td><td><center>Arduino 1.8.19</center>
+    </td><td><center>28674 bytes</center>
+  </td></tr>
+
+  <tr>
+    <td><center>Arduino Feather/Trinket M0</center>
+    </td><td><center>Arduino 1.8.19</center>
+    </td><td><center>31600 bytes</center>
+  </td></tr>
+
+  <tr>
+    <td><center>PC</center>
+    </td><td><center>clang, gcc, msvc</center>
+    </td><td><center>who cares :)</center>
+  </td></tr>
+</tbody></table>
+
+<h2>CPU Benchmarks run on Xeon E5-2640</h2>
+
+<p><b>particles:</b> testing foreach() speed as well as struct member access
+speed
+</p><table>
+  <tbody><tr>
+    <th><center>Language</center></th>
+    <th><center>Source</center></th>
+    <th><center>Bytecode Size/% wrench</center></th>
+    <th><center>Time/ % wrench</center></th>
+  </tr>
+  <tr>
+    <td><center>wrench</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.w">particles.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.w">
+    </a></td><td><center>518</center>
+    </td><td><center>15.2s</center>
+  </td></tr>
+  <tr>
+    <td><center>wrench [compact]</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.w">particles.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.w">
+    </a></td><td><center>518</center>
+    </td><td><center style="color:red">18.6s 22% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>lua</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.lua">particles.lua</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.lua">
+    </a></td><td><center style="color:red">970 87% larger</center>
+    </td><td><center style="color:red">46s 155% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>squirrel</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.nut">particles.nut</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/particles.nut">
+    </a></td><td><center style="color:red">3822 637% larger</center>
+    </td><td><center style="color:red">41s 127% slower</center>
+  </td></tr>
+</tbody></table>
+
+<p><b>primes:</b> testing function calls/recursion computation
+</p><table>
+  <tbody><tr>
+    <th><center>Language</center></th>
+    <th><center>Source</center></th>
+    <th><center>Bytecode Size/% wrench</center></th>
+    <th><center>Time/ % wrench</center></th>
+  </tr>
+  <tr>
+    <td><center>wrench</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.w">primes.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.w">
+    </a></td><td><center>113</center>
+    </td><td><center>10s</center>
+  </td></tr>
+  <tr>
+    <td><center>wrench [compact]</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.w">primes.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.w">
+    </a></td><td><center>113</center>
+    </td><td><center style="color:red">14s 40% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>lua</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.lua">primes.lua</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.lua">
+    </a></td><td><center style="color:red">422 237% larger</center>
+    </td><td><center style="color:red">18.2s 82% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>squirrel</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.nut">primes.nut</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/primes.nut">
+    </a></td><td><center style="color:red">1782 1476% larger</center>
+    </td><td><center style="color:red">27s 170% slower</center>
+  </td></tr>
+</tbody></table>
+
+<p><b>recursive fibonacci geerator:</b> testing function call overhead and recursion
+</p><table>
+  <tbody><tr>
+    <th><center>Language</center></th>
+    <th><center>Source</center></th>
+    <th><center>Bytecode Size/% wrench</center></th>
+    <th><center>Time/ % wrench</center></th>
+  </tr>
+  <tr>
+    <td><center>wrench</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.w">fibo.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.w">
+    </a></td><td><center>74</center>
+    </td><td><center>22s</center>
+  </td></tr>
+  <tr>
+    <td><center>wrench [compact]</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.w">fibo.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.w">
+    </a></td><td><center>74</center>
+    </td><td><center style="color:red">25s 12% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>lua</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.lua">fibo.lua</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.lua">
+    </a></td><td><center style="color:red">288 289% larger</center>
+    </td><td><center style="color:red">51.5s 131% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>squirrel</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.nut">fibo.nut</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/fibo.nut">
+    </a></td><td><center style="color:red">1001 1252% larger</center>
+    </td><td><center style="color:red">84s 281% slower</center>
+  </td></tr>
+</tbody></table>
+
+
+<p><b>exponent call:</b> testing library call overhead
+</p><table>
+  <tbody><tr>
+    <th><center>Language</center></th>
+    <th><center>Source</center></th>
+    <th><center>Bytecode Size/% wrench</center></th>
+    <th><center>Time/ % wrench</center></th>
+  </tr>
+  <tr>
+    <td><center>wrench</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.w">exp.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.w">
+    </a></td><td><center>87</center>
+    </td><td><center>19s</center>
+  </td></tr>
+  <tr>
+    <td><center>wrench [compact]</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.w">exp.w</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.w">
+    </a></td><td><center>87</center>
+    </td><td><center style="color:red">24.8s 30.5% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>lua</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.lua">exp.lua</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.lua">
+    </a></td><td><center style="color:red">288 231% larger</center>
+    </td><td><center style="color:red">40.8s 131% slower</center>
+  </td></tr>
+  <tr>
+    <td><center>squirrel</center>
+    </td><td><center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.nut">exp.nut</a></center><a href="https://home.workshopfriends.com/wrench/www/perf/exp.nut">
+    </a></td><td><center style="color:red">1144 1214% larger</center>
+    </td><td><center style="color:red">71s 273% slower</center>
+  </td></tr>
+</tbody></table>
+ 
+
+<hr><h1><a name="faq"></a>6.0 FAQ</h1>
+
+<p><b>... why? Aren't there enough interpreters out there? Surely one of
+them would have worked?</b><cr>
+Probably, but I couldn't find one! I tried squirrel, wren, tiny-c,
+pawn, even lua and a few others I can't think of. Most of them would
+compile and run for my embedded system (SAMD21 CortexM0) but they all
+blew chow when I actually tried to run scripts.
+</cr></p><p>The problem? RAM.
+</p><p>They all needed a pile of it, hundreds of k in some cases. My chip
+has 32k total and I needed most of it for shift-buffer space!
+</p><p>wrench was motivated by a need for lightning-fast user-programmable scripts in a tight space
+
+</p><p><b>So use FORTH?</b><cr>
+Wrench is also motivated by the need for scripts that are approachable
+by novice-to-intermediate programmers. Asking them to become familiar
+with FORTH (or any of the many other expressive minimalistic langauges
+I've encountered) would sink the project.
+
+</cr></p><p><b>You say wrench is fast, but LuaJITs is faster!</b><cr>
+Yes, I know. If a JIT language solves your problem then of course use
+one! I am a big fan of c# personally. wrench is for when that's not an
+option.
+
+
+
+
+
+
+
+
+    </cr></p></cr></main>
+    <div class="overlay"></div>
+  </div>
+</div>
+
+
+
+</body></html>

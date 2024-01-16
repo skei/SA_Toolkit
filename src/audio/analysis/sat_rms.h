@@ -27,7 +27,14 @@ class SAT_Rms {
 
     SAT_Rms() {
       reset();
-      setup(300, 44100);
+      //setup(300,44100);
+    }
+
+    //----------
+
+    SAT_Rms(T AWindowLength, T ASampleRate) {
+      reset();
+      setup(AWindowLength,ASampleRate);
     }
 
     //----------
@@ -38,9 +45,9 @@ class SAT_Rms {
       srate   : sample rate
     */
 
-    void setup(T winlen, T srate) {
-      b1 = exp(-1/(winlen*srate*0.001));
-      a0 = 1 - b1;
+    void setup(T AWindowLength, T ASampleRate) {
+      b1 = exp(-1.0 / (AWindowLength * ASampleRate * 0.001));
+      a0 = 1.0 - b1;
     }
 
     //----------
@@ -55,7 +62,7 @@ class SAT_Rms {
     //----------
 
     T process(T input) {
-      fout = a0*input*input + b1*fout;// + MIP_FLOAT_DENORM;
+      fout = a0 * input * input + b1 * fout;// + MIP_FLOAT_DENORM;
       return sqrt(fout);
     }
 

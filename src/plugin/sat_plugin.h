@@ -170,12 +170,25 @@ public:
 public:
 //------------------------------
 
-  void setEventMode(uint32_t AMode) { MEventMode = AMode; }
-  void setPluginFormat(const char* AFormat) { MPluginFormat = AFormat; }
-  //void setProcessThreaded(bool AThreaded=true)  { MProcessThreaded = AThreaded; }
+  void setEventMode(uint32_t AMode) {
+    MEventMode = AMode;
+  }
 
-  SAT_Host* getHost() { return MHost; }
-    SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
+  void setPluginFormat(const char* AFormat) {
+    MPluginFormat = AFormat;
+  }
+
+  //void setProcessThreaded(bool AThreaded=true) {
+  //  MProcessThreaded = AThreaded;
+  //}
+
+  SAT_Host* getHost() {
+    return MHost;
+  }
+
+  SAT_ProcessContext* getProcessContext() {
+    return &MProcessContext;
+  }
 
 //------------------------------
 public: // extensions

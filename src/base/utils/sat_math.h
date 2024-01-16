@@ -2,6 +2,10 @@
 #define sat_math_included
 //----------------------------------------------------------------------
 
+// TODO: templatize..
+
+//
+
 #include <math.h>
 #include <stdlib.h> // abs
 

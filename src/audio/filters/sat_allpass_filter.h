@@ -86,7 +86,7 @@ public:
     //output := x2 + ( (AInput-y2) * a );
     //output := KKillDenorm(output);
     //y0 := output;
-    y0 = x2 + ( (AInput-y2) * a );
+    y0 = x2 + ( (AInput - y2) * a );
     y0 = SAT_KillDenormal(y0);
     return y0;
   }
