@@ -64,10 +64,10 @@ public:
     if (strcmp(extension_id,CLAP_EXT_VOICE_INFO)          == 0) return &MVoiceInfoExt;
     // drafts
     if (strcmp(extension_id,CLAP_EXT_AMBISONIC)           == 0) return &MAmbisonicExt;
-    if (strcmp(extension_id,CLAP_EXT_CHECK_FOR_UPDATE)    == 0) return &MCheckForUpdateExt;
+  //if (strcmp(extension_id,CLAP_EXT_CHECK_FOR_UPDATE)    == 0) return &MCheckForUpdateExt;
     if (strcmp(extension_id,CLAP_EXT_CONTEXT_MENU)        == 0) return &MContextMenuExt;
-    if (strcmp(extension_id,CLAP_EXT_CV)                  == 0) return &MCVExt;
-    if (strcmp(extension_id,CLAP_EXT_MIDI_MAPPINGS)       == 0) return &MMidiMappingsExt;
+  //if (strcmp(extension_id,CLAP_EXT_CV)                  == 0) return &MCVExt;
+  //if (strcmp(extension_id,CLAP_EXT_MIDI_MAPPINGS)       == 0) return &MMidiMappingsExt;
     if (strcmp(extension_id,CLAP_EXT_PRESET_LOAD)         == 0) return &MPresetLoadExt;
     if (strcmp(extension_id,CLAP_EXT_REMOTE_CONTROLS)     == 0) return &MRemoteControlsExt;
     if (strcmp(extension_id,CLAP_EXT_RESOURCE_DIRECTORY)  == 0) return &MResourceDirectoryExt;
@@ -198,8 +198,8 @@ public: // drafts
   void ambisonic_changed() override {
   }
   
-  void check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) override {
-  }
+  // void check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) override {
+  // }
   
   bool context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) override {
     return false;
@@ -217,11 +217,11 @@ public: // drafts
     return false;
   }
   
-  void cv_changed() override {
-  }
+  // void cv_changed() override {
+  // }
   
-  void midi_mappings_changed() override {
-  }
+  // void midi_mappings_changed() override {
+  // }
   
   void preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) override {
   }

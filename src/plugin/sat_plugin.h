@@ -252,12 +252,12 @@ public: // extensions
   virtual void registerDraftExtension() {
     registerExtension(CLAP_EXT_AMBISONIC,                 &MExtAmbisonic);
     registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation);
-    registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,          &MExtCheckForUpdate);
+  //registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,          &MExtCheckForUpdate);
     registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts);
     registerExtension(CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu);
-    registerExtension(CLAP_EXT_CV,                        &MExtCv);
+  //registerExtension(CLAP_EXT_CV,                        &MExtCv);
     registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts);
-    registerExtension(CLAP_EXT_MIDI_MAPPINGS,             &MExtMidiMappings);
+  //registerExtension(CLAP_EXT_MIDI_MAPPINGS,             &MExtMidiMappings);
     registerExtension(CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication);
     registerExtension(CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad);
     registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls);
@@ -2227,8 +2227,8 @@ protected: // draft: audio_ports_activation
 protected: // draft: check_for_update
 //------------------------------
 
-  void check_for_update_check(bool include_preview) override {
-  }
+  // void check_for_update_check(bool include_preview) override {
+  // }
 
 //------------------------------
 protected: // draft: configurable_audio_ports
@@ -2262,9 +2262,9 @@ protected: // draft: context_menu
 protected: // draft: cv
 //------------------------------
 
-  bool cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) override {
-    return false; 
-  }
+  // bool cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) override {
+  //   return false; 
+  // }
 
 //------------------------------
 protected: //
@@ -2284,19 +2284,19 @@ protected: //
 protected: // draft: midi_mappings
 //------------------------------
 
-  uint32_t midi_mappings_count() override {
-    return 0;
-  }
+  // uint32_t midi_mappings_count() override {
+  //   return 0;
+  // }
 
   //----------
 
-  bool midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) override {
-    //mapping->channel = 0;
-    //mapping->number = 0;
-    //apping->param_id = 0;
-    //return true;
-    return false;
-  }
+  // bool midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) override {
+  //   //mapping->channel = 0;
+  //   //mapping->number = 0;
+  //   //apping->param_id = 0;
+  //   //return true;
+  //   return false;
+  // }
   
 //------------------------------
 protected: // draft: param_indication

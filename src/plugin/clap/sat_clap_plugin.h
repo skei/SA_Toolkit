@@ -118,20 +118,22 @@ protected:
 
   // drafts
 
+  
+
   virtual bool                ambisonic_is_config_supported(const clap_ambisonic_config_t *config) { return false; }
   virtual bool                ambisonic_get_config(bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) { return false; }
   virtual bool                audio_ports_activation_can_activate_while_processing() { return false; }
   virtual bool                audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) { return false; }
-  virtual void                check_for_update_check(bool include_preview) {}
+//virtual void                check_for_update_check(bool include_preview) {}
   virtual bool                configurable_audio_ports_can_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) { return false; }
   virtual bool                configurable_audio_ports_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) { return false; }
   virtual bool                context_menu_populate(const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) { return false; }
   virtual bool                context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
-  virtual bool                cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) { return false; }
+//virtual bool                cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) { return false; }
   virtual bool                extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) { return false; }
   virtual bool                extensible_audio_ports_remove_port(bool is_input, uint32_t index) { return false; }
-  virtual uint32_t            midi_mappings_count() { return 0; }
-  virtual bool                midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) { return false; }
+//virtual uint32_t            midi_mappings_count() { return 0; }
+//virtual bool                midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) { return false; }
   virtual void                param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {}
   virtual void                param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) {}
   virtual bool                preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) { return false; }
@@ -731,19 +733,19 @@ protected:
 private: // draft: check-for-update
 //------------------------------
 
-  static
-  void check_for_update_check_callback(const clap_plugin_t *plugin, bool include_preview) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    plug->check_for_update_check(include_preview);
-  }
+  // static
+  // void check_for_update_check_callback(const clap_plugin_t *plugin, bool include_preview) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   plug->check_for_update_check(include_preview);
+  // }
 
 //--------------------
 protected:
 //--------------------
 
-  const clap_plugin_check_for_update_t MExtCheckForUpdate {
-    .check = check_for_update_check_callback
-  };
+  // const clap_plugin_check_for_update_t MExtCheckForUpdate {
+  //   .check = check_for_update_check_callback
+  // };
 
 //------------------------------
 private: // draft: configurable-audio-ports
@@ -799,19 +801,19 @@ protected:
 private: // draft: cv
 //------------------------------
 
-  static
-  bool cv_get_channel_type_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->cv_get_channel_type(is_input,port_index,channel_index,channel_type);
-  }
+  // static
+  // bool cv_get_channel_type_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   return plug->cv_get_channel_type(is_input,port_index,channel_index,channel_type);
+  // }
 
 //--------------------
 protected:
 //--------------------
 
-  const clap_plugin_cv_t MExtCv {
-    .get_channel_type = cv_get_channel_type_callback
-  };
+  // const clap_plugin_cv_t MExtCv {
+  //   .get_channel_type = cv_get_channel_type_callback
+  // };
 
 //------------------------------
 private: // draft: extensible-audio-ports
@@ -842,26 +844,26 @@ protected:
 private: // draft: midi-mappings
 //------------------------------
 
-  static
-  uint32_t midi_mappings_count_callback(const clap_plugin_t *plugin) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->midi_mappings_count();
-  }
-  
-  static
-  bool midi_mappings_get_callback(const clap_plugin_t *plugin, uint32_t index, clap_midi_mapping_t *mapping) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->midi_mappings_get(index,mapping);
-  }
+  // static
+  // uint32_t midi_mappings_count_callback(const clap_plugin_t *plugin) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   return plug->midi_mappings_count();
+  // }
+  //  
+  // static
+  // bool midi_mappings_get_callback(const clap_plugin_t *plugin, uint32_t index, clap_midi_mapping_t *mapping) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   return plug->midi_mappings_get(index,mapping);
+  // }
     
 //--------------------
 protected:
 //--------------------
 
-  const clap_plugin_midi_mappings_t MExtMidiMappings {
-    .count  = midi_mappings_count_callback, 
-    .get    = midi_mappings_get_callback
-  };
+  // const clap_plugin_midi_mappings_t MExtMidiMappings {
+  //   .count  = midi_mappings_count_callback, 
+  //   .get    = midi_mappings_get_callback
+  // };
 
 //------------------------------
 private: // draft: param-indication

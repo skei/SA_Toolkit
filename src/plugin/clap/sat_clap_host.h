@@ -107,7 +107,7 @@ private:
     //SAT_PRINT;
     ext.audio_ports         = (clap_host_audio_ports_t*)MHost->get_extension(MHost,CLAP_EXT_AUDIO_PORTS);
     ext.audio_ports_config  = (clap_host_audio_ports_config_t*)MHost->get_extension(MHost,CLAP_EXT_AUDIO_PORTS_CONFIG);
-    ext.check_for_update    = (clap_host_check_for_update_t*)MHost->get_extension(MHost,CLAP_EXT_CHECK_FOR_UPDATE);
+  //ext.check_for_update    = (clap_host_check_for_update_t*)MHost->get_extension(MHost,CLAP_EXT_CHECK_FOR_UPDATE);
     ext.event_registry      = (clap_host_event_registry_t*)MHost->get_extension(MHost,CLAP_EXT_EVENT_REGISTRY);
     ext.gui                 = (clap_host_gui_t*)MHost->get_extension(MHost,CLAP_EXT_GUI);
     ext.latency             = (clap_host_latency_t*)MHost->get_extension(MHost,CLAP_EXT_LATENCY);
@@ -125,8 +125,8 @@ private:
     // draft
     ext.ambisonic           = (clap_host_ambisonic_t*)MHost->get_extension(MHost,CLAP_EXT_AMBISONIC);
     ext.context_menu        = (clap_host_context_menu_t*)MHost->get_extension(MHost,CLAP_EXT_CONTEXT_MENU);
-    ext.cv                  = (clap_host_cv_t*)MHost->get_extension(MHost,CLAP_EXT_CV);
-    ext.midi_mappings       = (clap_host_midi_mappings_t*)MHost->get_extension(MHost,CLAP_EXT_MIDI_MAPPINGS);
+  //ext.cv                  = (clap_host_cv_t*)MHost->get_extension(MHost,CLAP_EXT_CV);
+  //ext.midi_mappings       = (clap_host_midi_mappings_t*)MHost->get_extension(MHost,CLAP_EXT_MIDI_MAPPINGS);
     ext.preset_load         = (clap_host_preset_load_t*)MHost->get_extension(MHost,CLAP_EXT_PRESET_LOAD);
     ext.remote_controls     = (clap_host_remote_controls_t*)MHost->get_extension(MHost,CLAP_EXT_REMOTE_CONTROLS);
     ext.resource_directory  = (clap_host_resource_directory_t*)MHost->get_extension(MHost,CLAP_EXT_RESOURCE_DIRECTORY);

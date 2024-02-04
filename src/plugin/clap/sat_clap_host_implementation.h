@@ -84,13 +84,13 @@ public: // drafts
 //------------------------------
 
   virtual void        ambisonic_changed() {}
-  virtual void        check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) {}
+//virtual void        check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) {}
   virtual bool        context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) { return false; }
   virtual bool        context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
   virtual bool        context_menu_can_popup() { return false; }
   virtual bool        context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) { return false; }
-  virtual void        cv_changed() {}
-  virtual void        midi_mappings_changed() {}
+//virtual void        cv_changed() {}
+//virtual void        midi_mappings_changed() {}
   virtual void        preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {}
   virtual void        preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) {}
   virtual void        remote_controls_changed() {}
@@ -526,17 +526,17 @@ protected:
 private: // check for update
 //------------------------------
 
-  static
-  void clap_host_check_for_update_on_new_version_callback(const clap_host_t *host, const clap_check_for_update_info_t *update_info) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->check_for_update_on_new_version(update_info);
-  }
+  // static
+  // void clap_host_check_for_update_on_new_version_callback(const clap_host_t *host, const clap_check_for_update_info_t *update_info) {
+  //   SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+  //   _host->check_for_update_on_new_version(update_info);
+  // }
 
 protected:
 
-  clap_host_check_for_update_t MCheckForUpdateExt = {
-    .on_new_version = clap_host_check_for_update_on_new_version_callback
-  };
+  // clap_host_check_for_update_t MCheckForUpdateExt = {
+  //   .on_new_version = clap_host_check_for_update_on_new_version_callback
+  // };
 
 //------------------------------
 private: // context menu
@@ -579,33 +579,33 @@ protected:
 private: // cv
 //------------------------------
 
-  static
-  void clap_host_cv_changed_callback(const clap_host_t *host) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->cv_changed();
-  }
+  // static
+  // void clap_host_cv_changed_callback(const clap_host_t *host) {
+  //   SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+  //   _host->cv_changed();
+  // }
 
 protected:
 
-  clap_host_cv_t MCVExt = {
-    .changed    = clap_host_cv_changed_callback
-  };
+  // clap_host_cv_t MCVExt = {
+  //   .changed    = clap_host_cv_changed_callback
+  // };
 
 //------------------------------
 private: // midi mappings
 //------------------------------
 
-  static
-  void clap_host_midi_mappings_changed_callback(const clap_host_t *host) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->midi_mappings_changed();
-  }
+  // static
+  // void clap_host_midi_mappings_changed_callback(const clap_host_t *host) {
+  //   SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+  //   _host->midi_mappings_changed();
+  // }
 
 protected:
 
-  clap_host_midi_mappings_t MMidiMappingsExt = {
-    .changed  = clap_host_midi_mappings_changed_callback
-  };
+  // clap_host_midi_mappings_t MMidiMappingsExt = {
+  //   .changed  = clap_host_midi_mappings_changed_callback
+  // };
 
 //------------------------------
 private: // preset load
