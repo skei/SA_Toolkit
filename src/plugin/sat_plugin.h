@@ -229,42 +229,41 @@ public: // extensions
   //----------
 
   virtual void registerAllExtension() {
+    registerExtension(CLAP_EXT_AMBISONIC,                 &MExtAmbisonic);
     registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation);
     registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig);
+    registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts);
+    registerExtension(CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu);
     #ifndef SAT_GUI_NOGUI
       registerExtension(CLAP_EXT_GUI,                     &MExtGui);
     #endif
     registerExtension(CLAP_EXT_LATENCY,                   &MExtLatency);
     registerExtension(CLAP_EXT_NOTE_NAME,                 &MExtNoteName);
     registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
+    registerExtension(CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication);
     registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
     registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,          &MExtPosixFdSupport);
+    registerExtension(CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad);
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls);
     registerExtension(CLAP_EXT_RENDER,                    &MExtRender);
     registerExtension(CLAP_EXT_STATE,                     &MExtState);
+    registerExtension(CLAP_EXT_STATE_CONTEXT,             &MExtStateContext);
+    registerExtension(CLAP_EXT_SURROUND,                  &MExtSurround);
     registerExtension(CLAP_EXT_TAIL,                      &MExtTail);
     registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
     registerExtension(CLAP_EXT_TIMER_SUPPORT,             &MExtTimerSupport);
+    registerExtension(CLAP_EXT_TRACK_INFO,                &MExtTrackInfo);
     registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
   }
 
   //----------
 
+  //TODO: fix this for clap 1.2 ..
+
   virtual void registerDraftExtension() {
-    registerExtension(CLAP_EXT_AMBISONIC,                 &MExtAmbisonic);
-    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation);
-  //registerExtension(CLAP_EXT_CHECK_FOR_UPDATE,          &MExtCheckForUpdate);
-    registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts);
-    registerExtension(CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu);
-  //registerExtension(CLAP_EXT_CV,                        &MExtCv);
     registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts);
-  //registerExtension(CLAP_EXT_MIDI_MAPPINGS,             &MExtMidiMappings);
-    registerExtension(CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication);
-    registerExtension(CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad);
-    registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls);
     registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,        &MExtResourceDirectory);
-    registerExtension(CLAP_EXT_STATE_CONTEXT,             &MExtStateContext);
-    registerExtension(CLAP_EXT_SURROUND,                  &MExtSurround);
-    registerExtension(CLAP_EXT_TRACK_INFO,                &MExtTrackInfo);
     registerExtension(CLAP_EXT_TRIGGERS,                  &MExtTriggers);
     registerExtension(CLAP_EXT_TUNING,                    &MExtTuning);
   }
@@ -1521,21 +1520,11 @@ protected: // SAT_EditorListener
 
 
 
-
-
-
-
-
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
-
-
-
-
-
 
 
 
@@ -1675,6 +1664,20 @@ protected: // clap_plugin
   }
 
 //------------------------------
+protected: // ambisonic
+//------------------------------
+
+  bool ambisonic_is_config_supported(const clap_ambisonic_config_t *config) override {
+    return false; 
+  }
+
+  //----------
+
+  bool ambisonic_get_config(bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) override {
+    return false; 
+  }
+
+//------------------------------
 protected: // audio_ports
 //------------------------------
 
@@ -1697,6 +1700,20 @@ protected: // audio_ports
       memcpy(info,MAudioOutputPorts[index]->getInfo(),sizeof(clap_audio_port_info_t));
     }
       return true;
+  }
+
+//------------------------------
+protected: // audio_ports_activation
+//------------------------------
+
+  bool audio_ports_activation_can_activate_while_processing() override {
+    return false; 
+  }
+
+  //----------
+
+  bool audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) override {
+    return false; 
   }
 
 //------------------------------
@@ -1736,6 +1753,34 @@ protected: // audio_ports_config
 
   bool audio_ports_config_select(clap_id config_id) override {
     return true;
+  }
+
+//------------------------------
+protected: // configurable_audio_ports
+//------------------------------
+
+  bool configurable_audio_ports_can_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) override {
+    return false; 
+  }
+
+  //----------
+
+  bool configurable_audio_ports_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) override {
+    return false; 
+  }
+
+//------------------------------
+protected: // context_menu
+//------------------------------
+
+  bool context_menu_populate(const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) override {
+    return false; 
+  }
+
+  //----------
+
+  bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
+    return false; 
   }
 
 //------------------------------
@@ -2006,6 +2051,47 @@ protected: // note_ports
   }
 
 //------------------------------
+protected: // param_indication
+//------------------------------
+
+  void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
+    SAT_Parameter* param = MParameters[param_id];
+//    param->setMappingIndication(has_mapping,color,label,description);
+    param->setIsMapped(has_mapping);
+    SAT_Color C = SAT_Color(
+      (double)color->red    * SAT_INV255,
+      (double)color->green  * SAT_INV255,
+      (double)color->blue   * SAT_INV255,
+      (double)color->alpha  * SAT_INV255
+    );
+    param->setMappedColor(C);
+    #if !defined (SAT_GUI_NOGUI)
+      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+    #endif
+  }
+  
+  //----------
+
+  void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
+    SAT_Parameter* param = MParameters[param_id];
+//    param->setAutomationIndication(automation_state,color);
+    //param->setAutomationIndication(automation_state,color);
+    param->setAutomationState(automation_state);
+    SAT_Color C = SAT_Color(
+      (double)color->red    * SAT_INV255,
+      (double)color->green  * SAT_INV255,
+      (double)color->blue   * SAT_INV255,
+      (double)color->alpha  * SAT_INV255
+    );
+    param->setAutomationColor(C);
+    #if !defined (SAT_GUI_NOGUI)
+      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+    #endif
+  }
+  
+//------------------------------
 protected: // params
 //------------------------------
 
@@ -2061,6 +2147,58 @@ protected: // posix_fd_support
   void posix_fd_support_on_fd(int fd, clap_posix_fd_flags_t flags) override {
   }
 
+//------------------------------
+protected: // preset_load
+//------------------------------
+
+  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
+
+    const clap_host_t* host = MHost->getHost();
+    //const clap_host_preset_load_t* preset_load = (const clap_host_preset_load_t*)host->get_extension(host,CLAP_EXT_PRESET_LOAD);
+
+    //return loadPresetFromFile(location,load_key);
+    switch (location_kind) {
+      case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
+        if (MHost->ext.preset_load) MHost->ext.preset_load->loaded(host,location_kind,location,load_key);
+        return true;
+      }
+      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
+        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
+        if (MHost->ext.preset_load) MHost->ext.preset_load->loaded(host,location_kind,location,load_key);
+        return true;
+      }
+      default: {
+        SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
+        return false;
+      }
+    }
+    return false;
+  }
+  
+//------------------------------
+protected: // remote_controls
+//------------------------------
+
+  uint32_t remote_controls_count() override {
+    return 1;
+  }
+  
+  //----------
+
+  bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
+    SAT_Strlcpy(page->page_name,"Perform",CLAP_NAME_SIZE);
+    SAT_Strlcpy(page->section_name,"",CLAP_NAME_SIZE);
+    page->page_id = 0;
+    page->is_for_preset = false;
+    uint32_t numpar = MParameters.size();
+    for (uint32_t i=0; i<8; i++) {
+      if (i < numpar) page->param_ids[i] = i;// CLAP_INVALID_ID;
+      else page->param_ids[i] = CLAP_INVALID_ID;
+    }
+    return true;
+  }
+  
 //------------------------------
 protected: // render
 //------------------------------
@@ -2162,6 +2300,42 @@ protected: // state
   }
 
 //------------------------------
+protected: // state_context
+//------------------------------
+
+  bool state_context_save(const clap_ostream_t *stream, uint32_t context_type) override {
+    switch (context_type) {
+      case CLAP_STATE_CONTEXT_FOR_DUPLICATE:  return state_save(stream);
+      case CLAP_STATE_CONTEXT_FOR_PRESET:     return state_save(stream);
+    }
+    return true;
+  }
+  
+  //----------
+
+  bool state_context_load(const clap_istream_t *stream, uint32_t context_type) override {
+    switch (context_type) {
+      case CLAP_STATE_CONTEXT_FOR_DUPLICATE:  return state_load(stream);
+      case CLAP_STATE_CONTEXT_FOR_PRESET:     return state_load(stream);
+    }
+    return true;
+  }
+
+//------------------------------
+protected: // surround
+//------------------------------
+
+  bool surround_is_channel_mask_supported(uint64_t channel_mask) override {
+    return false;
+  }
+
+  //----------
+
+  uint32_t surround_get_channel_map(bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) override {
+    return 0;
+  }
+
+//------------------------------
 protected: // tail
 //------------------------------
 
@@ -2184,279 +2358,7 @@ protected: // timer
   }
 
 //------------------------------
-protected: // voice_info
-//------------------------------
-
-  bool voice_info_get(clap_voice_info_t *info) override {
-    //info->voice_count     = 16;
-    //info->voice_capacity  = 16;
-    //info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
-    //return true;
-    return false;
-  }
-
-//------------------------------
-protected: // draft: ambisonic
-//------------------------------
-
-  bool ambisonic_is_config_supported(const clap_ambisonic_config_t *config) override {
-    return false; 
-  }
-
-  //----------
-
-  bool ambisonic_get_config(bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) override {
-    return false; 
-  }
-
-//------------------------------
-protected: // draft: audio_ports_activation
-//------------------------------
-
-  bool audio_ports_activation_can_activate_while_processing() override {
-    return false; 
-  }
-
-  //----------
-
-  bool audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) override {
-    return false; 
-  }
-
-//------------------------------
-protected: // draft: check_for_update
-//------------------------------
-
-  // void check_for_update_check(bool include_preview) override {
-  // }
-
-//------------------------------
-protected: // draft: configurable_audio_ports
-//------------------------------
-
-  bool configurable_audio_ports_can_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) override {
-    return false; 
-  }
-
-  //----------
-
-  bool configurable_audio_ports_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) override {
-    return false; 
-  }
-
-//------------------------------
-protected: // draft: context_menu
-//------------------------------
-
-  bool context_menu_populate(const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) override {
-    return false; 
-  }
-
-  //----------
-
-  bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
-    return false; 
-  }
-
-//------------------------------
-protected: // draft: cv
-//------------------------------
-
-  // bool cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) override {
-  //   return false; 
-  // }
-
-//------------------------------
-protected: //
-//------------------------------
-
-  bool extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) override {
-    return false; 
-  }
-
-  //----------
-
-  bool extensible_audio_ports_remove_port(bool is_input, uint32_t index) override {
-    return false; 
-  }
-
-//------------------------------
-protected: // draft: midi_mappings
-//------------------------------
-
-  // uint32_t midi_mappings_count() override {
-  //   return 0;
-  // }
-
-  //----------
-
-  // bool midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) override {
-  //   //mapping->channel = 0;
-  //   //mapping->number = 0;
-  //   //apping->param_id = 0;
-  //   //return true;
-  //   return false;
-  // }
-  
-//------------------------------
-protected: // draft: param_indication
-//------------------------------
-
-  void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
-    SAT_Parameter* param = MParameters[param_id];
-//    param->setMappingIndication(has_mapping,color,label,description);
-    param->setIsMapped(has_mapping);
-    SAT_Color C = SAT_Color(
-      (double)color->red    * SAT_INV255,
-      (double)color->green  * SAT_INV255,
-      (double)color->blue   * SAT_INV255,
-      (double)color->alpha  * SAT_INV255
-    );
-    param->setMappedColor(C);
-    #if !defined (SAT_GUI_NOGUI)
-      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
-    #endif
-  }
-  
-  //----------
-
-
-
-  void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
-    SAT_Parameter* param = MParameters[param_id];
-//    param->setAutomationIndication(automation_state,color);
-    //param->setAutomationIndication(automation_state,color);
-    param->setAutomationState(automation_state);
-    SAT_Color C = SAT_Color(
-      (double)color->red    * SAT_INV255,
-      (double)color->green  * SAT_INV255,
-      (double)color->blue   * SAT_INV255,
-      (double)color->alpha  * SAT_INV255
-    );
-    param->setAutomationColor(C);
-    #if !defined (SAT_GUI_NOGUI)
-      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
-    #endif
-  }
-  
-//------------------------------
-protected: // draft: preset_load
-//------------------------------
-
-  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
-
-    const clap_host_t* host = MHost->getHost();
-    //const clap_host_preset_load_t* preset_load = (const clap_host_preset_load_t*)host->get_extension(host,CLAP_EXT_PRESET_LOAD);
-
-    //return loadPresetFromFile(location,load_key);
-    switch (location_kind) {
-      case CLAP_PRESET_DISCOVERY_LOCATION_FILE: {
-        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_FILE location '%s', load_key '%s'\n",location,load_key);
-        if (MHost->ext.preset_load) MHost->ext.preset_load->loaded(host,location_kind,location,load_key);
-        return true;
-      }
-      case CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN: {
-        SAT_Print("CLAP_PRESET_DISCOVERY_LOCATION_PLUGIN location '%s', load_key '%s'\n",location,load_key);
-        if (MHost->ext.preset_load) MHost->ext.preset_load->loaded(host,location_kind,location,load_key);
-        return true;
-      }
-      default: {
-        SAT_Print("unknown location kind (%i : '%s','%s')\n",location_kind,location,load_key);
-        return false;
-      }
-    }
-    return false;
-  }
-  
-//------------------------------
-protected: // draft: remote_controls
-//------------------------------
-
-  uint32_t remote_controls_count() override {
-    return 1;
-  }
-  
-  //----------
-
-  bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
-    SAT_Strlcpy(page->page_name,"Perform",CLAP_NAME_SIZE);
-    SAT_Strlcpy(page->section_name,"",CLAP_NAME_SIZE);
-    page->page_id = 0;
-    page->is_for_preset = false;
-    uint32_t numpar = MParameters.size();
-    for (uint32_t i=0; i<8; i++) {
-      if (i < numpar) page->param_ids[i] = i;// CLAP_INVALID_ID;
-      else page->param_ids[i] = CLAP_INVALID_ID;
-    }
-    return true;
-  }
-  
-//------------------------------
-protected: // draft: resource_directory
-//------------------------------
-
-  void resource_directory_set_directory(const char *path, bool is_shared) override {
-    MResourceDirectory = path;
-    MResourceDirectoryShared = is_shared;
-  }
-
-  //----------
-
-  void resource_directory_collect(bool all) override {
-  }
-
-  //----------
-
-  uint32_t resource_directory_get_files_count() override {
-    return 0;
-  }
-
-  //----------
-
-  int32_t resource_directory_get_file_path(uint32_t index, char *path, uint32_t path_size) override {
-    return 0;
-  }
-
-//------------------------------
-protected: // draft: state_context
-//------------------------------
-
-  bool state_context_save(const clap_ostream_t *stream, uint32_t context_type) override {
-    switch (context_type) {
-      case CLAP_STATE_CONTEXT_FOR_DUPLICATE:  return state_save(stream);
-      case CLAP_STATE_CONTEXT_FOR_PRESET:     return state_save(stream);
-    }
-    return true;
-  }
-  
-  //----------
-
-  bool state_context_load(const clap_istream_t *stream, uint32_t context_type) override {
-    switch (context_type) {
-      case CLAP_STATE_CONTEXT_FOR_DUPLICATE:  return state_load(stream);
-      case CLAP_STATE_CONTEXT_FOR_PRESET:     return state_load(stream);
-    }
-    return true;
-  }
-
-//------------------------------
-protected: // draft: surround
-//------------------------------
-
-  bool surround_is_channel_mask_supported(uint64_t channel_mask) override {
-    return false;
-  }
-
-  //----------
-
-  uint32_t surround_get_channel_map(bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) override {
-    return 0;
-  }
-
-//------------------------------
-protected: // draft: track_info
+protected: // track_info
 //------------------------------
 
   void track_info_changed() override {
@@ -2487,6 +2389,58 @@ protected: // draft: track_info
 
       }
     }
+  }
+
+//------------------------------
+protected: // voice_info
+//------------------------------
+
+  bool voice_info_get(clap_voice_info_t *info) override {
+    //info->voice_count     = 16;
+    //info->voice_capacity  = 16;
+    //info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
+    //return true;
+    return false;
+  }
+
+//------------------------------
+protected: // draft: extensible_audio_ports
+//------------------------------
+
+  bool extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) override {
+    return false; 
+  }
+
+  //----------
+
+  bool extensible_audio_ports_remove_port(bool is_input, uint32_t index) override {
+    return false; 
+  }
+
+//------------------------------
+protected: // draft: resource_directory
+//------------------------------
+
+  void resource_directory_set_directory(const char *path, bool is_shared) override {
+    MResourceDirectory = path;
+    MResourceDirectoryShared = is_shared;
+  }
+
+  //----------
+
+  void resource_directory_collect(bool all) override {
+  }
+
+  //----------
+
+  uint32_t resource_directory_get_files_count() override {
+    return 0;
+  }
+
+  //----------
+
+  int32_t resource_directory_get_file_path(uint32_t index, char *path, uint32_t path_size) override {
+    return 0;
   }
 
 //------------------------------

@@ -75,11 +75,19 @@ protected:
 
   // extensions
 
+  virtual bool                ambisonic_is_config_supported(const clap_ambisonic_config_t *config) { return false; }
+  virtual bool                ambisonic_get_config(bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) { return false; }
   virtual uint32_t            audio_ports_count(bool is_input) { return 0; }
   virtual bool                audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) { return false; }
+  virtual bool                audio_ports_activation_can_activate_while_processing() { return false; }
+  virtual bool                audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) { return false; }
   virtual uint32_t            audio_ports_config_count() { return 0; }
   virtual bool                audio_ports_config_get(uint32_t index, clap_audio_ports_config_t *config) { return true; }
   virtual bool                audio_ports_config_select(clap_id config_id) { return true;}
+  virtual bool                configurable_audio_ports_can_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) { return false; }
+  virtual bool                configurable_audio_ports_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) { return false; }
+  virtual bool                context_menu_populate(const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) { return false; }
+  virtual bool                context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
   virtual bool                gui_is_api_supported(const char *api, bool is_floating) { return false; }
   virtual bool                gui_get_preferred_api(const char **api, bool *is_floating) { return false; }
   virtual bool                gui_create(const char *api, bool is_floating) { return false; }
@@ -100,6 +108,8 @@ protected:
   virtual bool                note_name_get(uint32_t index, clap_note_name_t *note_name) { return false; }
   virtual uint32_t            note_ports_count(bool is_input) { return 0; }
   virtual bool                note_ports_get(uint32_t index, bool is_input, clap_note_port_info_t *info) { return false; }
+  virtual void                param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {}
+  virtual void                param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) {}
   virtual uint32_t            params_count() { return 0; }
   virtual bool                params_get_info(uint32_t param_index, clap_param_info_t *param_info) { return false; }
   virtual bool                params_get_value(clap_id param_id, double *out_value) { return false; }
@@ -107,50 +117,37 @@ protected:
   virtual bool                params_text_to_value(clap_id param_id, const char *param_value_text, double *out_value) { return false; }
   virtual void                params_flush(const clap_input_events_t *in, const clap_output_events_t *out) {}
   virtual void                posix_fd_support_on_fd(int fd, clap_posix_fd_flags_t flags) {}
+  virtual bool                preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) { return false; }
+  virtual uint32_t            remote_controls_count() { return 0; }
+  virtual bool                remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) { return false; }
   virtual bool                render_has_hard_realtime_requirement() { return false; }
   virtual bool                render_set(clap_plugin_render_mode mode) { return false; }
   virtual bool                state_save(const clap_ostream_t *stream) { return false; }
   virtual bool                state_load(const clap_istream_t *stream) { return false; }
-  virtual uint32_t            tail_get() { return 0; }
-  virtual void                thread_pool_exec(uint32_t task_index) {}
-  virtual void                timer_support_on_timer(clap_id timer_id) {}
-  virtual bool                voice_info_get(clap_voice_info_t *info) { return false; }
-
-  // drafts
-
-  
-
-  virtual bool                ambisonic_is_config_supported(const clap_ambisonic_config_t *config) { return false; }
-  virtual bool                ambisonic_get_config(bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) { return false; }
-  virtual bool                audio_ports_activation_can_activate_while_processing() { return false; }
-  virtual bool                audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) { return false; }
-//virtual void                check_for_update_check(bool include_preview) {}
-  virtual bool                configurable_audio_ports_can_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) { return false; }
-  virtual bool                configurable_audio_ports_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) { return false; }
-  virtual bool                context_menu_populate(const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) { return false; }
-  virtual bool                context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
-//virtual bool                cv_get_channel_type(bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) { return false; }
-  virtual bool                extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) { return false; }
-  virtual bool                extensible_audio_ports_remove_port(bool is_input, uint32_t index) { return false; }
-//virtual uint32_t            midi_mappings_count() { return 0; }
-//virtual bool                midi_mappings_get(uint32_t index, clap_midi_mapping_t *mapping) { return false; }
-  virtual void                param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {}
-  virtual void                param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) {}
-  virtual bool                preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) { return false; }
-  virtual uint32_t            remote_controls_count() { return 0; }
-  virtual bool                remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) { return false; }
-  virtual void                resource_directory_set_directory(const char *path, bool is_shared) {}
-  virtual void                resource_directory_collect(bool all) {}
-  virtual uint32_t            resource_directory_get_files_count() { return 0; }
-  virtual int32_t             resource_directory_get_file_path(uint32_t index, char *path, uint32_t path_size) { return 0; }
   virtual bool                state_context_save(const clap_ostream_t *stream, uint32_t context_type) { return false; }
   virtual bool                state_context_load(const clap_istream_t *stream, uint32_t context_type) { return false; }
   virtual bool                surround_is_channel_mask_supported(uint64_t channel_mask) { return false; }
   virtual uint32_t            surround_get_channel_map(bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) { return 0; }
+  virtual uint32_t            tail_get() { return 0; }
+  virtual void                thread_pool_exec(uint32_t task_index) {}
+  virtual void                timer_support_on_timer(clap_id timer_id) {}
   virtual void                track_info_changed() {}
+  virtual bool                voice_info_get(clap_voice_info_t *info) { return false; }
+
+  // drafts
+
+  virtual bool                extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) { return false; }
+  virtual bool                extensible_audio_ports_remove_port(bool is_input, uint32_t index) { return false; }
+  virtual void                resource_directory_set_directory(const char *path, bool is_shared) {}
+  virtual void                resource_directory_collect(bool all) {}
+  virtual uint32_t            resource_directory_get_files_count() { return 0; }
+  virtual int32_t             resource_directory_get_file_path(uint32_t index, char *path, uint32_t path_size) { return 0; }
   virtual uint32_t            triggers_count() { return 0; }
   virtual bool                triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) { return false; }
   virtual void                tuning_changed() {}
+
+
+
 
 //------------------------------
 private: // plugin
@@ -237,9 +234,42 @@ protected:
     .on_main_thread   = on_main_thread_callback
   };
 
+
+
+
+
 //------------------------------
 // extensions
 //------------------------------
+
+
+
+
+
+//------------------------------
+private: // ambisonic
+//------------------------------
+
+  static
+  bool ambisonic_is_config_supported_callback(const clap_plugin_t *plugin, const clap_ambisonic_config_t *config) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->ambisonic_is_config_supported(config);
+  }
+
+  static
+  bool ambisonic_get_config_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->ambisonic_get_config(is_input,port_index,config);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_ambisonic_t MExtAmbisonic {
+    .is_config_supported  = ambisonic_is_config_supported_callback,
+    .get_config           = ambisonic_get_config_callback
+  };
 
 //------------------------------
 private: // audio-ports
@@ -264,6 +294,31 @@ protected:
   const clap_plugin_audio_ports_t MExtAudioPorts {
     .count  = audio_ports_count_callback,
     .get    = audio_ports_get_callback
+  };
+
+//------------------------------
+private: // audio-ports-activation
+//------------------------------
+
+  static
+  bool audio_ports_activation_can_activate_while_processing_callback(const clap_plugin_t *plugin) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->audio_ports_activation_can_activate_while_processing();
+  }
+
+  static
+  bool audio_ports_activation_set_active_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->audio_ports_activation_set_active(is_input,port_index,is_active,sample_size);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_audio_ports_activation_t MExtAudioPortsActivation {
+    .can_activate_while_processing  = audio_ports_activation_can_activate_while_processing_callback,
+    .set_active                     = audio_ports_activation_set_active_callback
   };
 
 //------------------------------
@@ -296,6 +351,56 @@ protected:
     .count  = audio_ports_config_count_callback,
     .get    = audio_ports_config_get_callback,
     .select = audio_ports_config_select_callback
+  };
+
+//------------------------------
+private: // configurable-audio-ports
+//------------------------------
+
+  static
+  bool configurable_audio_ports_can_apply_configuration_callback(const clap_plugin_t *plugin, const struct clap_audio_port_configuration_request *requests, uint32_t request_count) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->configurable_audio_ports_can_apply_configuration(requests,request_count);
+  }
+
+  static
+  bool configurable_audio_ports_apply_configuration_callback(const clap_plugin_t *plugin, const struct clap_audio_port_configuration_request *requests, uint32_t request_count) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->configurable_audio_ports_apply_configuration(requests,request_count);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_configurable_audio_ports_t MExtConfigurableAudioPorts {
+    .can_apply_configuration  = configurable_audio_ports_can_apply_configuration_callback,
+    .apply_configuration      = configurable_audio_ports_apply_configuration_callback
+  };
+
+//------------------------------
+private: // context-menu
+//------------------------------
+
+  static
+  bool context_menu_populate_callback(const clap_plugin_t *plugin, const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->context_menu_populate(target,builder);
+  }
+
+  static
+  bool context_menu_perform_callback(const clap_plugin_t *plugin, const clap_context_menu_target_t *target, clap_id action_id) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->context_menu_perform(target,action_id);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_context_menu_t MExtContextMenu {
+    .populate = context_menu_populate_callback,
+    .perform  = context_menu_perform_callback
   };
 
 //------------------------------
@@ -483,6 +588,31 @@ protected:
   };
 
 //------------------------------
+private: // param-indication
+//------------------------------
+
+  static
+  void param_indication_set_mapping_callback(const clap_plugin_t *plugin, clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->param_indication_set_mapping(param_id,has_mapping,color,label,description);
+  }
+
+  static
+  void param_indication_set_automation_callback(const clap_plugin_t *plugin, clap_id param_id, uint32_t automation_state, const clap_color_t *color) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->param_indication_set_automation(param_id,automation_state,color);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_param_indication_t MExtParamIndication {
+    .set_mapping    = param_indication_set_mapping_callback,
+    .set_automation = param_indication_set_automation_callback
+  };
+
+//------------------------------
 private: // params
 //------------------------------
 
@@ -554,6 +684,49 @@ protected:
   };
 
 //------------------------------
+private: // preset-load
+//------------------------------
+
+  static
+  bool preset_load_from_location_callback(const clap_plugin_t *plugin, uint32_t location_kind, const char *location, const char *load_key) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->preset_load_from_location(location_kind,location,load_key);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_preset_load_t MExtPresetLoad {
+    .from_location = preset_load_from_location_callback
+  };
+
+//------------------------------
+private: // remote-controls
+//------------------------------
+
+  static
+  uint32_t remote_controls_count_callback(const clap_plugin_t *plugin) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->remote_controls_count();
+  }
+
+  static
+  bool remote_controls_get_callback(const clap_plugin_t *plugin, uint32_t page_index, clap_remote_controls_page_t *page) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->remote_controls_get(page_index,page);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_remote_controls_t MExtRemoteControls {
+    .count  = remote_controls_count_callback,
+    .get    = remote_controls_get_callback
+  };
+
+//------------------------------
 private: // render
 //------------------------------
 
@@ -601,6 +774,56 @@ protected:
   const clap_plugin_state_t MExtState {
     .save = state_save_callback,
     .load = state_load_callback,
+  };
+
+//------------------------------
+private: // state-context
+//------------------------------
+
+  static
+  bool state_context_save_callback(const clap_plugin_t *plugin, const clap_ostream_t *stream, uint32_t context_type) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->state_context_save(stream,context_type);
+  }
+
+  static
+  bool state_context_load_callback(const clap_plugin_t *plugin, const clap_istream_t *stream, uint32_t context_type) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->state_context_load(stream,context_type);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_state_context_t MExtStateContext {
+    .save = state_context_save_callback,
+    .load = state_context_load_callback
+  };
+
+//------------------------------
+private: // surround
+//------------------------------
+
+  static
+  bool surround_is_channel_mask_supported_callback(const clap_plugin_t *plugin, uint64_t channel_mask) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->surround_is_channel_mask_supported(channel_mask);
+  }
+
+  static
+  uint32_t surround_get_channel_map_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->surround_get_channel_map(is_input,port_index,channel_map,channel_map_capacity);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_surround_t MExtSurround {
+    surround_is_channel_mask_supported_callback,
+    surround_get_channel_map_callback
   };
 
 //------------------------------
@@ -658,6 +881,24 @@ protected:
   };
 
 //------------------------------
+private: // track-info
+//------------------------------
+
+  static
+  void track_info_changed_callback(const clap_plugin_t *plugin) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    plug->track_info_changed();
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_track_info_t MExtTrackInfo {
+    .changed = track_info_changed_callback
+  };
+
+//------------------------------
 private: // voice-info
 //------------------------------
 
@@ -675,145 +916,17 @@ protected:
     .get = voice_info_get_callback
   };
 
+
+
+
+
 //------------------------------
 // drafts
 //------------------------------
 
-//------------------------------
-private: // draft: ambisonic
-//------------------------------
 
-  static
-  bool ambisonic_is_config_supported_callback(const clap_plugin_t *plugin, const clap_ambisonic_config_t *config) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->ambisonic_is_config_supported(config);
-  }
 
-  static
-  bool ambisonic_get_config_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->ambisonic_get_config(is_input,port_index,config);
-  }
 
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_ambisonic_t MExtAmbisonic {
-    .is_config_supported  = ambisonic_is_config_supported_callback,
-    .get_config           = ambisonic_get_config_callback
-  };
-
-//------------------------------
-private: // draft: audio-ports-activation
-//------------------------------
-
-  static
-  bool audio_ports_activation_can_activate_while_processing_callback(const clap_plugin_t *plugin) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->audio_ports_activation_can_activate_while_processing();
-  }
-
-  static
-  bool audio_ports_activation_set_active_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->audio_ports_activation_set_active(is_input,port_index,is_active,sample_size);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_audio_ports_activation_t MExtAudioPortsActivation {
-    .can_activate_while_processing  = audio_ports_activation_can_activate_while_processing_callback,
-    .set_active                     = audio_ports_activation_set_active_callback
-  };
-
-//------------------------------
-private: // draft: check-for-update
-//------------------------------
-
-  // static
-  // void check_for_update_check_callback(const clap_plugin_t *plugin, bool include_preview) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   plug->check_for_update_check(include_preview);
-  // }
-
-//--------------------
-protected:
-//--------------------
-
-  // const clap_plugin_check_for_update_t MExtCheckForUpdate {
-  //   .check = check_for_update_check_callback
-  // };
-
-//------------------------------
-private: // draft: configurable-audio-ports
-//------------------------------
-
-  static
-  bool configurable_audio_ports_can_apply_configuration_callback(const clap_plugin_t *plugin, const struct clap_audio_port_configuration_request *requests, uint32_t request_count) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->configurable_audio_ports_can_apply_configuration(requests,request_count);
-  }
-
-  static
-  bool configurable_audio_ports_apply_configuration_callback(const clap_plugin_t *plugin, const struct clap_audio_port_configuration_request *requests, uint32_t request_count) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->configurable_audio_ports_apply_configuration(requests,request_count);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_configurable_audio_ports_t MExtConfigurableAudioPorts {
-    .can_apply_configuration  = configurable_audio_ports_can_apply_configuration_callback,
-    .apply_configuration      = configurable_audio_ports_apply_configuration_callback
-  };
-
-//------------------------------
-private: // draft: context-menu
-//------------------------------
-
-  static
-  bool context_menu_populate_callback(const clap_plugin_t *plugin, const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->context_menu_populate(target,builder);
-  }
-
-  static
-  bool context_menu_perform_callback(const clap_plugin_t *plugin, const clap_context_menu_target_t *target, clap_id action_id) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->context_menu_perform(target,action_id);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_context_menu_t MExtContextMenu {
-    .populate = context_menu_populate_callback,
-    .perform  = context_menu_perform_callback
-  };
-
-//------------------------------
-private: // draft: cv
-//------------------------------
-
-  // static
-  // bool cv_get_channel_type_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, uint32_t channel_index, uint32_t *channel_type) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   return plug->cv_get_channel_type(is_input,port_index,channel_index,channel_type);
-  // }
-
-//--------------------
-protected:
-//--------------------
-
-  // const clap_plugin_cv_t MExtCv {
-  //   .get_channel_type = cv_get_channel_type_callback
-  // };
 
 //------------------------------
 private: // draft: extensible-audio-ports
@@ -838,99 +951,6 @@ protected:
   const clap_plugin_extensible_audio_ports_t MExtExtensibleAudioPorts {
     .add_port     = extensible_audio_ports_add_port_callback,
     .remove_port  = extensible_audio_ports_remove_port_callback
-  };
-
-//------------------------------
-private: // draft: midi-mappings
-//------------------------------
-
-  // static
-  // uint32_t midi_mappings_count_callback(const clap_plugin_t *plugin) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   return plug->midi_mappings_count();
-  // }
-  //  
-  // static
-  // bool midi_mappings_get_callback(const clap_plugin_t *plugin, uint32_t index, clap_midi_mapping_t *mapping) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   return plug->midi_mappings_get(index,mapping);
-  // }
-    
-//--------------------
-protected:
-//--------------------
-
-  // const clap_plugin_midi_mappings_t MExtMidiMappings {
-  //   .count  = midi_mappings_count_callback, 
-  //   .get    = midi_mappings_get_callback
-  // };
-
-//------------------------------
-private: // draft: param-indication
-//------------------------------
-
-  static
-  void param_indication_set_mapping_callback(const clap_plugin_t *plugin, clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->param_indication_set_mapping(param_id,has_mapping,color,label,description);
-  }
-
-  static
-  void param_indication_set_automation_callback(const clap_plugin_t *plugin, clap_id param_id, uint32_t automation_state, const clap_color_t *color) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->param_indication_set_automation(param_id,automation_state,color);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_param_indication_t MExtParamIndication {
-    .set_mapping    = param_indication_set_mapping_callback,
-    .set_automation = param_indication_set_automation_callback
-  };
-
-//------------------------------
-private: // draft: preset-load
-//------------------------------
-
-  static
-  bool preset_load_from_location_callback(const clap_plugin_t *plugin, uint32_t location_kind, const char *location, const char *load_key) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->preset_load_from_location(location_kind,location,load_key);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_preset_load_t MExtPresetLoad {
-    .from_location = preset_load_from_location_callback
-  };
-
-//------------------------------
-private: // draft: remote-controls
-//------------------------------
-
-  static
-  uint32_t remote_controls_count_callback(const clap_plugin_t *plugin) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->remote_controls_count();
-  }
-
-  static
-  bool remote_controls_get_callback(const clap_plugin_t *plugin, uint32_t page_index, clap_remote_controls_page_t *page) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->remote_controls_get(page_index,page);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_remote_controls_t MExtRemoteControls {
-    .count  = remote_controls_count_callback,
-    .get    = remote_controls_get_callback
   };
 
 //------------------------------
@@ -970,74 +990,6 @@ protected:
     .collect          = resource_directory_collect_callback,
     .get_files_count  = resource_directory_get_files_count_callback,
     .get_file_path    = resource_directory_get_file_path_callback
-  };
-
-//------------------------------
-private: // draft: state-context
-//------------------------------
-
-  static
-  bool state_context_save_callback(const clap_plugin_t *plugin, const clap_ostream_t *stream, uint32_t context_type) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->state_context_save(stream,context_type);
-  }
-
-  static
-  bool state_context_load_callback(const clap_plugin_t *plugin, const clap_istream_t *stream, uint32_t context_type) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->state_context_load(stream,context_type);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_state_context_t MExtStateContext {
-    .save = state_context_save_callback,
-    .load = state_context_load_callback
-  };
-
-//------------------------------
-private: // draft: surround
-//------------------------------
-
-  static
-  bool surround_is_channel_mask_supported_callback(const clap_plugin_t *plugin, uint64_t channel_mask) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->surround_is_channel_mask_supported(channel_mask);
-  }
-
-  static
-  uint32_t surround_get_channel_map_callback(const clap_plugin_t *plugin, bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->surround_get_channel_map(is_input,port_index,channel_map,channel_map_capacity);
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_surround_t MExtSurround {
-    surround_is_channel_mask_supported_callback,
-    surround_get_channel_map_callback
-  };
-
-//------------------------------
-private: // draft: track-info
-//------------------------------
-
-  static
-  void track_info_changed_callback(const clap_plugin_t *plugin) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    plug->track_info_changed();
-  }
-
-//--------------------
-protected:
-//--------------------
-
-  const clap_plugin_track_info_t MExtTrackInfo {
-    .changed = track_info_changed_callback
   };
 
 //------------------------------

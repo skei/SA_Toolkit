@@ -50,9 +50,14 @@ public:
 public: // extensions
 //------------------------------
 
+  virtual void        ambisonic_changed() {}
   virtual bool        audio_ports_is_rescan_flag_supported(uint32_t flag) { return false; }
   virtual void        audio_ports_rescan(uint32_t flags) {}
   virtual void        audio_ports_config_rescan() {}
+  virtual bool        context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) { return false; }
+  virtual bool        context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
+  virtual bool        context_menu_can_popup() { return false; }
+  virtual bool        context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) { return false; }
   virtual bool        event_registry_query(const char *space_name, uint16_t *space_id) { return false; }
   virtual void        gui_resize_hints_changed() {}
   virtual bool        gui_request_resize(uint32_t width, uint32_t height) { return false; }
@@ -70,35 +75,27 @@ public: // extensions
   virtual bool        posix_fd_support_register_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
   virtual bool        posix_fd_support_modify_fd(int fd, clap_posix_fd_flags_t flags) { return false; }
   virtual bool        posix_fd_support_unregister_fd(int fd) { return false; }
+  virtual void        preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {}
+  virtual void        preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) {}
+  virtual void        remote_controls_changed() {}
+  virtual void        remote_controls_suggest_page(clap_id page_id) {}
   virtual void        state_mark_dirty() {}
+  virtual void        surround_changed() {}
   virtual void        tail_changed() {}
   virtual bool        thread_check_is_main_thread() { return false; }
   virtual bool        thread_check_is_audio_thread() { return false; }
   virtual bool        thread_pool_request_exec(uint32_t num_tasks) { return false; }
   virtual bool        timer_support_register_timer(uint32_t period_ms, clap_id *timer_id) { return false; }
   virtual bool        timer_support_unregister_timer(clap_id timer_id) { return false; }
+  virtual bool        track_info_get(clap_track_info_t *info) { return false; }
   virtual void        voice_info_changed() {}
 
 //------------------------------
 public: // drafts
 //------------------------------
 
-  virtual void        ambisonic_changed() {}
-//virtual void        check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) {}
-  virtual bool        context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) { return false; }
-  virtual bool        context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) { return false; }
-  virtual bool        context_menu_can_popup() { return false; }
-  virtual bool        context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) { return false; }
-//virtual void        cv_changed() {}
-//virtual void        midi_mappings_changed() {}
-  virtual void        preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {}
-  virtual void        preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) {}
-  virtual void        remote_controls_changed() {}
-  virtual void        remote_controls_suggest_page(clap_id page_id) {}
   virtual bool        resource_directory_request_directory(bool is_shared) { return false; }
   virtual void        resource_directory_release_directory(bool is_shared) {}
-  virtual void        surround_changed() {}
-  virtual bool        track_info_get(clap_track_info_t *info) { return false; }
   virtual void        transport_control_request_start() {}
   virtual void        transport_control_request_stop() {}
   virtual void        transport_control_request_continue() {}
@@ -116,7 +113,7 @@ public: // drafts
   virtual bool        tuning_should_play(clap_id tuning_id, int32_t channel, int32_t key) { return false; }
   virtual uint32_t    tuning_get_tuning_count() { return 0; }
   virtual bool        tuning_get_info(uint32_t tuning_index, clap_tuning_info_t *info) { return false; }
-  
+
 //----------------------------------------------------------------------
 private: // host
 //----------------------------------------------------------------------
@@ -161,6 +158,22 @@ private: // extensions
 //----------------------------------------------------------------------
 
 //------------------------------
+private: // ambisonic
+//------------------------------
+
+  static
+  void clap_host_ambisonic_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->ambisonic_changed();
+  }
+
+protected:
+
+  clap_host_ambisonic_t MAmbisonicExt = {
+    .changed = clap_host_ambisonic_changed_callback
+  };
+
+//------------------------------
 private: // audio ports
 //------------------------------
 
@@ -197,6 +210,43 @@ protected:
 
   clap_host_audio_ports_config_t MAudioPortsConfigExt = {
     .rescan = clap_host_audio_ports_config_rescan_callback
+  };
+
+//------------------------------
+private: // context menu
+//------------------------------
+
+  static
+  bool clap_host_context_menu_populate_callback(const clap_host_t *host, const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_populate(target,builder);
+  }
+
+  static
+  bool clap_host_context_menu_perform_callback(const clap_host_t *host, const clap_context_menu_target_t *target, clap_id action_id) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_perform(target,action_id);
+  }
+
+  static
+  bool clap_host_context_menu_can_popup_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_can_popup();
+  }
+
+  static
+  bool clap_host_context_menu_popup_callback(const clap_host_t *host, const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->context_menu_popup(target,screen_index,x,y);
+  }
+
+protected:
+
+  clap_host_context_menu_t MContextMenuExt = {
+    .populate   = clap_host_context_menu_populate_callback,
+    .perform    = clap_host_context_menu_perform_callback,
+    .can_popup  = clap_host_context_menu_can_popup_callback,
+    .popup      = clap_host_context_menu_popup_callback
   };
 
 //------------------------------
@@ -392,6 +442,52 @@ protected:
   };
 
 //------------------------------
+private: // preset load
+//------------------------------
+
+  static
+  void clap_host_preset_load_on_error_callback(const clap_host_t *host, uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->preset_load_on_error(location_kind,location,load_key,os_error,msg);
+  }
+
+  static
+  void clap_host_preset_load_loaded_callback(const clap_host_t *host, uint32_t location_kind, const char *location, const char *load_key) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->preset_load_loaded(location_kind,location,load_key);
+  }
+
+protected:
+
+  clap_host_preset_load_t MPresetLoadExt = {
+    .on_error = clap_host_preset_load_on_error_callback,
+    .loaded   = clap_host_preset_load_loaded_callback
+  };
+
+//------------------------------
+private: // remote controls
+//------------------------------
+
+  static
+  void clap_host_remote_controls_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->remote_controls_changed();
+  }
+
+  static
+  void clap_host_remote_controls_suggest_page_callback(const clap_host_t *host, clap_id page_id) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->remote_controls_suggest_page(page_id);
+  }
+
+protected:
+
+  clap_host_remote_controls_t MRemoteControlsExt = {
+    .changed      = clap_host_remote_controls_changed_callback,
+    .suggest_page = clap_host_remote_controls_suggest_page_callback
+  };
+
+//------------------------------
 private: // state
 //------------------------------
 
@@ -405,6 +501,22 @@ protected:
 
   clap_host_state_t MStateExt = {
     .mark_dirty  = clap_host_state_mark_dirty_callback
+  };
+
+//------------------------------
+private: // surround
+//------------------------------
+
+  static
+  void clap_host_surround_changed_callback(const clap_host_t *host) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    _host->surround_changed();
+  }
+
+protected:
+
+  clap_host_surround_t MSurroundExt = {
+    .changed = clap_host_surround_changed_callback//,
   };
 
 //------------------------------
@@ -486,6 +598,22 @@ protected:
   };
 
 //------------------------------
+private: // track info
+//------------------------------
+
+  static
+  bool clap_host_track_info_get_callback(const clap_host_t *host, clap_track_info_t *info) {
+    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
+    return _host->track_info_get(info);
+  }
+
+protected:
+
+  clap_host_track_info_t MTrackInfoExt = {
+    .get  = clap_host_track_info_get_callback
+  };
+
+//------------------------------
 private: // voice info
 //------------------------------
 
@@ -502,156 +630,16 @@ protected:
   };
 
 
+
+
+
 //----------------------------------------------------------------------
 private: // drafts
 //----------------------------------------------------------------------
 
-//------------------------------
-private: // ambisonic
-//------------------------------
 
-  static
-  void clap_host_ambisonic_changed_callback(const clap_host_t *host) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->ambisonic_changed();
-  }
 
-protected:
 
-  clap_host_ambisonic_t MAmbisonicExt = {
-    .changed = clap_host_ambisonic_changed_callback
-  };
-
-//------------------------------
-private: // check for update
-//------------------------------
-
-  // static
-  // void clap_host_check_for_update_on_new_version_callback(const clap_host_t *host, const clap_check_for_update_info_t *update_info) {
-  //   SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-  //   _host->check_for_update_on_new_version(update_info);
-  // }
-
-protected:
-
-  // clap_host_check_for_update_t MCheckForUpdateExt = {
-  //   .on_new_version = clap_host_check_for_update_on_new_version_callback
-  // };
-
-//------------------------------
-private: // context menu
-//------------------------------
-
-  static
-  bool clap_host_context_menu_populate_callback(const clap_host_t *host, const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->context_menu_populate(target,builder);
-  }
-
-  static
-  bool clap_host_context_menu_perform_callback(const clap_host_t *host, const clap_context_menu_target_t *target, clap_id action_id) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->context_menu_perform(target,action_id);
-  }
-
-  static
-  bool clap_host_context_menu_can_popup_callback(const clap_host_t *host) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->context_menu_can_popup();
-  }
-
-  static
-  bool clap_host_context_menu_popup_callback(const clap_host_t *host, const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->context_menu_popup(target,screen_index,x,y);
-  }
-
-protected:
-
-  clap_host_context_menu_t MContextMenuExt = {
-    .populate   = clap_host_context_menu_populate_callback,
-    .perform    = clap_host_context_menu_perform_callback,
-    .can_popup  = clap_host_context_menu_can_popup_callback,
-    .popup      = clap_host_context_menu_popup_callback
-  };
-
-//------------------------------
-private: // cv
-//------------------------------
-
-  // static
-  // void clap_host_cv_changed_callback(const clap_host_t *host) {
-  //   SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-  //   _host->cv_changed();
-  // }
-
-protected:
-
-  // clap_host_cv_t MCVExt = {
-  //   .changed    = clap_host_cv_changed_callback
-  // };
-
-//------------------------------
-private: // midi mappings
-//------------------------------
-
-  // static
-  // void clap_host_midi_mappings_changed_callback(const clap_host_t *host) {
-  //   SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-  //   _host->midi_mappings_changed();
-  // }
-
-protected:
-
-  // clap_host_midi_mappings_t MMidiMappingsExt = {
-  //   .changed  = clap_host_midi_mappings_changed_callback
-  // };
-
-//------------------------------
-private: // preset load
-//------------------------------
-
-  static
-  void clap_host_preset_load_on_error_callback(const clap_host_t *host, uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->preset_load_on_error(location_kind,location,load_key,os_error,msg);
-  }
-
-  static
-  void clap_host_preset_load_loaded_callback(const clap_host_t *host, uint32_t location_kind, const char *location, const char *load_key) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->preset_load_loaded(location_kind,location,load_key);
-  }
-
-protected:
-
-  clap_host_preset_load_t MPresetLoadExt = {
-    .on_error = clap_host_preset_load_on_error_callback,
-    .loaded   = clap_host_preset_load_loaded_callback
-  };
-
-//------------------------------
-private: // remote controls
-//------------------------------
-
-  static
-  void clap_host_remote_controls_changed_callback(const clap_host_t *host) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->remote_controls_changed();
-  }
-
-  static
-  void clap_host_remote_controls_suggest_page_callback(const clap_host_t *host, clap_id page_id) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->remote_controls_suggest_page(page_id);
-  }
-
-protected:
-
-  clap_host_remote_controls_t MRemoteControlsExt = {
-    .changed      = clap_host_remote_controls_changed_callback,
-    .suggest_page = clap_host_remote_controls_suggest_page_callback
-  };
 
 //------------------------------
 private: // resource directory
@@ -674,38 +662,6 @@ protected:
   clap_host_resource_directory_t MResourceDirectoryExt = {
     .request_directory  = clap_host_resource_directory_request_directory_callback,
     .release_directory  = clap_host_resource_directory_release_directory_callback
-  };
-
-//------------------------------
-private: // surround
-//------------------------------
-
-  static
-  void clap_host_surround_changed_callback(const clap_host_t *host) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    _host->surround_changed();
-  }
-
-protected:
-
-  clap_host_surround_t MSurroundExt = {
-    .changed = clap_host_surround_changed_callback//,
-  };
-
-//------------------------------
-private: // track info
-//------------------------------
-
-  static
-  bool clap_host_track_info_get_callback(const clap_host_t *host, clap_track_info_t *info) {
-    SAT_ClapHostImplementation* _host = (SAT_ClapHostImplementation*)host->host_data;
-    return _host->track_info_get(info);
-  }
-
-protected:
-
-  clap_host_track_info_t MTrackInfoExt = {
-    .get  = clap_host_track_info_get_callback
   };
 
 //------------------------------

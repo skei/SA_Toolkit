@@ -46,8 +46,10 @@ public:
 
   const void* get_extension(const char *extension_id) override {
     //SAT_Print("id %s\n",extension_id);
+    if (strcmp(extension_id,CLAP_EXT_AMBISONIC)           == 0) return &MAmbisonicExt;
     if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS)         == 0) return &MAudioPortsExt;
     if (strcmp(extension_id,CLAP_EXT_AUDIO_PORTS_CONFIG)  == 0) return &MAudioPortsConfigExt;
+    if (strcmp(extension_id,CLAP_EXT_CONTEXT_MENU)        == 0) return &MContextMenuExt;
     if (strcmp(extension_id,CLAP_EXT_EVENT_REGISTRY)      == 0) return &MEventRegistryExt;
     if (strcmp(extension_id,CLAP_EXT_GUI)                 == 0) return &MGuiExt;
     if (strcmp(extension_id,CLAP_EXT_LATENCY)             == 0) return &MLatencyExt;
@@ -56,26 +58,22 @@ public:
     if (strcmp(extension_id,CLAP_EXT_NOTE_PORTS)          == 0) return &MNotePortsExt;
     if (strcmp(extension_id,CLAP_EXT_PARAMS)              == 0) return &MParamsExt;
     if (strcmp(extension_id,CLAP_EXT_POSIX_FD_SUPPORT)    == 0) return &MPosixFdSupportExt;
+    if (strcmp(extension_id,CLAP_EXT_PRESET_LOAD)         == 0) return &MPresetLoadExt;
+    if (strcmp(extension_id,CLAP_EXT_REMOTE_CONTROLS)     == 0) return &MRemoteControlsExt;
     if (strcmp(extension_id,CLAP_EXT_STATE)               == 0) return &MStateExt;
+    if (strcmp(extension_id,CLAP_EXT_SURROUND)            == 0) return &MSurroundExt;
     if (strcmp(extension_id,CLAP_EXT_TAIL)                == 0) return &MTailExt;
     if (strcmp(extension_id,CLAP_EXT_THREAD_CHECK)        == 0) return &MThreadCheckExt;
     if (strcmp(extension_id,CLAP_EXT_THREAD_POOL)         == 0) return &MThreadPoolExt;
     if (strcmp(extension_id,CLAP_EXT_TIMER_SUPPORT)       == 0) return &MTimerSupportExt;
+    if (strcmp(extension_id,CLAP_EXT_TRACK_INFO)          == 0) return &MTrackInfoExt;
     if (strcmp(extension_id,CLAP_EXT_VOICE_INFO)          == 0) return &MVoiceInfoExt;
     // drafts
-    if (strcmp(extension_id,CLAP_EXT_AMBISONIC)           == 0) return &MAmbisonicExt;
-  //if (strcmp(extension_id,CLAP_EXT_CHECK_FOR_UPDATE)    == 0) return &MCheckForUpdateExt;
-    if (strcmp(extension_id,CLAP_EXT_CONTEXT_MENU)        == 0) return &MContextMenuExt;
-  //if (strcmp(extension_id,CLAP_EXT_CV)                  == 0) return &MCVExt;
-  //if (strcmp(extension_id,CLAP_EXT_MIDI_MAPPINGS)       == 0) return &MMidiMappingsExt;
-    if (strcmp(extension_id,CLAP_EXT_PRESET_LOAD)         == 0) return &MPresetLoadExt;
-    if (strcmp(extension_id,CLAP_EXT_REMOTE_CONTROLS)     == 0) return &MRemoteControlsExt;
     if (strcmp(extension_id,CLAP_EXT_RESOURCE_DIRECTORY)  == 0) return &MResourceDirectoryExt;
-    if (strcmp(extension_id,CLAP_EXT_SURROUND)            == 0) return &MSurroundExt;
-    if (strcmp(extension_id,CLAP_EXT_TRACK_INFO)          == 0) return &MTrackInfoExt;
     if (strcmp(extension_id,CLAP_EXT_TRANSPORT_CONTROL)   == 0) return &MTransportControlExt;
     if (strcmp(extension_id,CLAP_EXT_TRIGGERS)            == 0) return &MTriggersExt;
     if (strcmp(extension_id,CLAP_EXT_TUNING)              == 0) return &MTuningExt;
+
     return nullptr;
   }
 
@@ -92,6 +90,9 @@ public:
 public: // extensions
 //------------------------------
 
+  void ambisonic_changed() override {
+  }
+  
   bool audio_ports_is_rescan_flag_supported(uint32_t flag) override {
     return false;
   }
@@ -100,6 +101,22 @@ public: // extensions
   }
 
   void audio_ports_config_rescan() override {
+  }
+  
+  bool context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) override {
+    return false;
+  }
+  
+  bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
+    return false;
+  }
+  
+  bool context_menu_can_popup() override {
+    return false;
+  }
+  
+  bool context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) override {
+    return false;
   }
   
   bool event_registry_query(const char *space_name, uint16_t *space_id) override {
@@ -161,7 +178,22 @@ public: // extensions
     return false;
   }
   
+  void preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) override {
+  }
+  
+  void preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) override {
+  }
+  
+  void remote_controls_changed() override {
+  }
+  
+  void remote_controls_suggest_page(clap_id page_id) override {
+  }
+  
   void state_mark_dirty() override {
+  }
+  
+  void surround_changed() override {
   }
   
   void tail_changed() override {
@@ -187,6 +219,10 @@ public: // extensions
     return false;
   }
   
+  bool track_info_get(clap_track_info_t *info) override {
+    return false;
+  }
+  
   void voice_info_changed() override {
   }
   
@@ -195,58 +231,11 @@ public: // extensions
 public: // drafts
 //------------------------------
 
-  void ambisonic_changed() override {
-  }
-  
-  // void check_for_update_on_new_version(const clap_check_for_update_info_t *update_info) override {
-  // }
-  
-  bool context_menu_populate(const clap_context_menu_target_t *target, const clap_context_menu_builder_t *builder) override {
-    return false;
-  }
-  
-  bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
-    return false;
-  }
-  
-  bool context_menu_can_popup() override {
-    return false;
-  }
-  
-  bool context_menu_popup(const clap_context_menu_target_t *target, int32_t screen_index, int32_t x, int32_t y) override {
-    return false;
-  }
-  
-  // void cv_changed() override {
-  // }
-  
-  // void midi_mappings_changed() override {
-  // }
-  
-  void preset_load_on_error(uint32_t location_kind, const char *location, const char *load_key,int32_t os_error, const char *msg) override {
-  }
-  
-  void preset_load_loaded(uint32_t location_kind, const char *location, const char *load_key) override {
-  }
-  
-  void remote_controls_changed() override {
-  }
-  
-  void remote_controls_suggest_page(clap_id page_id) override {
-  }
-  
   bool resource_directory_request_directory(bool is_shared) override {
     return false;
   }
   
   void resource_directory_release_directory(bool is_shared) override {
-  }
-  
-  void surround_changed() override {
-  }
-  
-  bool track_info_get(clap_track_info_t *info) override {
-    return false;
   }
   
   void transport_control_request_start() override {
