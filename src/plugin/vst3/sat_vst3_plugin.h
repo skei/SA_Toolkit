@@ -311,9 +311,9 @@ private:
                 param_value_event->header.flags    = 0;
                 param_value_event->param_id        = id;//paramQueue->getParameterId();
                 param_value_event->note_id         = -1;
-                param_value_event->port_index      = 0;
-                param_value_event->channel         = 0;
-                param_value_event->key             = 0;
+                param_value_event->port_index      = 0; // -1?
+                param_value_event->channel         = 0; // -1?
+                param_value_event->key             = 0; // -1?
                 param_value_event->value           = value;
                 //SAT_Print("param_value: %i = %.3f\n",paramQueue->getParameterId(),value);
               }
@@ -2017,14 +2017,14 @@ public: // IEditController
     } // index < numparams
     else { // > # params
       //SAT_Trace("paramIndex (%08x) >= num.params\n",paramIndex);
-      switch (paramIndex) {
-        case kAfterTouch: // 128
-          break;
-        case kPitchBend: // 129
-          break;
-        case kCtrlFilterResonance: // cc 74 (slide)
-          break;
-      }
+      // switch (paramIndex) {
+      //   case kAfterTouch: // 128
+      //     break;
+      //   case kPitchBend: // 129
+      //     break;
+      //   case kCtrlFilterResonance: // cc 74 (slide)
+      //     break;
+      // }
       switch (paramIndex & 0xffff0000) {
         case SAT_PLUGIN_VST3_PARAM_AFTERTOUCH:
           break;

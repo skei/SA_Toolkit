@@ -123,7 +123,7 @@
 //----------------------------------------------------------------------
 
 #if defined (SAT_PLUGIN_EXE)
-  #undef SAT_DEBUG_PRINT_SOCKET
+  //#undef SAT_DEBUG_PRINT_SOCKET
   //#define SAT_DEBUG_MEMTRACE
 #else
   #define SAT_DEBUG_PRINT_SOCKET

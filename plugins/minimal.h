@@ -8,7 +8,7 @@ public:
     registerDefaultExtensions();
     appendStereoAudioInputPort("in");
     appendStereoAudioOutputPort("out");
-    appendParameter( new SAT_Parameter("gain",0.5) );
+    appendParameter( new SAT_Parameter("gain",0.5,0,1,CLAP_PARAM_IS_AUTOMATABLE + CLAP_PARAM_IS_MODULATABLE) );
     return SAT_Plugin::init();
   }
   void processStereoSample(float* spl0, float* spl1) final {

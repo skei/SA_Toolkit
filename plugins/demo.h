@@ -66,7 +66,7 @@ public:
     SAT_MenuWidget* MSelectorMenu = nullptr;
     float           MBuffer[2048];
 
-    //void* memleak = nullptr;
+    //char* memleak_ptr = nullptr;
 
 //------------------------------
 public:
@@ -77,17 +77,18 @@ public:
   sat_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
 
-    // SAT_PRINT;
-    // SAT_Print("some text.. %i %p\n",123,nullptr);
-    // SAT_DPrint("..or colored " SAT_TERM_FG_LIGHT_GREEN " text..\n" SAT_TERM_RESET );
+    //SAT_PRINT;
+    //SAT_Print("some text.. %i %p\n",123,nullptr);
+    //SAT_DPrint("..or colored " SAT_TERM_FG_LIGHT_GREEN "text..\n" SAT_TERM_RESET );
 
-    // SAT_LOG("hello world!\n");
+    //SAT_LOG("hello world!\n");
 
-    // int* ptr = nullptr;
-    // int val = *ptr;
-    // SAT_Print("%p = %i\n",ptr,val);
+    //int* ptr = nullptr;
+    //int val = *ptr;
+    //SAT_Print("%p = %i\n",ptr,val);
 
-    //memleak = malloc(666);
+    //memleak_ptr = (char*)malloc(666);
+    //memleak_ptr = new char[666];
 
   }
 
@@ -96,7 +97,8 @@ public:
   virtual ~sat_demo_plugin() {
     //SAT_PRINT;
     
-    //free(memleak);
+    //free(memleak_ptr);
+    //delete memleak_ptr;
   }
 
 //------------------------------

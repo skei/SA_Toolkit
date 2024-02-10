@@ -43,8 +43,6 @@
 //#include "../plugins/ports/sa_tilteq.h"
 //#include "../plugins/ports/sa_transient_killer.h"
 
-//
-
 //#include "../plugins/ports/loser/0XMaximizer.h"
 
 //----------
@@ -63,8 +61,6 @@
 //#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_tyr.h"
-
-//----------
 
 //#include "../plugins/sa_plugins.h"
 
