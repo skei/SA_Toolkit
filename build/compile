@@ -9,7 +9,7 @@
 CC="g++"
 INPUT="build.cpp"
 OUTPUT="build.exe"
-BUILD_COUNT="build_count"
+BUILD_COUNT=""
 FORMAT="EXE"
 GUI="X11"
 DEBUG=false
@@ -134,15 +134,19 @@ OUTPUT_DIR=${OUTPUT%$OUTPUT_FILE}
 # build count
 #------------------------------
 
-#todo: if build_count != "" ...
+if [[ "$BUILD_COUNT" != "" ]]
+  then
+    count=0
+    if test -f $BUILD_COUNT
+      then
+        read count < $BUILD_COUNT
+    fi
+    ((count=count+1))  
+    echo $count > $BUILD_COUNT
+    echo build $count
+    FLAGS+=" -DSAT_BUILD_COUNT=$count"
+fi
 
-#build_count=0
-#if test -f $BUILD_COUNT
-#  then
-#    read build_count < $BUILD_COUNT
-#fi
-#((build_count=build_count+1))  
-#echo $build_count > $BUILD_COUNT
 
 #------------------------------
 # -f format
