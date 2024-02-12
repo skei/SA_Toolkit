@@ -1,15 +1,6 @@
 #ifndef sat_plugin_included
 #define sat_plugin_included
 //----------------------------------------------------------------------
-/*
-  TODO:
-
-  * split in two:
-    - SAT_NoGuiPlugin : public SAT_Plugin
-    - SAT_GuiPlugin : public SAT_NoGuiPlugin
-  
-*/
-//----------------------------------------------------------------------
 
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"

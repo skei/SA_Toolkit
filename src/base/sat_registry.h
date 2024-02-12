@@ -160,20 +160,13 @@ public: // factories
 
 #define SAT_PLUGIN_ENTRY(DESC,PLUG)                                                                                           \
                                                                                                                               \
-  /* #include "plugin/sat_entry.h" */                                                                                         \
-                                                                                                                              \
   void SAT_Register(SAT_Registry* ARegistry) {                                                                                \
-    /*uint32_t index = ARegistry->getNumDescriptors();*/                                                                      \
-    /*SAT_Print("index %i = id %s\n",index,DESC.id);*/                                                                        \
     ARegistry->registerDescriptor(&DESC);                                                                                     \
   }                                                                                                                           \
                                                                                                                               \
-  /* ----- */                                                                                                                 \
-                                                                                                                              \
   SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {  \
-    /*SAT_Print("index %i\n",AIndex);*/                                                                                       \
     if (AIndex == 0) {                                                                                                        \
-      SAT_Plugin* plugin = new PLUG(ADescriptor,AHost); /* deleted in: ... */                                                 \
+      SAT_Plugin* plugin = new PLUG(ADescriptor,AHost);                                                                       \
       return plugin;                                                                                                          \
     }                                                                                                                         \
     return nullptr;                                                                                                           \

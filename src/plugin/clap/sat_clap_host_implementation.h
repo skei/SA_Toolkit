@@ -642,7 +642,7 @@ private: // drafts
 
 
 //------------------------------
-private: // resource directory
+private: // draft: resource directory
 //------------------------------
 
   static
@@ -665,7 +665,7 @@ protected:
   };
 
 //------------------------------
-private: // transport controls
+private: // draft: transport controls
 //------------------------------
 
   static
@@ -751,7 +751,7 @@ protected:
   };
 
 //------------------------------
-private: // triggers
+private: // draft: triggers
 //------------------------------
 
   static
@@ -774,7 +774,7 @@ protected:
   };
 
 //------------------------------
-private: // tuning
+private: // draft: tuning
 //------------------------------
 
   static
