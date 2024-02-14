@@ -14,7 +14,7 @@ FORMAT="EXE"
 GUI="X11"
 DEBUG=false
 SANITIZE=false
-TEST=false
+TESTS=false
 VERBOSE=false
 ADDITIONAL=""
 LIBRARY=false
@@ -83,7 +83,7 @@ do
     w)    WIN32=true;;
     d)    DEBUG=true;;
     s)    SANITIZE=true;;
-    t)    TEST=true;;
+    t)    TESTS=true;;
     v)    VERBOSE=true;;
     a)    ADDITIONAL=$OPTARG;;
     h|?)  print_help_and_exit;;
@@ -297,10 +297,10 @@ if $SANITIZE
 fi
 
 #------------------------------
-# -t test
+# -t tests
 #------------------------------
 
-if $TEST
+if $TESTS
   then
     FLAGS+=" -DSAT_TESTS"
 fi
@@ -312,6 +312,8 @@ fi
 if $WIN32
   then
     CC="/usr/bin/x86_64-w64-mingw32-g++"
+    #FLAGS+=" -static-libgcc"
+    #FLAGS+=" -static-libstdc++"
   else
     CC="g++"
     LIB+=" -ldl -lrt"
@@ -326,7 +328,7 @@ fi
 #echo "* format:" $FORMAT
 #echo "* gui:" $GUI
 #echo "* debug:" $DEBUG
-#echo "* test:" $TEST
+#echo "* tests:" $TESTS
 
 #echo
 #echo "g++" $INPUT "-o" $OUTPUT $FLAGS $INC $LIB

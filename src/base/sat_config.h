@@ -2,7 +2,7 @@
 #define sat_config_included
 //----------------------------------------------------------------------
 
-#define SAT_VERSION                             "1.0"
+#define SAT_VERSION                             "1.0.0"
 #define SAT_VENDOR                              "skei.audio"
 #define SAT_URL                                 "https://github.com/skei/SA_Toolkit"
 #define SAT_LOG_DIRECTORY                       "skei.audio"
@@ -97,8 +97,10 @@
 //#define SAT_PLUGIN_VST2_VESTIGE
 //#define SAT_PLUGIN_VST2_NO_SHELL
 //#define SAT_PLUGIN_VST3
+
   #define SAT_PLUGIN_CONVERT_MIDI
-  #define SAT_PLUGIN_DELETE_IN_DESTROY  
+  #define SAT_PLUGIN_DELETE_IN_DESTROY
+  
 //#define SAT_PLUGIN_USE_ARA_FACTORY
 //#define SAT_PLUGIN_USE_INVALIDATION_FACTORY
   #define SAT_PLUGIN_USE_PLUGIN_FACTORY
