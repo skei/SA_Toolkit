@@ -244,6 +244,7 @@ AEffect* sat_vst2_entry(audioMasterCallback audioMaster) SAT_VST2_ENTRY_SYMBOL
 //TODO: move into SAT_GLOBAL.VST2 ??
 
 SAT_Vst2Entry GLOBAL_VST2_PLUGIN_ENTRY;
+//SAT_Vst2Entry SAT_GLOBAL.VST2_PLUGIN_ENTRY;
 
 //----------
 

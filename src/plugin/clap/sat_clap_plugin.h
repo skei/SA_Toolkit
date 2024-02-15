@@ -146,9 +146,6 @@ protected:
   virtual bool                triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) { return false; }
   virtual void                tuning_changed() {}
 
-
-
-
 //------------------------------
 private: // plugin
 //------------------------------

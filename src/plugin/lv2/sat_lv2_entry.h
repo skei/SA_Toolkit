@@ -221,6 +221,7 @@ private: // lv2 ui callbacks
 
 //TODO: move into SAT_GLOBAL.LV2 ??
 SAT_Lv2Entry GLOBAL_LV2_PLUGIN_ENTRY;
+//SAT_Lv2Entry SAT_GLOBAL.LV2_PLUGIN_ENTRY;
 
 //----------------------------------------------------------------------
 //

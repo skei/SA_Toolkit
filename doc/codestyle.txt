@@ -1,0 +1,13 @@
+[todo]
+
+- think c, or better,m think assembly
+- self-documenting, verbose, literal
+- simple, straight-forward, (old-school, primitive)
+- "let the compiler/optimizer do its job"
+
+prefix everything with SAT_ or SAT_
+
+SAT_ClassName, SAT_Function
+SAT_CONST_OR_ENUM
+sat_internal_or_private
+

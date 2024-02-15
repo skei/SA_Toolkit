@@ -227,9 +227,9 @@ public:
         strcpy(page->section_name,"Section");
         page->page_id = 0;
         strcpy(page->page_name,"SA_Synth parameters");
-        page->param_ids[0] = 0;//CLAP_INVALID_ID;
-        page->param_ids[1] = 1;//CLAP_INVALID_ID;
-        page->param_ids[2] = 2;//CLAP_INVALID_ID;
+        page->param_ids[0] = 0;
+        page->param_ids[1] = 1;
+        page->param_ids[2] = 2;
         page->param_ids[3] = CLAP_INVALID_ID;
         page->param_ids[4] = CLAP_INVALID_ID;
         page->param_ids[5] = CLAP_INVALID_ID;
@@ -245,6 +245,7 @@ public:
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
     if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
       loadPresetFromFile(location,load_key);
+      //if (loadPresetFromFile(location,load_key)
       SAT_Host* host = getHost();
       if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
       return true;

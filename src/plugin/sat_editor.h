@@ -2,7 +2,7 @@
 #define sat_editor_included
 //----------------------------------------------------------------------
 
-// 'direct-connect' editor (pointers..)
+// embeddedEditor.. 'direct-connect' editor (pointers..)
 // todo/maydo: remote editors (process, hardware, floating?)
 
 #include "sat.h"

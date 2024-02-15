@@ -114,7 +114,6 @@ public:
 
 
 
-//static?
 SAT_Global SAT_GLOBAL = {};
 
 

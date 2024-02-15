@@ -118,7 +118,7 @@ private:
     SAT_Editor*                     MEditor                     = nullptr;
     uint32_t                        MInitialEditorWidth         = 0;//512;
     uint32_t                        MInitialEditorHeight        = 0;//512;
-    double                          MInitialEditorScale         = 1.0;
+    double                          MInitialEditorScale         = 2.0;
 
     SAT_ParamFromHostToGuiQueue     MParamFromHostToGuiQueue    = {};   // when the host changes a parameter, we need to redraw it
     SAT_ModFromHostToGuiQueue       MModFromHostToGuiQueue      = {};   // --"-- modulation
@@ -1845,7 +1845,7 @@ protected: // gui
       // if we haven't set/called setInitialEditorSize, use calculated, generic editor size
       if ((MInitialEditorWidth == 0) || (MInitialEditorHeight == 0)) {
         SAT_Point size = getDefaultEditorSize();
-        double scale = 1.0;
+        double scale = MInitialEditorScale;
         setInitialEditorSize(size.w,size.h,scale);
       }
 

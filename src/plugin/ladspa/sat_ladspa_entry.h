@@ -247,6 +247,7 @@ private: // ladspa callbacks
 //----------------------------------------------------------------------
 
 SAT_LadspaEntry SAT_GLOBAL_LADSPA_ENTRY = {};
+//SAT_LadspaEntry SAT_GLOBAL.LADSPA_ENTRY;
 
 //----------------------------------------------------------------------
 //

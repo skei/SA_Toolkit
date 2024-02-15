@@ -36,6 +36,12 @@ public:
     return SAT_Plugin::init();
   }
 
+  void processStereoSample(float* spl0, float* spl1) final {
+    sat_param_t gain = getParameterValue(0);
+    *spl0 *= gain;
+    *spl1 *= gain;
+  }
+
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     SAT_RootWidget* root = new SAT_RootWidget(AWindow);
     AWindow->setRootWidget(root);
@@ -44,12 +50,6 @@ public:
     knob->setTextSize(15);
     knob->setValueSize(25);
     AEditor->connect(knob,getParameter(0));
-  }
-
-  void processStereoSample(float* spl0, float* spl1) final {
-    sat_param_t gain = getParameterValue(0);
-    *spl0 *= gain;
-    *spl1 *= gain;
   }
 
 };

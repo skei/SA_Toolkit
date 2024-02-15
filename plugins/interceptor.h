@@ -1,6 +1,7 @@
 #ifndef interceptor_included
 #define interceptor_included
 //----------------------------------------------------------------------
+// the 'opposite' of a standalone exe (internal host + plugin)
 
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
@@ -291,13 +292,12 @@ const clap_plugin_factory_t interceptor_plugin_factory {
 
 bool interceptor_clap_entry_init_callback(const char *plugin_path) {
   SAT_Print("plugin_path: %s\n",plugin_path);
-  // load real plugin
-  //features[0] = CLAP_PLUGIN_FEATURE_AUDIO_EFFECT;
   return true;
 }
 
 void interceptor_clap_entry_deinit_callback(void) {
   SAT_PRINT;
+  // unload real plugin
 }
 
 const void* interceptor_clap_entry_get_factory_callback(const char* factory_id) {
