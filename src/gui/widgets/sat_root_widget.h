@@ -25,7 +25,7 @@ private:
 public:
 //------------------------------
 
-  SAT_RootWidget(SAT_WidgetListener* AListener)
+  SAT_RootWidget(SAT_WidgetListener* AListener=nullptr)
   : SAT_PanelWidget(SAT_Rect(0,0,0,0)) {
     MListener = AListener;
     setName("MRootWidget");
@@ -34,6 +34,22 @@ public:
   //----------
 
   virtual ~SAT_RootWidget() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void setListener(SAT_WidgetListener* AListener) {
+    MListener = AListener;
+  }
+
+  virtual SAT_WidgetListener* getListener() {
+    return MListener;
+  }
+
+  virtual void setListenerIfNull(SAT_WidgetListener* AListener) {
+    if (!MListener) MListener = AListener;
   }
 
 //------------------------------
