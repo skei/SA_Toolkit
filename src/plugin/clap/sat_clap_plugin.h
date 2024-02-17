@@ -33,8 +33,6 @@ public:
 
   //----------
 
-  // note: we're calling 'delete this' in SAT_Plugin,destroy()
-
   virtual ~SAT_ClapPlugin() {
   }
 

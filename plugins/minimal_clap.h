@@ -27,7 +27,9 @@ const clap_plugin_descriptor_t myDescriptor = {
 class myPlugin
 : public SAT_ClapPlugin {
 
+//------------------------------
 public:
+//------------------------------
 
   myPlugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
@@ -36,7 +38,9 @@ public:
   virtual ~myPlugin() {
   }
 
+//------------------------------
 public:
+//------------------------------
 
   bool init() final {
     return true;
@@ -82,6 +86,8 @@ public:
 void SAT_Register(SAT_Registry* ARegistry) {
   ARegistry->registerDescriptor(&myDescriptor);
 }
+
+//----------
 
 SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
   if (AIndex == 0) return new myPlugin(ADescriptor,AHost);

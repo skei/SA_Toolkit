@@ -70,9 +70,10 @@
 
 //#include "../plugins/demo.h"
 //#include "../plugins/interceptor.h"
-//#include "../plugins/minimal.h"
+
+#include "../plugins/minimal.h"
+//#include "../plugins/minimal_clap.h"
 //#include "../plugins/standalone.h"
-#include "../plugins/minimal_clap.h"
 
 //----------------------------------------------------------------------
 //
