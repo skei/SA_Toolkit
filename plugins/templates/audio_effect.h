@@ -32,7 +32,7 @@ public:
     appendStereoAudioInputPort("Input");
     appendStereoAudioOutputPort("Output");
     appendParameter( new SAT_Parameter("Gain",0.5) );
-    setInitialEditorSize(200,200,2.0);
+    setInitialEditorSize(200,200,1);
     return SAT_Plugin::init();
   }
 

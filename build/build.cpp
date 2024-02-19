@@ -14,7 +14,7 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/templates/audio_effect.h"
+#include "../plugins/templates/audio_effect.h"
 //#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
@@ -71,8 +71,9 @@
 //#include "../plugins/demo.h"
 //#include "../plugins/interceptor.h"
 
-#include "../plugins/minimal.h"
+//#include "../plugins/minimal.h"
 //#include "../plugins/minimal_clap.h"
+//#include "../plugins/minimal_noop.h"
 //#include "../plugins/standalone.h"
 
 //----------------------------------------------------------------------

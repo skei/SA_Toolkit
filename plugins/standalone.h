@@ -9,6 +9,8 @@
 
 int main(void) {
 
+  test_bug();
+
   SAT_Window* window = new SAT_Window(800,600);
 
   SAT_RootWidget* root = new SAT_RootWidget();
@@ -28,4 +30,3 @@ int main(void) {
   delete window;
   return 0;
 }
-
