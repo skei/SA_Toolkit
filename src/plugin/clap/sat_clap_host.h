@@ -13,6 +13,42 @@
 //
 //----------------------------------------------------------------------
 
+struct SAT_ClapHostExtensions {
+  const clap_host_ambisonic_t*                ambisonic               = nullptr;
+  const clap_host_audio_ports_t*              audio_ports             = nullptr;
+  const clap_host_audio_ports_config_t*       audio_ports_config      = nullptr;
+  const clap_host_context_menu_t*             context_menu            = nullptr;
+  const clap_host_event_registry_t*           event_registry          = nullptr;
+  const clap_host_gui_t*                      gui                     = nullptr;
+  const clap_host_latency_t*                  latency                 = nullptr;
+  const clap_host_log_t*                      log                     = nullptr;
+  const clap_host_note_name_t*                note_name               = nullptr;
+  const clap_host_note_ports_t*               note_ports              = nullptr;
+  const clap_host_params_t*                   params                  = nullptr;
+  const clap_host_posix_fd_support_t*         posix_fd_support        = nullptr;
+  const clap_host_preset_load_t*              preset_load             = nullptr;
+  const clap_host_remote_controls_t*          remote_controls         = nullptr;
+  const clap_host_state_t*                    state                   = nullptr;
+  const clap_host_surround_t*                 surround                = nullptr;
+  const clap_host_tail_t*                     tail                    = nullptr;
+  const clap_host_thread_check_t*             thread_check            = nullptr;
+  const clap_host_thread_pool_t*              thread_pool             = nullptr;
+  const clap_host_timer_support_t*            timer_support           = nullptr;
+  const clap_host_track_info_t*               track_info              = nullptr;
+  const clap_host_voice_info_t*               voice_info              = nullptr;
+  // draft
+  const clap_host_resource_directory_t*       resource_directory      = nullptr;
+  const clap_host_transport_control_t*        transport_control       = nullptr;
+  const clap_host_triggers_t*                 triggers                = nullptr;
+  const clap_host_tuning_t*                   tuning                  = nullptr;
+};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
 class SAT_ClapHost {
 
 //------------------------------
