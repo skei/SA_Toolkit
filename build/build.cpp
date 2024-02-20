@@ -64,13 +64,14 @@
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/base_clap.h"
-//#include "../plugins/demo.h"
-//#include "../plugins/interceptor.h"
+#include "../plugins/pure_clap.h"
 //#include "../plugins/minimal.h"
 //#include "../plugins/minimal_clap.h"
 //#include "../plugins/minimal_noop.h"
 //#include "../plugins/standalone.h"
+
+//#include "../plugins/demo.h"
+//#include "../plugins/interceptor.h"
 
 //----------------------------------------------------------------------
 //

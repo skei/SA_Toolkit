@@ -26,7 +26,6 @@ const clap_plugin_descriptor_t myDescriptor = {
 // plugin
 //----------------------------------------------------------------------
 
-
 bool plugin_init_callback(const struct clap_plugin *plugin) {
   printf("plugin_init_callback\n");
   return true;
