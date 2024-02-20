@@ -1,9 +1,8 @@
 
-#include "sat.h"
 #include "plugin/clap/sat_clap_plugin.h"
 
 //----------------------------------------------------------------------
-//
+// descriptor
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t myDescriptor = {
@@ -20,7 +19,7 @@ const clap_plugin_descriptor_t myDescriptor = {
 };
 
 //----------------------------------------------------------------------
-//
+// plugin
 //----------------------------------------------------------------------
 
 class myPlugin
@@ -79,34 +78,8 @@ public:
 };
 
 //----------------------------------------------------------------------
-// entry
+// plugin factory
 //----------------------------------------------------------------------
-
-//#include "plugin/clap/sat_clap_entry.h"
-//SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
-
-//----------------------------------------------------------------------
-
-#if 0
-
-#include "plugin/clap/sat_clap_entry.h"
-
-void SAT_Register(SAT_Registry* ARegistry) {
-  ARegistry->registerDescriptor(&myDescriptor);
-}
-
-SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
-  if (AIndex == 0) return new myPlugin(ADescriptor,AHost);
-  return nullptr;
-}
-
-#endif // 0
-
-//----------------------------------------------------------------------
-
-//------------------------------
-// factory
-//------------------------------
 
 uint32_t get_plugin_count_callback(const struct clap_plugin_factory *factory) {
   SAT_PRINT;
@@ -114,15 +87,18 @@ uint32_t get_plugin_count_callback(const struct clap_plugin_factory *factory) {
 }
 
 const clap_plugin_descriptor_t* get_plugin_descriptor_callback(const struct clap_plugin_factory *factory, uint32_t index) {
-  SAT_PRINT;
+  SAT_Print("index: %i\n",index);
   if (index == 0) return &myDescriptor;
   return nullptr;
 }
 
 const clap_plugin_t* create_plugin_callback(const struct clap_plugin_factory *factory, const clap_host_t *host, const char *plugin_id) {
-  SAT_PRINT;
-  myPlugin* plugin = new myPlugin(&myDescriptor,host);
-  return plugin->getClapPlugin();
+  SAT_Print("plugin_id: %s\n",plugin_id);
+  if (strcmp(plugin_id,myDescriptor.id) == 0) {
+    myPlugin* plugin = new myPlugin(&myDescriptor,host);
+    return plugin->getClapPlugin();
+  }
+  return nullptr;
 }
 
 const clap_plugin_factory_t plugin_factory {
@@ -131,26 +107,25 @@ const clap_plugin_factory_t plugin_factory {
   .create_plugin         = create_plugin_callback
 };
 
-//------------------------------
-// entry
-//------------------------------
+//----------------------------------------------------------------------
+// clap entry
+//----------------------------------------------------------------------
 
 bool init_callback(const char *plugin_path) {
-  SAT_PRINT;
+  SAT_Print("plugin_path: %s\n",plugin_path);
   return true;
 }
 
 void deinit_callback(void) {
-  SAT_PRINT;
+  SAT_Print("\n");
 }
 
 const void* get_factory_callback(const char* factory_id) {
-  SAT_PRINT;
+  SAT_Print("factory_id: %s\n",factory_id);
   if (strcmp(factory_id,CLAP_PLUGIN_FACTORY_ID) == 0) return &plugin_factory;
   return nullptr;
 }
 
-//__SAT_EXPORT
 CLAP_EXPORT extern const clap_plugin_entry_t clap_entry {
   .clap_version = CLAP_VERSION,
   .init         = init_callback,
