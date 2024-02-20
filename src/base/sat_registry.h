@@ -8,7 +8,9 @@
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_plugin.h"
 
+class SAT_ClapPlugin;
 class SAT_Registry;
+
 extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
 extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
 

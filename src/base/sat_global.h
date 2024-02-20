@@ -6,6 +6,15 @@
   * 'global' destructor.. cleanup things for stuff that might go wrong..
     final safe-keeping, dbl check pointers? (be sure to null when deleting)
 
+  * see also:
+    - clap                                (entry, factories, descriptors)
+    - base/sat_win32.h                    SAT_GLOBAL_WIN32_INSTANCE
+    - base/debug/sat_debug_observer.h     SAT_GLOBAL_OBSERVER
+    - plugin/ladspa/sat_ladspa_entry.h    SAT_GLOBAL_LADSPA_ENTRY
+    - plugin/ladspa/sat_ladspa_factory.h  SAT_GLOBAL_LADSPA_FACTORY
+    - plugin/lv2/sat_lv2_entry.h          GLOBAL_LV2_PLUGIN_ENTRY
+    - plugin/vst2/sat_vst2_entry.h        GLOBAL_VST2_PLUGIN_ENTRY
+
 */
 //----------------------------------------------------------------------
 

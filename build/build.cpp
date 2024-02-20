@@ -3,8 +3,6 @@
   in console: nc -U -l -k /tmp/sat.socket
 */
 
-//----------
-
 //#define SAT_DEBUG_PRINT_SOCKET
 //#define SAT_DEBUG_MEMTRACE
 
@@ -14,7 +12,7 @@
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/templates/audio_effect.h"
+//#include "../plugins/templates/audio_effect.h"
 //#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
@@ -43,8 +41,6 @@
 //#include "../plugins/ports/sa_tilteq.h"
 //#include "../plugins/ports/sa_transient_killer.h"
 
-//----------
-
 //#include "../plugins/sa_ports.h"
 
 //----------------------------------------------------------------------
@@ -64,13 +60,13 @@
 
 //----------------------------------------------------------------------
 //
-//
+// misc
 //
 //----------------------------------------------------------------------
 
+#include "../plugins/base_clap.h"
 //#include "../plugins/demo.h"
 //#include "../plugins/interceptor.h"
-
 //#include "../plugins/minimal.h"
 //#include "../plugins/minimal_clap.h"
 //#include "../plugins/minimal_noop.h"
