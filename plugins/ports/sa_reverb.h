@@ -12,7 +12,7 @@
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
-#include "gui/sat_widgets.h"
+//#include "gui/sat_widgets.h"
 
 #include "extern/signalsmith/dsp/delay.h"
 
