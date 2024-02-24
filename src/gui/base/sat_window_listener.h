@@ -5,6 +5,7 @@
 // window -> editor
 
 #include "sat.h"
+//#include "gui/base/sat_base_widget.h"
 
 class SAT_Timer;
 class SAT_Widget;

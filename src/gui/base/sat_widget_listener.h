@@ -6,6 +6,7 @@
 
 #include "sat.h"
 //#include "gui/sat_widget.h"
+#include "gui/base/sat_base_painter.h"
 
 class SAT_Widget;
 

@@ -52,6 +52,20 @@ typedef SAT_Queue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_
   : SAT_Plugin(ADescriptor,AHost) {                                             \
   };
 
+#define SAT_DEFAULT_PLUGIN_DESCRIPTOR(DESC,ID,NAME,VENDOR,TYPE)                      \
+  const clap_plugin_descriptor_t DESC = {                               \
+    .clap_version = CLAP_VERSION,                                               \
+    .id           = ID,                                                         \
+    .name         = NAME,                                                       \
+    .vendor       = VENDOR,                                                     \
+    .url          = "",                                                         \
+    .manual_url   = "",                                                         \
+    .support_url  = "",                                                         \
+    .version      = "0.0.0",                                                    \
+    .description  = "",                                                         \
+    .features     = (const char*[]) { CLAP_PLUGIN_FEATURE_ ## TYPE, nullptr }   \
+  };
+
 //----------------------------------------------------------------------
 //
 //
@@ -249,8 +263,6 @@ public: // extensions
   }
 
   //----------
-
-  //TODO: fix this for clap 1.2 ..
 
   virtual void registerDraftExtension() {
     registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts);
@@ -528,6 +540,14 @@ public: // modulation
 
   virtual sat_param_t getParameterModulation(uint32_t AIndex) {
     return MParameters[AIndex]->getModulation();
+  }
+
+  virtual sat_param_t getModulatedParameterValue(uint32_t AIndex) {
+    sat_param_t pval = MParameters[AIndex]->getValue();
+    sat_param_t mval = MParameters[AIndex]->getModulation();
+    sat_param_t pmin = MParameters[AIndex]->getMinValue();
+    sat_param_t pmax = MParameters[AIndex]->getMaxValue();
+    return SAT_Clamp( (pval + mval), pmin, pmax);
   }
 
   // void resetAllModulations() {
@@ -1309,7 +1329,7 @@ public: // process
 
   //----------
 
-  virtual void processStereoSample(float* spl0, float* spl1) {
+  virtual void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) {
   }
 
   //----------

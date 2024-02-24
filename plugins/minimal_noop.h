@@ -1,5 +1,5 @@
 #include "plugin/sat_plugin.h"
-const clap_plugin_descriptor_t myDescriptor = { CLAP_VERSION, "me/myPlugin", "myPlugin", "me", "", "", "", "0.0.0", "", (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr } };
+SAT_DEFAULT_PLUGIN_DESCRIPTOR(myDescriptor,"me/myPlugin","myPlugin","me",AUDIO_EFFECT);
 class myPlugin : public SAT_Plugin {
 public:
   SAT_DEFAULT_PLUGIN_CONSTRUCTOR(myPlugin);

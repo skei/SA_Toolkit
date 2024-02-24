@@ -17,13 +17,8 @@ class SAT_BasePainter {
 public:
 //------------------------------
 
-  SAT_BasePainter(SAT_PainterOwner* AOwner) {
-  }
-
-  //----------
-
-  virtual ~SAT_BasePainter() {
-  }
+  SAT_BasePainter(SAT_PainterOwner* AOwner) {}
+  virtual ~SAT_BasePainter() {}
 
 //------------------------------
 public:
@@ -59,8 +54,8 @@ public:
   virtual void            setDrawColor(SAT_Color color) {}
   virtual void            setFillColor(SAT_Color color) {}
   virtual void            setFillLinearGradient(double AX1, double AY1, double AX2, double AY2, SAT_Color AColor1, SAT_Color AColor2) {}
-  //virtual void            setFillBoxGradient
-  //virtual void            setFillRadialGradient
+//virtual void            setFillBoxGradient
+//virtual void            setFillRadialGradient
   virtual void            setTextColor(SAT_Color color) {}
   virtual void            setTextSize(double ASize) {}
   virtual void            setTextLetterSpacing(float spacing) {}

@@ -12,7 +12,7 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/templates/audio_effect.h"
+#include "../plugins/templates/audio_effect.h"
 //#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
@@ -60,14 +60,14 @@
 
 //----------------------------------------------------------------------
 //
-// misc
+// misc, test, ..
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/pure_clap.h"
-//#include "../plugins/minimal.h"
+//#include "../plugins/pure_clap.h"
 //#include "../plugins/minimal_clap.h"
 //#include "../plugins/minimal_noop.h"
+//#include "../plugins/minimal.h"
 //#include "../plugins/standalone.h"
 
 //#include "../plugins/demo.h"

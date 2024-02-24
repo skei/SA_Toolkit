@@ -13,7 +13,7 @@ const clap_plugin_descriptor_t myDescriptor = {
   .support_url  = "https://website.com/support",
   .version      = "0.0.0",
   .description  = "my precious plugin",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  .features     = (const char*[]) { CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
 
 //----------------------------------------------------------------------
@@ -31,13 +31,13 @@ public:
     registerDefaultExtensions();
     appendStereoAudioInputPort("Input");
     appendStereoAudioOutputPort("Output");
-    appendParameter( new SAT_Parameter("Gain",0.5) );
-    setInitialEditorSize(200,200,1);
+    appendParameter( new SAT_Parameter( "Gain", 0.5, 0, 1, CLAP_PARAM_IS_AUTOMATABLE + CLAP_PARAM_IS_MODULATABLE ));
+    setInitialEditorSize( 200, 200, 3.0 );
     return SAT_Plugin::init();
   }
 
-  void processStereoSample(float* spl0, float* spl1) final {
-    sat_param_t gain = getParameterValue(0);
+  void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) final {
+    sat_param_t gain = getModulatedParameterValue(0);
     *spl0 *= gain;
     *spl1 *= gain;
   }
@@ -45,11 +45,12 @@ public:
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     SAT_RootWidget* root = new SAT_RootWidget(AWindow);
     AWindow->setRootWidget(root);
-    SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(50,50,100,100),"Gain",0.1);
+    SAT_KnobWidget* knob = new SAT_KnobWidget( SAT_Rect(10,10,180,180), "Gain", 0.1 );
     root->appendChildWidget(knob);
-    knob->setTextSize(15);
-    knob->setValueSize(25);
-    AEditor->connect(knob,getParameter(0));
+    knob->setArcThickness(15);
+    knob->setTextSize(25);
+    knob->setValueSize(40);
+    AEditor->connect( knob, getParameter(0) );
   }
 
 };
