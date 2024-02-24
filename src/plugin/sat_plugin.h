@@ -637,6 +637,9 @@ public: // editor
         SAT_SliderWidget* slider = new SAT_SliderWidget(SAT_Rect(x,y,w,h),param->getName(),param->getValue());
         slider->setTextOffset(SAT_Rect(5,0,0,0));
         slider->setValueOffset(SAT_Rect(0,0,5,0));
+
+        slider->addLayoutFlag(SAT_WIDGET_LAYOUT_STRETCH_RIGHT);
+        
         middle->appendChildWidget(slider);
         AEditor->connect(slider,param);
       }
