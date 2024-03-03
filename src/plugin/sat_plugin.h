@@ -52,8 +52,8 @@ typedef SAT_Queue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_
   : SAT_Plugin(ADescriptor,AHost) {                                             \
   };
 
-#define SAT_DEFAULT_PLUGIN_DESCRIPTOR(DESC,ID,NAME,VENDOR,TYPE)                      \
-  const clap_plugin_descriptor_t DESC = {                               \
+#define SAT_DEFAULT_PLUGIN_DESCRIPTOR(DESC,ID,NAME,VENDOR,TYPE)                 \
+  const clap_plugin_descriptor_t DESC = {                                       \
     .clap_version = CLAP_VERSION,                                               \
     .id           = ID,                                                         \
     .name         = NAME,                                                       \

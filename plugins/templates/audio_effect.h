@@ -31,7 +31,7 @@ public:
     registerDefaultExtensions();
     appendStereoAudioInputPort("Input");
     appendStereoAudioOutputPort("Output");
-    appendParameter( new SAT_Parameter( "Gain", 0.5, 0, 1, CLAP_PARAM_IS_AUTOMATABLE + CLAP_PARAM_IS_MODULATABLE ));
+    appendParameter( new SAT_Parameter( "Gain", 0.5, 0, 1, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE ));
     setInitialEditorSize( 200, 200, 3.0 );
     return SAT_Plugin::init();
   }
@@ -47,9 +47,9 @@ public:
     AWindow->setRootWidget(root);
     SAT_KnobWidget* knob = new SAT_KnobWidget( SAT_Rect(10,10,180,180), "Gain", 0.1 );
     root->appendChildWidget(knob);
-    knob->setArcThickness(15);
-    knob->setTextSize(25);
-    knob->setValueSize(40);
+    knob->setArcThickness(25);
+    knob->setTextSize(30);
+    knob->setValueSize(45);
     AEditor->connect( knob, getParameter(0) );
   }
 

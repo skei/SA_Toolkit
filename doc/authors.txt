@@ -2,7 +2,7 @@
 in the meanwhile, some quick notes-to-self:
 
 /ara - 
-/clap - MIT, Alexandre Bique, https://github.com/free-audio/clap
+/clap - mit, Alexandre Bique, https://github.com/free-audio/clap
 /nanosvg - zlib, Mikko Mononen, https://github.com/memononen/nanosvg
 /nanovg - zlib, Mikko Mononen, https://github.com/memononen/nanovg
 /reaper - bsd?, Cockos Incorporated

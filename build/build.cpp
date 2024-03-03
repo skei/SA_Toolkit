@@ -12,7 +12,7 @@
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/templates/audio_effect.h"
+//#include "../plugins/templates/audio_effect.h"
 //#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
@@ -41,7 +41,7 @@
 //#include "../plugins/ports/sa_tilteq.h"
 //#include "../plugins/ports/sa_transient_killer.h"
 
-//#include "../plugins/sa_ports.h"
+#include "../plugins/sa_ports.h"
 
 //----------------------------------------------------------------------
 //

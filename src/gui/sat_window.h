@@ -242,6 +242,13 @@ public:
 
   //----------
 
+  // if you have a static root widget, and dson't want it to be auto-deleted here,
+  // you nmust set the ptr to null so that the destructor doesn't try to delete it..
+
+  virtual void clearRootWidget() {
+    MRootWidget = nullptr;
+  }
+
   virtual void setRootWidget(SAT_RootWidget* AWidget) {
     MRootWidget = AWidget;
     MRootWidget->setParent(nullptr);

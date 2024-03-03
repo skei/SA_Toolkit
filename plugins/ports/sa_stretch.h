@@ -10,7 +10,6 @@
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
-//#include "gui/sat_widgets.h"
 
 // gcc complained about Complex
 #define prev_complex Complex
@@ -128,10 +127,8 @@ public:
 //----------------------------------------------------------------------
 
 #ifndef SAT_NO_ENTRY
-
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_stretch_descriptor,sa_stretch_plugin)
-  
 #endif
 
 //----------

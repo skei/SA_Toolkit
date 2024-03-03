@@ -1,10 +1,11 @@
-sa_toolkit v1.0
-or yapf (yet another plugin framework)
+sa_toolkit
+(or yapf - yet another plugin framework)
 
 * c++
 * linux (gcc), win32 (mingw)
 * clap, vst3, standalone exe, (vst2, lv2, ladspa, dssi)
 * x11/win32/opengl, wayland/gles, nanovg
+
 
 https://discord.gg/KMNea8P6Pe
 https://www.youtube.com/@torhelgeskei
@@ -18,5 +19,5 @@ https://www.youtube.com/@torhelgeskei
  gpu-accelerated, freely scalable (vector) gui.. all clap goodies (poly
  modulation, voice stacking, thread pool, remote controls, preset discovery,
  parameter indication, sample accurate..), voice manager with threaded voices,
- overlapping notes, polyphonic modulation, etc, etc).. simplified, abstracted,
- streamlined for rapid installation/setup, prototyping, iterations.."
+ etc, etc).. simplified, abstracted, streamlined for rapid installation/setup,
+ prototyping, and further iterations.."

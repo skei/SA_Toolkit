@@ -1,6 +1,6 @@
 [todo]
 
-- think c, or better,m think assembly
+- think c, or better, think assembly
 - self-documenting, verbose, literal
 - simple, straight-forward, (old-school, primitive)
 - "let the compiler/optimizer do its job"
