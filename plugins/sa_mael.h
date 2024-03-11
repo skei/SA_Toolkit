@@ -15,17 +15,19 @@
 
 //----------
 
+#include "sa_mael/sa_mael_parameters.h"
+#include "sa_mael/sa_mael_voice.h"
+
+#if !defined (SAT_GUI_NOGUI)
   //#include "sa_mael/sa_mael_editor.h"
-  #include "sa_mael/sa_mael_parameters.h"
-  #include "sa_mael/sa_mael_voice.h"
-  #include "sa_mael/sa_mael_widgets.h"
+  //#include "sa_mael/sa_mael_widgets.h"
+#endif
 
-  #define PLUGIN_NAME   "sa_mael"
-  #define MAX_VOICES    32
-
-  #define EDITOR_WIDTH  430
-  #define EDITOR_HEIGHT 280 + 250
-  #define EDITOR_SCALE  2 /*1.33*/
+#define PLUGIN_NAME   "sa_mael"
+#define MAX_VOICES    64
+#define EDITOR_WIDTH  430
+#define EDITOR_HEIGHT 295
+#define EDITOR_SCALE  2
 
 //----------------------------------------------------------------------
 //
@@ -174,7 +176,7 @@ public:
 
 //------------------------------
 public: // events
-//------------------------------
+//---------------[0.056162:00075733:sat_plugin.h:track_info_changed:2388] sa_ma---------------
 
   bool on_plugin_noteOn(const clap_event_note_t* event) final {
     MVoiceManager.handleNoteOn(event);

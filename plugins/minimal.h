@@ -12,8 +12,8 @@ public:
     return SAT_Plugin::init();
   }
   void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) final {
-    *spl0 *= getParameterValue(0);
-    *spl1 *= getParameterValue(0);
+    *spl0 *= getModulatedParameterValue(0);
+    *spl1 *= getModulatedParameterValue(0);
   }
 };
 #include "plugin/sat_entry.h"

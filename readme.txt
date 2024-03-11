@@ -19,5 +19,5 @@ https://www.youtube.com/@torhelgeskei
  gpu-accelerated, freely scalable (vector) gui.. all clap goodies (poly
  modulation, voice stacking, thread pool, remote controls, preset discovery,
  parameter indication, sample accurate..), voice manager with threaded voices,
- etc, etc).. simplified, abstracted, streamlined for rapid installation/setup,
+ etc, etc.. simplified, abstracted, streamlined for rapid installation/setup,
  prototyping, and further iterations.."

@@ -4,6 +4,7 @@
 
 #define VOICE_SCALE   0.1
 
+#include "base/utils/sat_interpolation.h"
 #include "audio/filters/sat_svf_filter.h"
 #include "audio/synthesis/sat_morph_oscillator.h"
 #include "audio/modulation/sat_exp_envelope.h"
@@ -22,12 +23,12 @@ private:
 
   sat_param_t                       MKey          = 0.0;    // aka note
   sat_param_t                       MVelocity     = 1.0;
-  sat_sample_t                      MPhase1        = 0.0;
-  sat_sample_t                      MPhaseAdd1     = 0.0;
-  sat_sample_t                      MPhase2        = 0.0;
-  sat_sample_t                      MPhaseAdd2     = 0.0;
-  SAT_MorphOscillator<sat_sample_t> MOscillator1   = {};
-  SAT_MorphOscillator<sat_sample_t> MOscillator2   = {};
+  sat_sample_t                      MPhase1       = 0.0;
+  sat_sample_t                      MPhaseAdd1    = 0.0;
+  sat_sample_t                      MPhase2       = 0.0;
+  sat_sample_t                      MPhaseAdd2    = 0.0;
+  SAT_MorphOscillator<sat_sample_t> MOscillator1  = {};
+  SAT_MorphOscillator<sat_sample_t> MOscillator2  = {};
   SAT_SVFFilter<sat_sample_t>       MFilter       = {};
   SAT_ExpEnvelope<sat_sample_t>     MEnvelope     = {};
   

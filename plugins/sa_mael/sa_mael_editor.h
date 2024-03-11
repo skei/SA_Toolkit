@@ -26,17 +26,17 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   //     osc2_type_menu->appendChildWidget( new SAT_MenuItemWidget(15,osc_types_txt[i] ));
   //   };
 
-  // SAT_MenuWidget* mix_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,15*num_mix_types+2+2));
-  //   mix_type_menu->setLayoutInnerBorder(SAT_Rect(2,2,2,2));
-  //   for (uint32_t i=0; i<num_mix_types; i++) {
-  //     mix_type_menu->appendChildWidget( new SAT_MenuItemWidget(15,mix_types_txt[i] ));
-  //   };
+  SAT_MenuWidget* mix_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,15*num_mix_types+2+2));
+    mix_type_menu->setLayoutInnerBorder(SAT_Rect(2,2,2,2));
+    for (uint32_t i=0; i<num_mix_types; i++) {
+      mix_type_menu->appendChildWidget( new SAT_MenuItemWidget(15,mix_types_txt[i] ));
+    };
 
-  // SAT_MenuWidget* flt1_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,15*num_flt_types+2+2));
-  //   flt1_type_menu->setLayoutInnerBorder(SAT_Rect(2,2,2,2));
-  //   for (uint32_t i=0; i<num_flt_types; i++) {
-  //     flt1_type_menu->appendChildWidget( new SAT_MenuItemWidget(15,flt_types_txt[i] ));
-  //   };
+  SAT_MenuWidget* flt1_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,15*num_flt_types+2+2));
+    flt1_type_menu->setLayoutInnerBorder(SAT_Rect(2,2,2,2));
+    for (uint32_t i=0; i<num_flt_types; i++) {
+      flt1_type_menu->appendChildWidget( new SAT_MenuItemWidget(15,flt_types_txt[i] ));
+    };
 
   //------------------------------
   // osc1
@@ -160,9 +160,7 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   // mix
   //------------------------------
 
-  /*
-
-  SAT_PanelWidget* mix_panel = new SAT_PanelWidget(SAT_Rect(10,135,130,115));
+  SAT_PanelWidget* mix_panel = new SAT_PanelWidget(SAT_Rect(10,170,130,115));
   root->appendChildWidget(mix_panel);
   
   SAT_PanelWidget* mix_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
@@ -177,15 +175,11 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   mix_panel->appendChildWidget(mix_amount);
   AEditor->connect(mix_amount,getParameter(SA_MAEL_PARAM_MIX_AMOUNT));
 
-  */
-
   //------------------------------
   // flt1
   //------------------------------
 
-  /*
-
-  SAT_PanelWidget* flt1_panel = new SAT_PanelWidget(SAT_Rect(200+10,135,130,115));
+  SAT_PanelWidget* flt1_panel = new SAT_PanelWidget(SAT_Rect(150,170,130,115));
   root->appendChildWidget(flt1_panel);
   
   SAT_PanelWidget* flt1_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
@@ -204,15 +198,11 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   flt1_panel->appendChildWidget(q_knob);
   AEditor->connect(q_knob,getParameter(SA_MAEL_PARAM_FLT1_Q));
 
-  */
-
   //------------------------------
   // env1
   //------------------------------
 
-  /*
-
-  SAT_PanelWidget* env1_panel = new SAT_PanelWidget(SAT_Rect(10,260,120,115));
+  SAT_PanelWidget* env1_panel = new SAT_PanelWidget(SAT_Rect(290,170,120,115));
   root->appendChildWidget(env1_panel);
   
   SAT_PanelWidget* env1_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
@@ -231,7 +221,7 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   SAT_SliderWidget* slider_d = new SAT_SliderWidget(SAT_Rect(35,55,20,50),"D",0);
   env1_panel->appendChildWidget(slider_d);
   AEditor->connect(slider_d,getParameter(SA_MAEL_PARAM_ENV1_DEC));
-  slider_d->setTextOffset(SAT_Rect(0,4,0,0))osc1;
+  slider_d->setTextOffset(SAT_Rect(0,4,0,0));
   slider_d->setDragDirection(SAT_DIRECTION_UP);
   slider_d->setDrawDirection(SAT_DIRECTION_UP);
   slider_d->setDrawValue(false);
@@ -255,18 +245,14 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   slider_r->setDrawValue(false);
   slider_r->setTextAlignment(SAT_TEXT_ALIGN_TOP);
 
-  */
-
   //------------------------------
   // global
   //------------------------------
 
-  /*
-  
-  SAT_PanelWidget* global_panel = new SAT_PanelWidget(SAT_Rect(10,385,130,115));
+  SAT_PanelWidget* global_panel = new SAT_PanelWidget(SAT_Rect(350,10,70,85));
   root->appendChildWidget(global_panel);
   
-  SAT_PanelWidget* global_text = new SAT_PanelWidget(SAT_Rect(0,0,130,20));
+  SAT_PanelWidget* global_text = new SAT_PanelWidget(SAT_Rect(0,0,70,20));
   global_panel->appendChildWidget(global_text);
   global_text->setText("Global");
 
@@ -274,19 +260,13 @@ void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   global_panel->appendChildWidget(gain_knob);
   AEditor->connect(gain_knob,getParameter(SA_MAEL_PARAM_GAIN));
 
-  */
-
   //------------------------------
   // menus 
   //------------------------------
 
-  /*
-  
-  root->appendChildWidget(osc1_type_menu);
-  root->appendChildWidget(osc2_type_menu);
+  // root->appendChildWidget(osc1_type_menu);
+  // root->appendChildWidget(osc2_type_menu);
   root->appendChildWidget(mix_type_menu);
   root->appendChildWidget(flt1_type_menu);
-
-  */
 
 }
