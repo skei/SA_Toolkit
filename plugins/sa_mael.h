@@ -74,6 +74,8 @@ public:
     SAT_PRINT;
   };
 
+  //----------
+
   virtual ~sa_mael_plugin() {
     SAT_PRINT;
   }
@@ -176,7 +178,7 @@ public:
 
 //------------------------------
 public: // events
-//---------------[0.056162:00075733:sat_plugin.h:track_info_changed:2388] sa_ma---------------
+//------------------------------
 
   bool on_plugin_noteOn(const clap_event_note_t* event) final {
     MVoiceManager.handleNoteOn(event);
@@ -246,6 +248,8 @@ public: // process
     AContext->voice_length = length;
     MVoiceManager.processAudio(AContext);
     MVoiceManager.mixActiveVoices();
+    sat_param_t gain = getModulatedParameterValue(SA_MAEL_PARAM_GAIN);
+    SAT_ScaleStereoBuffer(outputs,gain,length);
   }
 
 //------------------------------
@@ -277,20 +281,22 @@ public: // gui
   SAT_PLUGIN_ENTRY(sa_mael_descriptor,sa_mael_plugin);
 #endif
 
-  // void SAT_Register(SAT_Registry* ARegistry) {
-  //   uint32_t index = ARegistry->getNumDescriptors();
-  //   /*SAT_Print("index %i = id %s\n",index,myDescriptor.id);*/
-  //   ARegistry->registerDescriptor(&sa_mael_Descriptor);
-  // }
-  //
-  // SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
-  //   /*SAT_Print("index %i\n",AIndex);*/
-  //   if (AIndex == 0) {
-  //     SAT_Plugin* plugin = new sa_mael_Plugin(ADescriptor,AHost); /* deleted in: ... */
-  //     return plugin;
-  //   }
-  //   return nullptr;
-  // }
+//----------
+
+// void SAT_Register(SAT_Registry* ARegistry) {
+//   uint32_t index = ARegistry->getNumDescriptors();
+//   /*SAT_Print("index %i = id %s\n",index,myDescriptor.id);*/
+//   ARegistry->registerDescriptor(&sa_mael_Descriptor);
+// }
+//
+// SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
+//   /*SAT_Print("index %i\n",AIndex);*/
+//   if (AIndex == 0) {
+//     SAT_Plugin* plugin = new sa_mael_Plugin(ADescriptor,AHost); /* deleted in: ... */
+//     return plugin;
+//   }
+//   return nullptr;
+// }
 
 //----------------------------------------------------------------------
 #endif

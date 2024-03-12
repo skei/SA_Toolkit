@@ -34,7 +34,7 @@ protected:
   bool      MDrawModulation           = true;
   double    MModArcOffset             = 2.0;// 13.0;
   double    MModArcThickness          = 4.0;
-  SAT_Color MModArcColor              = SAT_Color(1,1,0,0.3);
+  SAT_Color MModArcColor              = SAT_Color(1,0,0,0.4);
 
   bool      MDrawMarker               = false;
   double    MMarkerValue              = 0.75;

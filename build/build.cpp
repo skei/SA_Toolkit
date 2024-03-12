@@ -52,7 +52,7 @@
 //#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
-#include "../plugins/sa_mael.h"
+//#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_tyr.h"
 
@@ -70,7 +70,7 @@
 //#include "../plugins/minimal.h"
 //#include "../plugins/standalone.h"
 
-//#include "../plugins/demo.h"
+#include "../plugins/demo.h"
 //#include "../plugins/interceptor.h"
 
 //----------------------------------------------------------------------

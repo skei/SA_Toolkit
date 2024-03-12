@@ -367,6 +367,7 @@ public:
         *buffer++ = out * VOICE_SCALE;
 
         // tuning
+        // shouldn't these be _before_ osc1/2 calculation?
 
         // osc1_oct = SAT_Trunc(osc1_oct);
         // osc1_semi = SAT_Trunc(osc1_semi);

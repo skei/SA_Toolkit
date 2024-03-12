@@ -29,7 +29,7 @@ protected:
 
 
   bool      MDrawModulation     = true;
-  SAT_Color MModulationColor    = SAT_Color(1,1,1,0.25);
+  SAT_Color MModulationColor    = SAT_Color(1,0,0,0.4);
   SAT_Rect  MModulationOffset   = SAT_Rect(0,0,0,0);
 
   bool      MDrawSliderEdge     = true;
