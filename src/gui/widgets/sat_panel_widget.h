@@ -128,6 +128,8 @@ public:
 public:
 //------------------------------
 
+  virtual void setDrawParamText(bool ADraw=true) { MDrawParamText = ADraw; }
+
   // background
 
   virtual void setFillBackground(bool AFill=true) {
@@ -559,7 +561,17 @@ public:
         if (wratio < hratio) textsize *= wratio;
         else textsize *= hratio;
       }
+
       const char* text = MText;
+
+      // SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      // if (param) {
+      //   sat_param_t value = param->getValue();
+      //   text = param->valueToText(value);
+      // }
+      //else {
+      //}
+
       if (MTextFont != -1) painter->selectFont(MTextFont);
       painter->setTextSize(textsize);
       SAT_Parameter* param = (SAT_Parameter*)getParameter();

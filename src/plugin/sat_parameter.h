@@ -14,6 +14,28 @@ typedef SAT_Array<SAT_Parameter*> SAT_ParameterArray;
 //
 //----------------------------------------------------------------------
 
+/*
+  CLAP_PARAM_IS_STEPPED                 // Is this param stepped? (integer values only) if so the double value is converted to integer using a cast (equivalent to trunc).   
+  CLAP_PARAM_IS_PERIODIC                // Useful for periodic parameters like a phase
+  CLAP_PARAM_IS_HIDDEN                  // The parameter should not be shown to the user, because it is currently not used. It is not necessary to process automation for this parameter.
+  CLAP_PARAM_IS_READONLY                // The parameter can't be changed by the host.
+  CLAP_PARAM_IS_BYPASS                  // This parameter is used to merge the plugin and host bypass button. It implies that the parameter is stepped. min: 0 -> bypass off, max: 1 -> bypass on
+  CLAP_PARAM_IS_AUTOMATABLE             // When set: automation can be recorded, automation can be played back. The host can send live user changes for this parameter regardless of this flag.
+  CLAP_PARAM_IS_AUTOMATABLE_PER_NOTE_ID // Does this parameter support per note automations?
+  CLAP_PARAM_IS_AUTOMATABLE_PER_KEY     // Does this parameter support per key automations?
+  CLAP_PARAM_IS_AUTOMATABLE_PER_CHANNEL // Does this parameter support per channel automations?
+  CLAP_PARAM_IS_AUTOMATABLE_PER_PORT    // Does this parameter support per port automations?
+  CLAP_PARAM_IS_MODULATABLE             // Does this parameter support the modulation signal?
+  CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID // Does this parameter support per note modulations?
+  CLAP_PARAM_IS_MODULATABLE_PER_KEY     // Does this parameter support per key modulations?
+  CLAP_PARAM_IS_MODULATABLE_PER_CHANNEL // Does this parameter support per channel modulations?
+  CLAP_PARAM_IS_MODULATABLE_PER_PORT    // Does this parameter support per port modulations?
+  CLAP_PARAM_REQUIRES_PROCESS           // Any change to this parameter will affect the plugin output and requires to be done via process() if the plugin is active. A simple example would be a DC Offset, changing it will change the output signal and must be processed.
+  CLAP_PARAM_IS_ENUM                    // This parameter represents an enumerated value. If you set this flag, then you must set CLAP_PARAM_IS_STEPPED too. All values from min to max must not have a blank value_to_text().
+*/
+
+//----------------------------------------------------------------------
+
 class SAT_Parameter {
 
 //------------------------------
@@ -174,7 +196,7 @@ public:
   //----------  
 
   virtual const char* valueToText(sat_param_t AValue) {
-    sprintf(MValueText,MValueFormat,getValue());
+    sprintf(MValueText,MValueFormat,AValue);//getValue());
     return MValueText;
   }
 

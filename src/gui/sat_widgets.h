@@ -7,6 +7,17 @@
 
 //
 
+//#include "gui/widgets/sat_visual_widget.h"
+//#include "gui/widgets/sat_layout_widget.h"
+//#include "gui/widgets/sat_panel_widget.h"
+//#include "gui/widgets/sat_text_widget.h"
+//#include "gui/widgets/sat_value_widget.h"
+//#include "gui/widgets/sat_multi_value_widget.h"
+//#include "gui/widgets/sat_clickable_widget.h"
+//#include "gui/widgets/sat_draggable_widget.h"
+
+//
+
 #include "gui/widgets/sat_button_widget.h"
 #include "gui/widgets/sat_button_row_widget.h"
 #include "gui/widgets/sat_circular_waveform_widget.h"

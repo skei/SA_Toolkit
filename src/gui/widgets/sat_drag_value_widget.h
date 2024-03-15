@@ -68,6 +68,9 @@ public:
       case SAT_DIRECTION_LEFT:  setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);  break;
       case SAT_DIRECTION_RIGHT: setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);  break;
     }
+
+    setDrawParamText(true);
+
   }
 
   //----------

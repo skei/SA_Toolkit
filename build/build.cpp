@@ -73,6 +73,9 @@
 #include "../plugins/demo.h"
 //#include "../plugins/interceptor.h"
 
+//#include "../plugins/test/test_params.h"
+
+
 //----------------------------------------------------------------------
 //
 //
