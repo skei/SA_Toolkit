@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------
 
 //#include "../plugins/templates/audio_effect.h"
-//#include "../plugins/templates/instrument.h"
+#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
 //----------------------------------------------------------------------
@@ -69,10 +69,8 @@
 //#include "../plugins/minimal_noop.h"
 //#include "../plugins/minimal.h"
 //#include "../plugins/standalone.h"
-
-#include "../plugins/demo.h"
+//#include "../plugins/demo.h"
 //#include "../plugins/interceptor.h"
-
 //#include "../plugins/test/test_params.h"
 
 

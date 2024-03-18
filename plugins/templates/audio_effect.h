@@ -57,5 +57,7 @@ public:
 
 //----------------------------------------------------------------------
 
-#include "plugin/sat_entry.h"
-SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+#ifndef SAT_NO_ENTRY
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+#endif

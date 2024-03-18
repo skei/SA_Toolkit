@@ -13,7 +13,6 @@
 #define EDITOR_WIDTH  256
 #define EDITOR_HEIGHT 256
 #define EDITOR_SCALE  1.0
-
 #define MAX_VOICES    32
 #define VOICE_SCALE   0.1
 
@@ -86,10 +85,9 @@ public:
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
         MPhase = SAT_Fract(MPhase);
-        float v = (MPhase * 2.0) - 1.0;  // 0..1 -> -1..1
+        float v = (MPhase * 2.0) - 1.0;
         double env = 1.0;
         *buffer++ = v * env * VOICE_SCALE;
-        // update
         double tu = MPTuning + MMTuning;
         tu = SAT_Clamp(tu,-1,1);
         tu +=  METuning;
@@ -181,10 +179,6 @@ public:
 
   bool init() final {
     registerDefaultSynthExtensions();
-    registerExtension(CLAP_EXT_PARAM_INDICATION,&MExtParamIndication);
-    registerExtension(CLAP_EXT_PRESET_LOAD,&MExtPresetLoad);
-    registerExtension(CLAP_EXT_REMOTE_CONTROLS,&MExtRemoteControls);
-    registerExtension(CLAP_EXT_TRACK_INFO,&MExtTrackInfo);
     appendClapNoteInputPort("Input");
     appendStereoAudioOutputPort("Output");
     clap_param_info_flags flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;
@@ -197,7 +191,6 @@ public:
     MVoiceManager.init(getClapPlugin(),getClapHost());
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
-    //MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_BLOCK);
     return SAT_Plugin::init();
   }
 
@@ -215,42 +208,6 @@ public:
     info->voice_capacity  = MAX_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
     return true;
-  }
-
-  uint32_t remote_controls_count() final {
-    return 1;
-  }  
-  
-  bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) final {
-    switch (page_index) {
-      case 0: {
-        strcpy(page->section_name,"Section");
-        page->page_id = 0;
-        strcpy(page->page_name,"SA_Synth parameters");
-        page->param_ids[0] = 0;
-        page->param_ids[1] = 1;
-        page->param_ids[2] = 2;
-        page->param_ids[3] = CLAP_INVALID_ID;
-        page->param_ids[4] = CLAP_INVALID_ID;
-        page->param_ids[5] = CLAP_INVALID_ID;
-        page->param_ids[6] = CLAP_INVALID_ID;
-        page->param_ids[7] = CLAP_INVALID_ID;
-        page->is_for_preset = false;
-        return true;
-      }
-    }
-    return false;
-  }  
-  
-  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
-    if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
-      loadPresetFromFile(location,load_key);
-      //if (loadPresetFromFile(location,load_key)
-      SAT_Host* host = getHost();
-      if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
-      return true;
-    }
-    return false;
   }
 
 //------------------------------
@@ -331,7 +288,7 @@ public: // process
 public: // gui
 //------------------------------
 
-  // #if !defined (SAT_GUI_NOGUI)  
+  // #if !defined (SAT_GUI_NOGUI)
   //  
   // void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   //   SAT_RootWidget* root = new SAT_RootWidget(AWindow);
@@ -353,13 +310,15 @@ public: // gui
 //
 //----------------------------------------------------------------------
 
-#include "plugin/sat_entry.h"
-SAT_PLUGIN_ENTRY(myDescriptor,mySynth);
+#ifndef SAT_NO_ENTRY
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(myDescriptor,mySynth);
+#endif
 
 //----------
 
-// #undef EDITOR_WIDTH
-// #undef EDITOR_HEIGHT
-// #undef EDITOR_SCALE
-// #undef MAX_VOICES
-// #undef VOICE_SCALE
+#undef EDITOR_WIDTH
+#undef EDITOR_HEIGHT
+#undef EDITOR_SCALE
+#undef MAX_VOICES
+#undef VOICE_SCALE
