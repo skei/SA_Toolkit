@@ -1,6 +1,13 @@
 #include "plugin/sat_plugin.h"
-#include "gui/sat_widgets.h"
 
+#if !defined (SAT_GUI_NOGUI)
+  #include "gui/sat_widgets.h"
+#endif
+
+//----------------------------------------------------------------------
+//
+// descriptor
+//
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t myDescriptor = {
@@ -17,15 +24,23 @@ const clap_plugin_descriptor_t myDescriptor = {
 };
 
 //----------------------------------------------------------------------
+//
+// plugin
+//
+//----------------------------------------------------------------------
 
 class myPlugin
 : public SAT_Plugin {
 
+//------------------------------
 public:
+//------------------------------
 
   SAT_DEFAULT_PLUGIN_CONSTRUCTOR(myPlugin);
 
+//------------------------------
 public:
+//------------------------------
 
   bool init() final {
     registerDefaultExtensions();
@@ -36,25 +51,37 @@ public:
     return SAT_Plugin::init();
   }
 
+  //----------
+
+  #if !defined (SAT_GUI_NOGUI)
+  
+  void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
+    SAT_RootWidget* root = new SAT_RootWidget(AWindow);
+    AWindow->setRootWidget(root);
+    SAT_KnobWidget* knob = new SAT_KnobWidget( SAT_Rect(10,10,180,180), "", 0.0 );
+    root->appendChildWidget(knob);
+    AEditor->connect( knob, getParameter(0) );
+    knob->setArcThickness(25);
+    knob->setTextSize(30);
+    knob->setValueSize(45);
+  }
+
+  #endif
+
+  //----------
+
   void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) final {
     sat_param_t gain = getModulatedParameterValue(0);
     *spl0 *= gain;
     *spl1 *= gain;
   }
 
-  void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-    SAT_RootWidget* root = new SAT_RootWidget(AWindow);
-    AWindow->setRootWidget(root);
-    SAT_KnobWidget* knob = new SAT_KnobWidget( SAT_Rect(10,10,180,180), "Gain", 0.1 );
-    root->appendChildWidget(knob);
-    knob->setArcThickness(25);
-    knob->setTextSize(30);
-    knob->setValueSize(45);
-    AEditor->connect( knob, getParameter(0) );
-  }
-
 };
 
+//----------------------------------------------------------------------
+//
+// entry
+//
 //----------------------------------------------------------------------
 
 #ifndef SAT_NO_ENTRY

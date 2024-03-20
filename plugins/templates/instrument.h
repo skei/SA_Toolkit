@@ -1,7 +1,7 @@
-
 #include "plugin/sat_plugin.h"
 #include "audio/sat_audio_math.h"
 #include "audio/sat_voice_manager.h"
+#include "audio/modulation/sat_exp_envelope.h"
 
 #if !defined (SAT_GUI_NOGUI)
   #include "plugin/sat_editor.h"
@@ -43,88 +43,137 @@ const clap_plugin_descriptor_t myDescriptor = {
 
 class myVoice {
 
+//------------------------------
 private:
+//------------------------------
 
-  uint32_t              MIndex      = 0;
-  SAT_VoiceContext*     MContext    = nullptr;
+  uint32_t                        MIndex      = 0;
+  SAT_VoiceContext*               MContext    = nullptr;
+  float                           MSampleRate = 0.0;
+
+  SAT_ExpEnvelope<sat_sample_t>   MEnvelope     = {};  
+
+  // note on
+  double                          MKey        = 0.0;
+  double                          MVelocity   = 1.0;
+
+  // synth
+  float                           MPhase      = 0.0;
+  float                           MPhaseAdd   = 0.0;
   
-  float                 MSampleRate = 0.0;
-  double                MKey        = 0.0;
-  double                MVelocity   = 1.0;
-  float                 MPhase      = 0.0;
-  float                 MPhaseAdd   = 0.0;
-  
-  double                MPGain      = 1.0;
-  double                MPTuning    = 0.0;
-  double                MPFilter    = 1.0;
+  // parameters
+  double                          MPGain      = 1.0;
+  double                          MPTuning    = 0.0;
+  double                          MPFilter    = 1.0;
 
-  double                MMGain      = 0.0;
-  double                MMTuning    = 0.0;
-  double                MMFilter    = 0.0;
+  // modulation
+  double                          MMGain      = 0.0;
+  double                          MMTuning    = 0.0;
+  double                          MMFilter    = 0.0;
 
-  double                MEPress     = 0.0;
-  double                METuning    = 0.0;
-  double                MEBright    = 0.0;
+  // note expressions
+  double                          MEPress     = 0.0;
+  double                          METuning    = 0.0;
+  double                          MEBright    = 0.0;
 
+//------------------------------
 public:
+//------------------------------
 
   void init(uint32_t AIndex, SAT_VoiceContext* AContext) {
     MIndex = AIndex;
     MContext = AContext;
     MSampleRate = AContext->sample_rate;
+    MEnvelope.setSampleRate(MSampleRate);
+    MEnvelope.setADSR( 0.0, 0.0, 1.0, 2.5 );
+
   }
+
+  //----------
 
   sat_sample_t getVoiceLevel() {
-    return 1.0;
+    //return 1.0;
+    return MEnvelope.getValue();
   }
 
+  //----------
+
   uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
+    // calc position of this voice in (big) buffer
     float* buffer = MContext->voice_buffer;
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     buffer += AOffset;
+    // calc samples
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
+        // naive phase (0..1)-> saw waveform (-1..1)
         MPhase = SAT_Fract(MPhase);
         float v = (MPhase * 2.0) - 1.0;
-        double env = 1.0;
+
+        // todo: real envelope
+        //double env = 1.0;
+        sat_sample_t env = MEnvelope.process();
+
         *buffer++ = v * env * VOICE_SCALE;
+        // calc tuning (key + tuning param + modulation + expression)
         double tu = MPTuning + MMTuning;
         tu = SAT_Clamp(tu,-1,1);
         tu +=  METuning;
         float hz = SAT_NoteToHz(MKey + tu);
+        // update synth phase
         MPhaseAdd = 1.0 / SAT_HzToSamples(hz,MSampleRate);
         MPhase += MPhaseAdd;
       }
     }
     else {
+      // no voices -> silent output
       memset(buffer,0,ALength * sizeof(float));
     }
-    return AState;
+    // continue..
+    if (MEnvelope.getStage() == SAT_ENVELOPE_FINISHED) return SAT_VOICE_FINISHED;
+    else return AState;
+
   }
+
+  //----------
 
   uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
     return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
   }
 
+  //----------
+
   uint32_t noteOn(uint32_t AIndex, double AValue) {
     SAT_Plugin*     plugin      = MContext->process_context->plugin;
     SAT_Parameter*  par_tuning  = plugin->getParameter(1);
+    // reset voice
     MKey      = AIndex;
     MVelocity = AValue;
     MPhase    = 0.0;
     MPTuning  = par_tuning->getValue();
     MMTuning  = 0.0;
     METuning  = 0.0;
+    MEnvelope.reset();
+    MEnvelope.setADSR(0,0,1,2.5);
+    MEnvelope.noteOn();    
     return SAT_VOICE_PLAYING;
   }
 
+  //----------
+
   uint32_t noteOff(uint32_t AIndex, double AValue) {
-    return SAT_VOICE_FINISHED;
-    //return SAT_VOICE_RELEASED;
+    MEnvelope.noteOff();
+    return SAT_VOICE_RELEASED;
+    //return SAT_VOICE_FINISHED;
   }
 
+  //----------
+
   void noteChoke(uint32_t AIndex, double AValue) {
+    // todo
   }
+
+  //----------
 
   void noteExpression(uint32_t AIndex, double AValue) {
     switch (AIndex) {
@@ -134,13 +183,22 @@ public:
     }
   }
 
+  //----------
+
   void parameter(uint32_t AIndex, double AValue) {
+    //sat_param_t a5 = (AValue * 5.0);
     switch (AIndex) {
       case 0: MPGain    = AValue; break;
       case 1: MPTuning  = AValue; break;
       case 2: MPFilter  = AValue; break;
+      //case SA_MAEL_PARAM_ENV1_ATT:    MEnvelope.setAttack(a5);  break;
+      //case SA_MAEL_PARAM_ENV1_DEC:    MEnvelope.setDecay(a5);   break;
+      //case SA_MAEL_PARAM_ENV1_SUS:    MEnvelope.setSustain(a5); break;
+      //case SA_MAEL_PARAM_ENV1_REL:    MEnvelope.setRelease(a5); break;    
     }
   }
+
+  //----------
 
   void modulation(uint32_t AIndex, double AValue) {
     switch (AIndex) {
@@ -178,30 +236,43 @@ public:
 //------------------------------
 
   bool init() final {
+
     registerDefaultSynthExtensions();
+
     appendClapNoteInputPort("Input");
     appendStereoAudioOutputPort("Output");
+
+    // all params mod per note id
     clap_param_info_flags flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;
     appendParameter(new SAT_Parameter("Gain",   1,  0, 1, flags));  // 0
     appendParameter(new SAT_Parameter("Tuning", 0, -1, 1, flags));  // 1
     appendParameter(new SAT_Parameter("Filter", 1,  0, 1, flags));  // 2
+
     #if !defined (SAT_GUI_NOGUI)
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
     #endif
+
     MVoiceManager.init(getClapPlugin(),getClapHost());
     MVoiceManager.setProcessThreaded(true);
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
+
     return SAT_Plugin::init();
   }
+
+  //----------
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
     MVoiceManager.activate(sample_rate,min_frames_count,max_frames_count);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
+  //----------
+
   void thread_pool_exec(uint32_t task_index) final {
     MVoiceManager.threadPoolExec(task_index);
   }
+
+  //----------
 
   bool voice_info_get(clap_voice_info_t *info) final {
     info->voice_count     = MAX_VOICES;

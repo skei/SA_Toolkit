@@ -1668,6 +1668,7 @@ protected: // clap_plugin
   //----------
 
   const void* get_extension(const char *id) override {
+    SAT_Print("id: %s\n",id);
     if (MExtensions.hasItem(id)) return MExtensions.getItem(id);
     return nullptr;
   }

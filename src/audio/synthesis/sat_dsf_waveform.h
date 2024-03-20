@@ -99,7 +99,7 @@ class SAT_DsfWaveform {
       T sin_t1nt2   = sin(t1 + N *t2);
       T sin_t1n1t2  = sin(t1 + N1*t2);
       T pow_an1     = pow(a,N1);
-      T result      = ((a*sin_t2t1+sin_t1) + pow_an1 * (a*sin_t1nt2-sin_t1n1t2)) / (1+aa-a2*cos_t2);
+      T result      = ((a * sin_t2t1 + sin_t1) + pow_an1 * (a * sin_t1nt2 - sin_t1n1t2)) / (1 + aa - a2 * cos_t2);
       /*
       T result      = (a*sin_t2t1  + sin_t1)
       result           += pow_an1 * (a*sin_t1nt2 - sin_t1n1t2)
@@ -116,29 +116,27 @@ class SAT_DsfWaveform {
 
     //----------
 
-    /*
-    T processF(T t1, T t2, T a, uint32_t N) {
-      t1               *= SAT_PI2;
-      t2               *= SAT_PI2;
-      T N1          = N + 1.0f;
-      T aa          = a * a;
-      T a2          = a * 2.0f;
-      T w_t1      = KWrap(t1,         -SAT_PI,SAT_PI);
-      T w_t2      = KWrap(t2,         -SAT_PI,SAT_PI);
-      T w_t2t1    = KWrap((t2-t1),    -SAT_PI,SAT_PI);
-      T w_t1nt2   = KWrap((t1+N*t2),  -SAT_PI,SAT_PI);
-      T w_t1n1t2  = KWrap((t1+N1*t2), -SAT_PI,SAT_PI);
-      T sin_t1      = KSinF2(w_t1);
-      T cos_t2      = KCosF2(w_t2);
-      T sin_t2t1    = KSinF2(w_t2t1);
-      T sin_t1nt2   = KSinF2(w_t1nt2);
-      T sin_t1n1t2  = KSinF2(w_t1n1t2);
-      //int32 iN1         = (int32)KTrunc(N1);
-      //T pow_an1     = KPowF(a,iN1);
-      T pow_an1     = pow(a,N1);
-      return ((a*sin_t2t1+sin_t1) + pow_an1 * (a*sin_t1nt2-sin_t1n1t2)) / (1+aa-a2*cos_t2);
-    }
-    */
+    // T processF(T t1, T t2, T a, uint32_t N) {
+    //   t1               *= SAT_PI2;
+    //   t2               *= SAT_PI2;
+    //   T N1          = N + 1.0f;
+    //   T aa          = a * a;
+    //   T a2          = a * 2.0f;
+    //   T w_t1      = KWrap(t1,         -SAT_PI,SAT_PI);
+    //   T w_t2      = KWrap(t2,         -SAT_PI,SAT_PI);
+    //   T w_t2t1    = KWrap((t2-t1),    -SAT_PI,SAT_PI);
+    //   T w_t1nt2   = KWrap((t1+N*t2),  -SAT_PI,SAT_PI);
+    //   T w_t1n1t2  = KWrap((t1+N1*t2), -SAT_PI,SAT_PI);
+    //   T sin_t1      = KSinF2(w_t1);
+    //   T cos_t2      = KCosF2(w_t2);
+    //   T sin_t2t1    = KSinF2(w_t2t1);
+    //   T sin_t1nt2   = KSinF2(w_t1nt2);
+    //   T sin_t1n1t2  = KSinF2(w_t1n1t2);
+    //   //int32 iN1         = (int32)KTrunc(N1);
+    //   //T pow_an1     = KPowF(a,iN1);
+    //   T pow_an1     = pow(a,N1);
+    //   return ((a*sin_t2t1+sin_t1) + pow_an1 * (a*sin_t1nt2-sin_t1n1t2)) / (1+aa-a2*cos_t2);
+    // }
 
     //----------
 

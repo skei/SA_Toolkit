@@ -86,7 +86,7 @@ clap_param_info_t sa_mael_Parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_FLT1_TYPE,      A|SE, nullptr, "Type",      "Flt1",     0,    9,   1      },
   { SA_MAEL_PARAM_FLT1_FREQ,      A|MN, nullptr, "Freq",      "Flt1",     0.0,  1.0, 0.75   },
   { SA_MAEL_PARAM_FLT1_Q,         A|MN, nullptr, "Q",         "Flt1",     0.0,  1.0, 0.2325 },
-  { SA_MAEL_PARAM_ENV1_ATT,       A,    nullptr, "All",       "Env1",     0.0,  1.0, 0.0    },
+  { SA_MAEL_PARAM_ENV1_ATT,       A,    nullptr, "Att",       "Env1",     0.0,  1.0, 0.0    },
   { SA_MAEL_PARAM_ENV1_DEC,       A,    nullptr, "Dec",       "Env1",     0.0,  1.0, 0.0    },
   { SA_MAEL_PARAM_ENV1_SUS,       A,    nullptr, "Sus",       "Env1",     0.0,  1.0, 1.0    },
   { SA_MAEL_PARAM_ENV1_REL,       A,    nullptr, "Rel",       "Env1",     0.0,  1.0, 0.0    }

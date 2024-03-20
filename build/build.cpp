@@ -12,8 +12,8 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/templates/audio_effect.h"
-#include "../plugins/templates/instrument.h"
+#include "../plugins/templates/audio_effect.h"
+//#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_effect.h"
 
 //----------------------------------------------------------------------
@@ -71,6 +71,7 @@
 //#include "../plugins/standalone.h"
 //#include "../plugins/demo.h"
 //#include "../plugins/interceptor.h"
+
 //#include "../plugins/test/test_params.h"
 
 
