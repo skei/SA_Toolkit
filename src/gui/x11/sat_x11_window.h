@@ -508,6 +508,16 @@ public: // SAT_BaseWindow
     to wake it up, we send a 'client message'.. when the thread receives this event,
     it will (should) kill itself..
   */
+
+  /*
+    had an editor close crash.. (couldn't reproduce it, needs investigation)
+    had the templates audio_plugin + instrument + note_effect templates open at the same time.
+    closed bitwig
+    crashed in SAT_X11Window::stopEventThread(), called from from SAT_X11Window::close()
+    called after/from two SAT_Editor::~SAT_Editor() calls in a row..
+    threads closing, vs atomic bools?
+    if the window is closing, will the SAT_WINDOW_THREAD_KILL client message reach it?
+  */
   
   void stopEventThread() override {
     void* ret;
