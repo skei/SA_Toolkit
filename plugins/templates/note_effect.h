@@ -1,15 +1,4 @@
-
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/sat_entry.h"
-#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
-#include "gui/sat_widgets.h"
-
-//----------------------------------------------------------------------
-
-#define PLUGIN_NAME "note_effect"
-#define PLUGIN_AUTHOR "me"
 
 //----------------------------------------------------------------------
 //
@@ -19,10 +8,10 @@
 
 const clap_plugin_descriptor_t my_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = PLUGIN_AUTHOR "/" PLUGIN_NAME,
-  .name         = PLUGIN_NAME,
-  .vendor       = PLUGIN_AUTHOR,
-  .url          = "",
+  .id           = "sat_note_effect",
+  .name         = "note_effect",
+  .vendor       = "skei.audio",
+  .url          = "https://github.com/skei/SA_Toolkit",
   .manual_url   = "",
   .support_url  = "",
   .version      = "0.0.1",
@@ -40,15 +29,20 @@ class note_effect
 : public SAT_Plugin {
   
 //------------------------------
-private:
-//------------------------------
-
-//------------------------------
 public:
 //------------------------------
 
   SAT_DEFAULT_PLUGIN_CONSTRUCTOR(note_effect)
  
+  //----------
+
+  bool send_event(void* event) {
+    SAT_ProcessContext* context = getProcessContext();
+    const clap_output_events_t *out_events = context->process->out_events;
+    out_events->try_push(out_events,(const clap_event_header_t*)event);
+    return true;
+  }
+
   //----------
 
   bool init() final {
@@ -62,44 +56,69 @@ public:
   //----------
 
   bool on_plugin_noteOn(const clap_event_note_t* event) final {
+    clap_event_note_t new_event;
+    memcpy(&new_event,event,sizeof(clap_event_note_t));
+    new_event.velocity *= 0.5;
+    send_event(&new_event);
     return true;
   }
 
   //----------
 
   bool on_plugin_noteOff(const clap_event_note_t* event) final {
+    send_event((void*)event);
     return true;
   }
 
   //----------
 
   bool on_plugin_noteChoke(const clap_event_note_t* event) final {
+    send_event((void*)event);
     return true;
   }
 
   //----------
 
   bool on_plugin_noteExpression(const clap_event_note_expression_t* event) final {
+    send_event((void*)event);
     return true;
   }
 
   //----------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    return true;
-  }
+  // bool on_plugin_midi(const clap_event_midi_t* event) final {
+  //   return true;
+  // }
 
   //----------
 
-  bool on_plugin_paramMod(const clap_event_param_mod_t* event) final {
-    return true;
-  }
+  // bool on_plugin_midiSysex(const clap_event_midi_sysex_t* event) {
+  //   return true;
+  // }
 
   //----------
 
-  bool on_plugin_transport(const clap_event_transport_t* event) final {
-    return true;
-  }
+  // bool on_plugin_midi2(const clap_event_midi2_t* event) {
+  //   return true;
+  // }
+
+  //----------
+
+  // bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  //   return true;
+  // }
+
+  //----------
+
+  // bool on_plugin_paramMod(const clap_event_param_mod_t* event) final {
+  //   return true;
+  // }
+
+  //----------
+
+  // bool on_plugin_transport(const clap_event_transport_t* event) final {
+  //   return true;
+  // }
   
 };
 
@@ -113,11 +132,3 @@ public:
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(my_descriptor,note_effect);
 #endif
-
-//----------
-
-#undef PLUGIN_NAME
-#undef PLUGIN_AUTHOR
-//#undef EDITOR_WIDTH
-//#undef EDITOR_HEIGHT
-

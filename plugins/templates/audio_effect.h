@@ -12,14 +12,14 @@
 
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/myPlugin",
-  .name         = "my plugin",
-  .vendor       = "me",
-  .url          = "https://website.com/myPlugin",
-  .manual_url   = "https://website.com/myPlugin/manual.pdf",
-  .support_url  = "https://website.com/support",
-  .version      = "0.0.0",
-  .description  = "my precious plugin",
+  .id           = "sat_audio_effect",
+  .name         = "audio_effect",
+  .vendor       = "skei.audio",
+  .url          = "https://github.com/skei/SA_Toolkit",
+  .manual_url   = "",
+  .support_url  = "",
+  .version      = "0.0.1",
+  .description  = "",
   .features     = (const char*[]) { CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
 
@@ -58,12 +58,12 @@ public:
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
     SAT_RootWidget* root = new SAT_RootWidget(AWindow);
     AWindow->setRootWidget(root);
-    SAT_KnobWidget* knob = new SAT_KnobWidget( SAT_Rect(10,10,180,180), "", 0.0 );
+    SAT_KnobWidget* knob = new SAT_KnobWidget( SAT_Rect(10,10,180,180), "qwe", 0.0 );
     root->appendChildWidget(knob);
-    AEditor->connect( knob, getParameter(0) );
     knob->setArcThickness(25);
-    knob->setTextSize(30);
     knob->setValueSize(45);
+    knob->setTextSize(30);
+    AEditor->connect( knob, getParameter(0) );
   }
 
   #endif

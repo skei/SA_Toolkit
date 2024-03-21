@@ -24,14 +24,14 @@
 
 const clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "me/mySynth",
-  .name         = "my synth",
-  .vendor       = "me",
-  .url          = "https://website.com/mySynth",
-  .manual_url   = "https://website.com/mySynth/manual.pdf",
-  .support_url  = "https://website.com/support",
-  .version      = "0.0.0",
-  .description  = "my precious synth",
+  .id           = "sat_instrument",
+  .name         = "instrument",
+  .vendor       = "skei.audio",
+  .url          = "https://github.com/skei/SA_Toolkit",
+  .manual_url   = "",
+  .support_url  = "",
+  .version      = "0.0.1",
+  .description  = "",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
 };
 
