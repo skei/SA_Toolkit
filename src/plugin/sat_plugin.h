@@ -912,7 +912,7 @@ public: // events
             //SAT_Print("MIDI NOTE OFF. chan %i key %i vel %i\n",chan,data2,data3);
             //clap_event_note_t note_event;
             //note_event.header.size     = sizeof(clap_event_note_t);
-            //note_event.header.time     = 0;
+            //note_event.header.time     = event.header.time;
             //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
             //note_event.header.type     = CLAP_EVENT_NOTE_OFF;
             //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
@@ -928,7 +928,7 @@ public: // events
             //SAT_Print("MIDI NOTE ON. chan %i key %i vel %i\n",chan,data2,data3);
             //clap_event_note_t note_event;
             //note_event.header.size     = sizeof(clap_event_note_t);
-            //note_event.header.time     = 0;
+            //note_event.header.time     = event.header.time;
             //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
             //note_event.header.type     = CLAP_EVENT_NOTE_ON;
             //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
@@ -1127,7 +1127,7 @@ private: // queues
 
   // TODO: check for duplicates? can we have duplicates from gui?
   // called from:
-  // - SAT_Plugin.process
+  // - start of SAT_Plugin.process
 
   void flushParamFromGuiToAudio() {
     uint32_t count = 0;
@@ -1186,10 +1186,11 @@ private: // queues
 
   // TODO: check for duplicates? can we have duplicates from gui?
   // called from:
-  // - SAT_Plugin.process()
+  // - end of SAT_Plugin.process()
 
   void flushParamFromGuiToHost(const clap_output_events_t *out_events) {
     uint32_t count = 0;
+    uint32_t blocksize = getProcessContext()->process->frames_count;
     //SAT_Print("\n");
     SAT_ParamQueueItem item;
     while (MParamFromGuiToHostQueue.read(&item)) {
@@ -1200,7 +1201,7 @@ private: // queues
       {
         clap_event_param_gesture_t event;
         event.header.size     = sizeof(clap_event_param_gesture_t);
-        event.header.time     = 0;
+        event.header.time     = blocksize - 1; //0; // should this be (blocksize-1), since we're called at the end of the audioblock?
         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
         event.header.type     = CLAP_EVENT_PARAM_GESTURE_BEGIN;
         event.header.flags    = 0;
@@ -1212,7 +1213,7 @@ private: // queues
       {
         clap_event_param_value_t event;
         event.header.size     = sizeof(clap_event_param_value_t);
-        event.header.time     = 0;
+        event.header.time     = blocksize - 1; //0; // same here (blocksize-1)
         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
         event.header.type     = CLAP_EVENT_PARAM_VALUE;
         event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
@@ -1231,7 +1232,7 @@ private: // queues
       {
         clap_event_param_gesture_t event;
         event.header.size     = sizeof(clap_event_param_gesture_t);
-        event.header.time     = 0;
+        event.header.time     = blocksize - 1; //0; // ..and here (blocksize-1)
         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
         event.header.type     = CLAP_EVENT_PARAM_GESTURE_END;
         event.header.flags    = 0;

@@ -495,16 +495,20 @@ private:
 
   //----------
 
+  // called at end of postProcessEvents()
+  // (end of process.. time should be blocksize-1 ?
+
   void flushNoteEnds(const clap_output_events_t* out_events) {
     uint32_t count = 0;
     SAT_Note note = {0};
+    uint32_t blocksize = MVoiceContext.process_context->process->frames_count;
     while (MNoteEndQueue.read(&note)) {
       count += 1;
       clap_event_note_t note_event;
       note_event.header.flags     = 0;
       note_event.header.size      = sizeof(clap_event_note_t);
       note_event.header.space_id  = CLAP_CORE_EVENT_SPACE_ID;
-      note_event.header.time      = 0;
+      note_event.header.time      = blocksize - 1; //0;
       note_event.header.type      = CLAP_EVENT_NOTE_END;
       note_event.port_index       = note.port;
       note_event.channel          = note.channel;
