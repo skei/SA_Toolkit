@@ -6,7 +6,7 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t my_descriptor = {
+const clap_plugin_descriptor_t note_effect_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = "sat_note_effect",
   .name         = "note_effect",
@@ -130,5 +130,5 @@ public:
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(my_descriptor,note_effect);
+  SAT_PLUGIN_ENTRY(note_effect_descriptor,note_effect);
 #endif

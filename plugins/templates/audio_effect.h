@@ -10,7 +10,7 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t myDescriptor = {
+const clap_plugin_descriptor_t audio_effect_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = "sat_audio_effect",
   .name         = "audio_effect",
@@ -29,14 +29,14 @@ const clap_plugin_descriptor_t myDescriptor = {
 //
 //----------------------------------------------------------------------
 
-class myPlugin
+class audio_effect
 : public SAT_Plugin {
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(myPlugin);
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(audio_effect);
 
 //------------------------------
 public:
@@ -86,5 +86,5 @@ public:
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(myDescriptor,myPlugin);
+  SAT_PLUGIN_ENTRY(audio_effect_descriptor,audio_effect);
 #endif

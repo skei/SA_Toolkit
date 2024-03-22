@@ -1,6 +1,7 @@
 #include "plugin/sat_plugin.h"
-#include "audio/sat_audio_math.h"
 #include "audio/sat_voice_manager.h"
+
+#include "audio/sat_audio_math.h"
 #include "audio/modulation/sat_exp_envelope.h"
 
 #if !defined (SAT_GUI_NOGUI)
@@ -22,7 +23,7 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t myDescriptor = {
+const clap_plugin_descriptor_t instrument_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = "sat_instrument",
   .name         = "instrument",
@@ -92,7 +93,6 @@ public:
   //----------
 
   sat_sample_t getVoiceLevel() {
-    //return 1.0;
     return MEnvelope.getValue();
   }
 
@@ -109,11 +109,8 @@ public:
         // naive phase (0..1)-> saw waveform (-1..1)
         MPhase = SAT_Fract(MPhase);
         float v = (MPhase * 2.0) - 1.0;
-
-        // todo: real envelope
-        //double env = 1.0;
+        // todo: polyblep
         sat_sample_t env = MEnvelope.process();
-
         *buffer++ = v * env * VOICE_SCALE;
         // calc tuning (key + tuning param + modulation + expression)
         double tu = MPTuning + MMTuning;
@@ -216,7 +213,7 @@ public:
 //
 //----------------------------------------------------------------------
 
-class mySynth
+class instrument
 : public SAT_Plugin {
 
 //------------------------------
@@ -229,7 +226,7 @@ private:
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(mySynth);
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(instrument);
 
 //------------------------------
 public:
@@ -383,7 +380,7 @@ public: // gui
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(myDescriptor,mySynth);
+  SAT_PLUGIN_ENTRY(instrument_descriptor,instrument);
 #endif
 
 //----------
