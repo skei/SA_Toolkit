@@ -1,3 +1,4 @@
+
 #include "plugin/sat_plugin.h"
 
 #if !defined (SAT_GUI_NOGUI)
@@ -47,7 +48,9 @@ public:
     appendStereoAudioInputPort("Input");
     appendStereoAudioOutputPort("Output");
     appendParameter( new SAT_Parameter( "Gain", 0.5, 0, 1, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE ));
-    setInitialEditorSize( 200, 200, 3.0 );
+    #if !defined (SAT_GUI_NOGUI)
+      setInitialEditorSize( 200, 200, 3.0 );
+    #endif
     return SAT_Plugin::init();
   }
 

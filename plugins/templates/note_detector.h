@@ -36,12 +36,12 @@ public:
  
   //----------
 
-  bool send_event(void* event) {
-    SAT_ProcessContext* context = getProcessContext();
-    const clap_output_events_t *out_events = context->process->out_events;
-    out_events->try_push(out_events,(const clap_event_header_t*)event);
-    return true;
-  }
+  // bool send_event(void* event) {
+  //   SAT_ProcessContext* context = getProcessContext();
+  //   const clap_output_events_t *out_events = context->process->out_events;
+  //   out_events->try_push(out_events,(const clap_event_header_t*)event);
+  //   return true;
+  // }
 
   //----------
 

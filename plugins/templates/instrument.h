@@ -1,3 +1,4 @@
+
 #include "plugin/sat_plugin.h"
 #include "audio/sat_voice_manager.h"
 
@@ -11,9 +12,6 @@
 
 //----------
 
-#define EDITOR_WIDTH  256
-#define EDITOR_HEIGHT 256
-#define EDITOR_SCALE  1.0
 #define MAX_VOICES    32
 #define VOICE_SCALE   0.1
 
@@ -209,7 +207,7 @@ public:
 
 //----------------------------------------------------------------------
 //
-// synth
+// plugin
 //
 //----------------------------------------------------------------------
 
@@ -246,7 +244,7 @@ public:
     appendParameter(new SAT_Parameter("Filter", 1,  0, 1, flags));  // 2
 
     #if !defined (SAT_GUI_NOGUI)
-      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+      setInitialEditorSize(256,256,1.0);
     #endif
 
     MVoiceManager.init(getClapPlugin(),getClapHost());
@@ -385,8 +383,5 @@ public: // gui
 
 //----------
 
-#undef EDITOR_WIDTH
-#undef EDITOR_HEIGHT
-#undef EDITOR_SCALE
 #undef MAX_VOICES
 #undef VOICE_SCALE

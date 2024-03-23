@@ -12,11 +12,11 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/templates/audio_effect.h"
+//#include "../plugins/templates/analyzer.h"
+  #include "../plugins/templates/audio_effect.h"
 //#include "../plugins/templates/instrument.h"
-//#include "../plugins/templates/note_effect.h"
 //#include "../plugins/templates/note_detector.h"
-#include "../plugins/templates/analyzer.h"
+//#include "../plugins/templates/note_effect.h"
 
 //----------------------------------------------------------------------
 //
