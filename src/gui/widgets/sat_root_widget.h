@@ -56,16 +56,16 @@ public:
 public: // widget
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
-    if (MListener) MListener->on_widgetListener_update(AWidget,AMode);
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
+    if (MListener) MListener->on_widgetListener_update(AWidget,AIndex,AMode);
   }
 
-  void do_widget_redraw(SAT_Widget* AWidget) override {
-    if (MListener) MListener->on_widgetListener_redraw(AWidget);
+  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
+    if (MListener) MListener->on_widgetListener_redraw(AWidget,AIndex,AMode);
   }
 
-  void do_widget_realign(SAT_Widget* AWidget) override {
-    if (MListener) MListener->on_widgetListener_realign(AWidget);
+  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode) override {
+    if (MListener) MListener->on_widgetListener_realign(AWidget,AMode);
   }
 
   void do_widget_setCursor(SAT_Widget* AWidget, int32_t ACursor) override {

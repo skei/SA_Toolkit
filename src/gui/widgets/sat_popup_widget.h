@@ -83,9 +83,9 @@ public:
 
     setActive(true);
     setVisible(true);
-    do_widget_realign(this);
+    do_widget_realign(this,0);
 //    realignChildWidgets();
-    do_widget_redraw(this);
+    do_widget_redraw(this,0,0);
     do_widget_setModal(this);
 
     return true;

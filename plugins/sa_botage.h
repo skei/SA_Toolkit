@@ -2,7 +2,7 @@
 #define sa_botage_included
 //----------------------------------------------------------------------
 
-#include "audio/sat_audio_utils.h"
+//#include "audio/sat_audio_utils.h"
 #include "plugin/sat_parameters.h"
 #include "plugin/sat_editor.h"
 #include "plugin/sat_plugin.h"
@@ -14,6 +14,8 @@
 #include "sa_botage/sa_botage_prob_page.h"
 #include "sa_botage/sa_botage_seq_page.h"
 #include "sa_botage/sa_botage_perf_page.h"
+
+#include "sa_botage/sa_botage_processor.h"
 
 #define PLUGIN_NAME   "sa_botage"
 #define PLUGIN_DESC   "sabotage your loops!"
@@ -55,6 +57,12 @@ class sa_botage_plugin
 : public SAT_Plugin {
   
 //------------------------------
+private:
+//------------------------------
+
+  sa_botage_processor   MProcessor = {};
+
+//------------------------------
 public:
 //------------------------------
 
@@ -67,13 +75,8 @@ public:
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
-    
     //appendParameters(SA_BOTAGE_PARAM_COUNT,sa_botage_parameter_infos);
-    
-    appendParameter( new SAT_Parameter(     "Gain",               0.25        ));
-    appendParameter( new SAT_IntParameter(  "Buffer Num Beats",   4,    1, 8  ));
-    appendParameter( new SAT_IntParameter(  "Buffer Num Slices",  2,    1, 8  ));
-    
+    if (!sa_botage_SetupParameters(this)) return false;
     return SAT_Plugin::init();
   }
   
@@ -84,18 +87,7 @@ public:
   //----------
 
   void processAudio(SAT_ProcessContext* AContext) final {
-    float** inputs = AContext->process->audio_inputs[0].data32;
-    float** outputs = AContext->process->audio_outputs[0].data32;
-    uint32_t length = AContext->process->frames_count;
-    
-    // process
-    SAT_CopyStereoBuffer(outputs,inputs,length);
-    
-//    // gain
-//    double scale = getParameterValue(0) + getModulationValue(0);
-//    scale = SAT_Clamp(scale,0,1);
-//    SAT_ScaleStereoBuffer(outputs,scale,length);
-    
+    MProcessor.process(AContext);
   }
   
 };

@@ -193,7 +193,7 @@ public:
       //setRect(mrect);
       setRectAndBase(mrect);
 
-      do_widget_realign(this);
+      do_widget_realign(this,0);
       //realignParent();
     }
     else if (MIsResizing) {
@@ -208,7 +208,7 @@ public:
       setRect(mrect);
       setRectAndBase(mrect);
       
-      do_widget_realign(this);
+      do_widget_realign(this,0);
       //realignParent();
     }
     else {

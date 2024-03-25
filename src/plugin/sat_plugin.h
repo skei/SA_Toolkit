@@ -2083,7 +2083,7 @@ protected: // param_indication
     param->setMappedColor(C);
     #if !defined (SAT_GUI_NOGUI)
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,0);
     #endif
   }
   
@@ -2103,7 +2103,7 @@ protected: // param_indication
     param->setAutomationColor(C);
     #if !defined (SAT_GUI_NOGUI)
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,0);
     #endif
   }
   
@@ -2401,7 +2401,7 @@ protected: // track_info
         MTrackIsMaster      = ((info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)        != 0);
 
         //SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-        //if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget);
+        //if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,0);
 
       }
     }

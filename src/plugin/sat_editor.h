@@ -115,13 +115,16 @@ public:
       //SAT_PaintContext* pc = MWindow->getPaintContext();
       //uint32_t counter = pc->counter;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
-      uint32_t index = AParameter->getWidgetIndex();
       if (widget) {
         sat_param_t normalized_value = AParameter->normalize(AValue);
+        uint32_t index = AParameter->getWidgetIndex();
         widget->setValue(normalized_value,index);
+
+        SAT_Print("index %i normalized_value ¤.3f\n",index,normalized_value);
+
         //widget->update();
         //parentRedraw();
-        widget->do_widget_redraw(widget);
+        widget->do_widget_redraw(widget,index,0);
       }
     }
   }
@@ -149,7 +152,7 @@ public:
         widget->setModulation(normalized_value);
         //widget->update();
         //widget->parentRedraw();
-        widget->do_widget_redraw(widget);
+        widget->do_widget_redraw(widget,0,0);
       }
     }
   }
@@ -159,11 +162,11 @@ public: // window listener
 //------------------------------
 
 
-  void on_windowListener_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
+  void on_windowListener_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
     if (MListener) {
       //SAT_Print("%s\n",AWidget->getName());
-      sat_param_t value = AWidget->getValue();
-      SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter();
+      sat_param_t value = AWidget->getValue(AIndex);
+      SAT_Parameter* parameter = (SAT_Parameter*)AWidget->getParameter(AIndex);
       if (parameter) {
         // widget value = 0..1
         double v = parameter->denormalize(value);

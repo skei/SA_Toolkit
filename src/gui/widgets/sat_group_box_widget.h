@@ -207,16 +207,16 @@ public:
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0) override {
+  void do_widget_update(SAT_Widget* ASender, uint32_t AIndex, uint32_t AMode) override {
     if (ASender == MTitleBar) {
       if (MClosable) {
-        SAT_Widget::do_widget_update(this,AMode);
+        SAT_Widget::do_widget_update(this,0,AMode);
         if (MTitleBar->getValue() >= 0.5f) open();
         else close();
       }
     }
     else {
-      SAT_Widget::do_widget_update(ASender,AMode);
+      SAT_Widget::do_widget_update(ASender,AIndex,AMode);
     }
   }
   
@@ -225,14 +225,14 @@ public:
   // redrawing the button click resulted in redraw bugs..
   // it will be redrawn as part of the entire groupbox..
 
-  void do_widget_redraw(SAT_Widget* ASender) override {
+  void do_widget_redraw(SAT_Widget* ASender, uint32_t AIndex, uint32_t AMode) override {
     if (ASender == MTitleBar) {
 //      SAT_Print("\n");
 //      SAT_Widget::do_widget_redraw(this);
 //      redrawParent();
     }
     else {
-      SAT_Widget::do_widget_redraw(ASender);
+      SAT_Widget::do_widget_redraw(ASender,AIndex,AMode);
     }
   }
 

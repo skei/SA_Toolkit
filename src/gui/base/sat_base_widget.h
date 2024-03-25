@@ -73,9 +73,9 @@ public: // on_ (downwards)
 public: // do_ (upwards)
 //------------------------------
 
-  virtual void do_widget_update(SAT_BaseWidget* AWidget, uint32_t AMode=0) {}
-  virtual void do_widget_redraw(SAT_BaseWidget* AWidget) {}
-  virtual void do_widget_realign(SAT_BaseWidget* AWidget) {}
+  virtual void do_widget_update(SAT_BaseWidget* AWidget, uint32_t AIndex, uint32_t AMode) {}
+  virtual void do_widget_redraw(SAT_BaseWidget* AWidget, uint32_t AIndex, uint32_t AMode) {}
+  virtual void do_widget_realign(SAT_BaseWidget* AWidget, uint32_t AMode) {}
   virtual void do_widget_setCursor(SAT_BaseWidget* AWidget, int32_t ACursor) {}
   virtual void do_widget_setHint(SAT_BaseWidget* AWidget, const char* AHint) {}
   virtual void do_widget_setModal(SAT_BaseWidget* AWidget) {}

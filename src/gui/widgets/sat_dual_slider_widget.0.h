@@ -464,7 +464,7 @@ public:
     //SAT_Print("MHoverEdge %i\n",MHoverEdge);
     if ((MHoverEdge != 0) && (!MIsDragging)) {
       MHoverEdge = 0;
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
     }
   }
 

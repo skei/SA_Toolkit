@@ -134,7 +134,7 @@ public:
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* ASender, uint32_t AMode=0) override {
+  void do_widget_update(SAT_Widget* ASender, uint32_t AIndex, uint32_t AMode) override {
     bool push = MPushOther;
     bool stop = MStopOther;
     if (AMode == SAT_STATE_SHIFT) push = true;
@@ -149,8 +149,8 @@ public:
 // !!!
           //MDragValue2->parentUpdate();
           //MDragValue2->parentRedraw();
-          do_widget_update(MDragValue2,AMode);  // parent...
-          do_widget_redraw(MDragValue2);
+          do_widget_update(MDragValue2,0,AMode);  // parent...
+          do_widget_redraw(MDragValue2,0,0);
 
         }
         else if (stop) {
@@ -169,8 +169,8 @@ public:
 // !!!
           //MDragValue1->parentUpdate();
           //MDragValue1->parentRedraw();
-          do_widget_update(MDragValue1);  // parent...
-          do_widget_redraw(MDragValue1);
+          do_widget_update(MDragValue1,0,0);  // parent...
+          do_widget_redraw(MDragValue1,0,0);
 
         }
         else if (stop) {
@@ -180,7 +180,7 @@ public:
         }
       }
     }
-    SAT_PanelWidget::do_widget_update(ASender);
+    SAT_PanelWidget::do_widget_update(ASender,0,0);
   }
   
   //void do_widgetListener_redraw(SAT_Widget* ASender, uint32_t AMode, uint32_t AIndex=0) override {

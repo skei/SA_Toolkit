@@ -72,7 +72,7 @@ public:
       setTextColor(MHoverTextColor);
       setBackgroundColor(MHoverBackgroundColor);
       //parentRedraw();
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
     //}
   }
 
@@ -88,7 +88,7 @@ public:
       setTextColor(MSavedTextColor);
       setBackgroundColor(MSavedBackgroundColor);
       //parentRedraw();
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
     }
   }
 

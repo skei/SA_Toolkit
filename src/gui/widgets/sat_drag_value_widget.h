@@ -27,6 +27,7 @@ private:
   double    MPreviousYpos     = 0.0;
   bool      MWaitingForDrag   = false;
   double    MDragValue        = 0.0;
+  uint32_t  MDragIndex        = 0;
   uint32_t  MDragDirection    = SAT_DIRECTION_UP;
   double    MDragSensitivity  = 0.001;
   double    MShiftSensitivity = 0.1;
@@ -213,12 +214,14 @@ public:
 //SAT_Print("index %i\n",index);
 
       if (index < 0) return;
-      selectValue(index);
-      double value = getSelectedValue();
+      //selectValue(index);
+      //double value = getSelectedValue();
+      double value = getValue(index);
 
 //SAT_Print("index %i value %.2f\n",index,value);
 
       MDragValue = value;
+      MDragIndex = index;
       MPreviousXpos = AXpos;
       MPreviousYpos = AYpos;
       MWaitingForDrag = true;
@@ -230,7 +233,7 @@ public:
   void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       setInteracting(false);
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
       MIsDragging = false;
       MWaitingForDrag = false;
       if (MAutoHideCursor) do_widget_setCursor(this,SAT_CURSOR_SHOW);
@@ -248,7 +251,8 @@ public:
       if (MAutoLockCursor) do_widget_setCursor(this,SAT_CURSOR_LOCK);
     }
     else if (MIsDragging) {
-      int32_t index = getSelectedValueIndex();    // selected
+      
+      int32_t index = MDragIndex; // getSelectedValueIndex();    // selected
       double value = MDragValue;
       int32_t index2 = 1 - index;                 // the other one
       double value2 = getValue(index2);
@@ -276,6 +280,7 @@ public:
           value -= (diff * sens);
           break;
       }
+
       MDragValue = SAT_Clamp(value,0,1);
       if (MQuantize && !(AState & SAT_STATE_SHIFT)) value = quantizeValue(value);
       if (MSnap && !(AState & SAT_STATE_SHIFT)) value = snapValue(value);
@@ -283,53 +288,55 @@ public:
 
       if (getNumValues() == 2) {
 
+SAT_Print("index %i value %.3f\n",index,value);
+
         if (index == 0) {
-          if (value > value2) {
-            if (AState & SAT_STATE_ALT) {
-              // push
-              // setValue(value,index);
-              // do_widget_update(this,AState);
-              // do_widget_redraw(this);
-            }
-            else {
-              // stop
-              value = value2;
-              // setValue(value,index);
-              // do_widget_update(this,AState);
-              // do_widget_redraw(this);
-            }
-          }
+          // if (value > value2) {
+          //   if (AState & SAT_STATE_ALT) {
+          //     // push
+          //     // setValue(value,index);
+          //     // do_widget_update(this,AState);
+          //     // do_widget_redraw(this);
+          //   }
+          //   else {
+          //     // stop
+          //     value = value2;
+          //     // setValue(value,index);
+          //     // do_widget_update(this,AState);
+          //     // do_widget_redraw(this);
+          //   }
+          // }
           setValue(value,index);
-          do_widget_update(this,AState);
-          do_widget_redraw(this);
+          do_widget_update(this,index,AState);
+          do_widget_redraw(this,index,0);
         }
 
         else if (index == 1) {
-          if (value < value2) {
-            if (AState & SAT_STATE_ALT) {
-              // push
-              // setValue(value,index);
-              // do_widget_update(this,AState);
-              // do_widget_redraw(this);
-            }
-            else {
-              // stop
-              value = value2;
-              // setValue(value,index);
-              // do_widget_update(this,AState);
-              // do_widget_redraw(this);
-            }
-          }
+          // if (value < value2) {
+          //   if (AState & SAT_STATE_ALT) {
+          //     // push
+          //     // setValue(value,index);
+          //     // do_widget_update(this,AState);
+          //     // do_widget_redraw(this);
+          //   }
+          //   else {
+          //     // stop
+          //     value = value2;
+          //     // setValue(value,index);
+          //     // do_widget_update(this,AState);
+          //     // do_widget_redraw(this);
+          //   }
+          // }
           setValue(value,index);
-          do_widget_update(this,AState);
-          do_widget_redraw(this);
+          do_widget_update(this,index,AState);
+          do_widget_redraw(this,index,0);
         }
       
       } // num values == 2
       else {
         setValue(value,index);
-        do_widget_update(this,AState);
-        do_widget_redraw(this);
+        do_widget_update(this,index,AState);
+        do_widget_redraw(this,index,0);
       }
     } // dragging
     

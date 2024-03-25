@@ -159,33 +159,33 @@ public:
     
     fx1_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+10,      40, 40 ), "%", 0.0 );
     fx1_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+10,      95, 18 ), "FX1", fx_menu, this);
-    fx1_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+32,      18, 18 ), "fx1 arg1" );
-    fx1_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+32,      18, 18 ), "fx1 arg2" );
-    fx1_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+32,      18, 18 ), "fx1 arg3" );
+    fx1_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+32,      18, 18 ), "fx1 arg1", 0.5 );
+    fx1_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+32,      18, 18 ), "fx1 arg2", 0.5 );
+    fx1_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+32,      18, 18 ), "fx1 arg3", 0.5 );
 
     fx2_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+50+10,   40, 40 ), "%", 0.0 );
     fx2_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+50+10,   95, 18 ), "FX2", fx_menu, this);
-    fx2_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+50+32,   18, 18 ), "fx2 arg1" );
-    fx2_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+50+32,   18, 18 ), "fx2 arg2"  );
-    fx2_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+50+32,   18, 18 ), "fx2 arg3" );
+    fx2_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+50+32,   18, 18 ), "fx2 arg1", 0.5 );
+    fx2_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+50+32,   18, 18 ), "fx2 arg2", 0.5  );
+    fx2_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+50+32,   18, 18 ), "fx2 arg3", 0.5 );
 
     fx3_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+100+10,  40, 40 ), "%", 0.0 );
     fx3_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+100+10,  95, 18 ), "FX3", fx_menu, this);
-    fx3_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+100+32,  18, 18 ), "fx3 arg1" );
-    fx3_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+100+32,  18, 18 ), "fx3 arg2" );
-    fx3_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+100+32,  18, 18 ), "fx3 arg3" );
+    fx3_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+100+32,  18, 18 ), "fx3 arg1", 0.5 );
+    fx3_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+100+32,  18, 18 ), "fx3 arg2", 0.5 );
+    fx3_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+100+32,  18, 18 ), "fx3 arg3", 0.5 );
 
     fx4_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+150+10,  40, 40 ), "%", 0.0 );
     fx4_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+150+10,  95, 18 ), "FX4", fx_menu, this);
-    fx4_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+150+32,  18, 18 ), "fx4 arg1" );
-    fx4_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+150+32,  18, 18 ), "fx4 arg2" );
-    fx4_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+150+32,  18, 18 ), "fx4 arg3" );
+    fx4_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+150+32,  18, 18 ), "fx4 arg1", 0.5 );
+    fx4_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+150+32,  18, 18 ), "fx4 arg2", 0.5 );
+    fx4_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+150+32,  18, 18 ), "fx4 arg3", 0.5 );
 
     fx5_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+200+10,  40, 40 ), "%", 0.0 );
     fx5_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+200+10,  95, 18 ), "FX5", fx_menu, this);
-    fx5_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+200+32,  18, 18 ), "fx5 arg1" );
-    fx5_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+200+32,  18, 18 ), "fx5 arg2" );
-    fx5_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+200+32,  18, 18 ), "fx5 arg3" );
+    fx5_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+200+32,  18, 18 ), "fx5 arg1", 0.5 );
+    fx5_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+200+32,  18, 18 ), "fx5 arg2", 0.5 );
+    fx5_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+200+32,  18, 18 ), "fx5 arg3", 0.5 );
 
     // range
     

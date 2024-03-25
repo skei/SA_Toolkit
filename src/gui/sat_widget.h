@@ -148,11 +148,14 @@ public:
   virtual void                setValue(double AValue, uint32_t AIndex=0)        { MValues[AIndex] = AValue; }
   virtual void                setModulation(double AValue, uint32_t AIndex=0)   { MModulations[AIndex] = AValue; }
 
+  // for debugging
+  // virtual void setValue(double AValue, uint32_t AIndex=0) {
+  //   SAT_Print("%i - %.3f\n",AIndex,AValue);
+  //   MValues[AIndex] = AValue;
+  // }
+
   virtual uint32_t            getNumValues()                                    { return MNumValues; }
   virtual void                setNumValues(uint32_t ANum)                       { MNumValues = ANum; }
-
-
-
 
   // rect
 
@@ -232,7 +235,7 @@ public:
   // tell parent to realign its children
 
   virtual void realignParent() {
-    if (MParent) MParent->do_widget_realign(MParent);
+    if (MParent) MParent->do_widget_realign(MParent,0);
   }
 
   //----------
@@ -240,7 +243,7 @@ public:
   // tell parent to redraw itself (and its children)
 
   virtual void redrawParent() {
-    if (MParent) MParent->do_widget_redraw(MParent);
+    if (MParent) MParent->do_widget_redraw(MParent,0,0);
   }
 
   //----------
@@ -777,16 +780,16 @@ public: // do_ (upwards)
   // widget value have changed
   // (redrawing is handled separately)
 
-  virtual void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=0) {
-    if (MParent) MParent->do_widget_update(AWidget,AMode);
+  virtual void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) {
+    if (MParent) MParent->do_widget_update(AWidget,AIndex,AMode);
   }
 
   //----------
 
   // widget needs to be redrawn for some reason
 
-  virtual void do_widget_redraw(SAT_Widget* AWidget) {
-    if (MParent) MParent->do_widget_redraw(AWidget);
+  virtual void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) {
+    if (MParent) MParent->do_widget_redraw(AWidget,AIndex,AMode);
   }
 
   //----------
@@ -797,14 +800,14 @@ public: // do_ (upwards)
   // (if we want the realign message to reach the root, we must set the sender as null)
   // (why/when do we need that?)
 
-  virtual void do_widget_realign(SAT_Widget* AWidget) {
+  virtual void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode) {
     //if (MParent) MParent->do_widget_realign(AWidget);
     //if (AWidget) {
     //  realignChildWidgets();
     //  do_widget_redraw(this);
     //}
     //else {
-      if (MParent) MParent->do_widget_realign(this);
+      if (MParent) MParent->do_widget_realign(this,0);
     //}
   }
 

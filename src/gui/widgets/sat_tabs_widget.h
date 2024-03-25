@@ -115,15 +115,15 @@ public:
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
     if (AWidget == MHeader) {
       int32_t sel = MHeader->getSelected();
       MPages->setPage(sel/*,true*/);
       MPages->realignChildWidgets();
-      do_widget_redraw(MPages);
+      do_widget_redraw(MPages,0,0);
       //redrawParent();
     }
-    SAT_Widget::do_widget_update(AWidget,AMode);
+    SAT_Widget::do_widget_update(AWidget,AIndex,AMode);
   }
 
 };

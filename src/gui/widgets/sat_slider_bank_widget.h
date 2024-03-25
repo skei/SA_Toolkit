@@ -125,7 +125,7 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
 
       MSliderValues[i] = SAT_Clamp(v,0,1);
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
 
 //      if (Options.autoHideCursor) {
 //        do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
@@ -160,11 +160,11 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
       MSliderValues[index] = SAT_Clamp(v,0,1);
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
     }
     else {
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
     }
   }
 
@@ -176,7 +176,7 @@ public:
     //SWidget::on_leave(AWidget);
     if (MHoverSlider >= 0) {
       MHoverSlider = -1;
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
     }
     //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
     //if (flags.autoHint) do_widgetListener_setHint(this,"");

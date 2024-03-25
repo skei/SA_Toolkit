@@ -92,21 +92,24 @@ public:
         if (mrect.h <= 0.0) return;
         // bar
         painter->setFillColor(MSliderBarColor);
-        SAT_Parameter* param = (SAT_Parameter*)getParameter();
+
+        SAT_Parameter* param1 = (SAT_Parameter*)getParameter();
+        SAT_Parameter* param2 = (SAT_Parameter*)getParameter(1);
 
         double value1 = 0.0;
-        if (param) value1 = param->getNormalizedValue();
-        else value1 = getValue();
-        //else value1 = getSelectedValue();
+        if (param1) value1 = param1->getNormalizedValue();
+        else value1 = getValue(0);
 
 //
 
         if (getNumValues() == 2) {
 
           double value2 = 0.0;
-          if (param) value2 = param->getNormalizedValue();
+          if (param2) value2 = param2->getNormalizedValue();
           else value2 = getValue(1);
           //else value2 = getSelectedValue();
+
+//SAT_Print("value1 %.3f value2 %.3f\n",value1,value2);
 
           if (MDrawSliderEdge && (MSliderEdgeWidth > 0)) {
 
@@ -171,25 +174,31 @@ public:
           } // edge
           
           // modulation
-          double modulation = 0.0;//value1 + getModulation();
-          if (param) modulation = param->getNormalizedModulation();
-          else modulation = 0.0;//getModulation();
-          modulation = SAT_Clamp(modulation + value1,0,1);
+
+          // left 
+
+          double modulation1 = 0.0;//value1 + getModulation();
+          if (param1) modulation1 = param1->getNormalizedModulation();
+          else modulation1 = 0.0;//getModulation();
+          modulation1 = SAT_Clamp(modulation1 + value1,0,1);
+
           if (MDrawModulation) {
+
             //double S = getWindowScale();
             mrect = getRect(); // reset
             SAT_Rect modulationoffset = MModulationOffset;
             modulationoffset.scale(S);
             mrect.shrink(modulationoffset);
+
             double v1 = 0;
             double v2 = 0;
-            if (modulation < value1) {
-              v1 = modulation;
+            if (modulation1 < value1) {
+              v1 = modulation1;
               v2 = value1;
             }
-            else if (modulation > value1) {
+            else if (modulation1 > value1) {
               v1 = value1;
-              v2 = modulation;
+              v2 = modulation1;
             }
             double x1 = mrect.x + (v1 * mrect.w);
             double w2 = (v2 - v1) * mrect.w;

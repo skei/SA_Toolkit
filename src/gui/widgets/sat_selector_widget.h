@@ -184,7 +184,7 @@ public: // widget
         //SAT_Print("%s\n",text);
         setText(text);
         //redrawParent();
-        do_widget_redraw(this);
+        do_widget_redraw(this,0,0);
       }
     }
   }
@@ -206,7 +206,7 @@ public: // menu listener
     if (param) {
       double value = param->normalize(AIndex);
       setValue(value);
-      do_widget_update(this);
+      do_widget_update(this,0,0);
     }
     else {
       SAT_MenuWidget* menuwidget = getMenuWidget();
@@ -216,7 +216,7 @@ public: // menu listener
         //SAT_Print("AIndex %i num %i -> v %f\n",AIndex,num,v);
         setValue(v);
       }
-      do_widget_update(this);
+      do_widget_update(this,0,0);
     }
     
     if (MDrawSelectedText) {
@@ -225,7 +225,7 @@ public: // menu listener
       //SAT_Print("%s\n",text);
       setText(text);
       //redrawParent();
-      do_widget_redraw(this);
+      do_widget_redraw(this,0,0);
     }
   }
 

@@ -313,6 +313,9 @@ public:
     setBipolar(true);
     setSnap(true);
     setSnapPos(0.5);
+
+    //setDrawParamText(false);
+
   }
   
 };
@@ -342,6 +345,9 @@ public:
     setArcThickness(6);
     //setSnap(true);
     //setSnapPos(0.5);
+    setDrawParamText(false);
+    //setTextAlignment(SAT_TEXT_ALIGN_CENTER);
+
   }
   
 };
@@ -371,6 +377,8 @@ public:
     setArcValueColor(0.5);
     //setSnap(true);
     //setSnapPos(0.5);
+    setDrawParamText(false);
+
   }
   
 };
@@ -405,23 +413,37 @@ public:
 //----------
 
 class sa_botage_dualslider_widget
-: public SAT_DualSliderWidget {
+//: public SAT_DualSliderWidget {
+: public SAT_SliderWidget {
 
 public:
 
   sa_botage_dualslider_widget(SAT_Rect ARect, const char* AText, double AValue1, double AValue2)
-  : SAT_DualSliderWidget(ARect,AText,AValue1,AValue2) {
+  : SAT_SliderWidget(ARect,AText,AValue1) {
+
+    setNumValues(2);
+    setValue(AValue2,1);
+
     setFillBackground(true);
     setBackgroundColor(0.25);
     setDrawBorder(false);
     //setBorderColor(0.2);
+
     setTextColor(0);
     setTextSize(7);
-    setValueColors(0,0);
-    setValueSizes(8,8);
-    setValueOffsets(SAT_Rect(2,0,0,0),SAT_Rect(0,0,2,0));
+
+    setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);    
+    setDragDirection(SAT_DIRECTION_RIGHT);    
+
+    setValueColor(0);
+    setValueSize(8);
+    setValueOffset(SAT_Rect(2,0,2,0));
+
     setSliderBarColor(0.3);
     setSliderEdgeColor(0.5);
+
+    setDrawParamText(false);
+    setTextAlignment(SAT_TEXT_ALIGN_CENTER);
   }
   
 };
@@ -450,6 +472,9 @@ public:
     setCellActiveBackgroundColor(0.4);
     setCellDrawBorder(false);
     setCellBorderColor(0.3);
+
+    setValueIsBits(true,8);
+
     
   }
   

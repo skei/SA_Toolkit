@@ -804,21 +804,21 @@ public: // widget owner
 public: // widget listener
 //------------------------------
 
-  void on_widgetListener_update(SAT_Widget* AWidget, uint32_t AMode=0) override {
+  void on_widgetListener_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
     //SAT_Print("%s\n",AWidget->getName());
-    if (MListener) MListener->on_windowListener_update(AWidget,AMode);
+    if (MListener) MListener->on_windowListener_update(AWidget,AIndex,AMode);
   }
 
   //----------
 
-  void on_widgetListener_redraw(SAT_Widget* AWidget) override {
+  void on_widgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
     //SAT_Print("%s\n",AWidget->getName());
     markWidgetDirtyFromGui(AWidget);
   }
 
   //----------
 
-  void on_widgetListener_realign(SAT_Widget* AWidget) override {
+  void on_widgetListener_realign(SAT_Widget* AWidget, uint32_t AMode) override {
     //SAT_Print("%s\n",AWidget->getName());
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
