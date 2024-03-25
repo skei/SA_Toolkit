@@ -162,7 +162,7 @@ public:
   
               //MTarget->do_widgetListener_resized(this,deltax,deltay);
               
-//              MTarget->do_widget_resized(this,deltax,deltay);
+              MTarget->do_widget_resized(this,deltax,deltay);
 
               //parentNotify(SAT_WIDGET_NOTIFY_REALIGN,0);
               //do_widgetListener_realign(this);

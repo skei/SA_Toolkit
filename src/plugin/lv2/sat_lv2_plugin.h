@@ -110,6 +110,7 @@ public:
     MClapPlugin->init(MClapPlugin);
     MPlugin = (SAT_Plugin*)MClapPlugin->plugin_data;
     //SAT_Print("MPlugin %p\n",MPlugin);
+    MPlugin->setPluginFormat("LV2");
     
     // ports
     

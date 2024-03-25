@@ -34,6 +34,7 @@ public:
 //------------------------------
 
   bool init() final {
+
     registerDefaultExtensions();
     appendStereoAudioInputPort("Input");
     appendStereoAudioOutputPort("Output");
@@ -54,7 +55,10 @@ public:
     appendParameter( new SAT_IntParameter(  "ip10 (stepped) -5..5", 0, -5, 5, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
     appendParameter( new SAT_IntParameter(  "ip11 enum -5..5",      0, -5, 5, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED | CLAP_PARAM_IS_ENUM ));
 
-    setInitialEditorSize( 200, 255, 3.0 );
+    appendParameter( new SAT_Parameter(     "pm0 0..5",              0, 0, 5, CLAP_PARAM_IS_AUTOMATABLE ));
+    appendParameter( new SAT_Parameter(     "pm1 (stepped) 0..5",    0, 0, 5, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
+
+    setInitialEditorSize( 430, 270, 3.0 );
     return SAT_Plugin::init();
   }
 
@@ -132,6 +136,18 @@ public:
     // knob->setTextSize(30);
     // knob->setValueSize(45);
     // AEditor->connect( knob, getParameter(0) );
+
+    //
+
+    SAT_SliderWidget* sm0 = new SAT_SliderWidget( SAT_Rect(200,10,180,15), "", 0 );
+    root->appendChildWidget(sm0);
+    sm0->setNumValues(2);
+    sm0->setValue(0.75,1);
+    sm0->setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);    
+    sm0->setDragDirection(SAT_DIRECTION_RIGHT);    
+    //AEditor->connect( sm0, getParameter(12)   );
+    //AEditor->connect( sm0, getParameter(13),1 );
+
   }
 
 };

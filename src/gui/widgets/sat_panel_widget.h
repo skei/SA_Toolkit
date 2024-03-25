@@ -94,7 +94,8 @@ protected:
   bool        MDrawValue                  = false;
   SAT_Color   MValueColor                 = SAT_White;
   double      MValueSize                  = 10.0;
-  uint32_t    MValueAlignment             = SAT_TEXT_ALIGN_RIGHT;
+  uint32_t    MValueAlignment1            = SAT_TEXT_ALIGN_RIGHT;
+  uint32_t    MValueAlignment2            = SAT_TEXT_ALIGN_RIGHT;
   SAT_Rect    MValueOffset                = {0,0,0,0};
   char        MValueText[256]             = {0};
   bool        MDrawValueDropShadow        = false;
@@ -122,6 +123,18 @@ public:
   }
 
   virtual ~SAT_PanelWidget() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setNumValues(uint32_t ANum) override {
+    if (ANum == 2) {
+      MValueAlignment1 = SAT_TEXT_ALIGN_LEFT;
+      MValueAlignment2 = SAT_TEXT_ALIGN_RIGHT;
+    }
+    SAT_Widget::setNumValues(ANum);
   }
 
 //------------------------------
@@ -297,7 +310,12 @@ public:
   virtual void        setDrawValue(bool ADraw=true)               { MDrawValue = ADraw; }
   virtual void        setValueColor(SAT_Color AColor)             { MValueColor = AColor; }
   virtual void        setValueSize(double ASize)                  { MValueSize = ASize; }
-  virtual void        setValueAlignment(uint32_t AAlign)          { MValueAlignment = AAlign; }
+
+  virtual void        setValueAlignment(uint32_t AAlign, uint32_t AIndex=0) {
+    if (AIndex==1) MValueAlignment2 = AAlign;
+    else MValueAlignment1 = AAlign;
+  }
+
   virtual void        setValueOffset(SAT_Rect AOffset)            { MValueOffset = AOffset; }
   virtual void        setDrawValueDropShadow(bool ADraw=true)     { MDrawValueDropShadow = ADraw; }
   virtual void        setValueDropShadowSize(double ASize)        { MValueDropShadowSize = ASize; }
@@ -617,7 +635,7 @@ public:
 
   //----------
 
-  virtual void drawValue(SAT_PaintContext* AContext) {
+  virtual void drawValue(SAT_PaintContext* AContext, uint32_t AIndex=0) {
     SAT_Assert(AContext);
     if (MDrawValue) {
       double S = AContext->scale;
@@ -630,18 +648,23 @@ public:
       if (mrect.w <= 0.0) return;
       if (mrect.h <= 0.0) return;
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
+
       if (param) {
-        double pv = getValue();
+        double pv = getValue(AIndex);
         double depv = param->denormalize(pv);
         const char* txt = param->valueToText(depv);
         strcpy(MValueText,txt);
       }
       else {
-        double v = getValue();
+        double v = getValue(AIndex);
         sprintf(MValueText,"%.2f",v);
       }
+
       painter->setTextSize(MValueSize*S);
-      SAT_Point p = painter->getTextPos(mrect,MValueText,MValueAlignment);
+      SAT_Point p;
+      if (AIndex==1) p = painter->getTextPos(mrect,MValueText,MValueAlignment2);
+      else p = painter->getTextPos(mrect,MValueText,MValueAlignment1);
+
       if (MDrawValueDropShadow) {
         painter->setFontBlur(MValueDropShadowSize);
         SAT_Color color = MValueDropShadowColor;
@@ -654,6 +677,7 @@ public:
       if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
       painter->setTextColor(color);
       painter->drawText(p.x, p.y, MValueText);
+
     }
   }
 

@@ -92,7 +92,7 @@ class SAT_Plugin
 private:
 //------------------------------
 
-  const char*                       MPluginFormat               = "";
+  const char*                       MPluginFormat               = "CLAP"; // default
 
   const clap_plugin_descriptor_t*   MDescriptor                 = nullptr;
   SAT_Host*                         MHost                       = nullptr;

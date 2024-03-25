@@ -1,8 +1,8 @@
 
 #include "plugin/sat_plugin.h"
-#include "audio/sat_voice_manager.h"
 
 #include "audio/sat_audio_math.h"
+#include "audio/sat_voice_manager.h"
 #include "audio/modulation/sat_exp_envelope.h"
 
 #if !defined (SAT_GUI_NOGUI)

@@ -24,6 +24,7 @@ struct SAT_WidgetLayout {
   SAT_Rect  inner_border    = {0,0,0,0};
   SAT_Rect  outer_border    = {0,0,0,0};
   SAT_Point spacing         = {0,0};
+  SAT_Rect  size_limit      = {-1,-1,-1,-1};
 };
 
 //----------
@@ -80,10 +81,12 @@ private:
 
   const char*         MHint                               = "";
 
+
   double              MValues[SAT_WIDGET_MAX_VALUES]      = {};
   double              MModulations[SAT_WIDGET_MAX_VALUES] = {};
   void*               MParameters[SAT_WIDGET_MAX_VALUES]  = {0};
 
+  uint32_t            MNumValues                          = 1;
   int32_t             MSelectedIndex                      = 0;
   uint32_t            MLastPainted                        = 0;
 
@@ -145,6 +148,12 @@ public:
   virtual void                setValue(double AValue, uint32_t AIndex=0)        { MValues[AIndex] = AValue; }
   virtual void                setModulation(double AValue, uint32_t AIndex=0)   { MModulations[AIndex] = AValue; }
 
+  virtual uint32_t            getNumValues()                                    { return MNumValues; }
+  virtual void                setNumValues(uint32_t ANum)                       { MNumValues = ANum; }
+
+
+
+
   // rect
 
   virtual SAT_Point           getPos()                                          { return SAT_Point(MRect.x,MRect.y); }
@@ -155,13 +164,14 @@ public:
   virtual SAT_Rect            getBaseRect()                                     { return MBaseRect; }
   virtual SAT_Rect            getContentRect()                                  { return MContentRect; }
   virtual SAT_Rect            getInitialRect()                                  { return MInitialRect; }
-//virtual SAT_Point           getLayoutOffset()                                 { return MLayoutOffset; }
+  virtual SAT_Point           getLayoutOffset()                                 { return MLayoutOffset; }
 
   virtual void                setPos(SAT_Point APos)                            { MRect.setPos(APos); }
   virtual void                setSize(SAT_Point ASize)                          { MRect.setSize(ASize); }
   virtual void                setRect(SAT_Rect ARect)                           { MRect = ARect; }
   virtual void                setBaseRect(SAT_Rect ARect)                       { MBaseRect = ARect; }
-//virtual void                setLayoutOffset(SAT_Point AOffset)                { MLayoutOffset = AOffset; }
+  virtual void                setLayoutOffset(SAT_Point AOffset)                { MLayoutOffset = AOffset; }
+  virtual void                addLayoutOffset(SAT_Point AOffset)                { MLayoutOffset += AOffset; }
 
   virtual void                setWidth(double AWidth)                           { MRect.w = AWidth; }
   virtual void                setHeight(double AHeight)                         { MRect.h = AHeight; }
@@ -175,15 +185,18 @@ public:
   virtual SAT_Rect            getLayoutInnerBorder()                            { return MLayout.inner_border; }
   virtual SAT_Rect            getLayoutOuterBorder()                            { return MLayout.outer_border; }
   virtual SAT_Point           getLayoutSpacing()                                { return MLayout.spacing; }
+  virtual SAT_Rect            getLayoutSizeLimit()                              { return MLayout.size_limit; }
 
   virtual void                setLayoutFlags(uint32_t AFlags)                   { MLayout.flags = AFlags; }
   virtual void                setLayoutInnerBorder(SAT_Rect ABorder)            { MLayout.inner_border = ABorder; }
   virtual void                setLayoutOuterBorder(SAT_Rect ABorder)            { MLayout.outer_border = ABorder; }
   virtual void                setLayoutSpacing(SAT_Point ASpacing)              { MLayout.spacing = ASpacing; }
+  virtual void                setLayoutSizeLimit(SAT_Rect ALimit)               { MLayout.size_limit = ALimit; }
 
   virtual bool                hasLayoutFlag(uint32_t AFlag)                     { return (MLayout.flags & AFlag); }
   virtual void                addLayoutFlag(uint32_t AFlag)                     { MLayout.flags |= AFlag; }
   virtual void                clearLayoutFlag(uint32_t AFlag)                   { MLayout.flags &= ~AFlag; }
+
 
   // state
 
@@ -352,10 +365,12 @@ public:
     //SAT_Rect mrect = getRect();
     SAT_Rect rect = ARect;
     setRect(ARect);
+
 rect.x -= MLayoutOffset.x;
 rect.y -= MLayoutOffset.y;
 //rect.x -= (MLayoutOffset.x * scale);
 //rect.y -= (MLayoutOffset.y * scale);
+
     rect.scale(1.0 / scale);
     setBaseRect(rect);
   }
@@ -479,6 +494,9 @@ rect.y -= MLayoutOffset.y;
         //child->setChildrenOffset(AOffsetX,AOffsetY);
         child->MRect.x += AOffsetX;
         child->MRect.y += AOffsetY;
+
+        // child->addLayoutOffset(AOffsetX,AOffsetY);
+
         child->scrollChildWidgets(AOffsetX,AOffsetY);
       }
     }
@@ -848,19 +866,23 @@ public: // do_ (upwards)
   // todo: this it's an upward/downward event, but called directly from one widget to another..
   // put all of this into resizeWidget.. handle similar to resiing window.. ???
   
-  //void do_widgetListener_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) override {
-  //  SAT_Rect mrect = getRect();
-  //  double S = getWindowScale();
-  //  mrect.w += ADeltaX;
-  //  mrect.h += ADeltaY;
-  //  if ((MMinWidth  >= 0) && (mrect.w < (MMinWidth  * S))) return;//mrect.w = (MMinWidth  * S);
-  //  if ((MMinHeight >= 0) && (mrect.h < (MMinHeight * S))) return;//mrect.h = (MMinHeight * S);
-  //  if ((MMaxWidth  >= 0) && (mrect.w > (MMaxWidth  * S))) return;//mrect.w = (MMaxWidth  * S);
-  //  if ((MMaxHeight >= 0) && (mrect.h > (MMaxHeight * S))) return;//mrect.h = (MMaxHeight * S);
-  //  setRectAndBasis(mrect);
-  //  //realignChildWidgets(true);
-  //  //parentRedraw();
-  //}
+  virtual void do_widget_resized(SAT_Widget* ASender, double ADeltaX, double ADeltaY) {
+    SAT_Rect mrect = getRect();
+    mrect.w += ADeltaX;
+    mrect.h += ADeltaY;
+    double S = getWindowScale();
+    double min_width  = MLayout.size_limit.x;
+    double min_height = MLayout.size_limit.y;
+    double max_width  = MLayout.size_limit.w;
+    double max_height = MLayout.size_limit.h;
+    if ((min_width  >= 0) && (mrect.w < (min_width  * S))) return;//mrect.w = (MMinWidth  * S);
+    if ((min_height >= 0) && (mrect.h < (min_height * S))) return;//mrect.h = (MMinHeight * S);
+    if ((max_width  >= 0) && (mrect.w > (max_width  * S))) return;//mrect.w = (MMaxWidth  * S);
+    if ((max_height >= 0) && (mrect.h > (max_height * S))) return;//mrect.h = (MMaxHeight * S);
+    setRectAndBase(mrect);
+    realignParent();
+    redrawParent();
+  }
 
 };
 

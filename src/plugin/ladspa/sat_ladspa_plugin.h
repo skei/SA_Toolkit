@@ -111,6 +111,7 @@ public:
     SAT_ClapPlugin* plugin = SAT_CreatePlugin(index,clap_descriptor,clap_host); // deleted in ladspa_cleanup()
     MClapPlugin = plugin->getClapPlugin();
     MPlugin = (SAT_Plugin*)MClapPlugin;
+    MPlugin->setPluginFormat("LADSPA");
     
     MClapPlugin->init(MClapPlugin);
     

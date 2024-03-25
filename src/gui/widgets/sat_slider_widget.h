@@ -85,9 +85,6 @@ public:
       sliderbaroffset.scale(S);
       mrect.shrink(sliderbaroffset);
 
-
-
-
       if ((MDrawDirection == SAT_DIRECTION_LEFT) || (MDrawDirection == SAT_DIRECTION_RIGHT)) {
         double sew05 = MSliderEdgeWidth * 0.5 * S;
         mrect.shrink(sew05,0,sew05,0);
@@ -96,70 +93,114 @@ public:
         // bar
         painter->setFillColor(MSliderBarColor);
         SAT_Parameter* param = (SAT_Parameter*)getParameter();
-        double value = 0.0;
-        if (param) value = param->getNormalizedValue();
-        else value = getValue();
+
+        double value1 = 0.0;
+        if (param) value1 = param->getNormalizedValue();
+        else value1 = getValue();
+        //else value1 = getSelectedValue();
+
+//
+
+        if (getNumValues() == 2) {
+
+          double value2 = 0.0;
+          if (param) value2 = param->getNormalizedValue();
+          else value2 = getValue(1);
+          //else value2 = getSelectedValue();
+
+          if (MDrawSliderEdge && (MSliderEdgeWidth > 0)) {
+
+            double x1 = mrect.x + (value1 * mrect.w);
+            double x2 = mrect.x + (value2 * mrect.w);
+            double w = x2 - x1;
+
+            x1 -= (MSliderEdgeWidth * 0.5 * S);
+            x2 -= (MSliderEdgeWidth * 0.5 * S);
+
+            // bar
+            if (w > 0) {
+              painter->fillRect(x1,mrect.y,w,mrect.h);
+            }            
+
+            // edge1
+            painter->setFillColor(MSliderEdgeColor);
+            painter->fillRect(x1,mrect.y,MSliderEdgeWidth*S,mrect.h);
+
+            // edge2
+            painter->setFillColor(MSliderEdgeColor);
+            painter->fillRect(x2,mrect.y,MSliderEdgeWidth*S,mrect.h);
+
+          }
+        }
+
+//
+
+
+        else {
         
-        if (isBipolar()) {
-          double v1 = 0.0;
-          double v2 = 0.0;
-          double bpc = getBipolarCenter();
-          if (value < bpc) {
-            v1 = value;
-            v2 = bpc;
+          if (isBipolar()) {
+            double v1 = 0.0;
+            double v2 = 0.0;
+            double bpc = getBipolarCenter();
+            if (value1 < bpc) {
+              v1 = value1;
+              v2 = bpc;
+            }
+            else if (value1 > bpc) {
+              v1 = bpc;
+              v2 = value1;
+            }
+            double x1 = mrect.x + (v1 * mrect.w);
+            double w2 = (v2 - v1) * mrect.w;
+            if (w2 > 0) painter->fillRect(x1,mrect.y,w2,mrect.h);
+            
           }
-          else if (value > bpc) {
-            v1 = bpc;
-            v2 = value;
-          }
-          double x1 = mrect.x + (v1 * mrect.w);
-          double w2 = (v2 - v1) * mrect.w;
-          if (w2 > 0) painter->fillRect(x1,mrect.y,w2,mrect.h);
+          else { // ! bipolar
+            double w2 = (mrect.w * value1);
+            if (w2 > 0) {
+              painter->fillRect(mrect.x,mrect.y,w2,mrect.h);
+            }
+          } // bipolar
           
+          // edge
+          if (MDrawSliderEdge && (MSliderEdgeWidth > 0)) {
+            double x = mrect.x + (value1 * mrect.w);
+            x -= (MSliderEdgeWidth * 0.5 * S);
+            painter->setFillColor(MSliderEdgeColor);
+            painter->fillRect(x,mrect.y,MSliderEdgeWidth*S,mrect.h);
+          } // edge
+          
+          // modulation
+          double modulation = 0.0;//value1 + getModulation();
+          if (param) modulation = param->getNormalizedModulation();
+          else modulation = 0.0;//getModulation();
+          modulation = SAT_Clamp(modulation + value1,0,1);
+          if (MDrawModulation) {
+            //double S = getWindowScale();
+            mrect = getRect(); // reset
+            SAT_Rect modulationoffset = MModulationOffset;
+            modulationoffset.scale(S);
+            mrect.shrink(modulationoffset);
+            double v1 = 0;
+            double v2 = 0;
+            if (modulation < value1) {
+              v1 = modulation;
+              v2 = value1;
+            }
+            else if (modulation > value1) {
+              v1 = value1;
+              v2 = modulation;
+            }
+            double x1 = mrect.x + (v1 * mrect.w);
+            double w2 = (v2 - v1) * mrect.w;
+            if (w2 > 0) {
+              painter->setFillColor(MModulationColor);
+              painter->fillRect(x1,mrect.y,w2,mrect.h);
+            }
+          }
+
         }
-        else { // ! bipolar
-          double w2 = (mrect.w * value);
-          if (w2 > 0) {
-            painter->fillRect(mrect.x,mrect.y,w2,mrect.h);
-          }
-        } // bipolar
-        
-        // edge
-        if (MDrawSliderEdge && (MSliderEdgeWidth > 0)) {
-          double x = mrect.x + (value * mrect.w);
-          x -= (MSliderEdgeWidth * 0.5 * S);
-          painter->setFillColor(MSliderEdgeColor);
-          painter->fillRect(x,mrect.y,MSliderEdgeWidth*S,mrect.h);
-        } // edge
-        
-        // modulation
-        double modulation = 0.0;//value + getModulation();
-        if (param) modulation = param->getNormalizedModulation();
-        else modulation = 0.0;//getModulation();
-        modulation = SAT_Clamp(modulation + value,0,1);
-        if (MDrawModulation) {
-          //double S = getWindowScale();
-          mrect = getRect(); // reset
-          SAT_Rect modulationoffset = MModulationOffset;
-          modulationoffset.scale(S);
-          mrect.shrink(modulationoffset);
-          double v1 = 0;
-          double v2 = 0;
-          if (modulation < value) {
-            v1 = modulation;
-            v2 = value;
-          }
-          else if (modulation > value) {
-            v1 = value;
-            v2 = modulation;
-          }
-          double x1 = mrect.x + (v1 * mrect.w);
-          double w2 = (v2 - v1) * mrect.w;
-          if (w2 > 0) {
-            painter->setFillColor(MModulationColor);
-            painter->fillRect(x1,mrect.y,w2,mrect.h);
-          }
-        }
+
       }
 
 
@@ -178,21 +219,21 @@ public:
         // bar
         painter->setFillColor(MSliderBarColor);
         SAT_Parameter* param = (SAT_Parameter*)getParameter();
-        double value = 0.0;
-        if (param) value = param->getNormalizedValue();
-        else value = getValue();
+        double value1 = 0.0;
+        if (param) value1 = param->getNormalizedValue();
+        else value1 = getValue();
         
         if (isBipolar()) {
 //          double v1 = 0.0;
 //          double v2 = 0.0;
 //          double bpc = getBipolarCenter();
-//          if (value < bpc) {
-//            v1 = value;
+//          if (value1 < bpc) {
+//            v1 = value1;
 //            v2 = bpc;
 //          }
-//          else if (value > bpc) {
+//          else if (value1 > bpc) {
 //            v1 = bpc;
-//            v2 = value;
+//            v2 = value1;
 //          }
 //          double x1 = mrect.x + (v1 * mrect.w);
 //          double w2 = (v2 - v1) * mrect.w;
@@ -201,7 +242,7 @@ public:
         }
         else { // ! bipolar
 
-          double h2 = (mrect.h * value);
+          double h2 = (mrect.h * value1);
           if (h2 > 0) {
             painter->fillRect(mrect.x,mrect.y2() - h2,mrect.w,h2);
           }
@@ -210,17 +251,17 @@ public:
         
         // edge
         if (MDrawSliderEdge && (MSliderEdgeWidth > 0)) {
-          double y = mrect.y2() - (value * mrect.h);
+          double y = mrect.y2() - (value1 * mrect.h);
           y -= (MSliderEdgeWidth * 0.5 * S);
           painter->setFillColor(MSliderEdgeColor);
           painter->fillRect(mrect.x,y,mrect.w,MSliderEdgeWidth*S);
         } // edge
         
 //        // modulation
-//        double modulation = 0.0;//value + getModulation();
+//        double modulation = 0.0;//value1 + getModulation();
 //        if (param) modulation = param->getNormalizedModulation();
 //        else modulation = getModulation();
-//        modulation = SAT_Clamp(modulation + value,0,1);
+//        modulation = SAT_Clamp(modulation + value1,0,1);
 //        if (MDrawModulation) {
 //          //double S = getWindowScale();
 //          mrect = getRect(); // reset
@@ -229,12 +270,12 @@ public:
 //          mrect.shrink(modulationoffset);
 //          double v1 = 0;
 //          double v2 = 0;
-//          if (modulation < value) {
+//          if (modulation < value1) {
 //            v1 = modulation;
-//            v2 = value;
+//            v2 = value1;
 //          }
-//          else if (modulation > value) {
-//            v1 = value;
+//          else if (modulation > value1) {
+//            v1 = value1;
 //            v2 = modulation;
 //          }
 //          double x1 = mrect.x + (v1 * mrect.w);
@@ -261,7 +302,13 @@ public:
     fillBackground(AContext);
     drawSliderBar(AContext);
     drawText(AContext);
-    drawValue(AContext);
+    if (getNumValues() == 2) {
+      drawValue(AContext,0);
+      drawValue(AContext,1);
+    }
+    else {
+      drawValue(AContext);
+    }
     paintChildWidgets(AContext);
     drawBorder(AContext);
     drawHostIndicators(AContext);

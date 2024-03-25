@@ -81,8 +81,8 @@ public:
 public:
 //------------------------------
 
-  virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter) {
-    AWidget->setParameter(AParameter);
+  virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AParamIndex=0) {
+    AWidget->setParameter(AParameter,AParamIndex);
     AParameter->setWidget(AWidget);
   }
 

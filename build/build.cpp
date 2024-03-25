@@ -1,6 +1,6 @@
 /*
-  in '/bin':  ../build/compile -i ../build/build.cpp -o build.exe -f exe -g x11 -d
-  in console: nc -U -l -k /tmp/sat.socket
+  in '/bin'  : ../build/compile -i ../build/build.cpp -o build.exe -f exe -g x11 -d
+  in console : nc -U -l -k /tmp/sat.socket
 */
 
 //#define SAT_DEBUG_PRINT_SOCKET
@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------
 
 //#include "../plugins/templates/analyzer.h"
-  #include "../plugins/templates/audio_effect.h"
+//#include "../plugins/templates/audio_effect.h"
 //#include "../plugins/templates/instrument.h"
 //#include "../plugins/templates/note_detector.h"
 //#include "../plugins/templates/note_effect.h"
@@ -72,6 +72,7 @@
 //#include "../plugins/minimal.h"
 //#include "../plugins/standalone.h"
 //#include "../plugins/demo.h"
+  #include "../plugins/demo2.h"
 //#include "../plugins/interceptor.h"
 
 //#include "../plugins/test/test_params.h"

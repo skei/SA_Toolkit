@@ -40,7 +40,7 @@ private:
   uint32_t  MQuantizeSteps    = 1;
   bool      MBipolar          = false;
   double    MBipolarCenter    = 0.5;
-  uint32_t  MNumValues        = 0;
+  //uint32_t  MNumValues        = 0;
   double    MHoverDistance    = 0.01;
 
 //------------------------------
@@ -106,16 +106,16 @@ public:
   virtual void    setBipolarCenter(double APos)       { MBipolarCenter = APos; }
   virtual bool    isBipolar()                         { return MBipolar; }
   virtual double  getBipolarCenter()                  { return MBipolarCenter; }
-  virtual void    setNumValues(uint32_t ANum)         { MNumValues = ANum; }
+  //virtual void    setNumValues(uint32_t ANum)         { MNumValues = ANum; }
   virtual void    setHoverDistance(double ADist)      { MHoverDistance = ADist; }
   
 //------------------------------
 public:
 //------------------------------
 
-  virtual uint32_t  getNumValues()  {
-    return MNumValues;
-  }
+  // virtual uint32_t  getNumValues()  {
+  //   return MNumValues;
+  // }
 
 //------------------------------
 private:
@@ -155,7 +155,8 @@ private:
   // todo: ..ClosestValueHorizontal
 
   int32_t findClosestValue(double AXpos, double AYpos, bool AHorizontal=true) {
-    if (MNumValues == 0) return 0;
+    if (getNumValues() == 0) return 0;
+    else if (getNumValues() == 1) return getValue();
     else {
       double S = getWindowScale();
       SAT_Rect mrect = getRect();
@@ -179,7 +180,7 @@ private:
       double min_dist = range;
       int32_t index = -1;
 
-      for (uint32_t i=0; i<MNumValues; i++) {
+      for (uint32_t i=0; i<getNumValues(); i++) {
         double val = getValue(i);
         double dist = abs(pos - val);
         if (dist < hoverdist) {
@@ -207,10 +208,16 @@ public:
       setInteracting(true);
       MClickedYpos  = AYpos;
       MClickedYpos  = AYpos;
-      int32_t index = findClosestValue(AXpos,AYpos);
+      int32_t index = findClosestValue(AXpos,AYpos,true);
+
+//SAT_Print("index %i\n",index);
+
       if (index < 0) return;
       selectValue(index);
       double value = getSelectedValue();
+
+//SAT_Print("index %i value %.2f\n",index,value);
+
       MDragValue = value;
       MPreviousXpos = AXpos;
       MPreviousYpos = AYpos;
@@ -241,10 +248,13 @@ public:
       if (MAutoLockCursor) do_widget_setCursor(this,SAT_CURSOR_LOCK);
     }
     else if (MIsDragging) {
-      int32_t index = getSelectedValueIndex();
+      int32_t index = getSelectedValueIndex();    // selected
       double value = MDragValue;
-      int32_t index2 = 1 - index;
+      int32_t index2 = 1 - index;                 // the other one
       double value2 = getValue(index2);
+
+//SAT_Print("index %i value %.2f index2 %i value2 %.2f\n",index,value,index2,value2);
+
       double sens = MDragSensitivity;
       if (AState & SAT_STATE_CTRL) sens *= MShiftSensitivity;
       double diff = 0;
@@ -270,34 +280,49 @@ public:
       if (MQuantize && !(AState & SAT_STATE_SHIFT)) value = quantizeValue(value);
       if (MSnap && !(AState & SAT_STATE_SHIFT)) value = snapValue(value);
       value = SAT_Clamp(value,0,1);
-      if (MNumValues == 2) {
+
+      if (getNumValues() == 2) {
+
         if (index == 0) {
           if (value > value2) {
             if (AState & SAT_STATE_ALT) {
               // push
-              setValue(value,index2);
-              do_widget_update(this,AState);
-              do_widget_redraw(this);
+              // setValue(value,index);
+              // do_widget_update(this,AState);
+              // do_widget_redraw(this);
             }
             else {
               // stop
               value = value2;
+              // setValue(value,index);
+              // do_widget_update(this,AState);
+              // do_widget_redraw(this);
             }
           }
+          setValue(value,index);
+          do_widget_update(this,AState);
+          do_widget_redraw(this);
         }
+
         else if (index == 1) {
           if (value < value2) {
             if (AState & SAT_STATE_ALT) {
               // push
-              setValue(value,index2);
-              do_widget_update(this,AState);
-              do_widget_redraw(this);
+              // setValue(value,index);
+              // do_widget_update(this,AState);
+              // do_widget_redraw(this);
             }
             else {
               // stop
               value = value2;
+              // setValue(value,index);
+              // do_widget_update(this,AState);
+              // do_widget_redraw(this);
             }
           }
+          setValue(value,index);
+          do_widget_update(this,AState);
+          do_widget_redraw(this);
         }
       
       } // num values == 2
@@ -307,6 +332,7 @@ public:
         do_widget_redraw(this);
       }
     } // dragging
+    
     else {
       int32_t index = findClosestValue(AXpos,AYpos);
       if (index >= 0) do_widget_setCursor(this,getCursor());
@@ -319,7 +345,7 @@ public:
   //----------
   
   void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos) override {
-    if (MNumValues > 1) {
+    if (getNumValues() > 1) {
       int32_t index = findClosestValue(AXpos,AYpos);
       if (index >= 0) do_widget_setCursor(this,getCursor());
       else do_widget_setCursor(this,SAT_CURSOR_DEFAULT);
@@ -332,7 +358,7 @@ public:
   //----------
   
   void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) override {
-    if (MNumValues > 1) {
+    if (getNumValues() > 1) {
       do_widget_setCursor(this,SAT_CURSOR_DEFAULT);
     }
     else {
