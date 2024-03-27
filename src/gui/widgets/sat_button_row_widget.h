@@ -182,12 +182,20 @@ public:
   //----------
 
   double getValue(uint32_t AIndex=0) override {
-    //SAT_PRINT;
     if (MValueIsBits) {
-      return getButtonBits();
+      sat_param_t value = SAT_GridWidget::getValue();
+      uint32_t bits = getButtonBits();
+      SAT_Print("%.3f -> %i\n",value,bits);
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      if (param) return param->normalize(bits);
+      return bits;
     }
     else {
-      return SAT_GridWidget::getValue();
+      sat_param_t value = SAT_GridWidget::getValue();
+      //SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      //if (param) value = param->denormalize(value);
+      SAT_Print("%.3f\n",value);
+      return value;
     }
   }
 
@@ -195,15 +203,21 @@ public:
 
 
   void setValue(double AValue, uint32_t AIndex=0) override {
-    //SAT_Print("value %.3f\n",AValue);
+    SAT_Print("value %.3f\n",AValue);
     if (MValueIsBits) {
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      if (param) AValue = param->denormalize(AValue);
       int i = (int)AValue;
+      SAT_Print("%.3f -> %i\n",AValue,i);
       setButtonBits(i);
       SAT_GridWidget::setValue(AValue);
     }
     else {
+      SAT_Print("AValue %.3f\n",AValue);
       SAT_GridWidget::setValue(AValue);
-      selectValue(AValue);
+      //SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      //if (param) AValue = param->normalize(AValue);
+//      selectValue(AValue);
     }
   }
 

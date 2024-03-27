@@ -267,7 +267,9 @@ public:
       double ro = size * MOuterRadius;
       double rw = ro - ri;
       double r  = ri + (rw * 0.5);
+
       painter->setLineWidth(rw);
+      
       //for (uint32_t i=0; i<MNumMarkers; i++) {
       for (uint32_t i=0; i<MAX_WAVEFORM_MARKERS; i++) {
         if (MMarkers[i].active) {

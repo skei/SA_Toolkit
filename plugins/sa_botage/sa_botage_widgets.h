@@ -276,15 +276,32 @@ public:
     setGrid(4,2);
     setGridColor(0.3,0.25);
     setGridWidth(0.002,0.001);
+
     //setAreaActive(uint32_t AIndex, bool AActive=true);
     //setAreaPos(uint32_t AIndex, double APos, double ASize);
     //setAreaColor(uint32_t AIndex, SAT_Color AColor);
+    
     //setMarkerActive(uint32_t AIndex, bool AActive=true);
     //setMarkerPos(uint32_t AIndex, double APos, double ASize=0.0025);
     //setMarkerColor(uint32_t AIndex, SAT_Color AColor);
-    
+
   }
   
+//------------------------------
+public:
+//------------------------------
+
+  // void on_widget_open(SAT_WidgetOwner* AOwner) final {
+  //   SAT_Window* window = AOwner->on_widgetOwner_getWindow();
+  //   window->registerTimerWidget(this);
+  // }
+    
+  //----------
+
+  // void on_widget_timer(SAT_Timer* ATimer, double AElapsed) final {
+  //   // SAT_Print("elapsed: %.3f\n",AElapsed);
+  // }
+
 };
 
 //----------------------------------------------------------------------
@@ -473,8 +490,7 @@ public:
     setCellDrawBorder(false);
     setCellBorderColor(0.3);
 
-    setValueIsBits(true,8);
-
+    // setValueIsBits(true,8);
     
   }
   

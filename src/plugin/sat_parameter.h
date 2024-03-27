@@ -126,7 +126,13 @@ public:
 public:
 //------------------------------
 
-  virtual void        setWidget(void* AWidget)                  { MWidget = AWidget; }
+  virtual void setWidget(void* AWidget, uint32_t AIndex=0) {
+    MWidget = AWidget;
+    MWidgetIndex = AIndex;
+  }
+
+  //virtual void        setWidgetIndex(uint32_t AIndex)           { MWidgetIndex = AWidget; }
+
   virtual void        setIndex(int32_t AIndex)                  { MIndex = AIndex; MInfo.id  = AIndex; }  // !!!!!
   virtual void        setModulation(sat_param_t AValue)         { MModulation = AValue; }
   virtual void        setValue(sat_param_t AValue)              { MValue = AValue; }
@@ -155,10 +161,10 @@ public:
 public:
 //------------------------------
 
-  virtual void connect(void* AWidget, uint32_t AIndex=0) {
-    MWidget = AWidget;
-    MWidgetIndex = AIndex;
-  }
+  // virtual void connect(void* AWidget, uint32_t AIndex) {
+  //   MWidget = AWidget;
+  //   MWidgetIndex = AIndex;
+  // }
 
   //----------
 

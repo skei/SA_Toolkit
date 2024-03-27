@@ -156,8 +156,9 @@ private:
   // todo: ..ClosestValueHorizontal
 
   int32_t findClosestValue(double AXpos, double AYpos, bool AHorizontal=true) {
-    if (getNumValues() == 0) return 0;
-    else if (getNumValues() == 1) return getValue();
+    //if (getNumValues() == 0) return 0;
+    //else if (getNumValues() == 1) return getValue();
+    if (getNumValues() < 2) return 0;
     else {
       double S = getWindowScale();
       SAT_Rect mrect = getRect();
@@ -252,10 +253,10 @@ public:
     }
     else if (MIsDragging) {
       
-      int32_t index = MDragIndex; // getSelectedValueIndex();    // selected
-      double value = MDragValue;
-      int32_t index2 = 1 - index;                 // the other one
-      double value2 = getValue(index2);
+      int32_t index  = MDragIndex; // selected
+      int32_t index2 = 1 - index; // the other one
+      double value   = MDragValue;
+      double value2  = getValue(index2);
 
 //SAT_Print("index %i value %.2f index2 %i value2 %.2f\n",index,value,index2,value2);
 
@@ -288,7 +289,7 @@ public:
 
       if (getNumValues() == 2) {
 
-SAT_Print("index %i value %.3f\n",index,value);
+        //SAT_Print("index %i value %.3f\n",index,value);
 
         if (index == 0) {
           // if (value > value2) {

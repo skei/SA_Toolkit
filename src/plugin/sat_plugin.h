@@ -486,6 +486,27 @@ public: // parameters
     for (uint32_t i=0; i<num; i++) {
       double value = MParameters[i]->getDefaultValue();
       MParameters[i]->setValue(value);
+
+      //bool handleParamValueEvent(clap_event_param_value_t* event);
+      //return on_plugin_paramValue(event);
+
+      clap_event_param_value_t event;
+      event.header.size     = sizeof(clap_event_param_value_t);
+      event.header.time     = 0;
+      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+      event.header.type     = CLAP_EVENT_PARAM_VALUE;
+      event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+      event.param_id        = i;
+      event.cookie          = nullptr; // set?
+      event.note_id         = -1;
+      event.port_index      = -1;
+      event.channel         = -1;
+      event.key             = -1;
+      event.value           = value;
+      bool handled = handleParamValueEvent(&event);
+      if (!handled) {
+      }
+
     }
   }
   
@@ -523,12 +544,15 @@ public: // parameters
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
       SAT_Parameter* param = MParameters[i];
-      double value = MParameters[i]->getValue();//getDefaultValue();
+
+      //SAT_Print("%i\n",i);
+
+//      double value = param->getValue();//getDefaultValue();
       // parameters are in clap-space
       // widgets are 0..1
-      uint32_t sub = 0;//param->getWidgetIndex();
+//      uint32_t sub = param->getWidgetIndex(); // 0
       //SAT_Print("sub %i\n",sub);
-      MEditor->initParameterValue(param,i,sub,value); // (arg value  = clap space)
+      MEditor->initParameterValue(param/*,i,sub,value*/); // (arg value  = clap space)
     }
   }
 

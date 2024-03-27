@@ -81,9 +81,9 @@ public:
 public:
 //------------------------------
 
-  virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AParamIndex=0) {
-    AWidget->setParameter(AParameter,AParamIndex);
-    AParameter->setWidget(AWidget);
+  virtual void connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
+    AWidget->setParameter(AParameter,AIndex);
+    AParameter->setWidget(AWidget,AIndex);
   }
 
   //----------
@@ -91,12 +91,16 @@ public:
   // parameters are in clap-space
   // widgets are 0..1
   
-  virtual void initParameterValue(SAT_Parameter* AParam, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue) {
-    //SAT_Print("param %p index %i value %.3f\n",AParam,AIndex,AValue);
+  virtual void initParameterValue(SAT_Parameter* AParam/*, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue*/) {
+    //SAT_Print("param name %s\n",AParam->getName());
     SAT_Widget* widget = (SAT_Widget*)AParam->getWidget();
     if (widget) {
-      double v = AParam->normalize(AValue);
-      widget->setValue(v,ASubIndex);
+      //SAT_Print("widget name %s\n",widget->getName());
+      uint32_t index = AParam->getWidgetIndex();
+      //SAT_Print("index %i\n",index);
+      double v = AParam->getNormalizedValue();// normalize(AValue);
+      //SAT_Print("v %.3f\n",v);
+      widget->setValue(v,index);//ASubIndex);
     }
   }
 
@@ -120,7 +124,7 @@ public:
         uint32_t index = AParameter->getWidgetIndex();
         widget->setValue(normalized_value,index);
 
-        SAT_Print("index %i normalized_value ¤.3f\n",index,normalized_value);
+        SAT_Print("index %i normalized_value %.3f\n",index,normalized_value);
 
         //widget->update();
         //parentRedraw();

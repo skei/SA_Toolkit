@@ -9,13 +9,14 @@
 
 //----------------------------------------------------------------------
 
-#include "sa_botage/sa_botage_parameters.h"
-#include "sa_botage/sa_botage_widgets.h"
-#include "sa_botage/sa_botage_prob_page.h"
-#include "sa_botage/sa_botage_seq_page.h"
-#include "sa_botage/sa_botage_perf_page.h"
+const char* txt_eight[8] = { "1", "2", "3", "4", "5", "6", "7", "8" };
 
-#include "sa_botage/sa_botage_processor.h"
+#define NUM_FX_TYPES 3
+const char* fx_type_text[NUM_FX_TYPES] = {
+  "Filter",
+  "Reverb",
+  "Distortion"
+};
 
 #define PLUGIN_NAME   "sa_botage"
 #define PLUGIN_DESC   "sabotage your loops!"
@@ -24,6 +25,16 @@
 #define EDITOR_WIDTH  840
 #define EDITOR_HEIGHT 510
 #define EDITOR_SCALE  1.5
+
+//----------
+
+#include "sa_botage/sa_botage_parameters.h"
+#include "sa_botage/sa_botage_widgets.h"
+#include "sa_botage/sa_botage_prob_page.h"
+#include "sa_botage/sa_botage_seq_page.h"
+#include "sa_botage/sa_botage_perf_page.h"
+
+#include "sa_botage/sa_botage_processor.h"
 
 //----------------------------------------------------------------------
 //
@@ -79,17 +90,50 @@ public:
     if (!sa_botage_SetupParameters(this)) return false;
     return SAT_Plugin::init();
   }
+
+  //----------
   
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor.activate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+  
+  //----------
+
+  void processAudio(SAT_ProcessContext* AContext) final {
+    MProcessor.process(AContext);
+  }
+
+  //----------
+
+  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+    uint32_t index = event->param_id;
+    double value = event->value;
+    //SAT_Print("index %i value %.3f\n",index,value);
+    MProcessor.setParamValue(index,value);
+    return true;
+  }
+
+  bool on_plugin_transport(const clap_event_transport_t* event) final {
+    uint32_t flags = event->flags;
+    MProcessor.transport(flags);
+    return true;
+  }
+
   //----------
   
   #include "sa_botage/sa_botage_gui.h"
 
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
-    MProcessor.process(AContext);
+  void on_editorListener_timer(SAT_Timer* ATimer, double AElapsed) final {
+    SAT_Plugin::on_editorListener_timer(ATimer,AElapsed);
+    //SAT_Print("elapsed: %.3f\n",AElapsed);
+    updateWaveformWidget(&MProcessor);
+    updateProbIndicators(&MProcessor);
+
   }
-  
+
 };
 
 //----------------------------------------------------------------------

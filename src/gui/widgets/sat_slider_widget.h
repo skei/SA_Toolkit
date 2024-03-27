@@ -42,7 +42,7 @@ protected:
 public:
 //------------------------------
 
-  SAT_SliderWidget(SAT_Rect ARect, const char* AText, double AValue)
+  SAT_SliderWidget(SAT_Rect ARect, const char* AText, double AValue=0.0)
   : SAT_DragValueWidget(ARect,AText,AValue) {
     setName("SAT_SliderWidget");
     //setNumValues(1);
