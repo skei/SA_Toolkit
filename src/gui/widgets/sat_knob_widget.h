@@ -38,7 +38,7 @@ protected:
 
   bool      MDrawMarker               = false;
   double    MMarkerValue              = 0.75;
-  SAT_Color MMarkerColor              = SAT_White;
+  SAT_Color MMarkerColor              = SAT_LightYellow;
   double    MMarkerThickness          = 0.01;
 
   SAT_Color MDisabledColor            = SAT_Grey;
@@ -86,8 +86,20 @@ public:
   virtual void setArcValueColor(SAT_Color AColor)             { MArcValueColor = AColor; }
   virtual void setInteractiveArcValueColor(SAT_Color AColor)  { MInteractiveArcValueColor = AColor; }
   virtual void setArcThickness(double AThickness)             { MArcThickness = AThickness; }
-  virtual void setModArcThickness(double AThickness)          { MModArcThickness = AThickness; }
+
+  virtual void setDrawModulation(bool ADraw=true)             { MDrawModulation = ADraw; }
   virtual void setModArcOffset(double AOffset)                { MModArcOffset = AOffset; }
+  virtual void setModArcThickness(double AThickness)          { MModArcThickness = AThickness; }
+  virtual void setModArcColor(SAT_Color AColor)               { MModArcColor = AColor; }
+
+  virtual void setDrawMarker(bool ADraw)                      { MDrawMarker = ADraw; }
+  virtual void setMarkerValue(double AValue)                  { MMarkerValue = AValue; }
+  virtual void setMarkerColor(SAT_Color AColor)               { MMarkerColor = AColor; }
+  virtual void setMarkerThickness(double AThickness)          { MMarkerThickness = AThickness; }
+
+  virtual bool drawArc()        { return MDrawArc; }
+  virtual bool drawModulation() { return MDrawModulation; }
+  virtual bool drawMarker()     { return MDrawMarker; }
 
 //------------------------------
 public:
@@ -249,7 +261,7 @@ public:
 
       //}
 
-      // draw indicator
+      // draw marker
 
       if (MDrawMarker) {
         if (isActive()) {

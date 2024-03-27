@@ -20,8 +20,8 @@
   //sa_botage_buttonrow_widget*   buffer_beats_slider     = nullptr;
   //sa_botage_buttonrow_widget*   buffer_slices_slider    = nullptr; 
   
-  SAT_SliderWidget*   buffer_beats_slider     = nullptr;
-  SAT_SliderWidget*   buffer_slices_slider    = nullptr; 
+  SAT_SliderWidget*             buffer_beats_slider     = nullptr;
+  SAT_SliderWidget*             buffer_slices_slider    = nullptr; 
   
   sa_botage_knob3_widget*       trigger_prob_knob       = nullptr;
   sa_botage_buttonrow_widget*   trigger_slices_buttons  = nullptr;
@@ -95,9 +95,8 @@
       
       // buffer_panel->appendChildWidget(  new sa_botage_text1_widget(     SAT_Rect(  10, 10, 160, 10  ), "Beats" ));
       // buffer_panel->appendChildWidget(  new sa_botage_text1_widget(     SAT_Rect( 180, 10, 160, 10  ), "Slices" ));
-
-//      buffer_beats_slider  = new sa_botage_buttonrow_widget( SAT_Rect(  10, 25, 160, 10 ), 8, txt_eight,SAT_BUTTON_ROW_SINGLE,false );
-//      buffer_slices_slider = new sa_botage_buttonrow_widget( SAT_Rect( 180, 25, 160, 10 ), 8, txt_eight,SAT_BUTTON_ROW_SINGLE,false );
+      // buffer_beats_slider  = new sa_botage_buttonrow_widget( SAT_Rect(  10, 25, 160, 10 ), 8, txt_eight,SAT_BUTTON_ROW_SINGLE,false );
+      // buffer_slices_slider = new sa_botage_buttonrow_widget( SAT_Rect( 180, 25, 160, 10 ), 8, txt_eight,SAT_BUTTON_ROW_SINGLE,false );
 
       buffer_beats_slider  = new SAT_SliderWidget( SAT_Rect(  10, 10/*25*/, 160, 15 ), "Beats" );
       buffer_slices_slider = new SAT_SliderWidget( SAT_Rect( 180, 10/*25*/, 160, 15 ), "Slices" );
@@ -302,130 +301,175 @@
   //----------
 
   void updateProbIndicators(sa_botage_processor* processor) {
-  #if 0
 
-    if (MCurrentPage == 0) {
+    trigger_prob_knob->setMarkerValue(processor->rnd_main_prob);
+    //if (!trigger_prob_knob->drawMarker()) {
+      trigger_prob_knob->setDrawMarker(true);
+      trigger_prob_knob->do_widget_redraw(trigger_prob_knob,0,0);
+    //}
 
-      MMainProbWidget->setIndicatorValue(processor->rnd_main_prob);
+    uint32_t current_page = tabs_widget->getActivePage();
+    if (current_page == 0) {
+
       if (processor->MRange) {
 
-        //MMainProbWidget->setIndicatorValue(processor->rnd_main_prob);
-        MMainSlicesWidget->setIndicatorValue(processor->rnd_main_slices);
-        MMainLoopsWidget->setIndicatorValue(processor->rnd_main_subdiv);
+        // // MMainSlicesWidget->setIndicatorValue(processor->rnd_main_slices);
+        // //trigger_slices_buttons->setDrawMarker(true);
+        // //trigger_slices_buttons->setMarkerValue(processor->rnd_main_slices);
+        // //trigger_slices_buttons->do_widget_redraw(trigger_slices_buttons,0,0);
 
-        MRangeSizeWidget->setIndicatorValue(processor->rnd_range_size);
-        MRangeSpeedWidget->setIndicatorValue(processor->rnd_range_speed);
-        MRangeOffsetWidget->setIndicatorValue(processor->rnd_range_offset);
-        MRangeReverseWidget->setIndicatorValue(processor->rnd_range_reverse);
-        MRangeFXWidget->setIndicatorValue(processor->rnd_range_fx);
+        // // MMainLoopsWidget->setIndicatorValue(processor->rnd_main_subdiv);
+        // //trigger_loops_buttons->setDrawMarker(true);
+        // //trigger_loops_buttons->setMarkerValue(processor->rnd_main_subdiv);
+        // //trigger_loops_buttons->do_widget_redraw(trigger_loops_buttons,0,0);
 
-        if (processor->rnd_range_size_on) MRangeSizeValueWidget->setIndicatorValue(processor->rnd_range_size_value);
-        else MRangeSizeValueWidget->setIndicatorValue(-1);
-        if (processor->rnd_range_speed_on) MRangeSpeedValueWidget->setIndicatorValue(processor->rnd_range_speed_value);
-        else MRangeSpeedValueWidget->setIndicatorValue(-1);
-        if (processor->rnd_range_offset_on) MRangeOffsetValueWidget->setIndicatorValue(processor->rnd_range_offset_value);
-        else MRangeOffsetValueWidget->setIndicatorValue(-1);
-        if (processor->rnd_range_fx_on) MRangeFXValueWidget->setIndicatorValue(processor->rnd_range_fx_value);
-        else MRangeFXValueWidget->setIndicatorValue(-1);
+        // MRangeSizeWidget->setIndicatorValue(processor->rnd_range_size);
+        // MRangeSpeedWidget->setIndicatorValue(processor->rnd_range_speed);
+        // MRangeOffsetWidget->setIndicatorValue(processor->rnd_range_offset);
+        // MRangeReverseWidget->setIndicatorValue(processor->rnd_range_reverse);
+        // MRangeFXWidget->setIndicatorValue(processor->rnd_range_fx);
 
-        //------------------------------
+        prob_page_widget->range_length_prob->setMarkerValue(processor->rnd_range_size);
+        prob_page_widget->range_length_prob->setDrawMarker(true);
+        prob_page_widget->range_length_prob->do_widget_redraw(prob_page_widget->range_length_prob,0,0);
 
-        if (processor->rnd_range_fx_on) {
-          MFXProbKnob[0]->setIndicatorValue(processor->rnd_fx1);
-          MFXProbKnob[1]->setIndicatorValue(processor->rnd_fx2);
-          MFXProbKnob[2]->setIndicatorValue(processor->rnd_fx3);
-          MFXProbKnob[3]->setIndicatorValue(processor->rnd_fx4);
-          MFXProbKnob[4]->setIndicatorValue(processor->rnd_fx5);
-        }
-        else {
-          MFXProbKnob[0]->setIndicatorValue(-1);
-          MFXProbKnob[1]->setIndicatorValue(-1);
-          MFXProbKnob[2]->setIndicatorValue(-1);
-          MFXProbKnob[3]->setIndicatorValue(-1);
-          MFXProbKnob[4]->setIndicatorValue(-1);
-        }
+        prob_page_widget->range_speed_prob->setMarkerValue(processor->rnd_range_speed);
+        prob_page_widget->range_speed_prob->setDrawMarker(true);
+        prob_page_widget->range_speed_prob->do_widget_redraw(prob_page_widget->range_speed_prob,0,0);
 
-        //        if (processor->rnd_fx1_on) MFXProbKnob[0]->setIndicatorValue(processor->rnd_fx1);
-        //        else MFXProbKnob[0]->setIndicatorValue(-1);
-        //        if (processor->rnd_fx2_on) MFXProbKnob[1]->setIndicatorValue(processor->rnd_fx2);
-        //        else MFXProbKnob[1]->setIndicatorValue(-1);
-        //        if (processor->rnd_fx3_on) MFXProbKnob[2]->setIndicatorValue(processor->rnd_fx3);
-        //        else MFXProbKnob[2]->setIndicatorValue(-1);
-        //        if (processor->rnd_fx4_on) MFXProbKnob[3]->setIndicatorValue(processor->rnd_fx4);
-        //        else MFXProbKnob[3]->setIndicatorValue(-1);
-        //        if (processor->rnd_fx5_on) MFXProbKnob[4]->setIndicatorValue(processor->rnd_fx5);
-        //        else MFXProbKnob[4]->setIndicatorValue(-1);
+        prob_page_widget->range_offset_prob->setMarkerValue(processor->rnd_range_offset);
+        prob_page_widget->range_offset_prob->setDrawMarker(true);
+        prob_page_widget->range_offset_prob->do_widget_redraw(prob_page_widget->range_offset_prob,0,0);
 
-        //------------------------------
+        prob_page_widget->range_reverse_prob->setMarkerValue(processor->rnd_range_reverse);
+        prob_page_widget->range_reverse_prob->setDrawMarker(true);
+        prob_page_widget->range_reverse_prob->do_widget_redraw(prob_page_widget->range_reverse_prob,0,0);
 
-        if (processor->MLoopWrapped) {
-          MLoopSizeWidget->setIndicatorValue(processor->rnd_loop_size);
-          MLoopSpeedWidget->setIndicatorValue(processor->rnd_loop_speed);
-          MLoopOffsetWidget->setIndicatorValue(processor->rnd_loop_offset);
-          MLoopReverseWidget->setIndicatorValue(processor->rnd_loop_reverse);
-          MLoopFXWidget->setIndicatorValue(processor->rnd_loop_fx);
+        prob_page_widget->range_fx_prob->setMarkerValue(processor->rnd_range_fx);
+        prob_page_widget->range_fx_prob->setDrawMarker(true);
+        prob_page_widget->range_fx_prob->do_widget_redraw(prob_page_widget->range_fx_prob,0,0);
 
-          if (processor->rnd_loop_size_on) MLoopSizeValueWidget->setIndicatorValue(processor->rnd_loop_size_value);
-          else MLoopSizeValueWidget->setIndicatorValue(-1);
-          if (processor->rnd_loop_speed_on) MLoopSpeedValueWidget->setIndicatorValue(processor->rnd_loop_speed_value);
-          else MLoopSpeedValueWidget->setIndicatorValue(-1);
-          if (processor->rnd_loop_offset_on) MLoopOffsetValueWidget->setIndicatorValue(processor->rnd_loop_offset_value);
-          else MLoopOffsetValueWidget->setIndicatorValue(-1);
-          if (processor->rnd_loop_fx_on) MLoopFXValueWidget->setIndicatorValue(processor->rnd_loop_fx_value);
-          else MLoopFXValueWidget->setIndicatorValue(-1);
-        }
-        else {
-          MLoopSizeWidget->setIndicatorValue(-1);
-          MLoopSpeedWidget->setIndicatorValue(-1);
-          MLoopOffsetWidget->setIndicatorValue(-1);
-          MLoopReverseWidget->setIndicatorValue(-1);
-          MLoopFXWidget->setIndicatorValue(-1);
+        // if (processor->rnd_range_size_on) MRangeSizeValueWidget->setIndicatorValue(processor->rnd_range_size_value);
+        // else MRangeSizeValueWidget->setIndicatorValue(-1);
+        // if (processor->rnd_range_speed_on) MRangeSpeedValueWidget->setIndicatorValue(processor->rnd_range_speed_value);
+        // else MRangeSpeedValueWidget->setIndicatorValue(-1);
+        // if (processor->rnd_range_offset_on) MRangeOffsetValueWidget->setIndicatorValue(processor->rnd_range_offset_value);
+        // else MRangeOffsetValueWidget->setIndicatorValue(-1);
+        // if (processor->rnd_range_fx_on) MRangeFXValueWidget->setIndicatorValue(processor->rnd_range_fx_value);
+        // else MRangeFXValueWidget->setIndicatorValue(-1);
 
-          MLoopSizeValueWidget->setIndicatorValue(-1);
-          MLoopSpeedValueWidget->setIndicatorValue(-1);
-          MLoopOffsetValueWidget->setIndicatorValue(-1);
-          MLoopFXValueWidget->setIndicatorValue(-1);
-        }
+        // //------------------------------
+
+        // if (processor->rnd_range_fx_on) {
+        //   MFXProbKnob[0]->setIndicatorValue(processor->rnd_fx1);
+        //   MFXProbKnob[1]->setIndicatorValue(processor->rnd_fx2);
+        //   MFXProbKnob[2]->setIndicatorValue(processor->rnd_fx3);
+        //   MFXProbKnob[3]->setIndicatorValue(processor->rnd_fx4);
+        //   MFXProbKnob[4]->setIndicatorValue(processor->rnd_fx5);
+        // }
+        // else {
+        //   MFXProbKnob[0]->setIndicatorValue(-1);
+        //   MFXProbKnob[1]->setIndicatorValue(-1);
+        //   MFXProbKnob[2]->setIndicatorValue(-1);
+        //   MFXProbKnob[3]->setIndicatorValue(-1);
+        //   MFXProbKnob[4]->setIndicatorValue(-1);
+        // }
+
+        // //        if (processor->rnd_fx1_on) MFXProbKnob[0]->setIndicatorValue(processor->rnd_fx1);
+        // //        else MFXProbKnob[0]->setIndicatorValue(-1);
+        // //        if (processor->rnd_fx2_on) MFXProbKnob[1]->setIndicatorValue(processor->rnd_fx2);
+        // //        else MFXProbKnob[1]->setIndicatorValue(-1);
+        // //        if (processor->rnd_fx3_on) MFXProbKnob[2]->setIndicatorValue(processor->rnd_fx3);
+        // //        else MFXProbKnob[2]->setIndicatorValue(-1);
+        // //        if (processor->rnd_fx4_on) MFXProbKnob[3]->setIndicatorValue(processor->rnd_fx4);
+        // //        else MFXProbKnob[3]->setIndicatorValue(-1);
+        // //        if (processor->rnd_fx5_on) MFXProbKnob[4]->setIndicatorValue(processor->rnd_fx5);
+        // //        else MFXProbKnob[4]->setIndicatorValue(-1);
+
+        // //------------------------------
+
+        // if (processor->MLoopWrapped) {
+        //   MLoopSizeWidget->setIndicatorValue(processor->rnd_loop_size);
+        //   MLoopSpeedWidget->setIndicatorValue(processor->rnd_loop_speed);
+        //   MLoopOffsetWidget->setIndicatorValue(processor->rnd_loop_offset);
+        //   MLoopReverseWidget->setIndicatorValue(processor->rnd_loop_reverse);
+        //   MLoopFXWidget->setIndicatorValue(processor->rnd_loop_fx);
+
+        //   if (processor->rnd_loop_size_on) MLoopSizeValueWidget->setIndicatorValue(processor->rnd_loop_size_value);
+        //   else MLoopSizeValueWidget->setIndicatorValue(-1);
+        //   if (processor->rnd_loop_speed_on) MLoopSpeedValueWidget->setIndicatorValue(processor->rnd_loop_speed_value);
+        //   else MLoopSpeedValueWidget->setIndicatorValue(-1);
+        //   if (processor->rnd_loop_offset_on) MLoopOffsetValueWidget->setIndicatorValue(processor->rnd_loop_offset_value);
+        //   else MLoopOffsetValueWidget->setIndicatorValue(-1);
+        //   if (processor->rnd_loop_fx_on) MLoopFXValueWidget->setIndicatorValue(processor->rnd_loop_fx_value);
+        //   else MLoopFXValueWidget->setIndicatorValue(-1);
+        // }
+        // else {
+        //   MLoopSizeWidget->setIndicatorValue(-1);
+        //   MLoopSpeedWidget->setIndicatorValue(-1);
+        //   MLoopOffsetWidget->setIndicatorValue(-1);
+        //   MLoopReverseWidget->setIndicatorValue(-1);
+        //   MLoopFXWidget->setIndicatorValue(-1);
+
+        //   MLoopSizeValueWidget->setIndicatorValue(-1);
+        //   MLoopSpeedValueWidget->setIndicatorValue(-1);
+        //   MLoopOffsetValueWidget->setIndicatorValue(-1);
+        //   MLoopFXValueWidget->setIndicatorValue(-1);
+        // }
 
       }
       else { // ! range
 
-        //MMainProbWidget->setIndicatorValue(-1);
-        MMainSlicesWidget->setIndicatorValue(-1);
-        MMainLoopsWidget->setIndicatorValue(-1);
+        // //MMainProbWidget->setIndicatorValue(-1);
+        // MMainSlicesWidget->setIndicatorValue(-1);
+        // MMainLoopsWidget->setIndicatorValue(-1);
 
-        MRangeSizeWidget->setIndicatorValue(-1);
-        MRangeSpeedWidget->setIndicatorValue(-1);
-        MRangeOffsetWidget->setIndicatorValue(-1);
-        MRangeReverseWidget->setIndicatorValue(-1);
-        MRangeFXWidget->setIndicatorValue(-1);
+        // MRangeSizeWidget->setIndicatorValue(-1);
+        // MRangeSpeedWidget->setIndicatorValue(-1);
+        // MRangeOffsetWidget->setIndicatorValue(-1);
+        // MRangeReverseWidget->setIndicatorValue(-1);
+        // MRangeFXWidget->setIndicatorValue(-1);
 
-        MRangeSizeValueWidget->setIndicatorValue(-1);
-        MRangeSpeedValueWidget->setIndicatorValue(-1);
-        MRangeOffsetValueWidget->setIndicatorValue(-1);
-        MRangeFXValueWidget->setIndicatorValue(-1);
+        prob_page_widget->range_length_prob->setDrawMarker(false);
+        prob_page_widget->range_length_prob->do_widget_redraw(prob_page_widget->range_length_prob,0,0);
 
-        MLoopSizeWidget->setIndicatorValue(-1);
-        MLoopSpeedWidget->setIndicatorValue(-1);
-        MLoopOffsetWidget->setIndicatorValue(-1);
-        MLoopReverseWidget->setIndicatorValue(-1);
-        MLoopFXWidget->setIndicatorValue(-1);
+        prob_page_widget->range_speed_prob->setDrawMarker(false);
+        prob_page_widget->range_speed_prob->do_widget_redraw(prob_page_widget->range_speed_prob,0,0);
 
-        MLoopSizeValueWidget->setIndicatorValue(-1);
-        MLoopSpeedValueWidget->setIndicatorValue(-1);
-        MLoopOffsetValueWidget->setIndicatorValue(-1);
-        MLoopFXValueWidget->setIndicatorValue(-1);
+        prob_page_widget->range_offset_prob->setDrawMarker(false);
+        prob_page_widget->range_offset_prob->do_widget_redraw(prob_page_widget->range_offset_prob,0,0);
 
-        MFXProbKnob[0]->setIndicatorValue(-1);
-        MFXProbKnob[1]->setIndicatorValue(-1);
-        MFXProbKnob[2]->setIndicatorValue(-1);
-        MFXProbKnob[3]->setIndicatorValue(-1);
-        MFXProbKnob[4]->setIndicatorValue(-1);
+        prob_page_widget->range_reverse_prob->setDrawMarker(false);
+        prob_page_widget->range_reverse_prob->do_widget_redraw(prob_page_widget->range_reverse_prob,0,0);
 
-      }
+        prob_page_widget->range_fx_prob->setDrawMarker(false);
+        prob_page_widget->range_fx_prob->do_widget_redraw(prob_page_widget->range_fx_prob,0,0);
+
+        // MRangeSizeValueWidget->setIndicatorValue(-1);
+        // MRangeSpeedValueWidget->setIndicatorValue(-1);
+        // MRangeOffsetValueWidget->setIndicatorValue(-1);
+        // MRangeFXValueWidget->setIndicatorValue(-1);
+
+        // MLoopSizeWidget->setIndicatorValue(-1);
+        // MLoopSpeedWidget->setIndicatorValue(-1);
+        // MLoopOffsetWidget->setIndicatorValue(-1);
+        // MLoopReverseWidget->setIndicatorValue(-1);
+        // MLoopFXWidget->setIndicatorValue(-1);
+
+        // MLoopSizeValueWidget->setIndicatorValue(-1);
+        // MLoopSpeedValueWidget->setIndicatorValue(-1);
+        // MLoopOffsetValueWidget->setIndicatorValue(-1);
+        // MLoopFXValueWidget->setIndicatorValue(-1);
+
+        // MFXProbKnob[0]->setIndicatorValue(-1);
+        // MFXProbKnob[1]->setIndicatorValue(-1);
+        // MFXProbKnob[2]->setIndicatorValue(-1);
+        // MFXProbKnob[3]->setIndicatorValue(-1);
+        // MFXProbKnob[4]->setIndicatorValue(-1);
+
+      } // range
 
     } // page == 0
     
-  #endif // 0    
   }
 

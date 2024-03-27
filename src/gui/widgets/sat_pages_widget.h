@@ -41,6 +41,12 @@ public:
 public:
 //------------------------------
 
+  uint32_t getActivePage() {
+    return MActivePage;
+  }
+
+  //----------
+
   int32_t appendPage(SAT_Widget* APage) {
     //SAT_Print("index %i\n",getNumChildWidgets());
     //APage->State.active = false;

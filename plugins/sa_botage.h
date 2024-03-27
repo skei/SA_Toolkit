@@ -2,7 +2,6 @@
 #define sa_botage_included
 //----------------------------------------------------------------------
 
-//#include "audio/sat_audio_utils.h"
 #include "plugin/sat_parameters.h"
 #include "plugin/sat_editor.h"
 #include "plugin/sat_plugin.h"
@@ -18,9 +17,11 @@ const char* fx_type_text[NUM_FX_TYPES] = {
   "Distortion"
 };
 
+//----------
+
 #define PLUGIN_NAME   "sa_botage"
 #define PLUGIN_DESC   "sabotage your loops!"
-#define PLUGIN_VER    "0.5.0"
+#define PLUGIN_VER    "0.9.0"
 
 #define EDITOR_WIDTH  840
 #define EDITOR_HEIGHT 510
@@ -86,7 +87,6 @@ public:
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
     setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
-    //appendParameters(SA_BOTAGE_PARAM_COUNT,sa_botage_parameter_infos);
     if (!sa_botage_SetupParameters(this)) return false;
     return SAT_Plugin::init();
   }
@@ -109,7 +109,6 @@ public:
   bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
     uint32_t index = event->param_id;
     double value = event->value;
-    //SAT_Print("index %i value %.3f\n",index,value);
     MProcessor.setParamValue(index,value);
     return true;
   }
@@ -128,10 +127,8 @@ public:
 
   void on_editorListener_timer(SAT_Timer* ATimer, double AElapsed) final {
     SAT_Plugin::on_editorListener_timer(ATimer,AElapsed);
-    //SAT_Print("elapsed: %.3f\n",AElapsed);
-    updateWaveformWidget(&MProcessor);
     updateProbIndicators(&MProcessor);
-
+    updateWaveformWidget(&MProcessor);
   }
 
 };

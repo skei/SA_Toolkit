@@ -1160,19 +1160,6 @@ private:
 
   }
 
-//------------------------------
-public:
-//------------------------------
-
-  // void setBufferSize(uint32_t ASize) {
-  //   MBufferSize = ASize;
-  // }
-
-  // uint32_t getReadPos()     { return MReadPos; }
-  // uint32_t getWritePos()    { return MWritePos; }
-  // float*   getBuffer()      { return MBuffer; }
-  // uint32_t getBufferSize()  { return MBufferSize; }
-
 };
 
 //----------------------------------------------------------------------

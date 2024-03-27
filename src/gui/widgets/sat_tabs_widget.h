@@ -80,6 +80,10 @@ public:
   virtual SAT_PagesWidget*      getPages(void)     { return MPages; }
   virtual int32_t               getNumPages(void)  { return MNumPages; }
 
+  virtual uint32_t getActivePage() {
+    return MPages->getActivePage();
+  }
+
   //----------
 
   virtual int32_t appendPage(const char* ATitle, SAT_Widget* AWidget) {
