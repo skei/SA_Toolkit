@@ -36,6 +36,8 @@ protected:
   double    MModArcThickness          = 4.0;
   SAT_Color MModArcColor              = SAT_Color(1,0,0,0.4);
 
+  double    MValueIndicatorThickness  = 0.005;
+
   bool      MDrawMarker               = false;
   double    MMarkerValue              = 0.75;
   SAT_Color MMarkerColor              = SAT_LightYellow;
@@ -247,18 +249,17 @@ public:
 
         }
       }
+
+      // value pos indicator 
   
       //if (MDrawValueIndicator) {
-
-        double ms = MMarkerThickness * 0.5;
+        double ms = MValueIndicatorThickness * 0.5;
         /*double*/ a1 = 0.35 + ((value - ms) * 0.8);
         /*double*/ a2 = a1   + ((          ms + ms) * 0.8);
-
         painter->setLineWidth(thickness);
         color = SAT_White;
         painter->setDrawColor(color);
         painter->drawArc(cx,cy,r,a1*SAT_PI2,a2*SAT_PI2);
-
       //}
 
       // draw marker

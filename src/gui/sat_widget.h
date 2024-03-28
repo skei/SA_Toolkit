@@ -81,7 +81,6 @@ private:
 
   const char*         MHint                               = "";
 
-
   double              MValues[SAT_WIDGET_MAX_VALUES]      = {};
   double              MModulations[SAT_WIDGET_MAX_VALUES] = {};
   void*               MParameters[SAT_WIDGET_MAX_VALUES]  = {0};
@@ -96,6 +95,12 @@ private:
 public:
 //------------------------------
 
+  SAT_Widget() {
+    MRect = {0,0,0,0};
+    MBaseRect = {0,0,0,0};
+    MInitialRect = {0,0,0,0};
+  }
+  
   // we need to keep the initial rect, in case the base rect changes
   // (movable,popup), and we use percentage sizes (for realigning)
  

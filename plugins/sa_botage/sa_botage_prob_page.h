@@ -108,10 +108,10 @@ public:
     
     // fx type
     
-//    fx_type_menu = new SAT_MenuWidget(SAT_Rect(100,100));
-//    fx_type_menu->appendChildWidget( new SAT_MenuItemWidget(10,"LowPass") );
-//    fx_type_menu->appendChildWidget( new SAT_MenuItemWidget(10,"BandPass") );
-//    fx_type_menu->appendChildWidget( new SAT_MenuItemWidget(10,"HighPass") );
+    //    fx_type_menu = new SAT_MenuWidget(SAT_Rect(100,100));
+    //    fx_type_menu->appendChildWidget( new SAT_MenuItemWidget(10,"LowPass") );
+    //    fx_type_menu->appendChildWidget( new SAT_MenuItemWidget(10,"BandPass") );
+    //    fx_type_menu->appendChildWidget( new SAT_MenuItemWidget(10,"HighPass") );
     
     // range
     
@@ -138,8 +138,8 @@ public:
     range_length_minmax->setSnapPos(0.5);
     range_speed_minmax->setSnap(true);
     range_speed_minmax->setSnapPos(0.5);
-    range_offset_minmax->setQuantize(true);
-    range_offset_minmax->setQuantizeSteps(17);
+    //range_offset_minmax->setQuantize(true);
+    //range_offset_minmax->setQuantizeSteps(17);
     range_fx_minmax->setSnap(true);
     range_fx_minmax->setSnapPos(0.5);
     
@@ -168,8 +168,8 @@ public:
     loop_length_minmax->setSnapPos(0.5);
     loop_speed_minmax->setSnap(true);
     loop_speed_minmax->setSnapPos(0.5);
-    loop_offset_minmax->setQuantize(true);
-    loop_offset_minmax->setQuantizeSteps(17);
+    //loop_offset_minmax->setQuantize(true);
+    //loop_offset_minmax->setQuantizeSteps(17);
     loop_fx_minmax->setSnap(true);
     loop_fx_minmax->setSnapPos(0.5);
     

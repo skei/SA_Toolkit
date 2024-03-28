@@ -38,6 +38,13 @@ protected:
   
   uint32_t  MDrawDirection      = SAT_DIRECTION_RIGHT;
 
+  bool      MDrawIndicator      = false;
+  double    MIndicatorValue     = 0.75;
+  SAT_Color MIndicatorColor     = SAT_LightYellow;
+  double    MIndicatorThickness = 1;
+  SAT_Rect  MIndicatorOffset    = SAT_Rect(0,0,0,0);  
+
+
 //------------------------------
 public:
 //------------------------------
@@ -55,18 +62,24 @@ public:
 public:
 //------------------------------
 
-  virtual void setDrawSliderBar(bool ADraw)           { MDrawSliderBar = ADraw; }
-  virtual void setSliderBarColor(SAT_Color AColor)    { MSliderBarColor = AColor; }
-  virtual void setSliderBarDirection(uint32_t  ADir)  { MSliderBarDirection = ADir; }
-  virtual void setSliderBarOffset(SAT_Rect AOffset)   { MSliderBarOffset = AOffset; }
-  virtual void setDrawSliderEdge(bool ADraw)          { MDrawSliderEdge = ADraw; }
-  virtual void setSliderEdgeWidth(double AWidth)      { MSliderEdgeWidth = AWidth; }
-  virtual void setSliderEdgeColor(SAT_Color AColor)   { MSliderEdgeColor = AColor; }
+  virtual void setDrawSliderBar(bool ADraw)             { MDrawSliderBar = ADraw; }
+  virtual void setSliderBarColor(SAT_Color AColor)      { MSliderBarColor = AColor; }
+  virtual void setSliderBarDirection(uint32_t  ADir)    { MSliderBarDirection = ADir; }
+  virtual void setSliderBarOffset(SAT_Rect AOffset)     { MSliderBarOffset = AOffset; }
+  virtual void setDrawSliderEdge(bool ADraw)            { MDrawSliderEdge = ADraw; }
+  virtual void setSliderEdgeWidth(double AWidth)        { MSliderEdgeWidth = AWidth; }
+  virtual void setSliderEdgeColor(SAT_Color AColor)     { MSliderEdgeColor = AColor; }
 
-  virtual void setDrawModulation(bool ADraw)          { MDrawModulation = ADraw; }
-  virtual void setModulationColor(SAT_Color AColor)   { MModulationColor = AColor; }
+  virtual void setDrawModulation(bool ADraw)            { MDrawModulation = ADraw; }
+  virtual void setModulationColor(SAT_Color AColor)     { MModulationColor = AColor; }
 
-  virtual void setDrawDirection(uint32_t ADir)        { MDrawDirection = ADir; }
+  virtual void setDrawDirection(uint32_t ADir)          { MDrawDirection = ADir; }
+
+  virtual void setDrawIndicator(bool ADraw)             { MDrawIndicator = ADraw; }
+  virtual void setIndicatorValue(double AValue)         { MIndicatorValue = AValue; }
+  virtual void setIndicatorColor(SAT_Color AColor)      { MIndicatorColor = AColor; }
+  virtual void setIndicatorThickness(double AThickness) { MIndicatorThickness = AThickness; }
+  virtual void setIndicatorOffset(SAT_Rect AOffset)     { MIndicatorOffset = AOffset; }
 
 //------------------------------
 public:
@@ -133,13 +146,15 @@ public:
             painter->setFillColor(MSliderEdgeColor);
             painter->fillRect(x2,mrect.y,MSliderEdgeWidth*S,mrect.h);
 
+            // modulation
+
           }
         }
 
 //
 
 
-        else {
+        else { // numvalues != 2
         
           if (isBipolar()) {
             double v1 = 0.0;
@@ -158,6 +173,7 @@ public:
             if (w2 > 0) painter->fillRect(x1,mrect.y,w2,mrect.h);
             
           }
+
           else { // ! bipolar
             double w2 = (mrect.w * value1);
             if (w2 > 0) {
@@ -172,10 +188,8 @@ public:
             painter->setFillColor(MSliderEdgeColor);
             painter->fillRect(x,mrect.y,MSliderEdgeWidth*S,mrect.h);
           } // edge
-          
-          // modulation
 
-          // left 
+          // modulation
 
           double modulation1 = 0.0;//value1 + getModulation();
           if (param1) modulation1 = param1->getNormalizedModulation();
@@ -233,29 +247,27 @@ public:
         else value1 = getValue();
         
         if (isBipolar()) {
-//          double v1 = 0.0;
-//          double v2 = 0.0;
-//          double bpc = getBipolarCenter();
-//          if (value1 < bpc) {
-//            v1 = value1;
-//            v2 = bpc;
-//          }
-//          else if (value1 > bpc) {
-//            v1 = bpc;
-//            v2 = value1;
-//          }
-//          double x1 = mrect.x + (v1 * mrect.w);
-//          double w2 = (v2 - v1) * mrect.w;
-//          if (w2 > 0) painter->fillRect(x1,mrect.y,w2,mrect.h);
-//          
+          // double v1 = 0.0;
+          // double v2 = 0.0;
+          // double bpc = getBipolarCenter();
+          // if (value1 < bpc) {
+          //   v1 = value1;
+          //   v2 = bpc;
+          // }
+          // else if (value1 > bpc) {
+          //   v1 = bpc;
+          //   v2 = value1;
+          // }
+          // double x1 = mrect.x + (v1 * mrect.w);
+          // double w2 = (v2 - v1) * mrect.w;
+          // if (w2 > 0) painter->fillRect(x1,mrect.y,w2,mrect.h);
         }
-        else { // ! bipolar
 
+        else { // ! bipolar
           double h2 = (mrect.h * value1);
           if (h2 > 0) {
             painter->fillRect(mrect.x,mrect.y2() - h2,mrect.w,h2);
           }
-          
         } // bipolar
         
         // edge
@@ -266,40 +278,74 @@ public:
           painter->fillRect(mrect.x,y,mrect.w,MSliderEdgeWidth*S);
         } // edge
         
-//        // modulation
-//        double modulation = 0.0;//value1 + getModulation();
-//        if (param) modulation = param->getNormalizedModulation();
-//        else modulation = getModulation();
-//        modulation = SAT_Clamp(modulation + value1,0,1);
-//        if (MDrawModulation) {
-//          //double S = getWindowScale();
-//          mrect = getRect(); // reset
-//          SAT_Rect modulationoffset = MModulationOffset;
-//          modulationoffset.scale(S);
-//          mrect.shrink(modulationoffset);
-//          double v1 = 0;
-//          double v2 = 0;
-//          if (modulation < value1) {
-//            v1 = modulation;
-//            v2 = value1;
-//          }
-//          else if (modulation > value1) {
-//            v1 = value1;
-//            v2 = modulation;
-//          }
-//          double x1 = mrect.x + (v1 * mrect.w);
-//          double w2 = (v2 - v1) * mrect.w;
-//          if (w2 > 0) {
-//            painter->setFillColor(MModulationColor);
-//            painter->fillRect(x1,mrect.y,w2,mrect.h);
-//          }
-//        }
+        // // modulation
+        //
+        // double modulation = 0.0;//value1 + getModulation();
+        // if (param) modulation = param->getNormalizedModulation();
+        // else modulation = getModulation();
+        // modulation = SAT_Clamp(modulation + value1,0,1);
+        // if (MDrawModulation) {
+        //   //double S = getWindowScale();
+        //   mrect = getRect(); // reset
+        //   SAT_Rect modulationoffset = MModulationOffset;
+        //   modulationoffset.scale(S);
+        //   mrect.shrink(modulationoffset);
+        //   double v1 = 0;
+        //   double v2 = 0;
+        //   if (modulation < value1) {
+        //     v1 = modulation;
+        //     v2 = value1;
+        //   }
+        //   else if (modulation > value1) {
+        //     v1 = value1;
+        //     v2 = modulation;
+        //   }
+        //   double x1 = mrect.x + (v1 * mrect.w);
+        //   double w2 = (v2 - v1) * mrect.w;
+        //   if (w2 > 0) {
+        //     painter->setFillColor(MModulationColor);
+        //     painter->fillRect(x1,mrect.y,w2,mrect.h);
+        //   }
+        // }
         
       }
     }
   }
   
-  //
+  //----------
+
+  virtual void drawIndicator(SAT_PaintContext* AContext) {
+    if (MDrawIndicator) {
+      if (MIndicatorValue >= 0.0) {
+        double S = getWindowScale();
+        SAT_Painter* painter = AContext->painter;
+        SAT_Assert(painter);
+        SAT_Rect mrect = getRect();
+        SAT_Rect indicatoroffset = MIndicatorOffset;
+        indicatoroffset.scale(S);
+        mrect.shrink(indicatoroffset);
+
+        if ((MDrawDirection == SAT_DIRECTION_LEFT) || (MDrawDirection == SAT_DIRECTION_RIGHT)) {
+          if (isActive()) {
+            double v = MIndicatorValue;
+            double x1 = mrect.x + (mrect.w * v);
+            double y1 = mrect.y;
+            double x2 = x1;
+            double y2 = mrect.y2();
+            //SAT_Print("MIndicatorValue %.3f x1 %.3f y1 %.3f x2 %.3f y1 %.3f\n",v,x1,y1,x2,y2);
+            painter->setLineWidth(MIndicatorThickness*S);
+            painter->setDrawColor(MIndicatorColor);
+            painter->drawLine(x1,y1,x2,y2);
+            //painter->drawRect(x1,y1,5,5);
+          }
+        }
+
+        else { // vertical
+        }
+
+      }
+    }
+  }
 
 //------------------------------
 public:
@@ -318,6 +364,7 @@ public:
     else {
       drawValue(AContext);
     }
+    drawIndicator(AContext);
     paintChildWidgets(AContext);
     drawBorder(AContext);
     drawHostIndicators(AContext);

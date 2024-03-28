@@ -236,7 +236,9 @@ public:
       double rw = ro - ri;
       double r  = ri + (rw * 0.5);
 
+      rw *= 0.95;
       painter->setLineWidth(rw);
+
       painter->setDrawColor( MWaveformBackgroundColor );
       drawSegment(painter,cx,cy,r,0,SAT_PI2);
 
@@ -268,6 +270,7 @@ public:
       double rw = ro - ri;
       double r  = ri + (rw * 0.5);
 
+      rw *= 0.95;
       painter->setLineWidth(rw);
       
       //for (uint32_t i=0; i<MNumMarkers; i++) {
@@ -296,7 +299,10 @@ public:
       double ro = size * MOuterRadius;
       double rw = ro - ri;
       double r  = ri + (rw * 0.5);
+
+      rw *= 0.95;
       painter->setLineWidth(rw);
+      
       double pos = 0.0;
       double adder = 1.0 / (double)num;
       for (uint32_t i=0; i<num; i++) {

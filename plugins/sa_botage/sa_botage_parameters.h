@@ -96,9 +96,9 @@ public:
 
     double v = AValue;//powf(0.5,-value);
     v *= 8.0;
-    uint32_t iv = SAT_Trunc(v);
-    //sprintf(MValueText,MValueFormat,AValue);
-    sprintf(MValueText,"%i",iv);
+    sprintf(MValueText,MValueFormat,v);
+    //uint32_t iv = SAT_Trunc(v);
+    //sprintf(MValueText,"%i",iv);
     return MValueText;
   }
 
@@ -252,10 +252,10 @@ enum sa_botage_parameters_e {
 
 //const
 clap_param_info_t sa_botage_parameter_infos[SA_BOTAGE_PARAM_COUNT] = {
-  
+
   { SA_BOTAGE_PARAM_GAIN,                   A,    nullptr,  "Gain",             "Global",     0.0, 1.0,   0.5    },
-  { SA_BOTAGE_PARAM_ENV_LOOP_ATTACK,        A,    nullptr,  "Loop Attack",      "Global",     1.0, 25.0,   1.0   },
-  { SA_BOTAGE_PARAM_ENV_LOOP_DECAY,         A,    nullptr,  "Loop Decay",       "Global",     1.0, 25.0,   1.0   },
+  { SA_BOTAGE_PARAM_ENV_LOOP_ATTACK,        A,    nullptr,  "Loop Attack",      "Global",     1.0, 25.0,  1.0    },
+  { SA_BOTAGE_PARAM_ENV_LOOP_DECAY,         A,    nullptr,  "Loop Decay",       "Global",     1.0, 25.0,  1.0    },
   { SA_BOTAGE_PARAM_ENV_SLICE_ATTACK,       A,    nullptr,  "Slice Attack",     "Global",     0.0, 1.0,   0.0    },
   { SA_BOTAGE_PARAM_ENV_SLICE_DECAY,        A,    nullptr,  "Slice Decay",      "Global",     0.0, 1.0,   0.0    },
   { SA_BOTAGE_PARAM_BUFFER_BEATS,           A|S,  nullptr,  "Beats",            "Global",     1,   8,     4      },
@@ -268,33 +268,33 @@ clap_param_info_t sa_botage_parameter_infos[SA_BOTAGE_PARAM_COUNT] = {
   // Probabilities - Range
 
   { SA_BOTAGE_PARAM_PROB_RANGE_LENGTH,      A,    nullptr,  "Range Length",     "ProbRange",  0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_RANGE_LENGTH_MIN,  A,    nullptr,  "Range Length Min", "ProbRange", -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_RANGE_LENGTH_MIN,  A,    nullptr,  "Range Length Min", "ProbRange", -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_RANGE_LENGTH_MAX,  A,    nullptr,  "Range Length Max", "ProbRange", -1.0, 1.0,   0.5    },
   { SA_BOTAGE_PARAM_PROB_RANGE_SPEED,       A,    nullptr,  "Range Speed",      "ProbRange",  0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_RANGE_SPEED_MIN,   A,    nullptr,  "Range Speed Min",  "ProbRange", -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_RANGE_SPEED_MIN,   A,    nullptr,  "Range Speed Min",  "ProbRange", -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_RANGE_SPEED_MAX,   A,    nullptr,  "Range Speed Max",  "ProbRange", -1.0, 1.0,   0.5    },
   { SA_BOTAGE_PARAM_PROB_RANGE_OFFSET,      A,    nullptr,  "Range Offset",     "ProbRange",  0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_RANGE_OFFSET_MIN,  A,    nullptr,  "Range Offset Min", "ProbRange", -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_RANGE_OFFSET_MIN,  A,    nullptr,  "Range Offset Min", "ProbRange", -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_RANGE_OFFSET_MAX,  A,    nullptr,  "Range Offset Max", "ProbRange", -1.0, 1.0,   0.5    },
   { SA_BOTAGE_PARAM_PROB_RANGE_REVERSE,     A,    nullptr,  "Range Reverse",    "ProbRange",  0.0, 1.0,   0.25   },
   { SA_BOTAGE_PARAM_PROB_RANGE_FX,          A,    nullptr,  "Range FX",         "ProbRange",  0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_RANGE_FX_MIN,      A,    nullptr,  "Range FX Min",     "ProbRange", -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_RANGE_FX_MIN,      A,    nullptr,  "Range FX Min",     "ProbRange", -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_RANGE_FX_MAX,      A,    nullptr,  "Range FX Max",     "ProbRange", -1.0, 1.0,   0.5    },
 
   // Probabilities - Loop
 
   { SA_BOTAGE_PARAM_PROB_LOOP_LENGTH,       A,    nullptr,  "Loop Length",      "ProbLoop",   0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_LOOP_LENGTH_MIN,   A,    nullptr,  "Loop Length Min",  "ProbLoop",  -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_LOOP_LENGTH_MIN,   A,    nullptr,  "Loop Length Min",  "ProbLoop",  -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_LOOP_LENGTH_MAX,   A,    nullptr,  "Loop Length Max",  "ProbLoop",  -1.0, 1.0,   0.5    },
   { SA_BOTAGE_PARAM_PROB_LOOP_SPEED,        A,    nullptr,  "Loop Speed",       "ProbLoop",   0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_LOOP_SPEED_MIN,    A,    nullptr,  "Loop Speed Min",   "ProbLoop",  -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_LOOP_SPEED_MIN,    A,    nullptr,  "Loop Speed Min",   "ProbLoop",  -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_LOOP_SPEED_MAX,    A,    nullptr,  "Loop Speed Max",   "ProbLoop",  -1.0, 1.0,   0.5    },
   { SA_BOTAGE_PARAM_PROB_LOOP_OFFSET,       A,    nullptr,  "Loop Offset",      "ProbLoop",   0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_LOOP_OFFSET_MIN,   A,    nullptr,  "Loop Offset Min",  "ProbLoop",  -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_LOOP_OFFSET_MIN,   A,    nullptr,  "Loop Offset Min",  "ProbLoop",  -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_LOOP_OFFSET_MAX,   A,    nullptr,  "Loop Offset Max",  "ProbLoop",  -1.0, 1.0,   0.5    },
   { SA_BOTAGE_PARAM_PROB_LOOP_REVERSE,      A,    nullptr,  "Loop Reverse",     "ProbLoop",   0.0, 1.0,   0.25   },
   { SA_BOTAGE_PARAM_PROB_LOOP_FX,           A,    nullptr,  "Loop FX",          "ProbLoop",   0.0, 1.0,   0.25   },
-  { SA_BOTAGE_PARAM_PROB_LOOP_FX_MIN,       A,    nullptr,  "Loop FX Min",      "ProbLoop",  -1.0, 1.0,  -0.5    },
+  { SA_BOTAGE_PARAM_PROB_LOOP_FX_MIN,       A,    nullptr,  "Loop FX Min",      "ProbLoop",  -1.0, 1.0,   -0.5    },
   { SA_BOTAGE_PARAM_PROB_LOOP_FX_MAX,       A,    nullptr,  "Loop FX Max",      "ProbLoop",  -1.0, 1.0,   0.5    },
 
   // Probabilities - FX

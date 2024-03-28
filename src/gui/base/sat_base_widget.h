@@ -6,15 +6,24 @@
 #include "gui/base/sat_paint_context.h"
 #include "gui/base/sat_widget_owner.h"
 
-
+//----------------------------------------------------------------------
+//
+//
+//
 //----------------------------------------------------------------------
 
 class SAT_BaseWidget {
 
 //------------------------------
+protected:
+//------------------------------
+
+
+//------------------------------
 public:
 //------------------------------
 
+  SAT_BaseWidget() {}
   SAT_BaseWidget(SAT_Rect ARect) {}
   virtual ~SAT_BaseWidget() {}
 
@@ -53,35 +62,35 @@ public:
 public: // on_ (downwards)
 //------------------------------
 
-  virtual void on_widget_open(SAT_WidgetOwner* AOwner) {}
-  virtual void on_widget_close(SAT_WidgetOwner* AOwner) {}
-  virtual void on_widget_prealign() {}
-  virtual void on_widget_postalign() {}
-  virtual void on_widget_paint(SAT_PaintContext* AContext) {}
-  virtual void on_widget_timer(SAT_Timer* ATimer, double AElapsed) {}
-  virtual void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ANum, double* AData) {}
-  virtual void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) {}
-  virtual void on_widget_mouseDblClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) {}
-  virtual void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) {}
-  virtual void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) {}
-  virtual void on_widget_keyPress(char AChar, uint32_t AKey, uint32_t AState, uint32_t ATimeStamp) {}
-  virtual void on_widget_keyRelease(char AChar, uint32_t AKey, uint32_t AState, uint32_t ATimeStamp) {}
-  virtual void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos) {}
-  virtual void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) {}
+  // virtual void on_widget_open(SAT_WidgetOwner* AOwner) {}
+  // virtual void on_widget_close(SAT_WidgetOwner* AOwner) {}
+  // virtual void on_widget_prealign() {}
+  // virtual void on_widget_postalign() {}
+  // virtual void on_widget_paint(SAT_PaintContext* AContext) {}
+  // virtual void on_widget_timer(SAT_Timer* ATimer, double AElapsed) {}
+  // virtual void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ANum, double* AData) {}
+  // virtual void on_widget_mouseClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) {}
+  // virtual void on_widget_mouseDblClick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) {}
+  // virtual void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp) {}
+  // virtual void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATimeStamp) {}
+  // virtual void on_widget_keyPress(char AChar, uint32_t AKey, uint32_t AState, uint32_t ATimeStamp) {}
+  // virtual void on_widget_keyRelease(char AChar, uint32_t AKey, uint32_t AState, uint32_t ATimeStamp) {}
+  // virtual void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos) {}
+  // virtual void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) {}
 
 //------------------------------
 public: // do_ (upwards)
 //------------------------------
 
-  virtual void do_widget_update(SAT_BaseWidget* AWidget, uint32_t AIndex, uint32_t AMode) {}
-  virtual void do_widget_redraw(SAT_BaseWidget* AWidget, uint32_t AIndex, uint32_t AMode) {}
-  virtual void do_widget_realign(SAT_BaseWidget* AWidget, uint32_t AMode) {}
-  virtual void do_widget_setCursor(SAT_BaseWidget* AWidget, int32_t ACursor) {}
-  virtual void do_widget_setHint(SAT_BaseWidget* AWidget, const char* AHint) {}
-  virtual void do_widget_setModal(SAT_BaseWidget* AWidget) {}
-  virtual void do_widget_captureKeys(SAT_BaseWidget* AWidget) {}
-  virtual void do_widget_close(SAT_BaseWidget* AWidget) {}
-  virtual void do_widget_select(SAT_BaseWidget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) {}
+  // virtual void do_widget_update(SAT_BaseWidget* AWidget, uint32_t AIndex, uint32_t AMode) {}
+  // virtual void do_widget_redraw(SAT_BaseWidget* AWidget, uint32_t AIndex, uint32_t AMode) {}
+  // virtual void do_widget_realign(SAT_BaseWidget* AWidget, uint32_t AMode) {}
+  // virtual void do_widget_setCursor(SAT_BaseWidget* AWidget, int32_t ACursor) {}
+  // virtual void do_widget_setHint(SAT_BaseWidget* AWidget, const char* AHint) {}
+  // virtual void do_widget_setModal(SAT_BaseWidget* AWidget) {}
+  // virtual void do_widget_captureKeys(SAT_BaseWidget* AWidget) {}
+  // virtual void do_widget_close(SAT_BaseWidget* AWidget) {}
+  // virtual void do_widget_select(SAT_BaseWidget* AWidget, int32_t AIndex, int32_t ASubIndex=-1) {}
 
 };
 

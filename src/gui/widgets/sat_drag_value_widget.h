@@ -245,21 +245,21 @@ public:
   //----------
 
   void on_widget_mouseMove(double AXpos, double AYpos, uint32_t AState, uint32_t ATime) override {
+
     if (MWaitingForDrag) {
       MWaitingForDrag = false;
       MIsDragging = true;
       if (MAutoHideCursor) do_widget_setCursor(this,SAT_CURSOR_HIDE);
       if (MAutoLockCursor) do_widget_setCursor(this,SAT_CURSOR_LOCK);
     }
+
     else if (MIsDragging) {
       
       int32_t index  = MDragIndex; // selected
       int32_t index2 = 1 - index; // the other one
       double value   = MDragValue;
       double value2  = getValue(index2);
-
-//SAT_Print("index %i value %.2f index2 %i value2 %.2f\n",index,value,index2,value2);
-
+      //SAT_Print("index %i value %.2f index2 %i value2 %.2f\n",index,value,index2,value2);
       double sens = MDragSensitivity;
       if (AState & SAT_STATE_CTRL) sens *= MShiftSensitivity;
       double diff = 0;
@@ -346,6 +346,7 @@ public:
       if (index >= 0) do_widget_setCursor(this,getCursor());
       else do_widget_setCursor(this,SAT_CURSOR_DEFAULT);
     }
+    
     MPreviousXpos = AXpos;
     MPreviousYpos = AYpos;
   }

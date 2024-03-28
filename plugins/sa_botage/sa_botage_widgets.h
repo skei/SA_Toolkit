@@ -327,9 +327,9 @@ public:
     setDrawText(false);
     setArcThickness(4);
     setArcValueColor(0.5);
-    setBipolar(true);
-    setSnap(true);
-    setSnapPos(0.5);
+//    setBipolar(true);
+//    setSnap(true);
+//    setSnapPos(0.5);
 
     //setDrawParamText(false);
 
@@ -456,11 +456,16 @@ public:
     setValueSize(8);
     setValueOffset(SAT_Rect(2,0,2,0));
 
-    setSliderBarColor(0.3);
+    setSliderBarColor(0.4);
     setSliderEdgeColor(0.5);
 
     setDrawParamText(false);
     setTextAlignment(SAT_TEXT_ALIGN_CENTER);
+
+    setDrawIndicator(false);
+    //setIndicatorColor
+    //setIndicatorThickness
+    //setIndicatorValue
   }
   
 };
