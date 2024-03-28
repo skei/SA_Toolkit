@@ -138,8 +138,8 @@ public:
     range_length_minmax->setSnapPos(0.5);
     range_speed_minmax->setSnap(true);
     range_speed_minmax->setSnapPos(0.5);
-    //range_offset_minmax->setQuantize(true);
-    //range_offset_minmax->setQuantizeSteps(17);
+    range_offset_minmax->setQuantize(true);
+    range_offset_minmax->setQuantizeSteps(17);
     range_fx_minmax->setSnap(true);
     range_fx_minmax->setSnapPos(0.5);
     
@@ -168,8 +168,8 @@ public:
     loop_length_minmax->setSnapPos(0.5);
     loop_speed_minmax->setSnap(true);
     loop_speed_minmax->setSnapPos(0.5);
-    //loop_offset_minmax->setQuantize(true);
-    //loop_offset_minmax->setQuantizeSteps(17);
+    loop_offset_minmax->setQuantize(true);
+    loop_offset_minmax->setQuantizeSteps(17);
     loop_fx_minmax->setSnap(true);
     loop_fx_minmax->setSnapPos(0.5);
     

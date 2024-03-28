@@ -292,53 +292,61 @@ public:
         //SAT_Print("index %i value %.3f\n",index,value);
 
         if (index == 0) {
-          // if (value > value2) {
-          //   if (AState & SAT_STATE_ALT) {
-          //     // push
-          //     // setValue(value,index);
-          //     // do_widget_update(this,AState);
-          //     // do_widget_redraw(this);
-          //   }
-          //   else {
-          //     // stop
-          //     value = value2;
-          //     // setValue(value,index);
-          //     // do_widget_update(this,AState);
-          //     // do_widget_redraw(this);
-          //   }
-          // }
+
+          if (value > value2) {
+            if (AState & SAT_STATE_ALT) {
+              // push
+              value2 = value;
+              setValue(value2,index2);
+              do_widget_update(this,index2,AState);
+              do_widget_redraw(this,index2,0);
+            }
+            else {
+              // stop
+              value = value2;
+              // setValue(value,index);
+              // do_widget_update(this,AState);
+              // do_widget_redraw(this);
+            }
+          }
+
           setValue(value,index);
-          do_widget_update(this,index,AState);
+          do_widget_update(this,index,AState);      // astate?
           do_widget_redraw(this,index,0);
         }
 
         else if (index == 1) {
-          // if (value < value2) {
-          //   if (AState & SAT_STATE_ALT) {
-          //     // push
-          //     // setValue(value,index);
-          //     // do_widget_update(this,AState);
-          //     // do_widget_redraw(this);
-          //   }
-          //   else {
-          //     // stop
-          //     value = value2;
-          //     // setValue(value,index);
-          //     // do_widget_update(this,AState);
-          //     // do_widget_redraw(this);
-          //   }
-          // }
+
+          if (value < value2) {
+            if (AState & SAT_STATE_ALT) {
+              // push
+              value2 = value;
+              setValue(value2,index2);
+              do_widget_update(this,index2,AState); // astate?
+              do_widget_redraw(this,index2,0);
+            }
+            else {
+              // stop
+              value = value2;
+              // setValue(value2,index2);
+              // do_widget_update(this,index2,AState); // astate?
+              // do_widget_redraw(this,index2,0);
+            }
+          }
+
           setValue(value,index);
-          do_widget_update(this,index,AState);
+          do_widget_update(this,index,AState);      // astate?
           do_widget_redraw(this,index,0);
         }
       
       } // num values == 2
+
       else {
         setValue(value,index);
         do_widget_update(this,index,AState);
         do_widget_redraw(this,index,0);
       }
+
     } // dragging
     
     else {

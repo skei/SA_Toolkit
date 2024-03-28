@@ -41,6 +41,10 @@ protected:
   bool        MDrawRoundedBottom          = true;
   float       MRounded                    = 5;
   
+  bool        MDrawIndicator      = false;
+  double      MIndicatorValue     = 0.0;
+  SAT_Color   MIndicatorColor     = SAT_Yellow;
+  SAT_Rect    MIndicatorOffset    = SAT_Rect(0,0,0,0);  
 
 //------------------------------
 public:
@@ -95,6 +99,11 @@ public:
 
   virtual void setCellDrawBorder(bool ADraw)                  { MCellDrawBorder = ADraw; }
   virtual void setCellBorderColor(SAT_Color AColor)           { MCellBorderColor = AColor; }
+
+  virtual void setDrawIndicator(bool ADraw)             { MDrawIndicator = ADraw; }
+  virtual void setIndicatorValue(double AValue)         { MIndicatorValue = AValue; }
+  virtual void setIndicatorColor(SAT_Color AColor)      { MIndicatorColor = AColor; }
+  virtual void setIndicatorOffset(SAT_Rect AOffset)     { MIndicatorOffset = AOffset; }
 
 //------------------------------
 public:
@@ -306,14 +315,16 @@ public:
     if (MVertical) AA = AY;
     else AA = AX;
     
-    SAT_Color c1,c2;
-    if (MStates[AA]) {
+    SAT_Color c1 = MCellBackgroundColor;
+    SAT_Color c2 = MCellActiveBackgroundColor;
+
+    if (MDrawIndicator && ((int32_t)MIndicatorValue == AX)) {
+      c1 = MIndicatorColor;
+      c2 = MIndicatorColor;
+    }
+    else if (MStates[AA]) {
       c1 = MCellActiveBackgroundColor;
       c2 = MCellBackgroundColor;
-    }
-    else {
-      c1 = MCellBackgroundColor;
-      c2 = MCellActiveBackgroundColor;
     }
 
     // background

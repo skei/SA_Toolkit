@@ -96,9 +96,9 @@ public:
 
     double v = AValue;//powf(0.5,-value);
     v *= 8.0;
-    sprintf(MValueText,MValueFormat,v);
-    //uint32_t iv = SAT_Trunc(v);
-    //sprintf(MValueText,"%i",iv);
+    //sprintf(MValueText,MValueFormat,v);
+    int32_t iv = SAT_Trunc(v);
+    sprintf(MValueText,"%i",iv);
     return MValueText;
   }
 

@@ -312,16 +312,17 @@
     if (current_page == 0) {
 
       if (processor->MRange) {
+        //SAT_Print("%.1f, %.1f\n",processor->rnd_main_slices,processor->rnd_main_subdiv);
 
         // MMainSlicesWidget->setIndicatorValue(processor->rnd_main_slices);
-        //trigger_slices_buttons->setDrawMarker(true);
-        //trigger_slices_buttons->setMarkerValue(processor->rnd_main_slices);
-        //trigger_slices_buttons->do_widget_redraw(trigger_slices_buttons,0,0);
+        trigger_slices_buttons->setDrawIndicator(true);
+        trigger_slices_buttons->setIndicatorValue(processor->rnd_main_slices - 1);
+        trigger_slices_buttons->do_widget_redraw(trigger_slices_buttons,0,0);
 
         // MMainLoopsWidget->setIndicatorValue(processor->rnd_main_subdiv);
-        //trigger_loops_buttons->setDrawMarker(true);
-        //trigger_loops_buttons->setMarkerValue(processor->rnd_main_subdiv);
-        //trigger_loops_buttons->do_widget_redraw(trigger_loops_buttons,0,0);
+        trigger_loops_buttons->setDrawIndicator(true);
+        trigger_loops_buttons->setIndicatorValue(processor->rnd_main_subdiv - 1);
+        trigger_loops_buttons->do_widget_redraw(trigger_loops_buttons,0,0);
 
         prob_page_widget->range_length_prob->setMarkerValue(processor->rnd_range_size);
         prob_page_widget->range_length_prob->setDrawMarker(true);
@@ -486,9 +487,11 @@
       } // MRange
       else { // ! range
 
-        // //MMainProbWidget->setIndicatorValue(-1);
-        // MMainSlicesWidget->setIndicatorValue(-1);
-        // MMainLoopsWidget->setIndicatorValue(-1);
+        trigger_slices_buttons->setDrawIndicator(false);
+        trigger_slices_buttons->do_widget_redraw(trigger_slices_buttons,0,0);
+
+        trigger_loops_buttons->setDrawIndicator(false);
+        trigger_loops_buttons->do_widget_redraw(trigger_loops_buttons,0,0);
 
         prob_page_widget->range_length_prob->setDrawMarker(false);
         prob_page_widget->range_length_prob->do_widget_redraw(prob_page_widget->range_length_prob,0,0);
