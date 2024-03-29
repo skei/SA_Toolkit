@@ -59,7 +59,7 @@
 //#include "../plugins/sa_pitch.h"
 //#include "../plugins/sa_tyr.h"
 
-#include "../plugins/sa_plugins.h"
+//#include "../plugins/sa_plugins.h"
 
 //----------------------------------------------------------------------
 //
@@ -67,14 +67,14 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/pure_clap.h"
-//#include "../plugins/minimal_clap.h"
-//#include "../plugins/minimal_noop.h"
-//#include "../plugins/minimal.h"
-//#include "../plugins/standalone.h"
-//#include "../plugins/demo.h"
-//#include "../plugins/demo2.h"
-//#include "../plugins/interceptor.h"
+#include "../plugins/misc/demo.h"
+//#include "../plugins/misc/demo2.h"
+//#include "../plugins/misc/interceptor.h"
+//#include "../plugins/misc/minimal.h"
+//#include "../plugins/misc/minimal_clap.h"
+//#include "../plugins/misc/minimal_noop.h"
+//#include "../plugins/misc/pure_clap.h"
+//#include "../plugins/misc/standalone.h"
 
 //#include "../plugins/test/test_params.h"
 
