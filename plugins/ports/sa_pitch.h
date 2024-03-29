@@ -12,7 +12,7 @@
 //#ifdef SAT_DEBUG
 //  #define PLUGIN_NAME "sa_pitch (debug)"
 //#else
-  #define PLUGIN_NAME "sa_pitch"
+  #define PLUGIN_NAME "sa_port_pitch"
 //#endif
 
 //----------------------------------------------------------------------

@@ -118,7 +118,7 @@ public:
 const clap_plugin_descriptor_t sa_phaser_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_phaser",
-  .name         = "sa_phaser",
+  .name         = "sa_port_phaser",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

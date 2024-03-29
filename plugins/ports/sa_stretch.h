@@ -24,7 +24,7 @@
 //
 //----------------------------------------------------------------------
 
-#define PLUGIN_NAME "sa_stretch"
+#define PLUGIN_NAME "sa_port_stretch"
 
 //----------
 

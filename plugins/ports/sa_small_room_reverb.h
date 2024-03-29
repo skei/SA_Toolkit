@@ -24,7 +24,7 @@
 const clap_plugin_descriptor_t sa_small_room_reverb_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_small_room_reverb",
-  .name         = "sa_small_room_reverb",
+  .name         = "sa_port_small_room_reverb",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

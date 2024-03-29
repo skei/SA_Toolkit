@@ -425,7 +425,7 @@ public:
 const clap_plugin_descriptor_t sa_freeverb_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_freeverb",
-  .name         = "sa_freeverb",
+  .name         = "sa_port_freeverb",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

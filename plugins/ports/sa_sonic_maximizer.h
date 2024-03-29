@@ -47,7 +47,7 @@
 const clap_plugin_descriptor_t sa_sonic_maximizer_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_sonic_maximizer",
-  .name         = "sa_sonic_maximizer",
+  .name         = "sa_port_sonic_maximizer",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

@@ -42,7 +42,7 @@
 const clap_plugin_descriptor_t sa_exciter_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_exciter",
-  .name         = "sa_exciter",
+  .name         = "sa_port_exciter",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

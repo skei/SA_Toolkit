@@ -42,7 +42,7 @@ ENTRUST SOMEBODY ELSE WITH DOING SO.
 const clap_plugin_descriptor_t sa_transient_killer_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_transient_killer",
-  .name         = "sa_transient_killer",
+  .name         = "sa_port_transient_killer",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

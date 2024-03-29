@@ -31,7 +31,7 @@
 const clap_plugin_descriptor_t sa_saturation_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_saturation",
-  .name         = "sa_saturation",
+  .name         = "sa_port_saturation",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

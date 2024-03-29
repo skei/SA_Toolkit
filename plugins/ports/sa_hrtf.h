@@ -43,7 +43,7 @@
 const clap_plugin_descriptor_t sa_hrtf_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_hrtf",
-  .name         = "sa_hrtf",
+  .name         = "sa_port_hrtf",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

@@ -367,7 +367,7 @@ public:
 const clap_plugin_descriptor_t sa_iirfilter_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_iirfilter",
-  .name         = "sa_iirfilter",
+  .name         = "sa_port_iirfilter",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

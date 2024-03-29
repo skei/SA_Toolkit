@@ -24,7 +24,7 @@
 const clap_plugin_descriptor_t sa_limiter_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_limiter",
-  .name         = "sa_limiter",
+  .name         = "sa_port_limiter",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

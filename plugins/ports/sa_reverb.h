@@ -21,7 +21,7 @@
 
 //----------
 
-#define PLUGIN_NAME "sa_reverb"
+#define PLUGIN_NAME "sa_port_reverb"
 
 //----------------------------------------------------------------------
 //

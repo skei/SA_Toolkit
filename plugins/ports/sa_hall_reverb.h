@@ -54,7 +54,7 @@
 const clap_plugin_descriptor_t sa_hall_reverb_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_hall_reverb",
-  .name         = "sa_hall_reverb",
+  .name         = "sa_port_hall_reverb",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

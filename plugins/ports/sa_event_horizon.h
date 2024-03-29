@@ -36,7 +36,7 @@
 const clap_plugin_descriptor_t sa_event_horizon_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_event_horizon",
-  .name         = "sa_event_horizon",
+  .name         = "sa_port_event_horizon",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

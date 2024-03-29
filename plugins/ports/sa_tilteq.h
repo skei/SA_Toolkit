@@ -26,7 +26,7 @@
 const clap_plugin_descriptor_t sa_tilteq_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_tilteq",
-  .name         = "sa_tilteq",
+  .name         = "sa_port_tilteq",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
