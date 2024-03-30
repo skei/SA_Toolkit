@@ -9,8 +9,13 @@
 //----------------------------------------------------------------------
 
 template<typename T>
-struct SAT_NoDelayFx {
+struct SAT_NoLoopFx {
   T process(T x) { return x; }
+};
+
+template<typename T>
+struct SAT_HardClipFx {
+  T process(T x) { return x;/*SAT_Clamp(x,-1,1);*/ }
 };
 
 //----------------------------------------------------------------------
@@ -20,7 +25,7 @@ struct SAT_NoDelayFx {
 //----------------------------------------------------------------------
 
 
-template <typename T, int MAX_DELAY, typename FBLOOPFX=SAT_NoDelayFx<T>> // , typename CLIPFX=SAT_NoDelayFx<T>
+template <typename T, int MAX_DELAY, typename LOOPFX=SAT_NoLoopFx<T>, typename CLIPFX=SAT_HardClipFx<T>>
 class SAT_InterpolatedDelay {
 
 //------------------------------
@@ -31,8 +36,8 @@ private:
   int             MCounter            = 0;
   T               MDelayPos           = 0.0f;
   bool            MWrapped            = false;
-  FBLOOPFX        MFBLoopFX           = {};
-  CLIPFX          MClipFX           = {};
+  LOOPFX          MLoopFX             = {};
+  CLIPFX          MClipFX             = {};
   T               MPhase              = 0.0;
 
   //SAT_DcFilter  MDC;
@@ -54,8 +59,14 @@ public:
 public:
 //------------------------------
 
-  FBLOOPFX* getFeedbackFX() {
-    return &MFBLoopFX;
+  LOOPFX* getLoopFX() {
+    return &MLoopFX;
+  }
+
+  //----------
+
+  LOOPFX* getClipFX() {
+    return &MLoopFX;
   }
 
   //----------
@@ -66,7 +77,9 @@ public:
 
   //----------
 
-  T getPhase() { return MPhase; }
+  T getPhase() {
+    return MPhase;
+  }
 
   //----------
 
@@ -99,7 +112,7 @@ public:
 
   //----------
 
-  T process(T AInput, T AFeedback, T ADelay) {
+  T process(T AInput, T ADelay, T AFeedback) {
 
     SAT_Assert( ADelay > 0 );
     SAT_Assert( ADelay < MAX_DELAY );
@@ -125,25 +138,21 @@ public:
     T c1  = 0.5f * (y1 - y_1);
     T c2  = y_1 - 2.5f * y0 + 2.0f * y1 - 0.5f * y2;
     T c3  = 0.5f * (y2 - y_1) + 1.5f * (y0 - y1);
-    T output = ((c3 * x + c2) * x + c1) * x + c0;
+    T delayed = ((c3 * x + c2) * x + c1) * x + c0;
 
     //output = MDC.process(output);
     //output = SAT_KillDenormal(output);
 
-    T fb = output * AFeedback;
-    T flt = MFBLoopFX.process(fb);
     //T flt = fb;
-    T out = AInput + flt;
-
-    //-----
-
+    //T out = filtered_feedback;// + (AInput * AMix);
     //out = atan(out); // KClamp((AInput + flt), -1, 1);
-
     // hard-clip
-    if (out >  1.0f) out =  1.0f;
-    if (out < -1.0f) out = -1.0f;
+    //if (out >  1.0f) out =  1.0f;
+    //if (out < -1.0f) out = -1.0f;
 
-//    out = MClipFX.process(out);
+    T feedback = delayed * AFeedback;
+//    feedback = MLoopFX.process(feedback);
+//    feedback = MClipFX.process(feedback);
 
     //-----
 
@@ -156,7 +165,7 @@ public:
     //  out *= diff;
     //}
 
-    MBuffer[MCounter] = out;
+    MBuffer[MCounter] = AInput + feedback;
 
     MCounter++;
     if (MCounter >= MAX_DELAY) {
@@ -171,7 +180,7 @@ public:
 
     MPhase = MDelayPos / ADelay;
 
-    return output;
+    return delayed;
   }
 
 };

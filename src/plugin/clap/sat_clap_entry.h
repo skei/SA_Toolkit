@@ -38,6 +38,9 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
     if (strcmp(factory_id,CLAP_PRESET_DISCOVERY_FACTORY_ID) == 0) {
       return &SAT_CLAP_PRESET_DISCOVERY_FACTORY;
     }
+    if (strcmp(factory_id,CLAP_PRESET_DISCOVERY_FACTORY_ID_COMPAT) == 0) {
+      return &SAT_CLAP_PRESET_DISCOVERY_FACTORY;
+    }
   #endif
   //if (strcmp(factory_id,CLAP_PLUGIN_INVALIDATION_FACTORY_ID) == 0) {
   //  return &SAT_CLAP_PLUGIN_INVALIDATION_FACTORY;

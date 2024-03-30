@@ -1,6 +1,7 @@
 /*
-  in '/bin'  : ../build/compile -i ../build/build.cpp -o build.exe -f exe -g x11 -d
-  in console : nc -U -l -k /tmp/sat.socket
+  in '/bin':    ../build/compile -i ../build/build.cpp -o build.exe -f exe -g x11 -d
+  validator:    ../Tools/clap-validator validate ./build.clap
+  debug output: nc -U -l -k /tmp/sat.socket
 */
 
 //#define SAT_DEBUG_PRINT_SOCKET
@@ -57,7 +58,7 @@
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_pitch.h"
-//#include "../plugins/sa_tyr.h"
+#include "../plugins/sa_tyr.h"
 
 //#include "../plugins/sa_plugins.h"
 
@@ -67,7 +68,7 @@
 //
 //----------------------------------------------------------------------
 
-#include "../plugins/misc/demo.h"
+//#include "../plugins/misc/demo.h"
 //#include "../plugins/misc/demo2.h"
 //#include "../plugins/misc/interceptor.h"
 //#include "../plugins/misc/minimal.h"

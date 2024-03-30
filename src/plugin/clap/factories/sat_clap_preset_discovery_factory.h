@@ -163,7 +163,7 @@
         if (metadata_receiver->begin_preset(metadata_receiver,name,load_key)) {
 
           // Adds a plug-in id that this preset can be used with.
-          const clap_plugin_id_t plugin_id = { "clap", id };
+          const clap_universal_plugin_id_t plugin_id = { "clap", id };
           metadata_receiver->add_plugin_id(metadata_receiver,&plugin_id);
 
           // Sets the sound pack to which the preset belongs to.
