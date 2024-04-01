@@ -258,9 +258,9 @@ public:
 
   //----------
 
-  virtual void processNoAudioSample() {
-  }
-
+  // virtual void processNoAudioSample() {
+  //   SAT_PRINT;
+  // }
   
 };
 

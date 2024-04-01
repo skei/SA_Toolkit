@@ -102,7 +102,9 @@ public:
 //------------------------------
 
   bool init() final {
+
     registerDefaultExtensions();    
+
     registerExtension(CLAP_EXT_NOTE_PORTS, &MExtNotePorts);
     appendClapNoteInputPort("In");
     appendClapNoteOutputPort("Out");
@@ -111,6 +113,7 @@ public:
     appendParameter( new SAT_IntParameter( "Value2", 1, -12, 12 ));
     appendParameter( new SAT_IntParameter( "Modulo", 12,  1, 24 ));
     setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+    
     return SAT_Plugin::init();
   }
   

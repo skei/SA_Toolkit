@@ -1367,6 +1367,7 @@ public: // process
     #endif
     uint32_t prev_time = 0;
     uint32_t size = in_events->size(in_events);
+
     //if (size > 0) { SAT_Print("size %i\n",size); }
 
     for (uint32_t i=0; i<size; i++) {
@@ -1391,58 +1392,66 @@ public: // process
 
   //----------
 
+  // spl0/1 might be 0 if no input/output ports!
+
   virtual void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) {
   }
 
   //----------
 
-  virtual void processNoAudioSample() {
-  }
-
-  //----------
-
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
-
     const clap_process_t* process = AContext->process;
 
-    bool have_audio_ports = false;
-    if ((MAudioInputPorts.size() > 0) && (MAudioOutputPorts.size() > 0)) {
-      have_audio_ports = true;
-      if (MAudioInputPorts[0]->getInfo()->channel_count != 2) have_audio_ports = false;
-      if (MAudioOutputPorts[0]->getInfo()->channel_count != 2) have_audio_ports = false;
-    }
+    bool have_audio_inputs = (MAudioInputPorts.size() > 0);
+    bool have_audio_outputs = (MAudioOutputPorts.size() > 0);
+    bool have_audio_ports = have_audio_inputs | have_audio_outputs;
 
-    float* input0  = nullptr;
-    float* input1  = nullptr;
-    float* output0  = nullptr;
-    float* output1  = nullptr;
-
-    if (MAudioInputPorts.size() > 0) {
-      //have_audio_ports = true;
-      input0  = process->audio_inputs[0].data32[0]  + AOffset;
-      input1  = process->audio_inputs[0].data32[1]  + AOffset;
-    }
-    if (MAudioOutputPorts.size() > 0) {
-      //have_audio_ports = true;
-      output0  = process->audio_outputs[0].data32[0]  + AOffset;
-      output1  = process->audio_outputs[0].data32[1]  + AOffset;
-    }
-
-    if (have_audio_ports) {
-      for (uint32_t i=0; i<ALength; i++) {
-        float spl0 = *input0++;
-        float spl1 = *input1++;
-        processStereoSample(&spl0,&spl1);
-        *output0++ = spl0;
-        *output1++ = spl1;
+    if (have_audio_outputs) {
+      if (have_audio_inputs) {
+        float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+        float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+        float* output0  = process->audio_outputs[0].data32[0]  + AOffset;
+        float* output1  = process->audio_outputs[0].data32[1]  + AOffset;
+        for (uint32_t i=0; i<ALength; i++) {
+          float spl0 = *input0++;
+          float spl1 = *input1++;
+          processStereoSample(&spl0,&spl1);
+          *output0++ = spl0;
+          *output1++ = spl1;
+        }
+      }
+      else {
+        float* output0  = process->audio_outputs[0].data32[0]  + AOffset;
+        float* output1  = process->audio_outputs[0].data32[1]  + AOffset;
+        for (uint32_t i=0; i<ALength; i++) {
+          float spl0 = 0.0;
+          float spl1 = 0.0;
+          processStereoSample(&spl0,&spl1);
+          *output0++ = spl0;
+          *output1++ = spl1;
+        }
       }
     }
+
     else {
-      for (uint32_t i=0; i<ALength; i++) {
-        processNoAudioSample();
+      if (have_audio_inputs) {
+        float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+        float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+        for (uint32_t i=0; i<ALength; i++) {
+          float spl0 = *input0++;
+          float spl1 = *input1++;
+          processStereoSample(&spl0,&spl1);
+        }
+      }
+      else {
+        for (uint32_t i=0; i<ALength; i++) {
+          processStereoSample(nullptr,nullptr);
+        }
       }
     }
+
   }
+
 
   //----------
 
@@ -1455,50 +1464,8 @@ public: // process
   virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
-    // if (MAudioInputPorts.size() < 1) return;
-    // if (MAudioOutputPorts.size() < 1) return;
-    // if (MAudioInputPorts[0]->getInfo()->channel_count != 2) return;
-    // if (MAudioOutputPorts[0]->getInfo()->channel_count != 2) return;
-    // float* input0 = process->audio_inputs[0].data32[0];
-    // float* input1 = process->audio_inputs[0].data32[1];
-    // float* output0 = process->audio_outputs[0].data32[0];
-    // float* output1 = process->audio_outputs[0].data32[1];
-    // for (uint32_t i=0; i<length; i++) {
-    //   //*output0++ = *input0++;
-    //   //*output1++ = *input1++;
-    //   float spl0 = *input0++;
-    //   float spl1 = *input1++;
-    //   processStereoSample(&spl0,&spl1);
-    //   *output0++ = spl0;
-    //   *output1++ = spl1;
-    // }
     processAudio(AContext,0,length);
   }
-
-//----------
-//----------
-//----------
-
-  // virtual void processNoAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
-  //   const clap_process_t* process = AContext->process;
-  //   for (uint32_t i=0; i<ALength; i++) {
-  //     processNoAudioSample();
-  //   }
-  // }
-
-  //----------
-
-  // virtual void processNoAudio(SAT_ProcessContext* AContext, uint32_t AOffset) {
-  //   processNoAudio(AContext,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
-  // }
-
-  //----------
-
-  // virtual void processNoAudio(SAT_ProcessContext* AContext) {
-  //   const clap_process_t* process = AContext->process;
-  //   uint32_t length = process->frames_count;
-  //   processNoAudio(AContext,0,length);
-  // }
 
   //----------
 

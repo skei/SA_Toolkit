@@ -2,7 +2,7 @@
 #define sa_mael_voice_included
 //----------------------------------------------------------------------
 
-#define VOICE_SCALE   0.1
+//#define VOICE_SCALE   0.1
 
 #include "base/utils/sat_interpolation.h"
 #include "audio/filters/sat_svf_filter.h"
@@ -364,7 +364,7 @@ public:
 
         sat_sample_t env = MEnvelope.process();
         out *= env;
-        *buffer++ = out * VOICE_SCALE;
+        *buffer++ = out;// * VOICE_SCALE;
 
         // tuning
         // shouldn't these be _before_ osc1/2 calculation?
