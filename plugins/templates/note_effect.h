@@ -56,6 +56,21 @@ public:
   
   //----------
 
+  //clap_event_note_t note_event;
+  //note_event.header.size     = sizeof(clap_event_note_t);
+  //note_event.header.time     = event.header.time;
+  //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+  //note_event.header.type     = CLAP_EVENT_NOTE_ON;
+  //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+  //note_event.note_id         = (chan * 128) + index;
+  //note_event.port_index      = event->port_index;
+  //note_event.channel         = chan;
+  //note_event.key             = index;
+  //note_event.velocity        = value * (double)SAT_INV127;
+  //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
+
+  //----------
+
   bool on_plugin_noteOn(const clap_event_note_t* event) final {
     clap_event_note_t new_event;
     memcpy(&new_event,event,sizeof(clap_event_note_t));

@@ -103,8 +103,10 @@ public:
 
   bool init() final {
     registerDefaultExtensions();    
+    registerExtension(CLAP_EXT_NOTE_PORTS, &MExtNotePorts);
     appendClapNoteInputPort("In");
     appendClapNoteOutputPort("Out");
+
     appendParameter( new SAT_IntParameter( "Value1", 0, -12, 12 ));
     appendParameter( new SAT_IntParameter( "Value2", 1, -12, 12 ));
     appendParameter( new SAT_IntParameter( "Modulo", 12,  1, 24 ));
@@ -115,6 +117,7 @@ public:
   //----------
 
   bool on_plugin_noteOn(const clap_event_note_t* event) final {
+    //SAT_PRINT;
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;

@@ -48,7 +48,7 @@ private:
 public:
 //------------------------------
 
-  SAT_DragValueWidget(SAT_Rect ARect, const char* AText, double AValue)
+  SAT_DragValueWidget(SAT_Rect ARect, const char* AText, double AValue=0.0)
   : SAT_PanelWidget(ARect) {
     setName("SAT_DragValueWidget");
     setFillBackground(true);
@@ -71,6 +71,9 @@ public:
     }
 
     setDrawParamText(true);
+
+    setTextOffset(SAT_Rect(2,0,0,0));
+    setValueOffset(SAT_Rect(0,0,2,0));
 
   }
 

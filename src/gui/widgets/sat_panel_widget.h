@@ -77,7 +77,7 @@ protected:
   SAT_Color   MTextColor                  = SAT_White;
   double      MTextSize                   = 10.0;
   uint32_t    MTextAlignment              = SAT_TEXT_ALIGN_CENTER;
-  SAT_Rect    MTextOffset                 = {};
+  SAT_Rect    MTextOffset                 = {0,0,0,0};
   char        MText[1024]                 = {0};
   int32_t     MTextFont                   = -1;
   bool        MAutoSize                   = false;

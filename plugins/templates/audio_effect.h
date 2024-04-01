@@ -56,6 +56,12 @@ public:
 
   //----------
 
+  // bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+  //   return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  // }
+
+  //----------
+
   #if !defined (SAT_GUI_NOGUI)
   
   void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {

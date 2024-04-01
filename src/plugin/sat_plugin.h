@@ -352,6 +352,13 @@ public: // note ports
 
   //----------
 
+  virtual int32_t appendNoteInputPort(const char* name, uint32_t dialects, uint32_t preferred) {
+    SAT_NotePort* port = new SAT_NotePort(name,dialects,preferred);
+    return appendNoteInputPort(port);
+  }
+
+  //----------
+
   virtual int32_t appendClapNoteInputPort(const char* name) {
     SAT_NotePort* port = new SAT_NotePort(name,CLAP_NOTE_DIALECT_CLAP,CLAP_NOTE_DIALECT_CLAP);
     return appendNoteInputPort(port);
@@ -382,6 +389,13 @@ public: // note ports
 
   //----------
 
+  virtual int32_t appendNoteOutputPort(const char* name, uint32_t dialects, uint32_t preferred) {
+    SAT_NotePort* port = new SAT_NotePort(name,dialects,preferred);
+    return appendNoteOutputPort(port);
+  }
+
+  //----------
+
   virtual int32_t appendClapNoteOutputPort(const char* name) {
     SAT_NotePort* port = new SAT_NotePort(name,CLAP_NOTE_DIALECT_CLAP,CLAP_NOTE_DIALECT_CLAP);
     return appendNoteOutputPort(port);
@@ -393,6 +407,17 @@ public: // note ports
     SAT_NotePort* port = new SAT_NotePort(name,CLAP_NOTE_DIALECT_MIDI,CLAP_NOTE_DIALECT_MIDI);
     return appendNoteOutputPort(port);
   }
+
+  //----------
+
+// typedef struct clap_note_port_info {
+//    // id identifies a port and must be stable.
+//    // id may overlap between input and output ports.
+//    clap_id  id;
+//    uint32_t supported_dialects;   // bitfield, see clap_note_dialect
+//    uint32_t preferred_dialect;    // one value of clap_note_dialect
+//    char     name[CLAP_NAME_SIZE]; // displayable name, i18n?
+// } clap_note_port_info_t;
 
   //----------
 
@@ -770,6 +795,7 @@ public: // events
 
   // virtual
   bool handleEvent(const clap_event_header_t* header) {
+    //SAT_PRINT;
     if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
       switch (header->type) {
         case CLAP_EVENT_NOTE_ON:          return handleNoteOnEvent((clap_event_note_t*)header);
@@ -790,6 +816,7 @@ public: // events
   //----------
 
   bool handleNoteOnEvent(clap_event_note_t* event) {
+    //SAT_PRINT;
     bool result = on_plugin_noteOn(event);
     if (result) return true;
     return false;
@@ -881,6 +908,7 @@ public: // events
   //----------
 
   bool handleTransportEvent(const clap_event_transport_t* event) {
+    //SAT_PRINT;
     bool result = on_plugin_transport(event);
     if (result) return true;
 
@@ -1334,14 +1362,20 @@ public: // process
     if (!in_events) return;
     //if (!out_events) return;
     #if !defined (SAT_GUI_NOGUI)
-    clearAutomationToGui();
-    clearModulationToGui();
+      clearAutomationToGui();
+      clearModulationToGui();
     #endif
     uint32_t prev_time = 0;
     uint32_t size = in_events->size(in_events);
+    //if (size > 0) { SAT_Print("size %i\n",size); }
+
     for (uint32_t i=0; i<size; i++) {
       const clap_event_header_t* header = in_events->get(in_events,i);
+
+      //SAT_Print("header->space_id %i\n",header->space_id);
+
       if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {
+
         if (header->time < prev_time) {
           SAT_Print("huh? not sorted? prev_time %i header->time %i header->type %i\n",prev_time,header->time,header->type);
         }
@@ -1350,8 +1384,8 @@ public: // process
       }
     }
     #if !defined (SAT_GUI_NOGUI)
-    queueAutomationToGui();
-    queueModulationToGui();
+      queueAutomationToGui();
+      queueModulationToGui();
     #endif
   }
 
@@ -1362,25 +1396,51 @@ public: // process
 
   //----------
 
+  virtual void processNoAudioSample() {
+  }
+
+  //----------
+
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
+
     const clap_process_t* process = AContext->process;
-    //float* inputs[2];
-    //float* outputs[2];
-    //inputs[0]  = process->audio_inputs[0].data32[0] + AOffset;
-    //inputs[1]  = process->audio_inputs[0].data32[1] + AOffset;
-    //outputs[0] = process->audio_outputs[0].data32[0] + AOffset;
-    //outputs[1] = process->audio_outputs[0].data32[1] + AOffset;
-    //SAT_CopyStereoBuffer(outputs,inputs,ALength);
-    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
-    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
-    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
-    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
-    for (uint32_t i=0; i<ALength; i++) {
-      float spl0 = *input0++;
-      float spl1 = *input1++;
-      processStereoSample(&spl0,&spl1);
-      *output0++ = spl0;
-      *output1++ = spl1;
+
+    bool have_audio_ports = false;
+    if ((MAudioInputPorts.size() > 0) && (MAudioOutputPorts.size() > 0)) {
+      have_audio_ports = true;
+      if (MAudioInputPorts[0]->getInfo()->channel_count != 2) have_audio_ports = false;
+      if (MAudioOutputPorts[0]->getInfo()->channel_count != 2) have_audio_ports = false;
+    }
+
+    float* input0  = nullptr;
+    float* input1  = nullptr;
+    float* output0  = nullptr;
+    float* output1  = nullptr;
+
+    if (MAudioInputPorts.size() > 0) {
+      //have_audio_ports = true;
+      input0  = process->audio_inputs[0].data32[0]  + AOffset;
+      input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    }
+    if (MAudioOutputPorts.size() > 0) {
+      //have_audio_ports = true;
+      output0  = process->audio_outputs[0].data32[0]  + AOffset;
+      output1  = process->audio_outputs[0].data32[1]  + AOffset;
+    }
+
+    if (have_audio_ports) {
+      for (uint32_t i=0; i<ALength; i++) {
+        float spl0 = *input0++;
+        float spl1 = *input1++;
+        processStereoSample(&spl0,&spl1);
+        *output0++ = spl0;
+        *output1++ = spl1;
+      }
+    }
+    else {
+      for (uint32_t i=0; i<ALength; i++) {
+        processNoAudioSample();
+      }
     }
   }
 
@@ -1395,24 +1455,50 @@ public: // process
   virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
-    if (MAudioInputPorts.size() < 1) return;
-    if (MAudioOutputPorts.size() < 1) return;
-    if (MAudioInputPorts[0]->getInfo()->channel_count != 2) return;
-    if (MAudioOutputPorts[0]->getInfo()->channel_count != 2) return;
-    float* input0 = process->audio_inputs[0].data32[0];
-    float* input1 = process->audio_inputs[0].data32[1];
-    float* output0 = process->audio_outputs[0].data32[0];
-    float* output1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<length; i++) {
-      //*output0++ = *input0++;
-      //*output1++ = *input1++;
-      float spl0 = *input0++;
-      float spl1 = *input1++;
-      processStereoSample(&spl0,&spl1);
-      *output0++ = spl0;
-      *output1++ = spl1;
-    }
+    // if (MAudioInputPorts.size() < 1) return;
+    // if (MAudioOutputPorts.size() < 1) return;
+    // if (MAudioInputPorts[0]->getInfo()->channel_count != 2) return;
+    // if (MAudioOutputPorts[0]->getInfo()->channel_count != 2) return;
+    // float* input0 = process->audio_inputs[0].data32[0];
+    // float* input1 = process->audio_inputs[0].data32[1];
+    // float* output0 = process->audio_outputs[0].data32[0];
+    // float* output1 = process->audio_outputs[0].data32[1];
+    // for (uint32_t i=0; i<length; i++) {
+    //   //*output0++ = *input0++;
+    //   //*output1++ = *input1++;
+    //   float spl0 = *input0++;
+    //   float spl1 = *input1++;
+    //   processStereoSample(&spl0,&spl1);
+    //   *output0++ = spl0;
+    //   *output1++ = spl1;
+    // }
+    processAudio(AContext,0,length);
   }
+
+//----------
+//----------
+//----------
+
+  // virtual void processNoAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
+  //   const clap_process_t* process = AContext->process;
+  //   for (uint32_t i=0; i<ALength; i++) {
+  //     processNoAudioSample();
+  //   }
+  // }
+
+  //----------
+
+  // virtual void processNoAudio(SAT_ProcessContext* AContext, uint32_t AOffset) {
+  //   processNoAudio(AContext,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
+  // }
+
+  //----------
+
+  // virtual void processNoAudio(SAT_ProcessContext* AContext) {
+  //   const clap_process_t* process = AContext->process;
+  //   uint32_t length = process->frames_count;
+  //   processNoAudio(AContext,0,length);
+  // }
 
   //----------
 
@@ -1656,7 +1742,6 @@ protected: // clap_plugin
   //----------
 
   clap_process_status process(const clap_process_t *process) override {
-
     MProcessContext.process = process;
     //MProcessContext.parameters = &MParameters;
     MProcessContext.samplerate = MSampleRate;
@@ -1693,7 +1778,7 @@ protected: // clap_plugin
   //----------
 
   const void* get_extension(const char *id) override {
-    SAT_Print("id: %s\n",id);
+    //SAT_Print("id: %s\n",id);
     if (MExtensions.hasItem(id)) return MExtensions.getItem(id);
     return nullptr;
   }
