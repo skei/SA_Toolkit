@@ -8,7 +8,7 @@
 
 #define SAT_NO_ENTRY
 
-#include "sa_automaton.h"
+#include "sa_automata.h"
 #include "sa_botage.h"
 #include "sa_bulum.h"
 #include "sa_cred.h"
@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------
 
 void SAT_Register(SAT_Registry* ARegistry) {
-  ARegistry->registerDescriptor(&sa_automaton_descriptor);
+  ARegistry->registerDescriptor(&sa_automata_descriptor);
   ARegistry->registerDescriptor(&sa_botage_descriptor);
   ARegistry->registerDescriptor(&sa_bulum_descriptor);
   ARegistry->registerDescriptor(&sa_cred_descriptor);
@@ -35,7 +35,7 @@ void SAT_Register(SAT_Registry* ARegistry) {
 SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) {
   SAT_Plugin* plugin;  
   switch (AIndex) {
-    case 0: return new sa_automaton_plugin(ADescriptor,AHost);
+    case 0: return new sa_automata_plugin(ADescriptor,AHost);
     case 1: return new sa_botage_plugin(ADescriptor,AHost);
     case 2: return new sa_bulum_plugin(ADescriptor,AHost);
     case 3: return new sa_cred_plugin(ADescriptor,AHost);

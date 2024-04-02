@@ -39,7 +39,7 @@ public:
   //}
 
   virtual sat_param_t getValue() {
-    sat_param_t value = SAT_Trunc(MValue);
+    sat_param_t value = SAT_Trunc(MValue); // floor?
     //SAT_Print("%f\n",value);
     return value;
   }

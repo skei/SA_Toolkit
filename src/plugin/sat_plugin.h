@@ -195,6 +195,14 @@ public:
     return &MProcessContext;
   }
 
+  //
+
+  bool isEditorOpen() { if (MEditor) return MEditor->isOpen(); else return false; }
+  bool isEditorClosing() { if (MEditor) return MIsEditorClosing; else return false; }
+  bool isInitialized() { return MIsInitialized; }
+  bool isActivated() { return MIsActivated; }
+  bool isProcessing() { return MIsProcessing; }
+
 //------------------------------
 public: // extensions
 //------------------------------
@@ -1399,6 +1407,9 @@ public: // process
 
   //----------
 
+  // process ALength samples, from AOffset
+  // assumes stereo ports...
+
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
     const clap_process_t* process = AContext->process;
 
@@ -1407,11 +1418,13 @@ public: // process
     bool have_audio_ports = have_audio_inputs | have_audio_outputs;
 
     if (have_audio_outputs) {
+
+      // inputs & outputs
       if (have_audio_inputs) {
         float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
         float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
-        float* output0  = process->audio_outputs[0].data32[0]  + AOffset;
-        float* output1  = process->audio_outputs[0].data32[1]  + AOffset;
+        float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+        float* output1 = process->audio_outputs[0].data32[1] + AOffset;
         for (uint32_t i=0; i<ALength; i++) {
           float spl0 = *input0++;
           float spl1 = *input1++;
@@ -1420,9 +1433,11 @@ public: // process
           *output1++ = spl1;
         }
       }
+
+      // outputs only
       else {
-        float* output0  = process->audio_outputs[0].data32[0]  + AOffset;
-        float* output1  = process->audio_outputs[0].data32[1]  + AOffset;
+        float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+        float* output1 = process->audio_outputs[0].data32[1] + AOffset;
         for (uint32_t i=0; i<ALength; i++) {
           float spl0 = 0.0;
           float spl1 = 0.0;
@@ -1431,35 +1446,43 @@ public: // process
           *output1++ = spl1;
         }
       }
-    }
 
-    else {
+    }
+    else { // no outputs
+
+      // inputs only
       if (have_audio_inputs) {
-        float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
-        float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+        float* input0 = process->audio_inputs[0].data32[0] + AOffset;
+        float* input1 = process->audio_inputs[0].data32[1] + AOffset;
         for (uint32_t i=0; i<ALength; i++) {
           float spl0 = *input0++;
           float spl1 = *input1++;
           processStereoSample(&spl0,&spl1);
         }
       }
+      
+      // no audio ports (note effect?)
       else {
         for (uint32_t i=0; i<ALength; i++) {
           processStereoSample(nullptr,nullptr);
         }
       }
-    }
+
+    } // no outputs
 
   }
 
-
   //----------
+
+  // process SAT_AUDIO_QUANTIZED_SIZE samples, from AOffset
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset) {
     processAudio(AContext,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
   }
 
   //----------
+
+  // process entire buffer
 
   virtual void processAudio(SAT_ProcessContext* AContext) {
     const clap_process_t* process = AContext->process;

@@ -49,10 +49,10 @@ protected:
 //------------------------------
 
   int32_t   MNumColumns           = 0;
-  int32_t   MNumRows              = 0;          // rows
+  int32_t   MNumRows              = 0;
 
-  bool      MSelectCell           = true;
-  bool      MSelectMultipleCells  = true;
+  bool      MSelectCell           = false;//true;
+  bool      MSelectMultipleCells  = false;//true;
 
   bool      MDrawCells            = true;
   bool      MDrawHorizontalLines  = true;
@@ -131,8 +131,10 @@ public:
 //------------------------------
 
   virtual void on_initCell(SAT_Rect ARect, int32_t AX, int32_t AY) {}
-  virtual void on_clickCell(int32_t AX, int32_t AY, int32_t AB) {}
+  virtual void on_clickCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) {}
+  virtual void on_releaseCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) {}
   virtual void on_paintCell(SAT_PaintContext* AContext, SAT_Rect ARect, int32_t AX, int32_t AY) {}
+  virtual void on_selectCells(int32_t AX, int32_t AY, int32_t AW, int32_t AH) {}
 
 //------------------------------
 public:
@@ -298,10 +300,12 @@ public:
         if (MSelectMultipleCells) {
           MIsDragging = true;
         }
-        on_clickCell(x,y,AButton);
-        do_widget_redraw(this,0,0);
       }
+      //on_clickCell(x,y,AButton,AState);
+      //do_widget_redraw(this,0,0);
     }
+    on_clickCell(x,y,AButton,AState);
+    do_widget_redraw(this,0,0);
   }
 
   //----------
@@ -310,6 +314,8 @@ public:
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
     }
+    //on_releaseCell(x,y,AButton,AState);
+    //do_widget_redraw(this,0,0);
   }
 
   //----------
@@ -343,6 +349,7 @@ public:
           MSelectedYcount = y - MClickedY + 1;
         }
       //}
+      on_selectCells(MSelectedX,MSelectedY,MSelectedXcount,MSelectedYcount);
       do_widget_redraw(this,0,0);
     }
   }

@@ -291,7 +291,7 @@ public:
 public:
 //------------------------------
 
-  void on_clickCell(int32_t AX, int32_t AY, int32_t AB) override {
+  void on_clickCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) override {
     if (AB == SAT_BUTTON_LEFT) {
       
       //SAT_Print("MVertical %i AX %i AY %i\n",MVertical,AX,AY);
