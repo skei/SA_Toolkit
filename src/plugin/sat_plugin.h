@@ -175,33 +175,19 @@ public:
 public:
 //------------------------------
 
-  void setEventMode(uint32_t AMode) {
-    MEventMode = AMode;
-  }
+  void setEventMode(uint32_t AMode)         { MEventMode = AMode; }
+  void setPluginFormat(const char* AFormat) { MPluginFormat = AFormat; }
+  //void setProcessThreaded(bool AThreaded=true) MProcessThreaded = AThreaded; }
 
-  void setPluginFormat(const char* AFormat) {
-    MPluginFormat = AFormat;
-  }
+  SAT_Host*           getHost()           { return MHost; }
+  SAT_ProcessContext* getProcessContext() { return &MProcessContext; }
 
-  //void setProcessThreaded(bool AThreaded=true) {
-  //  MProcessThreaded = AThreaded;
-  //}
-
-  SAT_Host* getHost() {
-    return MHost;
-  }
-
-  SAT_ProcessContext* getProcessContext() {
-    return &MProcessContext;
-  }
-
-  //
-
-  bool isEditorOpen() { if (MEditor) return MEditor->isOpen(); else return false; }
-  bool isEditorClosing() { if (MEditor) return MIsEditorClosing; else return false; }
   bool isInitialized() { return MIsInitialized; }
   bool isActivated() { return MIsActivated; }
   bool isProcessing() { return MIsProcessing; }
+
+  bool isEditorOpen() { if (MEditor) return MEditor->isOpen(); else return false; }
+  bool isEditorClosing() { if (MEditor) return MIsEditorClosing; else return false; }
 
 //------------------------------
 public: // extensions
