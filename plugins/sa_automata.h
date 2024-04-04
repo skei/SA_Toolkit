@@ -44,38 +44,36 @@ class sa_automata_plugin
 private:
 //------------------------------
 
-  bool      MIsPlaying        = false;
-  double    MStartTime        = 0.0;
-  double    MTempo            = 0.0;
-//double    MTempoInc         = 0.0;
-  double    MSampleRate       = 0.0;
+  bool                  MIsPlaying              = false;
+  double                MStartTime              = 0.0;
+  double                MTempo                  = 0.0;
+//double                MTempoInc               = 0.0;
+  double                MSampleRate             = 0.0;
 
-  double    MSpeed            = 1.0;
-  double    MTuning           = 0.0;
+  double                MSpeed                  = 1.0;
+  double                MTuning                 = 0.0;
 
-  double    MTickSize         = 0.0;
-  double    MTickRemaining    = 0.0;
+  double                MTickSize               = 0.0;
+  double                MTickRemaining          = 0.0;
 
-  uint8_t   MStates[256*256]  = {0};
+  uint8_t               MStates[256*256]        = {0};
+  uint8_t               MStatesBackup[256*256]  = {0};
+  uint8_t               MTempBuffer[256*256]    = {0};
 
-  uint32_t              p_width         = 0.0;
-  uint32_t              p_height        = 0.0;
-  int32_t               p_tuning        = 0.0;
-  double                p_velocity      = 0.0;
-  uint32_t              p_cc1           = 0.0;
-  uint32_t              p_cc2           = 0.0;
-  uint32_t              p_cc3           = 0.0;
+  uint32_t              p_width                 = 0.0;
+  uint32_t              p_height                = 0.0;
+  int32_t               p_tuning                = 0.0;
+  double                p_velocity              = 0.0;
+  uint32_t              p_cc1                   = 0.0;
+  uint32_t              p_cc2                   = 0.0;
 
-  sa_automata_grid*     w_grid        = nullptr;
-  SAT_DragValueWidget*  w_grid_width  = nullptr;
-  SAT_DragValueWidget*  w_grid_height = nullptr;
-  SAT_DragValueWidget*  w_tuning      = nullptr;
-  SAT_DragValueWidget*  w_velocity    = nullptr;
-  SAT_DragValueWidget*  w_cc1         = nullptr;
-  SAT_DragValueWidget*  w_cc2         = nullptr;
-  SAT_DragValueWidget*  w_cc3         = nullptr;
-
-
+  sa_automata_grid*     w_grid                = nullptr;
+  SAT_DragValueWidget*  w_grid_width          = nullptr;
+  SAT_DragValueWidget*  w_grid_height         = nullptr;
+  SAT_DragValueWidget*  w_tuning              = nullptr;
+  SAT_DragValueWidget*  w_velocity            = nullptr;
+  SAT_DragValueWidget*  w_cc1                 = nullptr;
+  SAT_DragValueWidget*  w_cc2                 = nullptr;
 
 //------------------------------
 public:
@@ -87,41 +85,9 @@ public:
 public:
 //------------------------------
 
-  bool send_event(void* event) {
-    SAT_ProcessContext* context = getProcessContext();
-    const clap_output_events_t *out_events = context->process->out_events;
-    out_events->try_push(out_events,(const clap_event_header_t*)event);
-    return true;
-  }
-
-  //----------
-
-  void send_note() {
-    //clap_event_note_t note_event;
-    //note_event.header.size     = sizeof(clap_event_note_t);
-    //note_event.header.time     = event.header.time;
-    //note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    //note_event.header.type     = CLAP_EVENT_NOTE_ON;
-    //note_event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-    //note_event.note_id         = (chan * 128) + index;
-    //note_event.port_index      = event->port_index;
-    //note_event.channel         = chan;
-    //note_event.key             = index;
-    //note_event.velocity        = value * (double)SAT_INV127;
-    //const clap_event_header_t* header = (const clap_event_header_t*)&note_event;
-  }
-
-  //----------
-
-  void send_cc() {
-  }
-
-//------------------------------
-public:
-//------------------------------
-
   bool init() final {
     registerDefaultExtensions();    
+    registerExtension(CLAP_EXT_NOTE_PORTS,&MExtNotePorts);
     appendNoteOutputPort("Out", CLAP_NOTE_DIALECT_CLAP | CLAP_NOTE_DIALECT_MIDI, CLAP_NOTE_DIALECT_CLAP);
     appendParameter( new SAT_IntParameter( "Width",    16,    4,   32,    CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
     appendParameter( new SAT_IntParameter( "Height",   16,    4,   32,    CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
@@ -129,7 +95,6 @@ public:
     appendParameter( new SAT_Parameter(    "Velocity", 0.0,   0.0, 1.0,   CLAP_PARAM_IS_AUTOMATABLE ));
     appendParameter( new SAT_IntParameter( "CC1",      64,    0,   127,   CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
     appendParameter( new SAT_IntParameter( "CC2",      65,    0,   127,   CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
-    appendParameter( new SAT_IntParameter( "CC3",      66,    0,   127,   CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
     #if !defined (SAT_GUI_NOGUI)
       setInitialEditorSize( 420, 560, 1.0 );
     #endif
@@ -158,7 +123,6 @@ public:
       w_velocity    = new SAT_DragValueWidget( SAT_Rect(100,505, 80, 20),"Velocity");
       w_cc1         = new SAT_DragValueWidget( SAT_Rect(190,480, 80, 20),"CC1");
       w_cc2         = new SAT_DragValueWidget( SAT_Rect(190,505, 80, 20),"CC2");
-      w_cc3         = new SAT_DragValueWidget( SAT_Rect(190,530, 80, 20),"CC3");
       root->WGridWidth  = w_grid_width;
       root->WGridHeight = w_grid_height;
       root->WGrid       = w_grid;
@@ -169,14 +133,12 @@ public:
       root->appendChildWidget(w_velocity);
       root->appendChildWidget(w_cc1);
       root->appendChildWidget(w_cc2);
-      root->appendChildWidget(w_cc3);
       AEditor->connect(w_grid_width,  getParameter(0));
       AEditor->connect(w_grid_height, getParameter(1));
       AEditor->connect(w_tuning,      getParameter(2));
       AEditor->connect(w_velocity,    getParameter(3));
       AEditor->connect(w_cc1,         getParameter(4));
       AEditor->connect(w_cc2,         getParameter(5));
-      AEditor->connect(w_cc3,         getParameter(6));
     }
   #endif
 
@@ -185,7 +147,7 @@ public:
 //------------------------------
 
   bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    SAT_Print("index %i value %.3f\n",event->param_id,event->value);
+    //SAT_Print("index %i value %.3f\n",event->param_id,event->value);
     uint32_t index = event->param_id;
     double value = event->value;
     switch (index) {
@@ -195,7 +157,6 @@ public:
       case 3: p_velocity  = value;  break;
       case 4: p_cc1       = value;  break;
       case 5: p_cc2       = value;  break;
-      case 6: p_cc3       = value;  break;
     }
     return true;
   }
@@ -237,6 +198,7 @@ public:
     if (MIsPlaying) {
       MTickRemaining -= 1.0;
       if (MTickRemaining <= 0.0) {
+        //MTickRemaining = SAT_Fract(MTickRemaining);
         MTickRemaining += MTickSize; // = MTickSize - MTickRemaining;
         handleTick();
       }
@@ -260,42 +222,223 @@ public:
   //----------
 
   void handleStartPlaying() {
-    SAT_PRINT;
+    //SAT_PRINT;
     MTickRemaining = 0.0;
     //MTickRemaining = MTickSize;
+    w_grid->copyCellsTo(MStatesBackup);
   }
 
   //----------
 
   void handleStopPlaying() {
-    SAT_PRINT;
+    //SAT_PRINT;
+    killAllNotes();
+    w_grid->copyCellsFrom(MStatesBackup);
+    //memcpy(MStates,MStatesBackup,(sizeof(uint8_t)*(256*256)));
+    if (isEditorOpen()) {
+      //w_grid->do_widget_update(w_grid,0,0);
+      w_grid->do_widget_redraw(w_grid,0,0);
+    }
   }
 
   //----------
 
-  // we got a crash when closing editor..
-
   void handleTick() {
-
-    SAT_PRINT;
-
-    //for (uint32_t y=0; y<p_height; y++) {
-    //  for (uint32_t x=0; x<p_width; x++) {
-    //    uint32_t cell = w_grid->getCellState(x,y);
-    //  }
-    //}
-
-    uint32_t x = SAT_RandomRangeInt(0,p_width-1);
-    uint32_t y = SAT_RandomRangeInt(0,p_height-1);
-    uint32_t v = SAT_RandomRangeInt(0,15);
-    MStates[(y*256)+x] = v;
-
-    // crashes when playing & closing editor..
+    updateCells();
     if (isEditorOpen()) {
-      // w_grid->do_widget_update(w_grid,0,0);
+      //w_grid->do_widget_update(w_grid,0,0);
       w_grid->do_widget_redraw(w_grid,0,0);
     }
+  }
 
+  //----------
+
+  void sendEvent(clap_event_header_t* event) {
+    const clap_output_events_t* out_events = getProcessContext()->process->out_events;
+    out_events->try_push(out_events,event);
+  }
+
+  //----------
+
+  void killAllNotes() {
+
+    for (uint32_t y=0; y<127; y++) {
+      //bool alive = (isCellAlive( MStates, x,   y  ));
+      //if (alive) {
+        clap_event_note_t event;
+        event.header.size     = sizeof(clap_event_note_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_NOTE_OFF;
+        event.header.flags    = 0;
+        event.note_id         = -1;
+        event.port_index      = 0;
+        event.channel         = 0;
+        event.key             = y;
+        event.velocity        = 0;
+        sendEvent((clap_event_header_t*)&event);
+      //}
+    }
+  }
+
+  //----------
+
+  void sendNoteOn(int32_t AX, int32_t AY, uint32_t AOffset) {
+    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+    clap_event_note_t event;
+    event.header.size     = sizeof(clap_event_note_t);
+    event.header.time     = AOffset;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_NOTE_ON;
+    event.header.flags    = 0;
+    event.note_id         = -1;
+    event.port_index      = 0;
+    event.channel         = 0;
+    event.key             = 60 + AY + p_tuning;
+    event.velocity        = p_velocity;
+    sendEvent((clap_event_header_t*)&event);
+  }
+
+  //----------
+
+  void sendNoteOff(int32_t AX, int32_t AY, uint32_t AOffset) {
+    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+    clap_event_note_t event;
+    event.header.size     = sizeof(clap_event_note_t);
+    event.header.time     = AOffset;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_NOTE_OFF;
+    event.header.flags    = 0;
+    event.note_id         = -1;
+    event.port_index      = 0;
+    event.channel         = 0;
+    event.key             = 60 + AY + p_tuning;
+    event.velocity        = 0.0;
+    sendEvent((clap_event_header_t*)&event);
+  }
+
+  void sendCC1On(int32_t AX, int32_t AY, uint32_t AOffset) {
+    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+  }
+
+  void sendCC1Off(int32_t AX, int32_t AY, uint32_t AOffset) {
+    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+  }
+
+  void sendCC2On(int32_t AX, int32_t AY, uint32_t AOffset) {
+    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+  }
+
+  void sendCC2Off(int32_t AX, int32_t AY, uint32_t AOffset) {
+    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+  }
+
+
+//------------------------------
+public:
+//------------------------------
+
+  uint8_t getCell(uint8_t* AStates, int32_t AX, int32_t AY) {
+    uint32_t index = (AY * 256) + AX;
+    return AStates[index];
+  }
+
+  //----------
+
+  void setCell(uint8_t* AStates, int32_t AX, int32_t AY, uint8_t AState) {
+    uint32_t index = (AY * 256) + AX;
+    AStates[index] = AState;
+  }
+
+  //----------
+
+  bool isCellAlive(uint8_t* AStates, int32_t AX, int32_t AY) {
+    if (AX < 0) return false;
+    if (AX >= (int32_t)p_width) return false;
+    if (AY < 0) return false;
+    if (AY >= (int32_t)p_height) return false;
+    uint32_t index = (AY * 256) + AX;
+    return (AStates[index] & 1);
+  }
+
+  //----------
+
+  void setCellAlive(uint8_t* AStates, int32_t AX, int32_t AY, bool ATrigger) {
+    if (AX < 0) return;
+    if (AX >= (int32_t)p_width) return;
+    if (AY < 0) return;
+    if (AY >= (int32_t)p_height) return;
+    uint32_t index = (AY * 256) + AX;
+    AStates[index] |= 1;
+    uint8_t cell = getCell(MStates,AX,AY);
+    bool r = (cell & 2);
+    bool g = (cell & 4);
+    bool b = (cell & 8);
+    if (ATrigger) {
+      if (r) sendNoteOn(AX,AY,0);
+      if (g) sendCC1On(AX,AY,0);
+      if (b) sendCC2On(AX,AY,0);
+    }
+  }
+
+  //----------
+
+  void setCellDead(uint8_t* AStates, int32_t AX, int32_t AY, bool ATrigger) {
+    if (AX < 0) return;
+    if (AX >= (int32_t)p_width) return;
+    if (AY < 0) return;
+    if (AY >= (int32_t)p_height) return;
+    uint32_t index = (AY * 256) + AX;
+    AStates[index] &= (255- 1);
+    uint8_t cell = getCell(MStates,AX,AY);
+    bool r = (cell & 2);
+    bool g = (cell & 4);
+    bool b = (cell & 8);
+    if (ATrigger) {
+      if (r) sendNoteOff(AX,AY,0);
+      if (g) sendCC1Off(AX,AY,0);
+      if (b) sendCC2Off(AX,AY,0);
+    }
+  }
+  
+  //----------
+  /*
+    Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+    Any live cell with two or three live neighbors lives on to the next generation.
+    Any live cell with more than three live neighbors dies, as if by overpopulation.
+    Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+  */
+
+  void updateCells() {
+    w_grid->copyCellsTo(MTempBuffer);
+    for (uint32_t y=0; y<p_height; y++) {
+      for (uint32_t x=0; x<p_width; x++) {
+
+        bool alive = false;
+        uint32_t neighbours = 0;
+        if      (isCellAlive( MStates, x-1, y-1)) neighbours += 1;
+        if      (isCellAlive( MStates, x,   y-1)) neighbours += 1;
+        if      (isCellAlive( MStates, x+1, y-1)) neighbours += 1;
+        if      (isCellAlive( MStates, x-1, y  )) neighbours += 1;
+        alive = (isCellAlive( MStates, x,   y  ));
+        if      (isCellAlive( MStates, x+1, y  )) neighbours += 1;
+        if      (isCellAlive( MStates, x-1, y+1)) neighbours += 1;
+        if      (isCellAlive( MStates, x,   y+1)) neighbours += 1;
+        if      (isCellAlive( MStates, x+1, y+1)) neighbours += 1;
+
+        if (alive) {
+          if (neighbours < 2) setCellDead(MTempBuffer,x,y,true);       // die
+          else if (neighbours > 3) setCellDead(MTempBuffer,x,y,true);  // die
+          else setCellAlive(MTempBuffer,x,y,false);                    // keep alive
+        }
+        else {
+          if (neighbours == 3) setCellAlive(MTempBuffer,x,y,true);     // birth
+          else setCellDead(MTempBuffer,x,y,false);                     // stay dead
+        }
+      }
+    }
+    
+    w_grid->copyCellsFrom(MTempBuffer);
   }
 
 };

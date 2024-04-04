@@ -33,8 +33,8 @@ public:
   sa_automata_grid(SAT_Rect ARect, uint32_t AColumns, uint32_t ARows, uint8_t* AStateBuffer)
   : SAT_GridWidget(ARect,AColumns,ARows) {
     MStates = AStateBuffer;
-    setSelectCell(true);
-    setSelectMultipleCells(true);
+    //setSelectCell(true);
+    //setSelectMultipleCells(true);
 
   }
 
@@ -87,7 +87,6 @@ public:
     double r = 0.375;
     double g = 0.375;
     double b = 0.375;
-
     if (state & 2) r = 0.625;
     if (state & 4) g = 0.625;
     if (state & 8) b = 0.625;
@@ -102,10 +101,26 @@ public:
 
   //----------
 
+  void copyCellsTo(uint8_t* ABuffer) {
+    if (MStates) {
+      memcpy(ABuffer,MStates,(sizeof(uint8_t)*(256*256)));
+    }
+  }
+
+  void copyCellsFrom(uint8_t* ABuffer) {
+    if (MStates) {
+      memcpy(MStates,ABuffer,(sizeof(uint8_t)*(256*256)));
+    }
+  }
+
   uint8_t getCellState(int32_t AX, int32_t AY) {
     uint32_t state = 0;
     if (MStates) state = MStates[(AY*256)+AX];
     return state;
+  }
+
+  void setCellState(int32_t AX, int32_t AY, uint8_t ACell) {
+    if (MStates) MStates[(AY*256)+AX] = ACell;
   }
 
 };
