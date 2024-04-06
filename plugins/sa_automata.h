@@ -66,14 +66,18 @@ private:
   double                p_velocity              = 0.0;
   uint32_t              p_cc1                   = 0.0;
   uint32_t              p_cc2                   = 0.0;
+  uint32_t              p_cc1_val               = 0.0;
+  uint32_t              p_cc2_val               = 0.0;
 
-  sa_automata_grid*     w_grid                = nullptr;
-  SAT_DragValueWidget*  w_grid_width          = nullptr;
-  SAT_DragValueWidget*  w_grid_height         = nullptr;
-  SAT_DragValueWidget*  w_tuning              = nullptr;
-  SAT_DragValueWidget*  w_velocity            = nullptr;
-  SAT_DragValueWidget*  w_cc1                 = nullptr;
-  SAT_DragValueWidget*  w_cc2                 = nullptr;
+  sa_automata_grid*     w_grid                  = nullptr;
+  SAT_DragValueWidget*  w_grid_width            = nullptr;
+  SAT_DragValueWidget*  w_grid_height           = nullptr;
+  SAT_DragValueWidget*  w_tuning                = nullptr;
+  SAT_DragValueWidget*  w_velocity              = nullptr;
+  SAT_DragValueWidget*  w_cc1                   = nullptr;
+  SAT_DragValueWidget*  w_cc2                   = nullptr;
+  SAT_DragValueWidget*  w_cc1_val               = nullptr;
+  SAT_DragValueWidget*  w_cc2_val               = nullptr;
 
 //------------------------------
 public:
@@ -95,6 +99,8 @@ public:
     appendParameter( new SAT_Parameter(    "Velocity", 0.0,   0.0, 1.0,   CLAP_PARAM_IS_AUTOMATABLE ));
     appendParameter( new SAT_IntParameter( "CC1",      64,    0,   127,   CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
     appendParameter( new SAT_IntParameter( "CC2",      65,    0,   127,   CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
+    appendParameter( new SAT_IntParameter( "CC1 Val",  127,   0,   127,   CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
+    appendParameter( new SAT_IntParameter( "CC2 Val",  127,   0,   127,   CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
     #if !defined (SAT_GUI_NOGUI)
       setInitialEditorSize( 420, 560, 1.0 );
     #endif
@@ -123,6 +129,14 @@ public:
       w_velocity    = new SAT_DragValueWidget( SAT_Rect(100,505, 80, 20),"Velocity");
       w_cc1         = new SAT_DragValueWidget( SAT_Rect(190,480, 80, 20),"CC1");
       w_cc2         = new SAT_DragValueWidget( SAT_Rect(190,505, 80, 20),"CC2");
+      w_cc1_val     = new SAT_DragValueWidget( SAT_Rect(280,480, 80, 20),"CC1 Val");
+      w_cc2_val     = new SAT_DragValueWidget( SAT_Rect(280,505, 80, 20),"CC2 Val");
+      w_tuning->setBackgroundColor( SAT_DarkRed );
+      w_velocity->setBackgroundColor( SAT_DarkRed );
+      w_cc1->setBackgroundColor( SAT_DarkGreen );
+      w_cc1_val->setBackgroundColor( SAT_DarkGreen );
+      w_cc2->setBackgroundColor( SAT_DarkBlue );
+      w_cc2_val->setBackgroundColor( SAT_DarkBlue );
       root->WGridWidth  = w_grid_width;
       root->WGridHeight = w_grid_height;
       root->WGrid       = w_grid;
@@ -133,12 +147,16 @@ public:
       root->appendChildWidget(w_velocity);
       root->appendChildWidget(w_cc1);
       root->appendChildWidget(w_cc2);
+      root->appendChildWidget(w_cc1_val);
+      root->appendChildWidget(w_cc2_val);
       AEditor->connect(w_grid_width,  getParameter(0));
       AEditor->connect(w_grid_height, getParameter(1));
       AEditor->connect(w_tuning,      getParameter(2));
       AEditor->connect(w_velocity,    getParameter(3));
       AEditor->connect(w_cc1,         getParameter(4));
       AEditor->connect(w_cc2,         getParameter(5));
+      AEditor->connect(w_cc1_val,     getParameter(6));
+      AEditor->connect(w_cc2_val,     getParameter(7));
     }
   #endif
 
@@ -157,6 +175,8 @@ public:
       case 3: p_velocity  = value;  break;
       case 4: p_cc1       = value;  break;
       case 5: p_cc2       = value;  break;
+      case 6: p_cc1_val   = value;  break;
+      case 7: p_cc2_val   = value;  break;
     }
     return true;
   }
@@ -261,23 +281,44 @@ public:
   //----------
 
   void killAllNotes() {
-
     for (uint32_t y=0; y<127; y++) {
-      //bool alive = (isCellAlive( MStates, x,   y  ));
-      //if (alive) {
-        clap_event_note_t event;
-        event.header.size     = sizeof(clap_event_note_t);
-        event.header.time     = 0;
-        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-        event.header.type     = CLAP_EVENT_NOTE_OFF;
-        event.header.flags    = 0;
-        event.note_id         = -1;
-        event.port_index      = 0;
-        event.channel         = 0;
-        event.key             = y;
-        event.velocity        = 0;
-        sendEvent((clap_event_header_t*)&event);
-      //}
+      // notes
+      clap_event_note_t note_event;
+      note_event.header.size     = sizeof(clap_event_note_t);
+      note_event.header.time     = 0;
+      note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+      note_event.header.type     = CLAP_EVENT_NOTE_OFF;
+      note_event.header.flags    = 0;
+      note_event.note_id         = -1;
+      note_event.port_index      = 0;
+      note_event.channel         = 0;
+      note_event.key             = y;
+      note_event.velocity        = 0;
+      sendEvent((clap_event_header_t*)&note_event);
+      // cc1
+      clap_event_midi_t midi_event;
+      midi_event.header.size     = sizeof(clap_event_midi_t);
+      midi_event.header.time     = 0;//AOffset;
+      midi_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+      midi_event.header.type     = CLAP_EVENT_MIDI;
+      midi_event.header.flags    = 0;
+      midi_event.port_index      = 0;
+      midi_event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+      midi_event.data[1]         = p_cc1;
+      midi_event.data[2]         = 0;
+      sendEvent((clap_event_header_t*)&midi_event);
+      // cc2
+      //clap_event_midi_t midi_event;
+      midi_event.header.size     = sizeof(clap_event_midi_t);
+      midi_event.header.time     = 0;//AOffset;
+      midi_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+      midi_event.header.type     = CLAP_EVENT_MIDI;
+      midi_event.header.flags    = 0;
+      midi_event.port_index      = 0;
+      midi_event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+      midi_event.data[1]         = p_cc2;
+      midi_event.data[2]         = 0;
+      sendEvent((clap_event_header_t*)&midi_event);
     }
   }
 
@@ -317,22 +358,73 @@ public:
     sendEvent((clap_event_header_t*)&event);
   }
 
+  //----------
+
   void sendCC1On(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+    clap_event_midi_t event;
+    event.header.size     = sizeof(clap_event_midi_t);
+    event.header.time     = AOffset;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_MIDI;
+    event.header.flags    = 0;
+    event.port_index      = 0;
+    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    event.data[1]         = p_cc1;
+    event.data[2]         = p_cc1_val;
+    sendEvent((clap_event_header_t*)&event);
   }
+
+  //----------
 
   void sendCC1Off(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+    clap_event_midi_t event;
+    event.header.size     = sizeof(clap_event_midi_t);
+    event.header.time     = AOffset;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_MIDI;
+    event.header.flags    = 0;
+    event.port_index      = 0;
+    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    event.data[1]         = p_cc1;
+    event.data[2]         = 0;//p_cc1_val;
+    sendEvent((clap_event_header_t*)&event);
   }
+
+  //----------
 
   void sendCC2On(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+    clap_event_midi_t event;
+    event.header.size     = sizeof(clap_event_midi_t);
+    event.header.time     = AOffset;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_MIDI;
+    event.header.flags    = 0;
+    event.port_index      = 0;
+    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    event.data[1]         = p_cc2;
+    event.data[2]         = p_cc2_val;
+    sendEvent((clap_event_header_t*)&event);
   }
+
+  //----------
 
   void sendCC2Off(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+    clap_event_midi_t event;
+    event.header.size     = sizeof(clap_event_midi_t);
+    event.header.time     = AOffset;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_MIDI;
+    event.header.flags    = 0;
+    event.port_index      = 0;
+    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    event.data[1]         = p_cc2;
+    event.data[2]         = 0;//p_cc2_val;
+    sendEvent((clap_event_header_t*)&event);
   }
-
 
 //------------------------------
 public:

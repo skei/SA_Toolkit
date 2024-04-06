@@ -244,8 +244,10 @@ public: // clap_plugin
 
   //----------
 
+  // preserve_aspect_ratio doesn't work in bitwig/linux
+
   virtual bool get_resize_hints(clap_gui_resize_hints_t *hints) {
-    //SAT_Print("\n");
+    SAT_Print("MWidth %i MHeight %i\n",MWidth,MHeight);
     hints->can_resize_horizontally  = true;
     hints->can_resize_vertically    = true;
     hints->preserve_aspect_ratio    = false;

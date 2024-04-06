@@ -35,6 +35,7 @@ public:
     MStates = AStateBuffer;
     //setSelectCell(true);
     //setSelectMultipleCells(true);
+    setDragCell(true);
 
   }
 
@@ -55,8 +56,7 @@ public:
   //----------
 
   void on_clickCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) final {
-    SAT_Print("x %i y %i\n",AX,AY);
-    //uint32_t state = MStates[(AY*256)+AX];
+    //SAT_Print("x %i y %i\n",AX,AY);
     if (AB == SAT_BUTTON_LEFT) {
       if (AS & SAT_STATE_SHIFT) MStates[(AY*256)+AX] |= 2;
       else if (AS & SAT_STATE_CTRL) MStates[(AY*256)+AX] |= 4;
@@ -68,6 +68,30 @@ public:
       else if (AS & SAT_STATE_CTRL) MStates[(AY*256)+AX] &= (255 - 4);
       else if (AS & SAT_STATE_ALT) MStates[(AY*256)+AX] &= (255 - 8);
       else MStates[(AY*256)+AX] &= (255 - 1);
+    }
+  }
+
+  //----------
+
+  void on_dragCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) final {
+    //SAT_Print("x %i y %i\n",AX,AY);
+    uint8_t state = MStates[(AY*256)+AX];
+    uint8_t state_prev = state;
+    if (AB == SAT_BUTTON_LEFT) {
+      if (AS & SAT_STATE_SHIFT) state |= 2;
+      else if (AS & SAT_STATE_CTRL) state |= 4;
+      else if (AS & SAT_STATE_ALT) state |= 8;
+      else state |= 1;
+    }
+    else if (AB == SAT_BUTTON_RIGHT) {
+      if (AS & SAT_STATE_SHIFT) state &= (255 - 2);
+      else if (AS & SAT_STATE_CTRL) state &= (255 - 4);
+      else if (AS & SAT_STATE_ALT) state &= (255 - 8);
+      else state &= (255 - 1);
+    }
+    if (state != state_prev) {
+      //SAT_Print("x %i y %i\n",AX,AY);
+      MStates[(AY*256)+AX] = state;
     }
   }
 

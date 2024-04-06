@@ -39,6 +39,7 @@ private:
   bool      MIsMoving             = false;
   int32_t   MClickedX             = -1;
   int32_t   MClickedY             = -1;
+  uint32_t  MClickedB             = 0;
   int32_t   MSelectedX            = -1;
   int32_t   MSelectedY            = -1;
   int32_t   MSelectedXcount       = 0;
@@ -53,6 +54,7 @@ protected:
 
   bool      MSelectCell           = false;//true;
   bool      MSelectMultipleCells  = false;//true;
+  bool      MDragCell             = false;//true;
 
   bool      MDrawCells            = true;
   bool      MDrawHorizontalLines  = true;
@@ -95,6 +97,7 @@ public:
 
   virtual void    setSelectCell(bool ASelect=true)          { MSelectCell = ASelect; }
   virtual void    setSelectMultipleCells(bool ASelect=true) { MSelectMultipleCells = ASelect; }
+  virtual void    setDragCell(bool ADrag=true)              { MDragCell = ADrag; }
 
   virtual void    setDrawCells(bool ADraw=true)             { MDrawCells = ADraw; }
   virtual void    setDrawLines(bool H=true, bool V=true)    { MDrawHorizontalLines = H; MDrawVerticalLines = V; }
@@ -133,6 +136,7 @@ public:
   virtual void on_initCell(SAT_Rect ARect, int32_t AX, int32_t AY) {}
   virtual void on_clickCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) {}
   virtual void on_releaseCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) {}
+  virtual void on_dragCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) {}
   virtual void on_paintCell(SAT_PaintContext* AContext, SAT_Rect ARect, int32_t AX, int32_t AY) {}
   virtual void on_selectCells(int32_t AX, int32_t AY, int32_t AW, int32_t AH) {}
 
@@ -291,15 +295,22 @@ public:
     int32_t y = /*floorf*/( (float)(AYpos - mrect.y) / ycell );
     MClickedX = x;
     MClickedY = y;
+    MClickedB = AButton;
+
+    MIsDragging = true;
+
     if (AButton == SAT_BUTTON_LEFT) {
+
+      //MIsDragging = true;
+
       if (MSelectCell) {
         MSelectedX = x;
         MSelectedY = y;
         MSelectedXcount = 1;
         MSelectedYcount = 1;
-        if (MSelectMultipleCells) {
-          MIsDragging = true;
-        }
+//        if (MSelectMultipleCells) {
+//          MIsDragging = true;
+//        }
       }
       //on_clickCell(x,y,AButton,AState);
       //do_widget_redraw(this,0,0);
@@ -311,9 +322,13 @@ public:
   //----------
 
   void on_widget_mouseRelease(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp=0) override {
-    if (AButton == SAT_BUTTON_LEFT) {
-      MIsDragging = false;
-    }
+
+    MIsDragging = false;
+
+//    if (AButton == SAT_BUTTON_LEFT) {
+//      MIsDragging = false;
+//    }
+
     //on_releaseCell(x,y,AButton,AState);
     //do_widget_redraw(this,0,0);
   }
@@ -328,10 +343,16 @@ public:
     float y = /*floorf*/( (float)(AYpos - mrect.y) / ycell );
     x = SAT_Clamp(x,0,MNumColumns-1);
     y = SAT_Clamp(y,0,MNumRows-1);
+
     if (MIsDragging) {
-      //if (MIsMoving) {
-      //}
-      //else {
+
+      if (MDragCell) {
+        on_dragCell(x,y,MClickedB,AState);
+        do_widget_redraw(this,0,0);
+      }
+
+      if (MSelectMultipleCells && (MClickedB == SAT_BUTTON_LEFT)) {
+      
         if (x < MClickedX) {
           MSelectedX = x;
           MSelectedXcount = MClickedX - x + 1;
@@ -348,10 +369,12 @@ public:
           MSelectedY = MClickedY;
           MSelectedYcount = y - MClickedY + 1;
         }
-      //}
-      on_selectCells(MSelectedX,MSelectedY,MSelectedXcount,MSelectedYcount);
-      do_widget_redraw(this,0,0);
+        on_selectCells(MSelectedX,MSelectedY,MSelectedXcount,MSelectedYcount);
+        do_widget_redraw(this,0,0);
+      }
+
     }
+
   }
 
 };
