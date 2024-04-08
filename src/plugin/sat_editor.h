@@ -27,26 +27,28 @@ private:
   SAT_EditorListener*   MListener   = nullptr;
 //sat_atomic_bool_t     MIsClosing  = false;
 
-  double                MScale      = 1.0;
-  uint32_t              MWidth      = 640;
-  uint32_t              MHeight     = 480;
-  const char*           MTitle      = "SAT_Editor";
-  const clap_window_t*  MParent     = nullptr;
-  const clap_window_t*  MTransient  = nullptr;
-  SAT_Window*           MWindow     = nullptr;
-  bool                  MIsOpen     = false;
+  double                MScale        = 1.0;
+  uint32_t              MWidth        = 640;
+  uint32_t              MHeight       = 480;
+  bool                  MProportional = false;
+  const char*           MTitle        = "SAT_Editor";
+  const clap_window_t*  MParent       = nullptr;
+  const clap_window_t*  MTransient    = nullptr;
+  SAT_Window*           MWindow       = nullptr;
+  bool                  MIsOpen       = false;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale, intptr_t AParent) {
+  SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale, bool AProportional, intptr_t AParent) {
     //if (AListener) MListener = AListener;
     MListener = AListener;
 
     MWidth =  (double)AWidth * AScale;
     MHeight = (double)AHeight * AScale;
     MScale = AScale;
+    MProportional = AProportional;
 
     #if defined (SAT_GUI_WAYLAND)
       MWindow = new SAT_Window(AWidth,AHeight,AScale,this,AParent);
@@ -250,7 +252,7 @@ public: // clap_plugin
     SAT_Print("MWidth %i MHeight %i\n",MWidth,MHeight);
     hints->can_resize_horizontally  = true;
     hints->can_resize_vertically    = true;
-    hints->preserve_aspect_ratio    = false;//true;
+    hints->preserve_aspect_ratio    = MProportional; //false;
     hints->aspect_ratio_width       = MWidth;
     hints->aspect_ratio_height      = MHeight;
     return true;

@@ -133,6 +133,7 @@ private:
     uint32_t                        MInitialEditorWidth         = 0;//512;
     uint32_t                        MInitialEditorHeight        = 0;//512;
     double                          MInitialEditorScale         = 2.0;
+    bool                            MProportionalEditor         = false;
 
     SAT_ParamFromHostToGuiQueue     MParamFromHostToGuiQueue    = {};   // when the host changes a parameter, we need to redraw it
     SAT_ModFromHostToGuiQueue       MModFromHostToGuiQueue      = {};   // --"-- modulation
@@ -608,18 +609,19 @@ public: // editor
 
   #if !defined (SAT_GUI_NOGUI)
 
-  virtual void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale) {
+  virtual void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale, bool AProportional=false) {
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
     MInitialEditorScale = AScale;
+    MProportionalEditor = AProportional;
   }
 
   //----------
 
   // called from gui_create()
 
-  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale) {
-    return new SAT_Editor(AListener,AWidth,AHeight,AScale,0);
+  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale, bool AProportional=false) {
+    return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional,0);
     //return nullptr;
   }
 
@@ -1965,7 +1967,8 @@ protected: // gui
       if ((MInitialEditorWidth == 0) || (MInitialEditorHeight == 0)) {
         SAT_Point size = getDefaultEditorSize();
         double scale = MInitialEditorScale;
-        setInitialEditorSize(size.w,size.h,scale);
+        bool prop = MProportionalEditor;
+        setInitialEditorSize(size.w,size.h,scale,prop);
       }
 
     #else
@@ -1979,7 +1982,7 @@ protected: // gui
 
     //SAT_Print("api %s is_floating %i",api,is_floating);
     //MEditor = createEditor(this,w,h,MInitialEditorScale);
-    MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale);
+    MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
     MEditor->create(api,is_floating);
     if (MEditor) {
       //setupEditor(MEditor);
