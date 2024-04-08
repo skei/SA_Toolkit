@@ -105,7 +105,7 @@ public:
 
     registerDefaultExtensions();    
 
-    registerExtension(CLAP_EXT_NOTE_PORTS, &MExtNotePorts);
+    registerExtension(CLAP_EXT_NOTE_PORTS);
     appendClapNoteInputPort("In");
     appendClapNoteOutputPort("Out");
 

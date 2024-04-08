@@ -91,7 +91,7 @@ public:
 
   bool init() final {
     registerDefaultExtensions();    
-    registerExtension(CLAP_EXT_NOTE_PORTS,&MExtNotePorts);
+    registerExtension(CLAP_EXT_NOTE_PORTS);
     appendNoteOutputPort("Out", CLAP_NOTE_DIALECT_CLAP | CLAP_NOTE_DIALECT_MIDI, CLAP_NOTE_DIALECT_CLAP);
     appendParameter( new SAT_IntParameter( "Width",    16,    4,   32,    CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
     appendParameter( new SAT_IntParameter( "Height",   16,    4,   32,    CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));

@@ -87,10 +87,10 @@ public:
   bool init() final {
 
     registerDefaultSynthExtensions();
-    registerExtension(CLAP_EXT_PARAM_INDICATION,&MExtParamIndication);
-    registerExtension(CLAP_EXT_PRESET_LOAD,&MExtPresetLoad);
-    registerExtension(CLAP_EXT_REMOTE_CONTROLS,&MExtRemoteControls);
-    registerExtension(CLAP_EXT_TRACK_INFO,&MExtTrackInfo);
+    registerExtension(CLAP_EXT_PARAM_INDICATION);
+    registerExtension(CLAP_EXT_PRESET_LOAD);
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS);
+    registerExtension(CLAP_EXT_TRACK_INFO);
 
     appendClapNoteInputPort("Input");
     appendStereoAudioOutputPort("Output");

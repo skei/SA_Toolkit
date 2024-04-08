@@ -47,6 +47,15 @@ typedef SAT_Queue<SAT_ParamQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_
 
 //----------
 
+#define NUM_CLAP_EXTENSIONS 24
+
+struct SAT_ClapExtensionInfo {
+  const char* ext;
+  const void* ptr;
+};
+
+//----------
+
 #define SAT_DEFAULT_PLUGIN_CONSTRUCTOR(PLUGIN)                                  \
   PLUGIN(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
   : SAT_Plugin(ADescriptor,AHost) {                                             \
@@ -87,6 +96,37 @@ class SAT_Plugin
 
   friend class SAT_LadspaEntry;
   friend class SAT_Vst2Entry;
+
+//------------------------------
+private:
+//------------------------------
+
+  SAT_ClapExtensionInfo MClapExtensionInfos[NUM_CLAP_EXTENSIONS] = {
+    { CLAP_EXT_AMBISONIC,                 &MExtAmbisonic },
+    { CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts },
+    { CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation },
+    { CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig },
+    { CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts },
+    { CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu },
+    { CLAP_EXT_GUI,                       &MExtGui },
+    { CLAP_EXT_LATENCY,                   &MExtLatency },
+    { CLAP_EXT_NOTE_NAME,                 &MExtNoteName },
+    { CLAP_EXT_NOTE_PORTS,                &MExtNotePorts },
+    { CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication },
+    { CLAP_EXT_PARAMS,                    &MExtParams },
+    { CLAP_EXT_POSIX_FD_SUPPORT,          &MExtPosixFdSupport },
+    { CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad },
+    { CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls },
+    { CLAP_EXT_RENDER,                    &MExtRender },
+    { CLAP_EXT_STATE,                     &MExtState },
+    { CLAP_EXT_STATE_CONTEXT,             &MExtStateContext },
+    { CLAP_EXT_SURROUND,                  &MExtSurround },
+    { CLAP_EXT_TAIL,                      &MExtTail },
+    { CLAP_EXT_THREAD_POOL,               &MExtThreadPool },
+    { CLAP_EXT_TIMER_SUPPORT,             &MExtTimerSupport },
+    { CLAP_EXT_TRACK_INFO,                &MExtTrackInfo },
+    { CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo }
+  };
 
 //------------------------------
 private:
@@ -146,7 +186,6 @@ private:
 
   #endif // nogui
 
-
 //------------------------------
 public:
 //------------------------------
@@ -195,11 +234,25 @@ public:
 public: // extensions
 //------------------------------
 
-  virtual void registerExtension(const char* AId, const void* APtr) {
+  const void* findExtension(const char* AId) {
+    for (uint32_t i=0; i<NUM_CLAP_EXTENSIONS; i++) {
+      if (strcmp(AId,MClapExtensionInfos[i].ext) == 0) {
+        return MClapExtensionInfos[i].ptr;
+      }
+    }
+    return nullptr;
+  }
+
+  //----------
+
+  virtual void registerExtension(const char* AId) {
+    const void* ptr = findExtension(AId);
     if (!MExtensions.hasItem(AId)) {
-      MExtensions.addItem(AId,APtr);
+      MExtensions.addItem(AId,ptr);
     }
   }
+
+  //----------
 
   virtual void unregisterExtension(const char* AId) {
     if (MExtensions.hasItem(AId)) {
@@ -210,62 +263,136 @@ public: // extensions
   //----------
 
   virtual void registerDefaultExtensions() {
-    registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
+    registerExtension(CLAP_EXT_AUDIO_PORTS);
     #if !defined (SAT_GUI_NOGUI)
-      registerExtension(CLAP_EXT_GUI,                     &MExtGui);
+      registerExtension(CLAP_EXT_GUI);
     #endif
-    registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
-    registerExtension(CLAP_EXT_STATE,                     &MExtState);
+    registerExtension(CLAP_EXT_PARAMS);
+    registerExtension(CLAP_EXT_STATE);
   }
 
   //----------
 
   virtual void registerDefaultSynthExtensions() {
     registerDefaultExtensions();
-    registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
-    registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
-    registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
+    registerExtension(CLAP_EXT_NOTE_PORTS);
+    registerExtension(CLAP_EXT_THREAD_POOL);
+    registerExtension(CLAP_EXT_VOICE_INFO);
   }
 
   //----------
 
   virtual void registerAllExtension() {
-    registerExtension(CLAP_EXT_AMBISONIC,                 &MExtAmbisonic);
-    registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
-    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation);
-    registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig);
-    registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts);
-    registerExtension(CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu);
+    registerExtension(CLAP_EXT_AMBISONIC);
+    registerExtension(CLAP_EXT_AUDIO_PORTS);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION);
+    registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG);
+    registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS);
+    registerExtension(CLAP_EXT_CONTEXT_MENU);
     #ifndef SAT_GUI_NOGUI
-      registerExtension(CLAP_EXT_GUI,                     &MExtGui);
+      registerExtension(CLAP_EXT_GUI);
     #endif
-    registerExtension(CLAP_EXT_LATENCY,                   &MExtLatency);
-    registerExtension(CLAP_EXT_NOTE_NAME,                 &MExtNoteName);
-    registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
-    registerExtension(CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication);
-    registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
-    registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,          &MExtPosixFdSupport);
-    registerExtension(CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad);
-    registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls);
-    registerExtension(CLAP_EXT_RENDER,                    &MExtRender);
-    registerExtension(CLAP_EXT_STATE,                     &MExtState);
-    registerExtension(CLAP_EXT_STATE_CONTEXT,             &MExtStateContext);
-    registerExtension(CLAP_EXT_SURROUND,                  &MExtSurround);
-    registerExtension(CLAP_EXT_TAIL,                      &MExtTail);
-    registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
-    registerExtension(CLAP_EXT_TIMER_SUPPORT,             &MExtTimerSupport);
-    registerExtension(CLAP_EXT_TRACK_INFO,                &MExtTrackInfo);
-    registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
+    registerExtension(CLAP_EXT_LATENCY);
+    registerExtension(CLAP_EXT_NOTE_NAME);
+    registerExtension(CLAP_EXT_NOTE_PORTS);
+    registerExtension(CLAP_EXT_PARAM_INDICATION);
+    registerExtension(CLAP_EXT_PARAMS);
+    registerExtension(CLAP_EXT_POSIX_FD_SUPPORT);
+    registerExtension(CLAP_EXT_PRESET_LOAD);
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS);
+    registerExtension(CLAP_EXT_RENDER);
+    registerExtension(CLAP_EXT_STATE);
+    registerExtension(CLAP_EXT_STATE_CONTEXT);
+    registerExtension(CLAP_EXT_SURROUND);
+    registerExtension(CLAP_EXT_TAIL);
+    registerExtension(CLAP_EXT_THREAD_POOL);
+    registerExtension(CLAP_EXT_TIMER_SUPPORT);
+    registerExtension(CLAP_EXT_TRACK_INFO);
+    registerExtension(CLAP_EXT_VOICE_INFO);
+  }
+
+  virtual void registerDraftExtension() {
+    registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS);
+    registerExtension(CLAP_EXT_RESOURCE_DIRECTORY);
+    registerExtension(CLAP_EXT_TRIGGERS);
+    registerExtension(CLAP_EXT_TUNING);
   }
 
   //----------
 
-  virtual void registerDraftExtension() {
-    registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts);
-    registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,        &MExtResourceDirectory);
-    registerExtension(CLAP_EXT_TRIGGERS,                  &MExtTriggers);
-    registerExtension(CLAP_EXT_TUNING,                    &MExtTuning);
-  }
+  // virtual void registerExtension(const char* AId, const void* APtr) {
+  //   if (!MExtensions.hasItem(AId)) {
+  //     MExtensions.addItem(AId,APtr);
+  //   }
+  // }
+
+  //----------
+
+  // virtual void unregisterExtension(const char* AId) {
+  //   if (MExtensions.hasItem(AId)) {
+  //     MExtensions.removeItem(AId);
+  //   }
+  // }
+
+  //----------
+
+  // virtual void registerDefaultExtensions() {
+  //   registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
+  //   #if !defined (SAT_GUI_NOGUI)
+  //     registerExtension(CLAP_EXT_GUI,                     &MExtGui);
+  //   #endif
+  //   registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
+  //   registerExtension(CLAP_EXT_STATE,                     &MExtState);
+  // }
+
+  //----------
+
+  // virtual void registerDefaultSynthExtensions() {
+  //   registerDefaultExtensions();
+  //   registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
+  //   registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
+  //   registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
+  // }
+
+  //----------
+
+  // virtual void registerAllExtension() {
+  //   registerExtension(CLAP_EXT_AMBISONIC,                 &MExtAmbisonic);
+  //   registerExtension(CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts);
+  //   registerExtension(CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation);
+  //   registerExtension(CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig);
+  //   registerExtension(CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts);
+  //   registerExtension(CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu);
+  //   #ifndef SAT_GUI_NOGUI
+  //     registerExtension(CLAP_EXT_GUI,                     &MExtGui);
+  //   #endif
+  //   registerExtension(CLAP_EXT_LATENCY,                   &MExtLatency);
+  //   registerExtension(CLAP_EXT_NOTE_NAME,                 &MExtNoteName);
+  //   registerExtension(CLAP_EXT_NOTE_PORTS,                &MExtNotePorts);
+  //   registerExtension(CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication);
+  //   registerExtension(CLAP_EXT_PARAMS,                    &MExtParams);
+  //   registerExtension(CLAP_EXT_POSIX_FD_SUPPORT,          &MExtPosixFdSupport);
+  //   registerExtension(CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad);
+  //   registerExtension(CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls);
+  //   registerExtension(CLAP_EXT_RENDER,                    &MExtRender);
+  //   registerExtension(CLAP_EXT_STATE,                     &MExtState);
+  //   registerExtension(CLAP_EXT_STATE_CONTEXT,             &MExtStateContext);
+  //   registerExtension(CLAP_EXT_SURROUND,                  &MExtSurround);
+  //   registerExtension(CLAP_EXT_TAIL,                      &MExtTail);
+  //   registerExtension(CLAP_EXT_THREAD_POOL,               &MExtThreadPool);
+  //   registerExtension(CLAP_EXT_TIMER_SUPPORT,             &MExtTimerSupport);
+  //   registerExtension(CLAP_EXT_TRACK_INFO,                &MExtTrackInfo);
+  //   registerExtension(CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo);
+  // }
+
+  //----------
+
+  // virtual void registerDraftExtension() {
+  //   registerExtension(CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts);
+  //   registerExtension(CLAP_EXT_RESOURCE_DIRECTORY,        &MExtResourceDirectory);
+  //   registerExtension(CLAP_EXT_TRIGGERS,                  &MExtTriggers);
+  //   registerExtension(CLAP_EXT_TUNING,                    &MExtTuning);
+  // }
 
 //------------------------------
 public: // audio ports
