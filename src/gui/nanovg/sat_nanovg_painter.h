@@ -951,6 +951,7 @@ public: // render buffer
   */
 
   void* createRenderBuffer(uint32_t AWidth, uint32_t AHeight) final {
+    SAT_LOG("NANOVG.PAINTER.CREATE_RENDER_BUFFER: width %i height %i\n",AWidth,AHeight);
     int flags = 0;
     NVGLUframebuffer* fb = nvgluCreateFramebuffer(MContext,AWidth,AHeight,flags);
     //SAT_Print("fb %p\n",fb);
@@ -960,6 +961,7 @@ public: // render buffer
   //----------
 
   void deleteRenderBuffer(void* buffer) final {
+    SAT_LOG("NANOVG.PAINTER.DELETE_RENDER_BUFFER\n");
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     nvgluBindFramebuffer(nullptr);
     nvgluDeleteFramebuffer(fb);

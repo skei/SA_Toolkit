@@ -112,26 +112,26 @@ class SAT_FpuState {
 
 //----------
 
-class SCPU {
+class MIP_CpuInfo {
 
   private:
 
-    unsigned char isCalled;
+    unsigned char isCalled = 0;
+    unsigned int  _caps = 0;
     char          cpustringbuf[SAT_MAX_STRING_LENGTH];
-    unsigned int  _caps;
     unsigned char _SSE3, _SSSE3, _FPU, _CMOV, _SSE, _SSE2, _SSE4A, _SSE5, _MMX,
                   _MMXEXT, _3DNOW, _3DNOWEXT;
 
   public:
 
-    SCPU(void) {
+    MIP_CpuInfo(void) {
       isCalled=0;
       _caps=0;
     }
 
     //----------
 
-    ~SCPU(void) {
+    ~MIP_CpuInfo(void) {
     }
 
     //----------

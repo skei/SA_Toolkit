@@ -123,22 +123,22 @@ public:
 
   SAT_GLXRenderer(SAT_RendererOwner* AOwner)
   : SAT_BaseRenderer(AOwner) {
-
+    SAT_LOG("GLX_RENDERER.constructor\n");
     MOwner = AOwner;
     MDisplay = AOwner->on_rendererOwner_getX11Display();
-    //SAT_Print("MDisplay: %p\n",MDisplay);
+    SAT_LOG("GLX_RENDERER: MDisplay: %p\n",MDisplay);
 
     MFBConfig = findFBConfig(SAT_GLXWindowAttribs);
     MContext = createContext(MFBConfig);
-    //SAT_Print("MContext: %p\n",MContext);
+    SAT_LOG("GLX_RENDERER: MContext: %p\n",MContext);
 
     //
 
     xcb_drawable_t drawable = AOwner->on_rendererOwner_getDrawable();
-    //SAT_Print("drawable: %i\n",drawable);
+    SAT_LOG("GLX_RENDERER: xcb drawable: %i\n",drawable);
 
     MDrawable = glXCreateWindow(MDisplay,MFBConfig,drawable,nullptr);
-    //SAT_Print("MDrawable: %i\n",(int)MDrawable);
+    SAT_LOG("GLX_RENDERER: MDrawable: %i\n",(int)MDrawable);
 
     //
 
@@ -147,11 +147,11 @@ public:
 
     const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
     if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
-      //SAT_Print("GLX_EXT_swap_control\n");
+      SAT_LOG("GLX_RENDERER: GLX_EXT_swap_control found\n");
       glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
     }
     if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
-      //SAT_Print("GLX_MESA_swap_control\n");
+      SAT_LOG("GLX_RENDERER: GLX_MESA_swap_control found\n");
       glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
     }
 
@@ -162,6 +162,7 @@ public:
   //----------
 
   virtual ~SAT_GLXRenderer() {
+    SAT_LOG("GLX_RENDERER.destructor\n");
     glXDestroyWindow(MDisplay,MDrawable);
     destroyContext();
     //XCloseDisplay(MDisplay);
@@ -229,12 +230,12 @@ public:
   */
 
   bool makeCurrent() override {
-    //SAT_Print("MIsCurrent %i -> 1\n",MIsCurrent);
-    //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
+    //SAT_LOG("MIsCurrent %i -> 1\n",MIsCurrent);
+    //SAT_LOG("MIsCurrent: %i\n",MIsCurrent);
     //MPrevContext = glXGetCurrentContext();
     bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
     if (!res) {
-      //SAT_Print("Error: makeCurrent returned false\n");
+      //SAT_LOG("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = true;
@@ -251,12 +252,12 @@ public:
   //TODO: restore prev context?
 
   bool resetCurrent() override {
-    //SAT_Print("MIsCurrent %i -> 0\n",MIsCurrent);
-    //SAT_Print("MIsCurrent: %i\n",MIsCurrent);
+    //SAT_LOG("MIsCurrent %i -> 0\n",MIsCurrent);
+    //SAT_LOG("MIsCurrent: %i\n",MIsCurrent);
     bool res = glXMakeContextCurrent(MDisplay,0,0,0);
     //bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MPrevContext); // error
     if (!res) {
-      //SAT_Print("Error: makeCurrent returned false\n");
+      //SAT_LOG("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = false;
@@ -274,6 +275,7 @@ public:
   //----------
 
   bool disableVSync(/*Display* ADisplay, GLXDrawable ADrawable*/) override {
+    SAT_LOG("GLX_RENDERER.disableVSync\n");
 
     if (glXSwapIntervalEXT) glXSwapIntervalEXT(MDisplay,MDrawable,0);
     else if (glXSwapIntervalMESA) glXSwapIntervalMESA(0);
@@ -321,6 +323,7 @@ public:
   //----------
 
   bool enableVSync() override {
+    SAT_LOG("GLX_RENDERER.enableVSync\n");
     // TODO
     return true;
   }
@@ -336,11 +339,11 @@ private:
   GLXFBConfig findFBConfig(const int* AAttribs) {
     //SAT_PRINT;
     int num_fbc = 0;
-    //SAT_Print("Display: %p\n",MDisplay);
-    //SAT_Print("Screen: %i\n",DefaultScreen(MDisplay));
-    //SAT_Print("AAttribs: %p\n",AAttribs);
+    //SAT_LOG("Display: %p\n",MDisplay);
+    //SAT_LOG("Screen: %i\n",DefaultScreen(MDisplay));
+    //SAT_LOG("AAttribs: %p\n",AAttribs);
     GLXFBConfig* fbconfigs = glXChooseFBConfig(MDisplay,DefaultScreen(MDisplay),AAttribs,&num_fbc);
-    //SAT_Print("num_fbc: %i\n",num_fbc);
+    //SAT_LOG("num_fbc: %i\n",num_fbc);
     GLXFBConfig fbconfig = fbconfigs[0];
     XFree(fbconfigs);
     return fbconfig;
@@ -355,6 +358,7 @@ private:
   //    loadOpenGL();
 
   GLXContext createContext(GLXFBConfig fbconfig) {
+    SAT_LOG("GLX_RENDERER.createContext\n");
     GLXContext context = glXCreateNewContext(MDisplay,fbconfig,GLX_RGBA_TYPE,nullptr,True);
     //SAT_Assert(context);
     loadExtensions();
@@ -364,6 +368,7 @@ private:
   //----------
 
   void destroyContext() {
+    SAT_LOG("GLX_RENDERER.destroyContext\n");
     unloadExtensions();
     glXDestroyContext(MDisplay,MContext);
   }
@@ -458,24 +463,25 @@ private: // extensions
   // make context current before calling this
 
   bool loadExtensions() {
-    //SAT_Print("loading extensions..\n");
+    SAT_LOG("GLX_RENDERER.loadExtensions\n");
     int result = sogl_loadOpenGL();
     if (!result) {
-      SAT_Print("sogl_loadOpenGL() failed\n");
+      SAT_LOG("> sogl_loadOpenGL() failed\n");
       const char** failures = sogl_getFailures();
       while (*failures) {
-        SAT_Print("> %s\n",*failures);
+        SAT_LOG("> %s\n",*failures);
         failures++;
       }
       return false;
     }
-    //SAT_Print("sogl_loadOpenGL() succeeded\n");
+    SAT_LOG("> sogl_loadOpenGL() succeeded\n");
     return true;
   }
 
   //----------
 
   void unloadExtensions() {
+    SAT_LOG("GLX_RENDERER.unloadExtensions\n");
     sogl_cleanup();
   }
 

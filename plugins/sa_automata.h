@@ -280,52 +280,7 @@ public:
 
   //----------
 
-  void killAllNotes() {
-    for (uint32_t y=0; y<127; y++) {
-      // notes
-      clap_event_note_t note_event;
-      note_event.header.size     = sizeof(clap_event_note_t);
-      note_event.header.time     = 0;
-      note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-      note_event.header.type     = CLAP_EVENT_NOTE_OFF;
-      note_event.header.flags    = 0;
-      note_event.note_id         = -1;
-      note_event.port_index      = 0;
-      note_event.channel         = 0;
-      note_event.key             = y;
-      note_event.velocity        = 0;
-      sendEvent((clap_event_header_t*)&note_event);
-      // cc1
-      clap_event_midi_t midi_event;
-      midi_event.header.size     = sizeof(clap_event_midi_t);
-      midi_event.header.time     = 0;//AOffset;
-      midi_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-      midi_event.header.type     = CLAP_EVENT_MIDI;
-      midi_event.header.flags    = 0;
-      midi_event.port_index      = 0;
-      midi_event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
-      midi_event.data[1]         = p_cc1;
-      midi_event.data[2]         = 0;
-      sendEvent((clap_event_header_t*)&midi_event);
-      // cc2
-      //clap_event_midi_t midi_event;
-      midi_event.header.size     = sizeof(clap_event_midi_t);
-      midi_event.header.time     = 0;//AOffset;
-      midi_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-      midi_event.header.type     = CLAP_EVENT_MIDI;
-      midi_event.header.flags    = 0;
-      midi_event.port_index      = 0;
-      midi_event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
-      midi_event.data[1]         = p_cc2;
-      midi_event.data[2]         = 0;
-      sendEvent((clap_event_header_t*)&midi_event);
-    }
-  }
-
-  //----------
-
-  void sendNoteOn(int32_t AX, int32_t AY, uint32_t AOffset) {
-    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+  void sendNoteOnEvent(int32_t AKey, double AVelocity, uint32_t AOffset) {
     clap_event_note_t event;
     event.header.size     = sizeof(clap_event_note_t);
     event.header.time     = AOffset;
@@ -335,95 +290,212 @@ public:
     event.note_id         = -1;
     event.port_index      = 0;
     event.channel         = 0;
-    event.key             = 60 + AY + p_tuning;
-    event.velocity        = p_velocity;
-    sendEvent((clap_event_header_t*)&event);
+    event.key             = AKey + p_tuning;
+    event.velocity        = AVelocity;
+    const clap_output_events_t* out_events = getProcessContext()->process->out_events;
+    out_events->try_push(out_events,(clap_event_header_t*)&event);
+  }
+
+  //----------
+
+  void sendNoteOffEvent(int32_t AKey, uint32_t AOffset) {
+    clap_event_note_t event;
+    event.header.size     = sizeof(clap_event_note_t);
+    event.header.time     = AOffset;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_NOTE_ON;
+    event.header.flags    = 0;
+    event.note_id         = -1;
+    event.port_index      = 0;
+    event.channel         = 0;
+    event.key             = AKey + p_tuning;
+    event.velocity        = 0.0;
+    const clap_output_events_t* out_events = getProcessContext()->process->out_events;
+    out_events->try_push(out_events,(clap_event_header_t*)&event);
+  }
+
+  //----------
+
+  void sendMidiCCEvent(int32_t ACC, double AValue, uint32_t AOffset) {
+    clap_event_midi_t midi_event;
+    midi_event.header.size     = sizeof(clap_event_midi_t);
+    midi_event.header.time     = 0;//AOffset;
+    midi_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    midi_event.header.type     = CLAP_EVENT_MIDI;
+    midi_event.header.flags    = 0;
+    midi_event.port_index      = 0;
+    midi_event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    midi_event.data[1]         = ACC;
+    midi_event.data[2]         = AValue;
+    sendEvent((clap_event_header_t*)&midi_event);
+  }
+
+
+  //----------
+
+  void killAllNotes() {
+
+    // // notes
+
+    // clap_event_note_t note_event;
+    // note_event.header.size     = sizeof(clap_event_note_t);
+    // note_event.header.time     = 0;
+    // note_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // note_event.header.type     = CLAP_EVENT_NOTE_OFF;
+    // note_event.header.flags    = 0;
+    // note_event.note_id         = -1;
+    // note_event.port_index      = 0;
+    // note_event.channel         = 0;
+    // note_event.key             = y;
+    // note_event.velocity        = 0;
+    // sendEvent((clap_event_header_t*)&note_event);
+
+    for (uint32_t y=0; y<127; y++) {
+      sendNoteOffEvent(y,0);
+    }
+
+    // cc1
+
+    // clap_event_midi_t midi_event;
+    // midi_event.header.size     = sizeof(clap_event_midi_t);
+    // midi_event.header.time     = 0;//AOffset;
+    // midi_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // midi_event.header.type     = CLAP_EVENT_MIDI;
+    // midi_event.header.flags    = 0;
+    // midi_event.port_index      = 0;
+    // midi_event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    // midi_event.data[1]         = p_cc1;
+    // midi_event.data[2]         = 0;
+    // sendEvent((clap_event_header_t*)&midi_event);
+
+    sendMidiCCEvent(p_cc1,0,0);
+
+    // cc2
+
+    // //clap_event_midi_t midi_event;
+    // midi_event.header.size     = sizeof(clap_event_midi_t);
+    // midi_event.header.time     = 0;//AOffset;
+    // midi_event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // midi_event.header.type     = CLAP_EVENT_MIDI;
+    // midi_event.header.flags    = 0;
+    // midi_event.port_index      = 0;
+    // midi_event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    // midi_event.data[1]         = p_cc2;
+    // midi_event.data[2]         = 0;
+    // sendEvent((clap_event_header_t*)&midi_event);
+
+    sendMidiCCEvent(p_cc2,0,0);
+
+  }
+
+  //----------
+
+  void sendNoteOn(int32_t AX, int32_t AY, uint32_t AOffset) {
+    //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
+    // clap_event_note_t event;
+    // event.header.size     = sizeof(clap_event_note_t);
+    // event.header.time     = AOffset;
+    // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // event.header.type     = CLAP_EVENT_NOTE_ON;
+    // event.header.flags    = 0;
+    // event.note_id         = -1;
+    // event.port_index      = 0;
+    // event.channel         = 0;
+    // event.key             = 60 + AY + p_tuning;
+    // event.velocity        = p_velocity;
+    // sendEvent((clap_event_header_t*)&event);
+    sendNoteOnEvent( 60 + AY + p_tuning, p_velocity, AOffset );
   }
 
   //----------
 
   void sendNoteOff(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
-    clap_event_note_t event;
-    event.header.size     = sizeof(clap_event_note_t);
-    event.header.time     = AOffset;
-    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    event.header.type     = CLAP_EVENT_NOTE_OFF;
-    event.header.flags    = 0;
-    event.note_id         = -1;
-    event.port_index      = 0;
-    event.channel         = 0;
-    event.key             = 60 + AY + p_tuning;
-    event.velocity        = 0.0;
-    sendEvent((clap_event_header_t*)&event);
+    // clap_event_note_t event;
+    // event.header.size     = sizeof(clap_event_note_t);
+    // event.header.time     = AOffset;
+    // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // event.header.type     = CLAP_EVENT_NOTE_OFF;
+    // event.header.flags    = 0;
+    // event.note_id         = -1;
+    // event.port_index      = 0;
+    // event.channel         = 0;
+    // event.key             = 60 + AY + p_tuning;
+    // event.velocity        = 0.0;
+    // sendEvent((clap_event_header_t*)&event);
+    sendNoteOffEvent( 60 + AY + p_tuning, AOffset );
   }
 
   //----------
 
   void sendCC1On(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
-    clap_event_midi_t event;
-    event.header.size     = sizeof(clap_event_midi_t);
-    event.header.time     = AOffset;
-    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    event.header.type     = CLAP_EVENT_MIDI;
-    event.header.flags    = 0;
-    event.port_index      = 0;
-    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
-    event.data[1]         = p_cc1;
-    event.data[2]         = p_cc1_val;
-    sendEvent((clap_event_header_t*)&event);
+    // clap_event_midi_t event;
+    // event.header.size     = sizeof(clap_event_midi_t);
+    // event.header.time     = AOffset;
+    // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // event.header.type     = CLAP_EVENT_MIDI;
+    // event.header.flags    = 0;
+    // event.port_index      = 0;
+    // event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    // event.data[1]         = p_cc1;
+    // event.data[2]         = p_cc1_val;
+    // sendEvent((clap_event_header_t*)&event);
+    sendMidiCCEvent(p_cc1,p_cc1_val,AOffset);
   }
 
   //----------
 
   void sendCC1Off(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
-    clap_event_midi_t event;
-    event.header.size     = sizeof(clap_event_midi_t);
-    event.header.time     = AOffset;
-    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    event.header.type     = CLAP_EVENT_MIDI;
-    event.header.flags    = 0;
-    event.port_index      = 0;
-    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
-    event.data[1]         = p_cc1;
-    event.data[2]         = 0;//p_cc1_val;
-    sendEvent((clap_event_header_t*)&event);
+    // clap_event_midi_t event;
+    // event.header.size     = sizeof(clap_event_midi_t);
+    // event.header.time     = AOffset;
+    // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // event.header.type     = CLAP_EVENT_MIDI;
+    // event.header.flags    = 0;
+    // event.port_index      = 0;
+    // event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    // event.data[1]         = p_cc1;
+    // event.data[2]         = 0;//p_cc1_val;
+    // sendEvent((clap_event_header_t*)&event);
+    sendMidiCCEvent(p_cc1,0,AOffset);
   }
 
   //----------
 
   void sendCC2On(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
-    clap_event_midi_t event;
-    event.header.size     = sizeof(clap_event_midi_t);
-    event.header.time     = AOffset;
-    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    event.header.type     = CLAP_EVENT_MIDI;
-    event.header.flags    = 0;
-    event.port_index      = 0;
-    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
-    event.data[1]         = p_cc2;
-    event.data[2]         = p_cc2_val;
-    sendEvent((clap_event_header_t*)&event);
+    // clap_event_midi_t event;
+    // event.header.size     = sizeof(clap_event_midi_t);
+    // event.header.time     = AOffset;
+    // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // event.header.type     = CLAP_EVENT_MIDI;
+    // event.header.flags    = 0;
+    // event.port_index      = 0;
+    // event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    // event.data[1]         = p_cc2;
+    // event.data[2]         = p_cc2_val;
+    // sendEvent((clap_event_header_t*)&event);
+    sendMidiCCEvent(p_cc2,p_cc2_val,AOffset);
   }
 
   //----------
 
   void sendCC2Off(int32_t AX, int32_t AY, uint32_t AOffset) {
     //SAT_Print("x %i y %i ofs %i\n",AX,AY,AOffset);
-    clap_event_midi_t event;
-    event.header.size     = sizeof(clap_event_midi_t);
-    event.header.time     = AOffset;
-    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-    event.header.type     = CLAP_EVENT_MIDI;
-    event.header.flags    = 0;
-    event.port_index      = 0;
-    event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
-    event.data[1]         = p_cc2;
-    event.data[2]         = 0;//p_cc2_val;
-    sendEvent((clap_event_header_t*)&event);
+    // clap_event_midi_t event;
+    // event.header.size     = sizeof(clap_event_midi_t);
+    // event.header.time     = AOffset;
+    // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    // event.header.type     = CLAP_EVENT_MIDI;
+    // event.header.flags    = 0;
+    // event.port_index      = 0;
+    // event.data[0]         = SAT_MIDI_CONTROL_CHANGE + 0x00;
+    // event.data[1]         = p_cc2;
+    // event.data[2]         = 0;//p_cc2_val;
+    // sendEvent((clap_event_header_t*)&event);
+    sendMidiCCEvent(p_cc2,0,AOffset);
   }
 
 //------------------------------

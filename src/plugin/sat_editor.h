@@ -250,7 +250,7 @@ public: // clap_plugin
     SAT_Print("MWidth %i MHeight %i\n",MWidth,MHeight);
     hints->can_resize_horizontally  = true;
     hints->can_resize_vertically    = true;
-    hints->preserve_aspect_ratio    = false;
+    hints->preserve_aspect_ratio    = false;//true;
     hints->aspect_ratio_width       = MWidth;
     hints->aspect_ratio_height      = MHeight;
     return true;

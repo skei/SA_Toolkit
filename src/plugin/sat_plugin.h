@@ -152,6 +152,7 @@ public:
 
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
+    SAT_LOG("PLUGIN.constructor\n");
     MProcessContext.plugin = this;
     MHost = new SAT_Host(AHost);
   }
@@ -159,7 +160,7 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
-    //SAT_PRINT;
+    SAT_LOG("PLUGIN.destructor\n");
     #ifndef SAT_NO_AUTODELETE
       //SAT_PRINT;
       deleteAudioPorts();
@@ -1636,6 +1637,7 @@ protected: // clap_plugin
 //------------------------------
 
   bool init() override {
+    SAT_LOG("PLUGIN.INIT\n");
 
     // #ifdef SAT_DEBUG_WINDOW
     //   MDebugWindow = new SAT_DebugWindow(640,480);
@@ -1652,7 +1654,7 @@ protected: // clap_plugin
   //----------
 
   void destroy() override {
-    //SAT_PRINT;
+    SAT_LOG("PLUGIN.DESTROY\n");
 
     // #ifdef SAT_DEBUG_WINDOW
     //   if (MDebugWindow) {
@@ -1678,6 +1680,7 @@ protected: // clap_plugin
   //----------
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) override {
+    SAT_LOG("PLUGIN.ACTIVATE: sample_rate %.2f min_frames %i max_frames %i\n",sample_rate,min_frames_count,max_frames_count);
     //MProcessContext.plugin    = this; // constructor
     MIsActivated              = true;
     MSampleRate               = sample_rate;
@@ -1692,12 +1695,14 @@ protected: // clap_plugin
   //----------
 
   void deactivate() override {
+    SAT_LOG("PLUGIN.DEACTIVATE\n");
     MIsActivated = false;
   }
 
   //----------
 
   bool start_processing() override {
+    SAT_LOG("PLUGIN.START_PROCESSING\n");
     MIsProcessing = true;
     return true;
   }
@@ -1705,12 +1710,14 @@ protected: // clap_plugin
   //----------
 
   void stop_processing() override {
+    SAT_LOG("PLUGIN.STOP_PROCESSING\n");
     MIsProcessing = false;
   }
 
   //----------
 
   void reset() override {
+    SAT_LOG("PLUGIN.RESET\n");
     MProcessContext.process_counter = 0;
     MProcessContext.sample_counter = 0;
   }
@@ -1754,7 +1761,7 @@ protected: // clap_plugin
   //----------
 
   const void* get_extension(const char *id) override {
-    //SAT_Print("id: %s\n",id);
+    SAT_LOG("PLUGIN.GET_EXTENSION: id %s\n",id);
     if (MExtensions.hasItem(id)) return MExtensions.getItem(id);
     return nullptr;
   }
@@ -1762,6 +1769,7 @@ protected: // clap_plugin
   //----------
 
   void on_main_thread() override {
+    SAT_LOG("PLUGIN.ON_MAIN_THREAD\n");
   }
 
 //------------------------------
@@ -1891,7 +1899,7 @@ protected: // gui
   #if !defined (SAT_GUI_NOGUI)
 
   bool gui_is_api_supported(const char *api, bool is_floating) override {
-    //SAT_Print("api %s is_floating %i",api,is_floating);
+    SAT_LOG("GUI.IS_API_SUPPORTED: api %s floating %i\n",api,is_floating);
     #if defined(SAT_GUI_WAYLAND)
       if ((strcmp(api,CLAP_WINDOW_API_WAYLAND) == 0) && (is_floating)) {
         //SAT_DPrint(" -> true\n");
@@ -1915,7 +1923,7 @@ protected: // gui
   //----------
 
   bool gui_get_preferred_api(const char **api, bool *is_floating) override {
-    //SAT_Print("");
+    SAT_LOG("GUI.GET_PREFERRED_API\n");
     #if defined(SAT_GUI_WAYLAND)
       *api = CLAP_WINDOW_API_WAYLAND;
       *is_floating = true;
@@ -1939,6 +1947,7 @@ protected: // gui
   //----------
 
   bool gui_create(const char *api, bool is_floating) override {
+    SAT_LOG("GUI.CREATE: api %s floating %i\n",api,is_floating);
     MIsEditorClosing = false;
 
     if (is_floating == true) return false;
@@ -1985,6 +1994,7 @@ protected: // gui
   //----------
 
   void gui_destroy() override {
+    SAT_LOG("GUI.DESTROY\n");
     MIsEditorClosing = true;
     //SAT_Print("\n");
     if (MEditor) {
@@ -1999,7 +2009,7 @@ protected: // gui
   //----------
 
   bool gui_set_scale(double scale) override {
-    //SAT_Print("scale %f\n",scale);
+    SAT_LOG("GUI.SET_SCALE: scale %.3f\n",scale);
     if (MEditor) return MEditor->set_scale(scale);
     //SAT_Print("MEditor = null\n");
     return false;
@@ -2008,6 +2018,7 @@ protected: // gui
   //----------
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
+    SAT_LOG("GUI.GET_SIZE\n");
     bool result = false;
     if (MEditor) result = MEditor->get_size(width,height);
     else {
@@ -2021,7 +2032,7 @@ protected: // gui
   //----------
 
   bool gui_can_resize() override {
-    //SAT_Print("\n");
+    SAT_LOG("GUI.CAN_RESIZE\n");
     if (MEditor) return MEditor->can_resize();
     //SAT_Print("MEditor = null\n");
     return false;
@@ -2030,7 +2041,7 @@ protected: // gui
   //----------
 
   bool gui_get_resize_hints(clap_gui_resize_hints_t *hints) override {
-    //SAT_Print("\n");
+    SAT_LOG("GUI.GET_RESIZE_HINTS\n");
     if (MEditor) return MEditor->get_resize_hints(hints);
     //SAT_Print("MEditor = null\n");
     return false;
@@ -2039,7 +2050,7 @@ protected: // gui
   //----------
 
   bool gui_adjust_size(uint32_t *width, uint32_t *height) override {
-    //SAT_Print("(*width %i *height %i)\n",*width,*height);
+    SAT_LOG("GUI.ADJUST_SIZE: *width %i *height %i\n",*width,*height);
     if (MEditor) return MEditor->adjust_size(width,height);
     //SAT_Print("MEditor = null\n");
     return false;
@@ -2048,7 +2059,7 @@ protected: // gui
   //----------
 
   bool gui_set_size(uint32_t width, uint32_t height) override {
-    //SAT_Print("width %i height %i\n",width,height);
+    SAT_LOG("GUI.SET_SIZE: width %i height %i\n",width,height);
     if (MEditor) return MEditor->set_size(width,height);
     //SAT_Print("MEditor = null\n");
     return false;
@@ -2057,7 +2068,7 @@ protected: // gui
   //----------
 
   bool gui_set_parent(const clap_window_t *window) override {
-    //SAT_Print("\n");
+    SAT_LOG("GUI.SET_PARENT: api %s ptr %p\n",window->api,window->ptr);
     if (MEditor) {
       bool result = MEditor->set_parent(window);
       SAT_Window* window = MEditor->getWindow();
@@ -2072,7 +2083,7 @@ protected: // gui
   //----------
 
   bool gui_set_transient(const clap_window_t *window) override {
-    //SAT_Print("\n");
+    SAT_LOG("GUI.SET_TRANSIENT: api %s ptr %p\n",window->api,window->ptr);
     if (MEditor) return MEditor->set_transient(window);
     //SAT_Print("MEditor = null\n");
     return false;
@@ -2081,7 +2092,7 @@ protected: // gui
   //----------
 
   void gui_suggest_title(const char *title) override {
-    //SAT_Print("title %s\n",title);
+    SAT_LOG("GUI.SUGGEST_TITLE: title %s\n",title);
     if (MEditor) MEditor->suggest_title(title);
     //else { SAT_Print("MEditor = null\n"); }
   }
@@ -2089,7 +2100,7 @@ protected: // gui
   //----------
 
   bool gui_show() override {
-    //SAT_Print("\n");
+    SAT_LOG("GUI.SHOW\n");
     if (MEditor) return MEditor->show();
     //SAT_Print("MEditor = null\n");
     return false;
@@ -2098,7 +2109,7 @@ protected: // gui
   //----------
 
   bool gui_hide() override {
-    //SAT_Print("\n");
+    SAT_LOG("GUI.HIDE\n");
     if (MEditor) return MEditor->hide();
     //SAT_Print("MEditor = null\n");
     return false;

@@ -24,8 +24,8 @@ protected:
   bool        MStates[SAT_MAX_STATES]     = {0};
   const char* MLabels[SAT_MAX_STATES]     = {0};
 
-  uint32_t    MNumBits                    = 8;//8;
   bool        MValueIsBits                = false;//true;
+  uint32_t    MNumBits                    = 8;//8;
   bool        MAllowZeroBits              = true;
 
   //double      MTextSize                   = 9.0;
@@ -41,10 +41,10 @@ protected:
   bool        MDrawRoundedBottom          = true;
   float       MRounded                    = 5;
   
-  bool        MDrawIndicator      = false;
-  double      MIndicatorValue     = 0.0;
-  SAT_Color   MIndicatorColor     = SAT_Yellow;
-  SAT_Rect    MIndicatorOffset    = SAT_Rect(0,0,0,0);  
+  bool        MDrawIndicator              = false;
+  double      MIndicatorValue             = 0.0;
+  SAT_Color   MIndicatorColor             = SAT_Yellow;
+  SAT_Rect    MIndicatorOffset            = SAT_Rect(0,0,0,0);  
 
 //------------------------------
 public:
@@ -183,6 +183,8 @@ public:
   const char* getButtonName(int32_t i) {
     return MLabels[i];
   }
+
+  //----------
 
   void setButtonName(int32_t i, const char* AName) {
     MLabels[i] = (char*)AName;

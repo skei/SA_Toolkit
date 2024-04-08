@@ -2,6 +2,26 @@
 #define sat_log_included
 //----------------------------------------------------------------------
 
+#define SAT_LOG_TIME
+//#define SAT_LOG_THREAD
+
+//----------
+
+#ifdef SAT_LOG_THREAD
+  #ifdef SAT_LINUX
+    #include <sys/syscall.h>
+    #include <sys/unistd.h>
+    #define gettid() syscall(SYS_gettid)
+  #endif
+  #ifdef SAT_WIN32
+    #include <processthreadsapi.h>
+  #endif
+#endif
+
+#ifdef SAT_LOG_TIME
+  #include <sys/time.h> // gettimeofday
+#endif
+
 //#include "sat.h"
 #include "base/debug/sat_debug_print.h"
 #include "base/system/sat_file.h"
@@ -29,6 +49,10 @@ private:
   char        MTempBuffer[SAT_MAX_PATH_LENGTH]  = {0};
   //char      MHomePath[SAT_MAX_PATH_LENGTH]    = {0};
 
+  #ifdef SAT_LOG_TIME
+    double MStartTime = 0.0;
+  #endif
+
 //------------------------------
 public:
 //------------------------------
@@ -53,6 +77,11 @@ public:
 
   void initialize(SAT_DebugPrint* APrint) {
     #if !defined (SAT_NO_LOG)
+
+      #ifdef SAT_LOG_TIME
+        time_start();
+      #endif
+
       MEnabled = false;
       //MLogfileName = AName;
       SAT_File file = {};
@@ -61,9 +90,6 @@ public:
       if (file.direxists(MDesktopPath)) {
         SAT_CurrentTime time = {0};
         SAT_GetLocalTime(&time);
-
-//        printf("month: %i\n",time.month);
-        
         sprintf(MLogfileName,"%02i-%s-%04i_%02i-%02i-%02i",time.day, SAT_MONTH_NAMES[time.month - 1], time.year, time.hour, time.minutes, time.seconds);
         #ifdef SAT_LINUX
           sprintf(MFilename,"%s/%s",MDesktopPath,MLogfileName);
@@ -77,9 +103,9 @@ public:
         }
         else {
           MEnabled = true;
-          print("\n----------------------------------------------------------------------\n\n");
+          dprint("\n----------------------------------------------------------------------\n\n");
           print_header();
-          print("\n----------\n\n");
+          dprint("\n----------\n\n");
         }
       }
       else {
@@ -94,7 +120,7 @@ public:
   void cleanup() {
     #if !defined (SAT_NO_LOG)
       if (MEnabled) {
-        print("\n\n");
+        dprint("\n\n");
         MFile.close();
       }
     #else
@@ -105,11 +131,40 @@ public:
 public:
 //------------------------------
 
+//------------------------------
+private: // time
+//------------------------------
+
+  #ifdef SAT_LOG_TIME
+
+    void time_start() {
+      struct timeval time;
+      gettimeofday(&time,NULL);
+      MStartTime = (double)time.tv_sec + (double)time.tv_usec * .000001;
+    }
+
+    //----------
+
+    double time_elapsed() {
+      struct timeval time;
+      gettimeofday(&time,NULL);
+      double currenttime = (double)time.tv_sec + (double)time.tv_usec * .000001;
+      double elapsed = currenttime - MStartTime;
+      return elapsed;
+    }
+
+  #endif // log time
+
+//------------------------------
+public:
+//------------------------------
+
   void print_header() {
     if (MEnabled) {
+
       SAT_CurrentTime time = {0};
       SAT_GetLocalTime(&time);
-      //
+
       const char* gui = "";
       const char* painter = "";
 
@@ -135,36 +190,47 @@ public:
         gui = "X11";
       #endif
 
-      print("Time: %02i.%02i.%04i (%02i.%02i.%02i)\n",time.day,time.month,time.year,time.hour,time.minutes,time.seconds);
+      dprint("Time: %02i.%02i.%04i (%02i.%02i.%02i)\n",time.day,time.month,time.year,time.hour,time.minutes,time.seconds);
 
       #ifdef SAT_DEBUG
-        print("Build: Debug\n");
+        dprint("Build: Debug\n");
       #else
-        print("Build: Release\n");
+        dprint("Build: Release\n");
       #endif
+
       #ifdef SAT_LINUX
-        print("OS: Linux\n");
+        dprint("OS: Linux\n");
       #endif
       #ifdef SAT_WIN32
-        print("OS: Windows\n");
+        dprint("OS: Windows\n");
       #endif
 
-      print("GUI: %s\n",gui);
+      dprint("GUI: %s\n",gui);
       char buffer[SAT_MAX_PATH_LENGTH];
-      print("Home path: %s\n",SAT_GetHomePath(buffer));
-      print("Desktop path: %s\n",SAT_GetDesktopPath(buffer));
-      print("Base filename: %s\n",SAT_GetBaseFilename(buffer));
-      print("Base path: %s\n",SAT_GetBasePath(buffer));
-      print("CLAP Version: %i.%i.%i\n",CLAP_VERSION_MAJOR,CLAP_VERSION_MINOR,CLAP_VERSION_REVISION);
+      dprint("Home path: %s\n",SAT_GetHomePath(buffer));
+      dprint("Desktop path: %s\n",SAT_GetDesktopPath(buffer));
+      dprint("Base filename: %s\n",SAT_GetBaseFilename(buffer));
+      dprint("Base path: %s\n",SAT_GetBasePath(buffer));
+      dprint("CLAP Version: %i.%i.%i\n",CLAP_VERSION_MAJOR,CLAP_VERSION_MINOR,CLAP_VERSION_REVISION);
+      //dprint("Host name: %s\n",SAT_GetHostName(buffer));
 
+      #ifdef SAT_PLUGIN_DSSI
+        dprint("Wrapper: DSSI\n");
+      #endif
       #ifdef SAT_PLUGIN_EXE
-        print("Wrapper: EXE\n");
+        dprint("Wrapper: EXE\n");
+      #endif
+      #ifdef SAT_PLUGIN_LADSPA
+        dprint("Wrapper: LADSPA\n");
+      #endif
+      #ifdef SAT_PLUGIN_LV2
+        dprint("Wrapper: LV2\n");
       #endif
       #ifdef SAT_PLUGIN_VST2
-        print("Wrapper: VST2\n");
+        dprint("Wrapper: VST2\n");
       #endif
       #ifdef SAT_PLUGIN_VST3
-        print("Wrapper: VST3\n");
+        dprint("Wrapper: VST3\n");
       #endif
 
     } // enabled
@@ -183,13 +249,57 @@ public:
 
   //----------
 
-  void print_string(char* str) {
+  void print_string(char* str, bool prefix=true) {
     if (MEnabled) {
-      uint32_t len = strlen(str);
-      MFile.write(str,len);
+
+      if (prefix) {
+      
+        #if defined(SAT_LOG_TIME) || defined (SAT_LOG_THREAD)
+        
+          char temp[1024];
+          temp[0] = 0;
+
+          #ifdef SAT_LINUX
+            uint32_t thread_id = gettid();
+          #endif
+          #ifdef SAT_WIN32
+            uint32_t thread_id = GetCurrentThreadId();
+          #endif
+
+          #ifdef SAT_LOG_TIME
+            double time = time_elapsed();
+            #ifdef SAT_LOG_THREAD // time & thread_id
+              sprintf(temp,"[%.6f,%08x] %s",time,thread_id,str);
+            #else // time 
+              sprintf(temp,"[%.6f] %s",time,str);
+            #endif
+          #else // thread_id
+            sprintf(temp,"[%08x] %s",thread_id,str);
+          #endif
+
+          uint32_t len = strlen(temp);
+          MFile.write(temp,len);
+
+        #else // none
+
+          //sprintf(temp,"%s",str);
+          uint32_t len = strlen(str);
+          MFile.write(str,len);
+
+
+        #endif
+
+      }
+
+      else { //!prefix
+        uint32_t len = strlen(str);
+        MFile.write(str,len);
+      }
+
       MFile.flush();
+
     }
-}
+  }
 
   //----------
 
@@ -205,18 +315,31 @@ public:
     }
   }
 
-  void print_if(bool cond, const char* format, ...) {
+  // void print_if(bool cond, const char* format, ...) {
+  //   if (MEnabled) {
+  //     if (cond && MFile.isOpen()) {
+  //       va_list args;
+  //       va_start(args,format);
+  //       vsprintf(MTempBuffer,format,args);
+  //       va_end(args);
+  //       print_string(MTempBuffer);
+  //     }
+  //   }
+  // }
+
+  //----------
+
+  void dprint(const char* format, ...) {
     if (MEnabled) {
-      if (cond && MFile.isOpen()) {
+      if (MFile.isOpen()) {
         va_list args;
         va_start(args,format);
         vsprintf(MTempBuffer,format,args);
         va_end(args);
-        print_string(MTempBuffer);
+        print_string(MTempBuffer,false);
       }
     }
   }
-
 };
 
 //----------------------------------------------------------------------
