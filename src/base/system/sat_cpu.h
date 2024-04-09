@@ -2,6 +2,8 @@
 #define sat_linux_cpu_included
 //----------------------------------------------------------------------
 
+#if 0
+
 // http://bits.stephan-brumme.com/endianess.html
 // see also: SAT_LITTLE_ENDIAN
 
@@ -15,22 +17,21 @@
 //
 //----------------------------------------------------------------------
 
-//#ifdef SAT_WIN32
-//  #include <windows.h>
-//#endif
+// #ifdef SAT_WIN32
+//   #include <windows.h>
+// #endif
 
-//#elif SAT_MAC
-//  #include <sys/param.h>
-//  #include <sys/sysctl.h>
-//#endif
+// #elif SAT_MAC
+//   #include <sys/param.h>
+//   #include <sys/sysctl.h>
+// #endif
 
 #include <unistd.h>
 #include <emmintrin.h>
 //----------
 
 int32_t SAT_NumCpuCores(void ) {
-  //return sysconf(_SC_NPROCESSORS_ONLN);
-  return 0;
+  return sysconf(_SC_NPROCESSORS_ONLN);
 
   //#ifdef SAT_WIN32
   //  SYSTEM_INFO sysinfo;
@@ -99,12 +100,12 @@ class SAT_FpuState {
 // used with permission
 
 //----------------------------------------------------------------------
-/*
+
 
 // fPIC compatible
 #define SAT_CPU_EBX_REG "r"
 
-#define SAT_CPU_EBX_STORE  \
+#define SAT_CPU_EBX_STORE   \
   "pushl %%ebx;"            \
   "cpuid;"                  \
   "movl %%ebx, %1;"         \
@@ -118,7 +119,7 @@ class MIP_CpuInfo {
 
     unsigned char isCalled = 0;
     unsigned int  _caps = 0;
-    char          cpustringbuf[SAT_MAX_STRING_LENGTH];
+    char          cpustringbuf[256];
     unsigned char _SSE3, _SSSE3, _FPU, _CMOV, _SSE, _SSE2, _SSE4A, _SSE5, _MMX,
                   _MMXEXT, _3DNOW, _3DNOWEXT;
 
@@ -146,7 +147,7 @@ class MIP_CpuInfo {
         // 0x00000001
         __asmv (
           SAT_CPU_EBX_STORE
-          : "=a" (a), "="SAT_CPU_EBX_REG"" (b),
+          : "=a" (a), "=" SAT_CPU_EBX_REG "" (b),
             "=c" (c), "=d" (d) : "a" (0x00000001) : "cc"
         );
         _SSE3   = SBitGet(c, 0);
@@ -159,7 +160,7 @@ class MIP_CpuInfo {
         // 0x80000001
         __asmv (
           SAT_CPU_EBX_STORE
-          : "=a" (a), "="SAT_CPU_EBX_REG"" (b),
+          : "=a" (a), "=" SAT_CPU_EBX_REG "" (b),
             "=c" (c), "=d" (d) : "a" (0x80000001) : "cc"
         );
         _SSE4A    = SBitGet(c, 4);
@@ -174,7 +175,7 @@ class MIP_CpuInfo {
       else
         __asmv (
           SAT_CPU_EBX_STORE
-          : "=a" (*eax), "="SAT_CPU_EBX_REG"" (*ebx),
+          : "=a" (*eax), "=" SAT_CPU_EBX_REG "" (*ebx),
             "=c" (*ecx), "=d" (*edx) : "a" (fcall) : "cc"
         );
     }
@@ -183,7 +184,7 @@ class MIP_CpuInfo {
 
     // get cpu caps
 
-    uint32 caps(void) {
+    uint32_t caps(void) {
       if (!isCalled) id();
       if (_SSE3)      _caps |= 0x0001;
       if (_SSSE3)     _caps |= 0x0002;
@@ -259,7 +260,7 @@ class MIP_CpuInfo {
 
 };
 
-*/
+#endif // 0
 
 //----------------------------------------------------------------------
 #endif

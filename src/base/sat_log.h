@@ -24,6 +24,7 @@
 
 //#include "sat.h"
 #include "base/debug/sat_debug_print.h"
+#include "base/system/sat_cpu.h"
 #include "base/system/sat_file.h"
 #include "base/system/sat_paths.h"
 #include "base/system/sat_time.h"
