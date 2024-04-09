@@ -2,6 +2,10 @@
 #define sat_random_included
 //----------------------------------------------------------------------
 
+/*
+  * seeding
+*/
+
 #include "sat.h"
 
 //----------------------------------------------------------------------
@@ -10,12 +14,10 @@
 
 // TODO: ifdef random_system, etc..
 
-
-
 /*
-double   SAT_Random(void);
-double   SAT_RandomSigned(void);
-double   SAT_RandomRange(double minval, double maxval);
+double  SAT_Random(void);
+double  SAT_RandomSigned(void);
+double  SAT_RandomRange(double minval, double maxval);
 int32   SAT_RandomInt(void);
 int32   SAT_RandomSignedInt(void);
 int32   SAT_RandomRangeInt(int32 minval, int32 maxval);
@@ -56,39 +58,73 @@ double SAT_Random_System(void) {
   return result;
 }
 
-//----------
-
 double SAT_RandomSigned_System(void) {
   double r = (double)rand() * (double)SAT_INVRANDMAX;// / (double)RAND_MAX;
   return r * 2.0f - 1.0f;
 }
 
 // inclusive
-
 double SAT_RandomRange_System(double minval, double maxval) {
   return minval + (SAT_Random() * (maxval - minval) );
 }
-
-//----------
 
 int32_t SAT_RandomInt_System(void) {
   return rand();// & 0x7fffffff;
 }
 
 // -SAT_RandomMax..SAT_RandomMax
-
 int32_t SAT_RandomSignedInt_System(void) {
   return rand();
 }
 
 // inclusive
-
 int32_t SAT_RandomRangeInt_System(int32_t minval, int32_t maxval) {
   int32_t range = maxval-minval+1;
   if (range <= 0) return minval;
   //else return minval + SModulo(SAT_RandomInt(),range);
   else return minval + ( SAT_RandomInt() % range );
 }
+
+//----------------------------------------------------------------------
+
+class SAT_RandomSystem {
+
+public:
+
+  double value() {
+    double rnd = (double)rand();
+    double result = rnd * (double)SAT_INVRANDMAX;
+    return result;
+  }
+
+  double valueSigned() {
+    double r = (double)rand() * (double)SAT_INVRANDMAX;// / (double)RAND_MAX;
+    return r * 2.0f - 1.0f;
+  }
+
+  // inclusive
+  double valueRange(double minval, double maxval) {
+    return minval + (value() * (maxval - minval) );
+  }
+
+  int32_t valueInt() {
+    return rand();// & 0x7fffffff;
+  }
+
+  // -SAT_RandomMax..SAT_RandomMax
+  int32_t valueSignedInt() {
+    return rand();
+  }
+
+  // inclusive
+  int32_t valueRangeInt(int32_t minval, int32_t maxval) {
+    int32_t range = maxval-minval+1;
+    if (range <= 0) return minval;
+    //else return minval + SModulo(SAT_RandomInt(),range);
+    else return minval + ( valueInt() % range );
+  }
+
+};
 
 //----------------------------------------------------------------------
 //
@@ -149,7 +185,7 @@ double SRanddouble(int* a_Seed) {
 
 uint32_t rand_lcg_seed = 666;
 
-//
+//-----
 
 int32_t rand_lcg() {
   //rand_lcg_seed = ((uint64_t)rand_lcg_seed * 279470273UL) % 4294967291UL;
@@ -206,6 +242,72 @@ int32_t SAT_RandomRangeInt_LCG(int32_t minval, int32_t maxval) {
   //else return minval + SModulo(SAT_RandomInt(),range);
   else return minval + ( SAT_RandomInt_LCG() % range );
 }
+
+//----------------------------------------------------------------------
+
+class SAT_RandomLCG {
+
+private:
+
+  uint32_t rand_lcg_seed = 666;
+
+  int32_t rand_lcg() {
+    //rand_lcg_seed = ((uint64_t)rand_lcg_seed * 279470273UL) % 4294967291UL;
+    //return (int32_t)rand_lcg_seed;
+    uint64_t v = (uint64_t)rand_lcg_seed * 279470273UL;
+    v %= 4294967291UL;
+    rand_lcg_seed = (uint32_t)v;
+    return (uint32_t)v;
+  }  
+
+public:
+
+  SAT_RandomLCG(uint32_t ASeed=666) {
+    rand_lcg_seed = ASeed;
+  }
+
+  void seed(uint32_t ASeed=666) {
+    rand_lcg_seed = ASeed;
+  }
+
+  double value() {
+    double result = (double)rand_lcg() * (double)SAT_INVRANDMAX;
+    return abs(result);
+  }
+
+  double valueSigned() {
+    double result = (double)rand_lcg();
+    result *= (double)SAT_INVRANDMAX;
+    //return result * 2.0f - 1.0f;
+    //printf("rnd %.3f SAT_INVRANDMAX %f\n",result,SAT_INVRANDMAX);
+    return result;
+  }
+
+  // inclusive
+  double valueRange(double minval, double maxval) {
+    return minval + (value() * (maxval - minval) );
+  }
+
+  int32_t valueInt() {
+    //return rand_lcg();// & 0x7fffffff;
+    return abs(rand_lcg());
+  }
+
+  // -SAT_RandomMax..SAT_RandomMax
+  int32_t valueSignedInt() {
+    return rand_lcg();
+  }
+
+  // inclusive
+  int32_t valueRangeInt(int32_t minval, int32_t maxval) {
+    int32_t range = maxval - minval + 1;
+    if (range <= 0) return minval;
+    //else return minval + SModulo(SAT_RandomInt(),range);
+    else return minval + ( valueInt() % range );
+  }
+
+};
+
 
 //----------------------------------------------------------------------
 //
