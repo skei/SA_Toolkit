@@ -56,6 +56,7 @@
 #include "gui/widgets/sat_slider_widget.h"
 #include "gui/widgets/sat_symbol_widget.h"
 #include "gui/widgets/sat_tabs_widget.h"
+#include "gui/widgets/sat_text_widget.h"
 #include "gui/widgets/sat_text_box_widget.h"
 #include "gui/widgets/sat_text_edit_widget.h"
 #include "gui/widgets/sat_timeline_widget.h"
