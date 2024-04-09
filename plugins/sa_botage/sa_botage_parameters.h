@@ -8,9 +8,11 @@
 
 //----------------------------------------------------------------------
 //
-//
+// sa_botage specific parameters
 //
 //----------------------------------------------------------------------
+
+// -1..1 -> 0.5..2 (multiplier for pitch)
 
 class sa_botage_ScalePercentParameter
 : public SAT_Parameter {
