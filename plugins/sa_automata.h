@@ -54,6 +54,7 @@ private:
   double                MTuning                 = 0.0;
   double                MTiming                 = 1.0;
 
+  bool                  MWraparound             = false;
   double                MTickSize               = 0.0;
   double                MTickRemaining          = 0.0;
 
@@ -308,7 +309,9 @@ public:
     }
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   void sendEvent(clap_event_header_t* event) {
     const clap_output_events_t* out_events = getProcessContext()->process->out_events;
@@ -329,8 +332,9 @@ public:
     event.channel         = 0;
     event.key             = AKey + p_tuning;
     event.velocity        = AVelocity;
-    const clap_output_events_t* out_events = getProcessContext()->process->out_events;
-    out_events->try_push(out_events,(clap_event_header_t*)&event);
+    sendEvent((clap_event_header_t*)&event);
+    // const clap_output_events_t* out_events = getProcessContext()->process->out_events;
+    // out_events->try_push(out_events,(clap_event_header_t*)&event);
   }
 
   //----------
@@ -347,8 +351,9 @@ public:
     event.channel         = 0;
     event.key             = AKey + p_tuning;
     event.velocity        = 0.0;
-    const clap_output_events_t* out_events = getProcessContext()->process->out_events;
-    out_events->try_push(out_events,(clap_event_header_t*)&event);
+    sendEvent((clap_event_header_t*)&event);
+    // const clap_output_events_t* out_events = getProcessContext()->process->out_events;
+    // out_events->try_push(out_events,(clap_event_header_t*)&event);
   }
 
   //----------
@@ -368,7 +373,9 @@ public:
   }
 
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   void killAllNotes() {
     for (uint32_t y=0; y<127; y++) sendNoteOffEvent(y,0);
@@ -431,10 +438,18 @@ public:
   //----------
 
   bool isCellAlive(uint8_t* AStates, int32_t AX, int32_t AY) {
-    if (AX < 0) return false;
-    if (AX >= (int32_t)p_width) return false;
-    if (AY < 0) return false;
-    if (AY >= (int32_t)p_height) return false;
+    if (MWraparound) {
+      if (AX < 0) AX += p_width;
+      if (AX >= (int32_t)p_width) AX -= p_width;;
+      if (AY < 0) AY += p_height;
+      if (AY >= (int32_t)p_height) AY -= p_height;
+    }
+    else {
+      if (AX < 0) return false;
+      if (AX >= (int32_t)p_width) return false;
+      if (AY < 0) return false;
+      if (AY >= (int32_t)p_height) return false;
+    }
     uint32_t index = (AY * 256) + AX;
     return (AStates[index] & 1);
   }
@@ -504,6 +519,8 @@ public:
         if      (isCellAlive( MStates, x,   y+1)) neighbours += 1;
         if      (isCellAlive( MStates, x+1, y+1)) neighbours += 1;
 
+        // conway's game of life
+
         if (alive) {
           if (neighbours < 2) setCellDead(MTempBuffer,x,y,true);       // die
           else if (neighbours > 3) setCellDead(MTempBuffer,x,y,true);  // die
@@ -513,6 +530,8 @@ public:
           if (neighbours == 3) setCellAlive(MTempBuffer,x,y,true);     // birth
           else setCellDead(MTempBuffer,x,y,false);                     // stay dead
         }
+
+        //---
       }
     }
     

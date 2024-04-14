@@ -629,15 +629,15 @@ public: // parameters
 
   //----------
 
+  // called from: init()
+
   void setDefaultParameterValues() {
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
       double value = MParameters[i]->getDefaultValue();
       MParameters[i]->setValue(value);
-
       //bool handleParamValueEvent(clap_event_param_value_t* event);
       //return on_plugin_paramValue(event);
-
       clap_event_param_value_t event;
       event.header.size     = sizeof(clap_event_param_value_t);
       event.header.time     = 0;
@@ -654,7 +654,6 @@ public: // parameters
       bool handled = handleParamValueEvent(&event);
       if (!handled) {
       }
-
     }
   }
   
@@ -676,30 +675,29 @@ public: // parameters
   
   //----------
   
-  void setAllParameters(sat_param_t* AValues) {
-    uint32_t num_params = getNumParameters();
-    for (uint32_t i=0; i<num_params; i++) {
-      SAT_Print("%i : %f\n",i,AValues[i]);
-      //setParameter(i,AValues[i]);
-    }
-  }
+  // void setAllParameters(sat_param_t* AValues) {
+  //   uint32_t num_params = getNumParameters();
+  //   for (uint32_t i=0; i<num_params; i++) {
+  //     SAT_Print("%i : %f\n",i,AValues[i]);
+  //     //setParameter(i,AValues[i]);
+  //   }
+  // }
   
   //----------
   
   #if !defined (SAT_GUI_NOGUI)
 
+  // called from gui_set_parent()
+
   void initEditorParameterValues() {
     uint32_t num = MParameters.size();
     for (uint32_t i=0; i<num; i++) {
       SAT_Parameter* param = MParameters[i];
-
-      //SAT_Print("%i\n",i);
-
-//      double value = param->getValue();//getDefaultValue();
-      // parameters are in clap-space
-      // widgets are 0..1
-//      uint32_t sub = param->getWidgetIndex(); // 0
-      //SAT_Print("sub %i\n",sub);
+      // double value = param->getValue();//getDefaultValue();
+      // // parameters are in clap-space
+      // // widgets are 0..1
+      // uint32_t sub = param->getWidgetIndex(); // 0
+      // SAT_Print("sub %i\n",sub);
       MEditor->initParameterValue(param/*,i,sub,value*/); // (arg value  = clap space)
     }
   }
@@ -749,10 +747,11 @@ public: // editor
 
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale, bool AProportional=false) {
     return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional,0);
-    //return nullptr;
   }
 
   //----------
+
+  // called from gui_destroy()
 
   virtual void deleteEditor(SAT_Editor* AEditor) {
     delete AEditor;
@@ -774,6 +773,8 @@ public: // editor
 
   //----------
 
+  // called from: gui_create()
+
   virtual SAT_Point getDefaultEditorSize() {
     SAT_Point p;
     uint32_t numparams = getNumParameters();
@@ -784,11 +785,12 @@ public: // editor
 
   //----------
 
+  // called from gui_set_parent() -> setupEditorWindow()
   
   virtual void setupDefaultEditor(SAT_Editor* AEditor, SAT_Window* AWindow) {
     #if defined (SAT_GUI_DEFAULT_EDITOR)
       uint32_t numparams = getNumParameters();
-      SAT_Point size = getDefaultEditorSize();
+      //SAT_Point size = getDefaultEditorSize();
       SAT_RootWidget* root = new SAT_RootWidget(AWindow);
       AWindow->setRootWidget(root);
       const clap_plugin_descriptor_t* descriptor = getClapDescriptor();
@@ -826,7 +828,18 @@ public: // editor
 public: // presets
 //------------------------------
 
+  // virtual bool savePresetToFile(const char* ALocation, const char* AKey) {
+  //   return false;
+  // }
+
+  //----------
+
+  // called from: preset_load_from_location()
+
   virtual bool loadPresetFromFile(const char* ALocation, const char* AKey) {
+
+    SAT_Print("location: %s, key: %s\n",ALocation,AKey);
+
     //return false;
     char line_buffer[256] = {0};
     SAT_File file = {};
@@ -856,6 +869,8 @@ public: // presets
       //  SAT_Print("%i : %f\n",i,value);
       //}
       //setAllParameters(param_buffer);
+      // on_plugin_loadPreset(metadata,param_buffer);
+
       
       // ascii
       
@@ -905,10 +920,14 @@ public: // events
 //
 //------------------------------
 
+// called from: process()
+
   virtual void preProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
   }
 
   //----------
+
+  // called from: process()
 
   virtual void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
   }
@@ -916,6 +935,14 @@ public: // events
 //------------------------------
 //
 //------------------------------
+
+  /*
+    called from:
+    - processEvents()
+    - processAudioInterleaved()    
+    - processAudioQuantized()
+    - params_flush()
+  */
 
   // virtual
   bool handleEvent(const clap_event_header_t* header) {
@@ -939,6 +966,8 @@ public: // events
 
   //----------
 
+  // called from handleEvent()
+
   bool handleNoteOnEvent(clap_event_note_t* event) {
     //SAT_PRINT;
     bool result = on_plugin_noteOn(event);
@@ -948,6 +977,8 @@ public: // events
 
   //----------
 
+  // called from handleEvent()
+
   bool handleNoteOffEvent(clap_event_note_t* event) {
     bool result = on_plugin_noteOff(event);
     if (result) return true;
@@ -956,6 +987,8 @@ public: // events
 
   //----------
 
+  // called from handleEvent()
+
   bool handleNoteChokeEvent(clap_event_note_t* event) {
     bool result = on_plugin_noteChoke(event);
     if (result) return true;
@@ -963,6 +996,8 @@ public: // events
   }
 
   //----------
+
+  // called from handleEvent()
 
   bool handleNoteExpressionEvent(clap_event_note_expression_t* event) {
     bool result = on_plugin_noteExpression(event);
@@ -984,6 +1019,13 @@ public: // events
   }
 
   //----------
+
+  /*
+    called from:
+    - handleEvent()
+    - setDefaultParameterValues()
+    - flushParamFromGuiToAudio()
+  */
 
   bool handleParamValueEvent(clap_event_param_value_t* event) {
     uint32_t index = event->param_id; // !!!
@@ -1008,6 +1050,8 @@ public: // events
 
   //----------
 
+  // called from handleEvent()
+
   bool handleParamModEvent(clap_event_param_mod_t* event) {
     uint32_t index = event->param_id; // !!!
     double amount = event->amount;
@@ -1030,6 +1074,8 @@ public: // events
   }
 
   //----------
+
+  // called from handleEvent()
 
   bool handleTransportEvent(const clap_event_transport_t* event) {
     //SAT_PRINT;
@@ -1070,6 +1116,8 @@ public: // events
   }
 
   //----------
+
+  // called from handleEvent()
 
   bool handleMidiEvent(clap_event_midi_t* event) {
     bool result = on_plugin_midi(event); // data1,data2,data3
@@ -1162,6 +1210,8 @@ public: // events
 
   //----------
 
+  // called from handleEvent()
+
   bool handleMidiSysexEvent(const clap_event_midi_sysex_t* event) {
     bool result = on_plugin_midiSysex(event);
     if (result) return true;
@@ -1169,6 +1219,8 @@ public: // events
   }
 
   //----------
+
+  // called from handleEvent()
 
   bool handleMidi2Event(clap_event_midi2_t* event) {
     bool result = on_plugin_midi2(event);
@@ -1727,6 +1779,8 @@ protected: // SAT_EditorListener
 
   #if !defined (SAT_GUI_NOGUI)
 
+  // called from SAT_Editor.on_windowListener_timer()
+
   void on_editorListener_timer(SAT_Timer* ATimer, double AElapsed) override {
     //SAT_PRINT;
     flushParamFromHostToGui();
@@ -1735,8 +1789,9 @@ protected: // SAT_EditorListener
 
   //----------
 
-  // value = denormalized
+  // called from SAT_Editor.on_windowListener_update
 
+  // value = denormalized
   void on_editorListener_update(SAT_Parameter* AParameter, sat_param_t AValue) override {
     uint32_t index = AParameter->getIndex();
     //SAT_Print("from gui.. AParameter %p index %i AValue %f\n",AParameter,index,AValue);

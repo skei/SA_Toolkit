@@ -92,6 +92,8 @@ public:
 
   // parameters are in clap-space
   // widgets are 0..1
+
+  // called from SAT_Plugin.initEditorParameterValues
   
   virtual void initParameterValue(SAT_Parameter* AParam/*, uint32_t AIndex, uint32_t ASubIndex, sat_param_t AValue*/) {
     //SAT_Print("param name %s\n",AParam->getName());

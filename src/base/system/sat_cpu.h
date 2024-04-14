@@ -4,6 +4,58 @@
 
 #if 0
 
+// https://www.kvraudio.com/forum/viewtopic.php?p=8886124#p8886124
+
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <x86intrin.h>
+
+int main() {
+  uint32_t cw = _mm_getcsr();
+  cw &= 0b11111111111111110111111111111111; // FTZ OFF
+  //cw |= 0b00000000000000001000000000000000; // FTZ ON
+  cw &= 0b11111111111111111111111110111111; // DAZ OFF
+  //cw |= 0b00000000000000000000000001000000; // DAZ ON
+  _mm_setcsr(cw);
+
+  //float zero = 0.f;
+  uint32_t addend = 0b00000000111111111111111111111111;
+  uint32_t one = 1;
+  //float a = 0.f;
+  float a = *(float*)&addend;
+  float res = 0.f;
+  float disp = 0.f;
+
+  uint32_t c = addend;
+
+  while(addend >= 0) {
+    //a = *(float*)&addend;
+    //res = zero + a;
+    disp = res;
+    res = a - (*(float*)&one);
+    a = res;
+    addend = *(uint32_t*)&res;
+    if (res == 0.f) { break; }
+    //addend -= 0x00000001U;
+    c--;
+  }
+
+  printf("%u\n", addend);
+  printf("%u\n", c);
+  printf("%.25e\n", disp);
+  printf("%.25e\n", res);
+  printf("%.25e\n", a);
+  //system("pause");
+  return 0;
+}
+
+#endif // 0
+
+//----------------------------------------------------------------------
+
+#if 0
+
 // http://bits.stephan-brumme.com/endianess.html
 // see also: SAT_LITTLE_ENDIAN
 

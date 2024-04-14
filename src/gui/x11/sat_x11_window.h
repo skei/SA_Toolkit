@@ -300,11 +300,6 @@ public: // SAT_SurfaceOwner
 //------------------------------
 
 //------------------------------
-public:
-//------------------------------
-
-
-//------------------------------
 public: // SAT_BaseWindow
 //------------------------------
 
@@ -1057,7 +1052,7 @@ private:
           //}
 
           // double-check (in case we have closed the window before processing all events in queue?
-          // ??? is this needed, or did i pit it here for some debugging purposes?
+          // ??? is this needed, or did i put it here for some debugging purposes?
           // ugh..
           if (window->MIsEventThreadActive) {
             
