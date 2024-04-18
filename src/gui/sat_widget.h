@@ -383,6 +383,8 @@ rect.y -= MLayoutOffset.y;
     setBaseRect(rect);
   }
 
+  //----------
+
   virtual void setWidthAndBase(double AWidth) {
     double scale = getWindowScale();
     double w = AWidth;
@@ -447,6 +449,19 @@ rect.y -= MLayoutOffset.y;
     }
     MChildWidgets.clear();
   }
+
+  //----------
+
+  // virtual bool swapChildWidgets(uint32_t AIndex1, uint32_t AIndex2) {
+  //   SAT_Widget* widget1 = getChildWidget(AIndex1);
+  //   SAT_Widget* widget2 = getChildWidget(AIndex2);
+  //   MChildWidgets[AIndex1] = widget2;
+  //   MChildWidgets[AIndex2] = widget1;
+  //   widget1->setParentIndex(AIndex2);
+  //   widget2->setParentIndex(AIndex1);
+  //   realignChildWidgets();
+  //   return true;
+  // }
 
   //----------
 
@@ -628,11 +643,11 @@ rect.y -= MLayoutOffset.y;
 
         //
 
-// layout offset = pre/post alignment rect diff
-// see also setRectAndBase()
+        // layout offset = pre/post alignment rect diff
+        // see also setRectAndBase()
 
-child->MLayoutOffset.x = (child_rect.x - orig_rect.x); //(orig_rect.x * scale));
-child->MLayoutOffset.y = (child_rect.y - orig_rect.y); //(orig_rect.y * scale));
+        child->MLayoutOffset.x = (child_rect.x - orig_rect.x); //(orig_rect.x * scale));
+        child->MLayoutOffset.y = (child_rect.y - orig_rect.y); //(orig_rect.y * scale));
 
         //
 
@@ -658,7 +673,6 @@ child->MLayoutOffset.y = (child_rect.y - orig_rect.y); //(orig_rect.y * scale));
     uint32_t num = MChildWidgets.size();
     if (num > 0) {
       if (autoClip()) painter->pushOverlappingClip(mrect);
-
       for (uint32_t i=0; i<num; i++) {
       //for (int32_t i=(num-1); i>=0; i--) {
         SAT_Widget* widget = MChildWidgets[i];
@@ -754,13 +768,24 @@ public: // on_ (downwards)
 
   //----------
 
+  // note:
+  // widget will only receive key events if do_widget_captureKeys() cas been called  
+
   virtual void on_widget_keyPress(char AChar, uint32_t AKey, uint32_t AState, uint32_t ATimeStamp) {
   }
+
+  //----------
+
+  // note:
+  // widget will only receive key events if do_widget_captureKeys() cas been called  
 
   virtual void on_widget_keyRelease(char AChar, uint32_t AKey, uint32_t AState, uint32_t ATimeStamp) {
   }
   
   //----------
+
+  // called when mouse cursor enters the widget
+  // AFrom might be null if mouse cursor is entering the window
 
   virtual void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos) {
     if (isActive() && isVisible()) {
@@ -770,6 +795,9 @@ public: // on_ (downwards)
   }
 
   //----------
+
+  // called when mouse cursor leaves the widget
+  // ATo might be null if mouse cursor is leaving the window
 
   virtual void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) {
     if (isActive() && isVisible()) {

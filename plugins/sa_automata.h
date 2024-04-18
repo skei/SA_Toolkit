@@ -9,7 +9,7 @@
   //#include "gui/sat_widgets.h"
   #include "sa_automata/sa_automata_widgets.h"
 #endif
-  
+
 //----------------------------------------------------------------------
 //
 // descriptor
@@ -95,7 +95,7 @@ public:
   SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_automata_plugin)
  
 //------------------------------
-public:
+public: // setup
 //------------------------------
 
   bool init() final {
@@ -126,7 +126,7 @@ public:
   }
 
 //------------------------------
-public:
+public: // gui
 //------------------------------
 
   #if !defined (SAT_GUI_NOGUI)
@@ -192,7 +192,7 @@ public:
   #endif
 
 //------------------------------
-public:
+public: // plugin events
 //------------------------------
 
   bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
@@ -245,7 +245,9 @@ public:
     return true;
   }
 
-  //----------
+//------------------------------
+public: // process
+//------------------------------
 
   void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) final {
 
@@ -265,7 +267,7 @@ public:
   }
   
 //------------------------------
-public:
+public: // ticks
 //------------------------------
 
   void calcTickSize() {
@@ -310,7 +312,7 @@ public:
   }
 
 //------------------------------
-public:
+public: // send events
 //------------------------------
 
   void sendEvent(clap_event_header_t* event) {
@@ -420,7 +422,7 @@ public:
   }
 
 //------------------------------
-public:
+public: // automata
 //------------------------------
 
   uint8_t getCell(uint8_t* AStates, int32_t AX, int32_t AY) {
@@ -495,12 +497,31 @@ public:
   }
   
   //----------
+
+  // conway's game of life
+
   /*
     Any live cell with fewer than two live neighbors dies, as if by underpopulation.
     Any live cell with two or three live neighbors lives on to the next generation.
     Any live cell with more than three live neighbors dies, as if by overpopulation.
     Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
   */
+
+  // last arg = trigger (new note/cc)
+
+  void updateCell(int32_t AX, int32_t AY, bool AAlive, int32_t ANeighbours) {
+    if (AAlive) {
+      if (ANeighbours < 2)      setCellDead( MTempBuffer,AX,AY,true);   // die
+      else if (ANeighbours > 3) setCellDead( MTempBuffer,AX,AY,true);   // die
+      else                      setCellAlive(MTempBuffer,AX,AY,false);  // stay alive
+    }
+    else {
+      if (ANeighbours == 3)     setCellAlive(MTempBuffer,AX,AY,true);   // birth
+      else                      setCellDead( MTempBuffer,AX,AY,false);  // stay dead
+    }
+  }
+
+  //----------
 
   void updateCells() {
     w_grid->copyCellsTo(MTempBuffer);
@@ -519,19 +540,7 @@ public:
         if      (isCellAlive( MStates, x,   y+1)) neighbours += 1;
         if      (isCellAlive( MStates, x+1, y+1)) neighbours += 1;
 
-        // conway's game of life
-
-        if (alive) {
-          if (neighbours < 2) setCellDead(MTempBuffer,x,y,true);       // die
-          else if (neighbours > 3) setCellDead(MTempBuffer,x,y,true);  // die
-          else setCellAlive(MTempBuffer,x,y,false);                    // keep alive
-        }
-        else {
-          if (neighbours == 3) setCellAlive(MTempBuffer,x,y,true);     // birth
-          else setCellDead(MTempBuffer,x,y,false);                     // stay dead
-        }
-
-        //---
+        updateCell(x,y,alive,neighbours);
       }
     }
     

@@ -258,7 +258,14 @@ public:
   //----------
 
   // called from:
-  // on_window_open()
+  //   on_window_open()
+
+  /*
+    on_timerListener_callback
+      SAT_Window.on_window_timer
+        SAT_Editor.on_windowListener_timer
+          SAT_Plugin.on_editorListener_timer
+  */
 
   virtual void startTimer(uint32_t AMSInterval, bool AOneShot=false) {
     //HWND hwnd,     
@@ -282,11 +289,15 @@ public:
 
   //----------
 
+  // register widget as recipient for timer events/callbacks
+
   virtual void registerTimerWidget(SAT_Widget* AWidget) {
     MTimerWidgets.append(AWidget);
   }
 
   //----------
+
+  // unregister widget as recipient for timer events/callbacks
 
   virtual void unregisterTimerWidget(SAT_Widget* AWidget) {
     MTimerWidgets.remove(AWidget);

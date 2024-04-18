@@ -1124,7 +1124,7 @@ public: // events
     if (result) return true;
     else {
 
-      #ifdef SAT_PLUGIN_CONVERT_MIDI
+      #ifdef SAT_PLUGIN_CONVERT_MIDI_TO_CLAP
 
         uint8_t msg0 = event->data[0];
         //uint8_t index = event->data[1];
