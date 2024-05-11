@@ -62,12 +62,11 @@ private:
 
   // pos
 
-  SAT_Rect            MRect                           = {0,0,0,0};
-  SAT_Rect            MBaseRect                       = {0,0,0,0};
   SAT_Rect            MCreateRect                     = {0,0,0,0};
-
-  SAT_Rect            MClipOffset                     = {0,0,0,0};
+  SAT_Rect            MBaseRect                       = {0,0,0,0};
+  SAT_Rect            MRect                           = {0,0,0,0};
   SAT_Point           MLayoutOffset                   = {0,0};
+  SAT_Rect            MClipOffset                     = {0,0,0,0};
 //SAT_Point           MSnapDistance                   = {0,0};
 
   // layout
@@ -110,6 +109,12 @@ public:
   }
 
 //------------------------------
+public: // set
+//------------------------------
+
+  void setIndex(uint32_t AIndex) { MIndex = AIndex; }
+
+//------------------------------
 public: // get
 //------------------------------
 
@@ -125,14 +130,6 @@ public: // get
 
   bool isVertical()           { return MVertical; }
   bool isOpaque()             { return MOpaque; }
-
-//------------------------------
-public: // set
-//------------------------------
-
-  void setIndex(uint32_t AIndex) {
-    MIndex = AIndex;
-  }
 
 //------------------------------
 public: // hierarchy

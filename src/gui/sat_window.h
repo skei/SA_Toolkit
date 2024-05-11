@@ -249,6 +249,8 @@ public:
     MRootWidget = nullptr;
   }
 
+  //----------
+
   virtual void setRootWidget(SAT_RootWidget* AWidget) {
     MRootWidget = AWidget;
     MRootWidget->setParent(nullptr);

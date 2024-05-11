@@ -105,7 +105,7 @@ public:
     MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
 
     #if !defined (SAT_GUI_NOGUI)
-      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
 
     return SAT_Plugin::init();

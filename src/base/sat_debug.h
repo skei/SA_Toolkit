@@ -24,8 +24,8 @@
 #include "base/debug/sat_debug_callstack.h"
 #include "base/debug/sat_debug_crash_handler.h"
 #include "base/debug/sat_debug_memtrace.h"
-//#include "base/debug/sat_debug_observer.h"
 #include "base/debug/sat_debug_print.h"
+//#include "base/debug/sat_debug_observer.h"
 //#include "base/debug/sat_debug_window.h"
 
 //----------------------------------------------------------------------
@@ -37,18 +37,21 @@
 class SAT_Debug {
 
 //------------------------------
-//private:
-public:
+private:
 //------------------------------
 
+  bool              MInitialized  = false;
   SAT_DebugPrint*   MPrint        = nullptr;
+
+//------------------------------
+public:
+//------------------------------
 
   SAT_CallStack     CALLSTACK     = {};
   SAT_CrashHandler  CRASHHANDLER  = {};
   SAT_MemTrace      MEMTRACE      = {};
-
-  //SAT_Observer      MObserver     = {};
-  //SAT_DebugWindow*  MDebugWindow  = nullptr{};
+//SAT_Observer      OBSERVER      = {};
+//SAT_DebugWindow*  DEBUG_WNDOW   = nullptr{};
 
 //------------------------------
 public:
@@ -67,24 +70,33 @@ public:
 //------------------------------
 
   void initialize(SAT_DebugPrint* APrint) {
-    MPrint = APrint;
-    #if defined (SAT_DEBUG)
-      CALLSTACK.initialize(APrint);
-      CRASHHANDLER.initialize(APrint,&CALLSTACK);
-      MEMTRACE.initialize(APrint);
-    #endif
+    if (!MInitialized) {
+      MInitialized = true;
+      MPrint = APrint;
+      #if defined (SAT_DEBUG)
+        CALLSTACK.initialize(APrint);
+        CRASHHANDLER.initialize(APrint,&CALLSTACK);
+        MEMTRACE.initialize(APrint);
+        //OBSERVER.initialize(APrint);
+        //DEBUG_WINDOW = new SAT_DebugWindow(APrint);
+      #endif
+    }
   }
 
   //----------
 
   void cleanup() {
     //MPrint->print("debug cleanup\n");
-    #if defined (SAT_DEBUG)
-      MEMTRACE.cleanup();
-      CRASHHANDLER.cleanup();
-      CALLSTACK.cleanup();
-    #else
-    #endif
+    if (MInitialized) {
+      #if defined (SAT_DEBUG)
+        //delete DEBUG_WINDOW;
+        //OBSERVER.cleanup();
+        MEMTRACE.cleanup();
+        CRASHHANDLER.cleanup();
+        CALLSTACK.cleanup();
+      #else
+      #endif
+    }
   }
 
 //------------------------------
@@ -92,13 +104,21 @@ public:
 //------------------------------
 
   void printCallStack() {
-    CALLSTACK.print();
+    if (MInitialized) {
+      #if defined (SAT_DEBUG)
+        CALLSTACK.print();
+      #endif
+    }
   }
 
   //----------
 
   void crashHandler(int sig) {
-    CRASHHANDLER.crashHandler(sig);
+    if (MInitialized) {
+      #if defined (SAT_DEBUG)
+        CRASHHANDLER.crashHandler(sig);
+      #endif
+    }
   }
 
 };

@@ -12,6 +12,7 @@ struct SAT_Skin {
   SAT_Color borderColor;
   SAT_Color textColor;
   SAT_Color valueColor;
+  SAT_Color highlightColor;
 
   //------------------------------
 
@@ -21,6 +22,7 @@ struct SAT_Skin {
     borderColor     = SAT_Black;
     textColor       = SAT_White;
     valueColor      = SAT_Black;
+    highlightColor  = SAT_Red;
   }
 
 };
@@ -36,15 +38,15 @@ struct SAT_DefaultSkin
 
   SAT_DefaultSkin()
   : SAT_Skin() {
-    backgroundColor = SAT_DarkGrey;
-    foregroundColor = SAT_LightGrey;
-    borderColor     = SAT_Black;
-    textColor       = SAT_White;
-    valueColor      = SAT_Black;
+    // backgroundColor = SAT_DarkGrey;
+    // foregroundColor = SAT_LightGrey;
+    // borderColor     = SAT_Black;
+    // textColor       = SAT_White;
+    // valueColor      = SAT_Black;
+    // highlightColor  = SAT_Red;
   }
 
 };
-
 
 //----------------------------------------------------------------------
 #endif

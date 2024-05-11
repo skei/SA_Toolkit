@@ -86,7 +86,7 @@ public:
     registerDefaultExtensions();
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
-    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE);
+    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     if (!sa_botage_SetupParameters(this)) return false;
     return SAT_Plugin::init();
   }

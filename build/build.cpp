@@ -53,8 +53,8 @@
 //----------------------------------------------------------------------
 
   
-#include "../plugins/sa_automata.h"
-//#include "../plugins/sa_botage.h"
+//#include "../plugins/sa_automata.h"
+#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_mael.h"

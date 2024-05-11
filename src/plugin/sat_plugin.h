@@ -746,7 +746,7 @@ public: // editor
   // called from gui_create()
 
   virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale, bool AProportional=false) {
-    return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional,0);
+    return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional,0); // 0 = parent
   }
 
   //----------

@@ -281,14 +281,23 @@ public:
   //----------
 
   virtual void setSkin(SAT_Skin* ASkin, bool AOnlyIfNull=true, bool ARecursive=true) {
-    MSkin = ASkin;
+
+    if (AOnlyIfNull) {
+      if (MSkin == nullptr) MSkin = ASkin;
+    }
+    else MSkin = ASkin;
+
     if (ARecursive) {
       for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-        if (MChildWidgets[i]->getSkin() == nullptr) {
-          MChildWidgets[i]->setSkin(ASkin,ARecursive);
+
+        if (AOnlyIfNull) {
+          if (MChildWidgets[i]->getSkin() == nullptr) MChildWidgets[i]->setSkin(ASkin,ARecursive);
         }
+        else MChildWidgets[i]->setSkin(ASkin,ARecursive);
+
       }
     }
+
   }
 
   //----------
@@ -603,7 +612,6 @@ rect.y -= MLayoutOffset.y;
           child_rect.scale(scale);
         }
 
-          orig_rect = child_rect;
         orig_rect = child_rect; // before scaling...
 
         // anchor
