@@ -22,10 +22,10 @@
 
 class SAT_X11Window
 : public SAT_BaseWindow
-, public SAT_PaintSource
+//, public SAT_PaintSource
 , public SAT_PaintTarget
 , public SAT_PainterOwner
-, public SAT_RenderSource
+//, public SAT_RenderSource
 , public SAT_RenderTarget
 , public SAT_RendererOwner
 , public SAT_SurfaceOwner {
@@ -113,6 +113,18 @@ public:
       MIsEmbedded = false;
       wantQuitEvents();
     }
+
+    #ifdef SAT_PAINTER_X11
+      SAT_GLOBAL.GUI.xcbConnection  = _getXcbConnection();
+      SAT_GLOBAL.GUI.xcbVisual      = _getXcbVisual();
+      SAT_GLOBAL.GUI.xcbDrawable    = _getXcbDrawable();
+      SAT_GLOBAL.GUI.xcbDepth       = _getDepth();
+      SAT_PRINT("xcbConnection: %p\n",_getXcbConnection());
+      SAT_PRINT("xcbVisual:     %i\n",_getXcbVisual());
+      SAT_PRINT("xcbDrawable:   %i\n",_getXcbDrawable());
+      SAT_PRINT("xcbDepth:      %i\n",_getDepth());
+    #endif
+
   }
 
   //----------

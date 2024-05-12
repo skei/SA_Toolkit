@@ -69,7 +69,8 @@ public:
 //typedef SAT_WidgetWindow SAT_Window;
 
 class SAT_Window
-: public SAT_WidgetWindow {
+: public SAT_WidgetWindow
+/*, public SAT_WidgetOwner*/ {
 
 //------------------------------
 public:
@@ -83,6 +84,15 @@ public:
 
   virtual ~SAT_Window() {
   }
+
+//------------------------------
+public: // widget owner
+//------------------------------
+
+  // SAT_Window* _getWindow() override {
+  //   return this;
+  // }
+
 
 };
 

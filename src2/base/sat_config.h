@@ -50,7 +50,7 @@
 //
 //----------------------------------------------------------------------
 
-#define SAT_AUTHOR                            "skei.audio"
+#define SAT_VENDOR                            "skei.audio"
 #define SAT_URL                               "https://github.com/skei/SA_Toolkit"
 #define SAT_VERSION                           "0.0.0"
 #define SAT_LOG_DIRECTORY                     "skei.audio"
@@ -94,7 +94,7 @@
 
 //#define SAT_INCLUDE_TESTS
   #define SAT_INCLUDE_LOG
-//#define SAT_INCLUDE_ANALYTICS
+  #define SAT_INCLUDE_ANALYTICS
 
   #define SAT_LOG_THREAD
   #define SAT_LOG_TIME

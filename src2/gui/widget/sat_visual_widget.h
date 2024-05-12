@@ -52,6 +52,10 @@ public:
 public:
 //------------------------------
 
+//------------------------------
+public:
+//------------------------------
+
   virtual void fillBackground(SAT_PaintContext* AContext) {
     if (MFillBackground) {
       SAT_Painter* painter = AContext->painter;
@@ -76,11 +80,23 @@ public:
 public: // on_widget
 //------------------------------
 
+  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  //   MSurface = new SAT_Surface(100,100,0);
+  //   SAT_PRINT("MSurface: %p\n",MSurface);
+  // }
+
+  // void on_widget_close(SAT_WidgetOwner* AOwner) override {
+  //   SAT_PRINT("MSurface: %p\n",MSurface);
+  //   if (MSurface) delete MSurface;
+  // }
+
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_TRACE;
+
     fillBackground(AContext);
     paintChildren(AContext);
     drawBorder(AContext);
+
   }
 
 };

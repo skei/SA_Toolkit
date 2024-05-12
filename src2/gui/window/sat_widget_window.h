@@ -288,6 +288,14 @@ public: // timer listener
   }
 
 //------------------------------
+public: // widget owner
+//------------------------------
+
+  // SAT_Window* _getWindow() override {
+  //   return this;
+  // }
+
+//------------------------------
 public: // widget listener
 //------------------------------
 

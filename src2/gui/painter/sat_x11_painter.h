@@ -8,6 +8,8 @@
 #include "gui/painter/sat_paint_target.h"
 #include "gui/lib/sat_x11.h"
 #include "gui/lib/sat_x11_utils.h"
+#include "gui/sat_bitmap.h"
+#include "gui/sat_surface.h"
 
 //----------------------------------------------------------------------
 //
@@ -22,7 +24,7 @@ class SAT_X11Painter
 private:
 //------------------------------
 
-  SAT_PainterOwner* MOwner      = nullptr;
+  //SAT_PainterOwner* MOwner      = nullptr;
   SAT_PaintTarget*  MTarget     = nullptr;
 
   xcb_connection_t* MConnection = nullptr;
@@ -56,11 +58,17 @@ private:
 public:
 //------------------------------
 
-  SAT_X11Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
-  : SAT_BasePainter(AOwner,ATarget) {
-    MOwner      = AOwner;
-    MConnection = AOwner->_getXcbConnection();
-    MVisual     = AOwner->_getXcbVisual();
+  SAT_X11Painter(/*SAT_PainterOwner* AOwner,*/ SAT_PaintTarget* ATarget)
+  : SAT_BasePainter(/*AOwner,*/ ATarget) {
+    //MOwner      = AOwner;
+    //MConnection = AOwner->_getXcbConnection();
+    //MVisual     = AOwner->_getXcbVisual();
+    MConnection = SAT_GLOBAL.GUI.xcbConnection;
+    MVisual     = SAT_GLOBAL.GUI.xcbVisual;
+
+    SAT_Assert(MConnection);
+    SAT_Assert(MVisual != XCB_NONE);
+
     MTarget     = ATarget;
     MDrawable   = ATarget->_getXcbDrawable();
     MGC         = xcb_generate_id(MConnection);
@@ -614,6 +622,89 @@ public:
   }
 
 //------------------------------
+public:
+//------------------------------
+
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) override {
+    uint32_t width      = ABitmap->getWidth();
+    uint32_t height     = ABitmap->getHeight();
+    uint32_t buffersize = ABitmap->getBufferSize();
+    uint32_t* buffer    = ABitmap->getBuffer();
+    xcb_image_t* image = xcb_image_create(
+      width,                          // width      width in pixels.
+      height,                         // height     height in pixels.
+      XCB_IMAGE_FORMAT_Z_PIXMAP,      // format
+      32,                             // xpad       scanline pad (8,16,32)
+      24,                             // depth      (1,4,8,16,24 zpixmap),    (1 xybitmap), (anything xypixmap)
+      32,                             // bpp        (1,4,8,16,24,32 zpixmap,  (1 xybitmap), (anything xypixmap)
+      32,                             // unit       unit of image representation, in bits (8,16,32)
+      XCB_IMAGE_ORDER_LSB_FIRST,      // byte_order
+      XCB_IMAGE_ORDER_LSB_FIRST,      // bit_order
+      buffer,                         // base       The base address of malloced image data
+      buffersize,                     // bytes      The size in bytes of the storage pointed to by base.
+                                      //            If base == 0 and bytes == ~0 and data == 0, no storage will be auto-allocated.
+      (uint8_t*)buffer                // data       The image data. If data is null and bytes != ~0, then an attempt will be made
+                                      //            to fill in data; from base if it is non-null (and bytes is large enough), else
+                                      //            by mallocing sufficient storage and filling in base.
+    );
+    //xcb_flush(MTargetConnection);
+    xcb_image_put(
+      MConnection,            // xcb_connection_t*  conn,
+      MDrawable,              // xcb_drawable_t     draw,
+      MGC,                    // xcb_gcontext_t     gc,
+      image,                  // xcb_image_t*       image,
+      AXpos,                  // int16_t            x,
+      AYpos,                  // int16_t            y,
+      0                       // uint8_t            left_pad
+    );
+    //xcb_flush(MConnection);
+    image->base = nullptr;
+    xcb_image_destroy(image);
+    xcb_flush(MConnection);
+  }
+
+  //----------
+
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) override {
+  }
+  
+  //----------
+
+  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) override {
+    xcb_copy_area(
+      MConnection,                  // Pointer to the xcb_connection_t structure
+      ASurface->_getXcbDrawable(),  // The Drawable we want to paste
+      MDrawable,                    // The Drawable on which we copy the previous Drawable
+      MGC,                          // A Graphic Context
+      0,                            // Top left x coordinate of the region we want to copy
+      0,                            // Top left y coordinate of the region we want to copy
+      AXpos,                        // Top left x coordinate of the region where we want to copy
+      AYpos,                        // Top left y coordinate of the region where we want to copy
+      ASurface->getWidth(),         // Width                 of the region we want to copy
+      ASurface->getHeight()         // Height of the region we want to copy
+    );
+    xcb_flush(MConnection);
+  }
+  
+  //----------
+
+  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) override {
+    xcb_copy_area(
+      MConnection,                  // Pointer to the xcb_connection_t structure
+      ASurface->_getXcbDrawable(),  // The Drawable we want to paste
+      MDrawable,                    // The Drawable on which we copy the previous Drawable
+      MGC,                          // A Graphic Context
+      ASrc.x,                       // Top left x coordinate of the region we want to copy
+      ASrc.y,                       // Top left y coordinate of the region we want to copy
+      AXpos,                        // Top left x coordinate of the region where we want to copy
+      AYpos,                        // Top left y coordinate of the region where we want to copy
+      ASrc.w,                       // Width                 of the region we want to copy
+      ASrc.h                        // Height of the region we want to copy
+    );
+    xcb_flush(MConnection);
+  }
+
+//------------------------------
 private:
 //------------------------------
 
@@ -767,132 +858,6 @@ private:
 
   //----------
 
-  void uploadBitmap(float AXpos, float AYpos, KODE_Bitmap* ABitmap) override {
-    uint32_t width      = ABitmap->getWidth();
-    uint32_t height     = ABitmap->getHeight();
-    uint32_t buffersize = ABitmap->getBufferSize();
-    uint32_t* buffer    = ABitmap->getBuffer();
-    xcb_image_t* image = xcb_image_create(
-      width,                          // width      width in pixels.
-      height,                         // height     height in pixels.
-      XCB_IMAGE_FORMAT_Z_PIXMAP,      // format
-      32,                             // xpad       scanline pad (8,16,32)
-      24,                             // depth      (1,4,8,16,24 zpixmap),    (1 xybitmap), (anything xypixmap)
-      32,                             // bpp        (1,4,8,16,24,32 zpixmap,  (1 xybitmap), (anything xypixmap)
-      32,                             // unit       unit of image representation, in bits (8,16,32)
-      XCB_IMAGE_ORDER_LSB_FIRST,      // byte_order
-      XCB_IMAGE_ORDER_LSB_FIRST,      // bit_order
-      buffer,                         // base       The base address of malloced image data
-      buffersize,                     // bytes      The size in bytes of the storage pointed to by base.
-                                      //            If base == 0 and bytes == ~0 and data == 0, no storage will be auto-allocated.
-      (uint8_t*)buffer                // data       The image data. If data is null and bytes != ~0, then an attempt will be made
-                                      //            to fill in data; from base if it is non-null (and bytes is large enough), else
-                                      //            by mallocing sufficient storage and filling in base.
-    );
-    //xcb_flush(MTargetConnection);
-    xcb_image_put(
-      MConnection,            // xcb_connection_t*  conn,
-      MDrawable,              // xcb_drawable_t     draw,
-      MGC,                    // xcb_gcontext_t     gc,
-      image,                  // xcb_image_t*       image,
-      AXpos,                  // int16_t            x,
-      AYpos,                  // int16_t            y,
-      0                       // uint8_t            left_pad
-    );
-    //xcb_flush(MConnection);
-    image->base = KODE_NULL;
-    xcb_image_destroy(image);
-    xcb_flush(MConnection);
-  }
-
-  //----------
-
-  void drawBitmap(float AXpos, float AYpos, KODE_Drawable* ASource) override {
-    if (ASource->isImage()) {
-      xcb_image_put(
-        MConnection,            // xcb_connection_t*  conn,
-        MDrawable,              // xcb_drawable_t     draw,
-        MGC,                    // xcb_gcontext_t     gc,
-        ASource->getXcbImage(), // xcb_image_t*       image,
-        AXpos,                  // int16_t            x,
-        AYpos,                  // int16_t            y,
-        0                       // uint8_t            left_pad
-      );
-      xcb_flush(MConnection);
-    }
-    else if (ASource->isSurface()) {
-      //#ifdef KODE_USE_CAIRO
-      //cairo_surface_flush(MCairoSurface);
-      //#endif
-      xcb_copy_area(
-        MConnection,                // Pointer to the xcb_connection_t structure
-        ASource->getXcbDrawable(),  // The Drawable we want to paste
-        MDrawable,                  // The Drawable on which we copy the previous Drawable
-        MGC,                        // A Graphic Context
-        0,                          // Top left x coordinate of the region we want to copy
-        0,                          // Top left y coordinate of the region we want to copy
-        AXpos,                      // Top left x coordinate of the region where we want to copy
-        AYpos,                      // Top left y coordinate of the region where we want to copy
-        ASource->getWidth(),        // Width                 of the region we want to copy
-        ASource->getHeight()        // Height of the region we want to copy
-      );
-      xcb_flush(MConnection);
-      //#ifdef KODE_USE_CAIRO
-      //cairo_surface_mark_dirty_rectangle(MCairoSurface,src_x,src_y,src_w,src_h);
-      //#endif
-    }
-    //else {
-    //  KODE_Trace("unknown ADrawable for blit()\n");
-    //}
-  }
-
-  //----------
-
-  void drawBitmap(float AXpos, float AYpos, KODE_Drawable* ASource, KODE_FRect ASrc) override {
-    if (ASource->isImage()) {
-      KODE_Bitmap* bitmap = ASource->getBitmap();
-      kode_xcb_put_image(
-        MConnection,
-        MDrawable,
-        MGC,
-        ASrc.w,
-        ASrc.h,
-        AXpos,
-        AYpos,
-        MTarget->getDepth(),  //ASource->getDepth(),
-        bitmap->getStride(),
-        bitmap->getPixelPtr(ASrc.x,ASrc.y)  //getBuffer()
-      );
-      xcb_flush(MConnection);
-      //#ifdef KODE_USE_CAIRO
-      //cairo_surface_mark_dirty_rectangle(MCairoSurface,src_x,src_y,src_w,src_h);
-      //#endif
-    }
-    else if (ASource->isSurface()) {
-      //#ifdef KODE_USE_CAIRO
-      //cairo_surface_flush(MCairoSurface);
-      //#endif
-      xcb_copy_area(
-        MConnection,                // Pointer to the xcb_connection_t structure
-        ASource->getXcbDrawable(),  // The Drawable we want to paste
-        MDrawable,                    // The Drawable on which we copy the previous Drawable
-        MGC,                  // A Graphic Context
-        ASrc.x,                      // Top left x coordinate of the region we want to copy
-        ASrc.y,                      // Top left y coordinate of the region we want to copy
-        AXpos,                      // Top left x coordinate of the region where we want to copy
-        AYpos,                      // Top left y coordinate of the region where we want to copy
-        ASrc.w,                      // Width                 of the region we want to copy
-        ASrc.h                       // Height of the region we want to copy
-      );
-      xcb_flush(MConnection);
-      //#ifdef KODE_USE_CAIRO
-      //cairo_surface_mark_dirty_rectangle(MCairoSurface,src_x,src_y,src_w,src_h);
-      //#endif
-    }
-    //else {
-    //  KODE_Trace("unknown ADrawable for blit()\n");
-    //}
-  }
 
   //----------
 

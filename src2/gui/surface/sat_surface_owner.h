@@ -4,6 +4,10 @@
 
 // #include "sat.h"
 
+#ifdef SAT_SURFACE_NANOVG
+  #include "gui/lib/sat_nanovg.h"
+#endif
+
 // #ifdef SAT_SURFACE_SOFTWARE
 //   #include "gui/lib/sat_software.h"
 // #endif
@@ -21,12 +25,12 @@
 class SAT_SurfaceOwner {
 public:
 
-  virtual bool      _isCairo()    { return false; }
-  virtual bool      _isNanoVG()   { return false; }
+  virtual bool        _isCairo()    { return false; }
+  virtual bool        _isNanoVG()   { return false; }
 
-  virtual uint32_t  _getWidth()   { return 0; }
-  virtual uint32_t  _getHeight()  { return 0; }
-  virtual uint32_t  _getDepth()   { return 0; }
+  virtual uint32_t    _getWidth()   { return 0; }
+  virtual uint32_t    _getHeight()  { return 0; }
+  virtual uint32_t    _getDepth()   { return 0; }
 
   #ifdef SAT_SURFACE_NANOVG
     virtual NVGcontext*       _getNanoVGContext() { return nullptr; }

@@ -45,8 +45,8 @@ private:
 public:
 //------------------------------
 
-  SAT_Surface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
-  : SAT_ImplementedSurface(AOwner,AWidth,AHeight,ADepth) {
+  SAT_Surface(/*SAT_SurfaceOwner* AOwner,*/ uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
+  : SAT_ImplementedSurface(/*AOwner,*/AWidth,AHeight,ADepth) {
   }
 
   //----------

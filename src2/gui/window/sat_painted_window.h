@@ -42,8 +42,24 @@ public:
   : SAT_TimerWindow(AWidth,AHeight,AParent) {
     //SAT_PRINT("\n");
     MWindowRenderer = new SAT_Renderer(this,this);
-    MWindowPainter = new SAT_Painter(this,this);
+    MWindowPainter = new SAT_Painter(/*this,*/this);
     MPaintContext.painter = MWindowPainter;
+
+    // #ifdef SAT_PAINTER_NANOVG
+    //   SAT_GLOBAL.GUI.nanoVGContext = MWindowPainter.getNanoVGContext();
+    // #endif
+
+    // #ifdef SAT_PAINTER_X11
+    //   SAT_GLOBAL.GUI.xcbConnection  = _getXcbConnection();
+    //   SAT_GLOBAL.GUI.xcbVisual      = _getXcbVisual();
+    //   SAT_GLOBAL.GUI.xcbDrawable    = _getXcbDrawable();
+    //   SAT_GLOBAL.GUI.xcbDepth       = _getDepth();
+    //   SAT_PRINT("xcbConnection: %p\n",_getXcbConnection());
+    //   SAT_PRINT("xcbVisual:     %i\n",_getXcbVisual());
+    //   SAT_PRINT("xcbDrawable:   %i\n",_getXcbDrawable());
+    //   SAT_PRINT("xcbDepth:      %i\n",_getDepth());
+    // #endif
+
   }
 
   //----------

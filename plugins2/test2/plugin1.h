@@ -6,10 +6,13 @@
 #ifndef SAT_NO_GUI
   #include "plugin/sat_editor.h"
   #include "gui/sat_widgets.h"
+  #include "gui/sat_surface.h"
 #endif
 
 //----------------------------------------------------------------------
+//
 // descriptor
+//
 //----------------------------------------------------------------------
 
 clap_plugin_descriptor_t myDescriptor = {
@@ -26,7 +29,9 @@ clap_plugin_descriptor_t myDescriptor = {
 };
 
 //----------------------------------------------------------------------
+//
 // processor
+//
 //----------------------------------------------------------------------
 
 class myProcessor
@@ -78,11 +83,19 @@ public:
 };
 
 //----------------------------------------------------------------------
+//
 // plugin
+//
 //----------------------------------------------------------------------
 
 class myPlugin
 : public SAT_Plugin {
+
+//------------------------------
+private:
+//------------------------------
+
+  SAT_Surface* MSurface = nullptr;
 
 //------------------------------
 public:
@@ -98,7 +111,7 @@ public:
   }
 
 //------------------------------
-public:
+public: // init
 //------------------------------
 
   bool init() final {
@@ -113,15 +126,19 @@ public:
     return SAT_Plugin::init();
   }
 
-  //----------
+//------------------------------
+public: // editor
+//------------------------------
 
   #ifndef SAT_NO_GUI
 
   bool setupEditor(SAT_Editor* AEditor) final {
-    //SAT_TRACE;
+    SAT_TRACE;
     SAT_Window* window = AEditor->getWindow();
     SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
     window->setRootWidget(root);
+
+      MSurface = new SAT_Surface(100,100,0);
 
       SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
       root->appendChild(wdg1);
@@ -147,15 +164,26 @@ public:
       root->appendChild(drag1);
       AEditor->connect(drag1,getParameter(1));
 
+      SAT_SurfaceWidget* surface1 = new SAT_SurfaceWidget(SAT_Rect(230,70,100,50),MSurface);
+      root->appendChild(surface1);
+
     return true;
   }
+
+  void cleanupEditor(SAT_Editor* AEditor) final {
+    SAT_TRACE;
+    if (MSurface) delete MSurface;
+  }
+
 
   #endif
 
 };
 
 //----------------------------------------------------------------------
+//
 // entry
+//
 //----------------------------------------------------------------------
 
 #include "plugin/sat_entry.h"

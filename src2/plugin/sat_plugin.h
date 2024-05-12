@@ -544,6 +544,11 @@ public: // editor
     return true;
   }
 
+  // called just before editor is shown..
+
+  virtual void cleanupEditor(SAT_Editor* AEditor) {
+  }
+
   #endif // no gui
 
   //----------
@@ -875,6 +880,7 @@ public: // clap extensions
   void gui_destroy() override {
     //SAT_PRINT("\n");
     // MIsEditorClosing = true;
+    cleanupEditor(MEditor);
     if (MEditor) MEditor->destroy();
   }
 

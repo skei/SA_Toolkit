@@ -59,8 +59,8 @@ private:
 public:
 //------------------------------
 
-  SAT_Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
-  : SAT_ImplementedPainter(AOwner,ATarget) {
+  SAT_Painter(/*SAT_PainterOwner* AOwner,*/ SAT_PaintTarget* ATarget)
+  : SAT_ImplementedPainter(/*AOwner,*/ATarget) {
     //MOwner = AOwner;
   }
 

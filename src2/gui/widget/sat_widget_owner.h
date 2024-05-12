@@ -6,17 +6,17 @@
 
 // #include "sat.h"
 
-#ifdef SAT_SURFACE_X11
-  #include "gui/lib/sat_x11.h"
-#endif
+// #ifdef SAT_SURFACE_X11
+//   #include "gui/lib/sat_x11.h"
+// #endif
+
+class SAT_Window;
 
 //----------------------------------------------------------------------
 
 class SAT_WidgetOwner {
 public:
-
-
-  
+  // virtual SAT_Window* _getWindow() { return nullptr; }
 };
 
 //----------------------------------------------------------------------

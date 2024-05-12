@@ -26,7 +26,7 @@ class SAT_X11Surface
 private:
 //------------------------------
 
-  SAT_SurfaceOwner* MOwner            = nullptr;
+  //SAT_SurfaceOwner* MOwner            = nullptr;
   int32_t           MWidth            = 0;
   int32_t           MHeight           = 0;
   int32_t           MDepth            = 0;
@@ -39,22 +39,28 @@ private:
 public:
 //------------------------------
 
-  SAT_X11Surface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
-  : SAT_BaseSurface(AOwner,AWidth,AHeight,ADepth) {
-    MOwner = AOwner;
+  SAT_X11Surface(/*SAT_SurfaceOwner* AOwner,*/ uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
+  : SAT_BaseSurface(/*AOwner,*/AWidth,AHeight,ADepth) {
+    //MOwner = AOwner;
     MWidth = AWidth;
     MHeight = AHeight;
-    if (ADepth == 0) MDepth = AOwner->_getDepth();
+    if (ADepth == 0) MDepth = SAT_GLOBAL.GUI.xcbDepth;//AOwner->_getDepth();
     else MDepth = ADepth;
-    MConnection = AOwner->_getXcbConnection();
-    MVisual     = AOwner->_getXcbVisual();
+    //MConnection = AOwner->_getXcbConnection();
+    //MVisual     = AOwner->_getXcbVisual();
+    MConnection = SAT_GLOBAL.GUI.xcbConnection;
+    MVisual = SAT_GLOBAL.GUI.xcbVisual;
+
+    SAT_Assert(MConnection);
+    SAT_Assert(MVisual != XCB_NONE);
+
     // MOwnerDrawable = AOwner->_getXcbDrawable();
     MPixmap = xcb_generate_id(MConnection);
     xcb_create_pixmap(
       MConnection,
       MDepth,
       MPixmap,
-      AOwner->_getXcbDrawable(),
+      SAT_GLOBAL.GUI.xcbDrawable,
       MWidth,
       MHeight
     );
@@ -64,16 +70,25 @@ public:
   //----------
 
   virtual ~SAT_X11Surface() {
-    xcb_free_pixmap(MConnection,MPixmap);
+    if (MPixmap != XCB_NONE) xcb_free_pixmap(MConnection,MPixmap);
+    
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  xcb_connection_t* _getXcbConnection() override { return MConnection; }
-  xcb_drawable_t    _getXcbDrawable()   override { return MPixmap; }
-  xcb_visualid_t    _getXcbVisual()     override { return MVisual; }
+  uint32_t getWidth()   override { return MWidth; }
+  uint32_t getHeight()  override { return MHeight; }
+  uint32_t getDepth()   override { return MDepth; }
+
+//------------------------------
+public: // owner
+//------------------------------
+
+  xcb_connection_t* _getXcbConnection() override { return MConnection; }  // from owner
+  xcb_drawable_t    _getXcbDrawable()   override { return MPixmap; }      // pixmap
+  xcb_visualid_t    _getXcbVisual()     override { return MVisual; }      // from owner
 
 };
 

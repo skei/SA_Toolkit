@@ -1,5 +1,5 @@
 
-// ../build/compile -i ../build/build.cpp -o build -f exe -g x11 -d
+// ../build/compile2 -i ../build/build2.cpp -o build -f exe -g x11 -d
 // nc -U -l -k /tmp/sat.socket
 
 //----------------------------------------------------------------------
@@ -9,8 +9,6 @@
 #else
   #define SAT_PRINT_SOCKET
 #endif
-
-//----------
 
 //----------------------------------------------------------------------
 //
@@ -25,5 +23,5 @@
 //
 //----------------------------------------------------------------------
 
-//#include "../plugins/test2/exe1.h"
-#include "../plugins/test2/plugin1.h"
+//#include "../plugins2/test2/exe1.h"
+#include "../plugins2/test2/plugin1.h"

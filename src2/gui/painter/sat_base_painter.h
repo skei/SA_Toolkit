@@ -9,6 +9,8 @@
 #include "gui/painter/sat_painter_owner.h"
 #include "gui/painter/sat_paint_target.h"
 
+class SAT_Bitmap;
+class SAT_Surface;
 class SAT_Painter;
 
 #ifdef SAT_PAINTER_NANOVG
@@ -27,7 +29,7 @@ class SAT_BasePainter {
 public:
 //------------------------------
 
-  SAT_BasePainter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget) {}
+  SAT_BasePainter(/*SAT_PainterOwner* AOwner,*/ SAT_PaintTarget* ATarget) {}
   virtual ~SAT_BasePainter() {}
 
 //------------------------------
@@ -147,6 +149,13 @@ public:
   virtual void        deleteRenderBuffer(void* buffer) {}
   virtual int32_t     getImageFromRenderBuffer(void* buffer) { return 0; }
   virtual void        selectRenderBuffer(void* buffer) {}
+
+  virtual void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) {}
+  virtual void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) {}
+
+  virtual void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurfae) {}
+  virtual void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) {}
+
 
 //------------------------------
 public:
