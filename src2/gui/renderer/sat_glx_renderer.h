@@ -52,8 +52,8 @@ private:
 
   bool                  MIsCurrent          = false;
 
-  SAT_RendererOwner*    MOwner              = nullptr;
-  SAT_RenderTarget*     MTarget             = nullptr;
+  // SAT_RendererOwner*    MOwner              = nullptr;
+  // SAT_RenderTarget*     MTarget             = nullptr;
 
   Display*              MDisplay            = None;
   GLXFBConfig           MFBConfig           = nullptr;
@@ -115,18 +115,19 @@ public:
 
   SAT_GlxRenderer(SAT_RendererOwner* AOwner, SAT_RenderTarget* ATarget)
   : SAT_BaseRenderer(AOwner,ATarget) {
+    SAT_TRACE;
 
-    MOwner = AOwner;
-    MTarget = ATarget;
-
-    MDisplay = AOwner->_getX11Display();
+    // SAT_RendererOwner *MOwner = AOwner;
+    // SAT_RenderTarget* MTarget = ATarget;
+    MDisplay = AOwner->on_rendererOwner_getX11Display();
+    SAT_Assert(MDisplay);
     MFBConfig = findFBConfig(SAT_GLXWindowAttribs);
     MContext = createContext(MFBConfig);
-    xcb_drawable_t drawable = ATarget->_getXcbDrawable();
+    xcb_drawable_t drawable = ATarget->on_renderTarget_getXcbDrawable();
+    SAT_Assert(drawable);
     MDrawable = glXCreateWindow(MDisplay,MFBConfig,drawable,nullptr);
-
+    SAT_Assert(MDrawable);
     // makeCurrent();
-
     const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
     if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
       glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
@@ -134,11 +135,10 @@ public:
     if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
       glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
     }
-
     disableVSync();
-
+    SAT_TRACE;
     makeCurrent();
-
+    SAT_TRACE;
   }
 
   //----------
@@ -192,7 +192,7 @@ public:
     //MPrevContext = glXGetCurrentContext();
     bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MContext);
     if (!res) {
-      //SAT_PRINT("Error: makeCurrent returned false\n");
+      SAT_PRINT("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = true;
@@ -222,12 +222,13 @@ public:
   //TODO: restore prev context?
 
   bool resetCurrent() override {
+    SAT_TRACE;
     //SAT_PRINT("MIsCurrent %i -> 0\n",MIsCurrent);
     //SAT_PRINT("MIsCurrent: %i\n",MIsCurrent);
     bool res = glXMakeContextCurrent(MDisplay,0,0,0);
     //bool res = glXMakeContextCurrent(MDisplay,MDrawable,MDrawable,MPrevContext); // error
     if (!res) {
-      //SAT_PRINT("Error: makeCurrent returned false\n");
+      SAT_PRINT("Error: makeCurrent returned false\n");
       return false;
     }
     MIsCurrent = false;
@@ -243,14 +244,18 @@ public:
   //----------
 
   bool beginRendering() override {
+    SAT_TRACE;
     makeCurrent();
+    SAT_TRACE;
     return true;
   }
 
   //----------
 
   bool beginRendering(int32_t AWidth, int32_t AHeight) override {
+    SAT_TRACE;
     makeCurrent();
+    SAT_TRACE;
     setViewport(0,0,AWidth,AHeight);
     //setClip(SAT_DRect(AXpos,AYpos,AWidth,AHeight));
     return true;
@@ -275,6 +280,7 @@ public:
   //----------
 
   bool swapBuffers() override {
+    SAT_TRACE;
     glXSwapBuffers(MDisplay,MDrawable);
     return true;
   }

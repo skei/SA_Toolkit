@@ -95,7 +95,7 @@ class myPlugin
 private:
 //------------------------------
 
-  SAT_Surface* MSurface = nullptr;
+  // SAT_Surface* MSurface = nullptr;
 
 //------------------------------
 public:
@@ -138,7 +138,13 @@ public: // editor
     SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
     window->setRootWidget(root);
 
-      MSurface = new SAT_Surface(100,100,0);
+      // MSurface = new SAT_Surface(window,100,100,0);
+      //   SAT_Painter* painter = new SAT_Painter(window,MSurface);
+      //   painter->setFillColor(SAT_Red);
+      //   painter->fillRect(0,0,100,100);
+      //   painter->setDrawColor(SAT_BrightYellow);
+      //   painter->drawRect(10,10,50,20);
+      //   delete painter;
 
       SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
       root->appendChild(wdg1);
@@ -164,15 +170,15 @@ public: // editor
       root->appendChild(drag1);
       AEditor->connect(drag1,getParameter(1));
 
-      SAT_SurfaceWidget* surface1 = new SAT_SurfaceWidget(SAT_Rect(230,70,100,50),MSurface);
-      root->appendChild(surface1);
+      // SAT_SurfaceWidget* surface1 = new SAT_SurfaceWidget(SAT_Rect(230,70,100,50),MSurface);
+      // root->appendChild(surface1);
 
     return true;
   }
 
   void cleanupEditor(SAT_Editor* AEditor) final {
     SAT_TRACE;
-    if (MSurface) delete MSurface;
+    // if (MSurface) delete MSurface;
   }
 
 

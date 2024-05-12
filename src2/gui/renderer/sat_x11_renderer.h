@@ -27,6 +27,7 @@ public:
 
   SAT_X11Renderer(SAT_RendererOwner* AOwner, SAT_RenderTarget* ATarget)
   : SAT_BaseRenderer(AOwner,ATarget) {
+    SAT_TRACE;
   }
 
   virtual ~SAT_X11Renderer() {

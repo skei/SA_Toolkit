@@ -16,7 +16,7 @@ class SAT_Window;
 
 class SAT_WidgetOwner {
 public:
-  // virtual SAT_Window* _getWindow() { return nullptr; }
+  // virtual SAT_Window* on_widgetOwner_getWindow() { return nullptr; }
 };
 
 //----------------------------------------------------------------------

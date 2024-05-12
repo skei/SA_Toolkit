@@ -42,7 +42,7 @@ public:
   : SAT_TimerWindow(AWidth,AHeight,AParent) {
     //SAT_PRINT("\n");
     MWindowRenderer = new SAT_Renderer(this,this);
-    MWindowPainter = new SAT_Painter(/*this,*/this);
+    MWindowPainter = new SAT_Painter(this,this);
     MPaintContext.painter = MWindowPainter;
 
     // #ifdef SAT_PAINTER_NANOVG
@@ -59,6 +59,8 @@ public:
     //   SAT_PRINT("xcbDrawable:   %i\n",_getXcbDrawable());
     //   SAT_PRINT("xcbDepth:      %i\n",_getDepth());
     // #endif
+
+    MWindowRenderer->resetCurrent();
 
   }
 
@@ -81,10 +83,12 @@ public:
 public: // owner
 //------------------------------
 
-  #ifdef SAT_PAINTER_NANOVG
-    bool        _isNanoVG()         override { return true; }
-    NVGcontext* _getNanoVGContext() override { return MWindowPainter->getNvgContext(); }
-  #endif
+  // SAT_SurfaceOwner (SAT_X11Window)
+
+  // #ifdef SAT_PAINTER_NANOVG
+  //   bool        on_surfaceOwner_isNanoVG()         override { return true; }
+  //   NVGcontext* on_surfaceOwner_getNanoVGContext() override { return MWindowPainter->getNvgContext(); }
+  // #endif
 
 //------------------------------
 public:

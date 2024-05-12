@@ -23,7 +23,10 @@
 //
 //----------------------------------------------------------------------
 
-// struct SAT_GlobalGui {
+struct SAT_GlobalGui {
+  uint32_t MScreenWidth   = 0;
+  uint32_t MScreenHeight  = 0;
+  uint32_t MScreenDepth   = 0;
 //   #ifdef SAT_PAINTER_NANOVG
 //     NVGcontext* nanoVGContext = nullptr;
 //   #endif
@@ -33,7 +36,7 @@
 //     xcb_drawable_t    xcbDrawable   = XCB_NONE;
 //     uint32_t          xcbDepth      = 0;
 //   #endif
-// };
+};
 
 // struct SAT_GlobalLinux {
 //   #ifdef SAT_LINUX
@@ -71,7 +74,7 @@ public:
   SAT_Registry    REGISTRY    = {};
   SAT_UnitTest    TEST        = {};
   SAT_Analytics   ANALYTICS   = {};
-//SAT_GlobalGui   GUI         = {};
+  SAT_GlobalGui   GUI         = {};
 //SAT_GlobalLinux LINUX       = {};
 //SAT_GlobalWin32 WIN32       = {};
   

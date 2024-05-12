@@ -58,19 +58,15 @@ private:
 public:
 //------------------------------
 
-  SAT_X11Painter(/*SAT_PainterOwner* AOwner,*/ SAT_PaintTarget* ATarget)
-  : SAT_BasePainter(/*AOwner,*/ ATarget) {
+  SAT_X11Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
+  : SAT_BasePainter(AOwner, ATarget) {
     //MOwner      = AOwner;
-    //MConnection = AOwner->_getXcbConnection();
-    //MVisual     = AOwner->_getXcbVisual();
-    MConnection = SAT_GLOBAL.GUI.xcbConnection;
-    MVisual     = SAT_GLOBAL.GUI.xcbVisual;
-
+    MConnection = AOwner->on_painterOwner_getXcbConnection();
+    MVisual     = AOwner->on_painterOwner_getXcbVisual();
     SAT_Assert(MConnection);
     SAT_Assert(MVisual != XCB_NONE);
-
     MTarget     = ATarget;
-    MDrawable   = ATarget->_getXcbDrawable();
+    MDrawable   = ATarget->on_paintTarget_getXcbDrawable();
     MGC         = xcb_generate_id(MConnection);
     uint32_t mask =
       //XCB_GC_FUNCTION
@@ -672,16 +668,16 @@ public:
 
   void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) override {
     xcb_copy_area(
-      MConnection,                  // Pointer to the xcb_connection_t structure
-      ASurface->_getXcbDrawable(),  // The Drawable we want to paste
-      MDrawable,                    // The Drawable on which we copy the previous Drawable
-      MGC,                          // A Graphic Context
-      0,                            // Top left x coordinate of the region we want to copy
-      0,                            // Top left y coordinate of the region we want to copy
-      AXpos,                        // Top left x coordinate of the region where we want to copy
-      AYpos,                        // Top left y coordinate of the region where we want to copy
-      ASurface->getWidth(),         // Width                 of the region we want to copy
-      ASurface->getHeight()         // Height of the region we want to copy
+      MConnection,                                // Pointer to the xcb_connection_t structure
+      ASurface->on_paintSource_getXcbDrawable(),  // The Drawable we want to paste
+      MDrawable,                                  // The Drawable on which we copy the previous Drawable
+      MGC,                                        // A Graphic Context
+      0,                                          // Top left x coordinate of the region we want to copy
+      0,                                          // Top left y coordinate of the region we want to copy
+      AXpos,                                      // Top left x coordinate of the region where we want to copy
+      AYpos,                                      // Top left y coordinate of the region where we want to copy
+      ASurface->getWidth(),                       // Width                 of the region we want to copy
+      ASurface->getHeight()                       // Height of the region we want to copy
     );
     xcb_flush(MConnection);
   }
@@ -690,16 +686,16 @@ public:
 
   void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) override {
     xcb_copy_area(
-      MConnection,                  // Pointer to the xcb_connection_t structure
-      ASurface->_getXcbDrawable(),  // The Drawable we want to paste
-      MDrawable,                    // The Drawable on which we copy the previous Drawable
-      MGC,                          // A Graphic Context
-      ASrc.x,                       // Top left x coordinate of the region we want to copy
-      ASrc.y,                       // Top left y coordinate of the region we want to copy
-      AXpos,                        // Top left x coordinate of the region where we want to copy
-      AYpos,                        // Top left y coordinate of the region where we want to copy
-      ASrc.w,                       // Width                 of the region we want to copy
-      ASrc.h                        // Height of the region we want to copy
+      MConnection,                                // Pointer to the xcb_connection_t structure
+      ASurface->on_paintSource_getXcbDrawable(),  // The Drawable we want to paste
+      MDrawable,                                  // The Drawable on which we copy the previous Drawable
+      MGC,                                        // A Graphic Context
+      ASrc.x,                                     // Top left x coordinate of the region we want to copy
+      ASrc.y,                                     // Top left y coordinate of the region we want to copy
+      AXpos,                                      // Top left x coordinate of the region where we want to copy
+      AYpos,                                      // Top left y coordinate of the region where we want to copy
+      ASrc.w,                                     // Width                 of the region we want to copy
+      ASrc.h                                      // Height of the region we want to copy
     );
     xcb_flush(MConnection);
   }

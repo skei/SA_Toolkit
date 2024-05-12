@@ -39,32 +39,32 @@ private:
 public:
 //------------------------------
 
-  SAT_X11Surface(/*SAT_SurfaceOwner* AOwner,*/ uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
-  : SAT_BaseSurface(/*AOwner,*/AWidth,AHeight,ADepth) {
+  SAT_X11Surface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
+  : SAT_BaseSurface(AOwner,AWidth,AHeight,ADepth) {
+    SAT_TRACE;
     //MOwner = AOwner;
     MWidth = AWidth;
     MHeight = AHeight;
-    if (ADepth == 0) MDepth = SAT_GLOBAL.GUI.xcbDepth;//AOwner->_getDepth();
+    if (ADepth == 0) MDepth = AOwner->on_surfaceOwner_getDepth();
     else MDepth = ADepth;
-    //MConnection = AOwner->_getXcbConnection();
-    //MVisual     = AOwner->_getXcbVisual();
-    MConnection = SAT_GLOBAL.GUI.xcbConnection;
-    MVisual = SAT_GLOBAL.GUI.xcbVisual;
-
+    MConnection = AOwner->on_surfaceOwner_getXcbConnection();
+    MVisual     = AOwner->on_surfaceOwner_getXcbVisual();
     SAT_Assert(MConnection);
     SAT_Assert(MVisual != XCB_NONE);
-
     // MOwnerDrawable = AOwner->_getXcbDrawable();
     MPixmap = xcb_generate_id(MConnection);
+    // Creates a pixmap. The pixmap can only be used on the same screen as 'drawable' is on and only with drawables of the same 'depth'.
     xcb_create_pixmap(
       MConnection,
       MDepth,
-      MPixmap,
-      SAT_GLOBAL.GUI.xcbDrawable,
+      MPixmap,                                  //  The ID with which you will refer to the new pixmap, created by `xcb_generate_id`.
+      AOwner->on_surfaceOwner_getXcbDrawable(), //.GUI.xcbDrawable,   // Drawable to get the screen from.
       MWidth,
       MHeight
     );
+
     xcb_flush(MConnection);
+    
   }
 
   //----------
@@ -86,9 +86,12 @@ public:
 public: // owner
 //------------------------------
 
-  xcb_connection_t* _getXcbConnection() override { return MConnection; }  // from owner
-  xcb_drawable_t    _getXcbDrawable()   override { return MPixmap; }      // pixmap
-  xcb_visualid_t    _getXcbVisual()     override { return MVisual; }      // from owner
+  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
+  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MVisual; }
+
+  xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return MPixmap; }
+  
+  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MPixmap; }
 
 };
 

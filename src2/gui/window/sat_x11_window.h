@@ -22,13 +22,11 @@
 
 class SAT_X11Window
 : public SAT_BaseWindow
-//, public SAT_PaintSource
-, public SAT_PaintTarget
 , public SAT_PainterOwner
-//, public SAT_RenderSource
-, public SAT_RenderTarget
 , public SAT_RendererOwner
-, public SAT_SurfaceOwner {
+, public SAT_SurfaceOwner
+, public SAT_PaintTarget
+, public SAT_RenderTarget {
 
 //------------------------------
 private:
@@ -99,6 +97,7 @@ public:
 
   SAT_X11Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_BaseWindow(AWidth,AHeight,AParent) {
+    SAT_TRACE;
     setupConnection();
     setupScreen();
     setupScreenGC();
@@ -113,18 +112,6 @@ public:
       MIsEmbedded = false;
       wantQuitEvents();
     }
-
-    #ifdef SAT_PAINTER_X11
-      SAT_GLOBAL.GUI.xcbConnection  = _getXcbConnection();
-      SAT_GLOBAL.GUI.xcbVisual      = _getXcbVisual();
-      SAT_GLOBAL.GUI.xcbDrawable    = _getXcbDrawable();
-      SAT_GLOBAL.GUI.xcbDepth       = _getDepth();
-      SAT_PRINT("xcbConnection: %p\n",_getXcbConnection());
-      SAT_PRINT("xcbVisual:     %i\n",_getXcbVisual());
-      SAT_PRINT("xcbDrawable:   %i\n",_getXcbDrawable());
-      SAT_PRINT("xcbDepth:      %i\n",_getDepth());
-    #endif
-
   }
 
   //----------
@@ -148,16 +135,25 @@ public:
   xcb_window_t getXcbWindow() { return MWindow; }
 
 //------------------------------
-public: // owner
+public:
 //------------------------------
 
-  uint32_t          _getWidth()         override { return MWindowWidth; }
-  uint32_t          _getHeight()        override { return MWindowHeight; }
-  uint32_t          _getDepth()         override { return MScreenDepth; }
-  Display*          _getX11Display()    override { return MDisplay; }
-  xcb_connection_t* _getXcbConnection() override { return MConnection; }
-  xcb_visualid_t    _getXcbVisual()     override { return MScreenVisual; }
-  xcb_drawable_t    _getXcbDrawable()   override { return MWindow;; }
+    xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
+    xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MScreenVisual; }
+
+    xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MWindow; }
+
+    Display*          on_rendererOwner_getX11Display()    override { return MDisplay; }
+    xcb_drawable_t    on_rendererOwner_getXcbDrawable()   override { return MWindow; }
+
+    xcb_drawable_t    on_renderTarget_getXcbDrawable()    override { return MWindow; }
+
+    uint32_t          on_surfaceOwner_getWidth()          override { return MWindowWidth; }
+    uint32_t          on_surfaceOwner_getHeight()         override { return MWindowHeight; }
+    uint32_t          on_surfaceOwner_getDepth()          override { return MScreenDepth; }
+    xcb_connection_t* on_surfaceOwner_getXcbConnection()  override { return MConnection; }
+    xcb_drawable_t    on_surfaceOwner_getXcbDrawable()    override { return MWindow; }
+    xcb_visualid_t    on_surfaceOwner_getXcbVisual()      override { return MScreenVisual; }
 
 //------------------------------
 public: // SAT_BaseWindow
@@ -473,6 +469,7 @@ private: // setup,cleanup
         break;
       }
     }
+
     MScreenWidth    = MScreen->width_in_pixels;
     MScreenHeight   = MScreen->height_in_pixels;
     MScreenDepth    = MScreen->root_depth;
@@ -480,6 +477,7 @@ private: // setup,cleanup
     //MScreenWindow   = MScreen->root;
     //MScreenColormap = MScreen->default_colormap;
     //MScreenDrawable = MScreen->root;
+    
   }
 
   //----------

@@ -93,8 +93,8 @@
 //#define SAT_GUI_X11
 
 //#define SAT_INCLUDE_TESTS
-  #define SAT_INCLUDE_LOG
-  #define SAT_INCLUDE_ANALYTICS
+//#define SAT_INCLUDE_LOG
+//#define SAT_INCLUDE_ANALYTICS
 
   #define SAT_LOG_THREAD
   #define SAT_LOG_TIME
@@ -259,10 +259,10 @@
   #ifdef SAT_GUI_X11
     #define SAT_WINDOW_X11
     #define SAT_SURFACE_X11
-    //#define SAT_RENDERER_GLX
-    //#define SAT_PAINTER_NANOVG
-    #define SAT_RENDERER_X11
-    #define SAT_PAINTER_X11
+    //#define SAT_RENDERER_X11
+    //#define SAT_PAINTER_X11
+    #define SAT_RENDERER_GLX
+    #define SAT_PAINTER_NANOVG
   #endif
 
 #endif

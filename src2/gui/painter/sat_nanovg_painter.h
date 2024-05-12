@@ -57,6 +57,7 @@ public:
 
   SAT_NanoVGPainter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
   : SAT_BasePainter(AOwner,ATarget) {
+    SAT_TRACE;
 
     //ARenderer->makeCurrent();
 
@@ -69,6 +70,8 @@ public:
       MContext = nvgCreateGL3(NVG_ANTIALIAS);
       //MContext = nvgCreateGLES3(NVG_ANTIALIAS);
     #endif
+
+    SAT_Assert(MContext);
 
     //SAT_Print("nvgContext: %p\n",MContext); // prints (nil)
 

@@ -13,8 +13,10 @@
 // #ifdef SAT_SURFACE_CAIRO
 // #endif
 
-// #ifdef SAT_SURFACE_NANOVG
-// #endif
+#ifdef SAT_SURFACE_NANOVG
+  #include "gui/surface/sat_nanovg_surface.h"
+  typedef SAT_NanoVGSurface SAT_ImplementedSurface;
+#endif
 
 #ifdef SAT_SURFACE_WIN32
   #include "gui/surface/sat_win32_surface.h"
@@ -45,8 +47,8 @@ private:
 public:
 //------------------------------
 
-  SAT_Surface(/*SAT_SurfaceOwner* AOwner,*/ uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
-  : SAT_ImplementedSurface(/*AOwner,*/AWidth,AHeight,ADepth) {
+  SAT_Surface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
+  : SAT_ImplementedSurface(AOwner,AWidth,AHeight,ADepth) {
   }
 
   //----------

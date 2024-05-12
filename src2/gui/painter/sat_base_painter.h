@@ -29,15 +29,8 @@ class SAT_BasePainter {
 public:
 //------------------------------
 
-  SAT_BasePainter(/*SAT_PainterOwner* AOwner,*/ SAT_PaintTarget* ATarget) {}
+  SAT_BasePainter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget) {}
   virtual ~SAT_BasePainter() {}
-
-//------------------------------
-public:
-//------------------------------
-
-  // virtual bool        initialize() { return true; }
-  // virtual void        cleanup() {}
 
 //------------------------------
 public:
