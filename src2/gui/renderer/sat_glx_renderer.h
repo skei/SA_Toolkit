@@ -115,7 +115,7 @@ public:
 
   SAT_GlxRenderer(SAT_RendererOwner* AOwner, SAT_RenderTarget* ATarget)
   : SAT_BaseRenderer(AOwner,ATarget) {
-    SAT_TRACE;
+    //SAT_TRACE;
 
     // SAT_RendererOwner *MOwner = AOwner;
     // SAT_RenderTarget* MTarget = ATarget;
@@ -136,9 +136,9 @@ public:
       glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
     }
     disableVSync();
-    SAT_TRACE;
+    //SAT_TRACE;
     makeCurrent();
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
   //----------
@@ -222,7 +222,7 @@ public:
   //TODO: restore prev context?
 
   bool resetCurrent() override {
-    SAT_TRACE;
+    //SAT_TRACE;
     //SAT_PRINT("MIsCurrent %i -> 0\n",MIsCurrent);
     //SAT_PRINT("MIsCurrent: %i\n",MIsCurrent);
     bool res = glXMakeContextCurrent(MDisplay,0,0,0);
@@ -244,18 +244,18 @@ public:
   //----------
 
   bool beginRendering() override {
-    SAT_TRACE;
+    //SAT_TRACE;
     makeCurrent();
-    SAT_TRACE;
+    //SAT_TRACE;
     return true;
   }
 
   //----------
 
   bool beginRendering(int32_t AWidth, int32_t AHeight) override {
-    SAT_TRACE;
+    //SAT_TRACE;
     makeCurrent();
-    SAT_TRACE;
+    //SAT_TRACE;
     setViewport(0,0,AWidth,AHeight);
     //setClip(SAT_DRect(AXpos,AYpos,AWidth,AHeight));
     return true;
@@ -280,7 +280,7 @@ public:
   //----------
 
   bool swapBuffers() override {
-    SAT_TRACE;
+    //SAT_TRACE;
     glXSwapBuffers(MDisplay,MDrawable);
     return true;
   }

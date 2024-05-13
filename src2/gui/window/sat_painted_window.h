@@ -77,9 +77,11 @@ public: // owner
 public:
 //------------------------------
 
-  virtual void on_window_paint(SAT_PaintContext* AContext) {
-    //SAT_TRACE;
-  }
+  virtual void on_window_prerender(uint32_t AWidth, uint32_t AHeight) {}
+  virtual void on_window_prepaint(uint32_t AWidth, uint32_t AHeight) {}
+  virtual void on_window_paint(SAT_PaintContext* AContext) {}
+  virtual void on_window_postpaint() {}
+  virtual void on_window_postrender() {}
 
 //------------------------------
 public: // window
@@ -96,27 +98,19 @@ public: // window
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
     //SAT_PRINT("x %i y %i w %i h %i\n",AXpos,AYpos,AWidth,AHeight);
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
-
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
-
-    //MWindowRenderer->makeCurrent();
-    //MWindowRenderer->beginRendering(AWidth,AHeight);
-    //MWindowPainter->beginPainting(AWidth,AHeight);
-    //MWindowPainter->beginFrame(AWidth,AHeight);
-
+    on_window_prerender(screenwidth,screenheight);
     MWindowRenderer->beginRendering(screenwidth,screenheight);
+    on_window_prepaint(screenwidth,screenheight);
     MWindowPainter->beginPainting(screenwidth,screenheight);
     MWindowPainter->beginFrame(screenwidth,screenheight);
-
     on_window_paint(&MPaintContext);
-
     MWindowPainter->endFrame();
     MWindowPainter->endPainting();
+    on_window_postpaint();
     MWindowRenderer->endRendering();
-    //MWindowRenderer->swapBuffers();
-    //MWindowRenderer->resetCurrent();
-
+    on_window_postrender();
   }
 
   //----------

@@ -8,7 +8,7 @@
 
 CC="g++"
 INPUT="build.cpp"
-OUTPUT="build.exe"
+OUTPUT="plugin.exe"
 BUILD_COUNT=""
 FORMAT="EXE"
 GUI="X11"

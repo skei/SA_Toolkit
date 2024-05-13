@@ -50,7 +50,7 @@ public:
 
   SAT_NanoVGSurface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
   : SAT_BaseSurface(AOwner,AWidth,AHeight,ADepth) {
-    SAT_TRACE;
+    //SAT_TRACE;
 
     // if (AOwner->on_surfaceOwner_isNanoVG()) {
     //   MContext = AOwner->on_surfaceOwner_getNanoVGContext();

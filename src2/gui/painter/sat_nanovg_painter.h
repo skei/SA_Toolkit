@@ -58,7 +58,7 @@ public:
 
   SAT_NanoVGPainter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
   : SAT_BasePainter(AOwner,ATarget) {
-    SAT_TRACE;
+    //SAT_TRACE;
 
     //ARenderer->makeCurrent();
 
@@ -1024,22 +1024,22 @@ public:
 //------------------------------
 
   void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) final {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
   void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) final {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
   
   void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) final {
-    SAT_TRACE;
+    //SAT_TRACE;
     //ASurface->select();
-    //drawRect(AXpos,AYpos,ASurface->getWidth(),ASurface->getHeight());
+    //fillRect(AXpos,AYpos,ASurface->getWidth(),ASurface->getHeight());
     //ASurface->deselect();
   }
   
   void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) final {
-    SAT_TRACE;
+    //SAT_TRACE;
       // ASurface->select();
       //   setFillColor(SAT_Red);
       //   fillRect(5,5,32,32);

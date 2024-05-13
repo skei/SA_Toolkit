@@ -190,8 +190,6 @@ public: // text
     else /*if (AAlignment & SAT_TEXT_ALIGN_CENTER)*/  { y += ((ARect.h - h) * 0.5); }
     return SAT_Point(x,y);
   }
-
-
   
   //----------
 

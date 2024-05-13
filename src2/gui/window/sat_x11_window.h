@@ -97,7 +97,7 @@ public:
 
   SAT_X11Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_BaseWindow(AWidth,AHeight,AParent) {
-    SAT_TRACE;
+    //SAT_TRACE;
     setupConnection();
     setupScreen();
     setupScreenGC();
@@ -117,6 +117,7 @@ public:
   //----------
 
   virtual ~SAT_X11Window() {
+    //SAT_TRACE;
     if (MIsMapped) hide();
     cleanupKeyboard();
     cleanupMouse();

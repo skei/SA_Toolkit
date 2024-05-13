@@ -216,20 +216,18 @@
   #ifdef SAT_GUI_WIN32
     #define SAT_WINDOW_WIN32
     #define SAT_SURFACE_WIN32
-    #define SAT_WINDOW_WIN32
-    #define SAT_SURFACE_WIN32
-    //#define SAT_RENDERER_WGL
-    //#define SAT_PAINTER_NANOVG
+    #define SAT_RENDERER_WGL
+    #define SAT_PAINTER_NANOVG
   #endif
 
   #ifdef SAT_GUI_X11
     #define SAT_WINDOW_X11
-    //#define SAT_SURFACE_X11
-    //#define SAT_RENDERER_X11
-    //#define SAT_PAINTER_X11
-    #define SAT_SURFACE_NANOVG
     #define SAT_RENDERER_GLX
+    #define SAT_SURFACE_NANOVG
     #define SAT_PAINTER_NANOVG
+    // #define SAT_RENDERER_X11
+    // #define SAT_SURFACE_X11
+    // #define SAT_PAINTER_X11
   #endif
 
 #endif

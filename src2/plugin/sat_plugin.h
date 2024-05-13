@@ -20,6 +20,10 @@
 #include "plugin/processor/sat_interleaved_processor.h"
 #include "plugin/processor/sat_quantized_processor.h"
 
+#ifdef SAT_EDITOR_EMBEDDED
+  #include "gui/sat_window.h"
+#endif
+
 //----------------------------------------------------------------------
 //
 //
@@ -553,6 +557,20 @@ public: // editor
 
   //----------
 
+  #ifdef SAT_EDITOR_EMBEDDED
+
+  virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
+    return new SAT_Window(AWidth,AHeight);
+  }
+
+  virtual void deleteWindow(SAT_Window* AWindow) {
+    delete AWindow;
+  }
+
+  #endif // embedded
+
+  //----------
+
   void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
@@ -569,25 +587,39 @@ public: // editor listener
 
   #ifndef SAT_NO_GUI
 
-  // a control has been tweaked on the gui
-  // we need to tell the editor, as well as the host
-  // queue them up here
-  // audio queue is flushed at the start of next process
-  // host queue is flushed at the end of next process
+    // a control has been tweaked on the gui
+    // we need to tell the editor, as well as the host
+    // queue them up here
+    // audio queue is flushed at the start of next process
+    // host queue is flushed at the end of next process
 
-  void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) override {
-    //SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
-    //MProcessor->processParamValueEvent(event);
-    MQueues.queueParamFromGuiToHost(AIndex,AValue);
-    MQueues.queueParamFromGuiToAudio(AIndex,AValue);
-  }
+    void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) override {
+      //SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
+      //MProcessor->processParamValueEvent(event);
+      MQueues.queueParamFromGuiToHost(AIndex,AValue);
+      MQueues.queueParamFromGuiToAudio(AIndex,AValue);
+    }
 
-  //----------
+    //----------
 
-  void on_editorListener_timer(SAT_Timer* ATimer) override {
-  }
+    void on_editorListener_timer(SAT_Timer* ATimer) override {
+    }
 
-  #endif
+    //----------
+
+    #ifdef SAT_EDITOR_EMBEDDED
+
+    SAT_Window* on_editorListener_createWindow(uint32_t AWidth, uint32_t AHeight) override {
+      return createWindow(AWidth,AHeight);
+    }
+
+    void on_editorListener_deleteWindow(SAT_Window* AWindow) override {
+      deleteWindow(AWindow);
+    }
+
+    #endif
+
+  #endif // gui
 
 //----------------------------------------------------------------------
 public: // clap plugin

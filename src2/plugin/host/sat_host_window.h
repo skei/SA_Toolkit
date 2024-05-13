@@ -54,6 +54,14 @@ public:
 public:
 //------------------------------
 
+  // surface owner
+
+  #ifdef SAT_PAINTER_NANOVG
+    NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
+  #endif
+
+  /*
+
   // shut up about non-implemented abstract methods!
 
   #ifdef SAT_PAINTER_NANOVG
@@ -108,20 +116,7 @@ public:
   xcb_visualid_t    on_surfaceOwner_getXcbVisual()      override { return XCB_NONE; }
   #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  */
 
 };
 

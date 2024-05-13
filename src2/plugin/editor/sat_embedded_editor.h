@@ -191,7 +191,10 @@ public: // clap.gui
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
       SAT_Assert(!MWindow);
-      MWindow = new SAT_Window(MWidth,MHeight);
+
+      if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
+      else MWindow = new SAT_Window(MWidth,MHeight);
+
       MWindow->setListener(this);
       SAT_Assert(MWindow);
     #endif
@@ -209,7 +212,8 @@ public: // clap.gui
     if (MWindow) {
       MWindow->hide();
       //hide();
-      delete MWindow;
+      if (MListener) MListener->on_editorListener_deleteWindow(MWindow);
+      else delete MWindow;
       MWindow = nullptr;
     }
   }

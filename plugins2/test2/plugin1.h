@@ -130,6 +130,11 @@ public: // init
 
   #ifndef SAT_NO_GUI
 
+  SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) final {
+    SAT_TRACE;
+    return new SAT_Window(AWidth,AHeight);
+  }
+
   bool setupEditor(SAT_Editor* AEditor) final {
     SAT_TRACE;
     SAT_Window* window = AEditor->getWindow();
