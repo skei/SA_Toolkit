@@ -9,46 +9,6 @@
 #include "base/sat_test.h"
 #include "base/sat_analytics.h"
 
-// #ifdef SAT_PAINTER_NANOVG
-//   #include"gui/lib/sat_nanovg.h"
-// #endif
-
-// #ifdef SAT_PAINTER_X11
-//   #include"gui/lib/sat_x11.h"
-// #endif
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-struct SAT_GlobalGui {
-  uint32_t MScreenWidth   = 0;
-  uint32_t MScreenHeight  = 0;
-  uint32_t MScreenDepth   = 0;
-//   #ifdef SAT_PAINTER_NANOVG
-//     NVGcontext* nanoVGContext = nullptr;
-//   #endif
-//   #ifdef SAT_PAINTER_X11
-//     xcb_connection_t* xcbConnection = nullptr;
-//     xcb_visualid_t    xcbVisual     = XCB_NONE;
-//     xcb_drawable_t    xcbDrawable   = XCB_NONE;
-//     uint32_t          xcbDepth      = 0;
-//   #endif
-};
-
-// struct SAT_GlobalLinux {
-//   #ifdef SAT_LINUX
-//   #endif
-// };
-
-// struct SAT_GlobalWin32 {
-//   #ifdef SAT_WIN32
-//     HINSTANCE dllHandler;
-//   #endif
-// };
-
 //----------------------------------------------------------------------
 //
 //
@@ -74,9 +34,6 @@ public:
   SAT_Registry    REGISTRY    = {};
   SAT_UnitTest    TEST        = {};
   SAT_Analytics   ANALYTICS   = {};
-  SAT_GlobalGui   GUI         = {};
-//SAT_GlobalLinux LINUX       = {};
-//SAT_GlobalWin32 WIN32       = {};
   
 //------------------------------
 public:

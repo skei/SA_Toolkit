@@ -44,24 +44,7 @@ public:
     MWindowRenderer = new SAT_Renderer(this,this);
     MWindowPainter = new SAT_Painter(this,this);
     MPaintContext.painter = MWindowPainter;
-
-    // #ifdef SAT_PAINTER_NANOVG
-    //   SAT_GLOBAL.GUI.nanoVGContext = MWindowPainter.getNanoVGContext();
-    // #endif
-
-    // #ifdef SAT_PAINTER_X11
-    //   SAT_GLOBAL.GUI.xcbConnection  = _getXcbConnection();
-    //   SAT_GLOBAL.GUI.xcbVisual      = _getXcbVisual();
-    //   SAT_GLOBAL.GUI.xcbDrawable    = _getXcbDrawable();
-    //   SAT_GLOBAL.GUI.xcbDepth       = _getDepth();
-    //   SAT_PRINT("xcbConnection: %p\n",_getXcbConnection());
-    //   SAT_PRINT("xcbVisual:     %i\n",_getXcbVisual());
-    //   SAT_PRINT("xcbDrawable:   %i\n",_getXcbDrawable());
-    //   SAT_PRINT("xcbDepth:      %i\n",_getDepth());
-    // #endif
-
     MWindowRenderer->resetCurrent();
-
   }
 
   //----------
@@ -114,10 +97,17 @@ public: // window
     //SAT_PRINT("x %i y %i w %i h %i\n",AXpos,AYpos,AWidth,AHeight);
     MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
 
+    uint32_t screenwidth = getWidth();
+    uint32_t screenheight = getHeight();
+
     //MWindowRenderer->makeCurrent();
-    MWindowRenderer->beginRendering(AWidth,/*-*/AHeight);
-    MWindowPainter->beginPainting(AWidth,AHeight);
-    MWindowPainter->beginFrame(AWidth,AHeight);
+    //MWindowRenderer->beginRendering(AWidth,AHeight);
+    //MWindowPainter->beginPainting(AWidth,AHeight);
+    //MWindowPainter->beginFrame(AWidth,AHeight);
+
+    MWindowRenderer->beginRendering(screenwidth,screenheight);
+    MWindowPainter->beginPainting(screenwidth,screenheight);
+    MWindowPainter->beginFrame(screenwidth,screenheight);
 
     on_window_paint(&MPaintContext);
 

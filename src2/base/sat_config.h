@@ -141,11 +141,15 @@
 
 //#define SAT_TESTS_EXIT_ON_FAILURE
 
+//#define SAT_SURFACE_BITMAP
+//#define SAT_SURFACE_CAIRO
+//#define SAT_SURFACE_NANOVG
 //#define SAT_SURFACE_WIN32
 //#define SAT_SURFACE_X11
 
 //#define SAT_WINDOW_NO_TIMER_AUTOSTART
 //#define SAT_WINDOW_TIMER_REFRESH  
+
 //#define SAT_WINDOW_WAYLAND
 //#define SAT_WINDOW_WIN32
 //#define SAT_WINDOW_X11
@@ -252,8 +256,10 @@
   #ifdef SAT_GUI_WIN32
     #define SAT_WINDOW_WIN32
     #define SAT_SURFACE_WIN32
-    #define SAT_RENDERER_WGL
-    #define SAT_PAINTER_NANOVG
+    #define SAT_WINDOW_WIN32
+    #define SAT_SURFACE_WIN32
+    //#define SAT_RENDERER_WGL
+    //#define SAT_PAINTER_NANOVG
   #endif
 
   #ifdef SAT_GUI_X11
