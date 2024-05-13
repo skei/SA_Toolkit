@@ -38,6 +38,11 @@ public:
 public:
 //------------------------------
 
+  virtual int32_t getImage()    { return 0; }
+  virtual void    select()      {}
+  virtual void    deselect()    {}
+
+
 };
 
 //----------------------------------------------------------------------

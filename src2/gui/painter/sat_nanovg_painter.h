@@ -6,6 +6,7 @@
 #include "gui/lib/sat_nanovg.h"
 #include "gui/painter/sat_base_painter.h"
 #include "gui/painter/sat_painter_owner.h"
+#include "gui/sat_surface.h"
 
 //#include "../data/fonts/Roboto/Roboto-Regular.h"
 //#include "../data/fonts/Manjari/Manjari-Thin.h"
@@ -1019,6 +1020,36 @@ public: // render buffer
 //  }
 
 //------------------------------
+public:
+//------------------------------
+
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) final {
+    SAT_TRACE;
+  }
+
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) final {
+    SAT_TRACE;
+  }
+  
+  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) final {
+    SAT_TRACE;
+    //ASurface->select();
+    //drawRect(AXpos,AYpos,ASurface->getWidth(),ASurface->getHeight());
+    //ASurface->deselect();
+  }
+  
+  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) final {
+    SAT_TRACE;
+      // ASurface->select();
+      //   setFillColor(SAT_Red);
+      //   fillRect(5,5,32,32);
+      // ASurface->deselect();
+    int32_t image = ASurface->getImage();
+    setFillImage(image,0,0,1,1,1,0);
+    fillRect(AXpos,AYpos,ASrc.w,ASrc.h);
+  }
+  
+  //------------------------------
 public:
 //------------------------------
 

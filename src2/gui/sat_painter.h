@@ -6,6 +6,9 @@
 #include "gui/painter/sat_paint_target.h"
 #include "gui/painter/sat_painter_owner.h"
 
+#include "../../data/fonts/Roboto/Roboto-Regular.h"
+#include "../../data/fonts/Manjari/Manjari-Thin.h"
+
 typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_ClipRectStack;
 
 //----------
@@ -51,9 +54,12 @@ class SAT_Painter
 private:
 //------------------------------
 
-//SAT_PainterOwner* MOwner      = nullptr;
-  SAT_Rect          MClipRect   = {};
-  SAT_ClipRectStack MClipStack  = {};
+//SAT_PainterOwner* MOwner        = nullptr;
+  SAT_Rect          MClipRect     = {};
+  SAT_ClipRectStack MClipStack    = {};
+
+  int               MDefaultFont  = -1;
+  int               MHeaderFont   = -1;
 
 //------------------------------
 public:
@@ -61,7 +67,12 @@ public:
 
   SAT_Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
   : SAT_ImplementedPainter(AOwner,ATarget) {
-    //MOwner = AOwner;
+
+    MDefaultFont = loadFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
+    MHeaderFont = loadFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
+    selectFont(MDefaultFont);
+    setTextSize(12.0);
+
   }
 
   //----------

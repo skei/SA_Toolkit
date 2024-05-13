@@ -15,10 +15,9 @@ private:
 //------------------------------
 
   const char* MText           = "text";
-
   bool        MDrawText       = true;
   SAT_Color   MTextColor      = SAT_Black;
-  double      MTextSize       = 10.0;
+  double      MTextSize       = 12.0;
   uint32_t    MTextAlignment  = SAT_TEXT_ALIGN_CENTER;
 
 //------------------------------

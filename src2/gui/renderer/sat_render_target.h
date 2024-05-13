@@ -10,7 +10,10 @@
 
 class SAT_RenderTarget {
 public:
-  #ifdef SAT_LINUX
+  #ifdef SAT_RENDERER_GLX
+    virtual xcb_drawable_t on_renderTarget_getXcbDrawable() = 0; //{ return XCB_NONE; }
+  #endif
+  #ifdef SAT_RENDERER_X11
     virtual xcb_drawable_t on_renderTarget_getXcbDrawable() = 0; //{ return XCB_NONE; }
   #endif
 };

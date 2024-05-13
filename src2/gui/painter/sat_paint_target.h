@@ -10,7 +10,10 @@
 
 class SAT_PaintTarget {
 public:
-  #ifdef SAT_LINUX
+  #ifdef SAT_PAINTER_NANOVG
+    virtual xcb_drawable_t on_paintTarget_getXcbDrawable() = 0; //{ return XCB_NONE; }
+  #endif
+  #ifdef SAT_PAINTER_X11
     virtual xcb_drawable_t on_paintTarget_getXcbDrawable() = 0; //{ return XCB_NONE; }
   #endif
 };

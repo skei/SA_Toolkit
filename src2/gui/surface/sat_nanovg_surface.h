@@ -5,6 +5,11 @@
 #include "sat.h"
 #include "gui/lib/sat_nanovg.h"
 #include "gui/surface/sat_base_surface.h"
+#include "gui/painter/sat_painter_owner.h"
+#include "gui/painter/sat_paint_source.h"
+#include "gui/painter/sat_paint_target.h"
+
+//#include "gui/lib/sat_x11.h"
 
 //----------------------------------------------------------------------
 //
@@ -71,15 +76,36 @@ public:
 public: // owner
 //------------------------------
 
-  // SAT_PainterOwner
-  // xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
-  // xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MVisual; }
+  #ifdef SAT_PAINTER_NANOVG
+  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return nullptr; }  // MConnection; }
+  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return XCB_NONE; } // MScreenVisual; }
+  #endif
 
-  // SAT_PaintSource
-  // xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return MPixmap; }
+  #ifdef SAT_PAINTER_X11
+  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return nullptr; }  // MConnection; }
+  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return XCB_NONE; } // MScreenVisual; }
+  #endif
 
-  // SAT_PaintTarget
-  // xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MPixmap; }
+  //----------
+
+  #ifdef SAT_PAINTER_NANOVG
+  xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return XCB_NONE; }
+  #endif
+
+  #ifdef SAT_PAINTER_X11
+  xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return XCB_NONE; }
+  #endif
+
+  //----------
+
+  #ifdef SAT_PAINTER_NANOVG
+  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return XCB_NONE; }
+  #endif
+
+  #ifdef SAT_PAINTER_X11
+  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return XCB_NONE; }
+  #endif
+
 
 //------------------------------
 public:

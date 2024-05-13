@@ -10,7 +10,11 @@
 
 class SAT_PainterOwner {
 public:
-  #ifdef SAT_LINUX
+  #ifdef SAT_PAINTER_NANOVG
+    virtual xcb_connection_t* on_painterOwner_getXcbConnection()  = 0; //{ return nullptr; }
+    virtual xcb_visualid_t    on_painterOwner_getXcbVisual()      = 0; //{ return XCB_NONE; }
+  #endif
+  #ifdef SAT_PAINTER_X11
     virtual xcb_connection_t* on_painterOwner_getXcbConnection()  = 0; //{ return nullptr; }
     virtual xcb_visualid_t    on_painterOwner_getXcbVisual()      = 0; //{ return XCB_NONE; }
   #endif
