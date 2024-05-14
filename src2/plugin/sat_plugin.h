@@ -545,6 +545,9 @@ public: // editor
   // called when the editor (and its window, if embedded) has been created..
 
   virtual bool setupEditor(SAT_Editor* AEditor) {
+    SAT_Window* window = AEditor->getWindow();
+    SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+    window->setRootWidget(root);
     return true;
   }
 
@@ -562,6 +565,8 @@ public: // editor
   virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
     return new SAT_Window(AWidth,AHeight);
   }
+
+  //----------
 
   virtual void deleteWindow(SAT_Window* AWindow) {
     delete AWindow;

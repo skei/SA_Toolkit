@@ -69,7 +69,7 @@ public: // owner
   // SAT_SurfaceOwner (from SAT_X11Window)
 
   #ifdef SAT_PAINTER_NANOVG
-    //bool        on_surfaceOwner_isNanoVG()         override { return true; }
+  //bool        on_surfaceOwner_isNanoVG()         override { return true; }
     NVGcontext* on_surfaceOwner_getNanoVGContext() override { return MWindowPainter->getNvgContext(); }
   #endif
 

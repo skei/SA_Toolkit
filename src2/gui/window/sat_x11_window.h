@@ -271,8 +271,8 @@ public: // SAT_BaseWindow
 
   //----------
 
-  void setMouseCursor() override {
-    // setWMCursor(ACursor);
+  void setMouseCursor(int32_t ACursor) override {
+    setWMCursor(ACursor);
   }
 
   //----------
@@ -496,7 +496,7 @@ private: // setup,cleanup
 
   void cleanupConnection() {
     XSetEventQueueOwner(MDisplay,XlibOwnsEventQueue);
-    XCloseDisplay(MDisplay);  // this crashes bitwig??
+    XCloseDisplay(MDisplay);
     MDisplay = nullptr;
     MConnection = nullptr;
   }
@@ -513,7 +513,6 @@ private: // setup,cleanup
         break;
       }
     }
-
     MScreenWidth    = MScreen->width_in_pixels;
     MScreenHeight   = MScreen->height_in_pixels;
     MScreenDepth    = MScreen->root_depth;
@@ -521,7 +520,6 @@ private: // setup,cleanup
     //MScreenWindow   = MScreen->root;
     //MScreenColormap = MScreen->default_colormap;
     //MScreenDrawable = MScreen->root;
-    
   }
 
   //----------

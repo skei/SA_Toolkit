@@ -8,7 +8,7 @@
 class SAT_SurfaceOwner {
 public:
   //#ifdef SAT_SURFACE_NANOVG
-  //  NVGcontext* getNanoVGContext() { return nullptr; }
+  //  NVGcontext* on_surfaceOwner_getNanoVGContext() { return nullptr; }
   //#endif
 };
 

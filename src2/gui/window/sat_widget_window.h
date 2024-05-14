@@ -36,14 +36,18 @@ private:
   SAT_Widget*         MModalWidget        = nullptr;
   SAT_Widget*         MMouseCaptureWidget = nullptr;
   SAT_Widget*         MKeyCaptureWidget   = nullptr;
-  
-  int32_t             MMouseClickedXpos   = 0;
-  int32_t             MMouseClickedYpos   = 0;
-  uint32_t            MMouseClickedButton = 0;
 
+  //
+
+  int32_t             MMouseCurrentCursor = SAT_CURSOR_DEFAULT;
+  
   bool                MMouseLocked        = false;
   int32_t             MMouseLockedX       = 0;
   int32_t             MMouseLockedY       = 0;
+
+  int32_t             MMouseClickedXpos   = 0;
+  int32_t             MMouseClickedYpos   = 0;
+  uint32_t            MMouseClickedButton = 0;
 
   bool                MMouseCaptured      = false;
   int32_t             MMouseCaptureXpos   = 0;
@@ -361,26 +365,26 @@ public: // widget listener
 
   void on_widgetListener_set_cursor(SAT_Widget* AWidget, int32_t ACursor) override {
     // //SAT_Print("%s\n",AWidget->getName());
-    // switch(ACursor) {
-    //   case SAT_CURSOR_LOCK:
-    //     lockMouseCursor();
-    //     break;
-    //   case SAT_CURSOR_UNLOCK:
-    //     unlockMouseCursor();
-    //     break;
-    //   case SAT_CURSOR_SHOW:  
-    //     showMouse();
-    //     setMouseCursor(MMouseCurrentCursor);
-    //     break;
-    //   case SAT_CURSOR_HIDE:
-    //     hideMouse();
-    //     break;
-    //   default:
-    //     if (ACursor != MMouseCurrentCursor) {
-    //       setMouseCursor(ACursor);
-    //       MMouseCurrentCursor = ACursor;
-    //     }
-    // }
+    switch(ACursor) {
+      case SAT_CURSOR_LOCK:
+//        lockMouseCursor();
+        break;
+      case SAT_CURSOR_UNLOCK:
+//        unlockMouseCursor();
+        break;
+      case SAT_CURSOR_SHOW:  
+        showMouse();
+        setMouseCursor(MMouseCurrentCursor);
+        break;
+      case SAT_CURSOR_HIDE:
+        hideMouse();
+        break;
+      default:
+        if (ACursor != MMouseCurrentCursor) {
+          setMouseCursor(ACursor);
+          MMouseCurrentCursor = ACursor;
+        }
+    }
   }
   
   //----------

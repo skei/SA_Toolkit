@@ -4,7 +4,6 @@
 
 #include "sat.h"
 #include "gui/widget/sat_base_widget.h"
-//#include "gui/widget/sat_widget_owner.h"
 
 class SAT_Widget;
 typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
@@ -23,17 +22,17 @@ struct SAT_WidgetLayout {
 };
 
 struct SAT_WidgetOptions {
-  bool opaque       = true;   // fully fills its rect
-  bool autoCapture  = false;  // mouse automatically captured
-  bool autoCursor   = false;  // mouse automatically captured
-  bool autoHint     = false;  // automatically send hint
+  bool      opaque      = true;   // fully fills its rect
+  bool      autoCapture = false;  // mouse automatically captured
+  bool      autoCursor  = false;  // mouse automatically captured
+  bool      autoHint    = false;  // automatically send hint
 };
 
 struct SAT_WidgetState {
-  bool active       = true;   // receive events
-  bool visible      = true;   // alignment, drawing
-  bool disabled     = false;  // drawn grayed out
-  bool interactive  = false;  // drawn highlighted
+  bool      active      = true;   // receive events
+  bool      visible     = true;   // alignment, drawing
+  bool      disabled    = false;  // drawn grayed out
+  bool      interactive = false;  // drawn highlighted
 };
 
 //----------------------------------------------------------------------
@@ -64,8 +63,7 @@ private:
 //SAT_Point         MMovedOffset                        = {0,0};          // manually moved, .. 
 //SAT_Point         MScrolledOffset                     = {0,0};          // scrollbox, ..
 
-//  void*             MParameter                          = nullptr;        // connected parameter
-
+//void*             MParameter                          = nullptr;        // connected parameter
   void*             MParameters[SAT_WIDGET_NUM_VALUES]  = {0};            // array of values
   uint32_t          MParameterIndex                     = 0;              // index of selected, current value
 

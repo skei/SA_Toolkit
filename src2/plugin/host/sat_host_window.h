@@ -54,11 +54,9 @@ public:
 public:
 //------------------------------
 
-  // surface owner
-
-  #ifdef SAT_PAINTER_NANOVG
-    NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
-  #endif
+  // #ifdef SAT_PAINTER_NANOVG
+  //   NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
+  // #endif
 
   /*
 

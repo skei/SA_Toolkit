@@ -7,6 +7,8 @@
 class SAT_Parameter;
 typedef SAT_Array<SAT_Parameter*> SAT_ParameterArray;
 
+#define SAT_PARAMETER_NUM_VALUES 16
+
 //----------------------------------------------------------------------
 //
 //
@@ -48,22 +50,22 @@ private:
     .default_value  = 0.0
   };
 
-  uint32_t    MIndex                          = 0;    // index into parent's list of parameters
-  void*       MWidget                         = nullptr;
+  uint32_t    MIndex                              = 0;    // index into parent's list of parameters
+  void*       MWidget                             = nullptr;
 
-  char        MValueText[SAT_MAX_NAME_LENGTH] = {0};
-  sat_param_t MValue                          = {0};
-  sat_param_t MModulation                     = 0.0;
+  char        MValueText[SAT_MAX_NAME_LENGTH]     = {0};
+  sat_param_t MValue                              = {0};
+  sat_param_t MModulation                         = 0.0;
 
-  bool        MIndicateMapped                 = false;
-  SAT_Color   MIndicateMappedColor            = SAT_Black;
-  uint32_t    MIndicateAutomationState        = 0;
-  SAT_Color   MIndicateAutomationColor        = SAT_White;
+  bool        MIndicateMapped                     = false;
+  SAT_Color   MIndicateMappedColor                = SAT_Black;
+  uint32_t    MIndicateAutomationState            = 0;
+  SAT_Color   MIndicateAutomationColor            = SAT_White;
 
-  // bool         MGuiAutomationDirty             = false;
-  // bool         MGuiModulationDirty             = false;
-  // sat_param_t  MLastAutomatedValue             = 0.0;
-  // sat_param_t  MLastModulatedValue             = 0.0;
+//bool        MGuiAutomationDirty                 = false;
+//bool        MGuiModulationDirty                 = false;
+//sat_param_t MLastAutomatedValue                 = 0.0;
+//sat_param_t MLastModulatedValue                 = 0.0;
 
 //------------------------------
 public:
@@ -117,7 +119,6 @@ public:
 //virtual void setLastAutomatedValue(double AValue)         { MLastAutomatedValue = AValue; }
 //virtual void setLastModulatedValue(double AValue)         { MLastModulatedValue = AValue; }
 
-
 //------------------------------
 public:
 //------------------------------
@@ -137,12 +138,12 @@ public:
 //virtual bool                isGuiAutomationDirty()  { return MGuiAutomationDirty; }
 //virtual bool                isGuiModulationDirty()  { return MGuiModulationDirty; }
 
-  virtual bool isStepped()  { return (MInfo.flags & CLAP_PARAM_IS_STEPPED); }
-  virtual bool isPeriodic() { return (MInfo.flags & CLAP_PARAM_IS_PERIODIC); }
-  virtual bool isHidden()   { return (MInfo.flags & CLAP_PARAM_IS_HIDDEN); }
-  virtual bool isReadOnly() { return (MInfo.flags & CLAP_PARAM_IS_READONLY); }
-  virtual bool isBypass()   { return (MInfo.flags & CLAP_PARAM_IS_BYPASS); }
-  virtual bool isEnum()     { return (MInfo.flags & CLAP_PARAM_IS_ENUM); }
+  virtual bool                isStepped()             { return (MInfo.flags & CLAP_PARAM_IS_STEPPED); }
+  virtual bool                isPeriodic()            { return (MInfo.flags & CLAP_PARAM_IS_PERIODIC); }
+  virtual bool                isHidden()              { return (MInfo.flags & CLAP_PARAM_IS_HIDDEN); }
+  virtual bool                isReadOnly()            { return (MInfo.flags & CLAP_PARAM_IS_READONLY); }
+  virtual bool                isBypass()              { return (MInfo.flags & CLAP_PARAM_IS_BYPASS); }
+  virtual bool                isEnum()                { return (MInfo.flags & CLAP_PARAM_IS_ENUM); }
 
 //------------------------------
 public:

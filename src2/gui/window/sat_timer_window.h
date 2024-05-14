@@ -18,7 +18,6 @@
 //----------------------------------------------------------------------
 
 class SAT_TimerWindow
-//: public SAT_BasicWindow
 : public SAT_ImplementedWindow
 , public SAT_TimerListener {
 
@@ -34,7 +33,6 @@ public:
 //------------------------------
 
   SAT_TimerWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  //: SAT_BasicWindow(AWidth,AHeight,AParent) {
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     MTimer = new SAT_Timer(this);
   }
@@ -67,7 +65,6 @@ public: // window
 //------------------------------
 
   void on_window_show() override {
-    //SAT_BasicWindow::on_window_show();
     SAT_ImplementedWindow::on_window_show();
     //SAT_TRACE;
     #ifndef SAT_WINDOW_NO_TIMER_AUTOSTART
@@ -84,7 +81,6 @@ public: // window
       //SAT_TRACE;
       stopTimer();
     #endif
-    //SAT_BasicWindow::on_window_hide();
     SAT_ImplementedWindow::on_window_hide();
   }
 

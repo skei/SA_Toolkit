@@ -36,7 +36,7 @@ public:
   virtual void      setTitle(const char* ATitle) {}
 
   virtual void      setMousePos(int32_t AXpos, int32_t AYpos) {}
-  virtual void      setMouseCursor() {}
+  virtual void      setMouseCursor(int32_t ACursor) {}
   virtual void      hideMouse() {}
   virtual void      showMouse() {}
   virtual void      grabMouse() {}
