@@ -130,10 +130,10 @@ public: // init
 
   #ifndef SAT_NO_GUI
 
-  SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) final {
-    SAT_TRACE;
-    return new SAT_Window(AWidth,AHeight);
-  }
+  // SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) final {
+  //   SAT_TRACE;
+  //   return new SAT_Window(AWidth,AHeight);
+  // }
 
   bool setupEditor(SAT_Editor* AEditor) final {
     SAT_TRACE;
@@ -143,18 +143,20 @@ public: // init
 
       MSurface = new SAT_Surface(window,100,100,0);
 
+      // MSurface->select();
+      // SAT_Painter* painter = window->getPainter();
+      // painter->setFillColor(SAT_Red);
+      // painter->fillRect(0,0,10,10);
+      // MSurface->deselect();
+
       SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
       root->appendChild(wdg1);
       wdg1->setBackgroundColor(SAT_DarkGrey);
 
-      SAT_VisualWidget* wdg2 = new SAT_VisualWidget(SAT_Rect(120,10,100,50));
-      root->appendChild(wdg2);
-      wdg2->setBackgroundColor(SAT_DarkGrey);
-
-      SAT_TextWidget* text1 = new SAT_TextWidget(SAT_Rect(230,10,100,50));
+      SAT_TextWidget* text1 = new SAT_TextWidget(SAT_Rect(120,10,100,50));
       root->appendChild(text1);
 
-      SAT_ValueWidget* value1 = new SAT_ValueWidget(SAT_Rect(340,10,100,50));
+      SAT_ValueWidget* value1 = new SAT_ValueWidget(SAT_Rect(230,10,100,50));
       root->appendChild(value1);
 
       //
