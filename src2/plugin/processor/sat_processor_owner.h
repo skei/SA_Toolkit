@@ -17,13 +17,15 @@ public:
   virtual SAT_NotePortArray*  on_processorOwner_getNoteOutputPorts()  { return nullptr; }
   virtual SAT_ParameterArray* on_processorOwner_getParameters()       { return nullptr; }
 
-  virtual void                on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-  virtual void                on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  // should be processorListener?
 
-  // virtual void  on_processorOwner_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-  // virtual void  on_processorOwner_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
+  virtual void  on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void  on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void  on_processorOwner_outputEvent()  {}
 
-  // virtual void  on_processorOwner_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
+//virtual void  on_processorOwner_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+//virtual void  on_processorOwner_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
+//virtual void  on_processorOwner_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
 };
 
 //----------------------------------------------------------------------

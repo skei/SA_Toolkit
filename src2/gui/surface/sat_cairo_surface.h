@@ -40,7 +40,7 @@ public:
     MOwner = AOwner;
     MWidth = AWidth;
     MHeight = AHeight;
-    if (ADepth == 0) MDepth = AOwner->_getDepth();
+    if (ADepth == 0) MDepth = AOwner->on_surfaceOwner_getDepth();
     else MDepth = ADepth;
     //..
   }

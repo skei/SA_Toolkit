@@ -213,6 +213,7 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_PLUGIN_BLOCK_PROCESSOR              0
 #define SAT_PLUGIN_INTERLEAVED_PROCESSOR        1
 #define SAT_PLUGIN_QUANTIZED_PROCESSOR          2
+#define SAT_PLUGIN_VOICE_PROCESSOR              3
 
 #define SAT_RENDERER_TYPE_NONE                  0
 #define SAT_RENDERER_TYPE_GLX                   1

@@ -3,9 +3,15 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/surface/sat_base_surface.h"
 #include "gui/surface/sat_surface_owner.h"
 
 //----------
+
+#ifdef SAT_NO_SURFACE
+  //#include "gui/surface/sat_no_surface.h"
+  typedef SAT_BaseSurface SAT_ImplementedSurface;
+#endif
 
 // #ifdef SAT_SURFACE_BITMAP
 // #endif

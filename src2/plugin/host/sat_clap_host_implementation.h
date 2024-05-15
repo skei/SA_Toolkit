@@ -141,7 +141,8 @@ private: // host
 
 protected:
 
-  const clap_host_t MClapHost = {
+  //const
+  clap_host_t MClapHost = {
     .clap_version     = CLAP_VERSION,
     .host_data        = this,
     .name             = "SAT_ClapHostImplementation",

@@ -95,8 +95,6 @@ class myPlugin
 private:
 //------------------------------
 
-  SAT_Surface* MSurface = nullptr;
-
 //------------------------------
 public:
 //------------------------------
@@ -118,9 +116,9 @@ public: // init
     registerDefaultExtensions();
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
-    appendParameter( "Left",  "", 1.0 );
-    appendParameter( "Right", "", 1.0 );
-    appendParameter( "Gain",  "", 1.0 );
+    appendParameter( new SAT_Parameter("Left",  "", 1.0) );
+    appendParameter( new SAT_Parameter("Right", "", 1.0) );
+    appendParameter( new SAT_Parameter("Gain",  "", 1.0) );
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(640,480,1.0,false);
     return SAT_Plugin::init();
@@ -128,61 +126,40 @@ public: // init
 
   //----------
 
+  //#if 0
   #ifndef SAT_NO_GUI
 
-  // SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) final {
-  //   SAT_TRACE;
-  //   return new SAT_Window(AWidth,AHeight);
-  // }
+    bool setupEditor(SAT_Editor* AEditor) final {
+      SAT_TRACE;
+      SAT_Window* window = AEditor->getWindow();
+      SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+      window->setRootWidget(root);
 
-  bool setupEditor(SAT_Editor* AEditor) final {
-    SAT_TRACE;
-    SAT_Window* window = AEditor->getWindow();
-    SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
-    window->setRootWidget(root);
+        SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
+        root->appendChild(wdg1);
+        wdg1->setBackgroundColor(SAT_DarkGrey);
 
-      MSurface = new SAT_Surface(window,100,100,0);
+        SAT_TextWidget* text1 = new SAT_TextWidget(SAT_Rect(120,10,100,50));
+        root->appendChild(text1);
 
-      // MSurface->select();
-      // SAT_Painter* painter = window->getPainter();
-      // painter->setFillColor(SAT_Red);
-      // painter->fillRect(0,0,10,10);
-      // MSurface->deselect();
+        SAT_ValueWidget* value1 = new SAT_ValueWidget(SAT_Rect(230,10,100,50));
+        root->appendChild(value1);
 
-      SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
-      root->appendChild(wdg1);
-      wdg1->setBackgroundColor(SAT_DarkGrey);
+        //
 
-      SAT_TextWidget* text1 = new SAT_TextWidget(SAT_Rect(120,10,100,50));
-      root->appendChild(text1);
+        SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(10,70,100,50));
+        root->appendChild(button1);
+        AEditor->connect(button1,getParameter(0));
 
-      SAT_ValueWidget* value1 = new SAT_ValueWidget(SAT_Rect(230,10,100,50));
-      root->appendChild(value1);
+        SAT_DragValueWidget* drag1 = new SAT_DragValueWidget(SAT_Rect(120,70,100,50));
+        root->appendChild(drag1);
+        AEditor->connect(drag1,getParameter(1));
 
-      //
+      return true;
+    }
 
-      SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(10,70,100,50));
-      root->appendChild(button1);
-      AEditor->connect(button1,getParameter(0));
-
-      SAT_DragValueWidget* drag1 = new SAT_DragValueWidget(SAT_Rect(120,70,100,50));
-      root->appendChild(drag1);
-      AEditor->connect(drag1,getParameter(1));
-
-      SAT_SurfaceWidget* surface1 = new SAT_SurfaceWidget(SAT_Rect(230,70,100,50),MSurface);
-      root->appendChild(surface1);
-
-    return true;
-  }
-
-  //----------
-
-  void cleanupEditor(SAT_Editor* AEditor) final {
-    SAT_TRACE;
-    if (MSurface) delete MSurface;
-  }
-
-  #endif
+  #endif // gui
+  //#endif // 0
 
 };
 

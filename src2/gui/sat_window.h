@@ -5,12 +5,18 @@
 #include "sat.h"
 #include "gui/widget/sat_widget_listener.h"
 #include "gui/widget/sat_root_widget.h"
+#include "gui/window/sat_base_window.h"
 #include "gui/sat_renderer.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 #include "base/system/sat_timer.h"
 
 //----------
+
+#ifdef SAT_NO_WINDOW
+  //#include "gui/window/sat_no_window.h"
+  typedef SAT_BaseWindow SAT_ImplementedWindow;
+#endif
 
 #ifdef SAT_WINDOW_WAYLAND
   #include "gui/window/sat_wayland_window.h"
@@ -44,15 +50,11 @@ public:
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
   }
 
-  virtual ~SAT_BasicWindow() {
-  }
-
   // make it shut up about unimplemented virtual abstract methods..
   
   #ifdef SAT_PAINTER_NANOVG
     NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
   #endif
-
 
 };
 
@@ -82,11 +84,6 @@ public:
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_WidgetWindow(AWidth,AHeight,AParent) {
-  }
-
-  //----------
-
-  virtual ~SAT_Window() {
   }
 
 };

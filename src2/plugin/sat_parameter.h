@@ -43,8 +43,8 @@ private:
     .id             = 0,
     .flags          = CLAP_PARAM_IS_AUTOMATABLE,
     .cookie         = this,
-    .name           = "",
-    .module         = "",
+    .name           = "param",
+    .module         = "default",
     .min_value      = 0.0,
     .max_value      = 1.0,
     .default_value  = 0.0

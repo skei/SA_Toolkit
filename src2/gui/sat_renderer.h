@@ -9,9 +9,15 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/renderer/sat_base_renderer.h"
 #include "gui/renderer/sat_renderer_owner.h"
 
 //----------
+
+#ifdef SAT_NO_RENDERER
+  //#include "gui/renderer/sat_no_renderer.h"
+  typedef SAT_BaseRenderer SAT_ImplementedRenderer;
+#endif
 
 #ifdef SAT_RENDERER_EGL
   #include "gui/renderer/sat_egl_renderer.h"

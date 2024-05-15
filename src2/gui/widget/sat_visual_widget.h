@@ -66,6 +66,8 @@ public:
     }
   }
 
+  //----------
+
   virtual void drawBorder(SAT_PaintContext* AContext) {
     if (MDrawBorder) {
       //SAT_TRACE;

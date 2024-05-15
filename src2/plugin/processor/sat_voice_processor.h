@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/sat_process_context.h"
 #include "plugin/sat_processor.h"
-#include "plugin/sat_processor_owner.h"
+#include "plugin/processor/sat_process_context.h"
+#include "plugin/processor/sat_processor_owner.h"
 
 //----------------------------------------------------------------------
 

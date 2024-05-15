@@ -5,11 +5,14 @@
 // todo: move most of this to dedicated hosting class
 
 #include "sat.h"
-#include "plugin/host/sat_host_window.h"
 #include "plugin/lib/sat_clap.h"
 #include "plugin/lib/sat_exe.h"
 #include "plugin/sat_host_implementation.h"
-#include "gui/sat_window.h"
+
+#ifndef SAT_NO_GUI
+  #include "plugin/host/sat_host_window.h"
+  #include "gui/sat_window.h"
+#endif
 
 //----------------------------------------------------------------------
 //
@@ -24,7 +27,9 @@
   const clap_plugin_t*            MClapPlugin     = nullptr;
   const clap_plugin_gui_t*        MClapGui        = nullptr;
   
+  #ifndef SAT_NO_GUI
   SAT_HostWindow*                 MHostWindow     = nullptr;
+  #endif
 
 //----------------------------------------------------------------------
 //
@@ -69,6 +74,8 @@
 //------------------------------
 //
 //------------------------------
+
+  #ifndef SAT_NO_GUI
 
   SAT_HostWindow* openEditor(SAT_HostWindow* AHostWindow) {
     //MHostWindow = AHostWindow;
@@ -118,6 +125,7 @@
     AHostWindow->eventLoop();
   }
 
+  #endif // gui
 
 //----------------------------------------------------------------------
 //
@@ -131,16 +139,22 @@ int main(int argc, char** argv) {
   SAT_HostImplementation* host = new SAT_HostImplementation();
   initFromMemory(&clap_entry,"");
   loadPlugin(host->getClapHost(),0);
-  uint32_t width,height;
-  getEditorSize(&width,&height);
-  SAT_HostWindow* window = new SAT_HostWindow(width,height,0,MClapPlugin);
-  window->setTitle("SAT_ExeEntry");
-  window->show();
-  SAT_HostWindow* hostwindow = openEditor(window);
-  mainloop(hostwindow);
-  closeEditor();
-  window->hide();
-  delete window;
+
+  #ifndef SAT_NO_GUI
+    if (MClapGui) {
+      uint32_t width,height;
+      getEditorSize(&width,&height);
+      SAT_HostWindow* window = new SAT_HostWindow(width,height,0,MClapPlugin);
+      window->setTitle("SAT_ExeEntry");
+      window->show();
+      SAT_HostWindow* hostwindow = openEditor(window);
+      mainloop(hostwindow);
+      closeEditor();
+      window->hide();
+      delete window;
+    }
+  #endif
+
   unloadPlugin();
   deinit();
   delete host;

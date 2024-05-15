@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/painter/sat_base_painter.h"
 #include "gui/painter/sat_paint_target.h"
 #include "gui/painter/sat_painter_owner.h"
 
@@ -18,6 +19,11 @@ typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_ClipRectStack;
   typedef SAT_PAINTER_USER_DEFINED SAT_ImplementedRenderer;
 
 #else
+
+  #ifdef SAT_NO_PAINTER
+    //#include "gui/painter/sat_no_painter.h"
+    typedef SAT_BasePainter SAT_ImplementedPainter;
+  #endif
 
   #ifdef SAT_PAINTER_CAIRO
     #include "gui/painter/sat_cairo_painter.h"

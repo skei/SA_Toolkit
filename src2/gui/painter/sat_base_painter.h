@@ -14,6 +14,7 @@ class SAT_Surface;
 class SAT_Painter;
 
 #ifdef SAT_PAINTER_NANOVG
+  #include "gui/lib/sat_nanovg.h"
   typedef NVGpaint sat_nanovg_paint_t;
 #endif
 

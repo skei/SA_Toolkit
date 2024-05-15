@@ -192,6 +192,8 @@ public: // clap.gui
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
       SAT_Assert(!MWindow);
 
+      // ask plugin to create window
+      // if not, create it ourselves
       if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
       else MWindow = new SAT_Window(MWidth,MHeight);
 

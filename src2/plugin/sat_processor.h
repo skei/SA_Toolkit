@@ -2,6 +2,11 @@
 #define sat_processor_included
 //----------------------------------------------------------------------
 
+// todo:
+// - output events
+
+//----------------------------------------------------------------------
+
 #include "sat.h"
 #include "plugin/processor/sat_process_context.h"
 #include "plugin/processor/sat_processor_owner.h"
@@ -336,6 +341,9 @@ public: // audio
 public:
 //------------------------------
 
+  // note: stereo only
+  // advice: override this with your own..
+
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
     const clap_process_t* process = AContext->process;
     bool have_audio_inputs = (process->audio_inputs_count > 0);
@@ -369,7 +377,7 @@ public:
         }
       }
     }
-    else { // no outputs
+    else {
       // inputs only
       if (have_audio_inputs) {
         float* input0 = process->audio_inputs[0].data32[0] + AOffset;
@@ -420,56 +428,56 @@ public: // gui dirty queues
 
   #if !defined (SAT_NO_GUI)
 
-  // call before processing all events
-  
-  void clearAutomationToGui() {
-    // uint32_t num = MParameters->size();
-    // for (uint32_t i=0; i<num; i++) {
-    //   SAT_Parameter* param = MParameters->getItem(i);
-    //   param->setGuiAutomationDirty(false);
-    //   //param->setLastAutomatedValue(0.0);
-    // }
-  }
-  
-  void clearModulationToGui() {
-    // uint32_t num = MParameters->size();
-    // for (uint32_t i=0; i<num; i++) {
-    //   SAT_Parameter* param = MParameters->getItem(i);
-    //   param->setGuiModulationDirty(false);
-    //   //param->setLastModulatedValue(0.0);
-    // }
-  }
-  
-  //----------
+    // call before processing all events
     
-  // call after processing all events
-  // lastAutomatedValue set in processParamValueEvent
-  // ParamFromHostToGui queue flushed at the end of process()
-  // should this be flushed in (start of) gui repaint?
-  
-  void queueAutomationToGui() {
-    // uint32_t num = MParameters->size();
-    // for (uint32_t i=0; i<num; i++) {
-    //   SAT_Parameter* param = MParameters->getItem(i);
-    //   if (param->isGuiAutomationDirty()) {
-    //     double value = param->getLastAutomatedValue();
-    //     MOwner->on_processorOwner_queueParamFromHostToGui(i,value);
-    //   }
-    // }
-  }
+    void clearAutomationToGui() {
+      // uint32_t num = MParameters->size();
+      // for (uint32_t i=0; i<num; i++) {
+      //   SAT_Parameter* param = MParameters->getItem(i);
+      //   param->setGuiAutomationDirty(false);
+      //   //param->setLastAutomatedValue(0.0);
+      // }
+    }
+    
+    void clearModulationToGui() {
+      // uint32_t num = MParameters->size();
+      // for (uint32_t i=0; i<num; i++) {
+      //   SAT_Parameter* param = MParameters->getItem(i);
+      //   param->setGuiModulationDirty(false);
+      //   //param->setLastModulatedValue(0.0);
+      // }
+    }
+    
+    //----------
+      
+    // call after processing all events
+    // lastAutomatedValue set in processParamValueEvent
+    // ParamFromHostToGui queue flushed at the end of process()
+    // should this be flushed in (start of) gui repaint?
+    
+    void queueAutomationToGui() {
+      // uint32_t num = MParameters->size();
+      // for (uint32_t i=0; i<num; i++) {
+      //   SAT_Parameter* param = MParameters->getItem(i);
+      //   if (param->isGuiAutomationDirty()) {
+      //     double value = param->getLastAutomatedValue();
+      //     MOwner->on_processorOwner_queueParamFromHostToGui(i,value);
+      //   }
+      // }
+    }
 
-  // same here..
+    // same here..
 
-  void queueModulationToGui() {
-    // uint32_t num = MParameters->size();
-    // for (uint32_t i=0; i<num; i++) {
-    //   SAT_Parameter* param = MParameters->getItem(i);
-    //   if (param->isGuiModulationDirty()) {
-    //     double value = param->getLastModulatedValue();
-    //     MOwner->on_processorOwner_queueModFromHostToGui(i,value);
-    //   }
-    // }
-  }
+    void queueModulationToGui() {
+      // uint32_t num = MParameters->size();
+      // for (uint32_t i=0; i<num; i++) {
+      //   SAT_Parameter* param = MParameters->getItem(i);
+      //   if (param->isGuiModulationDirty()) {
+      //     double value = param->getLastModulatedValue();
+      //     MOwner->on_processorOwner_queueModFromHostToGui(i,value);
+      //   }
+      // }
+    }
 
   #endif // nogui
 

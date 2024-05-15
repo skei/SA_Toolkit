@@ -6,7 +6,7 @@
 #include "sat.h"
 #include "plugin/lib/sat_clap.h"
 #include "plugin/host/sat_clap_host_implementation.h"
-#include "plugin/host/sat_host_window.h"
+//#include "plugin/host/sat_host_window.h"
 
 //----------------------------------------------------------------------
 //
@@ -23,6 +23,9 @@ public:
 
   SAT_HostImplementation()
   : SAT_ClapHostImplementation() {
+
+    MClapHost.name = "SAT_HostImplementation";
+
   };
 
   //----------

@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+
 #include "plugin/sat_audio_port.h"
 #include "plugin/sat_editor.h"
 #include "plugin/sat_host.h"
@@ -11,17 +12,26 @@
 #include "plugin/sat_plugin_queues.h"
 #include "plugin/sat_preset.h"
 #include "plugin/sat_processor.h"
+
 #include "plugin/editor/sat_editor_listener.h"
 #include "plugin/lib/sat_clap.h"
 #include "plugin/plugin/sat_clap_plugin.h"
-#include "plugin/processor/sat_block_processor.h"
+
 #include "plugin/processor/sat_process_context.h"
 #include "plugin/processor/sat_processor_owner.h"
+
+#include "plugin/processor/sat_block_processor.h"
 #include "plugin/processor/sat_interleaved_processor.h"
 #include "plugin/processor/sat_quantized_processor.h"
+#include "plugin/processor/sat_voice_processor.h"
 
+
+
+#ifndef SAT_NO_GUI
 #ifdef SAT_EDITOR_EMBEDDED
   #include "gui/sat_window.h"
+  #include "gui/sat_widgets.h"
+#endif
 #endif
 
 //----------------------------------------------------------------------
@@ -64,6 +74,7 @@ protected:
   uint32_t                MInitialEditorHeight  = 256;
   double                  MInitialEditorScale   = 1.0;
   bool                    MProportionalEditor   = false;
+  
 //double                  MEditorAspectRatio    = 1.0;
 //sat_atomic_bool_t       MIsEditorClosing      = false;
 
@@ -464,9 +475,10 @@ public: // processor
   void createProcessor(uint32_t AProcessor) {
     SAT_Processor* processor = nullptr;
     switch (AProcessor) {
-      case SAT_PLUGIN_BLOCK_PROCESSOR:       processor = new SAT_BlockProcessor(this); break;
-      case SAT_PLUGIN_INTERLEAVED_PROCESSOR: processor = new SAT_InterleavedProcessor(this); break;
-      case SAT_PLUGIN_QUANTIZED_PROCESSOR:   processor = new SAT_QuantizedProcessor(this); break;
+      case SAT_PLUGIN_BLOCK_PROCESSOR:        processor = new SAT_BlockProcessor(this); break;
+      case SAT_PLUGIN_INTERLEAVED_PROCESSOR:  processor = new SAT_InterleavedProcessor(this); break;
+      case SAT_PLUGIN_QUANTIZED_PROCESSOR:    processor = new SAT_QuantizedProcessor(this); break;
+      case SAT_PLUGIN_VOICE_PROCESSOR:        processor = new SAT_VoiceProcessor(this); break;
     }
     if (!processor) processor = new SAT_Processor(this);
     SAT_Assert(processor);
@@ -528,54 +540,6 @@ public: // processor owner
 public: // editor
 //------------------------------
 
-  #ifndef SAT_NO_GUI
-
-  virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
-    return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
-  }
-
-  //----------
-
-  virtual void deleteEditor(SAT_Editor* AEditor) {
-    if (AEditor) delete AEditor;
-  }
-
-  //----------
-
-  // called when the editor (and its window, if embedded) has been created..
-
-  virtual bool setupEditor(SAT_Editor* AEditor) {
-    SAT_Window* window = AEditor->getWindow();
-    SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
-    window->setRootWidget(root);
-    return true;
-  }
-
-  // called just before editor is shown..
-
-  virtual void cleanupEditor(SAT_Editor* AEditor) {
-  }
-
-  #endif // no gui
-
-  //----------
-
-  #ifdef SAT_EDITOR_EMBEDDED
-
-  virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
-    return new SAT_Window(AWidth,AHeight);
-  }
-
-  //----------
-
-  virtual void deleteWindow(SAT_Window* AWindow) {
-    delete AWindow;
-  }
-
-  #endif // embedded
-
-  //----------
-
   void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
@@ -585,6 +549,67 @@ public: // editor
     //   MEditorAspectRatio = AWidth / AHeight;
     // }
   }
+
+  //----------
+
+  #ifndef SAT_NO_GUI
+  
+    #ifdef SAT_EDITOR_EMBEDDED
+    virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
+      return new SAT_Window(AWidth,AHeight);
+    }
+    #endif
+
+    //----------
+
+    #ifdef SAT_EDITOR_EMBEDDED
+    virtual void deleteWindow(SAT_Window* AWindow) {
+      delete AWindow;
+    }
+    #endif
+
+  #endif // no gui
+
+  //----------
+
+  #ifndef SAT_NO_GUI
+
+    virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
+      return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
+    }
+
+    //----------
+
+    virtual void deleteEditor(SAT_Editor* AEditor) {
+      if (AEditor) delete AEditor;
+    }
+
+    //----------
+
+    // called when the editor (and its window, if embedded) has been created..
+    virtual bool setupEditor(SAT_Editor* AEditor) {
+      SAT_Window* window = AEditor->getWindow();
+      SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+      window->setRootWidget(root);
+
+      // setup default editor..
+
+      for (uint32_t i=0; i<getNumParameters(); i++) {
+        SAT_DragValueWidget* widget = new SAT_DragValueWidget( SAT_Rect( 10, (10 + (i * 25)), 200,20) );
+        root->appendChild(widget);
+        AEditor->connect(widget,getParameter(i));
+      }
+
+      return true;
+    }
+
+    //----------
+
+    // called just before editor is shown..
+    virtual void cleanupEditor(SAT_Editor* AEditor) {
+    }
+
+  #endif // no gui
 
 //------------------------------
 public: // editor listener
@@ -618,6 +643,8 @@ public: // editor listener
       return createWindow(AWidth,AHeight);
     }
 
+    //----------
+
     void on_editorListener_deleteWindow(SAT_Window* AWindow) override {
       deleteWindow(AWindow);
     }
@@ -633,13 +660,11 @@ public: // clap plugin
   bool init() override {
     //SAT_TRACE;
     MHost = new SAT_Host(getClapHost());
-
     setDefaultParameterValues();
     #ifndef SAT_NO_GUI
       MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
       SAT_Assert(MEditor);
     #endif
-
     MIsInitialized = true;    
     return true;
   }
@@ -649,12 +674,10 @@ public: // clap plugin
   void destroy() override {
     //SAT_TRACE;
     if (MHost) delete MHost;
-
     #ifndef SAT_NO_GUI
       deleteEditor(MEditor);
       MEditor = nullptr;
     #endif
-
     MIsInitialized = false;
     delete this;
   }
@@ -904,9 +927,10 @@ public: // clap extensions
     // MIsEditorClosing = false;
     if (MEditor) {
       if (MEditor->create(api,is_floating)) {
-        if (!setupEditor(MEditor)) return false;
-        setEditorParameterValues();
-        return true;
+        if (setupEditor(MEditor)) {
+          setEditorParameterValues();
+          return true;
+        }
       }
     }
     return false;
