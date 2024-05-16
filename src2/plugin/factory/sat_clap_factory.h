@@ -9,23 +9,23 @@
 
 //----------------------------------------------------------------------
 
-#if defined (SAT_PLUGIN_INCLUDE_ARA_FACTORY)
+#if defined (SAT_PLUGIN_INCLUDE_CLAP_ARA_FACTORY)
   #include "plugin/factory/sat_clap_ara_factory.h"
 #endif
 
-#if defined (SAT_PLUGIN_INCLUDE_INVALIDATION_FACTORY)
+#if defined (SAT_PLUGIN_INCLUDE_CLAP_INVALIDATION_FACTORY)
   #include "plugin/factory/sat_clap_invalidation_factory.h"
 #endif
 
-#if defined (SAT_PLUGIN_INCLUDE_PLUGIN_FACTORY)
+#if defined (SAT_PLUGIN_INCLUDE_CLAP_PLUGIN_FACTORY)
    #include "plugin/factory/sat_clap_plugin_factory.h"
 #endif
 
-#if defined (SAT_PLUGIN_INCLUDE_PRESET_DISCOVERY_FACTORY)
+#if defined (SAT_PLUGIN_INCLUDE_CLAP_PRESET_DISCOVERY_FACTORY)
   #include "plugin/factory/sat_clap_preset_discovery_factory.h"
 #endif
 
-#if defined (SAT_PLUGIN_INCLUDE_STATE_CONVERTER_FACTORY)
+#if defined (SAT_PLUGIN_INCLUDE_CLAP_STATE_CONVERTER_FACTORY)
   #include "plugin/factory/sat_clap_state_converter_factory.h"
 #endif
 

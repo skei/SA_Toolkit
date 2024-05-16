@@ -8,7 +8,7 @@
 
 //----------------------------------------------------------------------
 
-bool clap_entry_init_callback(const char *plugin_path) {
+bool sat_clap_entry_init_callback(const char *plugin_path) {
   //SAT_PRINT("plugin_path: %s\n",plugin_path);
   SAT_GLOBAL.setPluginPath(plugin_path);
   return true;
@@ -16,13 +16,13 @@ bool clap_entry_init_callback(const char *plugin_path) {
 
 //----------
 
-void clap_entry_deinit_callback(void) {
+void sat_clap_entry_deinit_callback(void) {
   //SAT_PRINT("\n");
 }
 
 //----------
 
-const void* clap_entry_get_factory_callback(const char* factory_id) {
+const void* sat_clap_entry_get_factory_callback(const char* factory_id) {
 
   //SAT_PRINT("factory_id: %s\n",factory_id);
 
@@ -39,7 +39,7 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
     return &SAT_CLAP_PLUGIN_FACTORY;
   }
 
-  #ifdef SAT_PLUGIN_INCLUDE_PRESET_DISCOVERY_FACTORY
+  #ifdef SAT_PLUGIN_INCLUDE_CLAP_PRESET_DISCOVERY_FACTORY
     if (strcmp(factory_id,CLAP_PRESET_DISCOVERY_FACTORY_ID) == 0) {
       return &SAT_CLAP_PRESET_DISCOVERY_FACTORY;
     }
@@ -52,7 +52,7 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
   //  return &SAT_CLAP_PLUGIN_INVALIDATION_FACTORY;
   //}
 
-  #ifdef SAT_PLUGIN_INCLUDE_ARA_FACTORY
+  #ifdef SAT_PLUGIN_INCLUDE_CLAP_ARA_FACTORY
     if (strcmp(factory_id,CLAP_EXT_ARA_FACTORY) == 0) {
       return &SAT_CLAP_ARA_FACTORY;
     }
@@ -67,9 +67,9 @@ const void* clap_entry_get_factory_callback(const char* factory_id) {
 //__SAT_EXPORT
 CLAP_EXPORT extern const clap_plugin_entry_t clap_entry {
   .clap_version = CLAP_VERSION,
-  .init         = clap_entry_init_callback,
-  .deinit       = clap_entry_deinit_callback,
-  .get_factory  = clap_entry_get_factory_callback
+  .init         = sat_clap_entry_init_callback,
+  .deinit       = sat_clap_entry_deinit_callback,
+  .get_factory  = sat_clap_entry_get_factory_callback
 };
 
 //----------------------------------------------------------------------

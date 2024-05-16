@@ -37,8 +37,6 @@ private:
   SAT_Widget*         MMouseCaptureWidget = nullptr;
   SAT_Widget*         MKeyCaptureWidget   = nullptr;
 
-  //
-
   int32_t             MMouseCurrentCursor = SAT_CURSOR_DEFAULT;
   
   bool                MMouseLocked        = false;
@@ -284,11 +282,13 @@ public: // timer listener
   //   on_window_timer(ATimer,elapsed);
   // }
 
-  void on_timerListener_callback(SAT_Timer* ATimer) override {
+  void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
     //SAT_TRACE;
     if (MListener) {
-      MListener->on_windowListener_timer(ATimer);
+      MListener->on_windowListener_timer(ATimer,ADelta);
     }
+    // tweening
+    // dirty widgets
   }
 
 //------------------------------
@@ -315,7 +315,7 @@ public: // widget listener
   void on_widgetListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
     //SAT_PRINT("%s\n",AWidget->getName());
     //markWidgetDirtyFromGui(AWidget);
-    #ifdef SAT_WINDOW_TIMER_REFRESH
+    #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
       //queueDirtyWidget(AWidget);
     #else
       SAT_Rect rect = AWidget->getRect();

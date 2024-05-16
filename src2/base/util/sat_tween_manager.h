@@ -13,6 +13,9 @@
 //#define SAT_TWEEN_CALLBACK  1
 //#define SAT_TWEEN_PAUSE     2
 //#define SAT_TWEEN_RECT      3
+//#define SAT_TWEEN_BG_COLOR  4
+//#define SAT_TWEEN_TXT_COLOR 5
+//#define SAT_TWEEN_TRANS     6
 
 // delete, end, repeat, ..
 
@@ -50,11 +53,9 @@ public:
 public:
 //------------------------------
 
-  SAT_TweenNode(void* ATarget, uint32_t AId, /*double AStart, */double ADuration, uint32_t AType, uint32_t ANumValues=0, double* AStartValues=nullptr, double* AEndValues=nullptr, uint32_t ATween=0) {
-    //MActive       = false;
+  SAT_TweenNode(void* ATarget, uint32_t AId, double ADuration, uint32_t AType, uint32_t ANumValues=0, double* AStartValues=nullptr, double* AEndValues=nullptr, uint32_t ATween=0) {
     MType         = AType;
     MId           = AId;
-    //MStartTime    = AStart;
     MDuration     = ADuration;
     MTarget       = ATarget;
     MTweenType    = ATween;
@@ -173,13 +174,14 @@ public:
 public:
 //------------------------------
 
-  //void appendTween(SAT_TweenNode* ATween) {
-  //}
+  // void appendTween(SAT_TweenNode* ATween) {
+  //   // create chain
+  //   // append node
+  // }
   
   //----------
   
   SAT_TweenChain* appendChain(SAT_TweenChain* AChain) {
-    //SAT_PRINT;
     //MChains.append(AChain);
     MPending.write(AChain);
     return AChain;
@@ -195,7 +197,7 @@ public:
   
   //----------
 
-  virtual void process(double ADelta/*, double AScale*/) {
+  virtual void process(double ADelta) {
 
     SAT_TweenChain* chain;
     while (MPending.read(&chain)) {
@@ -208,7 +210,7 @@ public:
 
         uint32_t index = MChains[i]->MCurrentNode;
         SAT_TweenNode* node = MChains[i]->MNodes[index];
-        if (node) {// && node->MActive) {
+        if (node) {
           SAT_Widget* target = (SAT_Widget*)node->MTarget;
           double data[16] = {0};
           for (uint32_t j=0; j<node->MNumValues; j++) {
@@ -220,21 +222,12 @@ public:
               node->MDuration
             );
           }
-          //switch (node->MType) {
-          //  case SAT_WIDGET_TWEEN_PAUSE:
-          //    break;
-          //  default:
-
-              target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
-
-          //    break;
-          //}
+          target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
           MChains[i]->MCurrentTime += ADelta;
           if (MChains[i]->MCurrentTime >= node->MDuration) {
             MChains[i]->MCurrentTime = 0.0;
             MChains[i]->MCurrentNode += 1;
             if (MChains[i]->MCurrentNode >= MChains[i]->MNodes.size()) {
-              //SAT_Print("finished %i\n",i);
               MChains[i]->MActive = false;
               // //TODO: if looping
               // MChains[i]->MCurrentNode = 0;
@@ -250,12 +243,6 @@ public:
     while (i < MChains.size()) {
       SAT_TweenChain* chain = MChains[i];
       if (!chain->MActive) {
-        //for (uint32_t j=0; j<chain->MNodes.size(); j++) {
-        //  SAT_TweenNode* node = chain->MNodes[j];
-        //  SAT_Print("deleting node %i\n",j);
-        //  delete node;
-        //}
-        //SAT_Print("deleting chain %i\n",i);
         delete chain;
         MChains.remove(i);
       }
@@ -264,8 +251,6 @@ public:
     
   }
   
-  //----------
-
 };
 
 //----------------------------------------------------------------------

@@ -64,6 +64,11 @@ public:
   //   if (painter && MRenderBuffer) painter->deleteRenderBuffer(MRenderBuffer);
   // }
 
+  //----------
+
+  // resize
+  // dirty, redraw, ..
+
 };
 
 //----------------------------------------------------------------------

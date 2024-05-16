@@ -8,13 +8,13 @@
 // 128 bit
 struct SAT_PluginQueueItem {
   union {
-    uint32_t    index;
-    uint32_t    noteid;
+    uint32_t  param_id;
+    int32_t   note_id;
   };
-  uint32_t dummy;
+  uint32_t    dummy;
   union {
     double    value;
-    SAT_Note  note; // 64bit
+    SAT_Note  note;
   };
 };
 

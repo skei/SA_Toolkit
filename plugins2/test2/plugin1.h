@@ -2,6 +2,7 @@
 #include "sat.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/sat_processor.h"
+#include "plugin/processor/sat_block_processor.h"
 
 #ifndef SAT_NO_GUI
   #include "plugin/sat_editor.h"
@@ -92,10 +93,6 @@ class myPlugin
 : public SAT_Plugin {
 
 //------------------------------
-private:
-//------------------------------
-
-//------------------------------
 public:
 //------------------------------
 
@@ -131,6 +128,7 @@ public: // init
 
     bool setupEditor(SAT_Editor* AEditor) final {
       SAT_TRACE;
+
       SAT_Window* window = AEditor->getWindow();
       SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
       window->setRootWidget(root);
@@ -145,8 +143,6 @@ public: // init
         SAT_ValueWidget* value1 = new SAT_ValueWidget(SAT_Rect(230,10,100,50));
         root->appendChild(value1);
 
-        //
-
         SAT_ButtonWidget* button1 = new SAT_ButtonWidget(SAT_Rect(10,70,100,50));
         root->appendChild(button1);
         AEditor->connect(button1,getParameter(0));
@@ -160,6 +156,13 @@ public: // init
 
   #endif // gui
   //#endif // 0
+
+  //----------
+
+  // void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) final {
+  //   SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
+  //   SAT_PRINT("delta %.3f\n",ADelta);
+  // }
 
 };
 

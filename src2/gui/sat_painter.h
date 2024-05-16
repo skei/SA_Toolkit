@@ -73,12 +73,10 @@ public:
 
   SAT_Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
   : SAT_ImplementedPainter(AOwner,ATarget) {
-
     MDefaultFont = loadFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
     MHeaderFont = loadFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
     selectFont(MDefaultFont);
     setTextSize(12.0);
-
   }
 
   //----------

@@ -44,14 +44,14 @@ public: // host -> gui
 
   #ifndef SAT_NO_GUI
 
-  // called from
-  // SAT_Plugin.on_processorOwner_updateParamFromHostToGui
-  // (from SAT_Processor.processParamValueEvent)
+  // called from [audio]
+  //   SAT_Plugin.on_processorOwner_updateParamFromHostToGui
+  //   (from SAT_Processor.processParamValueEvent)
 
-  void queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+  void queueParamFromHostToGui(uint32_t AParamId, sat_param_t AValue) {
     SAT_PluginQueueItem item;
     //item.type = CLAP_EVENT_PARAM_VALUE;
-    item.index  = AIndex;
+    item.param_id  = AParamId;
     item.value  = AValue;
     if (!MParamFromHostToGui.write(item)) {
       // SAT_PRINT("couldn't write to MParamFromHostToGui queue\n");
@@ -60,8 +60,8 @@ public: // host -> gui
 
   //----------
 
-  // called from
-  // (todo: gui timer)
+  // called from [timer]
+  //   todo
 
   void flushParamFromHostToGui(SAT_ProcessContext* AContext, SAT_Editor* AEditor) {
     SAT_ParameterArray* parameters = AContext->parameters;
@@ -69,7 +69,7 @@ public: // host -> gui
     SAT_PluginQueueItem item;
     while (MParamFromHostToGui.read(&item)) {
       count += 1;
-      SAT_Parameter* parameter = parameters->getItem(item.index);
+      SAT_Parameter* parameter = parameters->getItem(item.param_id);
       if (AEditor) AEditor->updateParameterFromHost(parameter,item.value);
     }
     SAT_GLOBAL.ANALYTICS.set_ParamFromHostToGui(count);
@@ -77,15 +77,15 @@ public: // host -> gui
 
   //----------
 
-  // called from
-  // SAT_Plugin.on_processorOwner_updateModFromHostToGui
-  // (from SAT_Processor.processParamModEvent)
+  // called from [audio]
+  //   SAT_Plugin.on_processorOwner_updateModFromHostToGui
+  //   (from SAT_Processor.processParamModEvent)
 
-  void queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue) {
+  void queueModFromHostToGui(uint32_t AParamId, sat_param_t AValue) {
     // todo: is_gui_open?
     SAT_PluginQueueItem item;
     //item.type = CLAP_EVENT_PARAM_MOD;
-    item.index  = AIndex;
+    item.param_id  = AParamId;
     item.value  = AValue;
     if (!MModFromHostToGui.write(item)) {
       // SAT_PRINT("couldn't write to MModFromHostToGui queue\n");
@@ -94,8 +94,8 @@ public: // host -> gui
 
   //----------
 
-  // called from
-  // (todo: gui timer)
+  // called from [timer]
+  //   todo
 
   void flushModFromHostToGui(SAT_ProcessContext* AContext, SAT_Editor* AEditor) {
     SAT_ParameterArray* parameters = AContext->parameters;
@@ -103,7 +103,7 @@ public: // host -> gui
     uint32_t count = 0;
     while (MModFromHostToGui.read(&item)) {
       count += 1;
-      SAT_Parameter* parameter = parameters->getItem(item.index);
+      SAT_Parameter* parameter = parameters->getItem(item.param_id);
       if (AEditor) AEditor->updateModulationFromHost(parameter,item.value);
     }
     SAT_GLOBAL.ANALYTICS.set_ModFromHostToGui(count);
@@ -117,16 +117,16 @@ public: // gui -> host
 
   #ifndef SAT_NO_GUI
 
-  // called from
-  // SAT_Plugin.on_editorListener_update
-  // from SAT_EmbeddedEditor.on_windowListener_update)
-  //   (SAT_WidgetWindow.on_widgetListener_update)
-  //   (SAT_RootWidget.do_widget_update)
+  // called from [gui]
+  //   SAT_Plugin.on_editorListener_update
+  //   (from SAT_EmbeddedEditor.on_windowListener_update)
+  //        (SAT_WidgetWindow.on_widgetListener_update)
+  //        (SAT_RootWidget.do_widget_update)
 
-  void queueParamFromGuiToHost(uint32_t AIndex, sat_param_t AValue) {
+  void queueParamFromGuiToHost(uint32_t AParamId, sat_param_t AValue) {
     SAT_PluginQueueItem item;
     //item.type = CLAP_EVENT_PARAM_VALUE;
-    item.index  = AIndex;
+    item.param_id  = AParamId;
     item.value  = AValue;
     if (!MParamFromGuiToHost.write(item)) {
       // SAT_PRINT("couldn't write to MParamFromGuiToHost queue\n");
@@ -135,8 +135,8 @@ public: // gui -> host
 
   //----------
 
-  // called from
-  // SAT_Plugin.process
+  // called from [audio]
+  //   SAT_Plugin.process
 
   void flushParamFromGuiToHost(SAT_ProcessContext* AContext) {
     SAT_ParameterArray* parameters = AContext->parameters;
@@ -146,7 +146,7 @@ public: // gui -> host
     SAT_PluginQueueItem item;
     while (MParamFromGuiToHost.read(&item)) {
       count += 1;
-      SAT_Parameter* parameter = parameters->getItem(item.index);
+      SAT_Parameter* parameter = parameters->getItem(item.param_id);
       // gesture begin
       {
         clap_event_param_gesture_t event;
@@ -155,7 +155,7 @@ public: // gui -> host
         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
         event.header.type     = CLAP_EVENT_PARAM_GESTURE_BEGIN;
         event.header.flags    = 0;
-        event.param_id        = item.index;
+        event.param_id        = item.param_id;
         const clap_event_header_t* header = (const clap_event_header_t*)&event;
         out_events->try_push(out_events,header);
       }
@@ -167,7 +167,7 @@ public: // gui -> host
         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
         event.header.type     = CLAP_EVENT_PARAM_VALUE;
         event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-        event.param_id        = item.index;
+        event.param_id        = item.param_id;
         event.cookie          = parameter->getCookie(); // reaper needs the event.cookie ??
         event.note_id         = -1;
         event.port_index      = -1;
@@ -186,7 +186,7 @@ public: // gui -> host
         event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
         event.header.type     = CLAP_EVENT_PARAM_GESTURE_END;
         event.header.flags    = 0;
-        event.param_id        = item.index;
+        event.param_id        = item.param_id;
         const clap_event_header_t* header = (const clap_event_header_t*)&event;
         out_events->try_push(out_events,header);
       }
@@ -202,16 +202,16 @@ public: // gui -> audio
 
   #ifndef SAT_NO_GUI
 
-  // called from
-  // SAT_Plugin.on_editorListener_update
-  // (from SAT_EmbeddedEditor.on_windowListener_update)
-  //   (SAT_WidgetWindow.on_widgetListener_update)
-  //   (SAT_RootWindow.do_widget_update)
+  // called from [gui]
+  //   SAT_Plugin.on_editorListener_update
+  //   (from SAT_EmbeddedEditor.on_windowListener_update)
+  //        (SAT_WidgetWindow.on_widgetListener_update)
+  //        (SAT_RootWindow.do_widget_update)
 
-  void queueParamFromGuiToAudio(uint32_t AIndex, sat_param_t AValue) {
+  void queueParamFromGuiToAudio(uint32_t AParamId, sat_param_t AValue) {
     SAT_PluginQueueItem item;
     //item.type = CLAP_EVENT_PARAM_VALUE;
-    item.index  = AIndex;
+    item.param_id  = AParamId;
     item.value  = AValue;
     if (!MParamFromGuiToAudio.write(item)) {
       // SAT_PRINT("couldn't write to MParamFromGuiToAudio queue\n");
@@ -220,8 +220,8 @@ public: // gui -> audio
 
   //----------
 
-  // called from
-  // SAT_Plugin.process
+  // called from [audio]
+  //   SAT_Plugin.process
 
   void flushParamFromGuiToAudio(SAT_Processor* AProcessor) {
     uint32_t count = 0;
@@ -234,7 +234,7 @@ public: // gui -> audio
       event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
       event.header.type     = CLAP_EVENT_PARAM_VALUE;
       event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-      event.param_id        = item.index;
+      event.param_id        = item.param_id;
       event.cookie          = nullptr; // set?
       event.note_id         = -1;
       event.port_index      = -1;
@@ -252,21 +252,27 @@ public: // gui -> audio
 public: // audio -> host
 //------------------------------
 
+  // called from [audio]
+  //   todo (event processing)
+
   void queueNoteEndFromAudioToHost(uint32_t ANoteId, int16_t APort=-1, int16_t AChannel=-1, int16_t AKey=-1) {
     SAT_PluginQueueItem item;
     //item.type       = CLAP_EVENT_NOTE_END;
-    item.noteid       = ANoteId;
+    item.note_id       = ANoteId;
     //item.value      = 0.0;
-    item.note.dummy   = 0;
     item.note.port    = APort;
     item.note.channel = AChannel;
     item.note.key     = AKey;
+    // item.note.dummy   = 0;
     if (!MNoteEndFromAudioToHost.write(item)) {
       // SAT_PRINT("couldn't write to MNoteEndFromAudioToHost queue\n");
     }
   }
 
   //----------
+
+  // called from [audio]
+  //   SAT_Plugin.process
 
   void flushNoteEndsFromAudioToHost(SAT_ProcessContext* AContext) {
     const clap_output_events_t* out_events = AContext->process->out_events;
@@ -281,7 +287,7 @@ public: // audio -> host
       event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
       event.header.type     = CLAP_EVENT_NOTE_END;
       event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-      event.note_id         = item.noteid;
+      event.note_id         = item.note_id;
       event.channel         = item.note.channel;
       event.key             = item.note.key;
       event.port_index      = item.note.port;

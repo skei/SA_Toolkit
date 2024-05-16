@@ -105,45 +105,116 @@ public:
 public:
 //------------------------------
 
-  virtual void setIndex(uint32_t AIndex)                    { MIndex = AIndex;     MInfo.id = AIndex; }
-  virtual void setIndicateAutomationState(uint32_t AState)  { MIndicateAutomationState = AState; }
-  virtual void setIndicateAutomationColor(SAT_Color AColor) { MIndicateAutomationColor = AColor; }
-  virtual void setIndicateMapped(bool AMapped)              { MIndicateMapped = AMapped; }
-  virtual void setIndicateMappedColor(SAT_Color AColor)     { MIndicateMappedColor = AColor; }
-  virtual void setModulation(double AValue)                 { MModulation = AValue; }
-  virtual void setValue(double AValue)                      { MValue = AValue; }
-  virtual void setWidget(void* AWidget)                     { MWidget = AWidget; }
+  virtual void setIndex(uint32_t AIndex) {
+    MIndex = AIndex;
+    MInfo.id = AIndex;
+  }
+  
+  virtual void setWidget(void* AWidget) {
+    MWidget = AWidget;
+  }
 
-//virtual void setGuiAutomationDirty(bool ADirty)           { MGuiAutomationDirty = ADirty; }
-//virtual void setGuiModulationDirty(bool ADirty)           { MGuiModulationDirty = ADirty; }
-//virtual void setLastAutomatedValue(double AValue)         { MLastAutomatedValue = AValue; }
-//virtual void setLastModulatedValue(double AValue)         { MLastModulatedValue = AValue; }
+  virtual void setModulation(double AValue) {
+    MModulation = AValue;
+  }
+
+  virtual void setValue(double AValue) {
+    MValue = AValue;
+  }
+
+  virtual void setIndicateAutomationState(uint32_t AState) {
+    MIndicateAutomationState = AState;
+  }
+
+  virtual void setIndicateAutomationColor(SAT_Color AColor) {
+    MIndicateAutomationColor = AColor;
+  }
+
+  virtual void setIndicateMapped(bool AMapped) {
+    MIndicateMapped = AMapped;
+  }
+
+  virtual void setIndicateMappedColor(SAT_Color AColor) {
+    MIndicateMappedColor = AColor;
+  }
+  
+  //virtual void setGuiAutomationDirty(bool ADirty) { MGuiAutomationDirty = ADirty; }
+  //virtual void setGuiModulationDirty(bool ADirty) { MGuiModulationDirty = ADirty; }
+  //virtual void setLastAutomatedValue(double AValue) { MLastAutomatedValue = AValue; }
+  //virtual void setLastModulatedValue(double AValue) { MLastModulatedValue = AValue; }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual void*               getCookie()             { return MInfo.cookie; }
-  virtual sat_param_t         getDefaultValue()       { return MInfo.default_value; }
-  virtual clap_param_info_t*  getInfo()               { return &MInfo; }
-  virtual uint32_t            getIndex()              { return MIndex; }
-  virtual sat_param_t         getMaxValue()           { return MInfo.max_value; }
-  virtual sat_param_t         getMinValue()           { return MInfo.min_value; }
-  virtual sat_param_t         getModulation()         { return MModulation; }
-  virtual sat_param_t         getValue()              { return MValue; }
-  virtual void*               getWidget()             { return MWidget; }
+  virtual clap_param_info_t* getInfo() {
+    return &MInfo;
+  }
 
-//virtual double              getLastAutomatedValue() { return MLastAutomatedValue; }
-//virtual double              getLastModulatedValue() { return MLastModulatedValue; }
-//virtual bool                isGuiAutomationDirty()  { return MGuiAutomationDirty; }
-//virtual bool                isGuiModulationDirty()  { return MGuiModulationDirty; }
+  virtual void* getCookie() {
+    return MInfo.cookie;
+  }
 
-  virtual bool                isStepped()             { return (MInfo.flags & CLAP_PARAM_IS_STEPPED); }
-  virtual bool                isPeriodic()            { return (MInfo.flags & CLAP_PARAM_IS_PERIODIC); }
-  virtual bool                isHidden()              { return (MInfo.flags & CLAP_PARAM_IS_HIDDEN); }
-  virtual bool                isReadOnly()            { return (MInfo.flags & CLAP_PARAM_IS_READONLY); }
-  virtual bool                isBypass()              { return (MInfo.flags & CLAP_PARAM_IS_BYPASS); }
-  virtual bool                isEnum()                { return (MInfo.flags & CLAP_PARAM_IS_ENUM); }
+  virtual uint32_t getIndex() {
+    return MIndex;
+  }
+
+  virtual void* getWidget() {
+    return MWidget;
+  }
+
+  virtual sat_param_t getValue() {
+    return MValue;
+  }
+
+  virtual sat_param_t getModulation() {
+    return MModulation;
+  }
+
+  virtual sat_param_t getMinValue() {
+    return MInfo.min_value;
+  }
+
+  virtual sat_param_t getMaxValue() {
+    return MInfo.max_value;
+  }
+
+  virtual sat_param_t getDefaultValue() {
+    return MInfo.default_value;
+  }
+
+  virtual sat_param_t getValueRange() {
+    return (MInfo.max_value - MInfo.min_value);
+  }
+
+  virtual bool isStepped() {
+    return (MInfo.flags & CLAP_PARAM_IS_STEPPED);
+  }
+
+  virtual bool isPeriodic() {
+    return (MInfo.flags & CLAP_PARAM_IS_PERIODIC);
+  }
+
+  virtual bool isHidden() {
+    return (MInfo.flags & CLAP_PARAM_IS_HIDDEN);
+  }
+
+  virtual bool isReadOnly() {
+    return (MInfo.flags & CLAP_PARAM_IS_READONLY);
+  }
+
+  virtual bool isBypass() {
+    return (MInfo.flags & CLAP_PARAM_IS_BYPASS);
+  }
+
+  virtual bool isEnum() {
+    return (MInfo.flags & CLAP_PARAM_IS_ENUM);
+  }
+
+  //virtual double getLastAutomatedValue() { return MLastAutomatedValue; }
+  //virtual double getLastModulatedValue() { return MLastModulatedValue; }
+  //virtual bool isGuiAutomationDirty() { return MGuiAutomationDirty; }
+  //virtual bool isGuiModulationDirty() { return MGuiModulationDirty; }
 
 //------------------------------
 public:

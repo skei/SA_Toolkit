@@ -92,10 +92,15 @@ public: // on_widget
       setBackgroundColor(MOnBackgroundColor);
       setBorderColor(MOnBorderColor);
     }
+
     fillBackground(AContext);
     drawText(AContext);
     paintChildren(AContext);
     drawBorder(AContext);
+
+    // why not just:
+    // SAT_TextWidget::on_widget_paint(AContext);
+
   }
 
 };

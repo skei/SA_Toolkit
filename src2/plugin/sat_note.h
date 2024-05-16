@@ -10,9 +10,9 @@ struct SAT_Note {
 
   union {
     struct {
+      int16_t port;       //  = -1;
       int16_t channel;    //  = -1;
       int16_t key;        //  = -1;
-      int16_t port;       //  = -1;
       int16_t dummy;      //  = -1;   // clap uses 32 bit note_id's.. ???
     };
     uint64_t  data;       //  = 0;

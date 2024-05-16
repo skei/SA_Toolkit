@@ -80,8 +80,9 @@ public:
 
   //----------
 
-  void on_windowListener_timer(SAT_Timer* ATimer) override {
+  void on_windowListener_timer(SAT_Timer* ATimer, double ADelta) override {
     //SAT_TRACE;
+    if (MListener) MListener->on_editorListener_timer(ATimer,ADelta);
   }
 
 //------------------------------

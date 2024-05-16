@@ -20,12 +20,10 @@
 #include "plugin/processor/sat_process_context.h"
 #include "plugin/processor/sat_processor_owner.h"
 
-#include "plugin/processor/sat_block_processor.h"
-#include "plugin/processor/sat_interleaved_processor.h"
-#include "plugin/processor/sat_quantized_processor.h"
-#include "plugin/processor/sat_voice_processor.h"
-
-
+// #include "plugin/processor/sat_block_processor.h"
+// #include "plugin/processor/sat_interleaved_processor.h"
+// #include "plugin/processor/sat_quantized_processor.h"
+// #include "plugin/processor/sat_voice_processor.h"
 
 #ifndef SAT_NO_GUI
 #ifdef SAT_EDITOR_EMBEDDED
@@ -333,7 +331,21 @@ public: // parameters
     return MParameters.size();
   }
 
+  //----------
+
   SAT_Parameter* findParameter(const char* AName) {
+    for (uint32_t i=0; i<getNumParameters(); i++) {
+      SAT_Parameter* param = getParameter(i);
+      if (param) {
+        clap_param_info_t* info = param->getInfo();
+        const char* name = info->name;
+        if (name) {
+          if (strcmp(AName,name) == 0) {
+            return param;
+          }
+        }
+      }
+    }
     return nullptr;
   }
 
@@ -346,26 +358,28 @@ public: // parameters
   //----------
 
   virtual void setDefaultParameterValues() {
-    uint32_t num = MParameters.size();
-    for (uint32_t i=0; i<num; i++) {
-      double value = MParameters[i]->getDefaultValue();
-      MParameters[i]->setValue(value);
-      //bool processParamValueEvent(clap_event_param_value_t* event);
-      //return paramValueEvent(event);
-      clap_event_param_value_t event;
-      event.header.size     = sizeof(clap_event_param_value_t);
-      event.header.time     = 0;
-      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-      event.header.type     = CLAP_EVENT_PARAM_VALUE;
-      event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-      event.param_id        = i;
-      event.cookie          = nullptr; // set?
-      event.note_id         = -1;
-      event.port_index      = -1;
-      event.channel         = -1;
-      event.key             = -1;
-      event.value           = value;
-      MProcessor->processParamValueEvent(&event);
+    if (MProcessor) {
+      uint32_t num = MParameters.size();
+      for (uint32_t i=0; i<num; i++) {
+        double value = MParameters[i]->getDefaultValue();
+        MParameters[i]->setValue(value);
+        //bool processParamValueEvent(clap_event_param_value_t* event);
+        //return paramValueEvent(event);
+        clap_event_param_value_t event;
+        event.header.size     = sizeof(clap_event_param_value_t);
+        event.header.time     = 0;
+        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        event.header.type     = CLAP_EVENT_PARAM_VALUE;
+        event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+        event.param_id        = i;
+        event.cookie          = nullptr; // set?
+        event.note_id         = -1;
+        event.port_index      = -1;
+        event.channel         = -1;
+        event.key             = -1;
+        event.value           = value;
+        MProcessor->processParamValueEvent(&event);
+      }
     }
   }
 
@@ -472,18 +486,18 @@ public: // processor
 
   //----------
 
-  void createProcessor(uint32_t AProcessor) {
-    SAT_Processor* processor = nullptr;
-    switch (AProcessor) {
-      case SAT_PLUGIN_BLOCK_PROCESSOR:        processor = new SAT_BlockProcessor(this); break;
-      case SAT_PLUGIN_INTERLEAVED_PROCESSOR:  processor = new SAT_InterleavedProcessor(this); break;
-      case SAT_PLUGIN_QUANTIZED_PROCESSOR:    processor = new SAT_QuantizedProcessor(this); break;
-      case SAT_PLUGIN_VOICE_PROCESSOR:        processor = new SAT_VoiceProcessor(this); break;
-    }
-    if (!processor) processor = new SAT_Processor(this);
-    SAT_Assert(processor);
-    MProcessor = processor;
-  }
+  // void createProcessor(uint32_t AProcessor) {
+  //   SAT_Processor* processor = nullptr;
+  //   switch (AProcessor) {
+  //     case SAT_PLUGIN_BLOCK_PROCESSOR:        processor = new SAT_BlockProcessor(this); break;
+  //     case SAT_PLUGIN_INTERLEAVED_PROCESSOR:  processor = new SAT_InterleavedProcessor(this); break;
+  //     case SAT_PLUGIN_QUANTIZED_PROCESSOR:    processor = new SAT_QuantizedProcessor(this); break;
+  //     case SAT_PLUGIN_VOICE_PROCESSOR:        processor = new SAT_VoiceProcessor(this); break;
+  //   }
+  //   if (!processor) processor = new SAT_Processor(this);
+  //   SAT_Assert(processor);
+  //   MProcessor = processor;
+  // }
 
 //------------------------------
 public: // processor owner
@@ -504,7 +518,7 @@ public: // processor owner
       if (MEditor) {
         SAT_Parameter* param = getParameter(AIndex);
         if (param) {
-          #ifdef SAT_WINDOW_TIMER_REFRESH
+          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
             uint32_t index = param->getIndex();
             MQueues.queueParamFromHostToGui(index,AValue);    // flushed where?
           #else
@@ -525,7 +539,7 @@ public: // processor owner
       if (MEditor) {
         SAT_Parameter* param = getParameter(AIndex);
         if (param) {
-          #ifdef SAT_WINDOW_TIMER_REFRESH
+          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
             uint32_t index = param->getIndex();
             MQueues.queueModFromHostToGui(index,AValue);    // flushed where?
           #else
@@ -632,7 +646,8 @@ public: // editor listener
 
     //----------
 
-    void on_editorListener_timer(SAT_Timer* ATimer) override {
+    void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+      //SAT_TRACE;
     }
 
     //----------
@@ -757,7 +772,7 @@ public: // clap plugin
     MProcessor->process(&MProcessContext);
     MProcessor->postProcessEvents(process->in_events,process->out_events);
 
-    //MQueues.flushNoteEndsFromAudioToHost(&MProcessContext);
+    MQueues.flushNoteEndsFromAudioToHost(&MProcessContext);
 
     #if !defined (SAT_NO_GUI)
       MQueues.flushParamFromGuiToHost(&MProcessContext);

@@ -10,7 +10,7 @@
 class SAT_WindowListener {
 public:
   virtual void on_windowListener_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
-  virtual void on_windowListener_timer(SAT_Timer* ATimer) {}
+  virtual void on_windowListener_timer(SAT_Timer* ATimer, double ADelta) {}
 
   // virtual void on_windowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) {}
   // virtual void on_windowListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) {}

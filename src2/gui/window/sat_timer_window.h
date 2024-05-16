@@ -88,7 +88,7 @@ public: // window
 public: // timer listener
 //------------------------------
 
-  void on_timerListener_callback(SAT_Timer* ATimer) override {
+  void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
     //SAT_TRACE;
   }
 
