@@ -11,28 +11,31 @@ typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 //----------------------------------------------------------------------
 
 struct SAT_WidgetLayout {
-  uint32_t  alignment   = 0;
-  uint32_t  anchor      = 0;
-  uint32_t  stretch     = 0;
-  uint32_t  crop        = 0;
-  SAT_Rect  innerBorder = {0,0,0,0};
-  SAT_Rect  outerBorder = {0,0,0,0};
-  uint32_t  direction   = SAT_DIRECTION_RIGHT;
-  SAT_Rect  clipOffset  = {0,0,0,0};
+  uint32_t  flags             = SAT_WIDGET_LAYOUT_DEFAULT;
+  uint32_t  alignment         = 0;
+  uint32_t  anchor            = 0;
+  uint32_t  stretch           = 0;
+  uint32_t  crop              = 0;
+  uint32_t  direction         = SAT_DIRECTION_RIGHT;
+  SAT_Rect  innerBorder       = {0,0,0,0};
+  SAT_Rect  outerBorder       = {0,0,0,0};
+  SAT_Rect  clipOffset        = {0,0,0,0};
+  SAT_Point spacing           = {0,0};
 };
 
 struct SAT_WidgetOptions {
-  bool      opaque      = true;   // fully fills its rect
-  bool      autoCapture = false;  // mouse automatically captured
-  bool      autoCursor  = false;  // mouse automatically captured
-  bool      autoHint    = false;  // automatically send hint
+  bool      opaque            = true;   // fully fills its rect
+  bool      autoCapture       = false;  // mouse automatically captured
+  bool      autoCursor        = false;  // mouse automatically captured
+  bool      autoHint          = false;  // automatically send hint
+  bool      realignInvisible  = false;
 };
 
 struct SAT_WidgetState {
-  bool      active      = true;   // receive events
-  bool      visible     = true;   // alignment, drawing
-  bool      disabled    = false;  // drawn grayed out
-  bool      interactive = false;  // drawn highlighted
+  bool      active            = true;   // receive events
+  bool      visible           = true;   // alignment, drawing
+  bool      disabled          = false;  // drawn grayed out
+  bool      interactive       = false;  // drawn highlighted
 };
 
 //----------------------------------------------------------------------
@@ -57,9 +60,9 @@ private:
   SAT_WidgetLayout  MLayout                             = {};
   SAT_WidgetOptions MOptions                            = {};
   SAT_Rect          MRect                               = {0,0,0,0};      // current on-screen rect
+  SAT_Rect          MBaseRect                           = {0,0,0,0};      // basis for re-alignment
+  SAT_Rect          MInitialRect                        = {0,0,0,0};      // rect at creation time (unmodified)
 
-//SAT_Rect          MInitialRect                        = {0,0,0,0};      // rect at creation time (unmodified)
-//SAT_Rect          MBaseRect                           = {0,0,0,0};      // basis for re-alignment
 //SAT_Point         MMovedOffset                        = {0,0};          // manually moved, .. 
 //SAT_Point         MScrolledOffset                     = {0,0};          // scrollbox, ..
 
@@ -81,6 +84,8 @@ public:
 
   SAT_Widget(SAT_Rect ARect)
   : SAT_BaseWidget() {
+    MInitialRect = ARect;
+    MBaseRect = ARect;
     MRect = ARect;
   }
 
@@ -96,7 +101,9 @@ public:
 public:
 //------------------------------
 
+  virtual SAT_Rect          getBaseRect()                 { return MBaseRect; }
   virtual uint32_t          getIndex()                    { return MIndex; }
+  virtual SAT_Rect          getInitialRect()              { return MInitialRect; }
   virtual SAT_WidgetLayout* getLayout()                   { return &MLayout; }
   virtual uint32_t          getLayoutAlignment()          { return MLayout.alignment; }
   virtual uint32_t          getLayoutAnchor()             { return MLayout.anchor; }
@@ -232,6 +239,8 @@ public: // children
 
   //----------
 
+  // note: doesn't paint itself..
+
   virtual void paintChildren(SAT_PaintContext* AContext/*, bool ARecursive=true*/) {
     //SAT_PRINT("\n");
     uint32_t numchildren = MChildren.size();
@@ -254,12 +263,100 @@ public: // children
 
   //----------
 
-  virtual void realignChildren(/*bool ARecursive=true*/) {
-    //SAT_PRINT("\n");
+  SAT_Rect MContentRect = {0,0,0,0};
+  double getWindowScale() { return 1.0; }
+
+  //-----
+
+  virtual void realignChildren(bool ARecursive=true) {
+    SAT_PRINT("\n");
+
+    // for (uint32_t i=0; i<MChildren.size(); i++) {
+    //   SAT_Widget* widget = MChildren[i];
+    //   widget->on_widget_realign();
+    // }
+
+    double scale = getWindowScale();
+
+    SAT_Rect inner_border = MLayout.innerBorder;
+    inner_border.scale(scale);
+    SAT_Point spacing = MLayout.spacing;
+    spacing.scale(scale);
+
+    SAT_Rect mrect = getRect();
+    SAT_Rect parent_rect = mrect;
+    parent_rect.shrink(MLayout.innerBorder);
+    SAT_Rect layout_rect = mrect;
+    layout_rect.shrink(MLayout.innerBorder);
+
+    double layout_xcenter = layout_rect.x + (layout_rect.w * 0.5);
+    double layout_ycenter = layout_rect.y + (layout_rect.h * 0.5);
+    MContentRect = SAT_Rect( mrect.x,mrect.y, 0,0 );
+    
     for (uint32_t i=0; i<MChildren.size(); i++) {
-      SAT_Widget* widget = MChildren[i];
-      widget->on_widget_realign();
-    }
+      SAT_Widget* child = MChildren[i];
+      uint32_t child_layout = child->getLayout()->flags;
+      SAT_Rect child_rect;
+      SAT_Rect orig_rect;
+      bool need_realign = child->isVisible() || child->MOptions.realignInvisible;
+      if (need_realign) {
+        child->on_widget_preAlign();
+        if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
+          child_rect = SAT_Rect(mrect.w,mrect.h,mrect.w,mrect.h);
+          child_rect.scale(child->getInitialRect());
+          child_rect.scale(0.01);
+        }
+        else if (child_layout & SAT_WIDGET_LAYOUT_PERCENT_PARENT) {
+          child_rect = SAT_Rect(parent_rect.w,parent_rect.h,parent_rect.w,parent_rect.h);
+          child_rect.scale(child->getInitialRect());
+          child_rect.scale(0.01);
+        }
+        else if (child_layout & SAT_WIDGET_LAYOUT_PERCENT_LAYOUT) {
+          child_rect = SAT_Rect(layout_rect.w,layout_rect.h,layout_rect.w,layout_rect.h);
+          child_rect.scale(child->getInitialRect());
+          child_rect.scale(0.01);
+        }
+        else {
+          child_rect = child->getBaseRect();
+          child_rect.scale(scale);
+        }
+        orig_rect = child_rect; // before scaling...
+        // anchor
+        bool xanchored = false;
+        bool yanchored = false;
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_LEFT)         { xanchored = true; child_rect.x += layout_rect.x; }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_TOP)          { yanchored = true; child_rect.y += layout_rect.y; }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)        { xanchored = true; child_rect.x += (layout_rect.x2()  - child_rect.w); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM)       { yanchored = true; child_rect.y += (layout_rect.y2()  - child_rect.h); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ) { xanchored = true; child_rect.x += (layout_xcenter - (child_rect.w * 0.5)); }
+        if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)  { yanchored = true; child_rect.y += (layout_ycenter - (child_rect.h * 0.5)); }
+        if (!xanchored) child_rect.x += mrect.x;
+        if (!yanchored) child_rect.y += mrect.y;
+        // stretch
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_LEFT)        { child_rect.setX1( layout_rect.x   ); }
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_TOP)         { child_rect.setY1( layout_rect.y   ); }
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_RIGHT)       { child_rect.setX2( layout_rect.x2()); }
+        if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_BOTTOM)      { child_rect.setY2( layout_rect.y2()); }
+        // crop
+        if (child_layout & SAT_WIDGET_LAYOUT_FILL_LEFT)           { layout_rect.setX1( child_rect.x2()); layout_rect.x += spacing.x; layout_rect.w -= spacing.x; }
+        if (child_layout & SAT_WIDGET_LAYOUT_FILL_TOP)            { layout_rect.setY1( child_rect.y2()); layout_rect.y += spacing.y; layout_rect.h -= spacing.y; }
+        if (child_layout & SAT_WIDGET_LAYOUT_FILL_RIGHT)          { layout_rect.setX2( child_rect.x   ); layout_rect.w -= spacing.x; }
+        if (child_layout & SAT_WIDGET_LAYOUT_FILL_BOTTOM)         { layout_rect.setY2( child_rect.y   ); layout_rect.h -= spacing.y; }
+        MContentRect.combine(child_rect);
+        // outer border
+        SAT_Rect outer_border = child->getLayoutOuterBorder();
+        outer_border.scale(scale);
+        child_rect.shrink(outer_border);
+    //  child->MLayoutOffset.x = (child_rect.x - orig_rect.x); //(orig_rect.x * scale));
+    //  child->MLayoutOffset.y = (child_rect.y - orig_rect.y); //(orig_rect.y * scale));
+        child->setRect(child_rect);
+        child->on_widget_postAlign();
+        if (ARecursive) child->realignChildren(ARecursive);
+      } // visible
+    } // for
+    MContentRect.w += inner_border.w;
+    MContentRect.h += inner_border.h;
+
   }
 
 //------------------------------
@@ -287,6 +384,7 @@ public:
 
   void on_widget_move(int32_t AXpos, int32_t AYpos) override {
     //do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
+    //realignChildren();
   }
   
   //----------
@@ -296,6 +394,7 @@ public:
 
   void on_widget_resize(uint32_t AWidth, uint32_t AHeight) override {
     //do_widget_realign(MParent,SAT_WIDGET_REALIGN_SIZE);
+    //realignChildren();
   }
   
   //----------
@@ -369,7 +468,7 @@ public:
 
   //----------
 
-  void on_widget_timer(uint32_t AId, double ADelta) override {
+  void on_widget_timer(double ADelta) override {
   }
 
 //------------------------------
@@ -393,15 +492,15 @@ public:
     if (MParent) MParent->do_widget_notify(AWidget,AValue);
   }
   
-  void do_widget_mouse_capture(SAT_Widget* AWidget) override {
+  void do_widget_mouse_capture(SAT_Widget* AWidget, bool ACapture=true) override {
     if (MParent) MParent->do_widget_mouse_capture(AWidget);
   }
   
-  void do_widget_key_capture(SAT_Widget* AWidget) override {
+  void do_widget_key_capture(SAT_Widget* AWidget, bool ACapture=true) override {
     if (MParent) MParent->do_widget_key_capture(AWidget);
   }
   
-  void do_widget_modal(SAT_Widget* AWidget) override {
+  void do_widget_modal(SAT_Widget* AWidget, bool AModal=true) override {
     if (MParent) MParent->do_widget_modal(AWidget);
   }
 
@@ -412,6 +511,11 @@ public:
   void do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) override {
     if (MParent) MParent->do_widget_set_hint(AWidget,AHint);
   }
+
+  void do_widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) override {
+    if (MParent) MParent->do_widget_want_timer(AWidget,AWantTimer);
+  }
+
   
 };
 

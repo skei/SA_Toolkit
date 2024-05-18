@@ -289,12 +289,8 @@ public:
 //------------------------------
 
   void drawLine(double x1, double y1, double x2, double y2) override {
-  // void drawLine(float AXpos1, float AYpos1, float AXpos2, float AYpos2, KODE_Color AColor, uint32_t AWidth=1) override {
-  //   set_color(AColor);
-  //   set_line_width(AWidth);
     xcb_point_t polyline[] = { (int16_t)x1, (int16_t)y1, (int16_t)x2, (int16_t)y2 };
     xcb_poly_line(MConnection,XCB_COORD_MODE_ORIGIN,MDrawable,MGC,2,polyline);
-  // }
   }
   
   void drawLines(uint32_t num, double* coords) override {
@@ -330,12 +326,8 @@ public:
   }
   
   void drawRect(double x, double y, double w, double h) override {
-  // void drawRectangle(KODE_FRect ARect, KODE_Color AColor, uint32_t AWidth=1) override {
-  //   set_color(AColor);
-  //   set_line_width(AWidth);
     xcb_rectangle_t rectangles[] = {{ (int16_t)x, (int16_t)y, (uint16_t)w, (uint16_t)h }};
     xcb_poly_rectangle(MConnection,MDrawable,MGC,1,rectangles);
-  // }
   }
   
   void drawRoundedRect(double x, double y, double w, double h, double r) override {
@@ -416,12 +408,8 @@ public:
   }
   
   void fillRect(double x, double y, double w, double h) override {
-  // void fillRectangle(KODE_FRect ARect, KODE_Color AColor) override {
-  //   if ((ARect.w <= 0) || (ARect.h <= 0)) return;
-  //   set_color(AColor);
     xcb_rectangle_t rectangles[] = {{ (int16_t)x, (int16_t)y, (uint16_t)w, (uint16_t)h }};
     xcb_poly_fill_rectangle(MConnection,MDrawable,MGC,1,rectangles);
-  // }
   }
   
   void fillRoundedRect(double x, double y, double w, double h, double r) override {
@@ -485,15 +473,12 @@ public:
   }
   
   void drawText(double x, double y, const char* text) override {
-  // void drawText(float AXpos, float AYpos, const char* AText, KODE_Color AColor) override {
-  //   set_color(AColor);
     uint8_t buffer[512];
     SAT_XcbPolyText8 pt;
     pt.data = buffer;
     pt.used = 0;
     sat_xcb_add_string_text8(&pt,text);
     xcb_poly_text_8(MConnection,MDrawable,MGC,x,y,pt.used,pt.data);
-  // }
   }
   
   void drawTextBox(float x, float y, float breakRowWidth, const char* string, const char* end) override {

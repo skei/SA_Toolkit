@@ -20,6 +20,7 @@ struct SAT_Point {
     struct { double x,y; };
     struct { double w,h; };
     struct { double horiz,vert; };
+    double data[2];
   };
 
 //------------------------------
@@ -41,10 +42,10 @@ struct SAT_Point {
     y = ay;
   }
 
-  SAT_Point(const SAT_Point& p) {
-    x = p.x;
-    y = p.y;
-  }
+  //SAT_Point(const SAT_Point& p) {
+  //  x = p.x;
+  //  y = p.y;
+  //}
 
 //------------------------------
 public:

@@ -17,6 +17,7 @@ class SAT_Window;
 class SAT_WidgetOwner {
 public:
   // virtual SAT_Window* on_widgetOwner_getWindow() { return nullptr; }
+  // virtual void on_widgetOwner_wantTimerEvents(bool AWant=true) {}
 };
 
 //----------------------------------------------------------------------

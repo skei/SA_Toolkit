@@ -110,15 +110,15 @@ public: // do_widget
     if (MListener) MListener->on_widgetListener_notify(AWidget,AValue);
   }
   
-  void do_widget_mouse_capture(SAT_Widget* AWidget) override {
+  void do_widget_mouse_capture(SAT_Widget* AWidget, bool ACapture=true) override {
     if (MListener) MListener->on_widgetListener_mouse_capture(AWidget);
   }
   
-  void do_widget_key_capture(SAT_Widget* AWidget) override {
+  void do_widget_key_capture(SAT_Widget* AWidget, bool ACapture=true) override {
     if (MListener) MListener->on_widgetListener_key_capture(AWidget);
   }
   
-  void do_widget_modal(SAT_Widget* AWidget) override {
+  void do_widget_modal(SAT_Widget* AWidget, bool AModal=true) override {
     if (MListener) MListener->on_widgetListener_modal(AWidget);
   }
 
@@ -129,6 +129,11 @@ public: // do_widget
   void do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) override {
     if (MListener) MListener->on_widgetListener_set_hint(AWidget,AHint);
   }
+
+  void do_widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) override {
+    if (MListener) MListener->on_widgetListener_want_timer(AWidget,AWantTimer);
+  }
+
 
 };
 

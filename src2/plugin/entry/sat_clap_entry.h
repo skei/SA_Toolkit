@@ -9,15 +9,17 @@
 //----------------------------------------------------------------------
 
 bool sat_clap_entry_init_callback(const char *plugin_path) {
-  //SAT_PRINT("plugin_path: %s\n",plugin_path);
-  SAT_GLOBAL.setPluginPath(plugin_path);
+  SAT_PRINT("plugin_path: %s\n",plugin_path);
+  //SAT_GLOBAL.setPluginPath(plugin_path);
+  SAT_GLOBAL.clapInit(plugin_path);
   return true;
 }
 
 //----------
 
 void sat_clap_entry_deinit_callback(void) {
-  //SAT_PRINT("\n");
+  SAT_PRINT("\n");
+  SAT_GLOBAL.clapDeInit();
 }
 
 //----------

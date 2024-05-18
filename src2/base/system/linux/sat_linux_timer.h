@@ -158,7 +158,7 @@ public:
         }
       }*/
       MIsRunning = true;
-      MPrevTime = SAT_GetTimeMS();
+      MPrevTime = SAT_GetTime();
     }
   }
 

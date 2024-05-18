@@ -203,6 +203,7 @@
     #define SAT_SURFACE_WAYLAND
     #define SAT_RENDERER_EGL
     #define SAT_PAINTER_NANOVG
+    // #define SAT_EDITOR_REMOTE
   #endif
 
   #ifdef SAT_GUI_WIN32
@@ -217,9 +218,9 @@
     #define SAT_RENDERER_GLX
     #define SAT_SURFACE_NANOVG
     #define SAT_PAINTER_NANOVG
-    // #define SAT_RENDERER_X11
-    // #define SAT_SURFACE_X11
-    // #define SAT_PAINTER_X11
+    //#define SAT_RENDERER_X11
+    //#define SAT_SURFACE_X11
+    //#define SAT_PAINTER_X11
   #endif
 
 #endif

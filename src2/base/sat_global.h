@@ -89,6 +89,17 @@ public:
 public:
 //------------------------------
 
+  void clapInit(const char *APath) {
+    setPluginPath(APath);
+  }
+
+  //----------
+
+  void clapDeInit() {
+  }
+
+  //----------
+
   void setPluginPath(const char* APath) {
     SAT_Strlcpy(MPluginPath,APath,SAT_MAX_PATH_LENGTH-1);
     MPluginPath[SAT_MAX_PATH_LENGTH-1] = 0;

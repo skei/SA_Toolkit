@@ -12,6 +12,8 @@
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 
+//typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
+
 //----------------------------------------------------------------------
 //
 //
@@ -38,6 +40,7 @@ private:
   SAT_Widget*         MKeyCaptureWidget   = nullptr;
 
   int32_t             MMouseCurrentCursor = SAT_CURSOR_DEFAULT;
+  SAT_WidgetArray     MTimerListeners = {};
   
   bool                MMouseLocked        = false;
   int32_t             MMouseLockedX       = 0;
@@ -91,6 +94,35 @@ public:
   // };
 
 //------------------------------
+private:
+//------------------------------
+
+  void updateHover(uint32_t AXpos, uint32_t AYpos, uint32_t ATime) {
+    if (MRootWidget) {
+      SAT_Widget* hover;
+      if (MModalWidget) hover = MModalWidget->findWidget(AXpos,AYpos);
+      else hover = MRootWidget->findWidget(AXpos,AYpos);
+      if (hover) {
+        if (hover != MHoverWidget) {
+          // if (MMouseCaptured) {
+          // }
+          // else {
+          // }
+          if (MHoverWidget) MHoverWidget->on_widget_leave(hover,AXpos,AYpos,ATime);
+          hover->on_widget_enter(MHoverWidget,AXpos,AYpos,ATime);
+          MHoverWidget = hover;
+          //SAT_PRINT("hover: %s\n",MHoverWidget->getName());
+        }
+      }
+      else {
+        if (MHoverWidget) MHoverWidget->on_widget_leave(nullptr,AXpos,AYpos,ATime);
+        MHoverWidget = nullptr;
+        //SAT_PRINT("hover: %s\n",MHoverWidget->getName());
+      }
+    }
+  }
+
+//------------------------------
 public: // window
 //------------------------------
 
@@ -141,6 +173,7 @@ public: // window
     //SAT_PRINT("w %i h %i\n",AWidth,AHeight);
     if (MRootWidget) {
       MRootWidget->on_widget_resize(AWidth,AHeight);
+      //MRootWidget->realignChildren();
     }
   }
 
@@ -155,7 +188,7 @@ public: // window
       MMouseCaptureWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
     }
 
-    // else, captured the widget we are hovering above
+    // else, capture the widget we are hovering above
     else {
       if (MHoverWidget) {
         MMouseCaptured = true;
@@ -274,18 +307,13 @@ public: // window
 public: // timer listener
 //------------------------------
 
-  // void on_timerListener_callback(SAT_Timer* ATimer) override {
-  //   if (!ATimer->isRunning()) return;
-  //   double now = SAT_GetTime();
-  //   double elapsed = now - MPrevTime;
-  //   MPrevTime = now;
-  //   on_window_timer(ATimer,elapsed);
-  // }
-
   void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
     //SAT_TRACE;
     if (MListener) {
       MListener->on_windowListener_timer(ATimer,ADelta);
+    }
+    for (uint32_t i=0; i<MTimerListeners.size(); i++) {
+      MTimerListeners[i]->on_widget_timer(ADelta);
     }
     // tweening
     // dirty widgets
@@ -298,6 +326,11 @@ public: // widget owner
   // SAT_Window* _getWindow() override {
   //   return this;
   // }
+
+  //----------
+
+  //void on_widgetOwner_wantTimerEvents(bool AWant=true) override {
+  //}
 
 //------------------------------
 public: // widget listener
@@ -394,34 +427,13 @@ public: // widget listener
       // if (MListener) MListener->on_windowListener_set_hint(AWidget,AHint);
     }
   }
-  
-//------------------------------
-private:
-//------------------------------
 
-  void updateHover(uint32_t AXpos, uint32_t AYpos, uint32_t ATime) {
-    if (MRootWidget) {
-      SAT_Widget* hover;
-      if (MModalWidget) hover = MModalWidget->findWidget(AXpos,AYpos);
-      else hover = MRootWidget->findWidget(AXpos,AYpos);
-      if (hover) {
-        if (hover != MHoverWidget) {
-          // if (MMouseCaptured) {
-          // }
-          // else {
-          // }
-          if (MHoverWidget) MHoverWidget->on_widget_leave(hover,AXpos,AYpos,ATime);
-          hover->on_widget_enter(MHoverWidget,AXpos,AYpos,ATime);
-          MHoverWidget = hover;
-          //SAT_PRINT("hover: %s\n",MHoverWidget->getName());
-        }
-      }
-      else {
-        if (MHoverWidget) MHoverWidget->on_widget_leave(nullptr,AXpos,AYpos,ATime);
-        MHoverWidget = nullptr;
-        //SAT_PRINT("hover: %s\n",MHoverWidget->getName());
-      }
-    }
+  //----------
+
+  void on_widgetListener_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) override {
+    //SAT_TRACE;
+    if (AWantTimer) MTimerListeners.append(AWidget);
+    else MTimerListeners.remove(AWidget);
   }
 
 };

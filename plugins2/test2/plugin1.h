@@ -151,6 +151,10 @@ public: // init
         root->appendChild(drag1);
         AEditor->connect(drag1,getParameter(1));
 
+        SAT_SliderWidget* slider1 = new SAT_SliderWidget(SAT_Rect(230,70,100,50));
+        root->appendChild(slider1);
+        AEditor->connect(slider1,getParameter(2));
+
       return true;
     }
 

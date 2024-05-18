@@ -1,6 +1,19 @@
 #ifndef sat_plugin_queues_included
 #define sat_plugin_queues_included
 //----------------------------------------------------------------------
+/*
+  from host   to audio: automation, modulation, notes, ..
+  from host   to gui:   automation, modulation
+
+  from gui    to audio: knobs (params)
+  from gui    to host:  knobs (param_fvalue)
+
+  from audio  to gui:   [vu, spectrum..]
+  from audio  to host:  knobs (param value, via gui to audio),
+                        note events (note effect)
+                        synth voice (note end)
+*/
+//----------------------------------------------------------------------
 
 #include "sat.h"
 #include "plugin/processor/sat_process_context.h"
@@ -298,6 +311,12 @@ public: // audio -> host
     //SAT_GLOBAL.ANALYTICS.set_NoteEndFromAudioToHost(count);
 
   }
+
+//------------------------------
+public: // audio -> host
+//------------------------------
+
+  // handled in process()
 
 //------------------------------
 public: // audio -> gui
