@@ -9,6 +9,8 @@
 // #include "gui/sat_painter.h"
 // #include "gui/sat_widget.h"
 #include "base/system/sat_timer.h"
+#include "gui/window/sat_buffered_window.h"
+
 
 
 //----------------------------------------------------------------------
@@ -18,7 +20,7 @@
 //----------------------------------------------------------------------
 
 class SAT_TimerWindow
-: public SAT_ImplementedWindow
+: public SAT_BufferedWindow
 , public SAT_TimerListener {
 
 //------------------------------
@@ -33,7 +35,7 @@ public:
 //------------------------------
 
   SAT_TimerWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+  : SAT_BufferedWindow(AWidth,AHeight,AParent) {
     MTimer = new SAT_Timer(this);
   }
 

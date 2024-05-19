@@ -133,6 +133,8 @@ public: // init
       SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
       window->setRootWidget(root);
 
+        root->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
+
         SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
         root->appendChild(wdg1);
         wdg1->setBackgroundColor(SAT_DarkGrey);
@@ -151,9 +153,13 @@ public: // init
         root->appendChild(drag1);
         AEditor->connect(drag1,getParameter(1));
 
-        SAT_SliderWidget* slider1 = new SAT_SliderWidget(SAT_Rect(230,70,100,50));
+        //SAT_SliderWidget* slider1 = new SAT_SliderWidget(SAT_Rect(100,50)); // (230,70,100,50));
+        SAT_SliderWidget* slider1 = new SAT_SliderWidget(SAT_Rect(50,20));
         root->appendChild(slider1);
         AEditor->connect(slider1,getParameter(2));
+
+        slider1->setLayout(SAT_WIDGET_LAYOUT_RIGHT_CENTER);
+        slider1->addLayout(SAT_WIDGET_LAYOUT_PERCENT_PARENT);
 
       return true;
     }

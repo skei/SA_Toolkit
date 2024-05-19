@@ -50,8 +50,9 @@ public:
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
   }
 
+  //----------
+
   // make it shut up about unimplemented virtual abstract methods..
-  
   #ifdef SAT_PAINTER_NANOVG
     NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
   #endif
@@ -64,9 +65,9 @@ public:
 //
 //----------------------------------------------------------------------
 
-#include "gui/window/sat_timer_window.h"
 #include "gui/window/sat_painted_window.h"
 #include "gui/window/sat_buffered_window.h"
+#include "gui/window/sat_timer_window.h"
 #include "gui/window/sat_widget_window.h"
 
 //----------------------------------------------------------------------

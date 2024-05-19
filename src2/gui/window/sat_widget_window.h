@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------
 
 class SAT_WidgetWindow
-: public SAT_BufferedWindow
+: public SAT_TimerWindow
 , public SAT_WidgetListener
 , public SAT_WidgetOwner {
 
@@ -60,7 +60,7 @@ public:
 //------------------------------
 
   SAT_WidgetWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_BufferedWindow(AWidth,AHeight,AParent) {
+  : SAT_TimerWindow(AWidth,AHeight,AParent) {
   }
 
   //----------
@@ -126,18 +126,28 @@ private:
 public: // window
 //------------------------------
 
+  /*
+    don't realign every time we hide/show editor? (in plugin)
+    only first time we open it
+  */
+
   void on_window_show() override {
-    //SAT_PRINT("\n");
+    SAT_PRINT("show start\n");
     SAT_BufferedWindow::on_window_show();
+
     if (MRootWidget) {
       MRootWidget->ownerWindowOpened(this);
       // MRootWidget->setSkin(&MDefaultSkin,true,true);
       uint32_t w = getWidth();// * MScale;
       uint32_t h = getHeight();// * MScale;
       MRootWidget->setSize(w,h);
-      MRootWidget->realignChildren();
+
+      // MRootWidget->realignChildren();
+
       // markRootWidgetDirty();
     }
+
+    SAT_PRINT("show end\n");
   }
 
   //----------
@@ -170,10 +180,10 @@ public: // window
   
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
     //SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
-    //SAT_PRINT("w %i h %i\n",AWidth,AHeight);
+    SAT_PRINT("w %i h %i\n",AWidth,AHeight);
     if (MRootWidget) {
       MRootWidget->on_widget_resize(AWidth,AHeight);
-      //MRootWidget->realignChildren();
+      MRootWidget->realignChildren();
     }
   }
 
@@ -323,11 +333,23 @@ public: // timer listener
 public: // widget owner
 //------------------------------
 
+  uint32_t on_widgetOwner_getWidth() override {
+    return getWidth();
+  }
+
+  uint32_t on_widgetOwner_getHeight() override {
+    return getHeight();
+  }
+
+  double on_widgetOwner_getScale() override {
+    return getScale();
+  }
+
+  //----------
+
   // SAT_Window* _getWindow() override {
   //   return this;
   // }
-
-  //----------
 
   //void on_widgetOwner_wantTimerEvents(bool AWant=true) override {
   //}

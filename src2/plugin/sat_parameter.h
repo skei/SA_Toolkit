@@ -147,6 +147,22 @@ public:
 public:
 //------------------------------
 
+  virtual uint32_t getIndicateAutomationState() {
+    return MIndicateAutomationState;
+  }
+
+  virtual SAT_Color getIndicateAutomationColor() {
+    return MIndicateAutomationColor;
+  }
+
+  virtual bool getIndicateMapped() {
+    return MIndicateMapped;
+  }
+
+  virtual SAT_Color getIndicateMappedColor() {
+    return MIndicateMappedColor;
+  }
+
   virtual clap_param_info_t* getInfo() {
     return &MInfo;
   }
@@ -167,8 +183,24 @@ public:
     return MValue;
   }
 
+  virtual sat_param_t getNormalizedValue() {
+    double range = (MInfo.max_value - MInfo.min_value);
+    if (range > 0.0) {
+      return (MValue - MInfo.min_value) / range;
+    }
+    return 0.0;
+  }
+
   virtual sat_param_t getModulation() {
     return MModulation;
+  }
+
+  virtual sat_param_t getNormalizedModulation() {
+    double range = (MInfo.max_value - MInfo.min_value);
+    if (range > 0.0) {
+      return (MModulation - MInfo.min_value) / range;
+    }
+    return 0.0;
   }
 
   virtual sat_param_t getMinValue() {

@@ -631,17 +631,18 @@ public: // editor listener
 
   #ifndef SAT_NO_GUI
 
-    // a control has been tweaked on the gui
-    // we need to tell the editor, as well as the host
-    // queue them up here
     // audio queue is flushed at the start of next process
     // host queue is flushed at the end of next process
 
     void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) override {
       //SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
-      //MProcessor->processParamValueEvent(event);
       MQueues.queueParamFromGuiToHost(AIndex,AValue);
       MQueues.queueParamFromGuiToAudio(AIndex,AValue);
+      
+      // prematurely?
+      // to keep everything in synth, should we set this when flushing (to audio) ?
+      MParameters[AIndex]->setValue(AValue);
+
     }
 
     //----------

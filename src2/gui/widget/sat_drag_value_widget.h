@@ -67,11 +67,12 @@ public: // on_widget
 
   void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     if (MIsDragging) {
-      double value = getValue();
+
       double deltax = AXpos - MMousePrevX;
       double deltay = AYpos - MMousePrevY;
-
       double deltav = (deltay * MSensitivity);
+
+      double value = getValue();
       double new_value = value - deltav;
       new_value = SAT_Clamp(new_value,0,1);
 

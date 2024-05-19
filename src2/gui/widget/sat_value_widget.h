@@ -53,9 +53,23 @@ public:
 public:
 //------------------------------
 
+  double calcValue() {
+    double value = getValue();
+    //SAT_PRINT("value %.3f\n",value);
+    SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    //SAT_PRINT("param %p\n",param);
+    if (param) {
+      value = param->getNormalizedValue();
+      //SAT_PRINT("normalized value %.3f\n",value);
+    }
+    return value;
+  }
+
+  //----------
+
   virtual void drawValueText(SAT_PaintContext* AContext) {
     if (MDrawValueText) {
-      double value = getValue();
+      double value = calcValue(); // getValue();
       sprintf(MValueText,"%.2f",value);
       //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;
@@ -77,6 +91,7 @@ public: // on_widget
     drawText(AContext);
     drawValueText(AContext);
     paintChildren(AContext);
+//    drawIndicators(AContext);
     drawBorder(AContext);
   }
 };

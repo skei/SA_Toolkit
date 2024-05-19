@@ -24,6 +24,8 @@ private:
   SAT_Color   MBackgroundColor  = SAT_Grey;
   SAT_Color   MBorderColor      = SAT_Black;
 
+  bool        MDrawIndicators   = true;
+
 //------------------------------
 public:
 //------------------------------
@@ -47,6 +49,8 @@ public:
 
   void setDrawBorder(bool ADraw=true)       { MDrawBorder = ADraw; }
   void setBorderColor(SAT_Color AColor)     { MBorderColor = AColor; }
+
+  void setDrawIndicators(bool ADraw)        { MDrawIndicators = ADraw; }
 
 //------------------------------
 public:
@@ -78,6 +82,37 @@ public:
     }
   }
 
+  //----------
+
+  virtual void drawIndicators(SAT_PaintContext* AContext) {
+    if (MDrawIndicators) {
+      //SAT_TRACE;
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      if (param) {
+        SAT_Painter* painter = AContext->painter;
+        SAT_Rect rect = getRect();
+
+        if (param->getIndicateMapped()) {
+            SAT_Color color = param->getIndicateMappedColor();
+            painter->setFillColor(color);
+            //painter->drawRect(rect.x,rect.y,rect.w,rect.h);
+        }
+        // switch (param->getIndicateAutomationState() ) {
+        //   case CLAP_PARAM_INDICATION_AUTOMATION_NONE: // The host doesn't have an automation for this parameter
+        //   case CLAP_PARAM_INDICATION_AUTOMATION_PRESENT: // The host has an automation for this parameter, but it isn't playing it
+        //   case CLAP_PARAM_INDICATION_AUTOMATION_PLAYING: // The host is playing an automation for this parameter
+        //   case CLAP_PARAM_INDICATION_AUTOMATION_RECORDING: // The host is recording an automation on this parameter
+        //   case CLAP_PARAM_INDICATION_AUTOMATION_OVERRIDING: // The host should play an automation for this parameter, but the user has started to adjust this parameter and is overriding the automation playback
+        // }
+        if (param->getIndicateAutomationState() != CLAP_PARAM_INDICATION_AUTOMATION_NONE) {
+          SAT_Color color = param->getIndicateAutomationColor();
+          painter->setDrawColor(color);
+          //painter->drawRect(rect.x,rect.y,rect.w,rect.h);
+        }
+      }
+    }
+  }
+
 //------------------------------
 public: // on_widget
 //------------------------------
@@ -94,11 +129,10 @@ public: // on_widget
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_TRACE;
-
     fillBackground(AContext);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
-
   }
 
 };

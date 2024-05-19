@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "base/system/sat_timer.h"
+//#include "base/system/sat_timer.h"
 #include "gui/painter/sat_paint_context.h"
 #include "gui/sat_renderer.h"
 #include "gui/sat_painter.h"
@@ -15,7 +15,7 @@
 //----------------------------------------------------------------------
 
 class SAT_PaintedWindow
-: public SAT_TimerWindow
+: public SAT_ImplementedWindow
 {
 
 //------------------------------
@@ -39,12 +39,13 @@ public:
 //------------------------------
 
   SAT_PaintedWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_TimerWindow(AWidth,AHeight,AParent) {
+  : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     //SAT_PRINT("\n");
     MWindowRenderer = new SAT_Renderer(this,this);
     MWindowPainter = new SAT_Painter(this,this);
     MPaintContext.painter = MWindowPainter;
     MWindowRenderer->resetCurrent();
+    setInitialSize(AWidth,AHeight);
   }
 
   //----------
@@ -57,6 +58,8 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  double            getScale()        { return MScale; }
 
   SAT_PaintContext* getPaintContext() { return &MPaintContext; }
   SAT_Painter*      getPainter()      { return MWindowPainter; }
@@ -123,30 +126,30 @@ public: // window
 public: // scale
 //------------------------------
 
-  // virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
-  //   MInitialWidth = AWidth;
-  //   MInitialHeight = AHeight;
-  //   MScale = recalcScale( getWidth(), getHeight() );
-  //   // MScale = recalcScale(AWidth,AHeight);
-  //   //SAT_Print("MScale %f\n",MScale);
-  // }
-
-  //----------
-
   // calculates the maximal (or minimal) scale to use for the gui,
   // that will fit inside the given width/height
 
-  // virtual double recalcScale(int32_t AWidth, int32_t AHeight) {
-  //   double scale = 1.0;
-  //   if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
-  //     double xscale = (double)AWidth / (double)MInitialWidth;
-  //     double yscale = (double)AHeight / (double)MInitialHeight;
-  //     if (xscale < yscale) scale = xscale;
-  //     else scale =  yscale;
-  //   }
-  //   //SAT_Print("scale: %f\n",scale);
-  //   return scale;
-  // }
+  virtual double recalcScale(int32_t AWidth, int32_t AHeight) {
+    double scale = 1.0;
+    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
+      double xscale = (double)AWidth / (double)MInitialWidth;
+      double yscale = (double)AHeight / (double)MInitialHeight;
+      if (xscale < yscale) scale = xscale;
+      else scale =  yscale;
+    }
+    //SAT_Print("scale: %f\n",scale);
+    return scale;
+  }
+
+  //----------
+
+  virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
+    MInitialWidth = AWidth;
+    MInitialHeight = AHeight;
+    MScale = recalcScale( getWidth(), getHeight() );
+    // MScale = recalcScale(AWidth,AHeight);
+    //SAT_Print("MScale %f\n",MScale);
+  }
 
 };
 
