@@ -86,7 +86,7 @@ public:
 
   SAT_Parameter(/*uint32_t AId=0,*/ const char* AName, const char* AModule="", sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0, uint32_t AFlags=CLAP_PARAM_IS_AUTOMATABLE) {
     MInfo.id                  = 0;//AId;
-    MInfo.flags               = AFlags;
+    MInfo.flags               = AFlags | CLAP_PARAM_IS_MODULATABLE;
     MInfo.cookie              = this;
     SAT_Strlcpy(MInfo.name,AName,CLAP_NAME_SIZE);
     SAT_Strlcpy(MInfo.module,AModule,CLAP_PATH_SIZE);

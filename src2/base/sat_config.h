@@ -52,6 +52,8 @@
   #define SAT_LOG_THREAD
   #define SAT_LOG_TIME
 //#define SAT_NANOVG_PATCH
+//#define SAT_NO_BITMAP_PNG
+//#define SAT_NO_BITMAP_PNG_FILE
 //#define SAT_NO_STDLIB
 //#define SAT_NO_GUI
 //#define SAT_PLUGIN_DEFAULT_EDITOR
@@ -67,8 +69,8 @@
 //#define SAT_PRINT_PRETTY_FUNCTION
 //#define SAT_TESTS_EXIT_ON_FAILURE
 //#define SAT_WINDOW_BUFFERED
-  #define SAT_WINDOW_NO_TIMER_AUTOSTART
-//#define SAT_WINDOW_TIMER_REFRESH_WIDGETS
+//#define SAT_WINDOW_NO_TIMER_AUTOSTART
+  #define SAT_WINDOW_TIMER_REFRESH_WIDGETS
   #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 // automatically (compile script, command line):

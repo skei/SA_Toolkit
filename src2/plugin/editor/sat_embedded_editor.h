@@ -80,6 +80,12 @@ public:
 
   //----------
 
+  // void on_windowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_PARAM) override {
+  //   SAT_TRACE;
+  // }
+
+  //----------
+
   void on_windowListener_timer(SAT_Timer* ATimer, double ADelta) override {
     //SAT_TRACE;
     if (MListener) MListener->on_editorListener_timer(ATimer,ADelta);

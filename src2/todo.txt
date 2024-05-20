@@ -16,3 +16,7 @@ new, improved
 * SAT_ShaderWidget
 * tweening
 * standalone executable: audio/midi io
+
+- text auto-wrap inside container
+- text auto-scale to fill container
+- widget autosize around child widgets

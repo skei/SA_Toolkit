@@ -8,6 +8,9 @@
   #include "plugin/sat_editor.h"
   #include "gui/sat_widgets.h"
   #include "gui/sat_surface.h"
+
+  #include "gui/sat_bitmap.h"
+
 #endif
 
 //----------------------------------------------------------------------
@@ -66,6 +69,7 @@ public:
   void paramValueEvent(const clap_event_param_value_t* event) final {
     uint32_t id = event->param_id;
     sat_param_t value = event->value;
+    //SAT_PRINT("%i = %.3f\n",id,value);
     switch(id) {
       case 0: param1 = value; break;
       case 1: param2 = value; break;

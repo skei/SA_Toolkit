@@ -148,7 +148,9 @@ int main(int argc, char** argv) {
       window->setTitle("SAT_ExeEntry");
       window->show();
       SAT_HostWindow* hostwindow = openEditor(window);
+      //hostwindow->on_window_show();
       mainloop(hostwindow);
+      //hostwindow->on_window_hide();
       closeEditor();
       window->hide();
       delete window;

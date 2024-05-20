@@ -649,6 +649,8 @@ public: // editor listener
 
     void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
       //SAT_TRACE;
+      MQueues.flushParamFromHostToGui(&MParameters,MEditor);
+      MQueues.flushModFromHostToGui(&MParameters,MEditor);
     }
 
     //----------

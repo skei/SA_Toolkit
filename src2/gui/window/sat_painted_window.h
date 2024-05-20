@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-//#include "base/system/sat_timer.h"
 #include "gui/painter/sat_paint_context.h"
 #include "gui/sat_renderer.h"
 #include "gui/sat_painter.h"
@@ -15,8 +14,7 @@
 //----------------------------------------------------------------------
 
 class SAT_PaintedWindow
-: public SAT_ImplementedWindow
-{
+: public SAT_BasicWindow {
 
 //------------------------------
 private:
@@ -39,7 +37,7 @@ public:
 //------------------------------
 
   SAT_PaintedWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
+  : SAT_BasicWindow(AWidth,AHeight,AParent) {
     //SAT_PRINT("\n");
     MWindowRenderer = new SAT_Renderer(this,this);
     MWindowPainter = new SAT_Painter(this,this);
@@ -91,11 +89,11 @@ public: // window
 //------------------------------
 
   // void on_window_show() override {
-  //   SAT_TimerWindow::on_window_show();
+  //   SAT_BasicWindow::on_window_show();
   // }
 
   // void on_window_hide() override {
-  //   SAT_TimerWindow::on_window_hide();
+  //   SAT_BasicWindow::on_window_hide();
   // }
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {

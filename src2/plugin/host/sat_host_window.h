@@ -45,6 +45,16 @@ public:
 public:
 //------------------------------
 
+  // void on_window_show() override {
+  //   SAT_TRACE;
+  //   SAT_BasicWindow::on_window_show();
+  // }
+
+  // void on_window_hide() override {
+  //   SAT_TRACE;
+  //   SAT_BasicWindow::on_window_show();
+  // }
+
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
     //SAT_PRINT("w %i h %i\n",AWidth,AHeight);
     if (MClapGui) MClapGui->set_size(MClapPlugin,AWidth,AHeight);

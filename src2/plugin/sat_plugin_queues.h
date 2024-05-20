@@ -76,13 +76,12 @@ public: // host -> gui
   // called from [timer]
   //   todo
 
-  void flushParamFromHostToGui(SAT_ProcessContext* AContext, SAT_Editor* AEditor) {
-    SAT_ParameterArray* parameters = AContext->parameters;
+  void flushParamFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     uint32_t count = 0;
     SAT_PluginQueueItem item;
     while (MParamFromHostToGui.read(&item)) {
       count += 1;
-      SAT_Parameter* parameter = parameters->getItem(item.param_id);
+      SAT_Parameter* parameter = AParameters->getItem(item.param_id);
       if (AEditor) AEditor->updateParameterFromHost(parameter,item.value);
     }
     SAT_GLOBAL.ANALYTICS.set_ParamFromHostToGui(count);
@@ -110,13 +109,12 @@ public: // host -> gui
   // called from [timer]
   //   todo
 
-  void flushModFromHostToGui(SAT_ProcessContext* AContext, SAT_Editor* AEditor) {
-    SAT_ParameterArray* parameters = AContext->parameters;
+  void flushModFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     SAT_PluginQueueItem item;
     uint32_t count = 0;
     while (MModFromHostToGui.read(&item)) {
       count += 1;
-      SAT_Parameter* parameter = parameters->getItem(item.param_id);
+      SAT_Parameter* parameter = AParameters->getItem(item.param_id);
       if (AEditor) AEditor->updateModulationFromHost(parameter,item.value);
     }
     SAT_GLOBAL.ANALYTICS.set_ModFromHostToGui(count);

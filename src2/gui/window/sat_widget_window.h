@@ -7,12 +7,13 @@
 #include "gui/widget/sat_widget_listener.h"
 #include "gui/window/sat_window_listener.h"
 #include "gui/widget/sat_root_widget.h"
-#include "gui/window/sat_buffered_window.h"
 #include "gui/sat_renderer.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 
-//typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
+// SAT_EditorQueues
+
+typedef SAT_Queue<SAT_Widget*,1024> SAT_WidgetQueue;
 
 //----------------------------------------------------------------------
 //
@@ -21,7 +22,7 @@
 //----------------------------------------------------------------------
 
 class SAT_WidgetWindow
-: public SAT_TimerWindow
+: public SAT_BufferedWindow
 , public SAT_WidgetListener
 , public SAT_WidgetOwner {
 
@@ -31,8 +32,8 @@ private:
 
   SAT_WindowListener* MListener           = nullptr;
   SAT_TweenManager    MTweenManager       = {};
-
   SAT_RootWidget*     MRootWidget         = nullptr;
+  SAT_WidgetQueue     MDirtyWidgets       = {};
   
   SAT_Widget*         MHoverWidget        = nullptr;
   SAT_Widget*         MModalWidget        = nullptr;
@@ -60,7 +61,7 @@ public:
 //------------------------------
 
   SAT_WidgetWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_TimerWindow(AWidth,AHeight,AParent) {
+  : SAT_BufferedWindow(AWidth,AHeight,AParent) {
   }
 
   //----------
@@ -75,6 +76,8 @@ public:
     MListener = AListener;
   }
 
+  //----------
+
   void setRootWidget(SAT_RootWidget* ARoot) {
     MRootWidget = ARoot;
   }
@@ -88,6 +91,8 @@ public:
   //   if (MRootWidget) MRootWidget->on_widget_realign();
   //   SAT_BufferedWindow::show();
   // };
+
+  //----------
 
   // void hide() override {
   //   SAT_BufferedWindow::hide();
@@ -122,6 +127,29 @@ private:
     }
   }
 
+  //----------
+
+  void queueDirtyWidget(SAT_Widget* AWidget) {
+    // SAT_PRINT("%s\n",AWidget->getName());
+    if (!MDirtyWidgets.write(AWidget)) {
+    }
+  }
+
+  //----------
+
+  void flushDirtyWidgets() {
+    // SAT_TRACE;
+    uint32_t count = 0;
+    SAT_Widget* widget;
+    while (MDirtyWidgets.read(&widget)) {
+      count += 1;
+
+      SAT_Rect rect = widget->getRect();
+      invalidate(rect.x,rect.y,rect.w,rect.h);
+
+    }
+  }
+
 //------------------------------
 public: // window
 //------------------------------
@@ -132,22 +160,18 @@ public: // window
   */
 
   void on_window_show() override {
-    SAT_PRINT("show start\n");
+//    SAT_PRINT("show start\n");
     SAT_BufferedWindow::on_window_show();
-
     if (MRootWidget) {
       MRootWidget->ownerWindowOpened(this);
       // MRootWidget->setSkin(&MDefaultSkin,true,true);
       uint32_t w = getWidth();// * MScale;
       uint32_t h = getHeight();// * MScale;
       MRootWidget->setSize(w,h);
-
       // MRootWidget->realignChildren();
-
       // markRootWidgetDirty();
     }
-
-    SAT_PRINT("show end\n");
+//    SAT_PRINT("show end\n");
   }
 
   //----------
@@ -182,6 +206,7 @@ public: // window
     //SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
     SAT_PRINT("w %i h %i\n",AWidth,AHeight);
     if (MRootWidget) {
+      // resize buffer?
       MRootWidget->on_widget_resize(AWidth,AHeight);
       MRootWidget->realignChildren();
     }
@@ -319,14 +344,14 @@ public: // timer listener
 
   void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
     //SAT_TRACE;
-    if (MListener) {
-      MListener->on_windowListener_timer(ATimer,ADelta);
-    }
+    if (MListener) MListener->on_windowListener_timer(ATimer,ADelta);
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(ADelta);
     }
-    // tweening
-    // dirty widgets
+    // todo: tweening
+    #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
+      flushDirtyWidgets();
+    #endif
   }
 
 //------------------------------
@@ -371,7 +396,7 @@ public: // widget listener
     //SAT_PRINT("%s\n",AWidget->getName());
     //markWidgetDirtyFromGui(AWidget);
     #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
-      //queueDirtyWidget(AWidget);
+      queueDirtyWidget(AWidget);
     #else
       SAT_Rect rect = AWidget->getRect();
       invalidate(rect.x,rect.y,rect.w,rect.h);

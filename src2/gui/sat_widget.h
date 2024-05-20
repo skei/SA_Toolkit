@@ -380,7 +380,7 @@ public: // children
   //----------
 
   virtual void realignChildren(bool ARecursive=true) {
-    SAT_PRINT("%s\n",getName());
+    //SAT_PRINT("%s\n",getName());
 
     double scale = getWindowScale();
 
