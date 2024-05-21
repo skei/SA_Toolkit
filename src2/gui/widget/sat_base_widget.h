@@ -30,6 +30,27 @@ public:
 public:
 //------------------------------
 
+  // virtual SAT_Widget* appendChild(SAT_Widget* AWidget) { return nullptr; }
+  // virtual void        removeChild(SAT_Widget* AWidget) {}
+  // virtual void        deleteChildren() {}
+  // virtual uint32_t    getNumChildren() { return 0; }
+  // virtual SAT_Widget* getChild(uint32_t AIndex) { return nullptr; }
+
+  // virtual void        ownerWindowOpened(SAT_WidgetOwner* AOwner) {}
+  // virtual void        closeOwnerWindow(SAT_WidgetOwner* AOwner) {}
+
+  // virtual double      getWindowWidth() { return 0.0; }
+  // virtual double      getWindowHeight() { return 0.0; }
+  // virtual double      getWindowScale() { return 1.0; }
+
+  // virtual SAT_Widget* findWidget(int32_t AXpos, int32_t AYpos) { return nullptr; }
+  // virtual void        paintChildren(SAT_PaintContext* AContext/*, bool ARecursive=true*/) {}
+  // virtual void        realignChildren(bool ARecursive=true) {}
+
+//------------------------------
+public:
+//------------------------------
+
   virtual void on_widget_open(SAT_WidgetOwner* AOwner) {}
   virtual void on_widget_close(SAT_WidgetOwner* AOwner) {}
   virtual void on_widget_move(int32_t AXpos, int32_t AYpos) {}
@@ -48,7 +69,6 @@ public:
   virtual void on_widget_leave(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {}
   virtual void on_widget_timer(double ADelta) {}
-
 
 //------------------------------
 public:

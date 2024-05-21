@@ -5,6 +5,7 @@
 #include "sat.h"
 #include "base/util/sat_tween_manager.h"
 #include "gui/widget/sat_widget_listener.h"
+#include "gui/window/sat_buffered_window.h"
 #include "gui/window/sat_window_listener.h"
 #include "gui/widget/sat_root_widget.h"
 #include "gui/sat_renderer.h"
@@ -41,7 +42,10 @@ private:
   SAT_Widget*         MKeyCaptureWidget   = nullptr;
 
   int32_t             MMouseCurrentCursor = SAT_CURSOR_DEFAULT;
-  SAT_WidgetArray     MTimerListeners = {};
+  SAT_WidgetArray     MTimerListeners     = {};
+
+  int32_t             MMouseCurrentXpos   = 0;
+  int32_t             MMouseCurrentYpos   = 0;
   
   bool                MMouseLocked        = false;
   int32_t             MMouseLockedX       = 0;
@@ -129,6 +133,9 @@ private:
 
   //----------
 
+  // called from
+  // on_widgetListener_redraw
+
   void queueDirtyWidget(SAT_Widget* AWidget) {
     // SAT_PRINT("%s\n",AWidget->getName());
     if (!MDirtyWidgets.write(AWidget)) {
@@ -136,6 +143,8 @@ private:
   }
 
   //----------
+
+  // called from timer
 
   void flushDirtyWidgets() {
     // SAT_TRACE;
@@ -149,6 +158,22 @@ private:
 
     }
   }
+
+  //----------
+
+  virtual void lockMouseCursor() {
+    MMouseLocked  = true;
+    MMouseLockedX = MMouseCurrentXpos;
+    MMouseLockedY = MMouseCurrentYpos;
+    // MMouseClickedXpos = MMouseXpos;
+    // MMouseClickedYpos = MMouseYpos;
+  }
+
+  //----------
+
+  virtual void unlockMouseCursor() {
+    MMouseLocked = false;
+  }  
 
 //------------------------------
 public: // window
@@ -216,6 +241,9 @@ public: // window
   
   void on_window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     //SAT_PRINT("x %i y %i b %i s %i\n",AXpos,AYpos,AButton,AState);
+    MMouseClickedXpos   = AXpos;
+    MMouseClickedYpos   = AYpos;
+    MMouseClickedButton = AButton;
 
     // if widget is already captured, 
     // send further clicks to the same widget..
@@ -241,6 +269,10 @@ public: // window
   
   void on_window_mouseRelease(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     //SAT_PRINT("x %i y %i b %i s %i\n",AXpos,AYpos,AButton,AState);
+
+    // MMouseClickedXpos   = AXpos;
+    // MMouseClickedYpos   = AYpos;
+    // MMouseClickedButton = AButton;
 
     if (MMouseCaptured) {
 
@@ -268,17 +300,19 @@ public: // window
   
   void on_window_mouseMove(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     //SAT_PRINT("x %i y %i s %i\n",AXpos,AYpos,AState);
+    MMouseCurrentXpos = AXpos;
+    MMouseCurrentYpos = AYpos;
 
-    // when we set the mouse cursor back to its locked pos,
-    // the os/system might send us a mouse move event as a result
-    // ignore it..
+    // when we set the mouse cursor back to its locked pos, the os/system might send us a new mouse move event as a result.. ignore it..
     if (MMouseLocked) {
-      if ((AXpos == MMouseClickedXpos) && (AYpos == MMouseClickedYpos)) return;
+      if ((AXpos == MMouseLockedX) && (AYpos == MMouseLockedY)) {
+        // SAT_TRACE;
+        return;
+      }
     }
 
     // send mouse move events only to captured widget
     if (MMouseCaptured) {
-      //SAT_PRINT("move\n");
       MMouseCaptureWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
       // updateHoverCaptured(AXpos,AYpos,ATime);
     }
@@ -288,6 +322,7 @@ public: // window
 
     // if mouse locked, set it back to locked position
     // (after processing it)
+
     if (MMouseLocked) {
       setMousePos(MMouseLockedX,MMouseLockedY);
     }
@@ -447,10 +482,10 @@ public: // widget listener
     // //SAT_Print("%s\n",AWidget->getName());
     switch(ACursor) {
       case SAT_CURSOR_LOCK:
-//        lockMouseCursor();
+        lockMouseCursor();
         break;
       case SAT_CURSOR_UNLOCK:
-//        unlockMouseCursor();
+        unlockMouseCursor();
         break;
       case SAT_CURSOR_SHOW:  
         showMouse();

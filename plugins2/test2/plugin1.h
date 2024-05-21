@@ -117,9 +117,9 @@ public: // init
     registerDefaultExtensions();
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
-    appendParameter( new SAT_Parameter("Left",  "", 1.0) );
-    appendParameter( new SAT_Parameter("Right", "", 1.0) );
-    appendParameter( new SAT_Parameter("Gain",  "", 1.0) );
+    appendParameter(new SAT_Parameter("Left", "",1.0));
+    appendParameter(new SAT_Parameter("Right","",1.0));
+    appendParameter(new SAT_Parameter("Gain", "",1.0));
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(640,480,1.0,false);
     return SAT_Plugin::init();
@@ -137,7 +137,7 @@ public: // init
       SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
       window->setRootWidget(root);
 
-        root->setLayoutInnerBorder(SAT_Rect(10,10,10,10));
+        root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
         SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
         root->appendChild(wdg1);
@@ -162,8 +162,8 @@ public: // init
         root->appendChild(slider1);
         AEditor->connect(slider1,getParameter(2));
 
-        slider1->setLayout(SAT_WIDGET_LAYOUT_RIGHT_CENTER);
-        slider1->addLayout(SAT_WIDGET_LAYOUT_PERCENT_PARENT);
+        slider1->Layout.flags =  SAT_WIDGET_LAYOUT_RIGHT_CENTER;
+        slider1->Layout.flags |= SAT_WIDGET_LAYOUT_PERCENT_PARENT;
 
       return true;
     }

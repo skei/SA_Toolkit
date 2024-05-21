@@ -45,7 +45,6 @@ public:
   void setTextSize(double ASize)              { MTextSize = ASize; }
   void setTextAlignment(uint32_t AAlignment)  { MTextAlignment = AAlignment; }
 
-
 //------------------------------
 public:
 //------------------------------

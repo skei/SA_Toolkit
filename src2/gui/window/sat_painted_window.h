@@ -4,6 +4,7 @@
 
 #include "sat.h"
 #include "gui/painter/sat_paint_context.h"
+#include "gui/window/sat_basic_window.h"
 #include "gui/sat_renderer.h"
 #include "gui/sat_painter.h"
 
