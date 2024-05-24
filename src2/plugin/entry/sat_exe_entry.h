@@ -140,6 +140,8 @@ int main(int argc, char** argv) {
   initFromMemory(&clap_entry,"");
   loadPlugin(host->getClapHost(),0);
 
+  // todo: start audio/midi
+
   #ifndef SAT_NO_GUI
     if (MClapGui) {
       uint32_t width,height;
@@ -156,6 +158,8 @@ int main(int argc, char** argv) {
       delete window;
     }
   #endif
+
+  // todo: stop audio/midi
 
   unloadPlugin();
   deinit();

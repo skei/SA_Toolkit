@@ -84,7 +84,7 @@ public:
 
 //------------------------------
 public:
-//------------------------------
+//------------------------------SAT_ClapPlugin
 
   const clap_plugin_descriptor_t* getClapDescriptor() {
     return MClapPlugin.desc;

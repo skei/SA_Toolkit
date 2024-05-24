@@ -258,35 +258,15 @@ public: // children
   //----------
 
   // returns null if no child widgets at x,y
-  // todo: ifActive
 
-  // virtual SAT_Widget* findChildWidget(uint32_t AXpos, uint32_t AYpos, bool ARecursive=true) {
-  //   uint32_t num = MChildWidgets.size();
-  //   for (int32_t i=(num-1); i>=0; i--) {
-  //   //for (uint32_t i=0; i<num; i++) {
-  //     SAT_Widget* child = MChildWidgets[i];
-  //     if (child->isActive()) {
-  //       SAT_Rect child_rect = child->getRect();
-  //       if (child_rect.contains(AXpos,AYpos)) {
-  //         if (ARecursive) {
-  //           SAT_Widget* subchild = child->findChildWidget(AXpos,AYpos,ARecursive);
-  //           if (subchild) return subchild;
-  //         }
-  //         return child;
-  //       }
-  //     }
-  //   }
-  //   return nullptr;
-  // }
-
-  virtual SAT_Widget* findWidget(int32_t AXpos, int32_t AYpos) {
+  virtual SAT_Widget* findWidget(int32_t AXpos, int32_t AYpos, bool ARecursive=true) {
     if (MChildren.size() > 0) {
       for (int32_t i=MChildren.size()-1; i>=0; i--) {
         SAT_Widget* widget = MChildren[i];
         SAT_Rect widget_rect = widget->getRect();
         if (widget->State.active) {
           if (widget_rect.contains(AXpos,AYpos)) {
-            return widget->findWidget(AXpos,AYpos);
+            if (ARecursive) return widget->findWidget(AXpos,AYpos);
           }
         }
       }
@@ -296,23 +276,22 @@ public: // children
 
   //----------
 
-  // virtual SAT_Widget* findChildWidget(const char* AName, bool ARecursive=true) { return nullptr;
-  //   for (uint32_t i=0; i<MChildWidgets.size(); i++) {
-  //     SAT_Widget* child = MChildWidgets[i];
-  //     const char* name = child->getName();
-  //     if (strcmp(AName,name) == 0) {
-  //       return child;
-  //     }
-  //     else {
-  //       if (ARecursive) {
-  //         SAT_Widget* subchild = child->findChildWidget(AName,ARecursive);
-  //         if (subchild) return subchild;
-  //       }
-  //     }
-
-  //   }
-  //   return nullptr;
-  // }
+  virtual SAT_Widget* findWidget(const char* AName, bool ARecursive=true) { return nullptr;
+    for (uint32_t i=0; i<MChildren.size(); i++) {
+      SAT_Widget* child = MChildren[i];
+      const char* name = child->getName();
+      if (strcmp(AName,name) == 0) {
+        return child;
+      }
+      else {
+        if (ARecursive) {
+          SAT_Widget* subchild = child->findWidget(AName,ARecursive);
+          if (subchild) return subchild;
+        }
+      }
+    }
+    return nullptr;
+  }
 
   //----------
 
@@ -324,7 +303,10 @@ public: // children
     SAT_Painter* painter= AContext->painter;
     uint32_t numchildren = MChildren.size();
     if (numchildren > 0) {
-      if (Options.autoClip) painter->pushOverlappingClip(mrect);
+
+      SAT_Rect clip_rect = mrect;
+      if (Options.autoClip) painter->pushOverlappingClip(clip_rect);
+
       //for (int32_t i=(numchildren-1); i>=0; i--) {
       for (uint32_t i=0; i<numchildren; i++) {
         SAT_Widget* widget = MChildren[i];
@@ -337,7 +319,9 @@ public: // children
           }
         //}
       }
+
       if (Options.autoClip) painter->popClip();
+
     }
   }
 

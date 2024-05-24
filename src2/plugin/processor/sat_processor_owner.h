@@ -1,6 +1,7 @@
 #ifndef sat_processor_owner_included
 #define sat_processor_owner_included
 //----------------------------------------------------------------------
+// aka plugin
 
 #include "sat.h"
 #include "plugin/sat_audio_port.h"

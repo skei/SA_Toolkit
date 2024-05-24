@@ -65,6 +65,10 @@ public:
   SAT_NotePortArray*  getNoteOutputs()  { return MNoteOutputs; }
   SAT_ParameterArray* getParameters()   { return MParameters; }
 
+  uint32_t            getNumParameters()                  { return MParameters->size(); }
+  SAT_Parameter*      getParameter(uint32_t AIndex)       { return MParameters->getItem(AIndex); }
+  sat_param_t         getParameterValue(uint32_t AIndex)  { return MParameters->getItem(AIndex)->getValue(); }
+
 //------------------------------
 public: // events
 //------------------------------

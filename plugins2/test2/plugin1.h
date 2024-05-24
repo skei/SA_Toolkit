@@ -1,17 +1,10 @@
 
-#include "sat.h"
 #include "plugin/sat_plugin.h"
-#include "plugin/sat_processor.h"
+
 #include "plugin/processor/sat_block_processor.h"
-
-#ifndef SAT_NO_GUI
-  #include "plugin/sat_editor.h"
-  #include "gui/sat_widgets.h"
-  #include "gui/sat_surface.h"
-
-  #include "gui/sat_bitmap.h"
-
-#endif
+#include "plugin/processor/sat_interleaved_processor.h"
+#include "plugin/processor/sat_quantized_processor.h"
+#include "plugin/processor/sat_voice_processor.h"
 
 //----------------------------------------------------------------------
 //
@@ -23,12 +16,12 @@ clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
   .id           = "myPlugin-v0",
   .name         = "myPlugin",
-  .vendor       = "skei.audio",
-  .url          = "",
+  .vendor       = SAT_VENDOR,
+  .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
-  .version      = "0.0.0",
-  .description  = "myPlugin",
+  .version      = SAT_VERSION,
+  .description  = "my plugin..",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
 
@@ -39,22 +32,23 @@ clap_plugin_descriptor_t myDescriptor = {
 //----------------------------------------------------------------------
 
 class myProcessor
-: public SAT_BlockProcessor {
+: public SAT_InterleavedProcessor {
 
 //------------------------------
 private:
 //------------------------------
 
+  sat_param_t   param0 = 0.0;
   sat_param_t   param1 = 0.0;
   sat_param_t   param2 = 0.0;
-  sat_param_t   param3 = 0.0;
+  //sat_param_t   params[3] = {0,0,0};
 
 //------------------------------
 public:
 //------------------------------
 
   myProcessor(SAT_ProcessorOwner* AOwner)
-  : SAT_BlockProcessor(AOwner) {
+  : SAT_InterleavedProcessor(AOwner) {
   }
 
   //----------
@@ -70,10 +64,11 @@ public:
     uint32_t id = event->param_id;
     sat_param_t value = event->value;
     //SAT_PRINT("%i = %.3f\n",id,value);
+    //params[id] = value;
     switch(id) {
-      case 0: param1 = value; break;
-      case 1: param2 = value; break;
-      case 2: param3 = value; break;
+      case 0: param0 = value; break;
+      case 1: param1 = value; break;
+      case 2: param2 = value; break;
     }
   }
 
@@ -81,8 +76,13 @@ public:
 
   void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) final {
     SAT_ParameterArray* parameters = getParameters();
-    *spl0 *= (param1 * param3);
-    *spl1 *= (param2 * param3);
+    //*spl0 *= (params[0] * params[2]);
+    //*spl1 *= (params[1] * params[2]);
+    //sat_param_t param0 = getParameterValue(0);
+    //sat_param_t param1 = getParameterValue(1);
+    //sat_param_t param2 = getParameterValue(2);
+    *spl0 *= (param0 * param2);
+    *spl1 *= (param1 * param2);
   }
 
 };
@@ -141,7 +141,7 @@ public: // init
 
         SAT_VisualWidget* wdg1 = new SAT_VisualWidget(SAT_Rect(10,10,100,50));
         root->appendChild(wdg1);
-        wdg1->setBackgroundColor(SAT_DarkGrey);
+        wdg1->setBackgroundColor(SAT_Green);
 
         SAT_TextWidget* text1 = new SAT_TextWidget(SAT_Rect(120,10,100,50));
         root->appendChild(text1);
@@ -161,7 +161,6 @@ public: // init
         SAT_SliderWidget* slider1 = new SAT_SliderWidget(SAT_Rect(50,20));
         root->appendChild(slider1);
         AEditor->connect(slider1,getParameter(2));
-
         slider1->Layout.flags =  SAT_WIDGET_LAYOUT_RIGHT_CENTER;
         slider1->Layout.flags |= SAT_WIDGET_LAYOUT_PERCENT_PARENT;
 

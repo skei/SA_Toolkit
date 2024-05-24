@@ -10,10 +10,12 @@ typedef SAT_Array<const void*> SAT_ClapFactoryArray;
 typedef SAT_Array<const char*> SAT_ClapFactoryIdArray;
 
 class SAT_Registry;
-extern void SAT_Register(SAT_Registry* ARegistry) __attribute__ ((weak)); //__SAT_WEAK;
+//extern void SAT_Register(SAT_Registry* ARegistry) __attribute__ ((weak));
+extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
 
 class SAT_ClapPlugin;
-extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __attribute__ ((weak)); //__SAT_WEAK;
+//extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __attribute__ ((weak));
+extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
 
 //----------------------------------------------------------------------
 //

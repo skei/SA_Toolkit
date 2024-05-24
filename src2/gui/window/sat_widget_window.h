@@ -35,6 +35,7 @@ private:
   SAT_TweenManager    MTweenManager       = {};
   SAT_RootWidget*     MRootWidget         = nullptr;
   SAT_WidgetQueue     MDirtyWidgets       = {};
+  SAT_WidgetQueue     MPaintWidgets       = {};
   
   SAT_Widget*         MHoverWidget        = nullptr;
   SAT_Widget*         MModalWidget        = nullptr;
@@ -134,7 +135,7 @@ private:
   //----------
 
   // called from
-  // on_widgetListener_redraw
+  // - on_widgetListener_redraw
 
   void queueDirtyWidget(SAT_Widget* AWidget) {
     // SAT_PRINT("%s\n",AWidget->getName());
@@ -144,7 +145,14 @@ private:
 
   //----------
 
-  // called from timer
+  // called from
+  // - timer
+
+  // TODO:
+  // read widget from MDirtyWidgets, write to MPaintWidgets
+  // in on_paint, read MPaintWidgets, do some checking (already drawm this frame?),
+  // and paint all of them..
+  // then copy (just) the update rect to the screen)
 
   void flushDirtyWidgets() {
     // SAT_TRACE;
@@ -152,10 +160,8 @@ private:
     SAT_Widget* widget;
     while (MDirtyWidgets.read(&widget)) {
       count += 1;
-
       SAT_Rect rect = widget->getRect();
       invalidate(rect.x,rect.y,rect.w,rect.h);
-
     }
   }
 

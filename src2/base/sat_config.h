@@ -47,8 +47,8 @@
   #define SAT_EDITOR_EMBEDDED
 //#define SAT_EDITOR_REMOTE
 //#define SAT_INCLUDE_TESTS
-//#define SAT_INCLUDE_LOG
 //#define SAT_INCLUDE_ANALYTICS
+//#define SAT_INCLUDE_LOG
   #define SAT_LOG_THREAD
   #define SAT_LOG_TIME
 //#define SAT_NANOVG_PATCH
@@ -152,7 +152,7 @@
   #define SAT_PLUGIN_CLAP
 #endif
 
-#undef SAT_PLUGIN_DEFINED
+//#undef SAT_PLUGIN_DEFINED
 
 //----------------------------------------------------------------------
 //
