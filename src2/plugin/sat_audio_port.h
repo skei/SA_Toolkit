@@ -20,12 +20,21 @@ private:
 //------------------------------
 
   clap_audio_port_info_t  MInfo = {
+  #ifdef SAT_WIN32
+    0,
+    "",
+    CLAP_AUDIO_PORT_IS_MAIN,
+    2,
+    CLAP_PORT_STEREO,
+    CLAP_INVALID_ID
+  #else
     .id             = 0,
     .name           = "",
     .flags          = CLAP_AUDIO_PORT_IS_MAIN,
     .channel_count  = 2,
     .port_type      = CLAP_PORT_STEREO,
     .in_place_pair  = CLAP_INVALID_ID
+  #endif
   };
 
 //------------------------------

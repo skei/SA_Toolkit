@@ -110,6 +110,29 @@
 
 //----------------------------------------------------------------------
 //
+// debug
+//
+//----------------------------------------------------------------------
+
+#ifdef SAT_WIN32
+  #undef SAT_DEBUG
+#endif
+
+//----------
+
+#ifndef SAT_DEBUG
+  #undef SAT_DEBUG_ASSERT
+  #undef SAT_DEBUG_BREAKPOINT
+  #undef SAT_DEBUG_CALLSTACK
+  #undef SAT_DEBUG_CRASH_HANDLER
+  #undef SAT_DEBUG_MEMTRACE
+  #undef SAT_DEBUG_OBSERVER
+  #undef SAT_DEBUG_PRINT_ALWAYS
+  #undef SAT_DEBUG_WINDOW
+#endif
+
+//----------------------------------------------------------------------
+//
 // default / plugin
 //
 //----------------------------------------------------------------------
@@ -148,7 +171,10 @@
     #define SAT_PLUGIN_DEFINED
   #endif
 
-#ifndef SAT_PLUGIN_DEFINED
+
+#ifdef SAT_PLUGIN_DEFINED
+  #define SAT_PLUGIN
+#else
   #define SAT_PLUGIN_CLAP
 #endif
 

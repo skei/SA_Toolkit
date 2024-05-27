@@ -314,6 +314,7 @@ if $WIN32
     CC="/usr/bin/x86_64-w64-mingw32-g++"
     FLAGS+=" -static-libgcc"
     FLAGS+=" -static-libstdc++"
+    LIB+=" -lwsock32"
   else
     CC="g++"
     LIB+=" -ldl -lrt"
