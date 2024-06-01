@@ -68,12 +68,29 @@ public: // on_widget
 
   void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     if (MIsDragging) {
+
       double deltax = AXpos - MClickedX;
       double deltay = AYpos - MClickedY;
       double delta  = (deltay * MSensitivity);
-      double value = getValue();
+
+      double value = 0.0;
+
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      if (param) {
+        value = param->getNormalizedValue();
+      }
+      else {
+        value = getValue();
+      }
+
+      // double value = 0.0;
+      // SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      // if (param) value = param->getNormalizedValue();
+      // else value = getValue();
+
       double new_value = value - delta;
       new_value = SAT_Clamp(new_value,0,1);
+      
       if (new_value != value) {
         setValue(new_value);
         do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);

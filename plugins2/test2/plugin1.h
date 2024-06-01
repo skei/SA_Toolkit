@@ -6,6 +6,8 @@
 #include "plugin/processor/sat_quantized_processor.h"
 #include "plugin/processor/sat_voice_processor.h"
 
+#define NUM_VOICES 32
+
 //----------------------------------------------------------------------
 //
 // descriptor
@@ -22,8 +24,22 @@ clap_plugin_descriptor_t myDescriptor = {
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "my plugin..",
-  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  //.features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
 };
+
+//----------------------------------------------------------------------
+//
+// voice
+//
+//----------------------------------------------------------------------
+
+class myVoice {
+};
+
+//----------
+
+typedef SAT_VoiceProcessor<myVoice,NUM_VOICES> myVoiceProcessor;
 
 //----------------------------------------------------------------------
 //
@@ -32,7 +48,8 @@ clap_plugin_descriptor_t myDescriptor = {
 //----------------------------------------------------------------------
 
 class myProcessor
-: public SAT_InterleavedProcessor {
+//: public SAT_InterleavedProcessor {
+: public myVoiceProcessor {
 
 //------------------------------
 private:
@@ -48,7 +65,8 @@ public:
 //------------------------------
 
   myProcessor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  //: SAT_InterleavedProcessor(AOwner) {
+  : myVoiceProcessor(AOwner) {
   }
 
   //----------
@@ -110,12 +128,14 @@ public:
   }
 
 //------------------------------
-public: // init
+public:
 //------------------------------
 
   bool init() final {
-    registerDefaultExtensions();
-    appendStereoAudioInputPort();
+    //registerDefaultExtensions();
+    registerSynthExtensions();
+    //appendStereoAudioInputPort();
+    appendClapNoteInputPort();
     appendStereoAudioOutputPort();
     appendParameter(new SAT_Parameter("Left", "",1.0));
     appendParameter(new SAT_Parameter("Right","",1.0));
@@ -126,6 +146,22 @@ public: // init
   }
 
   //----------
+
+  void thread_pool_exec(uint32_t task_index) final {
+  }
+
+  //----------
+
+  bool voice_info_get(clap_voice_info_t *info) override {
+    info->voice_count     = 16;
+    info->voice_capacity  = 16;
+    info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
+    return true;
+  }  
+
+//------------------------------
+public:
+//------------------------------
 
   //#if 0
   #ifndef SAT_NO_GUI

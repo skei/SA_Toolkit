@@ -136,7 +136,9 @@ public: // extensions
 
   void registerDefaultExtensions() {
     registerExtension(CLAP_EXT_AUDIO_PORTS);
-    registerExtension(CLAP_EXT_GUI);
+    #ifndef SAT_NO_GUI
+      registerExtension(CLAP_EXT_GUI);
+    #endif
     registerExtension(CLAP_EXT_PARAMS);
     registerExtension(CLAP_EXT_STATE);
   }
@@ -471,86 +473,6 @@ public: // presets
   }
 
 //------------------------------
-public: // processor
-//------------------------------
-
-  virtual void setProcessor(SAT_Processor* AProcessor) {
-    MProcessor = AProcessor;
-  }
-
-  //----------
-
-  virtual void deleteProcessor(SAT_Processor* AProcessor) {
-    delete AProcessor;
-  }
-
-  //----------
-
-  // void createProcessor(uint32_t AProcessor) {
-  //   SAT_Processor* processor = nullptr;
-  //   switch (AProcessor) {
-  //     case SAT_PLUGIN_BLOCK_PROCESSOR:        processor = new SAT_BlockProcessor(this); break;
-  //     case SAT_PLUGIN_INTERLEAVED_PROCESSOR:  processor = new SAT_InterleavedProcessor(this); break;
-  //     case SAT_PLUGIN_QUANTIZED_PROCESSOR:    processor = new SAT_QuantizedProcessor(this); break;
-  //     case SAT_PLUGIN_VOICE_PROCESSOR:        processor = new SAT_VoiceProcessor(this); break;
-  //   }
-  //   if (!processor) processor = new SAT_Processor(this);
-  //   SAT_Assert(processor);
-  //   MProcessor = processor;
-  // }
-
-//------------------------------
-public: // processor owner
-//------------------------------
-
-  SAT_AudioPortArray* on_processorOwner_getAudioInputPorts()  final { return &MAudioInputPorts; }
-  SAT_AudioPortArray* on_processorOwner_getAudioOutputPorts() final { return &MAudioOutputPorts; }
-  SAT_NotePortArray*  on_processorOwner_getNoteInputPorts()   final { return &MNoteInputPorts; }
-  SAT_NotePortArray*  on_processorOwner_getNoteOutputPorts()  final { return &MNoteOutputPorts; }
-  SAT_ParameterArray* on_processorOwner_getParameters()       final { return &MParameters; }
-
-  // a parameter has changed i process()
-  // tell the editor about it
-
-  void on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
-    //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
-    #ifndef SAT_NO_GUI
-      if (MEditor) {
-        SAT_Parameter* param = getParameter(AIndex);
-        if (param) {
-          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
-            uint32_t index = param->getIndex();
-            MQueues.queueParamFromHostToGui(index,AValue);    // flushed where?
-          #else
-            MEditor->updateParameterFromHost(param, AValue);
-          #endif
-
-        }
-      }
-    #endif
-  }
-
-  // modulation has changed i process()
-  // tell the editor about it
-
-  void on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
-    //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
-    #ifndef SAT_NO_GUI
-      if (MEditor) {
-        SAT_Parameter* param = getParameter(AIndex);
-        if (param) {
-          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
-            uint32_t index = param->getIndex();
-            MQueues.queueModFromHostToGui(index,AValue);    // flushed where?
-          #else
-            MEditor->updateModulationFromHost(param, AValue);
-          #endif
-        }
-      }
-    #endif
-  }
-
-//------------------------------
 public: // editor
 //------------------------------
 
@@ -609,7 +531,7 @@ public: // editor
       // setup default editor..
 
       for (uint32_t i=0; i<getNumParameters(); i++) {
-        SAT_DragValueWidget* widget = new SAT_DragValueWidget( SAT_Rect( 10, (10 + (i * 25)), 200,20) );
+        SAT_DragValueWidget* widget = new SAT_DragValueWidget( SAT_Rect( 10, (10 + (i * 25)), 200, 20) );
         root->appendChild(widget);
         AEditor->connect(widget,getParameter(i));
       }
@@ -633,15 +555,22 @@ public: // editor listener
 
     // audio queue is flushed at the start of next process
     // host queue is flushed at the end of next process
+    //
+    // value is in widget-space
+    // todo: convert to parameter-space (denormalize)
 
     void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) override {
       //SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
-      MQueues.queueParamFromGuiToHost(AIndex,AValue);
-      MQueues.queueParamFromGuiToAudio(AIndex,AValue);
-      
-      // prematurely?
-      // to keep everything in synth, should we set this when flushing (to audio) ?
-      MParameters[AIndex]->setValue(AValue);
+      SAT_Parameter* param = getParameter(AIndex);
+      if (param) {
+        sat_param_t value = param->denormalize(AValue);
+        //SAT_PRINT("AValue %.3f denormalized value %.3f\n",AValue,value);
+        MQueues.queueParamFromGuiToHost(AIndex,value);
+        MQueues.queueParamFromGuiToAudio(AIndex,value);
+        // prematurely?
+        // to keep everything in sync, should we set this when flushing (to audio) ?
+        MParameters[AIndex]->setValue(value);
+      }
 
     }
 
@@ -670,6 +599,91 @@ public: // editor listener
     #endif
 
   #endif // gui
+
+//------------------------------
+public: // processor
+//------------------------------
+
+  virtual void setProcessor(SAT_Processor* AProcessor) {
+    MProcessor = AProcessor;
+  }
+
+  //----------
+
+  virtual void deleteProcessor(SAT_Processor* AProcessor) {
+    delete AProcessor;
+  }
+
+  //----------
+
+  // void createProcessor(uint32_t AProcessor) {
+  //   SAT_Processor* processor = nullptr;
+  //   switch (AProcessor) {
+  //     case SAT_PLUGIN_BLOCK_PROCESSOR:        processor = new SAT_BlockProcessor(this); break;
+  //     case SAT_PLUGIN_INTERLEAVED_PROCESSOR:  processor = new SAT_InterleavedProcessor(this); break;
+  //     case SAT_PLUGIN_QUANTIZED_PROCESSOR:    processor = new SAT_QuantizedProcessor(this); break;
+  //     case SAT_PLUGIN_VOICE_PROCESSOR:        processor = new SAT_VoiceProcessor(this); break;
+  //   }
+  //   if (!processor) processor = new SAT_Processor(this);
+  //   SAT_Assert(processor);
+  //   MProcessor = processor;
+  // }
+
+//------------------------------
+public: // processor owner
+//------------------------------
+
+  SAT_AudioPortArray* on_processorOwner_getAudioInputPorts()  final { return &MAudioInputPorts; }
+  SAT_AudioPortArray* on_processorOwner_getAudioOutputPorts() final { return &MAudioOutputPorts; }
+  SAT_NotePortArray*  on_processorOwner_getNoteInputPorts()   final { return &MNoteInputPorts; }
+  SAT_NotePortArray*  on_processorOwner_getNoteOutputPorts()  final { return &MNoteOutputPorts; }
+  SAT_ParameterArray* on_processorOwner_getParameters()       final { return &MParameters; }
+
+  // a parameter has changed in process()
+  // tell the editor about it
+  //
+  // value is in clap-space
+  // todo: convert to widget-space (normalize)
+
+  void on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
+    //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
+    #ifndef SAT_NO_GUI
+      if (MEditor) {
+        SAT_Parameter* param = getParameter(AIndex);
+        if (param) {
+          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
+            uint32_t index = param->getIndex();
+            sat_param_t value = param->normalize(AValue);
+            MQueues.queueParamFromHostToGui(index,value);
+          #else
+            MEditor->updateParameterFromHost(param, AValue);
+          #endif
+
+        }
+      }
+    #endif
+  }
+
+  // modulation has changed i process()
+  // tell the editor about it
+
+  void on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
+    //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
+    #ifndef SAT_NO_GUI
+      if (MEditor) {
+        SAT_Parameter* param = getParameter(AIndex);
+        if (param) {
+          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
+            uint32_t index = param->getIndex();
+            sat_param_t value = param->normalize(AValue);
+            MQueues.queueModFromHostToGui(index,value);
+          #else
+            MEditor->updateModulationFromHost(param, AValue);
+          #endif
+        }
+      }
+    #endif
+  }
 
 //----------------------------------------------------------------------
 public: // clap plugin

@@ -254,7 +254,6 @@ public: // clap.gui
   //----------
 
   bool getResizeHints(clap_gui_resize_hints_t *hints) override {
-    //SAT_PRINT("\n");
     hints->can_resize_horizontally = true;
     hints->can_resize_vertically = true;
     hints->preserve_aspect_ratio = MProportional;

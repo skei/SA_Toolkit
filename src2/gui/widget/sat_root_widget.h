@@ -91,7 +91,7 @@ public: // on_widget
 public: // do_widget 
 //------------------------------
 
-  // widget -> listener
+  // widget -> listener (window)
 
   void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     //SAT_PRINT("%s\n",AWidget->getName());

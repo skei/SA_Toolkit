@@ -35,7 +35,7 @@ public:
 public:
 //------------------------------
 
-  void process(SAT_ProcessContext* AContext) final {
+  void process(SAT_ProcessContext* AContext) override {
     uint32_t buffer_length = AContext->process->frames_count;
     uint32_t remaining = buffer_length;
     uint32_t current_time = 0;

@@ -53,31 +53,41 @@ public:
 public:
 //------------------------------
 
-  double calcValue() {
-    double value = getValue();
-    //SAT_PRINT("value %.3f\n",value);
-    SAT_Parameter* param = (SAT_Parameter*)getParameter();
-    //SAT_PRINT("param %p\n",param);
-    if (param) {
-      value = param->getNormalizedValue();
-      //SAT_PRINT("normalized value %.3f\n",value);
-    }
-    return value;
-  }
+  // double calcValue() {
+  //   double value = getValue();
+  //   //SAT_PRINT("value %.3f\n",value);
+  //   SAT_Parameter* param = (SAT_Parameter*)getParameter();
+  //   //SAT_PRINT("param %p\n",param);
+  //   if (param) {
+  //     value = param->getNormalizedValue();
+  //     //SAT_PRINT("normalized value %.3f\n",value);
+  //   }
+  //   return value;
+  // }
 
   //----------
 
   virtual void drawValueText(SAT_PaintContext* AContext) {
     if (MDrawValueText) {
-      double value = calcValue(); // getValue();
-      sprintf(MValueText,"%.2f",value);
       //SAT_TRACE;
+      sat_param_t value = 0.0;
+      const char* text = "";
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      if (param) {
+        value = param->getValue();
+        text = param->valueToText(value);
+      }
+      else {
+        value = getValue();
+        sprintf(MValueText,"%.2f",value);
+        text = MValueText;
+      }
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
       painter->setTextColor(MValueTextColor);
       painter->setTextSize(MValueTextSize);
       //painter->drawText(rect.x,rect.y,MText);
-      painter->drawTextBox(rect,MValueText,MValueTextAlignment);
+      painter->drawTextBox(rect,text,MValueTextAlignment);
     }
   }
 

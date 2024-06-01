@@ -34,7 +34,7 @@ public:
 public:
 //------------------------------
 
-  void process(SAT_ProcessContext* AContext) final {
+  void process(SAT_ProcessContext* AContext) override {
     //SAT_TRACE;
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;

@@ -1,0 +1,85 @@
+------------------------------
+KNOB (gui thread)
+------------------------------
+
+  widget
+
+    -> parent.do_widget_update(widget)
+    -> parent.do_widget_redraw(widget)
+
+  root_widget
+
+    .do_widget_update(widget)
+      -> listener.on_widgetListener_update(widget)
+    .do_widget_redraw(widget)
+      -> listener.on_widgetListener_redraw(widget)
+
+  widget_window
+
+    .on_widgetListener_update(widget)
+      -> listener.on_windowListener_update(widget)
+    .on_widgetListener_redraw(widget)
+      queueDirtyWidget(widget) // (flushed in widget_window.on_timerListener_callback)
+
+  embedded_editor
+
+    .on_windowListener_update(widget)
+      -> on_editorListener_update (index,value)
+
+  plugin
+
+    .on_editorListener_update(index,value)  // value in widget-space
+      queueParamFromGuiToAudio(index,value) // (flushed in start of process)
+      queueParamFromGuiToHost(index,value)  // (flushed in end of process)
+
+------------------------------
+PROCESSOR (audio thread)
+------------------------------
+
+  process
+
+    flushParamFromGuiToAudio()
+    -> owner->on_processorOwner_updateParamFromHostToGui
+    -> owner->on_processorOwner_updateModFromHostToGui
+    (-> owner->on_processorOwner_noteEnd)
+    flushNoteEndsFromAudioToHost()
+    flushParamFromGuiToHost()
+
+  plugin
+
+    .on_processorOwner_updateParamFromHostToGui(index,value)  // value in clap-space
+      queueParamFromHostToGui(index,value)                    // (flushed in plugin.on_editorListener_timer)
+    .on_processorOwner_updateModFromHostToGui(index,value)    // valie in clap-space
+      queueModFromHostToGui(index,value)                      // (flushed in plugin.on_editorListener_timer)
+
+------------------------------
+TIMER (timer thread ?)
+------------------------------
+
+  widget_window
+
+    .on_timerListener_callback
+      -> listener.on_windowListener_timer
+      -> timer_listeners[].on_widget_timer
+      flushDirtyWidgets() // (-> invalidate)
+
+  editor
+
+    .on_windowListener_timer
+      -> listener->on_editorListener_timer
+
+  plugin
+
+    .on_editorListener_timer
+      flushParamFromHostToGui()
+      flushModFromHostToGui()
+
+------------------------------
+PAINTING (gui thread)
+------------------------------
+
+  widget_window
+
+    .on_window_paint
+      root_widget.on_widget_paint()
+

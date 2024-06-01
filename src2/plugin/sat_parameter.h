@@ -125,12 +125,20 @@ public:
     MWidget = AWidget;
   }
 
+  virtual void setValue(double AValue) {
+    MValue = AValue;
+  }
+
+  virtual void setNormalizedValue(double AValue) {
+    MValue = denormalize(AValue);
+  }
+
   virtual void setModulation(double AValue) {
     MModulation = AValue;
   }
 
-  virtual void setValue(double AValue) {
-    MValue = AValue;
+  virtual void setNormalizedModulation(double AValue) {
+    MModulation = denormalize(AValue);
   }
 
   virtual void setIndicateAutomationState(uint32_t AState) {
@@ -157,6 +165,12 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  virtual const char* getName()   { return MInfo.name; }
+  virtual const char* getModule() { return MInfo.module; }
+  virtual uint32_t    getId()     { return MInfo.id; }
+  virtual uint32_t    getFlags()  { return MInfo.flags; }
+  //virtual const char* getCookie() { return MInfo.cookie; }
 
   virtual uint32_t getIndicateAutomationState() {
     return MIndicateAutomationState;
@@ -195,11 +209,7 @@ public:
   }
 
   virtual sat_param_t getNormalizedValue() {
-    double range = (MInfo.max_value - MInfo.min_value);
-    if (range > 0.0) {
-      return (MValue - MInfo.min_value) / range;
-    }
-    return 0.0;
+    return normalize(MValue);
   }
 
   virtual sat_param_t getModulation() {
@@ -207,11 +217,7 @@ public:
   }
 
   virtual sat_param_t getNormalizedModulation() {
-    double range = (MInfo.max_value - MInfo.min_value);
-    if (range > 0.0) {
-      return (MModulation - MInfo.min_value) / range;
-    }
-    return 0.0;
+    return normalize(MModulation);
   }
 
   virtual sat_param_t getMinValue() {
@@ -285,13 +291,23 @@ public:
   //----------
 
   virtual sat_param_t normalize(sat_param_t AValue) {
-    return AValue;
+    //return AValue;
+    double range = (MInfo.max_value - MInfo.min_value);
+    if (range > 0.0) {
+      return (AValue - MInfo.min_value) / range;
+    }
+    return 0.0;
   }
 
   //----------
 
   virtual sat_param_t denormalize(sat_param_t AValue) {
-    return AValue;
+    //return AValue;
+    double range = (MInfo.max_value - MInfo.min_value);
+    if (range > 0.0) {
+      return MInfo.min_value + (AValue * range);
+    }
+    return 0.0;
   }
 
 };

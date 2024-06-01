@@ -14,20 +14,23 @@
 //
 //----------------------------------------------------------------------
 
-#define SAT_AUDIO_QUANTIZED_SIZE              32
-#define SAT_MAX_NAME_LENGTH                   64
-#define SAT_MAX_STRING_LENGTH                 256
-#define SAT_MAX_PATH_LENGTH                   512
-#define SAT_PAINTER_CLIP_RECT_STACK_SIZE      32
-#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK 1024
-#define SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK   1024
-#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK   32
-#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK    1024
-#define SAT_RENDERER_MAJOR_VERSION            3
-#define SAT_RENDERER_MINOR_VERSION            2
-#define SAT_WIDGET_NUM_VALUES                 16
-#define SAT_WINDOW_THREAD_KILL                666
-#define SAT_WINDOW_TIMER_MS                   20
+#define SAT_AUDIO_QUANTIZED_SIZE                  32
+#define SAT_MAX_NAME_LENGTH                       64
+#define SAT_MAX_STRING_LENGTH                     256
+#define SAT_MAX_PATH_LENGTH                       512
+#define SAT_PAINTER_CLIP_RECT_STACK_SIZE          32
+#define SAT_PLUGIN_MAX_BLOCK_SIZE                 4096
+#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK     1024
+#define SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK       1024
+#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK       32
+#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK        1024
+#define SAT_RENDERER_MAJOR_VERSION                3
+#define SAT_RENDERER_MINOR_VERSION                2
+#define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
+
+#define SAT_WIDGET_NUM_VALUES                     16
+#define SAT_WINDOW_THREAD_KILL                    666
+#define SAT_WINDOW_TIMER_MS                       20
 
 //----------------------------------------------------------------------
 //
@@ -68,6 +71,7 @@
   #define SAT_PRINT_TIME
 //#define SAT_PRINT_PRETTY_FUNCTION
 //#define SAT_TESTS_EXIT_ON_FAILURE
+//#define SAT_VOICE_MANAGER_CONVERT_MIDI
 //#define SAT_WINDOW_BUFFERED
 //#define SAT_WINDOW_NO_TIMER_AUTOSTART
   #define SAT_WINDOW_TIMER_REFRESH_WIDGETS

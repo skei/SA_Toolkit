@@ -89,6 +89,7 @@ public:
 //------------------------------
 
   virtual void processEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) {
+    //SAT_PRINT("in_events: %p out_events: %p\n",in_events,out_events);
     if (!in_events) return;
     // #ifndef SAT_NO_GUI
     //   clearAutomationToGui();
@@ -96,6 +97,7 @@ public:
     // #endif
     uint32_t prev_time = 0;
     uint32_t size = in_events->size(in_events);
+    //if (size > 0) { SAT_PRINT("%i events\n",size); }
     for (uint32_t i=0; i<size; i++) {
       const clap_event_header_t* header = in_events->get(in_events,i);
       if (header->space_id == CLAP_CORE_EVENT_SPACE_ID) {

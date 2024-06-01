@@ -57,7 +57,15 @@ public:
       painter->setTextColor(MTextColor);
       painter->setTextSize(MTextSize);
       //painter->drawText(rect.x,rect.y,MText);
-      painter->drawTextBox(rect,MText,MTextAlignment);
+      const char* text = "";
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      if (param) {
+        text = param->getName();
+      }
+      else {
+        text = MText;
+      }
+      painter->drawTextBox(rect,text,MTextAlignment);
     }
   }
 

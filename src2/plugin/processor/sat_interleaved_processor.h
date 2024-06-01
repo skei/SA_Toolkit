@@ -35,7 +35,7 @@ public:
 public:
 //------------------------------
 
-  void process(SAT_ProcessContext* AContext) final {
+  void process(SAT_ProcessContext* AContext) override {
     const clap_input_events_t* in_events = AContext->process->in_events;
     uint32_t remaining = AContext->process->frames_count;
     uint32_t num_events = in_events->size(in_events);

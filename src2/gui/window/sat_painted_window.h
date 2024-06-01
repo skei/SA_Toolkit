@@ -136,7 +136,7 @@ public: // scale
       if (xscale < yscale) scale = xscale;
       else scale =  yscale;
     }
-    //SAT_Print("scale: %f\n",scale);
+    //SAT_PRINT("scale: %f\n",scale);
     return scale;
   }
 
