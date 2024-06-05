@@ -218,6 +218,7 @@ public:
 
   virtual sat_param_t getNormalizedModulation() {
     return normalize(MModulation);
+    //return normalize(MValue + MModulation);
   }
 
   virtual sat_param_t getMinValue() {

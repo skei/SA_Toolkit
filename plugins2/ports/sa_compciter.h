@@ -22,19 +22,15 @@
 
 //#define SAT_NO_GUI
 
-//----------
-
-#include "plugin/sat_plugin.h"
-#include "plugin/processor/sat_interleaved_processor.h"
-
-//----------
-
 //#define cDenorm   10e-30
 #define c_ampdB     8.65617025
 #define freqHP      2243.2
 #define freqLP      224.32
 #define freqHP_p2   (-SAT_PI2 * freqHP)
 #define freqLP_p2   ( SAT_PI2 * freqLP)
+
+#include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
 
 //----------------------------------------------------------------------
 //
@@ -122,17 +118,13 @@ public:
 //------------------------------
 
   void paramValueEvent(const clap_event_param_value_t* event) final {
-    //SAT_TRACE;
     need_recalc = true;
   }
 
   //----------
 
   void process(SAT_ProcessContext* AContext) final {
-    if (need_recalc) {
-      //SAT_TRACE;
-      recalc(samplerate);
-    }
+    if (need_recalc) recalc(samplerate);
     SAT_InterleavedProcessor::process(AContext);
   }
 
@@ -267,31 +259,30 @@ public:
       SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
       window->setRootWidget(root);
 
-      // appendParameter( new SAT_Parameter( "Drive", "", 0,    0,   60    ));
-      // appendParameter( new SAT_Parameter( "Dist",  "", 25,   0,   100   ));
-      // appendParameter( new SAT_Parameter( "HP",    "", 5000, 800, 12000 ));
-      // appendParameter( new SAT_Parameter( "Wet",   "", -6,  -60,  24    ));
-      // appendParameter( new SAT_Parameter( "Dry",   "", 0,   -120, 0     ));
-
-      SAT_SliderWidget* s0 = new SAT_SliderWidget(SAT_Rect(10,10,200,15));
+      SAT_SliderWidget* s0 = new SAT_SliderWidget(SAT_Rect(10,10,300,25));
       root->appendChild(s0);
       AEditor->connect(s0,getParameter(0));
 
-      SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(10,30,200,15));
+      SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(10,40,300,25));
       root->appendChild(s1);
       AEditor->connect(s1,getParameter(1));
 
-      SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(10,50,200,15));
+      SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(10,70,300,25));
       root->appendChild(s2);
       AEditor->connect(s2,getParameter(2));
 
-      SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(10,70,200,15));
+      SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(10,100,300,25));
       root->appendChild(s3);
       AEditor->connect(s3,getParameter(3));
 
-      SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(10,90,200,15));
-      root->appendChild(s4);
-      AEditor->connect(s4,getParameter(4));
+      // SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(10,130,300,25));
+      // root->appendChild(s4);
+      // AEditor->connect(s4,getParameter(4));
+
+      SAT_KnobWidget* k4 = new SAT_KnobWidget(SAT_Rect(10,130,50,50));
+      root->appendChild(k4);
+      AEditor->connect(k4,getParameter(4));
+
 
       return true;
     }

@@ -16,9 +16,11 @@ class SAT_Window;
 
 class SAT_WidgetOwner {
 public:
-  virtual uint32_t on_widgetOwner_getWidth() { return 0; }
-  virtual uint32_t on_widgetOwner_getHeight() { return 0; }
-  virtual double   on_widgetOwner_getScale() { return 1.0; }
+  virtual uint32_t      on_widgetOwner_getWidth() { return 0; }
+  virtual uint32_t      on_widgetOwner_getHeight() { return 0; }
+  virtual double        on_widgetOwner_getScale() { return 1.0; }
+
+  virtual SAT_Painter*  on_widgetOwner_getPainter() { return nullptr; }
 
   // virtual SAT_Window* on_widgetOwner_getWindow() { return nullptr; }
   // virtual void on_widgetOwner_wantTimerEvents(bool AWant=true) {}

@@ -531,7 +531,11 @@ public: // editor
       // setup default editor..
 
       for (uint32_t i=0; i<getNumParameters(); i++) {
-        SAT_DragValueWidget* widget = new SAT_DragValueWidget( SAT_Rect( 10, (10 + (i * 25)), 200, 20) );
+        double x = 10;
+        double y = (10 + (i * 35));
+        double w = 300;
+        double h = 30;
+        SAT_DragValueWidget* widget = new SAT_DragValueWidget(SAT_Rect(x,y,w,h));
         root->appendChild(widget);
         AEditor->connect(widget,getParameter(i));
       }

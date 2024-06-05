@@ -49,34 +49,6 @@ private:
   virtual void setModulationColor(SAT_Color AColor) { MModulationColor = AColor; }
 
 //------------------------------
-private:
-//------------------------------
-
-  double calcValue() {
-    double value = getValue();
-    //SAT_PRINT("value %.3f\n",value);
-    SAT_Parameter* param = (SAT_Parameter*)getParameter();
-    //SAT_PRINT("param %p\n",param);
-    if (param) {
-      value = param->getNormalizedValue();
-      //SAT_PRINT("normalized value %.3f\n",value);
-    }
-    return value;
-  }
-
-  //----------
-
-  double calcModulation(double value) {
-    double modulation = value + getModulation();
-    SAT_Parameter* param = (SAT_Parameter*)getParameter();
-    if (param) {
-      modulation = value + param->getNormalizedModulation();
-      modulation = SAT_Clamp(modulation,0,1);
-    }
-    return modulation;
-  }
-
-//------------------------------
 public:
 //------------------------------
 
@@ -90,7 +62,7 @@ public:
       double w = rect.w;
       double h = rect.h;
       double v = calcValue();
-      double m = calcModulation(v);
+      double m = calcModulation();
 
       double vw = (v * w);
       if (v > 0) {

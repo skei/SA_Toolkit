@@ -411,6 +411,10 @@ public: // widget owner
     return getScale();
   }
 
+  SAT_Painter* on_widgetOwner_getPainter() override {
+    return MWindowPainter;
+  }
+
   //----------
 
   // SAT_Window* _getWindow() override {

@@ -5,6 +5,7 @@
 #include "gui/widget/sat_button_widget.h"
 #include "gui/widget/sat_cached_widget.h"
 #include "gui/widget/sat_drag_value_widget.h"
+#include "gui/widget/sat_knob_widget.h"
 #include "gui/widget/sat_root_widget.h"
 #include "gui/widget/sat_slider_widget.h"
 #include "gui/widget/sat_surface_widget.h"

@@ -23,6 +23,7 @@ private:
 
   SAT_Color   MBackgroundColor  = SAT_Grey;
   SAT_Color   MBorderColor      = SAT_Black;
+  double      MBorderWidth      = 1.0;
 
   bool        MDrawIndicators   = true;
 
@@ -78,6 +79,8 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
       painter->setDrawColor(MBorderColor);
+      painter->setLineWidth(MBorderWidth);
+
       painter->drawRect(rect.x,rect.y,rect.w,rect.h);
     }
   }

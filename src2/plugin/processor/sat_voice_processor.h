@@ -2,6 +2,8 @@
 #define sat_voice_processor_included
 //----------------------------------------------------------------------
 
+// inherit from block_processor ?
+
 
 
 /*

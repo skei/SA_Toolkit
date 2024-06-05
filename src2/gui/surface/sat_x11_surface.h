@@ -88,9 +88,7 @@ public: // owner
 
   xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
   xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MVisual; }
-
   xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return MPixmap; }
-  
   xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MPixmap; }
 
 };
