@@ -78,9 +78,9 @@ public:
       //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
+      double scale = getWindowScale();
       painter->setDrawColor(MBorderColor);
-      painter->setLineWidth(MBorderWidth);
-
+      painter->setLineWidth(MBorderWidth*scale);
       painter->drawRect(rect.x,rect.y,rect.w,rect.h);
     }
   }
@@ -94,6 +94,7 @@ public:
       if (param) {
         SAT_Painter* painter = AContext->painter;
         SAT_Rect rect = getRect();
+        double scale = getWindowScale();
 
         if (param->getIndicateMapped()) {
             SAT_Color color = param->getIndicateMappedColor();

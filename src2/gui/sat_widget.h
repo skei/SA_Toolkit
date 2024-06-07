@@ -12,10 +12,10 @@ typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 
 struct SAT_WidgetLayout {
   uint32_t  flags             = SAT_WIDGET_LAYOUT_DEFAULT;
-  uint32_t  direction         = SAT_DIRECTION_RIGHT;
+  //uint32_t  direction         = SAT_DIRECTION_RIGHT;
   SAT_Rect  innerBorder       = {0,0,0,0};
   SAT_Rect  outerBorder       = {0,0,0,0};
-  SAT_Rect  clipOffset        = {0,0,0,0};
+  //SAT_Rect  clipOffset        = {0,0,0,0};
   SAT_Point spacing           = {0,0};
 };
 
@@ -66,6 +66,7 @@ private:
 
   double            MValues[SAT_WIDGET_NUM_VALUES]      = {0};            // array of values
   uint32_t          MValueIndex                         = 0;              // index of selected, current value
+  uint32_t          MNumValues                          = 1;
   double            MModulation                         = 0.0;
 
   const char*       MName                               = "SAT_Widget";
@@ -110,6 +111,7 @@ public:
   virtual SAT_Rect          getInitialRect()              { return MInitialRect; }
   virtual double            getModulation()               { return MModulation; }
   virtual const char*       getName()                     { return MName; }
+  virtual uint32_t          getNumValues()                { return MNumValues; }
   virtual void*             getParameter()                { return MParameters[MParameterIndex]; }
   virtual void*             getParameter(uint32_t AIndex) { return MParameters[AIndex]; }
   virtual SAT_Rect          getRect()                     { return MRect; }
@@ -142,6 +144,7 @@ public:
   virtual void setModulation(double AValue)                     { MModulation = AValue; }
   virtual void setCursor(int32_t ACursor)                       { MCursor = ACursor; }
   virtual void setName(const char* AName)                       { MName = AName; }
+  virtual void setNumValues(uint32_t ANum)                      { MNumValues = ANum; }
   virtual void setOwner(SAT_WidgetOwner* AOwner)                { MOwner = AOwner; }
   virtual void setParameter(void* AParameter)                   { MParameters[MParameterIndex] = AParameter; }
   virtual void setParameter(void* AParameter, uint32_t AIndex)  { MParameters[AIndex] = AParameter; }
@@ -205,6 +208,7 @@ public: // children
   //   SAT_WidgetWindow.on_window_show()
 
   virtual void ownerWindowOpened(SAT_WidgetOwner* AOwner) {
+    MOwner = AOwner;
     on_widget_open(AOwner);
     for (uint32_t i=0; i<MChildren.size(); i++) {
       SAT_Widget* widget = MChildren[i];
@@ -247,10 +251,22 @@ public: // children
 
   // asks owner window about its scale
 
+  /*
+    can be called if the window is created, but not open yet (clap)
+    which means, we haven't called ownerWindowOpened on the widgets yet,
+    so if they call getWindowScale (realign), owner is null -> scale = 1.0
+    (i think)
+  */
+
   virtual double getWindowScale() {
     double scale = 1.0;
-    if (MOwner) scale = MOwner->on_widgetOwner_getScale();
-    //SAT_Print("scale %f\n",scale);
+    if (MOwner) {
+      scale = MOwner->on_widgetOwner_getScale();
+    }
+    else {
+      //SAT_PRINT("no owner\n");
+      //SAT_GLOBAL.DEBUG.CALL_STACK.print();
+    }
     return scale;
   }
 

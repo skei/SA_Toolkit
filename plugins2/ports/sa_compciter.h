@@ -279,6 +279,7 @@ public:
       // root->appendChild(s4);
       // AEditor->connect(s4,getParameter(4));
 
+
       SAT_KnobWidget* k4 = new SAT_KnobWidget(SAT_Rect(10,130,50,50));
       root->appendChild(k4);
       AEditor->connect(k4,getParameter(4));

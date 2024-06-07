@@ -25,6 +25,13 @@ private:
   bool      MDrawModulation   = true;
   SAT_Color MModulationColor  = SAT_Color(1,1,1,0.25);
 
+  bool      MDrawQuantized    = true;
+  SAT_Color MQuantizedColor   = SAT_Color(0,0,0,0.5);
+  double    MQuantizedWidth   = 1.0;
+
+  bool      MDrawBipolar      = false;
+  double    MBipolarCenter    = 0.5;
+
 //------------------------------
 public:
 //------------------------------
@@ -40,23 +47,71 @@ public:
   }
 
 //------------------------------
-private:
+public:
 //------------------------------
+
+  virtual bool      isBipolar()         { return MDrawBipolar; }
+  virtual double    getBipolarCenter()  { return MBipolarCenter; }
+
+  //
 
   virtual void setDrawSliderBar(bool ADraw=true)    { MDrawSliderBar = ADraw; }
   virtual void setSliderBarColor(SAT_Color AColor)  { MSliderBarColor = AColor; }
   virtual void setDrawModulation(bool ADraw=true)   { MDrawModulation = ADraw; }
   virtual void setModulationColor(SAT_Color AColor) { MModulationColor = AColor; }
+  virtual void setDrawQuantized(bool ADraw=true)    { MDrawQuantized = ADraw; }
+  virtual void setQuantizedColor(SAT_Color AColor)  { MQuantizedColor = AColor; }
+  virtual void setQuantizedWidth(double AWidth)     { MQuantizedWidth = AWidth; }
+
+  virtual void setDrawBipolar(bool AState=true)     { MDrawBipolar = AState; }
+  virtual void setBipolarCenter(double AValue)      { MBipolarCenter = AValue; }
+
+
 
 //------------------------------
 public:
 //------------------------------
+
+  virtual void drawQuantized(SAT_PaintContext* AContext) {
+    if (MDrawQuantized) {
+      SAT_Rect rect = getRect();
+      double x = rect.x;
+      double y = rect.y;
+      double w = rect.w;
+      double h = rect.h;
+      //SAT_TRACE;
+      if (getQuantize()) {
+        uint32_t num = getQuantizeSteps();
+        if (num > 2) {
+
+          SAT_Painter* painter = AContext->painter;
+          double scale = getWindowScale();
+
+          painter->setDrawColor(MQuantizedColor);
+          painter->setLineWidth(MQuantizedWidth*scale);
+
+          double size = w / (num - 1);
+          double pos  = x + size;
+          for (uint32_t i=1; i<(num-1); i++) {
+            painter->drawLine(pos,y,pos,y+h);
+            pos += size;
+          }
+
+          painter->setLineWidth(1.0);
+
+        }
+      }
+    }
+  }
+
+  //----------
 
   virtual void drawSliderBar(SAT_PaintContext* AContext) {
     if (MDrawSliderBar) {
       //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
+      double scale = getWindowScale();
       double x = rect.x;
       double y = rect.y;
       double w = rect.w;
@@ -104,6 +159,8 @@ public: // on_widget
     //SAT_TRACE;
     fillBackground(AContext);
     drawSliderBar(AContext);
+    drawQuantized(AContext);
+    drawValueBar(AContext,getDragValue());
     drawText(AContext);
     drawValueText(AContext);
     paintChildren(AContext);

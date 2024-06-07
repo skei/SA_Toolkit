@@ -122,7 +122,9 @@
   //----------
 
   void mainloop(SAT_HostWindow* AHostWindow) {
+    //AHostWindow->startTimer(1000);
     AHostWindow->eventLoop();
+    //AHostWindow->stopTimer();
   }
 
   #endif // gui

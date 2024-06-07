@@ -33,6 +33,7 @@ private:
 
   SAT_WindowListener* MListener           = nullptr;
   SAT_TweenManager    MTweenManager       = {};
+
   SAT_RootWidget*     MRootWidget         = nullptr;
   SAT_WidgetQueue     MDirtyWidgets       = {};
   SAT_WidgetQueue     MPaintWidgets       = {};
@@ -45,12 +46,23 @@ private:
   int32_t             MMouseCurrentCursor = SAT_CURSOR_DEFAULT;
   SAT_WidgetArray     MTimerListeners     = {};
 
+  int32_t             MInitialWidth       = 0;
+  int32_t             MInitialHeight      = 0;
+  double              MInitialScale       = 1.0;
+  bool                MProportional       = false;
+
+  double              MScale              = 1.0;  // returned by on_widgetOwner_getScale
+
   int32_t             MMouseCurrentXpos   = 0;
   int32_t             MMouseCurrentYpos   = 0;
+  int32_t             MMousePreviousXpos  = 0;
+  int32_t             MMousePreviousYpos  = 0;
   
   bool                MMouseLocked        = false;
-  int32_t             MMouseLockedX       = 0;
-  int32_t             MMouseLockedY       = 0;
+  int32_t             MMouseLockedXclick  = 0;
+  int32_t             MMouseLockedYclick  = 0;
+  int32_t             MMouseLockedXpos    = 0;
+  int32_t             MMouseLockedYpos    = 0;
 
   int32_t             MMouseClickedXpos   = 0;
   int32_t             MMouseClickedYpos   = 0;
@@ -67,6 +79,10 @@ public:
 
   SAT_WidgetWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_BufferedWindow(AWidth,AHeight,AParent) {
+  //MInitialWidth = AWidth;
+  //MInitialHeight = AHeight;
+  //MInitialScale = calcScale(AWidth,AHeight); // getWidth(),getHeight()
+  //MScale = calcScale(AWidth,AHeight);
   }
 
   //----------
@@ -85,6 +101,16 @@ public:
 
   void setRootWidget(SAT_RootWidget* ARoot) {
     MRootWidget = ARoot;
+  }
+
+  //
+
+  void setInitialSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
+    MInitialWidth = AWidth;
+    MInitialHeight = AHeight;
+    MInitialScale = AScale;
+    MProportional = AProportional;
+    MScale = calcScale(AWidth,AHeight);
   }
 
 //------------------------------
@@ -121,13 +147,11 @@ private:
           if (MHoverWidget) MHoverWidget->on_widget_leave(hover,AXpos,AYpos,ATime);
           hover->on_widget_enter(MHoverWidget,AXpos,AYpos,ATime);
           MHoverWidget = hover;
-          //SAT_PRINT("hover: %s\n",MHoverWidget->getName());
         }
       }
       else {
         if (MHoverWidget) MHoverWidget->on_widget_leave(nullptr,AXpos,AYpos,ATime);
         MHoverWidget = nullptr;
-        //SAT_PRINT("hover: %s\n",MHoverWidget->getName());
       }
     }
   }
@@ -169,10 +193,11 @@ private:
 
   virtual void lockMouseCursor() {
     MMouseLocked  = true;
-    MMouseLockedX = MMouseCurrentXpos;
-    MMouseLockedY = MMouseCurrentYpos;
-    // MMouseClickedXpos = MMouseXpos;
-    // MMouseClickedYpos = MMouseYpos;
+    MMouseLockedXclick = MMouseCurrentXpos;
+    MMouseLockedYclick = MMouseCurrentYpos;
+    MMouseLockedXpos = MMouseCurrentXpos;
+    MMouseLockedYpos = MMouseCurrentYpos;
+    //SAT_PRINT("lockedx %i lockedy %i\n",MMouseLockedXclick,MMouseLockedYclick);
   }
 
   //----------
@@ -180,6 +205,23 @@ private:
   virtual void unlockMouseCursor() {
     MMouseLocked = false;
   }  
+
+  //----------
+
+  // calculates the maximal (or minimal) scale to use for the gui,
+  // that will fit inside the given width/height
+
+  virtual double calcScale(int32_t AWidth, int32_t AHeight) {
+    double scale = 1.0;
+    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
+      double xscale = (double)AWidth / (double)MInitialWidth;
+      double yscale = (double)AHeight / (double)MInitialHeight;
+      if (xscale < yscale) scale = xscale;
+      else scale =  yscale;
+    }
+    //SAT_PRINT("scale: %f\n",scale);
+    return scale;
+  }
 
 //------------------------------
 public: // window
@@ -191,18 +233,24 @@ public: // window
   */
 
   void on_window_show() override {
-//    SAT_PRINT("show start\n");
+    //SAT_PRINT("show start\n");
     SAT_BufferedWindow::on_window_show();
     if (MRootWidget) {
+
+      uint32_t w = getWidth();
+      uint32_t h = getHeight();
+      MScale = calcScale(w,h);
+      //SAT_PRINT("MScale %.3f\n",MScale);
+
+      MRootWidget->setSize(w,h);
+      MRootWidget->realignChildren();
+      // markRootWidgetDirty();
+
       MRootWidget->ownerWindowOpened(this);
       // MRootWidget->setSkin(&MDefaultSkin,true,true);
-      uint32_t w = getWidth();// * MScale;
-      uint32_t h = getHeight();// * MScale;
-      MRootWidget->setSize(w,h);
-      // MRootWidget->realignChildren();
-      // markRootWidgetDirty();
+
     }
-//    SAT_PRINT("show end\n");
+    //    SAT_PRINT("show end\n");
   }
 
   //----------
@@ -234,9 +282,14 @@ public: // window
   //----------
   
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
+    //SAT_PRINT("width %i height %i\n",AWidth,AHeight);
     //SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
-    SAT_PRINT("w %i h %i\n",AWidth,AHeight);
+    //SAT_PRINT("w %i h %i\n",AWidth,AHeight);
     if (MRootWidget) {
+
+      MScale = calcScale(AWidth,AHeight);
+      //SAT_PRINT("AWidth %i AHeight %i MScale %.3f\n",AWidth,AHeight,MScale);
+
       // resize buffer?
       MRootWidget->on_widget_resize(AWidth,AHeight);
       MRootWidget->realignChildren();
@@ -250,6 +303,9 @@ public: // window
     MMouseClickedXpos   = AXpos;
     MMouseClickedYpos   = AYpos;
     MMouseClickedButton = AButton;
+
+    //MMouseCurrentXpos = AXpos;
+    //MMouseCurrentYpos = AYpos;
 
     // if widget is already captured, 
     // send further clicks to the same widget..
@@ -308,31 +364,33 @@ public: // window
     //SAT_PRINT("x %i y %i s %i\n",AXpos,AYpos,AState);
     MMouseCurrentXpos = AXpos;
     MMouseCurrentYpos = AYpos;
-
+    int32_t deltax = AXpos - MMousePreviousXpos;
+    int32_t deltay = AYpos - MMousePreviousYpos;
+    // SAT_PRINT("deltax %i deltay %i\n",deltax,deltay);
     // when we set the mouse cursor back to its locked pos, the os/system might send us a new mouse move event as a result.. ignore it..
     if (MMouseLocked) {
-      if ((AXpos == MMouseLockedX) && (AYpos == MMouseLockedY)) {
-        // SAT_TRACE;
-        return;
+      if ((AXpos != MMouseLockedXclick) || (AYpos != MMouseLockedYclick)) {
+        //SAT_PRINT("deltax %i deltay %i\n",deltax,deltay);
+        MMouseLockedXpos += deltax;
+        MMouseLockedYpos += deltay;
+        if (MMouseCaptured) MMouseCaptureWidget->on_widget_mouse_move(MMouseLockedXpos,MMouseLockedYpos,AState,ATime);
+        // set it back to locked position
+        //SAT_PRINT("> moving mouse back to locked pos %i,%i\n",MMouseLockedXclick,MMouseLockedYclick);
+        setMousePos(MMouseLockedXclick,MMouseLockedYclick);
       }
     }
-
-    // send mouse move events only to captured widget
-    if (MMouseCaptured) {
-      MMouseCaptureWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
-      // updateHoverCaptured(AXpos,AYpos,ATime);
-    }
     else {
-      updateHover(AXpos,AYpos,ATime);
+      // send mouse move events only to captured widget
+      if (MMouseCaptured) {
+        MMouseCaptureWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+        // updateHoverCaptured(AXpos,AYpos,ATime);
+      }
+      else {
+        updateHover(AXpos,AYpos,ATime);
+      }
     }
-
-    // if mouse locked, set it back to locked position
-    // (after processing it)
-
-    if (MMouseLocked) {
-      setMousePos(MMouseLockedX,MMouseLockedY);
-    }
-
+    MMousePreviousXpos = AXpos;
+    MMousePreviousYpos = AYpos;
   }
 
   //----------
@@ -408,7 +466,13 @@ public: // widget owner
   }
 
   double on_widgetOwner_getScale() override {
-    return getScale();
+    //uint32_t w = getWidth();
+    //uint32_t h = getHeight();
+    //double scale = calcScale(w,h);
+    //SAT_PRINT("scale %f\n",scale);
+    //return scale;
+    //SAT_PRINT("-> MScale %f\n",MScale);
+    return MScale;
   }
 
   SAT_Painter* on_widgetOwner_getPainter() override {

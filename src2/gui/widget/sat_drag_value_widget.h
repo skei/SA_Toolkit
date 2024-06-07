@@ -4,6 +4,7 @@
 
 #include "sat.h"
 #include "gui/widget/sat_value_widget.h"
+#include "plugin/sat_parameter.h"
 
 //----------------------------------------------------------------------
 //
@@ -18,31 +19,37 @@ class SAT_DragValueWidget
 private:
 //------------------------------
 
-  bool      MIsDragging       = false;
-  double    MSensitivity      = (1.0 / 200.0);
-  double    MSensitivity2     = (1.0 / 20.0);
-  int32_t   MClickedX         = 0;
-  int32_t   MClickedY         = 0;
+  int32_t   MPrevX              = 0;
+  int32_t   MPrevY              = 0;
+  bool      MIsDragging         = false;
+  double    MDragValue          = 0.0;
+  uint32_t  MPrevPreciseKey     = SAT_STATE_NONE;
+  uint32_t  MPrevUnsnapKey      = SAT_STATE_NONE;
 
-  uint32_t  MStartDragButton  = SAT_BUTTON_LEFT;
-  uint32_t  MPreciseKey       = SAT_STATE_CTRL;
-  uint32_t  MUnsnapKey        = SAT_STATE_SHIFT;
+  //
 
-  uint32_t  MPrevPreciseKey   = SAT_STATE_NONE;
-  uint32_t  MPrevUnsnapKey    = SAT_STATE_NONE;
+  uint32_t  MDragDirection      = SAT_DIRECTION_UP;
 
-  bool      MBipolar          = false;
-  double    MBipolarCenter    = 0.5;
+  double    MSensitivity        = (1.0 / 200.0);
+  double    MSensitivity2       = (1.0 / 20.0);
 
-  bool      MQuantize         = false;
-  uint32_t  MQuantizeSteps    = 5;
+  uint32_t  MDragButton         = SAT_BUTTON_LEFT;
+  uint32_t  MPreciseKey         = SAT_STATE_CTRL;
+  uint32_t  MUnsnapKey          = SAT_STATE_SHIFT;
 
-  bool      MSnap             = true;
-  double    MSnapPos          = 0.5;
-  double    MSnapDist         = 0.2;
-  double    MSnapSpeed        = 1.5;
+  bool      MQuantize           = false;
+  uint32_t  MQuantizeSteps      = 5;
 
-  double    MDragValue        = 0.0;
+  bool      MSnap               = false;
+  double    MSnapPos            = 0.5;
+  double    MSnapDist           = 0.2;
+  double    MSnapSpeed          = 1.5;
+
+  bool      MDrawValueBar       = false;
+  SAT_Color MValueBarColor      = SAT_Black;
+  double    MValueBarThickness  = 3.0;
+  uint32_t  MValueBarDirection  = SAT_DIRECTION_RIGHT;
+  SAT_Rect  MValueBarEdge       = SAT_EDGE_BOTTOM;
 
 //------------------------------
 public:
@@ -58,6 +65,43 @@ public:
 
   virtual ~SAT_DragValueWidget() {
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void setSensitivity(double AValue)              { MSensitivity = AValue; }
+  virtual void setSensitivity2(double AValue)             { MSensitivity2 = AValue; }
+  virtual void setDragButton(uint32_t AButton)            { MDragButton  = AButton; }
+  virtual void setPreciseKey(uint32_t AKey)               { MPreciseKey = AKey; }
+  virtual void setUnsnapKey(uint32_t AKey)                { MUnsnapKey = AKey; }
+
+  virtual void setDragQuantize(bool AState=true)          { MQuantize = AState; }
+  virtual void setDragQuantizeSteps(uint32_t ASteps)      { MQuantizeSteps = ASteps; }
+
+  virtual void setDragSnap(bool AState=true)              { MSnap = AState; }
+  virtual void setDragSnapPos(double AValue)              { MSnapPos = AValue; }
+  virtual void setDragSnapDist(double AValue)             { MSnapDist = AValue; }
+  virtual void setDragSnapSpeed(double AValue)            { MSnapSpeed = AValue; }
+
+
+  virtual void setDrawValueBar(bool ADraw=true)           { MDrawValueBar = ADraw; }
+  virtual void setValueBarColor(SAT_Color AColor)         { MValueBarColor = AColor; }
+  virtual void setValueBarThickness(double ASize)         { MValueBarThickness = ASize; }
+  virtual void setValueBarDirection(uint32_t ADirection)  { MValueBarDirection = ADirection; }
+  virtual void setValueBarEdge(uint32_t AEdge)            { MValueBarEdge = AEdge; }
+
+  //
+
+  virtual double    getDragValue()      { return MDragValue; }
+  
+  virtual bool      getQuantize()        { return MQuantize; }
+  virtual bool      getSnap()            { return MSnap; }
+
+  virtual uint32_t  getQuantizeSteps()  { return MQuantizeSteps; }
+  virtual double    getSnapPos()        { return MSnapPos; }
+  virtual double    getSnapDist()       { return MSnapDist; }
+  virtual double    getSnapSpeed()      { return MSnapSpeed; }
 
 //------------------------------
 protected:
@@ -128,68 +172,57 @@ protected:
     return AValue;
   }
   
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  // find closest (from mouse cursor) value
-  // if two values are identical, will fid the first one..
-  // todo: check if we're on the left or right side if values are equal (or similar)
-  // todo: ..ClosestValueHorizontal
+  virtual void drawValueBar(SAT_PaintContext* AContext, double AValue) {
+    if (MDrawValueBar) {
+      //SAT_TRACE;
+      SAT_Painter* painter = AContext->painter;
+      SAT_Rect rect = getRect();
+      double scale = getWindowScale();
+      double v = AValue * rect.w;
+      double x1 = rect.x + 1.0;
+      double y1 = rect.y + rect.h - (MValueBarThickness * 0.5);
+      double x2 = rect.x + v;
+      double y2 = y1;
+      if (v > 0) {
+        painter->setDrawColor(MValueBarColor);
+        painter->setLineWidth(MValueBarThickness*scale);
+        painter->drawLine(x1,y1,x2,y2);
+      }
+    }
 
-  // int32_t findClosestValue(double AXpos, double AYpos, bool AHorizontal=true) {
-  //   //if (getNumValues() == 0) return 0;
-  //   //else if (getNumValues() == 1) return getValue();
-  //   if (getNumValues() < 2) return 0;
-  //   else {
-  //     double S = getWindowScale();
-  //     SAT_Rect mrect = getRect();
-  //     if (!mrect.contains(AXpos,AYpos)) return -2;
-  //     double hoverdist = MHoverDistance * S;
-  //     double range;
-  //     double pos;
-  //     if (AHorizontal) {
-  //       range = mrect.w;
-  //       if (range <= 0.0) return -2;
-  //       pos = (AXpos - mrect.x) / range;
-  //     }
-  //     else {
-  //       range = mrect.h;
-  //       if (range <= 0.0) return -2;
-  //       pos = (AYpos - mrect.y) / range;
-  //     }
-  //     double min_dist = range;
-  //     int32_t index = -1;
-  //     for (uint32_t i=0; i<getNumValues(); i++) {
-  //       double val = getValue(i);
-  //       double dist = abs(pos - val);
-  //       if (dist < hoverdist) {
-  //         if (dist < min_dist) {
-  //           min_dist = dist;
-  //           index = i;
-  //         }
-  //       }
-  //     }
-  //     return index;
-  //   }
-  // }
+  }
 
 //------------------------------
 public: // on_widget
 //------------------------------
 
+  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+    MDragValue = calcValue();
+    //SAT_PRINT("MDragValue %.3f\n",MDragValue);
+    SAT_ValueWidget::on_widget_open(AOwner);
+  }
+
+  //----------
+
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    if (AButton == MStartDragButton) {
+    //SAT_PRINT("AXpos %i AYpos %i\n",AXpos,AYpos);
+    if (AButton == MDragButton) {
       MIsDragging = true;
-      MClickedX = AXpos;
-      MClickedY = AYpos;
+      MPrevX = AXpos;
+      MPrevY = AYpos;
       do_widget_set_cursor(this,SAT_CURSOR_LOCK);
-      MDragValue = calcValue();
+      MDragValue = calcValue(); // starting value
     }
   }
 
   //----------
 
   void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    if (AButton == MStartDragButton) {
+    if (AButton == MDragButton) {
       MIsDragging = false;
       do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
     }
@@ -198,88 +231,81 @@ public: // on_widget
   //----------
 
   void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+    //SAT_PRINT("AXpos %i AYpos %i MPrevX %i MPrevY %i\n",AXpos,AYpos,MPrevX,MPrevY);
+
     if (MIsDragging) {
 
-      bool unsnap_key = (AState & MUnsnapKey);
-      if (unsnap_key) {
-        if (!MPrevUnsnapKey) {
-          //SAT_PRINT("unsnap_key pressed\n");
-          MDragValue = getValue();
+      int32_t diff = 0;
+      switch (MDragDirection) {
+        case SAT_DIRECTION_UP:    diff = MPrevY - AYpos;  break;
+        case SAT_DIRECTION_DOWN:  diff = AYpos - MPrevY;  break;
+        case SAT_DIRECTION_LEFT:  diff = AXpos - MPrevX;  break;
+        case SAT_DIRECTION_RIGHT: diff = MPrevX - AXpos;  break;
+      }
+
+      bool unsnapkey = (AState & MUnsnapKey);
+      bool precisekey = (AState & MPreciseKey);
+
+      if (diff != 0) {
+
+        double sensitivity = MSensitivity;
+        if (precisekey) sensitivity *= MSensitivity2;
+        double delta = (double)diff * sensitivity;;
+
+        MDragValue += delta;
+        MDragValue = SAT_Clamp(MDragValue,0,1); 
+        //double value = 0.0;
+        double value = MDragValue;
+
+        //
+        
+        if (MSnap) {
+          if (unsnapkey) { // not snap
+            if (!MPrevUnsnapKey) {
+              //SAT_PRINT("shift released\n");              
+              //MDragValue = calcValue();
+            }
+          }
+          else { // snap
+            //if (MPrevUnsnapKey) {
+            //  SAT_PRINT("shift pressed\n");
+            //}
+            value = snapValue(MDragValue);
+          }
+          MPrevUnsnapKey = unsnapkey;
         }
-      }
-      else {
-        if (MPrevUnsnapKey) {
-          //SAT_PRINT("unsnap_key released\n");
-          MDragValue = getValue();
+
+        //
+
+        if (MQuantize && !unsnapkey) {
+          value = quantizeValue(MDragValue);
         }
-      }
-      MPrevUnsnapKey = unsnap_key;
 
-      // value
+        double prev_value = getValue();
+//        if (value != prev_value) {
+          setValue(value);
+          do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
+          do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
+//        }
 
-      double value = MDragValue;
+      } // diff
+    } // dragging
 
-      // sensitivity
-
-      double sensitivity = MSensitivity;
-
-      bool precise_key = (AState & MPreciseKey);
-      if (precise_key) {
-        if (!MPrevPreciseKey) {
-          SAT_PRINT("precise_key pressed\n");
-        }
-        sensitivity *= MSensitivity2;
-      }
-      else {
-        if (MPrevPreciseKey) {
-          SAT_PRINT("precise_key released\n");
-        }
-      }
-      MPrevPreciseKey = precise_key;
-
-      // delta
-
-      double deltax = AXpos - MClickedX;
-      double deltay = AYpos - MClickedY;
-      double delta  = (deltay * sensitivity);
-
-      double new_value = value - delta;
-      new_value = SAT_Clamp(new_value,0,1);
-
-      MDragValue = new_value;
-
-      // quantize
-
-      if (MQuantize) {
-        if (!(AState & MUnsnapKey)) {
-          new_value = quantizeValue(new_value);
-        }
-      }
-
-      // snap
-
-      if (MSnap) {
-        if (!(AState & MUnsnapKey)) {
-          new_value = snapValue(new_value);
-        }
-      }
-
-      SAT_PRINT("MDragValue %.3f new_value = %.3f\n", MDragValue, new_value );
-
-
-      // set
-
-
-      // SAT_PRINT("new_value %.3f MDragValue %.3f\n",new_value,MDragValue);
-
-      if (new_value != value) {
-        //setValue(new_value);
-        setValue(new_value);
-        do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
-        do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
-      }
-    }
+    MPrevX = AXpos;
+    MPrevY = AYpos;
   }
+
+  //----------
+
+  void on_widget_paint(SAT_PaintContext* AContext) override {
+    //SAT_TRACE;
+    fillBackground(AContext);
+    drawText(AContext);
+    drawValueText(AContext);
+    drawValueBar(AContext,MDragValue);
+    paintChildren(AContext);
+    drawBorder(AContext);
+  }  
 
 };
 

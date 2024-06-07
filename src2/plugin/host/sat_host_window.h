@@ -17,21 +17,24 @@
 //----------------------------------------------------------------------
 
 class SAT_HostWindow
-: public SAT_BasicWindow {
+//: public SAT_BasicWindow {
+: public SAT_ImplementedWindow {
 
 //------------------------------
 public:
 //------------------------------
 
-  const clap_plugin_t*      MClapPlugin = nullptr;
-  const clap_plugin_gui_t*  MClapGui    = nullptr;
+  const clap_plugin_t*      MClapPlugin   = nullptr;
+  const clap_plugin_gui_t*  MClapGui      = nullptr;
+  clap_process_t            MClapProcess  = {0};
 
 //------------------------------
 public:
 //------------------------------
 
   SAT_HostWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent,const clap_plugin_t* AClapPlugin)
-  : SAT_BasicWindow(AWidth,AHeight,AParent) {
+  //: SAT_BasicWindow(AWidth,AHeight,AParent) {
+  : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     MClapPlugin = AClapPlugin;
     MClapGui = (const clap_plugin_gui_t*)MClapPlugin->get_extension(MClapPlugin,CLAP_EXT_GUI);;
   }
@@ -40,6 +43,12 @@ public:
 
   virtual ~SAT_HostWindow() {
   }
+
+  // make it shut up about unimplemented virtual abstract methods..
+  #ifdef SAT_PAINTER_NANOVG
+    NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
+  #endif
+
 
 //------------------------------
 public:
@@ -63,6 +72,27 @@ public:
   //   SAT_TRACE;
   //   SAT_BasicWindow::on_window_show();
   // }
+
+  //----------
+
+  /*
+  void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
+    // SAT_TRACE;
+    // uint32_t time = 0;
+    // uint32_t block = 256;
+    // MClapProcess.steady_time         = time;
+    // MClapProcess.frames_count        = block;
+    // MClapProcess.transport           = nullptr;
+    // MClapProcess.audio_inputs        = nullptr;
+    // MClapProcess.audio_outputs       = nullptr;
+    // MClapProcess.audio_inputs_count  = 0;
+    // MClapProcess.audio_outputs_count = 0;
+    // MClapProcess.in_events           = nullptr;
+    // MClapProcess.out_events          = nullptr;
+    // MClapPlugin->process(MClapPlugin,&MClapProcess);
+    // time += block;
+  }
+  */
 
 };
 

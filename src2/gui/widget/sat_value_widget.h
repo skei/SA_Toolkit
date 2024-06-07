@@ -84,8 +84,9 @@ public:
       }
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
+      double scale = getWindowScale();
       painter->setTextColor(MValueTextColor);
-      painter->setTextSize(MValueTextSize);
+      painter->setTextSize(MValueTextSize*scale);
       //painter->drawText(rect.x,rect.y,MText);
       painter->drawTextBox(rect,text,MValueTextAlignment);
     }

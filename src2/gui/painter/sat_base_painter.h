@@ -67,8 +67,8 @@ public:
   virtual void        selectFont(const char* font) {}
   virtual void        setFontBlur(float blur) {}
   virtual void        setShapeAntiAlias(int enabled) {}
-  // virtual void        setDrawPaint(sat_nanovg_paint_t paint) /*final*/ {}
-  // virtual void        setFillPaint(sat_nanovg_paint_t paint) /*final*/ {}
+//virtual void        setDrawPaint(sat_nanovg_paint_t paint) /*final*/ {}
+//virtual void        setFillPaint(sat_nanovg_paint_t paint) /*final*/ {}
   virtual void        setMiterLimit(double limit) {}
   virtual void        setLineCap(int cap) {}
   virtual void        setLineJoin(int join) {}
@@ -113,7 +113,7 @@ public:
   virtual int32_t     loadFont(const char* AName, void* ABuffer, uint32_t ASize) { return 0; }
   virtual int         loadFontAtIndex(const char* name, const char* filename, const int fontIndex) { return 0; }
   virtual int         loadFontMemAtIndex(const char* name, unsigned char* data, int ndata, int freeData, const int fontIndex) { return 0; }
-  // virtual void        deleteFont(int32_t AFont) {}
+//virtual void        deleteFont(int32_t AFont) {}
   virtual int         findFont(const char* name) { return 0; }
   virtual int         addFallbackFontId(int baseFont, int fallbackFont) { return 0; }
   virtual int         addFallbackFont(const char* baseFont, const char* fallbackFont) { return 0; }
@@ -134,21 +134,21 @@ public:
   virtual void        imageSize(int image, int* w, int* h) {}
   virtual void        setFillImage(int32_t AImage, double xofs, double yofs, double xscale, double yscale, double AAlpha=1.0, double AAngle=0.0) {}
 
-  // virtual sat_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) /*final*/ {}
-  // virtual sat_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*final*/ {}
-  // virtual sat_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) /*final*/ {}
-  // virtual sat_paint_t imagePattern(double ox, double oy, double ex, double ey, double angle, int image, double alpha) /*final*/ {}
+//virtual sat_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) /*final*/ {}
+//virtual sat_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*final*/ {}
+//virtual sat_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) /*final*/ {}
+//virtual sat_paint_t imagePattern(double ox, double oy, double ex, double ey, double angle, int image, double alpha) /*final*/ {}
 
   virtual void*       createRenderBuffer(uint32_t AWidth, uint32_t AHeight) { return nullptr; }
   virtual void        deleteRenderBuffer(void* buffer) {}
   virtual int32_t     getImageFromRenderBuffer(void* buffer) { return 0; }
   virtual void        selectRenderBuffer(void* buffer) {}
 
-  virtual void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) {}
-  virtual void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) {}
+  virtual void        drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) {}
+  virtual void        drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) {}
 
-  virtual void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurfae) {}
-  virtual void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) {}
+  virtual void        drawSurface(double AXpos, double AYpos, SAT_Surface* ASurfae) {}
+  virtual void        drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) {}
 
 
 //------------------------------

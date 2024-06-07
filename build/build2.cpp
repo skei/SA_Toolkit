@@ -20,7 +20,7 @@
 // ports
 //------------------------------
 
-#include "../plugins2/ports/sa_compciter.h"
+//#include "../plugins2/ports/sa_compciter.h"
 
 //----------------------------------------------------------------------
 //
@@ -30,3 +30,4 @@
 
 //#include "../plugins2/test2/exe1.h"
 //#include "../plugins2/test2/plugin1.h"
+#include "../plugins2/test2/plugin_gui1.h"

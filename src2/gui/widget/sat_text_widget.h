@@ -31,6 +31,14 @@ public:
 
   //----------
 
+  SAT_TextWidget(SAT_Rect ARect, const char* AText)
+  : SAT_VisualWidget(ARect) {
+    setName("SAT_TextWidget");
+    MText = AText;
+  }
+
+  //----------
+
   virtual ~SAT_TextWidget() {
   }
 
@@ -54,9 +62,12 @@ public:
       //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
+      double scale = getWindowScale();
       painter->setTextColor(MTextColor);
-      painter->setTextSize(MTextSize);
+      painter->setTextSize(MTextSize*scale);
+
       //painter->drawText(rect.x,rect.y,MText);
+
       const char* text = "";
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
@@ -65,7 +76,10 @@ public:
       else {
         text = MText;
       }
+
       painter->drawTextBox(rect,text,MTextAlignment);
+      //painter->drawText(rect.x,rect.y,text);
+
     }
   }
 

@@ -19,19 +19,10 @@ private:
 
   SAT_EditorListener* MListener       = nullptr;
 
-  uint32_t            MInitialWidth   = 512;
-  uint32_t            MInitialHeight  = 512;
-  double              MInitialScale   = 1.0;
-
-  uint32_t            MWidth          = 512;
-  uint32_t            MHeight         = 512;
-  double              MScale          = 1.0;
-  const char*         MTitle          = "";
-
-  bool                MCanResize      = true;
-  bool                MProportional   = false;
-
   SAT_Window*         MWindow         = nullptr;
+  const char*         MTitle          = "";
+  bool                MCanResize      = true;
+  bool                MWindowIsOpen   = false;
 
   #ifdef SAT_GUI_WIN32
     void*             MParent         = nullptr;
@@ -43,20 +34,31 @@ private:
     uint32_t          MTransient      = 0;
   #endif
 
+  // from setInitialEditorSize(640,480,1.0,false);
+  uint32_t            MInitialWidth   = 512;
+  uint32_t            MInitialHeight  = 512;
+//double              MInitialScale   = 1.0;
+  bool                MProportional   = false;
+
+  // runtime
+  uint32_t            MWidth          = 512;
+  uint32_t            MHeight         = 512;
+//double              MScale          = 1.0;
+
 //------------------------------
 public:
 //------------------------------
 
-  SAT_EmbeddedEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false)
-  : SAT_BaseEditor(AListener,AWidth,AHeight,AScale,AProportional) {
+  SAT_EmbeddedEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight/*, double AScale=1.0, bool AProportional=false*/)
+  : SAT_BaseEditor(AListener,AWidth,AHeight/*,AScale,AProportional*/) {
     MListener       = AListener;
     MWidth          = AWidth;
     MHeight         = AHeight;
-    MScale          = AScale;
-    MProportional   = AProportional;
-    MInitialWidth   = AWidth;
-    MInitialHeight  = AHeight;
-    MInitialScale   = AScale;
+  //MInitialWidth   = AWidth;
+  //MInitialHeight  = AHeight;
+  //MInitialScale   = AScale;
+  //MProportional   = AProportional;
+  //MScale          = AScale;
   }
 
   //----------
@@ -95,18 +97,18 @@ public:
 public:
 //------------------------------
 
-  virtual bool connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
-    AWidget->setParameter(AParameter,AIndex);
-    AParameter->setWidget(AWidget);
-    return true;
+  SAT_Window* getWindow() {
+    return MWindow;
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Window* getWindow() {
-    return MWindow;
+  virtual bool connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
+    AWidget->setParameter(AParameter,AIndex);
+    AParameter->setWidget(AWidget);
+    return true;
   }
 
   //----------
@@ -197,15 +199,11 @@ public: // clap.gui
     if (is_floating == true) return false;
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
-      SAT_Assert(!MWindow);
-
       // ask plugin to create window
       // if not, create it ourselves
       if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
       else MWindow = new SAT_Window(MWidth,MHeight);
-
       MWindow->setListener(this);
-      SAT_Assert(MWindow);
     #endif
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
@@ -231,7 +229,8 @@ public: // clap.gui
 
   bool setScale(double scale) override {
     //SAT_PRINT("AScale %.3f\n",scale);
-    MScale = scale;
+    // MScale = scale;
+    // MScale *= scale;
     return true;
   }
 
@@ -280,9 +279,9 @@ public: // clap.gui
     //SAT_PRINT("*width %i, *height %i\n",width,height);
     MWidth = width;
     MHeight = height;
-    if (MWindow) {
-      MWindow->setSize(width,height);           // actually resizes the window (will it re-send resize event)
-      MWindow->on_window_resize(width,height);  // tell the rest of the system about the new size
+    if (MWindow /*&& MWindowIsOpen*/) {
+      MWindow->setSize(width,height);           // actually resizes the window (will it re-send resize event) (sets MWindowWidth/Height)
+      MWindow->on_window_resize(width,height);  // tell the rest of the system about the new size (calc scale. root.on_widget_resize,realign)
     }
     return true;
   }
@@ -336,7 +335,11 @@ public: // clap.gui
 
   bool show() override {
     //SAT_PRINT("\n");
-    if (MWindow) MWindow->show();
+    if (MWindow) {
+      MWindow->on_window_show();
+      MWindow->show();
+    }
+    MWindowIsOpen = true;
     return true;
   }
 
@@ -344,7 +347,11 @@ public: // clap.gui
 
   bool hide() override {
     //SAT_PRINT("\n");
-    if (MWindow) MWindow->hide();
+    if (MWindow) {
+      MWindow->on_window_hide();
+      MWindow->hide();
+    }
+    MWindowIsOpen = false;
     return true;
   }
   

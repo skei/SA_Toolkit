@@ -178,13 +178,13 @@ public: // text
 
   virtual SAT_Point getTextPos(SAT_Rect ARect, const char* AText, uint32_t AAlignment) /*override*/ {
     double bounds[4] = {0};
-    /*double advance =*/ getTextBounds(AText,bounds);
-    //SAT_PRINT("bounds %.f %.f %.f %.f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
-    double x = ARect.x   - bounds[0];
-    double y = ARect.y   - bounds[1];
+    double advance = getTextBounds(AText,bounds);
+    //SAT_PRINT("bounds %.2f %.2f %.2f %.2f advance %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3],advance);
+    double x = ARect.x   - bounds[0];// - bounds[2];
+    double y = ARect.y   - bounds[1];// - bounds[3];
     //double w = advance;//bounds[2] - bounds[0];
-    double w = bounds[2] ;//- bounds[0];
-    double h = bounds[3] ;//- bounds[1];
+    double w = bounds[2] - bounds[0];
+    double h = bounds[3] - bounds[1];
     //SAT_PRINT("x %.f y %.f w %.f h %.f\n",x,y,w,h);
     if      (AAlignment & SAT_TEXT_ALIGN_LEFT)        { }
     else if (AAlignment & SAT_TEXT_ALIGN_RIGHT)       { x +=   ARect.w - w; }

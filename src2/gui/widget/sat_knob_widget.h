@@ -80,8 +80,9 @@ public:
       //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
+      double scale = getWindowScale();
       
-      rect.shrink(MKnobArcThickness * 0.5);
+      rect.shrink(MKnobArcThickness * 0.5 * scale);
 
       double x = rect.x;
       double y = rect.y;
@@ -99,7 +100,7 @@ public:
       double r = w05;
       if (h05 < w05) r = h05;
 
-      painter->setLineWidth(MKnobArcThickness);
+      painter->setLineWidth(MKnobArcThickness * scale);
 
       if (MDrawKnobArcBackground) {
         double a1 = SAT_PI2 * (0.35);

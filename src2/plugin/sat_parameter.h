@@ -162,6 +162,42 @@ public:
   //virtual void setLastAutomatedValue(double AValue) { MLastAutomatedValue = AValue; }
   //virtual void setLastModulatedValue(double AValue) { MLastModulatedValue = AValue; }
 
+  virtual void setId(uint32_t AId) {
+    MInfo.id = AId;
+  }
+
+  virtual void setCookie(void* ACookie) {
+    MInfo.cookie = ACookie;
+  }
+
+  virtual void setFlag(uint32_t AFlag) {
+    MInfo.flags |= AFlag;
+  }
+
+  virtual void clearFlag(uint32_t AFlag) {
+    MInfo.flags &= ~AFlag;
+  }
+
+  virtual void setName(const char* AName) {
+    SAT_Strlcpy(MInfo.name,AName,CLAP_NAME_SIZE);
+  }
+
+  virtual void setModule(const char* AModule) {
+    SAT_Strlcpy(MInfo.module,AModule,CLAP_PATH_SIZE);
+  }
+
+  virtual void setMinValue(double AValue) {
+    MInfo.min_value = AValue;
+  }
+
+  virtual void setMaxValue(double AValue) {
+    MInfo.max_value = AValue;
+  }
+
+  virtual void setDefaultValue(double AValue) {
+    MInfo.default_value = AValue;
+  }
+
 //------------------------------
 public:
 //------------------------------

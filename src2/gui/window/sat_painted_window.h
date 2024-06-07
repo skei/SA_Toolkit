@@ -18,14 +18,6 @@ class SAT_PaintedWindow
 : public SAT_BasicWindow {
 
 //------------------------------
-private:
-//------------------------------
-
-  int32_t           MInitialWidth   = 0;
-  int32_t           MInitialHeight  = 0;
-  double            MScale          = 1.0;
-
-//------------------------------
 protected:
 //------------------------------
 
@@ -44,7 +36,6 @@ public:
     MWindowPainter = new SAT_Painter(this,this);
     MPaintContext.painter = MWindowPainter;
     MWindowRenderer->resetCurrent();
-    setInitialSize(AWidth,AHeight);
   }
 
   //----------
@@ -57,8 +48,6 @@ public:
 //------------------------------
 public:
 //------------------------------
-
-  double            getScale()        { return MScale; }
 
   SAT_PaintContext* getPaintContext() { return &MPaintContext; }
   SAT_Painter*      getPainter()      { return MWindowPainter; }
@@ -120,35 +109,6 @@ public: // window
   // void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
   //   //SAT_PRINT("w %i h %i\n",AWidth,AHeight);
   // }
-
-//------------------------------
-public: // scale
-//------------------------------
-
-  // calculates the maximal (or minimal) scale to use for the gui,
-  // that will fit inside the given width/height
-
-  virtual double recalcScale(int32_t AWidth, int32_t AHeight) {
-    double scale = 1.0;
-    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
-      double xscale = (double)AWidth / (double)MInitialWidth;
-      double yscale = (double)AHeight / (double)MInitialHeight;
-      if (xscale < yscale) scale = xscale;
-      else scale =  yscale;
-    }
-    //SAT_PRINT("scale: %f\n",scale);
-    return scale;
-  }
-
-  //----------
-
-  virtual void setInitialSize(uint32_t AWidth, uint32_t AHeight) {
-    MInitialWidth = AWidth;
-    MInitialHeight = AHeight;
-    MScale = recalcScale( getWidth(), getHeight() );
-    // MScale = recalcScale(AWidth,AHeight);
-    //SAT_Print("MScale %f\n",MScale);
-  }
 
 };
 

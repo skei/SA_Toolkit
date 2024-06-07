@@ -45,14 +45,14 @@ public:
 //------------------------------
 
   virtual void startTimer(float ms) {
-    SAT_TRACE;
+    //SAT_TRACE;
     if (MTimer) MTimer->start(ms);
   }
 
   //----------
 
   virtual void stopTimer() {
-    SAT_TRACE;
+    //SAT_TRACE;
     if (MTimer) MTimer->stop();
   }
 
@@ -66,10 +66,10 @@ public:
 
   //----------
 
-  // make it shut up about unimplemented virtual abstract methods..
-  #ifdef SAT_PAINTER_NANOVG
-    NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
-  #endif
+  // // make it shut up about unimplemented virtual abstract methods..
+  // #ifdef SAT_PAINTER_NANOVG
+  //   NVGcontext* on_surfaceOwner_getNanoVGContext()  override { return nullptr; }
+  // #endif
 
 //------------------------------
 public: // window
@@ -77,7 +77,7 @@ public: // window
 
   void on_window_show() override {
     SAT_ImplementedWindow::on_window_show();
-    SAT_TRACE;
+    //SAT_TRACE;
     #ifndef SAT_WINDOW_NO_TIMER_AUTOSTART
       //SAT_TRACE;
       startTimer(SAT_WINDOW_TIMER_MS);

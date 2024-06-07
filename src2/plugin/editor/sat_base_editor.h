@@ -11,13 +11,22 @@ class SAT_BaseEditor {
 public:
 //------------------------------
 
-  SAT_BaseEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
+  SAT_BaseEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight/*, double AScale=1.0, bool AProportional=false*/) {
   }
 
   //----------
 
   virtual ~SAT_BaseEditor() {
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  // virtual bool connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) { return false; }
+  virtual void setParameterValue(SAT_Parameter* AParameter) {}
+  virtual void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) {}
+  virtual void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) {}
 
 //------------------------------
 public:
@@ -39,13 +48,6 @@ public:
   virtual bool show() { return false; }
   virtual bool hide() { return false; }
 
-//------------------------------
-public:
-//------------------------------
-
-  virtual void setParameterValue(SAT_Parameter* AParameter) {}
-  virtual void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) {}
-  virtual void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) {}
 
 };
 
