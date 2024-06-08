@@ -31,18 +31,6 @@ class myProcessor
 : public SAT_InterleavedProcessor {
 
 //------------------------------
-private:
-//------------------------------
-
-  sat_param_t   param0 = 0.0;
-  sat_param_t   param1 = 0.0;
-  sat_param_t   param2 = 0.0;
-  sat_param_t   param3 = 0.0;
-  sat_param_t   param4 = 0.0;
-
-  //sat_param_t   params[5] = {0,0,0};
-
-//------------------------------
 public:
 //------------------------------
 
@@ -106,8 +94,9 @@ public:
     SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
     SAT_Parameter* p2 = new SAT_Parameter( "param2", "", 1.0,  0, 10 );
     SAT_Parameter* p3 = new SAT_Parameter( "param3", "", 2.0,  0, 10 );
-    SAT_Parameter* p4 = new SAT_Parameter( "param3", "", 3.0, -2, 10 );
-    SAT_Parameter* p5 = new SAT_Parameter( "param3", "", 4.0, -2, 10 );
+    SAT_Parameter* p4 = new SAT_Parameter( "param4", "", 3.0, -2, 10 );
+    SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
+    SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
 
     p2->setFlag(CLAP_PARAM_IS_STEPPED);
     p3->setFlag(CLAP_PARAM_IS_STEPPED);
@@ -119,6 +108,7 @@ public:
     appendParameter(p3);
     appendParameter(p4);
     appendParameter(p5);
+    appendParameter(p6);
 
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(640,480,1.0,false);
@@ -140,11 +130,13 @@ public:
 
         root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
-        SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(10, 10,620,30));
-        SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(10, 50,620,30));
-        SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(10, 90,620,30));
-        SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(10,130,620,30));
-        SAT_SliderWidget* s5 = new SAT_SliderWidget(SAT_Rect(10,170,620,30));
+        SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(  10, 10, 620, 30 ));
+        SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(  10, 50, 620, 30 ));
+        SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(  10, 90, 620, 30 ));
+        SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(  10,130, 620, 30 ));
+        SAT_SliderWidget* s5 = new SAT_SliderWidget(SAT_Rect(  10,170, 620, 30 ));
+
+        SAT_KnobWidget*   k1 = new SAT_KnobWidget(  SAT_Rect(  10,210, 100,100));
 
         s2->setDragSnap(true);
         s2->setDrawValueBar(true);
@@ -159,19 +151,24 @@ public:
         s4->setDrawQuantized(true);
         s4->setDrawValueBar(true);
 
-        s5->setDrawValueBar(true);
+        k1->setDrawKnobArcBackground(true);
+        k1->setKnobArcThickness(15);
+        k1->setTextSize(20);
+        k1->setValueTextSize(25);
 
         root->appendChild(s1);
         root->appendChild(s2);
         root->appendChild(s3);
         root->appendChild(s4);
         root->appendChild(s5);
+        root->appendChild(k1);
 
         AEditor->connect(s1,getParameter(0));
         AEditor->connect(s2,getParameter(1));
         AEditor->connect(s3,getParameter(2));
         AEditor->connect(s4,getParameter(3));
         AEditor->connect(s5,getParameter(4));
+        AEditor->connect(k1,getParameter(5));
 
       return true;
     }

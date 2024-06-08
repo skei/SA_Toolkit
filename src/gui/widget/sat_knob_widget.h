@@ -45,11 +45,14 @@ public:
 public:
 //------------------------------
 
-  // void setText(const char* AText)             { MText = AText; }
-  void setDrawKnobArc(bool ADraw=true)           { MDrawKnobArc = ADraw; }
-  void setKnobArcColor(SAT_Color AColor)         { MKnobArcColor = AColor; }
-  void setKnobArcThickness(double AThickness)    { MKnobArcThickness = AThickness; }
-  // void setTextAlignment(uint32_t AAlignment)  { MTextAlignment = AAlignment; }
+  // void setText(const char* AText)                { MText = AText; }
+  // void setTextAlignment(uint32_t AAlignment)     { MTextAlignment = AAlignment; }
+
+  void setDrawKnobArc(bool ADraw=true)              { MDrawKnobArc = ADraw; }
+  void setDrawKnobArcBackground(bool ADraw=true)    { MDrawKnobArcBackground = ADraw; }
+  void setKnobArcColor(SAT_Color AColor)            { MKnobArcColor = AColor; }
+  void setKnobArcBackgroundColor(SAT_Color AColor)  { MKnobArcBackgroundColor = AColor; }
+  void setKnobArcThickness(double AThickness)       { MKnobArcThickness = AThickness; }
 
 //------------------------------
 public:

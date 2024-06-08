@@ -27,7 +27,6 @@
 #define SAT_RENDERER_MAJOR_VERSION                3
 #define SAT_RENDERER_MINOR_VERSION                2
 #define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
-
 #define SAT_WIDGET_NUM_VALUES                     16
 #define SAT_WINDOW_THREAD_KILL                    666
 #define SAT_WINDOW_TIMER_MS                       20
@@ -54,7 +53,7 @@
 //#define SAT_INCLUDE_LOG
   #define SAT_LOG_THREAD
   #define SAT_LOG_TIME
-//#define SAT_NANOVG_PATCH
+  #define SAT_NANOVG_TEXTPATCH
 //#define SAT_NO_BITMAP_PNG
 //#define SAT_NO_BITMAP_PNG_FILE
 //#define SAT_NO_STDLIB
@@ -144,35 +143,44 @@
 #undef SAT_PLUGIN_DEFINED
 
   #ifdef SAT_PLUGIN_CLAP
+    #define SAT_PLUGIN
     #define SAT_PLUGIN_DEFINED
+    #define SAT_PLUGIN
   #endif
 
   #ifdef SAT_PLUGIN_DSSI
     #define SAT_PLUGIN_DEFINED
+    #define SAT_PLUGIN
   #endif
 
   #ifdef SAT_PLUGIN_EXE
     #define SAT_PLUGIN_DEFINED
+    #define SAT_EXE
   #endif
 
   #ifdef SAT_PLUGIN_EXELIB
     #define SAT_PLUGIN_DEFINED
+    #define SAT_PLUGIN
   #endif
 
   #ifdef SAT_PLUGIN_LADSPA
     #define SAT_PLUGIN_DEFINED
+    #define SAT_PLUGIN
   #endif
 
   #ifdef SAT_PLUGIN_LV2
     #define SAT_PLUGIN_DEFINED
+    #define SAT_PLUGIN
   #endif
 
   #ifdef SAT_PLUGIN_VST2
     #define SAT_PLUGIN_DEFINED
+    #define SAT_PLUGIN
   #endif
 
   #ifdef SAT_PLUGIN_VST3
     #define SAT_PLUGIN_DEFINED
+    #define SAT_PLUGIN
   #endif
 
 
