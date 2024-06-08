@@ -3,34 +3,49 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/sat_renderer.h"
+#include "gui/painter/sat_base_painter.h"
+#include "gui/painter/sat_paint_target.h"
+#include "gui/painter/sat_painter_owner.h"
+
+#include "../../data/fonts/Roboto/Roboto-Regular.h"
+#include "../../data/fonts/Manjari/Manjari-Thin.h"
+
+typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_ClipRectStack;
 
 //----------
 
-#if defined(SAT_GUI_NOGUI)
-  ;
+#ifdef SAT_PAINTER_USER_DEFINED
 
-#elif defined(SAT_GUI_WAYLAND)
-  #include "gui/nanovg/sat_nanovg_painter.h"
-  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
-
-#elif defined(SAT_GUI_X11)
-  #include "gui/nanovg/sat_nanovg_painter.h"
-  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
-
-#elif defined(SAT_GUI_WIN32)
-  #include "gui/nanovg/sat_nanovg_painter.h"
-  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
+  typedef SAT_PAINTER_USER_DEFINED SAT_ImplementedRenderer;
 
 #else
-  #error GUI type not defined
+
+  #ifdef SAT_NO_PAINTER
+    //#include "gui/painter/sat_no_painter.h"
+    typedef SAT_BasePainter SAT_ImplementedPainter;
+  #endif
+
+  #ifdef SAT_PAINTER_CAIRO
+    #include "gui/painter/sat_cairo_painter.h"
+    typedef SAT_CairoPainter SAT_ImplementedPainter;
+  #endif
+
+  #ifdef SAT_PAINTER_NANOVG
+    #include "gui/painter/sat_nanovg_painter.h"
+    typedef SAT_NanoVGPainter SAT_ImplementedPainter;
+  #endif
+
+  #ifdef SAT_PAINTER_WIN32
+    #include "gui/painter/sat_win32_painter.h"
+    typedef SAT_Win32Painter SAT_ImplementedPainter;
+  #endif
+
+  #ifdef SAT_PAINTER_X11
+    #include "gui/painter/sat_x11_painter.h"
+    typedef SAT_X11Painter SAT_ImplementedPainter;
+  #endif
 
 #endif
-
-//----------
-
-//typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_RectStack;
-
 
 //----------------------------------------------------------------------
 //
@@ -45,18 +60,23 @@ class SAT_Painter
 private:
 //------------------------------
 
-  SAT_Rect      MClipRect   = {};
-  SAT_RectStack MClipStack  = {};
+//SAT_PainterOwner* MOwner        = nullptr;
+  SAT_Rect          MClipRect     = {};
+  SAT_ClipRectStack MClipStack    = {};
+
+  int               MDefaultFont  = -1;
+  int               MHeaderFont   = -1;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Painter(SAT_PainterOwner* AOwner)
-  : SAT_ImplementedPainter(AOwner) {
-    //int32_t w = ATarget->tgtGetWidth();
-    //int32_t h = ATarget->tgtGetHeight();
-    //MClipRect = SAT_Rect(0,0,w,h);
+  SAT_Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
+  : SAT_ImplementedPainter(AOwner,ATarget) {
+    MDefaultFont = loadFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
+    MHeaderFont = loadFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
+    selectFont(MDefaultFont);
+    setTextSize(12.0);
   }
 
   //----------
@@ -73,7 +93,7 @@ public: // clip
     - set new clip rect
   */
 
-  void pushClip(SAT_Rect ARect) override {
+  virtual void pushClip(SAT_Rect ARect) /*override*/ {
     //SAT_Print("pushing %.f,%.f, %.f,%.f setting  %.f,%.f, %.f,%.f\n",MClipRect.x,MClipRect.y,MClipRect.w,MClipRect.h,ARect.x,ARect.y,ARect.w,ARect.h);
     MClipStack.push(MClipRect);
     MClipRect = ARect;
@@ -84,7 +104,7 @@ public: // clip
 
   //----------
 
-  void pushOverlappingClip(SAT_Rect ARect) override {
+  virtual void pushOverlappingClip(SAT_Rect ARect) /*override*/ {
     SAT_Rect r = ARect;
     r.overlap(MClipRect);
     pushClip(r);
@@ -92,7 +112,7 @@ public: // clip
 
   //----------
 
-  void pushNoClip() override {
+  virtual void pushNoClip() /*override*/ {
     MClipStack.push(MClipRect);
     //MClipRect = ARect;
     resetClip();
@@ -106,7 +126,7 @@ public: // clip
     - set clip rect to popped rect
   */
 
-  SAT_Rect popClip() override {
+  virtual SAT_Rect popClip() /*override*/ {
     //SAT_Assert( !MClipStack.isEmpty() );
     SAT_Rect popped_rect = MClipStack.pop();
     //MClipRect = MClipStack.pop();
@@ -120,25 +140,25 @@ public: // clip
 
   //----------
 
-  void resetClipStack() override {
+  virtual void resetClipStack() /*override*/ {
     MClipStack.reset();
   }
 
   //----------
 
-  void setClipRect(SAT_Rect ARect) override {
+  virtual void setClipRect(SAT_Rect ARect) /*override*/ {
     MClipRect = ARect;
   }
 
   //----------
 
-  SAT_Rect getClipRect() override {
+  virtual SAT_Rect getClipRect() /*override*/ {
     return MClipRect;
   }
   
   //----------
 
-  SAT_RectStack* getClipStack() override {
+  virtual SAT_ClipRectStack* getClipStack() /*override*/ {
     return &MClipStack;
   }
 
@@ -146,33 +166,41 @@ public: // clip
 public: // text
 //------------------------------
 
-  SAT_Point getTextPos(SAT_Rect ARect, const char* AText, uint32_t AAlignment) override {
+    // measure_string(AText);
+    // float x,y,w;
+    // if (AAlignment & KODE_TEXT_ALIGN_TOP) y = ARect.y    + MFontAscent;
+    // else if (AAlignment & KODE_TEXT_ALIGN_BOTTOM) y = ARect.y2() - MFontDescent;
+    // else y = ARect.y + (MFontAscent * 0.5f) + (ARect.h * 0.5f);
+    // w = MFontWidth;
+    // if (AAlignment & KODE_TEXT_ALIGN_LEFT) x = ARect.x;
+    // else if (AAlignment & KODE_TEXT_ALIGN_RIGHT) x = ARect.x2() - w;
+    // else x = ARect.x + (ARect.w * 0.5f) - (w * 0.5f);
+
+  virtual SAT_Point getTextPos(SAT_Rect ARect, const char* AText, uint32_t AAlignment) /*override*/ {
     double bounds[4] = {0};
-    /*double advance =*/ getTextBounds(AText,bounds);
-    double x = ARect.x   - bounds[0];
-    double y = ARect.y   - bounds[1];
+    double advance = getTextBounds(AText,bounds);
+    //SAT_PRINT("bounds %.2f %.2f %.2f %.2f advance %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3],advance);
+    double x = ARect.x   - bounds[0];// - bounds[2];
+    double y = ARect.y   - bounds[1];// - bounds[3];
     //double w = advance;//bounds[2] - bounds[0];
     double w = bounds[2] - bounds[0];
     double h = bounds[3] - bounds[1];
-    
+    //SAT_PRINT("x %.f y %.f w %.f h %.f\n",x,y,w,h);
     if      (AAlignment & SAT_TEXT_ALIGN_LEFT)        { }
-    else if (AAlignment & SAT_TEXT_ALIGN_RIGHT)       { x = ARect.w - w + x; }
+    else if (AAlignment & SAT_TEXT_ALIGN_RIGHT)       { x +=   ARect.w - w; }
     else /*if (AAlignment & SAT_TEXT_ALIGN_CENTER)*/  { x += ((ARect.w - w) * 0.5); }
-    
     if      (AAlignment & SAT_TEXT_ALIGN_TOP)         { }
-    else if (AAlignment & SAT_TEXT_ALIGN_BOTTOM)      { y = ARect.h - h + y; }
+    else if (AAlignment & SAT_TEXT_ALIGN_BOTTOM)      { y +=   ARect.h - h; }
     else /*if (AAlignment & SAT_TEXT_ALIGN_CENTER)*/  { y += ((ARect.h - h) * 0.5); }
-    
     return SAT_Point(x,y);
-    
   }
   
   //----------
 
-  void drawTextBox(SAT_Rect ARect, const char* AText, uint32_t AAlignment) override {
+  virtual void drawTextBox(SAT_Rect ARect, const char* AText, uint32_t AAlignment) /*override*/ {
     SAT_Point p = getTextPos(ARect,AText,AAlignment);
     drawText(p.x,p.y,AText);
-  }
+  }  
 
 };
 

@@ -3,7 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/clap/sat_clap.h"
 
 class SAT_NotePort;
 typedef SAT_Array<SAT_NotePort*> SAT_NotePortArray;
@@ -20,58 +19,42 @@ class SAT_NotePort {
 private:
 //------------------------------
 
-  clap_note_port_info_t MInfo   = {};
-  int32_t               MIndex  = -1;
-
+  clap_note_port_info_t  MInfo = {
+  #ifdef SAT_WIN32
+    0,
+    CLAP_NOTE_DIALECT_CLAP,
+    CLAP_NOTE_DIALECT_CLAP,
+    ""
+  #else
+    .id                 = 0,
+    .supported_dialects = CLAP_NOTE_DIALECT_CLAP,
+    .preferred_dialect  = CLAP_NOTE_DIALECT_CLAP,
+    .name               = ""
+  #endif
+  };
 
 //------------------------------
 public:
 //------------------------------
-
-
-  //----------
 
   SAT_NotePort() {
   }
 
   //----------
 
-  SAT_NotePort(const clap_note_port_info_t* AInfo) {
-    memcpy(&MInfo,AInfo,sizeof(clap_note_port_info_t));
-  }
-
-  //----------
-
-  SAT_NotePort(const char* name, uint32_t supported_dialects, uint32_t preferred_dialects) {
-    MInfo.id                  = 0; // !!!
-    MInfo.supported_dialects  = supported_dialects;
-    MInfo.preferred_dialect   = preferred_dialects;
-    SAT_Strlcpy(MInfo.name,name,CLAP_NAME_SIZE);
-  }
-
-  //----------
-
-  virtual ~SAT_NotePort() {
+  SAT_NotePort(const char* AName, uint32_t AId) {
+    MInfo.id                  = AId;
+    MInfo.supported_dialects  = CLAP_NOTE_DIALECT_CLAP;
+    MInfo.preferred_dialect   = CLAP_NOTE_DIALECT_CLAP;
+    SAT_Strlcpy(MInfo.name,AName,CLAP_NAME_SIZE);
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  virtual int32_t getIndex() {
-    return MIndex;
-  }
-
-  virtual const clap_note_port_info_t* getInfo() {
+  clap_note_port_info_t* getInfo() {
     return &MInfo;
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  virtual void setIndex(int32_t AIndex) {
-    MIndex = AIndex;
   }
 
 };

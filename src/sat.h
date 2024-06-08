@@ -3,22 +3,6 @@
 //----------------------------------------------------------------------
 
 
-#include <array>
-#include <atomic>
-#include <cassert>
-#include <malloc.h>
-#include <math.h>
-#include <memory.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-//#include <vector>
-
-//----------------------------------------------------------------------
-
 #if defined (__gnu_linux__)
   #define SAT_LINUX
 #endif
@@ -64,24 +48,11 @@
 //----------------------------------------------------------------------
 
 #include "base/sat_config.h"
+#include "base/sat_stdlib.h"
 #include "base/sat_attributes.h"
 #include "base/sat_const.h"
-
-//----------
-
-#if defined (SAT_LINUX)
-  #include "base/sat_linux.h"
-#endif
-
-#if defined (SAT_WIN32)
-  #include "base/sat_win32.h"
-#endif
-
-//----------
-
-#include "base/sat_global.h"
 #include "base/sat_types.h"
-//#include "base/sat_utils.h"
+#include "base/sat_global.h"
 
 //----------------------------------------------------------------------
 #endif

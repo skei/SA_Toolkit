@@ -8,7 +8,7 @@
 
 CC="g++"
 INPUT="build.cpp"
-OUTPUT="build.exe"
+OUTPUT="plugin.exe"
 BUILD_COUNT=""
 FORMAT="EXE"
 GUI="X11"
@@ -228,7 +228,7 @@ fi
 case $GUI in
   "NOGUI")
     #echo "gui = nogui"
-    FLAGS+=" -DSAT_GUI_NOGUI"
+    FLAGS+=" -DSAT_NO_GUI"
     ;;
   "WAYLAND")
     #echo "gui = win32"
@@ -302,7 +302,7 @@ fi
 
 if $TESTS
   then
-    FLAGS+=" -DSAT_TESTS"
+    FLAGS+=" -DSAT_INCLUDE_TESTS"
 fi
 
 #------------------------------
@@ -314,6 +314,7 @@ if $WIN32
     CC="/usr/bin/x86_64-w64-mingw32-g++"
     FLAGS+=" -static-libgcc"
     FLAGS+=" -static-libstdc++"
+    LIB+=" -lwsock32"
   else
     CC="g++"
     LIB+=" -ldl -lrt"

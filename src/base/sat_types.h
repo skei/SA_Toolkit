@@ -2,28 +2,26 @@
 #define sat_types_included
 //----------------------------------------------------------------------
 
-//#include "sat.h"
+#include "base/type/sat_array.h"
+#include "base/type/sat_buffer.h"
+#include "base/type/sat_color.h"
+#include "base/type/sat_complex.h"
+#include "base/type/sat_dictionary.h"
+#include "base/type/sat_list.h"
+#include "base/type/sat_matrix.h"
+#include "base/type/sat_point.h"
+#include "base/type/sat_quaternion.h"
+#include "base/type/sat_queue.h"
+#include "base/type/sat_rect.h"
+#include "base/type/sat_stack.h"
+#include "base/type/sat_string.h"
+#include "base/type/sat_tree.h"
+#include "base/type/sat_vector.h"
 
-#include "base/types/sat_array.h"
-#include "base/types/sat_buffer.h"
-#include "base/types/sat_color.h"
-#include "base/types/sat_complex.h"
-#include "base/types/sat_dictionary.h"
-#include "base/types/sat_list.h"
-#include "base/types/sat_matrix.h"
-#include "base/types/sat_point.h"
-#include "base/types/sat_quaternion.h"
-#include "base/types/sat_queue.h"
-#include "base/types/sat_rect.h"
-#include "base/types/sat_stack.h"
-#include "base/types/sat_string.h"
-#include "base/types/sat_tree.h"
-#include "base/types/sat_vector.h"
+//----------------------------------------------------------------------
 
-//----------
-
-typedef double            sat_param_t;
 typedef float             sat_sample_t;
+typedef double            sat_param_t;
 typedef std::atomic<bool> sat_atomic_bool_t;
 
 //----------------------------------------------------------------------

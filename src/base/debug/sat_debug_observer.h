@@ -34,6 +34,7 @@
     //uint32_t        MNumObservables                         = 0;
     //SAT_Observable  MObservables[SAT_DEBUG_MAX_OBSERVABLES] = {0};
     SAT_Observables  MObservables = {};
+    SAT_Print* MPrint = nullptr;
 
   //------------------------------
   public:
@@ -48,6 +49,22 @@
     }
     
   //------------------------------
+public:
+//------------------------------
+
+  bool initialize(SAT_Print* APrint) {
+    MPrint = APrint;
+    return true;
+  }
+
+  //----------
+
+  void cleanup() {
+    //MPrint->print("memtrace cleanup\n");
+//    print_memtrace();
+  }
+
+//------------------------------
   public: // observer
   //------------------------------
 
@@ -77,12 +94,12 @@
 
     void print_observers() {
       if (MObservables.size() > 0) {
-        SAT_DPrint("\nObserved:\n");
+        MPrint->print("\nObserved:\n");
         for (uint32_t i=0; i<MObservables.size(); i++) {
           switch (MObservables[i].type) {
             
             case SAT_OBSERVE_DOUBLE: {
-              SAT_DPrint("  %i. %s = %.3f\n",i,MObservables[i].desc,*(double*)MObservables[i].ptr);
+              MPrint->print("  %i. %s = %.3f\n",i,MObservables[i].desc,*(double*)MObservables[i].ptr);
               break;
             }
             

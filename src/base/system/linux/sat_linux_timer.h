@@ -12,13 +12,15 @@
 
 
 //#include "base/utils/sat_math.h"
+#include "base/system/sat_time.h"
 
 //----------------------------------------------------------------------
 
 class SAT_Timer;
+
 class SAT_TimerListener {
-  public:
-    virtual void on_timerListener_callback(SAT_Timer* ATimer) {}
+public:
+  virtual void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) {}
 };
 
 //----------------------------------------------------------------------
@@ -67,6 +69,8 @@ private:
   itimerspec          MTimerSpec      = {};
   std::atomic<bool>   MIsRunning      {false};
   SAT_TimerListener*  MTimerListener  = nullptr;
+
+  double              MPrevTime       = 0.0;
 
 //------------------------------
 public:
@@ -154,6 +158,7 @@ public:
         }
       }*/
       MIsRunning = true;
+      MPrevTime = SAT_GetTime();
     }
   }
 
@@ -182,7 +187,11 @@ public:
   //----------
 
   void on_timer() {
-    if (MTimerListener && MIsRunning) MTimerListener->on_timerListener_callback(this);
+    double time = SAT_GetTime();//MS();
+    double delta = time - MPrevTime;
+    //SAT_PRINT("delta %.3f\n",delta);
+    if (MTimerListener && MIsRunning) MTimerListener->on_timerListener_callback(this,delta);
+    MPrevTime = time;
   }
 
 };

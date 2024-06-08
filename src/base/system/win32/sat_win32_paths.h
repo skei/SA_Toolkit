@@ -6,7 +6,8 @@
 #include <stdlib.h>
 
 #include "sat.h"
-#include "base/sat_win32.h"
+
+#include "base/system/sat_win32.h"
 
 //#undef  _WIN32_WINNT
 //#define _WIN32_WINNT 0x0501
@@ -75,7 +76,7 @@ const char* SAT_GetExePath(char* ABuffer) {
   //  const char* slash = strrchr(filepath,'\\');
   //  if (slash) {
   //    int len = (slash+1) - (char*)filepath;
-  //    strncpy(ABuffer, filepath, len);
+  //    SAT_Strlcpy(ABuffer, filepath, len);
   //    ABuffer[len] = '\0';
   //  }
   //  else {
@@ -109,7 +110,7 @@ const char* SAT_GetLibPath(char* ABuffer) {
     const char* slash = strrchr(filepath,'\\');
     if (slash) {
       int len = (slash+1) - (char*)filepath;
-      strncpy(ABuffer, filepath, len);
+      SAT_Strlcpy(ABuffer, filepath, len);
       ABuffer[len] = '\0';
     }
     else {
@@ -156,7 +157,7 @@ const char* SAT_GetLibPath(char* ABuffer) {
 //    const char* slash = strrchr(filepath,'\\');
 //    if (slash) {
 //      int len = (slash+1) - (char*)filepath;
-//      strncpy(ABuffer, filepath, len);
+//      SAT_Strlcpy(ABuffer, filepath, len);
 //      ABuffer[len] = '\0';
 //    }
 //    else {

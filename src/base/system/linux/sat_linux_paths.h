@@ -61,7 +61,7 @@ const char* SAT_GetExePath(char* ABuffer) {
     const char* slash = strrchr(filepath, '/');
     if (slash) {
       int len = (slash + 1) - (char*)filepath;
-      strncpy(ABuffer, filepath, len);
+      SAT_Strlcpy(ABuffer, filepath, len);
       ABuffer[len] = '\0';
     }
     else {
@@ -91,7 +91,7 @@ const char* SAT_GetLibPath(char* ABuffer) {
   const char* slash = strrchr(dli.dli_fname, '/');
   if (slash) {
     int len = (slash + 1) - (char*)dli.dli_fname;
-    strncpy(ABuffer, dli.dli_fname, len);
+    SAT_Strlcpy(ABuffer, dli.dli_fname, len);
     ABuffer[len] = '\0';
   }
   else {

@@ -1,32 +1,36 @@
 #ifndef sat_debug_included
 #define sat_debug_included
 //----------------------------------------------------------------------
-/*
 
-  * flagging mechanisms for fake positives?
-    (if ptr == defined_false_positive) print("false positive..")
-  * max memory allocated
-  * max events in queues
-  * timing
-  * reality checks (did we quit normally?)
-  * memtrace: destructors mark themselves in separate list (destroyed objects)
-    maybe new to? ([un-]registerAllocation(classname,ptr)
-    then we can compare lists..
+#include "base/sat_print.h"
 
-  * can we have line pos, etc from signal, crash handler?
+#ifdef SAT_DEBUG_ASSERT
+  #include "base/debug/sat_debug_assert.h"
+#endif
 
-*/
-//----------------------------------------------------------------------
+#ifdef SAT_DEBUG_BREAKPOINT
+  #include "base/debug/sat_debug_breakpoint.h"
+#endif
 
-#include "sat.h"
-#include "base/debug/sat_debug_assert.h"
-#include "base/debug/sat_debug_breakpoint.h"
-#include "base/debug/sat_debug_callstack.h"
-#include "base/debug/sat_debug_crash_handler.h"
-#include "base/debug/sat_debug_memtrace.h"
-#include "base/debug/sat_debug_print.h"
-//#include "base/debug/sat_debug_observer.h"
-//#include "base/debug/sat_debug_window.h"
+#ifdef SAT_DEBUG_CALLSTACK
+  #include "base/debug/sat_debug_callstack.h"
+#endif
+
+#ifdef SAT_DEBUG_CRASH_HANDLER
+  #include "base/debug/sat_debug_crash_handler.h"
+#endif
+
+#ifdef SAT_DEBUG_MEMTRACE
+  #include "base/debug/sat_debug_memtrace.h"
+#endif
+
+#ifdef SAT_DEBUG_OBSERVER
+  #include "base/debug/sat_debug_observer.h"
+#endif
+
+#ifdef SAT_DEBUG_WINDOW
+  #include "base/debug/sat_debug_window.h"
+#endif
 
 //----------------------------------------------------------------------
 //
@@ -40,18 +44,34 @@ class SAT_Debug {
 private:
 //------------------------------
 
-  bool              MInitialized  = false;
-  SAT_DebugPrint*   MPrint        = nullptr;
+  SAT_Print*  MPrint = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_CallStack     CALLSTACK     = {};
-  SAT_CrashHandler  CRASHHANDLER  = {};
-  SAT_MemTrace      MEMTRACE      = {};
-//SAT_Observer      OBSERVER      = {};
-//SAT_DebugWindow*  DEBUG_WNDOW   = nullptr{};
+  // assert
+  // breakpoint
+
+  #ifdef SAT_DEBUG_CALLSTACK
+    SAT_CallStack CALL_STACK = {};
+  #endif
+
+  #ifdef SAT_DEBUG_CRASH_HANDLER
+    SAT_CrashHandler CRASH_HANDLER = {};
+  #endif
+
+  #ifdef SAT_DEBUG_MEMTRACE
+    SAT_MemTrace MEMTRACE = {};
+  #endif
+
+  #ifdef SAT_DEBUG_OBSERVER
+    SAT_Observer OBSERVER = {};
+  #endif
+
+  #ifdef SAT_DEBUG_WINDOW
+    SAT_DebugWindow WINDOW = {};
+  #endif
 
 //------------------------------
 public:
@@ -69,58 +89,69 @@ public:
 public:
 //------------------------------
 
-  void initialize(SAT_DebugPrint* APrint) {
-    if (!MInitialized) {
-      MInitialized = true;
-      MPrint = APrint;
-      #if defined (SAT_DEBUG)
-        CALLSTACK.initialize(APrint);
-        CRASHHANDLER.initialize(APrint,&CALLSTACK);
-        MEMTRACE.initialize(APrint);
-        //OBSERVER.initialize(APrint);
-        //DEBUG_WINDOW = new SAT_DebugWindow(APrint);
+  bool initialize(SAT_Print* APrint) {
+    //APrint->print("SAT_Debug.initialize\n");
+    MPrint = APrint;
+
+    #ifdef SAT_DEBUG_CALLSTACK
+      if (!CALL_STACK.initialize(APrint)) return false;
+    #endif
+
+    #ifdef SAT_DEBUG_CRASH_HANDLER
+      #ifdef SAT_DEBUG_CALLSTACK
+        #ifdef SAT_DEBUG_OBSERVER
+          if (!CRASH_HANDLER.initialize(APrint,&CALL_STACK,&OBSERVER)) return false;
+        #else
+          if (!CRASH_HANDLER.initialize(APrint,&CALL_STACK)) return false;
+        #endif
+      #else
+        #ifdef SAT_DEBUG_OBSERVER
+          if (!CRASH_HANDLER.initialize(APrint,&OBSERVER)) return false;
+        #else
+          if (!CRASH_HANDLER.initialize(APrint)) return false;
+        #endif
       #endif
-    }
+    #endif
+
+    #ifdef SAT_DEBUG_MEMTRACE
+      if (!MEMTRACE.initialize(APrint)) return false;
+    #endif
+
+    #ifdef SAT_DEBUG_OBSERVER
+      if (!OBSERVER.initialize(APrint)) return false;
+    #endif
+
+    #ifdef SAT_DEBUG_WINDOW
+      if (!WINDOW.initialize(APrint)) return false;
+    #endif
+
+    return true;
   }
 
   //----------
 
   void cleanup() {
-    //MPrint->print("debug cleanup\n");
-    if (MInitialized) {
-      #if defined (SAT_DEBUG)
-        //delete DEBUG_WINDOW;
-        //OBSERVER.cleanup();
-        MEMTRACE.cleanup();
-        CRASHHANDLER.cleanup();
-        CALLSTACK.cleanup();
-      #else
-      #endif
-    }
+
+    #ifdef SAT_DEBUG_WINDOW
+      WINDOW.cleanup();
+    #endif
+
+    #ifdef SAT_DEBUG_OBSERVER
+      OBSERVER.cleanup();
+    #endif
+
+    #ifdef SAT_DEBUG_MEMTRACE
+      MEMTRACE.cleanup();
+    #endif
+
+    #ifdef SAT_DEBUG_CRASH_HANDLER
+      CRASH_HANDLER.cleanup();
+    #endif
+
+    #ifdef SAT_DEBUG_CALLSTACK
+      CALL_STACK.cleanup();
+    #endif
   }
-
-//------------------------------
-public:
-//------------------------------
-
-  void printCallStack() {
-    if (MInitialized) {
-      #if defined (SAT_DEBUG)
-        CALLSTACK.print();
-      #endif
-    }
-  }
-
-  //----------
-
-  void crashHandler(int sig) {
-    if (MInitialized) {
-      #if defined (SAT_DEBUG)
-        CRASHHANDLER.crashHandler(sig);
-      #endif
-    }
-  }
-
 };
 
 //----------------------------------------------------------------------

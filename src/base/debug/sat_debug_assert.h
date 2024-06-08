@@ -39,8 +39,8 @@
 
   #define SAT_Assert(x) {                                                               \
     if (!(x)) {                                                                         \
-      SAT_Print("SAT_Assert( " SAT_TERM_FG_RED "%s" SAT_TERM_RESET " ) failed!\n",#x);  \
-      /*SAT_Print("SAT_Assert(%s) failed!\n",#x);*/                                     \
+      SAT_PRINT("SAT_Assert( " SAT_TERM_FG_RED "%s" SAT_TERM_RESET " ) failed!\n",#x);  \
+      /*SAT_PRINT("SAT_Assert(%s) failed!\n",#x);*/                                     \
       exit(1);                                                                          \
     }                                                                                   \
   }

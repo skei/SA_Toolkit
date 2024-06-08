@@ -1,0 +1,365 @@
+#!/bin/bash
+
+#----------------------------------------------------------------------
+#
+# defaults
+#
+#----------------------------------------------------------------------
+
+CC="g++"
+INPUT="build.cpp"
+OUTPUT="build.exe"
+BUILD_COUNT=""
+FORMAT="EXE"
+GUI="X11"
+DEBUG=false
+SANITIZE=false
+TESTS=false
+VERBOSE=false
+ADDITIONAL=""
+LIBRARY=false
+WIN32=false
+
+FLAGS=""
+FLAGS+=" -std=gnu++17"
+FLAGS+=" -Wall"
+FLAGS+=" -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-narrowing"
+FLAGS+=" -pthread"
+FLAGS+=" -Wl,--as-needed"
+#FLAGS+=" -static-libgcc"
+#FLAGS+=" -static-libstdc++"
+
+INC=""
+INC+=" -I../src"
+
+PRELIB=""
+
+LIB=""
+LIB+=" -lm"
+#LIB+=" -ldl -lrt"
+
+#----------------------------------------------------------------------
+#
+# print help
+#
+#----------------------------------------------------------------------
+
+function print_help_and_exit {
+  echo "usage: ./compile.sh <options>"
+  echo "  -i <path>   input file name/path"
+  echo "  -o <path>   output file name/path"
+  echo "  -b <path>   build_count file name/path"
+  echo "  -f <types>  format (all,clap,dssi,exe,exlib,ladspa,lv2,vst2,vst3)"
+  echo "  -g <type>   gui (nogui,wayland,win32,x11)"
+  echo "  -w          win32 (else linux)"
+  echo "  -d          debug mode (else release)"
+  echo "  -s          sanitize"
+  echo "  -t          include tests"
+  echo "  -v          verbose"
+  echo "  -a <flags>  additional flags (in quotes)"
+  echo "  -h, -?      this help"
+  exit 1
+}
+
+#----------------------------------------------------------------------
+#
+# parse command line
+#
+#----------------------------------------------------------------------
+
+if [ "$#" -eq 0 ]; then
+  print_help_and_exit
+fi
+
+while getopts i:o:b:f:g:wdstva:h? arg
+do
+  A=""
+  case $arg in
+    i)    INPUT=$OPTARG;;
+    o)    OUTPUT=$OPTARG;;
+    b)    BUILD_COUNT=$OPTARG;;
+    f)    FORMAT=${OPTARG^^};;
+    g)    GUI=${OPTARG^^};;
+    w)    WIN32=true;;
+    d)    DEBUG=true;;
+    s)    SANITIZE=true;;
+    t)    TESTS=true;;
+    v)    VERBOSE=true;;
+    a)    ADDITIONAL=$OPTARG;;
+    h|?)  print_help_and_exit;;
+    *)    exit 1;;
+  esac
+done
+
+#------------------------------
+# -i input
+#------------------------------
+
+#if [ $INPUT = "" ]; then
+#  INPUT="build.clap"
+#fi
+
+INPUT_FILE=${INPUT##*/}
+INPUT_BASE=${INPUT_FILE%%.*}
+INPUT_EXT=${INPUT_FILE##*.}
+INPUT_DIR=${INPUT%$INPUT_FILE}
+
+#echo ""
+#echo "INPUT     : $INPUT"
+#echo "INPUT_FILE: $INPUT_FILE"
+#echo "INPUT_BASE: $INPUT_BASE"
+#echo "INPUT_EXT : $INPUT_EXT"
+#echo "INPUT_DIR : $INPUT_DIR"
+
+#------------------------------
+# -o output
+#------------------------------
+
+OUTPUT_FILE=${OUTPUT##*/}
+OUTPUT_BASE=${OUTPUT_FILE%%.*}
+OUTPUT_EXT=${OUTPUT_FILE##*.}
+OUTPUT_DIR=${OUTPUT%$OUTPUT_FILE}
+
+#echo "OUTPUT     : $OUTPUT"
+#echo "OUTPUT_FILE: $OUTPUT_FILE"
+#echo "OUTPUT_BASE: $OUTPUT_BASE"
+#echo "OUTPUT_EXT : $OUTPUT_EXT"
+#echo "OUTPUT_DIR : $OUTPUT_DIR" 
+
+#if [ "$OUTPUT" = "" ]; then
+#  OUTPUT=$INPUT_BASE
+#fi
+
+#------------------------------
+# build count
+#------------------------------
+
+if [[ "$BUILD_COUNT" != "" ]]
+  then
+    count=0
+    if test -f $BUILD_COUNT
+      then
+        read count < $BUILD_COUNT
+    fi
+    ((count=count+1))  
+    echo $count > $BUILD_COUNT
+    #echo build $count
+    FLAGS+=" -DSAT_BUILD_COUNT=$count"
+fi
+
+
+#------------------------------
+# -f format
+#------------------------------
+
+#if [ "$FORMAT" = "" ]; then
+#  FORMAT="CLAP"
+#fi
+
+#-----
+
+# assume LIBRARY = true
+LIBRARY=true
+EXELIB=false
+
+if [[ "$FORMAT" == *"ALL"* ]]; then
+  FLAGS+=" -DSAT_PLUGIN_ALL"
+fi
+
+if [[ "$FORMAT" == *"CLAP"* ]]; then
+  FLAGS+=" -DSAT_PLUGIN_CLAP"
+fi
+
+if [[ "$FORMAT" == *"DSSI"* ]]; then
+  FLAGS+=" -DSAT_PLUGIN_DSSI"
+fi
+
+if [[ "$FORMAT" == *"EXE"* ]]; then
+  LIBRARY=false
+  FLAGS+=" -DSAT_PLUGIN_EXE"
+fi
+
+if [[ "$FORMAT" == *"EXLIB"* ]]; then
+  EXELIB=true
+  FLAGS+=" -DSAT_PLUGIN_EXECUTABLE_LIBRARY"
+fi
+
+if [[ "$FORMAT" == *"LADSPA"* ]]; then
+  FLAGS+=" -DSAT_PLUGIN_LADSPA"
+fi
+
+if [[ "$FORMAT" == *"LV2"* ]]; then
+  FLAGS+=" -DSAT_PLUGIN_LV2"
+fi
+
+if [[ "$FORMAT" == *"VST2"* ]]; then
+  FLAGS+=" -DSAT_PLUGIN_VST2"
+fi
+
+if [[ "$FORMAT" == *"VST3"* ]]; then
+  FLAGS+=" -DSAT_PLUGIN_VST3"
+  INC+=" -I../src/extern/vst3/vst3sdk"
+fi
+
+#----------
+
+if $LIBRARY
+  then
+    if $EXELIB
+      then
+        FLAGS+=" -shared"
+        FLAGS+=" -fPIC"
+        #FLAGS+=" -fPIE"
+        FLAGS+=" -Wl,-e,exelib_entry_point"
+        FLAGS+=" -DSAT_PLUGIN_EXE"
+      else
+        FLAGS+=" -shared"
+        FLAGS+=" -fPIC"
+        FLAGS+=" -DSAT_LIBRARY"
+    fi
+  #else
+  #  FLAGS+=" -DSAT_PLUGIN_EXE"
+fi
+
+#------------------------------
+# -g gui
+#------------------------------
+
+case $GUI in
+  "NOGUI")
+    #echo "gui = nogui"
+    FLAGS+=" -DSAT_GUI_NOGUI"
+    ;;
+  "WAYLAND")
+    #echo "gui = win32"
+    LIB+=" -lX11"
+    LIB+=" -lGL"
+    LIB+=" -lEGL"
+    LIB+=" -lwayland-client -lwayland-egl"
+    FLAGS+=" -DSAT_GUI_WAYLAND"
+    ;;
+  "WIN32")
+    #echo "gui = win32"
+    LIB+=" -lgdi32 -lmsimg32 -lopengl32"
+    FLAGS+=" -DSAT_GUI_WIN32"
+    ;;
+  "X11")
+    #echo "gui = x11"
+    LIB+=" -lX11 -lX11-xcb"
+    LIB+=" -lxcb -lxcb-util -lxcb-image -lxcb-cursor -lxcb-keysyms"
+    LIB+=" -lxkbcommon"
+    LIB+=" -lGL"
+    LIB+=" -lGLX"
+    #LIB+=" -lEGL"
+    FLAGS+=" -DSAT_GUI_X11"
+    ;;
+  *)
+    echo "unknown gui: $GUI";
+    exit 1
+    ;;
+esac
+
+#------------------------------
+# -d debug
+#------------------------------
+
+if $DEBUG
+  then
+    FLAGS+=" -DSAT_DEBUG"
+    FLAGS+=" -g"
+
+    if ! $WIN32
+      then
+        FLAGS+=" -export-dynamic"
+    fi
+
+    #FLAGS+=" -export-dynamic"
+    #FLAGS+=" -Wl,-Bsymbolic"
+
+  else
+    FLAGS+=" -DNDEBUG"
+    FLAGS+=" -O3"
+    FLAGS+=" -ffast-math"
+    FLAGS+=" -s"
+    #FLAGS+=" -flto"
+fi
+
+#------------------------------
+# -s sanitize
+#------------------------------
+
+if $SANITIZE
+  then
+    #PRELIB+=" -lasan"
+    FLAGS+=" -fsanitize=leak"
+    #FLAGS+=" -fsanitize=address"
+    FLAGS+=" -fno-omit-frame-pointer -fno-optimize-sibling-calls"
+fi
+
+#------------------------------
+# -t tests
+#------------------------------
+
+if $TESTS
+  then
+    FLAGS+=" -DSAT_TESTS"
+fi
+
+#------------------------------
+# -w win32
+#------------------------------
+
+if $WIN32
+  then
+    CC="/usr/bin/x86_64-w64-mingw32-g++"
+    FLAGS+=" -static-libgcc"
+    FLAGS+=" -static-libstdc++"
+  else
+    CC="g++"
+    LIB+=" -ldl -lrt"
+fi
+
+#----------------------------------------------------------------------
+#
+# compile
+#
+#----------------------------------------------------------------------
+
+#echo "* format:" $FORMAT
+#echo "* gui:" $GUI
+#echo "* debug:" $DEBUG
+#echo "* tests:" $TESTS
+
+#echo
+#echo "g++" $INPUT "-o" $OUTPUT $FLAGS $INC $LIB
+#echo
+
+if $VERBOSE; then
+  echo $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+fi  
+
+$CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+
+#----------------------------------------------------------------------
+#
+#
+#
+#----------------------------------------------------------------------
+
+# $PWD  = current path
+# $0    = script name/executable
+# $@    = arguments
+# $#    = number of arguments?
+
+#VAR_1="to uppercase"
+#echo ${VAR_1^}
+#echo ${VAR_1^^}
+
+#VAR_2="TO  LOWERCASE!"
+#echo ${VAR_2,}
+#echo ${VAR_2,,}
+
+#VAR_3="Reverse Cases"
+#echo ${VAR_3~}
+#echo ${VAR_3~~}
+

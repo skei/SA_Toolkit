@@ -9,7 +9,7 @@
 
 #define SAT_EVENT_SPACE_ID                      SAT_MAGIC // CLAP_CORE_EVENT_SPACE_ID
 
-//----------------------------------------------------------------------
+//----------
 
 const char  SAT_NULL_STRING[]   = "";
 const char  SAT_HEX_TABLE[]     = "0123456789ABCDEF";
@@ -20,10 +20,9 @@ const char  SAT_CSYMBOLS[]      = "________________________________"
 const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec", "errorember" };
 
 //----------------------------------------------------------------------
-//
+// std
 //----------------------------------------------------------------------
 
-//#define SAT_PI                                  3.1415926535
 #define SAT_PI                                  3.14159265358979323846
 #define SAT_PI2                                 (SAT_PI * 2.0)
 #define SAT_PI05                                (SAT_PI * 0.5)
@@ -45,9 +44,7 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 
 #define SAT_SQRT2                               sqrt(2.0)
 
-//----------------------------------------------------------------------
-//
-//----------------------------------------------------------------------
+//----------
 
 #define SAT_CHAR_BIT                            8
 #define SAT_CHAR_MAX                            0x7f                      // 127
@@ -75,7 +72,6 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_UINT_MAX                            SAT_UINT64_MAX            // 18446744073709551615UL
 #endif
 
-//#define SAT_RANDMAX                             RAND_MAX                  // 2147483647
 #define SAT_RANDMAX                             0x7fffffff
 #define SAT_INVRANDMAX                          (1.0 / (double)SAT_RANDMAX)
 
@@ -83,21 +79,16 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 //
 //----------------------------------------------------------------------
 
-#define SAT_ALIGNMENT_SIMD                      16
-#define SAT_ALIGNMENT_CACHE                     64
-
-#define SAT_AUDIO_FILE_READ                     0x10
-#define SAT_AUDIO_FILE_WRITE                    0x20
-#define SAT_AUDIO_FILE_RDWR                     0x30
-
 #define SAT_BUTTON_NONE                         0
-#define SAT_BUTTON_LEFT                         1
-#define SAT_BUTTON_MIDDLE                       2
-#define SAT_BUTTON_RIGHT                        3
-#define SAT_BUTTON_SCROLL_UP                    4
-#define SAT_BUTTON_SCROLL_DOWN                  5
-#define SAT_BUTTON_BACKWARD                     8
-#define SAT_BUTTON_FORWARD                      9
+#ifdef SAT_LINUX
+  #define SAT_BUTTON_LEFT                       1
+  #define SAT_BUTTON_MIDDLE                     2
+  #define SAT_BUTTON_RIGHT                      3
+  #define SAT_BUTTON_SCROLL_UP                  4
+  #define SAT_BUTTON_SCROLL_DOWN                5
+  #define SAT_BUTTON_SIDE_BACKWARD              8
+  #define SAT_BUTTON_SIDE_FORWARD               9
+#endif
 
 #define SAT_CORNER_NONE                         0
 #define SAT_CORNER_UPPER_LEFT                   0x01
@@ -146,16 +137,6 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_CURSOR_INVALID                      28
 #define SAT_CURSOR_X                            29
 #define SAT_CURSOR_COUNT                        30
-
-// #define SAT_DIRECTION_NONE                      0
-// #define SAT_DIRECTION_LEFT                      1
-// #define SAT_DIRECTION_RIGHT                     2
-// #define SAT_DIRECTION_UP                        3
-// #define SAT_DIRECTION_DOWN                      4
-// #define SAT_DIRECTION_TOP                       3
-// #define SAT_DIRECTION_BOTTOM                    4
-// #define SAT_DIRECTION_HORIZ                     5
-// #define SAT_DIRECTION_VERT                      6
 
 #define SAT_DIRECTION_NONE                      0x00
 #define SAT_DIRECTION_LEFT                      0x01
@@ -214,20 +195,8 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_MIDI_PITCHBEND                      0xE0
 #define SAT_MIDI_SYS                            0xF0
 
-// #define SAT_MODMATRIX_MODE_OFF                  0
-// #define SAT_MODMATRIX_MODE_GLOBAL               1
-// #define SAT_MODMATRIX_MODE_VOICE                2
-// #define SAT_MODMATRIX_MODE_SAMPLE               3
-// #define SAT_MODMATRIX_MODE_EVENT                4
-// #define SAT_MODMATRIX_MODE_BLOCK                5
-// #define SAT_MODMATRIX_MODE_SMOOTH               6
-
-// #define SAT_OBSERVE_NONE                        0
-// #define SAT_OBSERVE_DOUBLE                      1
-// #define SAT_OBSERVE_FLOAT                       2
-// #define SAT_OBSERVE_UINT32                      3
-// #define SAT_OBSERVE_INT32                       4
-// #define SAT_OBSERVE_STRING                      5
+#define SAT_OBSERVE_NONE                        0
+#define SAT_OBSERVE_DOUBLE                      1
 
 #define SAT_PAINTER_TYPE_NONE                   0
 #define SAT_PAINTER_TYPE_CAIRO                  1
@@ -241,41 +210,65 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_PAINTER_TYPE_NAME_WIN32             "Win32"
 #define SAT_PAINTER_TYPE_NAME_X11               "X11"
 
-#define SAT_PLUGIN_EVENT_MODE_BLOCK             0
-#define SAT_PLUGIN_EVENT_MODE_INTERLEAVED       1
-#define SAT_PLUGIN_EVENT_MODE_QUANTIZED         2
+#define SAT_PLUGIN_BLOCK_PROCESSOR              0
+#define SAT_PLUGIN_INTERLEAVED_PROCESSOR        1
+#define SAT_PLUGIN_QUANTIZED_PROCESSOR          2
+#define SAT_PLUGIN_VOICE_PROCESSOR              3
+
+#define SAT_PLUGIN_FORMAT_NONE                  0
+#define SAT_PLUGIN_FORMAT_CLAP                  1
+#define SAT_PLUGIN_FORMAT_DSSI                  2
+#define SAT_PLUGIN_FORMAT_EXE                   3
+#define SAT_PLUGIN_FORMAT_LADSPA                4
+#define SAT_PLUGIN_FORMAT_LV2                   5
+#define SAT_PLUGIN_FORMAT_VST2                  6
+#define SAT_PLUGIN_FORMAT_VST3                  7
+
+#define SAT_PLUGIN_FORMAT_NONE_NAME             "NONE"
+#define SAT_PLUGIN_FORMAT_CLAP_NAME             "CLAP"
+#define SAT_PLUGIN_FORMAT_DSSI_NAME             "DSSI"
+#define SAT_PLUGIN_FORMAT_EXE_NAME              "EXE"
+#define SAT_PLUGIN_FORMAT_LADSPA_NAME           "LADSPA"
+#define SAT_PLUGIN_FORMAT_LV2_NAME              "LV2"
+#define SAT_PLUGIN_FORMAT_VST2_NAME             "VST2"
+#define SAT_PLUGIN_FORMAT_VST3_NAME             "VST3"
 
 #define SAT_RENDERER_TYPE_NONE                  0
-#define SAT_RENDERER_TYPE_GLX                   0
-#define SAT_RENDERER_TYPE_EGL                   0
-#define SAT_RENDERER_TYPE_WGL                   0
+#define SAT_RENDERER_TYPE_GLX                   1
+#define SAT_RENDERER_TYPE_EGL                   2
+#define SAT_RENDERER_TYPE_WGL                   3
+#define SAT_RENDERER_TYPE_WIN32                 4
+#define SAT_RENDERER_TYPE_X11                   5
 
 #define SAT_PAINTER_TYPE_NAME_NONE               "None"
 #define SAT_PAINTER_TYPE_NAME_EGL                "EGL"
 #define SAT_PAINTER_TYPE_NAME_GLX                "GLX"
 #define SAT_PAINTER_TYPE_NAME_WGL                "WGL"
+#define SAT_PAINTER_TYPE_NAME_WIN32              "Win32"
+#define SAT_PAINTER_TYPE_NAME_X11                "X11"
 
-#define SAT_STATE_NONE                          0x00
-#define SAT_STATE_SHIFT                         0x01
-#define SAT_STATE_CAPS                          0x02
-#define SAT_STATE_CTRL                          0x04
-#define SAT_STATE_ALT                           0x08
-#define SAT_STATE_ALTGR                         0x10
+#define SAT_STATE_NONE                          0
+#ifdef SAT_LINUX
+  #define SAT_STATE_SHIFT                       0x01
+  #define SAT_STATE_CAPS                        0x02
+  #define SAT_STATE_CTRL                        0x04
+  #define SAT_STATE_ALT                         0x08
+  #define SAT_STATE_ALTGR                       0x10
+#endif
 
 #define SAT_SYMBOL_NONE                         0
 #define SAT_SYMBOL_RECT                         1
-#define SAT_SYMBOL_FILLED_RECT                  2
-#define SAT_SYMBOL_CIRCLE                       3
-#define SAT_SYMBOL_FILLED_CIRCLE                4
-#define SAT_SYMBOL_TRI_UP                       5
-#define SAT_SYMBOL_FILLED_TRI_UP                6
-#define SAT_SYMBOL_TRI_DOWN                     7
-#define SAT_SYMBOL_FILLED_TRI_DOWN              8
-#define SAT_SYMBOL_TRI_LEFT                     9
-#define SAT_SYMBOL_FILLED_TRI_LEFT              10
-#define SAT_SYMBOL_TRI_RIGHT                    11
+#define SAT_SYMBOL_CIRCLE                       2
+#define SAT_SYMBOL_TRI_UP                       3
+#define SAT_SYMBOL_TRI_DOWN                     4
+#define SAT_SYMBOL_TRI_LEFT                     5
+#define SAT_SYMBOL_TRI_RIGHT                    6
+#define SAT_SYMBOL_FILLED_RECT                  7
+#define SAT_SYMBOL_FILLED_CIRCLE                8
+#define SAT_SYMBOL_FILLED_TRI_UP                9
+#define SAT_SYMBOL_FILLED_TRI_DOWN              10
+#define SAT_SYMBOL_FILLED_TRI_LEFT              11
 #define SAT_SYMBOL_FILLED_TRI_RIGHT             12
-
 #define SAT_SYMBOL_SINE                         13
 #define SAT_SYMBOL_SAW                          14
 #define SAT_SYMBOL_SQUARE                       15
@@ -287,6 +280,93 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_TEXT_ALIGN_RIGHT                    0x02
 #define SAT_TEXT_ALIGN_TOP                      0x04
 #define SAT_TEXT_ALIGN_BOTTOM                   0x08
+
+#define SAT_VOICE_OFF                           0
+#define SAT_VOICE_WAITING                       1
+#define SAT_VOICE_PLAYING                       2
+#define SAT_VOICE_RELEASED                      3
+#define SAT_VOICE_FINISHED                      4
+
+#define SAT_WIDGET_REALIGN_POS                  0
+#define SAT_WIDGET_REALIGN_ORDER                1
+
+#define SAT_WIDGET_REDRAW_ALL                   0
+#define SAT_WIDGET_REDRAW_PARAM                 1
+#define SAT_WIDGET_REDRAW_MOD                   2
+
+#define SAT_WIDGET_UPDATE_VALUE                 0
+
+#define SAT_WINDOW_TYPE_NONE                    0
+#define SAT_WINDOW_TYPE_WAYLAND                 1
+#define SAT_WINDOW_TYPE_WIN32                   2
+#define SAT_WINDOW_TYPE_X11                     3
+
+#define SAT_WINDOW_TYPE_NAME_NONE               "None"
+#define SAT_WINDOW_TYPE_NAME_WAYLAND            "Wayland"
+#define SAT_WINDOW_TYPE_NAME_WIN32              "Win32"
+#define SAT_WINDOW_TYPE_NAME_X11                "X11"
+
+//----------------------------------------------------------------------
+// widget layout
+//----------------------------------------------------------------------
+
+#define SAT_WIDGET_LAYOUT_DEFAULT               0
+
+#define SAT_WIDGET_LAYOUT_ANCHOR_LEFT           0x000001
+#define SAT_WIDGET_LAYOUT_ANCHOR_RIGHT          0x000002
+#define SAT_WIDGET_LAYOUT_ANCHOR_TOP            0x000004
+#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM         0x000008
+
+#define SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT       (SAT_WIDGET_LAYOUT_ANCHOR_TOP + SAT_WIDGET_LAYOUT_ANCHOR_LEFT)
+#define SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT      (SAT_WIDGET_LAYOUT_ANCHOR_TOP + SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)
+#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT    (SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM + SAT_WIDGET_LAYOUT_ANCHOR_LEFT)
+#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT   (SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM + SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)
+
+#define SAT_WIDGET_LAYOUT_ANCHOR_TOP_CENTER     (SAT_WIDGET_LAYOUT_ANCHOR_TOP + SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ)
+#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_CENTER  (SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM + SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ)
+#define SAT_WIDGET_LAYOUT_ANCHOR_LEFT_CENTER    (SAT_WIDGET_LAYOUT_ANCHOR_LEFT + SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)
+#define SAT_WIDGET_LAYOUT_ANCHOR_RIGHT_CENTER   (SAT_WIDGET_LAYOUT_ANCHOR_RIGHT + SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)
+
+#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ   0x000010
+#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT    0x000020
+#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER         (SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ + SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)
+
+#define SAT_WIDGET_LAYOUT_STRETCH_LEFT          0x000100
+#define SAT_WIDGET_LAYOUT_STRETCH_RIGHT         0x000200
+#define SAT_WIDGET_LAYOUT_STRETCH_TOP           0x000400
+#define SAT_WIDGET_LAYOUT_STRETCH_BOTTOM        0x000800
+#define SAT_WIDGET_LAYOUT_STRETCH_HORIZ         (SAT_WIDGET_LAYOUT_STRETCH_LEFT + SAT_WIDGET_LAYOUT_STRETCH_RIGHT)
+#define SAT_WIDGET_LAYOUT_STRETCH_VERT          (SAT_WIDGET_LAYOUT_STRETCH_TOP + SAT_WIDGET_LAYOUT_STRETCH_BOTTOM)
+#define SAT_WIDGET_LAYOUT_STRETCH_ALL           (SAT_WIDGET_LAYOUT_STRETCH_HORIZ + SAT_WIDGET_LAYOUT_STRETCH_VERT)
+
+#define SAT_WIDGET_LAYOUT_FILL_LEFT             0x001000
+#define SAT_WIDGET_LAYOUT_FILL_RIGHT            0x002000
+#define SAT_WIDGET_LAYOUT_FILL_TOP              0x004000
+#define SAT_WIDGET_LAYOUT_FILL_BOTTOM           0x008000
+
+#define SAT_WIDGET_LAYOUT_PERCENT               0x010000
+#define SAT_WIDGET_LAYOUT_PERCENT_PARENT        0x020000
+#define SAT_WIDGET_LAYOUT_PERCENT_LAYOUT        0x040000
+
+#define SAT_WIDGET_LAYOUT_TOP_LEFT              ( SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT       | SAT_WIDGET_LAYOUT_FILL_TOP)
+#define SAT_WIDGET_LAYOUT_TOP_CENTER            ( SAT_WIDGET_LAYOUT_ANCHOR_TOP_CENTER     | SAT_WIDGET_LAYOUT_FILL_TOP)
+#define SAT_WIDGET_LAYOUT_TOP_RIGHT             ( SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT      | SAT_WIDGET_LAYOUT_FILL_TOP)
+
+#define SAT_WIDGET_LAYOUT_BOTTOM_LEFT           ( SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT    | SAT_WIDGET_LAYOUT_FILL_BOTTOM)
+#define SAT_WIDGET_LAYOUT_BOTTOM_CENTER         ( SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_CENTER  | SAT_WIDGET_LAYOUT_FILL_BOTTOM)
+#define SAT_WIDGET_LAYOUT_BOTTOM_RIGHT          ( SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT   | SAT_WIDGET_LAYOUT_FILL_BOTTOM)
+
+#define SAT_WIDGET_LAYOUT_LEFT_TOP              ( SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT       | SAT_WIDGET_LAYOUT_FILL_LEFT)
+#define SAT_WIDGET_LAYOUT_LEFT_CENTER           ( SAT_WIDGET_LAYOUT_ANCHOR_LEFT_CENTER    | SAT_WIDGET_LAYOUT_FILL_LEFT)
+#define SAT_WIDGET_LAYOUT_LEFT_BOTTOM           ( SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT    | SAT_WIDGET_LAYOUT_FILL_LEFT)
+
+#define SAT_WIDGET_LAYOUT_RIGHT_TOP             ( SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT      | SAT_WIDGET_LAYOUT_FILL_RIGHT)
+#define SAT_WIDGET_LAYOUT_RIGHT_CENTER          ( SAT_WIDGET_LAYOUT_ANCHOR_RIGHT_CENTER   | SAT_WIDGET_LAYOUT_FILL_RIGHT)
+#define SAT_WIDGET_LAYOUT_RIGHT_BOTTOM          ( SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT   | SAT_WIDGET_LAYOUT_FILL_RIGHT)
+
+//----------------------------------------------------------------------
+// terminal
+//----------------------------------------------------------------------
 
 // https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124
 // 0 Reset/Normal, 1 Bold, 2 Faint, 3 Italics, 4 Underlined
@@ -385,129 +465,6 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
   #define SAT_TERM_UNDERLINE                    ""
 
 #endif
-
-#define SAT_VOICE_OFF                           0
-#define SAT_VOICE_WAITING                       1
-#define SAT_VOICE_PLAYING                       2
-#define SAT_VOICE_RELEASED                      3
-#define SAT_VOICE_FINISHED                      4
-
-#define SAT_WIDGET_LAYOUT_DEFAULT               0
-#define SAT_WIDGET_LAYOUT_ANCHOR_LEFT           0x000001
-#define SAT_WIDGET_LAYOUT_ANCHOR_RIGHT          0x000002
-#define SAT_WIDGET_LAYOUT_ANCHOR_TOP            0x000004
-#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM         0x000008
-
-#define SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT       (SAT_WIDGET_LAYOUT_ANCHOR_TOP + SAT_WIDGET_LAYOUT_ANCHOR_LEFT)
-#define SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT      (SAT_WIDGET_LAYOUT_ANCHOR_TOP + SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)
-#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT    (SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM + SAT_WIDGET_LAYOUT_ANCHOR_LEFT)
-#define SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT   (SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM + SAT_WIDGET_LAYOUT_ANCHOR_RIGHT)
-
-#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ   0x000010
-#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT    0x000020
-#define SAT_WIDGET_LAYOUT_ANCHOR_CENTER         (SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ + SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)
-
-#define SAT_WIDGET_LAYOUT_STRETCH_LEFT          0x000100
-#define SAT_WIDGET_LAYOUT_STRETCH_RIGHT         0x000200
-#define SAT_WIDGET_LAYOUT_STRETCH_TOP           0x000400
-#define SAT_WIDGET_LAYOUT_STRETCH_BOTTOM        0x000800
-#define SAT_WIDGET_LAYOUT_STRETCH_HORIZ         (SAT_WIDGET_LAYOUT_STRETCH_LEFT + SAT_WIDGET_LAYOUT_STRETCH_RIGHT)
-#define SAT_WIDGET_LAYOUT_STRETCH_VERT          (SAT_WIDGET_LAYOUT_STRETCH_TOP + SAT_WIDGET_LAYOUT_STRETCH_BOTTOM)
-#define SAT_WIDGET_LAYOUT_STRETCH_ALL           (SAT_WIDGET_LAYOUT_STRETCH_HORIZ + SAT_WIDGET_LAYOUT_STRETCH_VERT)
-
-#define SAT_WIDGET_LAYOUT_CROP_LEFT             0x001000
-#define SAT_WIDGET_LAYOUT_CROP_RIGHT            0x002000
-#define SAT_WIDGET_LAYOUT_CROP_TOP              0x004000
-#define SAT_WIDGET_LAYOUT_CROP_BOTTOM           0x008000
-
-#define SAT_WIDGET_LAYOUT_PERCENT               0x010000
-#define SAT_WIDGET_LAYOUT_PERCENT_PARENT        0x020000
-#define SAT_WIDGET_LAYOUT_PERCENT_LAYOUT        0x040000
-
-/*
-
-#define SAT_WIDGET_ALIGN_DEFAULT                0
-#define SAT_WIDGET_ALIGN_PARENT                 0
-#define SAT_WIDGET_ALIGN_CLIENT                 1
-#define SAT_WIDGET_ALIGN_NONE                   2
-
-#define SAT_WIDGET_ALIGN_FILL                   10
-#define SAT_WIDGET_ALIGN_HFILL                  11
-#define SAT_WIDGET_ALIGN_VFILL                  12
-
-#define SAT_WIDGET_ALIGN_CENTER                 20
-#define SAT_WIDGET_ALIGN_HCENTER                21
-#define SAT_WIDGET_ALIGN_VCENTER                22
-
-#define SAT_WIDGET_ALIGN_LEFT                   30
-#define SAT_WIDGET_ALIGN_LEFT_TOP               31
-#define SAT_WIDGET_ALIGN_LEFT_CENTER            32
-#define SAT_WIDGET_ALIGN_LEFT_BOTTOM            33
-//#define SAT_WIDGET_ALIGN_LEFT_FILL
-
-#define SAT_WIDGET_ALIGN_RIGHT                  40
-#define SAT_WIDGET_ALIGN_RIGHT_TOP              41
-#define SAT_WIDGET_ALIGN_RIGHT_CENTER           42
-#define SAT_WIDGET_ALIGN_RIGHT_BOTTOM           43
-//#define SAT_WIDGET_ALIGN_RIGHT_FILL
-
-#define SAT_WIDGET_ALIGN_TOP                    50
-#define SAT_WIDGET_ALIGN_TOP_LEFT               51
-#define SAT_WIDGET_ALIGN_TOP_CENTER             52
-#define SAT_WIDGET_ALIGN_TOP_RIGHT              53
-//#define SAT_WIDGET_ALIGN_TOP_FILL
-
-#define SAT_WIDGET_ALIGN_BOTTOM                 60
-#define SAT_WIDGET_ALIGN_BOTTOM_LEFT            61
-#define SAT_WIDGET_ALIGN_BOTTOM_CENTER          62
-#define SAT_WIDGET_ALIGN_BOTTOM_RIGHT           63
-//#define SAT_WIDGET_ALIGN_BOTTOM_FILL
-
-*/
-
-// #define SAT_WIDGET_NOTIFY_NONE                  0
-// #define SAT_WIDGET_NOTIFY_CLOSE                 1
-// #define SAT_WIDGET_NOTIFY_SELECT                2
-// #define SAT_WIDGET_NOTIFY_REALIGN               3
-// //#define SAT_WIDGET_NOTIFY_RESIZED               4
-
-// #define SAT_WIDGET_REDRAW_FULL                  0
-// #define SAT_WIDGET_REDRAW_VALUE                 1
-// #define SAT_WIDGET_REDRAW_MOD                   2
-// #define SAT_WIDGET_REDRAW_HOVER                 3
-// #define SAT_WIDGET_REDRAW_INTERACT              4
-
-// #define SAT_WIDGET_STATE_NORMAL                 0
-// #define SAT_WIDGET_STATE_MODAL                  1
-
-// #define SAT_WIDGET_STRETCH_NONE                 0
-// #define SAT_WIDGET_STRETCH_LEFT                 0x01
-// #define SAT_WIDGET_STRETCH_RIGHT                0x02
-// #define SAT_WIDGET_STRETCH_TOP                  0x04
-// #define SAT_WIDGET_STRETCH_BOTTOM               0x08
-// #define SAT_WIDGET_STRETCH_ALL                  0x0f
-
-// #define SAT_WIDGET_STRETCH_HORIZONTAL           (SAT_WIDGET_STRETCH_LEFT | SAT_WIDGET_STRETCH_RIGHT)
-// #define SAT_WIDGET_STRETCH_VERTICAL             (SAT_WIDGET_STRETCH_TOP | SAT_WIDGET_STRETCH_BOTTOM)
-
-// #define SAT_WIDGET_TWEEN_NONE                   0
-// #define SAT_WIDGET_TWEEN_PAUSE                  1
-// #define SAT_WIDGET_TWEEN_CLOSE                  2
-// #define SAT_WIDGET_TWEEN_RECT                   3
-
-// #define SAT_WIDGET_UPDATE_VALUE                 0
-
-#define SAT_WINDOW_TYPE_NONE                    0
-#define SAT_WINDOW_TYPE_WAYLAND                 1
-#define SAT_WINDOW_TYPE_WIN32                   2
-#define SAT_WINDOW_TYPE_X11                     3
-
-#define SAT_WINDOW_TYPE_NAME_NONE               "None"
-#define SAT_WINDOW_TYPE_NAME_WAYLAND            "Wayland"
-#define SAT_WINDOW_TYPE_NAME_WIN32              "Win32"
-#define SAT_WINDOW_TYPE_NAME_X11                "X11"
-
-#define SAT_WINDOW_THREAD_KILL                  666
 
 //----------------------------------------------------------------------
 #endif

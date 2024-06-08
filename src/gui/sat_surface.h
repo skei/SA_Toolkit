@@ -3,28 +3,35 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_surface.h"
+#include "gui/surface/sat_base_surface.h"
+#include "gui/surface/sat_surface_owner.h"
 
-//----------------------------------------------------------------------
+//----------
 
-#if defined(SAT_GUI_NOGUI)
-  ;  
+#ifdef SAT_NO_SURFACE
+  //#include "gui/surface/sat_no_surface.h"
+  typedef SAT_BaseSurface SAT_ImplementedSurface;
+#endif
 
-#elif defined(SAT_GUI_WAYLAND)
-  #include "gui/wayland/sat_wayland_surface.h"
-  typedef SAT_WaylandSurface SAT_ImplementedSurface;
+// #ifdef SAT_SURFACE_BITMAP
+// #endif
 
-#elif defined(SAT_GUI_WIN32)
-  #include "gui/win32/sat_win32_surface.h"
+// #ifdef SAT_SURFACE_CAIRO
+// #endif
+
+#ifdef SAT_SURFACE_NANOVG
+  #include "gui/surface/sat_nanovg_surface.h"
+  typedef SAT_NanoVGSurface SAT_ImplementedSurface;
+#endif
+
+#ifdef SAT_SURFACE_WIN32
+  #include "gui/surface/sat_win32_surface.h"
   typedef SAT_Win32Surface SAT_ImplementedSurface;
+#endif
 
-#elif defined(SAT_GUI_X11)
-  #include "gui/x11/sat_x11_surface.h"
+#ifdef SAT_SURFACE_X11
+  #include "gui/surface/sat_x11_surface.h"
   typedef SAT_X11Surface SAT_ImplementedSurface;
-
-#else
-  #error GUI type not defined
-
 #endif
 
 //----------------------------------------------------------------------
@@ -37,17 +44,27 @@ class SAT_Surface
 : public SAT_ImplementedSurface {
 
 //------------------------------
+private:
+//------------------------------
+
+
+
+//------------------------------
 public:
 //------------------------------
 
-  SAT_Surface(SAT_SurfaceOwner* AOwner)
-  : SAT_ImplementedSurface(AOwner) {
+  SAT_Surface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0)
+  : SAT_ImplementedSurface(AOwner,AWidth,AHeight,ADepth) {
   }
 
   //----------
 
   virtual ~SAT_Surface() {
   }
+
+//------------------------------
+private:
+//------------------------------
 
 };
 

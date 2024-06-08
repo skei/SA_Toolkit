@@ -42,7 +42,7 @@ class SAT_CallStack {
 private:
 //------------------------------
 
-  SAT_DebugPrint* MPrint = nullptr;
+  SAT_Print* MPrint = nullptr;
 
 //------------------------------
 public:
@@ -61,8 +61,9 @@ public:
 public:
 //------------------------------
 
-  void initialize(SAT_DebugPrint* APrint) {
+  bool initialize(SAT_Print* APrint) {
     MPrint = APrint;
+    return true;
   }
 
   //----------

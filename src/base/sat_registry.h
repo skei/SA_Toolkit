@@ -2,20 +2,20 @@
 #define sat_registry_included
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "base/debug/sat_debug_print.h"
-#include "base/utils/sat_inifile.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/clap/sat_clap_plugin.h"
+#include "base/sat_print.h"
+#include "plugin/lib/sat_clap.h"
+
+typedef SAT_Array<const clap_plugin_descriptor_t*> SAT_ClapDescriptorArray;
+typedef SAT_Array<const void*> SAT_ClapFactoryArray;
+typedef SAT_Array<const char*> SAT_ClapFactoryIdArray;
+
+class SAT_Registry;
+//extern void SAT_Register(SAT_Registry* ARegistry) __attribute__ ((weak));
+extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
 
 class SAT_ClapPlugin;
-class SAT_Registry;
-
-extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
+//extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __attribute__ ((weak));
 extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
-
-typedef SAT_Array<const clap_plugin_descriptor_t*>  SAT_DescriptorArray;
-typedef SAT_Array<const clap_plugin_factory_t*>     SAT_FactoryArray;
 
 //----------------------------------------------------------------------
 //
@@ -29,12 +29,12 @@ class SAT_Registry {
 private:
 //------------------------------
 
-  bool                  MIsInitialized  = false;
-  SAT_DescriptorArray   MDescriptors    = {};
-  SAT_FactoryArray      MFactories      = {};
-  SAT_ConstCharPtrArray MFactoryIds     = {};
-
-//SAT_IniFile           MIniFile        = {};
+  bool                    MInitialized      = false;
+  SAT_Print*              MPrint            = nullptr;
+  SAT_ClapDescriptorArray MDescriptors      = {};
+  SAT_ClapFactoryArray    MFactories        = {};
+  SAT_ClapFactoryIdArray  MFactoryIds       = {};
+  char                    MPluginPath[1024] = {0};
 
 //------------------------------
 public:
@@ -52,23 +52,21 @@ public:
 public:
 //------------------------------
 
-  void initialize(SAT_DebugPrint* APrint) {
-    if (MIsInitialized) return;
+  bool initialize(SAT_Print* APrint) {
+    //APrint->print("SAT_Registry.initialize\n");
+    if (MInitialized) return true;
+    MPrint = APrint;
     //MIniFile.load();
     if (SAT_Register) SAT_Register(this);
-    MIsInitialized = true;
-  }
-
-  //----------
-
-  bool isInitialized() {
-    return MIsInitialized;
+    MInitialized = true;
+    return true;
   }
 
   //----------
 
   void cleanup() {
-    if (MIsInitialized) {
+    //SAT_PRINT("SAT_Registry.cleanup\n");
+    if (MInitialized) {
       //MIniFile.save();
     }
   }
@@ -80,6 +78,7 @@ public: // descriptors
   // returns index of descriptor
 
   uint32_t registerDescriptor(const clap_plugin_descriptor_t* descriptor) {
+    //SAT_PRINT("SAT_Registry.registerDescriptor\n");
     uint32_t index = MDescriptors.size();
     MDescriptors.push_back(descriptor);
     return index;
@@ -118,7 +117,7 @@ public: // factories
 
   // returns index of factory
 
-  uint32_t registerFactory(const char* factory_id, const clap_plugin_factory_t* factory) {
+  uint32_t registerFactory(const char* factory_id, const void* factory) {
     uint32_t index = MFactories.size();
     MFactoryIds.push_back(factory_id);
     MFactories.push_back(factory);
@@ -133,7 +132,7 @@ public: // factories
 
   // returns nullptr if index out of range
 
-  const clap_plugin_factory_t* getFactory(uint32_t index) {
+  const void* getFactory(uint32_t index) {
     if (index < MFactories.size()) {
       return MFactories[index];
     }

@@ -1,10 +1,12 @@
 #ifndef sat_host_implementation_included
 #define sat_host_implementation_included
 //----------------------------------------------------------------------
+// the host ptr you give to hosted plugins
 
-// aka SAT_HostImplementation
-
-#include "plugin/clap/sat_clap_host_implementation.h"
+#include "sat.h"
+#include "plugin/lib/sat_clap.h"
+#include "plugin/host/sat_clap_host_implementation.h"
+//#include "plugin/host/sat_host_window.h"
 
 //----------------------------------------------------------------------
 //
@@ -12,7 +14,7 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_HostImplementation
+class SAT_HostImplementation 
 : public SAT_ClapHostImplementation {
 
 //------------------------------
@@ -21,7 +23,10 @@ public:
 
   SAT_HostImplementation()
   : SAT_ClapHostImplementation() {
-  }
+
+    MClapHost.name = "SAT_HostImplementation";
+
+  };
 
   //----------
 
@@ -37,11 +42,13 @@ public:
     // dlopen, dlsym, entry_point.. (see host in exe_plugin)..
   }
 
+  //----------
+
   void unloadPlugin() {
   }
 
 //------------------------------
-public:
+public: // plugin
 //------------------------------
 
   const void* get_extension(const char *extension_id) override {
@@ -292,8 +299,6 @@ public: // drafts
   bool tuning_get_info(uint32_t tuning_index, clap_tuning_info_t *info) override {
     return false;
   }
-  
-
 };
 
 //----------------------------------------------------------------------

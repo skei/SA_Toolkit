@@ -2,12 +2,15 @@
 #define sat_debug_crash_handler_included
 //----------------------------------------------------------------------
 
+#ifdef SAT_DEBUG_CRASH_HANDLER
+
 /*
   crash handler:
   compile with: -g -rdynamic
   // https://lasr.cs.ucla.edu/vahab/resources/signals.html
   // The only two signals for which a handler cannot be defined are SIGKILL and SIGSTOP.
 */
+
 
 #include "sat.h"
 
@@ -23,7 +26,10 @@
 
 #include "sat.h"
 #include "base/debug/sat_debug_callstack.h"
-  //#include "base/debug/sat_debug_observer.h"
+
+#ifdef SAT_DEBUG_OBSERVER
+  #include "base/debug/sat_debug_observer.h"
+#endif
 
 #include <signal.h>
 
@@ -95,21 +101,68 @@ public:
   }
 
 //------------------------------
-public:
+private:
 //------------------------------
 
-  SAT_DebugPrint* MPrint      = nullptr;
+  SAT_Print*      MPrint      = nullptr;
   SAT_CallStack*  MCallStack  = nullptr;
 
+  #ifdef SAT_DEBUG_OBSERVER
+  SAT_Observer*   MObserver   = nullptr;
+  #endif
+
 //------------------------------
 public:
 //------------------------------
 
-  void initialize(SAT_DebugPrint* APrint, SAT_CallStack* ACallStack) {
-    MPrint = APrint;
-    MCallStack = ACallStack;
-    setupCrashHandlers();
-  }
+  #ifdef SAT_DEBUG_CALLSTACK
+
+    #ifdef SAT_DEBUG_OBSERVER
+
+      bool initialize(SAT_Print* APrint, SAT_CallStack* ACallStack, SAT_Observer* AObserver) {
+        MPrint = APrint;
+        MCallStack = ACallStack;
+        MObserver = AObserver;
+        setupCrashHandlers();
+        return true;
+      }
+
+    #else
+
+      bool initialize(SAT_Print* APrint, SAT_CallStack* ACallStack) {
+        MPrint = APrint;
+        MCallStack = ACallStack;
+        setupCrashHandlers();
+        return true;
+      }
+
+    #endif
+
+  #else
+
+    #ifdef SAT_DEBUG_OBSERVER
+
+      bool initialize(SAT_Print* APrint, SAT_Observer* AObserver) {
+        MPrint = APrint;
+        MObserver = AObserver;
+        setupCrashHandlers();
+        return true;
+      }
+
+    #else
+
+      bool initialize(SAT_Print* APrint) {
+        MPrint = APrint;
+        setupCrashHandlers();
+        return true;
+      }
+
+    #endif
+
+  #endif
+
+  //----------
+
 
   //----------
 
@@ -159,10 +212,9 @@ public: // crash handler
       }
       //SAT_GLOBAL_WATCHES.printWatches("watched:");
       if (MCallStack) MCallStack->print();
-      // #ifdef SAT_DEBUG_OBSERVER
-      // //#ifdef sat_debug_observer_included
-      // SAT_PrintObservers();
-      // #endif
+      #ifdef SAT_DEBUG_OBSERVER
+        MObserver->print_observers();
+      #endif
       //if (MPrint) MPrint->print("\n");
       exit(1); //_exit(1);
     #endif
@@ -180,6 +232,8 @@ private:
 
 
 };
+
+#endif // SAT_DEBUG_CRASH_HANDLER
 
 //----------------------------------------------------------------------
 #endif

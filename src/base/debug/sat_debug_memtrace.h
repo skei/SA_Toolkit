@@ -5,7 +5,7 @@
 #ifdef SAT_DEBUG_MEMTRACE
 
   #include "sat.h"
-  #include "base/types/sat_array.h"
+  #include "base/type/sat_array.h"
 
   #include <stdarg.h>       // va_
   #include <sys/unistd.h>
@@ -35,7 +35,7 @@
   private:
   //------------------------------
 
-    SAT_DebugPrint*   MPrint          = nullptr;
+    SAT_Print*   MPrint          = nullptr;
     SAT_MemTraceNodes MMemTraceNodes  = {};
 
   //------------------------------
@@ -57,8 +57,9 @@
 public:
 //------------------------------
 
-  void initialize(SAT_DebugPrint* APrint) {
+  bool initialize(SAT_Print* APrint) {
     MPrint = APrint;
+    return true;
   }
 
   //----------
@@ -185,7 +186,7 @@ public:
 
   class SAT_MemTrace {
   public:
-    void initialize(SAT_DebugPrint* APrint) {}
+    void initialize(SAT_Print* APrint) {}
     void cleanup() {}
   };
 
