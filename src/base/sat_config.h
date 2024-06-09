@@ -212,11 +212,17 @@
   #ifdef SAT_GUI_X11
     #define SAT_GUI_DEFINED
   #endif
+  #ifdef SAT_GUI_COCOA
+    #define SAT_GUI_DEFINED
+  #endif
 #endif
 
 #ifndef SAT_GUI_DEFINED
   #ifdef SAT_LINUX
     #define SAT_GUI_X11
+  #endif
+  #ifdef SAT_MAC
+    #define SAT_GUI_COCOA
   #endif
   #ifdef SAT_WIN32
     #define SAT_GUI_WIN32
