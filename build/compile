@@ -25,12 +25,20 @@ FLAGS+=" -std=gnu++17"
 FLAGS+=" -Wall"
 FLAGS+=" -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-narrowing"
 FLAGS+=" -pthread"
-FLAGS+=" -Wl,--as-needed"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  FLAGS+=" -Wl"
+else
+  FLAGS+=" -Wl,--as-needed"
+fi
 #FLAGS+=" -static-libgcc"
 #FLAGS+=" -static-libstdc++"
 
 INC=""
-INC+=" -I../src"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  INC+=" -I./src"
+else
+  INC+=" -I../src"
+fi
 
 PRELIB=""
 
@@ -78,8 +86,8 @@ do
     i)    INPUT=$OPTARG;;
     o)    OUTPUT=$OPTARG;;
     b)    BUILD_COUNT=$OPTARG;;
-    f)    FORMAT=${OPTARG^^};;
-    g)    GUI=${OPTARG^^};;
+    f)    FORMAT=$(echo "$OPTARG" | tr '[:lower:]' '[:upper:]');;
+    g)    GUI=$(echo "$OPTARG" | tr '[:lower:]' '[:upper:]');;
     w)    WIN32=true;;
     d)    DEBUG=true;;
     s)    SANITIZE=true;;
@@ -317,7 +325,11 @@ if $WIN32
     LIB+=" -lwsock32"
   else
     CC="g++"
-    LIB+=" -ldl -lrt"
+    if [[ "$OSTYPE" == "darwin"* ]]; then  # TODO: for now no gui on macos; timer is only used for the gui
+      LIB+=" -ldl"
+    else
+      LIB+=" -ldl -lrt"
+    fi
 fi
 
 #----------------------------------------------------------------------
