@@ -20,6 +20,8 @@ private:
   double      MTextSize       = 12.0;
   uint32_t    MTextAlignment  = SAT_TEXT_ALIGN_CENTER;
 
+  bool        MDrawParamText  = true;
+
 //------------------------------
 public:
 //------------------------------
@@ -53,6 +55,8 @@ public:
   void setTextSize(double ASize)              { MTextSize = ASize; }
   void setTextAlignment(uint32_t AAlignment)  { MTextAlignment = AAlignment; }
 
+  void setDrawParamText(bool AParam=true)     { MDrawParamText = AParam; }
+
 //------------------------------
 public:
 //------------------------------
@@ -70,7 +74,7 @@ public:
 
       const char* text = "";
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
-      if (param) {
+      if (MDrawParamText && param) {
         text = param->getName();
       }
       else {
