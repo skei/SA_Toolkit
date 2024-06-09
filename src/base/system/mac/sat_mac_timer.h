@@ -65,7 +65,7 @@ private:
 
   sigevent            MSigEvent       = {};
   dispatch_source_t   MTimer          = nullptr;
-  dispatch_time_t     MTimerSpec      = {};
+  // dispatch_time_t     MTimerSpec      = {};  // not used at all currently
   std::atomic<bool>   MIsRunning      {false};
   SAT_TimerListener*  MTimerListener  = nullptr;
 
