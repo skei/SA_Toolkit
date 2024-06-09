@@ -1,5 +1,5 @@
-#ifndef sat_dialogs_included
-#define sat_dialogs_included
+#ifndef sat_linux_dialogs_included
+#define sat_linux_dialogs_included
 //----------------------------------------------------------------------
 
 #include "base/utils/sat_convert.h"
