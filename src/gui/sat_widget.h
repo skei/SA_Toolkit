@@ -540,6 +540,11 @@ public:
   //----------
 
   void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) override {
+    SAT_PRINT("AId %i AType %i ACount %i, AData ",AId,AType,ACount);
+    for (uint32_t i=0; i<ACount; i++) { 
+      SAT_DPRINT("%.2f ",AData[i]);
+    }
+      SAT_DPRINT("\n");
   }
 
   //----------
@@ -590,6 +595,10 @@ public:
 
   void do_widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) override {
     if (MParent) MParent->do_widget_want_timer(AWidget,AWantTimer);
+  }
+
+  void do_widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
+    if (MParent) MParent->do_widget_start_tween(AWidget,ATween);
   }
 
   

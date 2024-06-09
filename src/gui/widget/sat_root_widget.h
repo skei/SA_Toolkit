@@ -134,6 +134,9 @@ public: // do_widget
     if (MListener) MListener->on_widgetListener_want_timer(AWidget,AWantTimer);
   }
 
+  void do_widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
+    if (MListener) MListener->on_widgetListener_start_tween(AWidget,ATween);
+  }
 
 };
 
