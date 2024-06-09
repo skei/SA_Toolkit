@@ -98,6 +98,8 @@ do
   esac
 done
 
+LINUX=false; if [[ "$WIN32" != "true" ]] && [[ "$MAC" != "true" ]]; then LINUX=true; fi
+
 #------------------------------
 # -i input
 #------------------------------
@@ -221,8 +223,8 @@ if $LIBRARY
         FLAGS+=" -shared"
         FLAGS+=" -fPIC"
         #FLAGS+=" -fPIE"
-        if $MAC; then
-          FLAGS+=" -Wl,exelib_entry_point"
+        if $MAC; then  # TODO: figure out how to create an app bundle on macos
+          FLAGS+=" exelib_entry_point"
         else
           FLAGS+=" -Wl,-e,exelib_entry_point"
         fi
@@ -231,6 +233,13 @@ if $LIBRARY
         FLAGS+=" -shared"
         FLAGS+=" -fPIC"
         FLAGS+=" -DSAT_LIBRARY"
+        if $MAC; then  # TODO: this is just a sandbox to figure out how to successfully build a CLAP plugin on macos
+          FLAGS+=" -arch x86_64"
+          FLAGS+=" -target x86_64-apple-macosx10.9"
+          FLAGS+=" -Wmost -Wsuper-class-method-mismatch"  # from clap-plugins/CMakeLists.txt
+          FLAGS+=" -fvisibility=hidden -fvisibility-inlines-hidden -Werror=return-type -Werror=unused-result -Wno-unused-parameter -Wuninitialized -Wvla -Wmultichar -Werror=non-virtual-dtor -Woverloaded-virtual"
+          FLAGS+=" -exported_symbols_list ./build/pre/tmp/macos-symbols.txt"
+        fi
     fi
   #else
   #  FLAGS+=" -DSAT_PLUGIN_EXE"
@@ -283,7 +292,7 @@ if $DEBUG
     FLAGS+=" -DSAT_DEBUG"
     FLAGS+=" -g"
 
-    if ! $WIN32
+    if ! $WIN32 && ! $MAC
       then
         FLAGS+=" -export-dynamic"
     fi
@@ -341,6 +350,32 @@ fi
 
 #----------------------------------------------------------------------
 #
+# pre- and post- scripts for os specifc tasks
+#
+#----------------------------------------------------------------------
+
+runPreSteps() {
+  if $MAC; then
+    source "./build/pre/pre_mac"
+  elif $WIN32; then
+    source "../build/pre/pre_win32"
+  elif $LINUX; then
+    source "../build/pre/pre_linux"
+  fi
+}
+
+runPostSteps() {
+  if $MAC; then
+    source "./build/post/post_mac"
+  elif $WIN32; then
+    source "../build/post/post_win32"
+  elif $LINUX; then
+    source "../build/post/post_linux"
+  fi
+}
+
+#----------------------------------------------------------------------
+#
 # compile
 #
 #----------------------------------------------------------------------
@@ -358,7 +393,9 @@ if $VERBOSE; then
   echo $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
 fi  
 
+runPreSteps
 $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+runPostSteps
 
 #----------------------------------------------------------------------
 #
