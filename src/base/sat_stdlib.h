@@ -5,7 +5,7 @@
 #ifndef SAT_NO_STDLIB
 
   #include <cassert>
-  #ifdef SAT_MAC
+  #ifdef __APPLE__
     #include <stdlib.h>
   #else
     #include <malloc.h>

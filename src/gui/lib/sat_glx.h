@@ -10,7 +10,7 @@
 
 #include "extern/sogl/simple-opengl-loader.h"
 
-#ifdef SAT_MAC
+#ifdef __APPLE__
   #include <OpenGL/gl.h>
   #include <OpenGL/glu.h>
 #else
