@@ -20,6 +20,8 @@ public:
   virtual SAT_Window* on_editorListener_createWindow(uint32_t AWidth, uint32_t AHeight) { return nullptr; }
   virtual void        on_editorListener_deleteWindow(SAT_Window* AWindow) {}
   #endif
+
+  virtual ~SAT_EditorListener() {}
 };
 
 //----------------------------------------------------------------------

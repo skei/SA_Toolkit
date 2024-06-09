@@ -20,6 +20,7 @@ class SAT_Timer;
 class SAT_TimerListener {
 public:
   virtual void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) {}
+  virtual ~SAT_TimerListener() {}
 };
 
 //----------------------------------------------------------------------

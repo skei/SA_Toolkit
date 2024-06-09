@@ -27,6 +27,8 @@ public:
 //virtual void  on_processorOwner_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
 //virtual void  on_processorOwner_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
 //virtual void  on_processorOwner_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
+
+  virtual ~SAT_ProcessorOwner() {}
 };
 
 //----------------------------------------------------------------------
