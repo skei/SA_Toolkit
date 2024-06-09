@@ -26,9 +26,7 @@ FLAGS+=" -std=gnu++17"
 FLAGS+=" -Wall"
 FLAGS+=" -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-narrowing"
 FLAGS+=" -pthread"
-if $MAC; then
-  FLAGS+=" -Wl"
-else
+if ! $MAC; then
   FLAGS+=" -Wl,--as-needed"
 fi
 #FLAGS+=" -static-libgcc"
