@@ -24,11 +24,7 @@ char* SAT_FloatToString(char* AString, float AValue, uint32_t ADigits=3) {
   format_string[2] = 48 + ADigits;
   format_string[3] = 'f';
   format_string[4] = 0;
-  #ifdef SAT_MAC
-    snprintf(AString,sizeof(AString),format_string,AValue);
-  #else
-    sprintf(AString,format_string,AValue);
-  #endif
+  sprintf(AString,format_string,AValue);
   return AString;
 }
 
@@ -39,11 +35,7 @@ char* SAT_IntToString(char* AString, int32_t AValue) {
   format_string[0] = '%';
   format_string[1] = 'i';
   format_string[2] = 0;
-  #ifdef SAT_MAC
-    snprintf(AString,sizeof(AString),format_string,AValue);
-  #else
-    sprintf(AString,format_string,AValue);
-  #endif
+  sprintf(AString,format_string,AValue);
   return AString;
 }
 

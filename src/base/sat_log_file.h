@@ -254,7 +254,7 @@ public:
           char temp[1024];
           temp[0] = 0;
 
-          #if defined(SAT_LINUX) || defined(SAT_MAC)
+          #ifdef SAT_LINUX
             uint32_t thread_id = gettid();
           #endif
           #ifdef SAT_WIN32
@@ -264,11 +264,7 @@ public:
           #ifdef SAT_LOG_TIME
             double time = time_elapsed();
             #ifdef SAT_LOG_THREAD // time & thread_id
-              #ifdef SAT_MAC
-                snprintf(temp,sizeof(temp),"[%.6f,%08x] %s",time,thread_id,str);
-              #else
-                sprintf(temp,"[%.6f,%08x] %s",time,thread_id,str);
-              #endif
+              sprintf(temp,"[%.6f,%08x] %s",time,thread_id,str);
             #else // time 
               sprintf(temp,"[%.6f] %s",time,str);
             #endif
@@ -307,11 +303,7 @@ public:
       if (MFile.isOpen()) {
         va_list args;
         va_start(args,format);
-        #ifdef SAT_MAC
-          vsnprintf(MTempBuffer,sizeof(MTempBuffer),format,args);
-        #else
-          vsprintf(MTempBuffer,format,args);
-        #endif
+        vsprintf(MTempBuffer,format,args);
         va_end(args);
         print_string(MTempBuffer);
       }
@@ -337,11 +329,7 @@ public:
       if (MFile.isOpen()) {
         va_list args;
         va_start(args,format);
-        #ifdef SAT_MAC
-          vsnprintf(MTempBuffer,sizeof(MTempBuffer),format,args);
-        #else
-          vsprintf(MTempBuffer,format,args);
-        #endif
+        vsprintf(MTempBuffer,format,args);
         va_end(args);
         print_string(MTempBuffer,false);
       }

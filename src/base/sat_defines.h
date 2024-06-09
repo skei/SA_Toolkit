@@ -10,10 +10,6 @@
   #define  SAT_WIN32
 #endif
 
-#if defined (__APPLE__) || (__MACH__)
-  #define  SAT_MAC
-#endif
-
 //----------
 
 #if defined (__i386__) || defined (_X86_) || defined (__X86__)
