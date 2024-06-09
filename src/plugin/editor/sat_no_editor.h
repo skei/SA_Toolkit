@@ -13,8 +13,8 @@ class SAT_NoEditor
 public:
 //------------------------------
 
-  SAT_NoEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false)
-  : SAT_BaseEditor(AListener,AWidth,AHeight,AScale,AProportional) {
+  SAT_NoEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight/*, double AScale=1.0, bool AProportional=false*/)
+  : SAT_BaseEditor(AListener,AWidth,AHeight/*,AScale,AProportional*/) {
     SAT_TRACE;
   }
 
