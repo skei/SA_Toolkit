@@ -11,6 +11,15 @@
   #define __SAT_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 
+#if defined (SAT_MAC)
+  #define __SAT_IMPORT
+  #define __SAT_EXPORT __SAT_PUBLIC
+  #define __SAT_CDECL
+  #define __SAT_STDCALL
+  #define __SAT_PUBLIC __attribute__ ((visibility ("default")))
+  #define __SAT_LOCAL  __attribute__ ((visibility ("hidden")))
+#endif
+
 #if defined (SAT_WIN32)
   #define __SAT_IMPORT  __attribute__ ((dllimport))
   #define __SAT_EXPORT  __attribute__ ((dllexport))
