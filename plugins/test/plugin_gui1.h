@@ -50,7 +50,7 @@ public:
   void paramValueEvent(const clap_event_param_value_t* event) final {
     uint32_t id = event->param_id;
     sat_param_t value = event->value;
-    //SAT_PRINT("%i = %.3f\n",id,value);
+    SAT_PRINT("%i = %.3f\n",id,value);
   }
 
   //----------
