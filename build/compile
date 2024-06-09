@@ -223,7 +223,11 @@ if $LIBRARY
         FLAGS+=" -shared"
         FLAGS+=" -fPIC"
         #FLAGS+=" -fPIE"
-        FLAGS+=" -Wl,-e,exelib_entry_point"
+        if $MAC; then
+          FLAGS+=" -Wl,exelib_entry_point"
+        else
+          FLAGS+=" -Wl,-e,exelib_entry_point"
+        fi
         FLAGS+=" -DSAT_PLUGIN_EXE"
       else
         FLAGS+=" -shared"
