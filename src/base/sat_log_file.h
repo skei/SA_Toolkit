@@ -196,6 +196,9 @@ public:
       #ifdef SAT_LINUX
         dprint("OS: Linux\n");
       #endif
+      #ifdef SAT_MAC
+        dprint("OS: macOS\n");
+      #endif
       #ifdef SAT_WIN32
         dprint("OS: Windows\n");
       #endif
