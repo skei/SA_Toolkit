@@ -22,6 +22,10 @@
     #include <sys/unistd.h>
     #define gettid() syscall(SYS_gettid)
   #endif
+  #ifdef SAT_MAC
+    #include <pthread.h>
+    #define gettid() pthread_mach_thread_np(pthread_self());
+  #endif
   #ifdef SAT_WIN32
     #include <processthreadsapi.h>
   #endif
@@ -113,18 +117,26 @@ public:
 
     #ifdef SAT_PRINT_TIME
       double time = timeElapsed();
-      sprintf(buffer, SAT_TERM_FG_YELLOW "%.6f" SAT_TERM_RESET ":",time);
+      #ifdef SAT_MAC
+        snprintf(buffer, sizeof(buffer), SAT_TERM_FG_YELLOW "%.6f" SAT_TERM_RESET ":",time);
+      #else
+        sprintf(buffer, SAT_TERM_FG_YELLOW "%.6f" SAT_TERM_RESET ":",time);
+      #endif
       strcat(MPrefixBuffer,buffer);
     #endif
 
     #ifdef SAT_PRINT_THREAD
-      #ifdef SAT_LINUX
+      #if defined(SAT_LINUX) || defined(SAT_MAC)
         uint32_t thread_id = gettid();
       #endif
       #ifdef SAT_WIN32
         uint32_t thread_id = GetCurrentThreadId();
       #endif
-      sprintf(buffer, SAT_TERM_FG_MAGENTA "%08x" SAT_TERM_RESET ":",thread_id);
+      #ifdef SAT_MAC
+        snprintf(buffer, sizeof(buffer), SAT_TERM_FG_MAGENTA "%08x" SAT_TERM_RESET ":",thread_id);
+      #else
+        sprintf(buffer, SAT_TERM_FG_MAGENTA "%08x" SAT_TERM_RESET ":",thread_id);
+      #endif
       strcat(MPrefixBuffer,buffer);
     #endif
 
@@ -135,7 +147,11 @@ public:
     strcat(MPrefixBuffer,":");
 
     char line_str[16] = {0};
-    sprintf(line_str, SAT_TERM_FG_CYAN "%i", ALine);
+    #ifdef SAT_MAC
+      snprintf(line_str, sizeof(line_str), SAT_TERM_FG_CYAN "%i", ALine);
+    #else
+      sprintf(line_str, SAT_TERM_FG_CYAN "%i", ALine);
+    #endif
     strcat(MPrefixBuffer,line_str);
     strcat(MPrefixBuffer,SAT_TERM_RESET );
 
@@ -155,7 +171,11 @@ public:
   void print(const char* format, ...) {
     va_list args;
     va_start(args,format);
-    vsprintf(MPrintBuffer,format,args);
+    #ifdef SAT_MAC
+      vsnprintf(MPrintBuffer,sizeof(MPrintBuffer),format,args);
+    #else
+      vsprintf(MPrintBuffer,format,args);
+    #endif
 
     #ifdef SAT_PRINT_SOCKET
       print_socket("%s%s",MPrefixBuffer,MPrintBuffer);
