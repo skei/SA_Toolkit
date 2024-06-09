@@ -307,7 +307,11 @@ public:
 //------------------------------
 
   virtual const char* valueToText(sat_param_t AValue) {
-    sprintf(MValueText,"%.2f",AValue);
+    #ifdef SAT_MAC
+      snprintf(MValueText,sizeof(MValueText),"%.2f",AValue);
+    #else
+      sprintf(MValueText,"%.2f",AValue);
+    #endif
     return MValueText;
   }
 
