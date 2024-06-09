@@ -114,22 +114,6 @@ public:
   }
 
 //------------------------------
-public:
-//------------------------------
-
-  // void show() override {
-  //   SAT_TRACE;
-  //   if (MRootWidget) MRootWidget->on_widget_realign();
-  //   SAT_BufferedWindow::show();
-  // };
-
-  //----------
-
-  // void hide() override {
-  //   SAT_BufferedWindow::hide();
-  // };
-
-//------------------------------
 private:
 //------------------------------
 
@@ -158,8 +142,41 @@ private:
 
   //----------
 
-  // called from
-  // - on_widgetListener_redraw
+  void lockMouseCursor() {
+    MMouseLocked  = true;
+    MMouseLockedXclick = MMouseCurrentXpos;
+    MMouseLockedYclick = MMouseCurrentYpos;
+    MMouseLockedXpos = MMouseCurrentXpos;
+    MMouseLockedYpos = MMouseCurrentYpos;
+    //SAT_PRINT("lockedx %i lockedy %i\n",MMouseLockedXclick,MMouseLockedYclick);
+  }
+
+  //----------
+
+  void unlockMouseCursor() {
+    MMouseLocked = false;
+  }  
+
+  //----------
+
+  // calculates the maximal (or minimal) scale to use for the gui,
+  // that will fit inside the given width/height
+
+  double calcScale(int32_t AWidth, int32_t AHeight) {
+    double scale = 1.0;
+    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
+      double xscale = (double)AWidth / (double)MInitialWidth;
+      double yscale = (double)AHeight / (double)MInitialHeight;
+      if (xscale < yscale) scale = xscale;
+      else scale =  yscale;
+    }
+    //SAT_PRINT("scale: %f\n",scale);
+    return scale;
+  }
+
+  //----------
+
+  // called from on_widgetListener_redraw()
 
   void queueDirtyWidget(SAT_Widget* AWidget) {
     // SAT_PRINT("%s\n",AWidget->getName());
@@ -169,8 +186,7 @@ private:
 
   //----------
 
-  // called from
-  // - timer
+  // called from timer
 
   // TODO:
   // read widget from MDirtyWidgets, write to MPaintWidgets
@@ -182,45 +198,41 @@ private:
     // SAT_TRACE;
     uint32_t count = 0;
     SAT_Widget* widget;
+    bool has_update = false;
+    SAT_Rect update_rect;
     while (MDirtyWidgets.read(&widget)) {
       count += 1;
       SAT_Rect rect = widget->getRect();
-      invalidate(rect.x,rect.y,rect.w,rect.h);
+      //invalidate(rect.x,rect.y,rect.w,rect.h);
+      queuePaintWidget(widget);
+      if (has_update) update_rect.combine(rect);
+      else {
+        update_rect = rect;
+        has_update = true;
+      }
+    }
+    if (has_update) {
+      invalidate(update_rect.x,update_rect.y,update_rect.w,update_rect.h);
     }
   }
 
   //----------
 
-  virtual void lockMouseCursor() {
-    MMouseLocked  = true;
-    MMouseLockedXclick = MMouseCurrentXpos;
-    MMouseLockedYclick = MMouseCurrentYpos;
-    MMouseLockedXpos = MMouseCurrentXpos;
-    MMouseLockedYpos = MMouseCurrentYpos;
-    //SAT_PRINT("lockedx %i lockedy %i\n",MMouseLockedXclick,MMouseLockedYclick);
+  // called from flushDirtyWidgets()
+
+  void queuePaintWidget(SAT_Widget* AWidget) {
   }
 
   //----------
 
-  virtual void unlockMouseCursor() {
-    MMouseLocked = false;
-  }  
+  // called from on_window_paint (?)
 
-  //----------
-
-  // calculates the maximal (or minimal) scale to use for the gui,
-  // that will fit inside the given width/height
-
-  virtual double calcScale(int32_t AWidth, int32_t AHeight) {
-    double scale = 1.0;
-    if ((MInitialWidth > 0) && (MInitialHeight > 0)) {
-      double xscale = (double)AWidth / (double)MInitialWidth;
-      double yscale = (double)AHeight / (double)MInitialHeight;
-      if (xscale < yscale) scale = xscale;
-      else scale =  yscale;
+  void flushPaintWidgets(SAT_PaintContext* AContext) {
+    //SAT_Rect rect = AContext->update_rect;
+    if (MRootWidget) {
+      //SAT_PRINT("%.f,%.f,%.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
+      MRootWidget->on_widget_paint(AContext);
     }
-    //SAT_PRINT("scale: %f\n",scale);
-    return scale;
   }
 
 //------------------------------
@@ -265,11 +277,7 @@ public: // window
   
   void on_window_paint(SAT_PaintContext* AContext) override {
     //SAT_BufferedWindow::on_window_paint(AContext);
-    SAT_Rect rect = AContext->update_rect;
-    if (MRootWidget) {
-      //SAT_PRINT("%.f,%.f,%.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
-      MRootWidget->on_widget_paint(AContext);
-    }
+    flushPaintWidgets(AContext);
   }
 
   //----------

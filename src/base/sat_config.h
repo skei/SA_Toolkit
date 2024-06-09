@@ -4,7 +4,7 @@
 
 #define SAT_VENDOR                            "skei.audio"
 #define SAT_URL                               "https://github.com/skei/SA_Toolkit"
-#define SAT_VERSION                           "0.0.0"
+#define SAT_VERSION                           "2.0.0"
 #define SAT_LOG_DIRECTORY                     "skei.audio"
 #define SAT_LOG_NAME                          "LOG"
 
