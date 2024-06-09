@@ -97,11 +97,13 @@ public:
     SAT_Parameter* p4 = new SAT_Parameter( "param4", "", 3.0, -2, 10 );
     SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
     SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
+    SAT_Parameter* p7 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
 
     p2->setFlag(CLAP_PARAM_IS_STEPPED);
     p3->setFlag(CLAP_PARAM_IS_STEPPED);
     p4->setFlag(CLAP_PARAM_IS_STEPPED);
     p5->setFlag(CLAP_PARAM_IS_STEPPED);
+    p7->setFlag(CLAP_PARAM_IS_ENUM);
 
     appendParameter(p1);
     appendParameter(p2);
@@ -109,6 +111,7 @@ public:
     appendParameter(p4);
     appendParameter(p5);
     appendParameter(p6);
+    appendParameter(p7);
 
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(640,480,1.0,false);
@@ -130,13 +133,14 @@ public:
 
         root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
-        SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(  10, 10, 620, 30 ));
-        SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(  10, 50, 620, 30 ));
-        SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(  10, 90, 620, 30 ));
-        SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(  10,130, 620, 30 ));
-        SAT_SliderWidget* s5 = new SAT_SliderWidget(SAT_Rect(  10,170, 620, 30 ));
+        SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(  10, 10, 480, 30 ));
+        SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(  10, 50, 480, 30 ));
+        SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(  10, 90, 480, 30 ));
+        SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(  10,130, 480, 30 ));
+        SAT_SliderWidget* s5 = new SAT_SliderWidget(SAT_Rect(  10,170, 480, 30 ));
 
         SAT_KnobWidget*   k1 = new SAT_KnobWidget(  SAT_Rect(  10,210, 100,100));
+        SAT_ButtonWidget* b1 = new SAT_ButtonWidget(SAT_Rect( 120,210, 100, 30));
 
         s2->setDragSnap(true);
         s2->setDrawValueBar(true);
@@ -156,12 +160,16 @@ public:
         k1->setTextSize(20);
         k1->setValueTextSize(25);
 
+        b1->setTexts("Off","On");
+        b1->setDrawParamText(false);
+
         root->appendChild(s1);
         root->appendChild(s2);
         root->appendChild(s3);
         root->appendChild(s4);
         root->appendChild(s5);
         root->appendChild(k1);
+        root->appendChild(b1);
 
         AEditor->connect(s1,getParameter(0));
         AEditor->connect(s2,getParameter(1));
@@ -169,6 +177,7 @@ public:
         AEditor->connect(s4,getParameter(3));
         AEditor->connect(s5,getParameter(4));
         AEditor->connect(k1,getParameter(5));
+        AEditor->connect(b1,getParameter(6));
 
       return true;
     }
