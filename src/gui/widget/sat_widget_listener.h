@@ -19,8 +19,7 @@ public:
   virtual void on_widgetListener_set_cursor(SAT_Widget* AWidget, int32_t ACursor) {}
   virtual void on_widgetListener_set_hint(SAT_Widget* AWidget, const char* AHint) {}
   virtual void on_widgetListener_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
-
-
+  virtual void on_widgetListener_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
 };
 
 //----------------------------------------------------------------------

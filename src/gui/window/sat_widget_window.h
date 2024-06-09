@@ -456,6 +456,7 @@ public: // timer listener
       MTimerListeners[i]->on_widget_timer(ADelta);
     }
     // todo: tweening
+    MTweenManager.process(ADelta);
     #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
       flushDirtyWidgets();
     #endif
@@ -598,6 +599,11 @@ public: // widget listener
     //SAT_TRACE;
     if (AWantTimer) MTimerListeners.append(AWidget);
     else MTimerListeners.remove(AWidget);
+  }
+
+  void on_widgetListener_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
+    //SAT_TRACE;
+    MTweenManager.appendChain(ATween);
   }
 
 };

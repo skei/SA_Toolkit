@@ -197,7 +197,12 @@ public:
   
   //----------
 
+  /*
+    'double free or corruption' crash when tween ends..
+  */
+
   virtual void process(double ADelta) {
+    //SAT_TRACE;
 
     SAT_TweenChain* chain;
     while (MPending.read(&chain)) {
@@ -243,8 +248,10 @@ public:
     while (i < MChains.size()) {
       SAT_TweenChain* chain = MChains[i];
       if (!chain->MActive) {
-        delete chain;
         MChains.remove(i);
+
+        // this crashes.. :-/
+        delete chain;
       }
       i += 1;
     }

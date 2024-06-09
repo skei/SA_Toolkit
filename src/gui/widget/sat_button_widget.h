@@ -23,7 +23,7 @@ private:
   SAT_Color   MOnTextColor       = SAT_LightGrey;
   SAT_Color   MOnBackgroundColor = SAT_DarkGrey;
   SAT_Color   MOnBorderColor     = SAT_White;
-  
+
 //------------------------------
 public:
 //------------------------------
@@ -32,6 +32,7 @@ public:
   : SAT_TextWidget(ARect) {
     setName("SAT_ButtonWidget");
     setCursor(SAT_CURSOR_FINGER);
+
   }
 
   //----------
@@ -70,6 +71,15 @@ public: // on_widget
       else {
         //SAT_PRINT("on\n");
         setValue(1.0);
+
+        // test tween
+        double starts[4] = {0,0,0,0};
+        double ends[4] = {100,100,100,100};
+        SAT_TweenChain* chain = new SAT_TweenChain();
+        SAT_TweenNode* node = new SAT_TweenNode(this,123,1.0,0,1,starts,ends,1);
+        chain->appendNode(node);
+        do_widget_start_tween(this,chain);
+
       }
       do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
       do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
