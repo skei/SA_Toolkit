@@ -19,13 +19,14 @@ VERBOSE=false
 ADDITIONAL=""
 LIBRARY=false
 WIN32=false
+MAC=false; if [[ "$OSTYPE" == "darwin"* ]]; then MAC=true; fi
 
 FLAGS=""
 FLAGS+=" -std=gnu++17"
 FLAGS+=" -Wall"
 FLAGS+=" -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-but-set-variable -Wno-narrowing"
 FLAGS+=" -pthread"
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if $MAC; then
   FLAGS+=" -Wl"
 else
   FLAGS+=" -Wl,--as-needed"
@@ -34,7 +35,7 @@ fi
 #FLAGS+=" -static-libstdc++"
 
 INC=""
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if $MAC; then
   INC+=" -I./src"
 else
   INC+=" -I../src"
@@ -325,7 +326,7 @@ if $WIN32
     LIB+=" -lwsock32"
   else
     CC="g++"
-    if [[ "$OSTYPE" == "darwin"* ]]; then  # TODO: for now no gui on macos; timer is only used for the gui
+    if $MAC; then  # TODO: for now no gui on macos; timer is only used for the gui
       LIB+=" -ldl"
     else
       LIB+=" -ldl -lrt"
@@ -375,4 +376,3 @@ $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
 #VAR_3="Reverse Cases"
 #echo ${VAR_3~}
 #echo ${VAR_3~~}
-
