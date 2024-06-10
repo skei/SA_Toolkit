@@ -1,0 +1,12 @@
+#!/bin/bash
+
+rm -rf dist; mkdir dist
+if [ ! -d "./build/pre/tmp" ]; then mkdir "./build/pre/tmp"; fi
+
+#----------------------------------------------------------------------
+#
+# generate clap symbols file
+#
+#----------------------------------------------------------------------
+
+echo "_clap_entry" > ./build/pre/tmp/macos-symbols.txt
