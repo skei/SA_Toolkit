@@ -4,4 +4,10 @@
 !build.cpp
 !compile2
 !build2.cpp
-
+!*.md
+!pre
+!pre/**
+pre/tmp
+!post
+!post/**
+pre/tmp
