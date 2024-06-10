@@ -305,7 +305,9 @@ if $DEBUG
     FLAGS+=" -DNDEBUG"
     FLAGS+=" -O3"
     FLAGS+=" -ffast-math"
-    FLAGS+=" -s"
+    if ! $MAC; then
+      FLAGS+=" -s"
+    fi
     #FLAGS+=" -flto"
 fi
 
