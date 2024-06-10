@@ -11,7 +11,7 @@
   #define __SAT_LOCAL  __attribute__ ((visibility ("hidden")))
 #endif
 
-#if defined (SAT_MAC)
+#if defined (SAT_MAC)  // TODO: Also works w/o for CLAP bundles; Not sure if that will be needed for App bundles
   #define __SAT_IMPORT
   #define __SAT_EXPORT __SAT_PUBLIC
   #define __SAT_CDECL
