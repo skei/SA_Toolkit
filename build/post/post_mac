@@ -8,6 +8,7 @@
 
 # TODO: need $OUTPUT_DIR here
 
+mv dist/build.clap dist/build
 mkdir -p dist/build.clap/Contents/MacOS
 mv dist/build dist/build.clap/Contents/MacOS/build
 
