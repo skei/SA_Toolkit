@@ -52,5 +52,5 @@ EOF
 
 # test the plugin
 
-../clap-info/build/clap-info dist/build.clap
-nm -g dist/build.clap/Contents/MacOS/build | grep -v U
+../clap-info/build/clap-info dist/build.clap | grep sat_clap_entry_init_callback
+# nm -g dist/build.clap/Contents/MacOS/build | grep -v U
