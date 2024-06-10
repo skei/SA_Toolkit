@@ -149,6 +149,50 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_DIRECTION_VERT                      (SAT_DIRECTION_UP    + SAT_DIRECTION_DOWN)
 #define SAT_DIRECTION_ALL                       (SAT_DIRECTION_HORIZ + SAT_DIRECTION_VERT)
 
+#define SAT_EASING_NONE           1
+#define SAT_EASING_LINEAR         1
+#define SAT_EASING_IN_QUAD        2
+#define SAT_EASING_OUT_QUAD       3
+#define SAT_EASING_INOUT_QUAD     4
+#define SAT_EASING_OUTIN_QUAD     5
+#define SAT_EASING_IN_CUBIC       6
+#define SAT_EASING_OUT_CUBIC      7
+#define SAT_EASING_INOUT_CUBIC    8
+#define SAT_EASING_OUTIN_CUBIC    9
+#define SAT_EASING_IN_QUART       10
+#define SAT_EASING_OUT_QUART      11
+#define SAT_EASING_INOUT_QUART    12
+#define SAT_EASING_OUTIN_QUART    13
+#define SAT_EASING_IN_QUINT       14
+#define SAT_EASING_OUT_QUINT      15
+#define SAT_EASING_INOUT_QUINT    16
+#define SAT_EASING_OUTIN_QUINT    17
+#define SAT_EASING_IN_SINE        18
+#define SAT_EASING_OUT_SINE       19
+#define SAT_EASING_INOUT_SINE     20
+#define SAT_EASING_OUTIN_SINE     21
+#define SAT_EASING_IN_EXPO        22
+#define SAT_EASING_OUT_EXPO       23
+#define SAT_EASING_INOUT_EXPO     24
+#define SAT_EASING_OUTIN_EXPO     25
+#define SAT_EASING_IN_CIRC        26
+#define SAT_EASING_OUT_CIRC       27
+#define SAT_EASING_INOUT_CIRC     28
+#define SAT_EASING_OUTIN_CIRC     29
+#define SAT_EASING_IN_ELASTIC     30
+#define SAT_EASING_OUT_ELASTIC    31
+#define SAT_EASING_INOUT_ELASTIC  32
+#define SAT_EASING_OUTIN_ELASTIC  33
+#define SAT_EASING_IN_BACK        34
+#define SAT_EASING_OUT_BACK       35
+#define SAT_EASING_INOUT_BACK     36
+#define SAT_EASING_OUTIN_BACK     37
+#define SAT_EASING_OUT_BOUNCE     38
+#define SAT_EASING_IN_BOUNCE      39
+#define SAT_EASING_INOUT_BOUNCE   40
+#define SAT_EASING_OUTIN_BOUNCE   41
+
+
 #define SAT_EDGE_NONE                           0
 #define SAT_EDGE_LEFT                           0x01
 #define SAT_EDGE_RIGHT                          0x02
@@ -280,6 +324,14 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_TEXT_ALIGN_RIGHT                    0x02
 #define SAT_TEXT_ALIGN_TOP                      0x04
 #define SAT_TEXT_ALIGN_BOTTOM                   0x08
+
+#define SAT_TWEEN_VALUE                         0
+#define SAT_TWEEN_RECT                          1
+// #define SAT_TWEEN_CALLBACK                   1
+// #define SAT_TWEEN_PAUSE                      2
+// #define SAT_TWEEN_BG_COLOR                   4
+// #define SAT_TWEEN_TXT_COLOR                  5
+// #define SAT_TWEEN_TRANS                      6
 
 #define SAT_VOICE_OFF                           0
 #define SAT_VOICE_WAITING                       1

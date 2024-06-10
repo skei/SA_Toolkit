@@ -72,13 +72,15 @@ public: // on_widget
         //SAT_PRINT("on\n");
         setValue(1.0);
 
-        // test tween
-        double starts[4] = {0,0,0,0};
-        double ends[4] = {100,100,100,100};
-        SAT_TweenChain* chain = new SAT_TweenChain();
-        SAT_TweenNode* node = new SAT_TweenNode(this,123,1.0,0,1,starts,ends,1);
-        chain->appendNode(node);
-        do_widget_start_tween(this,chain);
+// {
+//   // test tween
+//   double starts[4] = {0,0,0,0};
+//   double ends[4] = {100,100,100,100};
+//   SAT_TweenChain* chain = new SAT_TweenChain();
+//   SAT_TweenNode* node = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_VALUE,1,starts,ends,SAT_EASING_IN_CUBIC);
+//   chain->appendNode(node);
+//   do_widget_start_tween(this,chain);
+// }
 
       }
       do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
