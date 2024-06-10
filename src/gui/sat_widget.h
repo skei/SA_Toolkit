@@ -429,6 +429,23 @@ public: // children
 
   }
 
+  //----------
+
+  virtual void handleTweening(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
+    switch(AType) {
+      case SAT_TWEEN_VALUE:
+        SAT_PRINT("AId %i AType %i ACount %i : AData[0] %.3f \n",AId,AType,ACount,AData[0]);
+        break;
+      case SAT_TWEEN_RECT:
+        setRect(SAT_Rect(AData[0],AData[1],AData[2],AData[3]));
+        if (MParent) {
+          MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
+        }
+        break;
+    }
+  }
+
+
 //------------------------------
 public:
 //------------------------------
@@ -540,11 +557,7 @@ public:
   //----------
 
   void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) override {
-    SAT_PRINT("AId %i AType %i ACount %i, AData ",AId,AType,ACount);
-    for (uint32_t i=0; i<ACount; i++) { 
-      SAT_DPRINT("%.2f ",AData[i]);
-    }
-      SAT_DPRINT("\n");
+    handleTweening(AId,AType,ACount,AData);
   }
 
   //----------

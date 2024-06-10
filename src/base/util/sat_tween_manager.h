@@ -7,15 +7,8 @@
 
 //----------------------------------------------------------------------
 
-#define SAT_TWEEN_MAX_VALUES        4
-#define SAT_TWEEN_CHAIN_QUEUE_SIZE  32
-
-//#define SAT_TWEEN_CALLBACK  1
-//#define SAT_TWEEN_PAUSE     2
-//#define SAT_TWEEN_RECT      3
-//#define SAT_TWEEN_BG_COLOR  4
-//#define SAT_TWEEN_TXT_COLOR 5
-//#define SAT_TWEEN_TRANS     6
+// #define SAT_TWEEN_MAX_VALUES        4
+// #define SAT_TWEEN_CHAIN_QUEUE_SIZE  32
 
 // delete, end, repeat, ..
 

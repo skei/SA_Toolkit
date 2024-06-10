@@ -70,6 +70,16 @@ class myPlugin
 : public SAT_Plugin {
 
 //------------------------------
+private:
+//------------------------------
+
+  const char* MButtonTexts[15] = {
+    "1", "2", "3", "4", "5", 
+    "6", "7", "8", "9", "10", 
+    "11", "12", "13", "14", "15"
+  };
+
+//------------------------------
 public:
 //------------------------------
 
@@ -134,50 +144,59 @@ public:
         root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
         SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(  10, 10, 480, 30 ));
+        root->appendChild(s1);
+        AEditor->connect(s1,getParameter(0));
+
         SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(  10, 50, 480, 30 ));
-        SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(  10, 90, 480, 30 ));
-        SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(  10,130, 480, 30 ));
-        SAT_SliderWidget* s5 = new SAT_SliderWidget(SAT_Rect(  10,170, 480, 30 ));
-
-        SAT_KnobWidget*   k1 = new SAT_KnobWidget(  SAT_Rect(  10,210, 100,100));
-        SAT_ButtonWidget* b1 = new SAT_ButtonWidget(SAT_Rect( 120,210, 100, 30));
-
+        root->appendChild(s2);
+        AEditor->connect(s2,getParameter(1));
         s2->setDragSnap(true);
         s2->setDrawValueBar(true);
 
+        SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(  10, 90, 480, 30 ));
+        root->appendChild(s3);
+        AEditor->connect(s3,getParameter(2));
         s3->setDragQuantize(true);
         s3->setDragQuantizeSteps(11);
         s3->setDrawQuantized(true);
         s3->setDrawValueBar(true);
 
+        SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(  10,130, 480, 30 ));
+        root->appendChild(s4);
+        AEditor->connect(s4,getParameter(3));
         s4->setDragQuantize(true);
         s4->setDragQuantizeSteps(13);
         s4->setDrawQuantized(true);
         s4->setDrawValueBar(true);
 
+        SAT_SliderWidget* s5 = new SAT_SliderWidget(SAT_Rect(  10,170, 480, 30 ));
+        root->appendChild(s5);
+        AEditor->connect(s5,getParameter(4));
+
+        SAT_KnobWidget* k1 = new SAT_KnobWidget(  SAT_Rect(  10,210, 100,100));
+        root->appendChild(k1);
+        AEditor->connect(k1,getParameter(5));
         k1->setDrawKnobArcBackground(true);
         k1->setKnobArcThickness(15);
         k1->setTextSize(20);
         k1->setValueTextSize(25);
 
+        SAT_ButtonWidget* b1 = new SAT_ButtonWidget(SAT_Rect( 120,210, 100, 30));
+        root->appendChild(b1);
+        AEditor->connect(b1,getParameter(6));
         b1->setTexts("Off","On");
         b1->setDrawParamText(false);
 
-        root->appendChild(s1);
-        root->appendChild(s2);
-        root->appendChild(s3);
-        root->appendChild(s4);
-        root->appendChild(s5);
-        root->appendChild(k1);
-        root->appendChild(b1);
+        SAT_GridWidget* g1 = new SAT_GridWidget(SAT_Rect( 120,250, 300,100),5,3);
+        root->appendChild(g1);
+        g1->setSelectCell(true);
+        g1->setSelectMultipleCells(true);
+        g1->setDrawSelectedCells(true);
 
-        AEditor->connect(s1,getParameter(0));
-        AEditor->connect(s2,getParameter(1));
-        AEditor->connect(s3,getParameter(2));
-        AEditor->connect(s4,getParameter(3));
-        AEditor->connect(s5,getParameter(4));
-        AEditor->connect(k1,getParameter(5));
-        AEditor->connect(b1,getParameter(6));
+        SAT_ButtonGridWidget* bg1 = new SAT_ButtonGridWidget(SAT_Rect(120,360,300,100),5,3);
+        root->appendChild(bg1);
+        bg1->setButtonTexts(MButtonTexts);
+
 
       return true;
     }

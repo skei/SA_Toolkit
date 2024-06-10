@@ -26,6 +26,8 @@
 #define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK        1024
 #define SAT_RENDERER_MAJOR_VERSION                3
 #define SAT_RENDERER_MINOR_VERSION                2
+#define SAT_TWEEN_MAX_VALUES                      4
+#define SAT_TWEEN_CHAIN_QUEUE_SIZE                32
 #define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
 #define SAT_WIDGET_NUM_VALUES                     16
 #define SAT_WINDOW_THREAD_KILL                    666
