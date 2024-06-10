@@ -10,4 +10,4 @@
 pre/tmp
 !post
 !post/**
-pre/tmp
+post/tmp
