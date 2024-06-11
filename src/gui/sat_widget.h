@@ -163,6 +163,33 @@ public:
     MRect.h = AHeight;
   }
 
+  virtual void setActive(bool AState=true, bool ARecursive=true) {
+    State.active = AState;
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildren.size(); i++) {
+        MChildren[i]->setActive(AState,ARecursive);
+      }
+    }
+  }
+
+  virtual void setVisible(bool AState=true, bool ARecursive=true) {
+    State.visible = AState;
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildren.size(); i++) {
+        MChildren[i]->setVisible(AState,ARecursive);
+      }
+    }
+  }
+
+  virtual void setDisabled(bool AState=true, bool ARecursive=true) {
+    State.disabled = AState;
+    if (ARecursive) {
+      for (uint32_t i=0; i<MChildren.size(); i++) {
+        MChildren[i]->setDisabled(AState,ARecursive);
+      }
+    }
+   }
+
 //------------------------------
 public: // children
 //------------------------------
@@ -205,7 +232,9 @@ public: // children
     return MChildren[AIndex];
   }
 
-  //----------
+//------------------------------
+public: // owner window
+//------------------------------
 
   // called from
   //   SAT_WidgetWindow.on_window_show()
@@ -273,8 +302,9 @@ public: // children
     return scale;
   }
 
-
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   // returns null if no child widgets at x,y
 
