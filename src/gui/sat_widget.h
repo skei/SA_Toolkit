@@ -359,8 +359,8 @@ public:
       //for (int32_t i=(numchildren-1); i>=0; i--) {
       for (uint32_t i=0; i<numchildren; i++) {
         SAT_Widget* widget = MChildren[i];
-        if (widget->State.visible) {
-        //if (widget->isRecursivelyVisible()) {
+        //if (widget->State.visible) {
+        if (widget->isRecursivelyVisible()) {
           SAT_Rect widgetrect = widget->getRect();
           widgetrect.overlap(mrect);
           if (widgetrect.isNotEmpty()) {
