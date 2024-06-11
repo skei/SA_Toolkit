@@ -525,11 +525,11 @@ public: // widget listener
   //----------
 
   void on_widgetListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {
-    // SAT_Widget* parent = AWidget->getParent();
-    // if (parent) {
-    //   parent->realignChildWidgets();
-    //   markWidgetDirtyFromGui(parent);
-    // }    
+    SAT_Widget* parent = AWidget->getParent();
+    if (parent) {
+      parent->realignChildren();
+      //markWidgetDirtyFromGui(parent);
+    }    
   }
 
   //----------

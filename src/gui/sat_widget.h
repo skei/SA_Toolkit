@@ -114,6 +114,7 @@ public:
   virtual uint32_t          getNumValues()                { return MNumValues; }
   virtual void*             getParameter()                { return MParameters[MParameterIndex]; }
   virtual void*             getParameter(uint32_t AIndex) { return MParameters[AIndex]; }
+  virtual SAT_Widget*       getParent()                   { return MParent; }
   virtual SAT_Rect          getRect()                     { return MRect; }
   virtual double            getValue()                    { return MValues[MValueIndex]; }
   virtual double            getValue(uint32_t AIndex)     { return MValues[AIndex]; }
