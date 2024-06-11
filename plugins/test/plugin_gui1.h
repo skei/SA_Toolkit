@@ -74,9 +74,9 @@ private:
 //------------------------------
 
   const char* MButtonTexts[15] = {
-    "1", "2", "3", "4", "5", 
-    "6", "7", "8", "9", "10", 
-    "11", "12", "13", "14", "15"
+    "I", "II", "III", "IV", "V", 
+    "VI", "VII", "VIII", "IX", "X", 
+    "XI", "XII", "XIII", "XIV", "XV"
   };
 
 //------------------------------
@@ -108,6 +108,7 @@ public:
     SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
     SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
     SAT_Parameter* p7 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
+    SAT_Parameter* p8 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
 
     p2->setFlag(CLAP_PARAM_IS_STEPPED);
     p3->setFlag(CLAP_PARAM_IS_STEPPED);
@@ -122,9 +123,10 @@ public:
     appendParameter(p5);
     appendParameter(p6);
     appendParameter(p7);
+    appendParameter(p8);
 
     setProcessor( new myProcessor(this) );
-    setInitialEditorSize(640,480,1.0,false);
+    setInitialEditorSize(640,480,1.0,true);
     return SAT_Plugin::init();
   }
 
@@ -204,6 +206,14 @@ public:
         s6->setDrawDirection(SAT_DIRECTION_UP);
         s6->setDrawText(false);
         s6->setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
+
+        SAT_GroupBoxWidget* gb1 = new SAT_GroupBoxWidget(SAT_Rect(430,360,200,100),20,true);
+        root->appendChild(gb1);
+        //gb1->getHeaderWidget()->
+
+          SAT_KnobWidget* gb1_k1 = new SAT_KnobWidget(SAT_Rect(10,10,50,50));
+          gb1->appendChild(gb1_k1);
+          AEditor->connect(gb1_k1,getParameter(7));
 
       return true;
     }
