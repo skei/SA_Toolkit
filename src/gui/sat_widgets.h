@@ -9,6 +9,7 @@
 #include "gui/widget/sat_dual_slider_widget.h"
 #include "gui/widget/sat_dual_value_widget.h"
 #include "gui/widget/sat_grid_widget.h"
+#include "gui/widget/sat_groupbox_widget.h"
 #include "gui/widget/sat_knob_widget.h"
 #include "gui/widget/sat_root_widget.h"
 #include "gui/widget/sat_slider_widget.h"
