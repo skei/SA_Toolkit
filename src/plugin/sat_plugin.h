@@ -506,8 +506,8 @@ public: // editor
 
   #ifndef SAT_NO_GUI
 
-    virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight/*, double AScale=1.0, bool AProportional=false*/) {
-      return new SAT_Editor(AListener,AWidth,AHeight/*,AScale,AProportional*/);
+    virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
+      return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
     }
 
     //----------
@@ -696,7 +696,7 @@ public: // clap plugin
     MHost = new SAT_Host(getClapHost());
     setDefaultParameterValues();
     #ifndef SAT_NO_GUI
-      MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight/*,MInitialEditorScale,MProportionalEditor*/);
+      MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
       SAT_Assert(MEditor);
     #endif
     MIsInitialized = true;    
