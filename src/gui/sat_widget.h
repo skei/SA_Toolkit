@@ -140,6 +140,8 @@ public:
 
 //------------------------------
 
+  virtual void setBaseRect(SAT_Rect ARect)                      { MBaseRect = ARect; }
+
   virtual void setHint(const char* AHint)                       { MHint = AHint; }
   virtual void setIndex(uint32_t AIndex)                        { MIndex = AIndex; }
   virtual void setModulation(double AValue)                     { MModulation = AValue; }
@@ -327,14 +329,14 @@ public: // children
       //for (int32_t i=(numchildren-1); i>=0; i--) {
       for (uint32_t i=0; i<numchildren; i++) {
         SAT_Widget* widget = MChildren[i];
-        //if (widget->isVisible()) {
+        if (widget->State.visible) {
         //if (widget->isRecursivelyVisible()) {
           SAT_Rect widgetrect = widget->getRect();
           widgetrect.overlap(mrect);
           if (widgetrect.isNotEmpty()) {
             widget->on_widget_paint(AContext);
           }
-        //}
+        }
       }
 
       if (Options.autoClip) painter->popClip();
