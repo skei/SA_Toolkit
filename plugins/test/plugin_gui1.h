@@ -172,6 +172,7 @@ public:
         SAT_SliderWidget* s5 = new SAT_SliderWidget(SAT_Rect(  10,170, 480, 30 ));
         root->appendChild(s5);
         AEditor->connect(s5,getParameter(4));
+        s5->setDrawDirection(SAT_DIRECTION_RIGHT);
 
         SAT_KnobWidget* k1 = new SAT_KnobWidget(  SAT_Rect(  10,210, 100,100));
         root->appendChild(k1);
@@ -197,6 +198,12 @@ public:
         root->appendChild(bg1);
         bg1->setButtonTexts(MButtonTexts);
 
+        SAT_SliderWidget* s6 = new SAT_SliderWidget(SAT_Rect(430,210,30,140));
+        root->appendChild(s6);
+        //AEditor->connect(s6,getParameter(4));
+        s6->setDrawDirection(SAT_DIRECTION_UP);
+        s6->setDrawText(false);
+        s6->setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
 
       return true;
     }

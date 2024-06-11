@@ -32,6 +32,9 @@ private:
   bool      MDrawBipolar      = false;
   double    MBipolarCenter    = 0.5;
 
+  uint32_t  MDrawDirection    = SAT_DIRECTION_LEFT;
+
+
 //------------------------------
 public:
 //------------------------------
@@ -52,21 +55,22 @@ public:
 
   virtual bool      isBipolar()         { return MDrawBipolar; }
   virtual double    getBipolarCenter()  { return MBipolarCenter; }
+  virtual double    getDrawDirection()  { return MDrawDirection; }
 
   //
 
-  virtual void setDrawSliderBar(bool ADraw=true)    { MDrawSliderBar = ADraw; }
-  virtual void setSliderBarColor(SAT_Color AColor)  { MSliderBarColor = AColor; }
-  virtual void setDrawModulation(bool ADraw=true)   { MDrawModulation = ADraw; }
-  virtual void setModulationColor(SAT_Color AColor) { MModulationColor = AColor; }
-  virtual void setDrawQuantized(bool ADraw=true)    { MDrawQuantized = ADraw; }
-  virtual void setQuantizedColor(SAT_Color AColor)  { MQuantizedColor = AColor; }
-  virtual void setQuantizedWidth(double AWidth)     { MQuantizedWidth = AWidth; }
+  virtual void setDrawSliderBar(bool ADraw=true)      { MDrawSliderBar = ADraw; }
+  virtual void setSliderBarColor(SAT_Color AColor)    { MSliderBarColor = AColor; }
+  virtual void setDrawModulation(bool ADraw=true)     { MDrawModulation = ADraw; }
+  virtual void setModulationColor(SAT_Color AColor)   { MModulationColor = AColor; }
+  virtual void setDrawQuantized(bool ADraw=true)      { MDrawQuantized = ADraw; }
+  virtual void setQuantizedColor(SAT_Color AColor)    { MQuantizedColor = AColor; }
+  virtual void setQuantizedWidth(double AWidth)       { MQuantizedWidth = AWidth; }
 
-  virtual void setDrawBipolar(bool AState=true)     { MDrawBipolar = AState; }
-  virtual void setBipolarCenter(double AValue)      { MBipolarCenter = AValue; }
+  virtual void setDrawBipolar(bool AState=true)       { MDrawBipolar = AState; }
+  virtual void setBipolarCenter(double AValue)        { MBipolarCenter = AValue; }
 
-
+  virtual void setDrawDirection(uint32_t ADirection)  { MDrawDirection = ADirection; }
 
 //------------------------------
 public:
@@ -120,25 +124,56 @@ public:
       double m = calcModulation();
 
       double vw = (v * w);
+      double vh = (v * h);
+
+      painter->setFillColor(MSliderBarColor);
+
       if (v > 0) {
-        painter->setFillColor(MSliderBarColor);
-        painter->fillRect(x,y,vw,h);
+        switch (MDrawDirection) {
+          case SAT_DIRECTION_LEFT:
+            painter->fillRect(x,y,vw,h);
+            break;
+          case SAT_DIRECTION_RIGHT:
+            painter->fillRect((x+w-vw),y,vw,h);
+            break;
+          case SAT_DIRECTION_UP:
+            painter->fillRect(x,(y+h-vh),w,vh);
+            break;
+          case SAT_DIRECTION_DOWN:
+            painter->fillRect(x,y,w,vh);
+            break;
+        }
+
       }
 
       if (MDrawModulation) {
         double mx = 0.0;
         double mw = 0.0;
-        if (m > v) {
-          mx = x + (v * w);
-          mw = w * (m - v);
-        }
-        else {
-          mx = x + (m * w);
-          mw = w * (v - m);
-        }    
-        //SAT_PRINT("v %.3f m %.3f x %.3f w %.3f mx %.3f mw %.3f\n",v,m,x,w,mx,mw);
+        double my = 0.0;
+        double mh = 0.0;
+
         painter->setFillColor(MModulationColor);
-        painter->fillRect(mx,y,mw,h);
+
+        switch (MDrawDirection) {
+          case SAT_DIRECTION_LEFT:
+            if (m > v) {
+              mx = x + (v * w);
+              mw = w * (m - v);
+            }
+            else {
+              mx = x + (m * w);
+              mw = w * (v - m);
+            }    
+            painter->fillRect(mx,y,mw,h);
+            break;
+          case SAT_DIRECTION_RIGHT:
+            break;
+          case SAT_DIRECTION_UP:
+            break;
+          case SAT_DIRECTION_DOWN:
+            break;
+        }
+
       }
     }
   }
