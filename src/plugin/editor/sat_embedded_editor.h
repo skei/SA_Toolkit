@@ -37,7 +37,7 @@ private:
   // from setInitialEditorSize(640,480,1.0,false);
   uint32_t            MInitialWidth   = 512;
   uint32_t            MInitialHeight  = 512;
-//double              MInitialScale   = 1.0;
+  double              MInitialScale   = 1.0;
   bool                MProportional   = false;
 
   // runtime
@@ -49,15 +49,15 @@ private:
 public:
 //------------------------------
 
-  SAT_EmbeddedEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight/*, double AScale=1.0, bool AProportional=false*/)
-  : SAT_BaseEditor(AListener,AWidth,AHeight/*,AScale,AProportional*/) {
+  SAT_EmbeddedEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false)
+  : SAT_BaseEditor(AListener,AWidth,AHeight,AScale,AProportional) {
     MListener       = AListener;
     MWidth          = AWidth;
     MHeight         = AHeight;
-  //MInitialWidth   = AWidth;
-  //MInitialHeight  = AHeight;
-  //MInitialScale   = AScale;
-  //MProportional   = AProportional;
+    MInitialWidth   = AWidth;
+    MInitialHeight  = AHeight;
+    MInitialScale   = AScale;
+    MProportional   = AProportional;
   //MScale          = AScale;
   }
 

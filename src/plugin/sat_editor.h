@@ -43,8 +43,8 @@ class SAT_Editor
 public:
 //------------------------------
 
-  SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight/*, double AScale=1.0, bool AProportional=false*/)
-  : SAT_ImplementedEditor(AListener,AWidth,AHeight/*,AScale,AProportional*/) {
+  SAT_Editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false)
+  : SAT_ImplementedEditor(AListener,AWidth,AHeight,AScale,AProportional) {
   }
 
   //----------
