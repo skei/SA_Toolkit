@@ -189,10 +189,7 @@ private:
   // called from timer
 
   // TODO:
-  // read widget from MDirtyWidgets, write to MPaintWidgets
-  // in on_paint, read MPaintWidgets, do some checking (already drawm this frame?),
-  // and paint all of them..
-  // then copy (just) the update rect to the screen)
+  // - check widget if already set to be drawn (render frame #)
 
   void flushDirtyWidgets() {
     // SAT_TRACE;
@@ -225,7 +222,11 @@ private:
 
   //----------
 
-  // called from on_window_paint (?)
+  // called from on_window_paint()
+
+  // TODO:
+  // - paint to buffer
+  // - copy update rect
 
   void flushPaintWidgets(SAT_PaintContext* AContext) {
     //SAT_Rect rect = AContext->update_rect;
@@ -528,6 +529,7 @@ public: // widget listener
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
       parent->realignChildren();
+      parent->do_widget_redraw(parent,0);
       //markWidgetDirtyFromGui(parent);
     }    
   }
