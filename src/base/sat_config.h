@@ -126,7 +126,7 @@
 //----------
 
 #ifndef SAT_DEBUG
-  #undef SAT_DEBUG_ASSERT
+  //#undef SAT_DEBUG_ASSERT
   #undef SAT_DEBUG_BREAKPOINT
   #undef SAT_DEBUG_CALLSTACK
   #undef SAT_DEBUG_CRASH_HANDLER
