@@ -31,7 +31,6 @@ struct  SAT_Graph;
 #define PIN_YDIST       7
 
 #define MAX_PINS        16
-//#define BASE_HEIGHT     (MODULE_HEIGHT - (PIN_YDIST * 2) - 2)
 #define BASE_HEIGHT     (MODULE_HEIGHT - (PIN_YDIST * 2))
 
 //----------
@@ -242,38 +241,13 @@ public:
 public:
 //------------------------------
 
-  /*
-    'unscale' current position
-    'rescale' to new..
-  */
-
-  ///// TEMPORARY !!!!
-
-    double pre_align_width  = 0;
-    double pre_align_height = 0;
-    double post_align_width  = 0;
-    double post_align_height = 0;
-    
-  /////
-
-  void on_widget_preAlign() override {
-    // pre_align_width = getRect().w;
-    // pre_align_height = getRect().h;
-  }
+  // void on_widget_preAlign() override {
+  // }
 
   //----------
 
   void on_widget_postAlign() override {
     double scale = getWindowScale();
-    //SAT_PRINT("scale %.3f painted %.3f\n",scale,MPaintedScale);
-    // SAT_Rect rect = getRect();
-    // post_align_width = rect.w;
-    // post_align_height = rect.h;
-    // double xratio = 1.0;
-    // double yratio = 1.0;
-    // if (pre_align_width > 0.0) xratio = (post_align_width / pre_align_width);
-    // if (pre_align_height > 0.0) yratio = (post_align_height / pre_align_height);
-    // //SAT_PRINT("ratio %.3f,%.3f\n",xratio,yratio);
     if (scale != MPaintedScale) {
       double ratio = scale / MPaintedScale;
       SAT_ListNode* node = MModules.head();
