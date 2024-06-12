@@ -25,7 +25,8 @@ struct SAT_WidgetOptions {
   bool      autoCursor        = true;   // mouse automatically captured
   bool      autoHint          = false;  // automatically send hint
   bool      realignInvisible  = false;
-  bool      autoClip          = true;
+  bool      autoClipChildren  = true;
+  bool      wantHoverEvents   = false;
 };
 
 struct SAT_WidgetState {
@@ -384,7 +385,7 @@ public:
     if (numchildren > 0) {
 
       SAT_Rect clip_rect = mrect;
-      if (Options.autoClip) painter->pushOverlappingClip(clip_rect);
+      if (Options.autoClipChildren) painter->pushOverlappingClip(clip_rect);
 
       //for (int32_t i=(numchildren-1); i>=0; i--) {
       for (uint32_t i=0; i<numchildren; i++) {
@@ -399,7 +400,7 @@ public:
         }
       }
 
-      if (Options.autoClip) painter->popClip();
+      if (Options.autoClipChildren) painter->popClip();
 
     }
   }
