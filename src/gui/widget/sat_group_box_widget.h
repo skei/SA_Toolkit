@@ -1,5 +1,5 @@
-#ifndef sat_groupbox_widget_included
-#define sat_groupbox_widget_included
+#ifndef sat_group_box_widget_included
+#define sat_group_box_widget_included
 //----------------------------------------------------------------------
 
 #include "gui/widget/sat_button_widget.h"
@@ -37,10 +37,6 @@ public:
     MContainer->Options.realignInvisible = true;
     if (AOpen) open();
     else close();
-
-    //debug
-    MContainer->setBackgroundColor(SAT_Green);
-
   }
 
   //----------
