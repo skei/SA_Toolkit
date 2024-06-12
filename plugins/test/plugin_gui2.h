@@ -331,6 +331,16 @@ public:
       // center panel
       //--------------------
 
+      SAT_ScrollBoxWidget* scrollbox1 = new SAT_ScrollBoxWidget(100);
+      center_panel->appendChild(scrollbox1);
+      scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT;
+      scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
+      scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_RIGHT;
+
+        for (uint32_t i=0; i< 30; i++) {
+          scrollbox1->appendChild( new SAT_SliderWidget(SAT_Rect(5,5+i*25,80,20)));
+        }
+
       SAT_GraphWidget* graph1 = new SAT_GraphWidget(0);
       center_panel->appendChild(graph1);
       graph1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
