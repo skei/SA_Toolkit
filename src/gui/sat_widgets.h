@@ -17,6 +17,7 @@
 #include "gui/widget/sat_pages_widget.h"
 #include "gui/widget/sat_root_widget.h"
 #include "gui/widget/sat_scroll_bar_widget.h"
+#include "gui/widget/sat_scroll_box_widget.h"
 #include "gui/widget/sat_sizer_widget.h"
 #include "gui/widget/sat_slider_widget.h"
 #include "gui/widget/sat_surface_widget.h"
