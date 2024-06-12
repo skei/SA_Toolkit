@@ -73,10 +73,13 @@ class myPlugin
 private:
 //------------------------------
 
-  const char* MButtonTexts[15] = {
-    "I", "II", "III", "IV", "V", 
-    "VI", "VII", "VIII", "IX", "X", 
-    "XI", "XII", "XIII", "XIV", "XV"
+  const char* MButtonTexts[10*6] = {
+    "0",   "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",
+    "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+    "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+    "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+    "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+    "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"
   };
 
 //------------------------------
@@ -126,7 +129,7 @@ public:
     appendParameter(p8);
 
     setProcessor( new myProcessor(this) );
-    setInitialEditorSize(640,480,1.0,true);
+    setInitialEditorSize(640,480+100,1.0,true);
     return SAT_Plugin::init();
   }
 
@@ -195,21 +198,25 @@ public:
         SAT_KeyboardWidget* kb1 = new SAT_KeyboardWidget(SAT_Rect(10,375,100,30));
         root->appendChild(kb1);
 
-        SAT_ButtonWidget* b1 = new SAT_ButtonWidget(SAT_Rect( 120,210, 100, 30));
+        SAT_ButtonWidget* b1 = new SAT_ButtonWidget(SAT_Rect(120,210,100,30),false);
         root->appendChild(b1);
         AEditor->connect(b1,getParameter(6));
         b1->setTexts("Off","On");
         b1->setDrawParamText(false);
 
-        SAT_GridWidget* g1 = new SAT_GridWidget(SAT_Rect( 120,250, 300,100),5,3);
+        SAT_ButtonWidget* b2 = new SAT_ButtonWidget(SAT_Rect(230,210,100,30),true);
+        root->appendChild(b2);
+
+        SAT_GridWidget* g1 = new SAT_GridWidget(SAT_Rect( 120,250, 300,100),10,6);
         root->appendChild(g1);
         g1->setSelectCell(true);
         g1->setSelectMultipleCells(true);
         g1->setDrawSelectedCells(true);
 
-        SAT_ButtonGridWidget* bg1 = new SAT_ButtonGridWidget(SAT_Rect(120,360,300,100),5,3);
+        SAT_ButtonGridWidget* bg1 = new SAT_ButtonGridWidget(SAT_Rect(120,360,300,100),10,6,MButtonTexts);
         root->appendChild(bg1);
-        bg1->setButtonTexts(MButtonTexts);
+        //bg1->setButtonTexts(MButtonTexts);
+        bg1->setSingle(true,false);
 
         SAT_SliderWidget* s6 = new SAT_SliderWidget(SAT_Rect(430,210,30,140));
         root->appendChild(s6);
@@ -225,13 +232,27 @@ public:
 
         SAT_GroupBoxWidget* gb1 = new SAT_GroupBoxWidget(SAT_Rect(430,360,200,100),20,true);
         root->appendChild(gb1);
-        //gb1->getContainerWidget()->setBackgroundColor(SAT_DarkGrey);
 
           SAT_KnobWidget* gb1_k1 = new SAT_KnobWidget(SAT_Rect(10,10,50,50));
           gb1->appendChild(gb1_k1);
           AEditor->connect(gb1_k1,getParameter(7));
           gb1_k1->setFillBackground(false);
           gb1_k1->setKnobArcBackgroundColor(SAT_DarkerGrey);
+
+        SAT_TabsWidget* t1 = new SAT_TabsWidget(SAT_Rect(430,470,200,100),20);
+        root->appendChild(t1);
+
+          SAT_VisualWidget* p1 = new SAT_VisualWidget(15);
+          SAT_VisualWidget* p2 = new SAT_VisualWidget(15);
+          SAT_VisualWidget* p3 = new SAT_VisualWidget(15);
+          p1->setBackgroundColor(SAT_Yellow);
+          p2->setBackgroundColor(SAT_Orange);
+          p3->setBackgroundColor(SAT_Green2);
+          t1->appendPage( "Page1", p1);
+          t1->appendPage( "Page2", p2);
+          t1->appendPage( "Page3", p3);
+
+        t1->selectPage(0);
 
       return true;
     }
