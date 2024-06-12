@@ -30,4 +30,5 @@
 
 //#include "../plugins/test/exe1.h"
 //#include "../plugins/test/plugin1.h"
-#include "../plugins/test/plugin_gui1.h"
+//#include "../plugins/test/plugin_gui1.h"
+#include "../plugins/test/plugin_gui2.h"
