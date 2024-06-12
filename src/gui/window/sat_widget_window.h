@@ -278,7 +278,13 @@ public: // window
   
   void on_window_paint(SAT_PaintContext* AContext) override {
     //SAT_BufferedWindow::on_window_paint(AContext);
+    SAT_Painter* painter = AContext->painter;
+    uint32_t width = getWidth();
+    uint32_t height = getHeight();
+    painter->setClipRect(SAT_Rect(0,0,width,height));
+    painter->setClip(0,0,width,height);
     flushPaintWidgets(AContext);
+    painter->resetClip();
   }
 
   //----------

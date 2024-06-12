@@ -25,7 +25,7 @@ struct SAT_WidgetOptions {
   bool      autoCursor        = true;   // mouse automatically captured
   bool      autoHint          = false;  // automatically send hint
   bool      realignInvisible  = false;
-  bool      autoClip          = false;
+  bool      autoClip          = true;
 };
 
 struct SAT_WidgetState {
