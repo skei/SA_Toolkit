@@ -303,11 +303,23 @@ public:
       buttongrid1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
       buttongrid1->setSingle(false,true);
 
-      SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(60);
-      left_panel->appendChild(keyboard);
-      keyboard->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      keyboard->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-      keyboard->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      SAT_KeyboardWidget* keyboard1 = new SAT_KeyboardWidget(60);
+      left_panel->appendChild(keyboard1);
+      keyboard1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      keyboard1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      keyboard1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      SAT_SliderBankWidget* sliderbank1 = new SAT_SliderBankWidget(60,16);
+      left_panel->appendChild(sliderbank1);
+      sliderbank1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      sliderbank1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      sliderbank1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      SAT_ValueGraphWidget* valuegraph1 = new SAT_ValueGraphWidget(60,16);
+      left_panel->appendChild(valuegraph1);
+      valuegraph1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      valuegraph1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      valuegraph1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
       //--------------------
       // bottom panel
@@ -327,6 +339,23 @@ public:
       bottom_panel->appendChild(curve2);
       curve2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       curve2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+
+      SAT_SliderWidget* slider2 = new SAT_SliderWidget(SAT_Rect(25,50));
+      bottom_panel->appendChild(slider2);
+      slider2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      //slider2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
+      slider2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      slider2->setDrawDirection(SAT_DIRECTION_UP);
+      slider2->setDrawText(false);
+      slider2->setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
+
+      SAT_ScrollBarWidget* scrollbar2 = new SAT_ScrollBarWidget(SAT_Rect(25,50));
+      bottom_panel->appendChild(scrollbar2);
+      scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      //slider2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
+      scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      scrollbar2->setDirection(SAT_DIRECTION_VERT);
+
 
       //--------------------
       // center panel

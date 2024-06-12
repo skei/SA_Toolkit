@@ -20,11 +20,13 @@
 #include "gui/widget/sat_scroll_box_widget.h"
 #include "gui/widget/sat_sizer_widget.h"
 #include "gui/widget/sat_slider_widget.h"
+#include "gui/widget/sat_slider_bank_widget.h"
 #include "gui/widget/sat_surface_widget.h"
 #include "gui/widget/sat_tabs_widget.h"
 #include "gui/widget/sat_text_widget.h"
 #include "gui/widget/sat_tween_widget.h"
 #include "gui/widget/sat_value_widget.h"
+#include "gui/widget/sat_value_graph_widget.h"
 #include "gui/widget/sat_visual_widget.h"
 
 //----------------------------------------------------------------------

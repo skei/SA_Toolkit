@@ -402,8 +402,12 @@ public: // window
       }
       else {
         updateHover(AXpos,AYpos,ATime);
+        if (MHoverWidget && MHoverWidget->Options.wantHoverEvents) {
+          MHoverWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+        }
       }
     }
+
     MMousePreviousXpos = AXpos;
     MMousePreviousYpos = AYpos;
   }
