@@ -50,6 +50,7 @@ public:
 
   void setDrawBorder(bool ADraw=true)       { MDrawBorder = ADraw; }
   void setBorderColor(SAT_Color AColor)     { MBorderColor = AColor; }
+  void setBorderWidth(double AWidth)        { MBorderWidth = AWidth; }
 
   void setDrawIndicators(bool ADraw)        { MDrawIndicators = ADraw; }
 

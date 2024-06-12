@@ -184,6 +184,17 @@ public:
         k1->setTextSize(20);
         k1->setValueTextSize(25);
 
+        SAT_CurveWidget* c1 = new SAT_CurveWidget(SAT_Rect(10,320,45,45),false);
+        root->appendChild(c1);
+        //c1->setDecay(false);
+
+        SAT_CurveWidget* c2 = new SAT_CurveWidget(SAT_Rect(65,320,45,45),true);
+        root->appendChild(c2);
+        //c2->setDecay(true);
+
+        SAT_KeyboardWidget* kb1 = new SAT_KeyboardWidget(SAT_Rect(10,375,100,30));
+        root->appendChild(kb1);
+
         SAT_ButtonWidget* b1 = new SAT_ButtonWidget(SAT_Rect( 120,210, 100, 30));
         root->appendChild(b1);
         AEditor->connect(b1,getParameter(6));
@@ -207,13 +218,20 @@ public:
         s6->setDrawText(false);
         s6->setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
 
+        SAT_ScrollBarWidget* sb1 = new SAT_ScrollBarWidget(SAT_Rect(470,210,20,140));
+        root->appendChild(sb1);
+        sb1->setDirection(SAT_DIRECTION_VERT);
+        sb1->setThumbSize(0.3);
+
         SAT_GroupBoxWidget* gb1 = new SAT_GroupBoxWidget(SAT_Rect(430,360,200,100),20,true);
         root->appendChild(gb1);
-        //gb1->getHeaderWidget()->
+        //gb1->getContainerWidget()->setBackgroundColor(SAT_DarkGrey);
 
           SAT_KnobWidget* gb1_k1 = new SAT_KnobWidget(SAT_Rect(10,10,50,50));
           gb1->appendChild(gb1_k1);
           AEditor->connect(gb1_k1,getParameter(7));
+          gb1_k1->setFillBackground(false);
+          gb1_k1->setKnobArcBackgroundColor(SAT_DarkerGrey);
 
       return true;
     }
