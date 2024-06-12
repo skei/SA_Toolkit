@@ -13,6 +13,7 @@
 #include "gui/widget/sat_group_box_widget.h"
 #include "gui/widget/sat_keyboard_widget.h"
 #include "gui/widget/sat_knob_widget.h"
+#include "gui/widget/sat_pages_widget.h"
 #include "gui/widget/sat_root_widget.h"
 #include "gui/widget/sat_scroll_bar_widget.h"
 #include "gui/widget/sat_slider_widget.h"
