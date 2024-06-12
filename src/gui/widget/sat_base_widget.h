@@ -65,6 +65,7 @@ public:
   virtual void do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) {}
   virtual void do_widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
   virtual void do_widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
+  virtual void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
 
 };
 

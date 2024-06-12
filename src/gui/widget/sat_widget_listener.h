@@ -20,6 +20,7 @@ public:
   virtual void on_widgetListener_set_hint(SAT_Widget* AWidget, const char* AHint) {}
   virtual void on_widgetListener_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
   virtual void on_widgetListener_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
+  virtual void on_widgetListener_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
 };
 
 //----------------------------------------------------------------------

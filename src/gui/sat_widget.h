@@ -190,6 +190,20 @@ public:
     }
    }
 
+  // virtual void setRectAndBase(SAT_Rect ARect) {
+  //   double scale = getWindowScale();
+  //   //SAT_Rect mrect = getRect();
+  //   SAT_Rect rect = ARect;
+  //   setRect(ARect);
+  //   //rect.x -= MLayoutOffset.x;
+  //   //rect.y -= MLayoutOffset.y;
+  //   //rect.x -= (MLayoutOffset.x * scale);
+  //   //rect.y -= (MLayoutOffset.y * scale);
+  //   rect.scale(1.0 / scale);
+  //   setBaseRect(rect);
+  // }
+
+
 //------------------------------
 public: // children
 //------------------------------
@@ -647,6 +661,23 @@ public:
     if (MParent) MParent->do_widget_start_tween(AWidget,ATween);
   }
 
+  void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
+    SAT_PRINT("dx %i dy %i\n",ADeltaX,ADeltaY);
+    SAT_Rect base_rect = getBaseRect();
+    //base_rect.w += ADeltaX;
+    //base_rect.h += ADeltaY;
+    double scale = getWindowScale();
+    base_rect.w += (ADeltaX / scale);
+    base_rect.h += (ADeltaY / scale);
+    setBaseRect(base_rect);
+
+    SAT_Widget* parent = AWidget->getParent();
+    if (parent) {
+      parent->on_widget_realign();
+      parent->do_widget_redraw(parent,0);
+    }
+
+  }
   
 };
 

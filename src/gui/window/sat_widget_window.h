@@ -608,6 +608,16 @@ public: // widget listener
     MTweenManager.appendChain(ATween);
   }
 
+  void on_widgetListener_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
+    // SAT_Widget* parent = AWidget->getParent();
+    // if (parent) {
+    //   SAT_TRACE;
+    //   parent->on_widget_realign();
+    //   parent->do_widget_redraw(parent,0);
+    // }
+  }
+
+
 };
 
 //----------------------------------------------------------------------
