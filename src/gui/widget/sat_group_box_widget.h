@@ -31,6 +31,7 @@ public:
     SAT_Rect header_rect = SAT_Rect(0,0,ARect.w,MHeaderSize);
     SAT_Rect container_rect = SAT_Rect(0,MHeaderSize,ARect.w,ARect.h-MHeaderSize);
     MHeader = new SAT_ButtonWidget(header_rect);
+    MHeader->setTexts("Closed","open");
     MContainer = new SAT_VisualWidget(container_rect);
     SAT_VisualWidget::appendChild(MHeader);
     SAT_VisualWidget::appendChild(MContainer);
@@ -67,14 +68,14 @@ public:
 //------------------------------
 
   void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
-    SAT_VisualWidget::do_widget_update(AWidget,AMode);
-    //SAT_TRACE;
-    double value = MHeader->getValue();
-    if (value > 0.5) {
-      open();
+    if (AWidget == MHeader) {
+      double value = MHeader->getValue();
+      if (value > 0.5) open();
+      else close();
+      SAT_VisualWidget::do_widget_update(this,AMode);
     }
     else {
-      close();
+      SAT_VisualWidget::do_widget_update(AWidget,AMode);
     }
   }
 
