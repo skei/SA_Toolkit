@@ -662,7 +662,7 @@ public:
   }
 
   void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
-    SAT_PRINT("dx %i dy %i\n",ADeltaX,ADeltaY);
+    //SAT_PRINT("dx %i dy %i\n",ADeltaX,ADeltaY);
     SAT_Rect base_rect = getBaseRect();
     //base_rect.w += ADeltaX;
     //base_rect.h += ADeltaY;

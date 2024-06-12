@@ -151,7 +151,7 @@ public:
       } // switch mode
 
       if (MTarget) {
-        SAT_PRINT("deltax %i deltay %i\n",deltax,deltay);
+        //SAT_PRINT("deltax %i deltay %i\n",deltax,deltay);
         MTarget->do_widget_resize(this,deltax,deltay);
       }
       prevx = AXpos;
