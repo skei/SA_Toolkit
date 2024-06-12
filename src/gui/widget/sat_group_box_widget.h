@@ -28,14 +28,27 @@ public:
     setName("SAT_GroupBoxWidget");
     MHeaderSize = AHeaderSize;
     MFullSize = ARect.h;
-    SAT_Rect header_rect = SAT_Rect(0,0,ARect.w,MHeaderSize);
-    SAT_Rect container_rect = SAT_Rect(0,MHeaderSize,ARect.w,ARect.h-MHeaderSize);
-    MHeader = new SAT_ButtonWidget(header_rect);
-    MHeader->setTexts("Closed","open");
-    MContainer = new SAT_VisualWidget(container_rect);
+
+    // SAT_Rect header_rect = SAT_Rect(0,0,ARect.w,MHeaderSize);
+    // SAT_Rect container_rect = SAT_Rect(0,MHeaderSize,ARect.w,ARect.h-MHeaderSize);
+    // MHeader = new SAT_ButtonWidget(header_rect);
+    // MHeader->setTexts("Closed","open");
+    // MContainer = new SAT_VisualWidget(container_rect);
+    // SAT_VisualWidget::appendChild(MHeader);
+    // SAT_VisualWidget::appendChild(MContainer);
+
+    MHeader = new SAT_ButtonWidget(MHeaderSize);
     SAT_VisualWidget::appendChild(MHeader);
+    MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+    MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    MHeader->setTexts("Closed","open");
+
+    MContainer = new SAT_VisualWidget(0);
     SAT_VisualWidget::appendChild(MContainer);
     MContainer->Options.realignInvisible = true;
+    MContainer->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    MContainer->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
     if (AOpen) open();
     else close();
   }

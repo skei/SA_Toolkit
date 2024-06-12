@@ -96,9 +96,9 @@ public:
   virtual void    setNumRows(int32_t AHeight)               { MNumRows = AHeight; }
   virtual void    setNumCells(int32_t AX, int32_t AY)       { MNumColumns = AX; MNumRows = AY; }
 
-  virtual void    setSelectCell(bool ASelect=true)          { MSelectCell = ASelect; }
-  virtual void    setSelectMultipleCells(bool ASelect=true) { MSelectMultipleCells = ASelect; }
-  virtual void    setDragCell(bool ADrag=true)              { MDragCell = ADrag; }
+  virtual void    setCanSelectCell(bool ASelect=true)          { MSelectCell = ASelect; }
+  virtual void    setCanSelectMultipleCells(bool ASelect=true) { MSelectMultipleCells = ASelect; }
+  virtual void    setCanDragCell(bool ADrag=true)              { MDragCell = ADrag; }
 
   virtual void    setDrawCells(bool ADraw=true)             { MDrawCells = ADraw; }
   virtual void    setDrawLines(bool H=true, bool V=true)    { MDrawHorizontalLines = H; MDrawVerticalLines = V; }

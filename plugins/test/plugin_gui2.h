@@ -169,11 +169,15 @@ public:
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
       bottom_panel->setDrawBorder(false);
+      bottom_panel->Layout.innerBorder = SAT_Rect(5,5,5,0);
+      bottom_panel->Layout.spacing = SAT_Point(5,5);
 
       SAT_VisualWidget* center_panel = new SAT_VisualWidget(0);
       center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
       center_panel->setDrawBorder(false);
+      center_panel->Layout.innerBorder = SAT_Rect(0,0,0,0);
+      center_panel->Layout.spacing = SAT_Point(5,5);
 
       SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
       SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
@@ -197,6 +201,24 @@ public:
       widget1->setBackgroundColor(SAT_Red);
       widget1->setDrawBorder(false);
 
+      SAT_TextWidget* text1 = new SAT_TextWidget(20,"Text");
+      left_panel->appendChild(text1);
+      text1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      text1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      text1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      SAT_ButtonWidget* button1 = new SAT_ButtonWidget(20);
+      left_panel->appendChild(button1);
+      button1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      button1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      button1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      SAT_ButtonWidget* button2 = new SAT_ButtonWidget(20,true);
+      left_panel->appendChild(button2);
+      button2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      button2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      button2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
       SAT_ValueWidget* value1 = new SAT_ValueWidget(20);
       left_panel->appendChild(value1);
       value1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -217,6 +239,79 @@ public:
       slider1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       slider1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
       slider1->setText("Slider");
+
+      SAT_ScrollBarWidget* scrollbar1 = new SAT_ScrollBarWidget(20);
+      left_panel->appendChild(scrollbar1);
+      scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      SAT_GroupBoxWidget* groupbox1 = new SAT_GroupBoxWidget(80,20,true);
+      left_panel->appendChild(groupbox1);
+      groupbox1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      groupbox1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      groupbox1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      SAT_TabsWidget* tabs1 = new SAT_TabsWidget(80,20);
+      left_panel->appendChild(tabs1);
+      tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+        SAT_VisualWidget* p1 = new SAT_VisualWidget(15);
+        SAT_VisualWidget* p2 = new SAT_VisualWidget(15);
+        SAT_VisualWidget* p3 = new SAT_VisualWidget(15);
+        p1->setBackgroundColor(SAT_Yellow);
+        p2->setBackgroundColor(SAT_Orange);
+        p3->setBackgroundColor(SAT_Green2);
+        tabs1->appendPage( "Page1", p1);
+        tabs1->appendPage( "Page2", p2);
+        tabs1->appendPage( "Page3", p3);
+      tabs1->selectPage(0);
+
+      SAT_GridWidget* grid1 = new SAT_GridWidget(60,4,4);
+      left_panel->appendChild(grid1);
+      grid1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      grid1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      grid1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      grid1->setCanSelectCell(true);
+      grid1->setCanSelectMultipleCells(true);
+      grid1->setDrawSelectedCells(true);
+
+      SAT_ButtonGridWidget* buttongrid1 = new SAT_ButtonGridWidget(60,4,4,MButtonTexts);
+      left_panel->appendChild(buttongrid1);
+      buttongrid1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      buttongrid1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      buttongrid1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      buttongrid1->setSingle(false,true);
+
+      SAT_KeyboardWidget* keyboard = new SAT_KeyboardWidget(60);
+      left_panel->appendChild(keyboard);
+      keyboard->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      keyboard->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      keyboard->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      //--------------------
+      // bottom panel
+      //--------------------
+
+      SAT_KnobWidget* knob1 = new SAT_KnobWidget(50);
+      bottom_panel->appendChild(knob1);
+      knob1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      knob1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+
+      SAT_CurveWidget* curve1 = new SAT_CurveWidget(50);
+      bottom_panel->appendChild(curve1);
+      curve1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      curve1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+
+      SAT_CurveWidget* curve2 = new SAT_CurveWidget(50,false);
+      bottom_panel->appendChild(curve2);
+      curve2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      curve2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+
+      //--------------------
+      // left panel
+      //--------------------
 
       return true;
     }
