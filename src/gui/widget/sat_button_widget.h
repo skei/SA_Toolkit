@@ -14,24 +14,27 @@ class SAT_ButtonWidget
 private:
 //------------------------------
 
-  const char* MOffText            = "Off";
+  const char* MOffText            =  "Off";
   SAT_Color   MOffTextColor       = SAT_Black;
   SAT_Color   MOffBackgroundColor = SAT_Grey;
   SAT_Color   MOffBorderColor     = SAT_Black;
 
-  const char* MOnText            = "On";
-  SAT_Color   MOnTextColor       = SAT_LightGrey;
-  SAT_Color   MOnBackgroundColor = SAT_DarkGrey;
-  SAT_Color   MOnBorderColor     = SAT_White;
+  const char* MOnText             = "On";
+  SAT_Color   MOnTextColor        = SAT_LightGrey;
+  SAT_Color   MOnBackgroundColor  = SAT_DarkGrey;
+  SAT_Color   MOnBorderColor      = SAT_White;
+
+  bool        MMomentary          = true;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_ButtonWidget(SAT_Rect ARect)
+  SAT_ButtonWidget(SAT_Rect ARect, bool AMomentary=false)
   : SAT_TextWidget(ARect) {
     setName("SAT_ButtonWidget");
     setCursor(SAT_CURSOR_FINGER);
+    MMomentary = AMomentary;
 
   }
 
@@ -61,17 +64,6 @@ public:
 public: // on_widget
 //------------------------------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    if (AButton == SAT_BUTTON_LEFT) {
-      double value = getValue();
-      if (value > 0.5) {
-        //SAT_PRINT("off\n");
-        setValue(0.0);
-      }
-      else {
-        //SAT_PRINT("on\n");
-        setValue(1.0);
-
 // {
 //   // test tween
 //   double starts[4] = {0,0,0,0};
@@ -82,9 +74,30 @@ public: // on_widget
 //   do_widget_start_tween(this,chain);
 // }
 
+  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (AButton == SAT_BUTTON_LEFT) {
+      if (MMomentary) {
+        setValue(1.0);
+      }
+      else { // momentary
+        double value = getValue();
+        if (value > 0.5) setValue(0.0);
+        else setValue(1.0);
       }
       do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
       do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
+    }
+  }
+
+  //----------
+
+  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (AButton == SAT_BUTTON_LEFT) {
+      if (MMomentary) {
+        setValue(0.0);
+        do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
+        do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
+      }
     }
   }
 
