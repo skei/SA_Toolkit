@@ -105,6 +105,7 @@ public:
 //------------------------------
 
   virtual SAT_Rect          getBaseRect()                 { return MBaseRect; }
+  virtual SAT_Rect          getContentRect()              { return MContentRect; }
   virtual int32_t           getCursor()                   { return MCursor; }
   virtual const char*       getHint()                     { return MHint; }
   virtual uint32_t          getIndex()                    { return MIndex; }
@@ -356,6 +357,21 @@ public:
     return nullptr;
   }
 
+  //----------
+
+  virtual void scrollChildren(double AOffsetX, double AOffsetY) {
+    uint32_t num = MChildren.size();
+    for (uint32_t i=0; i<num; i++) {
+      SAT_Widget* child = MChildren[i];
+      if (child->State.visible) {
+        //child->setChildrenOffset(AOffsetX,AOffsetY);
+        child->MRect.x += AOffsetX;
+        child->MRect.y += AOffsetY;
+        // child->addLayoutOffset(AOffsetX,AOffsetY);
+        child->scrollChildren(AOffsetX,AOffsetY);
+      }
+    }
+  }
   //----------
 
   // note: doesn't paint itself..
