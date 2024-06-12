@@ -138,6 +138,11 @@ public: // do_widget
     if (MListener) MListener->on_widgetListener_start_tween(AWidget,ATween);
   }
 
+  void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
+    if (MListener) MListener->on_widgetListener_resize(AWidget,ADeltaX,ADeltaY);
+  }
+
+
 };
 
 //----------------------------------------------------------------------
