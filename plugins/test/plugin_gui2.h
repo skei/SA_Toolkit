@@ -156,14 +156,6 @@ public:
       window->setRootWidget(root);
       root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
-      SAT_VisualWidget* left_panel = new SAT_VisualWidget(200);
-      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
-      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
-      left_panel->setDrawBorder(false);
-      left_panel->Layout.innerBorder = SAT_Rect(0,0,5,5);
-      left_panel->Layout.spacing = SAT_Point(5,5);
-
       SAT_VisualWidget* bottom_panel = new SAT_VisualWidget(60);
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
@@ -171,6 +163,15 @@ public:
       bottom_panel->setDrawBorder(false);
       bottom_panel->Layout.innerBorder = SAT_Rect(5,5,5,0);
       bottom_panel->Layout.spacing = SAT_Point(5,5);
+
+      //SAT_VisualWidget* left_panel = new SAT_VisualWidget(200);
+      SAT_ScrollBoxWidget* left_panel = new SAT_ScrollBoxWidget(200);
+      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
+      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      left_panel->setDrawBorder(false);
+      left_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,0,5,5);
+      left_panel->getContentWidget()->Layout.spacing = SAT_Point(5,5);
 
       SAT_VisualWidget* center_panel = new SAT_VisualWidget(0);
       center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -182,10 +183,10 @@ public:
       SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
       SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
 
-      root->appendChild(left_panel);
-      root->appendChild(left_sizer);
       root->appendChild(bottom_panel);
       root->appendChild(bottom_sizer);
+      root->appendChild(left_panel);
+      root->appendChild(left_sizer);
       root->appendChild(center_panel);
 
       //--------------------
@@ -331,15 +332,15 @@ public:
       // center panel
       //--------------------
 
-      SAT_ScrollBoxWidget* scrollbox1 = new SAT_ScrollBoxWidget(100);
-      center_panel->appendChild(scrollbox1);
-      scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT;
-      scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
-      scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_RIGHT;
+      // SAT_ScrollBoxWidget* scrollbox1 = new SAT_ScrollBoxWidget(100);
+      // center_panel->appendChild(scrollbox1);
+      // scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT;
+      // scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
+      // scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_RIGHT;
 
-        for (uint32_t i=0; i< 30; i++) {
-          scrollbox1->appendChild( new SAT_SliderWidget(SAT_Rect(5,5+i*25,80,20)));
-        }
+      //   for (uint32_t i=0; i< 30; i++) {
+      //     scrollbox1->appendChild( new SAT_SliderWidget(SAT_Rect(5,5+i*25,80,20)));
+      //   }
 
       SAT_GraphWidget* graph1 = new SAT_GraphWidget(0);
       center_panel->appendChild(graph1);

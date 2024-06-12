@@ -104,7 +104,7 @@ public:
     //MContent->setFillBackground(true);
     //MContent->setBackgroundColor(SAT_COLOR_DARK_GREEN);
 
-//    MContent->setAutoClip(true);
+    //MContent->Options.autoClip = true;
     
   }
 
@@ -218,6 +218,20 @@ public: // child to parent
     }
   }
   
+  //----------
+
+  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {
+    // SAT_Widget* parent = AWidget->getParent();
+    // if (parent) {
+    //   parent->realignChildren();
+    //   parent->do_widget_redraw(parent,0);
+    //   //markWidgetDirtyFromGui(parent);
+    // }    
+    SAT_VisualWidget::do_widget_realign(this,AMode);
+
+  }
+
+
   //----------
   
   // only pass on event up, if you don't handle them..
