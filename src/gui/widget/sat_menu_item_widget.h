@@ -23,6 +23,7 @@ public:
     Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    setCursor(SAT_CURSOR_FINGER);
   }
 
   //----------

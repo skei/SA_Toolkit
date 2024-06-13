@@ -60,8 +60,20 @@ public:
     SAT_TRACE;
     setActive(true);
     setVisible(true);
+
     SAT_Widget* parent = getParent();
     if (parent) {
+
+      SAT_Rect rect = getBaseRect();
+      rect.x = AXpos;
+      rect.y = AYpos;
+      double scale = getWindowScale();
+      if (scale > 0.0) {
+        rect.x = AXpos / scale;
+        rect.y = AYpos / scale;
+      }
+      setBaseRect(rect);
+
       parent->realignChildren();
       parent->do_widget_redraw(parent,0);
     }
