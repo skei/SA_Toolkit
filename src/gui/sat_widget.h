@@ -194,18 +194,18 @@ public:
     }
    }
 
-  // virtual void setRectAndBase(SAT_Rect ARect) {
-  //   double scale = getWindowScale();
-  //   //SAT_Rect mrect = getRect();
-  //   SAT_Rect rect = ARect;
-  //   setRect(ARect);
-  //   //rect.x -= MLayoutOffset.x;
-  //   //rect.y -= MLayoutOffset.y;
-  //   //rect.x -= (MLayoutOffset.x * scale);
-  //   //rect.y -= (MLayoutOffset.y * scale);
-  //   rect.scale(1.0 / scale);
-  //   setBaseRect(rect);
-  // }
+  virtual void setRectAndBase(SAT_Rect ARect) {
+    double scale = getWindowScale();
+    //SAT_Rect mrect = getRect();
+    SAT_Rect rect = ARect;
+    setRect(ARect);
+    //rect.x -= MLayoutOffset.x;
+    //rect.y -= MLayoutOffset.y;
+    //rect.x -= (MLayoutOffset.x * scale);
+    //rect.y -= (MLayoutOffset.y * scale);
+    rect.scale(1.0 / scale);
+    setBaseRect(rect);
+  }
 
 
 //------------------------------
