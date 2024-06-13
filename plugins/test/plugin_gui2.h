@@ -82,6 +82,8 @@ private:
     "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"
   };
 
+  #include "../../data/img/SA.h"
+
 //------------------------------
 public:
 //------------------------------
@@ -245,9 +247,11 @@ public:
 
       SAT_SelectorWidget* selector1 = new SAT_SelectorWidget(20,"Select..",menu1);
       left_panel->appendChild(selector1);
+      menu1->setListener(selector1);
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
 
       SAT_DragValueWidget* dragvalue1 = new SAT_DragValueWidget(20);
       left_panel->appendChild(dragvalue1);
@@ -337,6 +341,21 @@ public:
       valuegraph1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       valuegraph1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
+      SAT_VisualWidget* symbol_container = new SAT_VisualWidget(20);
+      left_panel->appendChild(symbol_container);
+      symbol_container->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      symbol_container->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      symbol_container->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      symbol_container->setDrawBorder(false);
+      
+        for (uint32_t i=0; i<17; i++) {
+          SAT_SymbolWidget* symbol = new SAT_SymbolWidget(SAT_Rect(i*20,0,18,18),i);
+          symbol->setColor(SAT_DarkerGrey);
+          symbol->setColor(SAT_DarkerGrey);
+          symbol->setPenWidth(2);
+          symbol_container->appendChild(symbol);
+        }
+
       //--------------------
       // bottom panel
       //--------------------
@@ -359,7 +378,6 @@ public:
       SAT_SliderWidget* slider2 = new SAT_SliderWidget(SAT_Rect(25,50));
       bottom_panel->appendChild(slider2);
       slider2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      //slider2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
       slider2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
       slider2->setDrawDirection(SAT_DIRECTION_UP);
       slider2->setDrawText(false);
@@ -368,10 +386,13 @@ public:
       SAT_ScrollBarWidget* scrollbar2 = new SAT_ScrollBarWidget(SAT_Rect(25,50));
       bottom_panel->appendChild(scrollbar2);
       scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      //slider2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
       scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
       scrollbar2->setDirection(SAT_DIRECTION_VERT);
 
+      SAT_ImageWidget* image1 = new SAT_ImageWidget(100,(void*)SA_png,SA_png_size);
+      bottom_panel->appendChild(image1);
+      image1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      image1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
 
       //--------------------
       // center panel
@@ -410,7 +431,6 @@ public:
       //--------------------
 
       root->appendChild(menu1);
-      menu1->setListener(selector1);
 
       return true;
     }
