@@ -155,7 +155,9 @@ public:
   virtual void setParameter(void* AParameter, uint32_t AIndex)  { MParameters[AIndex] = AParameter; }
   virtual void setParameterIndex(uint32_t AIndex)               { MParameterIndex = AIndex; }
   virtual void setParent(SAT_Widget* AParent)                   { MParent = AParent; }
+  virtual void setPos(SAT_Point APos)                           { MRect.x = APos.x; MRect.y = APos.y; }
   virtual void setRect(SAT_Rect ARect)                          { MRect = ARect; }
+  virtual void setSize(SAT_Point ASize)                         { MRect.w = ASize.x; MRect.h = ASize.y; }
   virtual void setValue(double AValue)                          { MValues[MValueIndex] = AValue; }
   virtual void setValue(double AValue, uint32_t AIndex)         { MValues[AIndex] = AValue; }
   virtual void setValueIndex(uint32_t AIndex)                   { MValueIndex = AIndex; }
@@ -650,15 +652,15 @@ public:
     if (MParent) MParent->do_widget_notify(AWidget,AValue);
   }
   
-  void do_widget_mouse_capture(SAT_Widget* AWidget, bool ACapture=true) override {
+  void do_widget_mouse_capture(SAT_Widget* AWidget) override {
     if (MParent) MParent->do_widget_mouse_capture(AWidget);
   }
   
-  void do_widget_key_capture(SAT_Widget* AWidget, bool ACapture=true) override {
+  void do_widget_key_capture(SAT_Widget* AWidget) override {
     if (MParent) MParent->do_widget_key_capture(AWidget);
   }
   
-  void do_widget_modal(SAT_Widget* AWidget, bool AModal=true) override {
+  void do_widget_modal(SAT_Widget* AWidget) override {
     if (MParent) MParent->do_widget_modal(AWidget);
   }
 

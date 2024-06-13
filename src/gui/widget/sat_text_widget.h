@@ -48,14 +48,16 @@ public:
 public:
 //------------------------------
 
-  void setText(const char* AText)             { MText = AText; }
+  virtual void setText(const char* AText)             { MText = AText; }
 
-  void setDrawText(bool ADraw=true)           { MDrawText = ADraw; }
-  void setTextColor(SAT_Color AColor)         { MTextColor = AColor; }
-  void setTextSize(double ASize)              { MTextSize = ASize; }
-  void setTextAlignment(uint32_t AAlignment)  { MTextAlignment = AAlignment; }
+  virtual void setDrawText(bool ADraw=true)           { MDrawText = ADraw; }
+  virtual void setTextColor(SAT_Color AColor)         { MTextColor = AColor; }
+  virtual void setTextSize(double ASize)              { MTextSize = ASize; }
+  virtual void setTextAlignment(uint32_t AAlignment)  { MTextAlignment = AAlignment; }
 
-  void setDrawParamText(bool AParam=true)     { MDrawParamText = AParam; }
+  virtual void setDrawParamText(bool AParam=true)     { MDrawParamText = AParam; }
+
+  virtual const char* getText() { return MText; }
 
 //------------------------------
 public:

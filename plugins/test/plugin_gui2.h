@@ -157,6 +157,7 @@ public:
       root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
       SAT_VisualWidget* bottom_panel = new SAT_VisualWidget(60);
+      root->appendChild(bottom_panel);
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
@@ -164,8 +165,11 @@ public:
       bottom_panel->Layout.innerBorder = SAT_Rect(5,5,5,0);
       bottom_panel->Layout.spacing = SAT_Point(5,5);
 
-      //SAT_VisualWidget* left_panel = new SAT_VisualWidget(200);
+      SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
+      root->appendChild(bottom_sizer);
+
       SAT_ScrollBoxWidget* left_panel = new SAT_ScrollBoxWidget(200);
+      root->appendChild(left_panel);
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
@@ -173,21 +177,27 @@ public:
       left_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,0,5,5);
       left_panel->getContentWidget()->Layout.spacing = SAT_Point(5,5);
 
+      SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
+      root->appendChild(left_sizer);
+
       SAT_VisualWidget* center_panel = new SAT_VisualWidget(0);
+      root->appendChild(center_panel);
       center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
       center_panel->setDrawBorder(false);
       center_panel->Layout.innerBorder = SAT_Rect(5,0,0,5);
       center_panel->Layout.spacing = SAT_Point(5,5);
 
-      SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
-      SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
+      //--------------------
+      // menu
+      //--------------------
 
-      root->appendChild(bottom_panel);
-      root->appendChild(bottom_sizer);
-      root->appendChild(left_panel);
-      root->appendChild(left_sizer);
-      root->appendChild(center_panel);
+      SAT_MenuWidget* menu1 = new SAT_MenuWidget(SAT_Rect(100,20*5));
+        menu1->appendItem("Item1");
+        menu1->appendItem("Item2");
+        menu1->appendItem("Item3");
+        menu1->appendItem("Item4");
+        menu1->appendItem("Item5");
 
       //--------------------
       // left panel
@@ -233,6 +243,12 @@ public:
       button2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       button2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
+      SAT_SelectorWidget* selector1 = new SAT_SelectorWidget(20,"Select..",menu1);
+      left_panel->appendChild(selector1);
+      selector1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      selector1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      selector1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
       SAT_DragValueWidget* dragvalue1 = new SAT_DragValueWidget(20);
       left_panel->appendChild(dragvalue1);
       dragvalue1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -270,14 +286,14 @@ public:
         SAT_VisualWidget* p1 = new SAT_VisualWidget(15);
         SAT_VisualWidget* p2 = new SAT_VisualWidget(15);
         SAT_VisualWidget* p3 = new SAT_VisualWidget(15);
-        p1->setBackgroundColor(SAT_Yellow);
+        //p1->setBackgroundColor(SAT_Yellow);
         p1->appendChild( new SAT_KnobWidget(SAT_Rect( 5,5,40,40)));
         p1->appendChild( new SAT_KnobWidget(SAT_Rect(50,5,40,40)));
         p1->appendChild( new SAT_KnobWidget(SAT_Rect(95,5,40,40)));
-        p2->setBackgroundColor(SAT_Orange);
+        //p2->setBackgroundColor(SAT_Orange);
         p2->appendChild( new SAT_SliderWidget(SAT_Rect(5, 5,150,20)));
         p2->appendChild( new SAT_SliderWidget(SAT_Rect(5,30,150,20)));
-        p3->setBackgroundColor(SAT_Green2);
+        //p3->setBackgroundColor(SAT_Green2);
         p3->appendChild( new SAT_ButtonWidget(SAT_Rect( 5, 5,40,20)));
         p3->appendChild( new SAT_ButtonWidget(SAT_Rect(50, 5,40,20)));
         p3->appendChild( new SAT_ButtonWidget(SAT_Rect( 5,30,40,20)));
@@ -389,6 +405,12 @@ public:
           graph1->addModule(module,i*15,i*15,"module");
         }
 
+      //--------------------
+      // menu
+      //--------------------
+
+      root->appendChild(menu1);
+      menu1->setListener(selector1);
 
       return true;
     }

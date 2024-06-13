@@ -55,7 +55,7 @@
 //#define SAT_INCLUDE_LOG
   #define SAT_LOG_THREAD
   #define SAT_LOG_TIME
-  #define SAT_NANOVG_TEXTPATCH
+  #define SAT_NANOVG_TEXT_PATCH
 //#define SAT_NO_BITMAP_PNG
 //#define SAT_NO_BITMAP_PNG_FILE
 //#define SAT_NO_STDLIB

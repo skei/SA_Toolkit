@@ -110,15 +110,15 @@ public: // do_widget
     if (MListener) MListener->on_widgetListener_notify(AWidget,AValue);
   }
   
-  void do_widget_mouse_capture(SAT_Widget* AWidget, bool ACapture=true) override {
+  void do_widget_mouse_capture(SAT_Widget* AWidget) override {
     if (MListener) MListener->on_widgetListener_mouse_capture(AWidget);
   }
   
-  void do_widget_key_capture(SAT_Widget* AWidget, bool ACapture=true) override {
+  void do_widget_key_capture(SAT_Widget* AWidget) override {
     if (MListener) MListener->on_widgetListener_key_capture(AWidget);
   }
   
-  void do_widget_modal(SAT_Widget* AWidget, bool AModal=true) override {
+  void do_widget_modal(SAT_Widget* AWidget) override {
     if (MListener) MListener->on_widgetListener_modal(AWidget);
   }
 
