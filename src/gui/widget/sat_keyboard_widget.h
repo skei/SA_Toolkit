@@ -158,7 +158,7 @@ public:
             MNoteRects2[n4+2] = x2;         MNoteRects2[n4+3] = floorf(y1+s3) - mdist_s;//MDist;
             break;
           case 3: // black
-            MNoteRects1[n4+0] = x1 + MDist; MNoteRects1[n4+1] = floorf(y1);
+            MNoteRects1[n4+0] = x1 + /*MDist*/mdist_s; MNoteRects1[n4+1] = floorf(y1);
             MNoteRects1[n4+2] = x2;         MNoteRects1[n4+3] = floorf(y1+s2) - mdist_s - S;//MDist - 1;
             break;
         } // switch
