@@ -158,7 +158,7 @@ public:
       window->setRootWidget(root);
       root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
-      SAT_VisualWidget* bottom_panel = new SAT_VisualWidget(60);
+      SAT_VisualWidget* bottom_panel = new SAT_VisualWidget(110);
       root->appendChild(bottom_panel);
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
@@ -360,22 +360,22 @@ public:
       // bottom panel
       //--------------------
 
-      SAT_KnobWidget* knob1 = new SAT_KnobWidget(50);
+      SAT_KnobWidget* knob1 = new SAT_KnobWidget(100);
       bottom_panel->appendChild(knob1);
       knob1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       knob1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
 
-      SAT_CurveWidget* curve1 = new SAT_CurveWidget(50,false);
+      SAT_CurveWidget* curve1 = new SAT_CurveWidget(30,false);
       bottom_panel->appendChild(curve1);
       curve1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       curve1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
 
-      SAT_CurveWidget* curve2 = new SAT_CurveWidget(50,true);
+      SAT_CurveWidget* curve2 = new SAT_CurveWidget(30,true);
       bottom_panel->appendChild(curve2);
       curve2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       curve2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
 
-      SAT_SliderWidget* slider2 = new SAT_SliderWidget(SAT_Rect(25,50));
+      SAT_SliderWidget* slider2 = new SAT_SliderWidget(SAT_Rect(25,100));
       bottom_panel->appendChild(slider2);
       slider2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       slider2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
@@ -383,7 +383,7 @@ public:
       slider2->setDrawText(false);
       slider2->setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
 
-      SAT_ScrollBarWidget* scrollbar2 = new SAT_ScrollBarWidget(SAT_Rect(25,50));
+      SAT_ScrollBarWidget* scrollbar2 = new SAT_ScrollBarWidget(SAT_Rect(25,100));
       bottom_panel->appendChild(scrollbar2);
       scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
