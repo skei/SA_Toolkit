@@ -29,6 +29,7 @@
 #include "gui/widget/sat_symbol_widget.h"
 #include "gui/widget/sat_tabs_widget.h"
 #include "gui/widget/sat_text_widget.h"
+#include "gui/widget/sat_text_edit_widget.h"
 #include "gui/widget/sat_tween_widget.h"
 #include "gui/widget/sat_value_widget.h"
 #include "gui/widget/sat_value_graph_widget.h"
