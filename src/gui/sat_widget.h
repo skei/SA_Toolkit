@@ -113,6 +113,7 @@ public:
   virtual SAT_Rect          getInitialRect()              { return MInitialRect; }
   virtual double            getModulation()               { return MModulation; }
   virtual const char*       getName()                     { return MName; }
+  virtual SAT_WidgetOwner*  getOwner()                    { return MOwner; }
   virtual uint32_t          getNumValues()                { return MNumValues; }
   virtual void*             getParameter()                { return MParameters[MParameterIndex]; }
   virtual void*             getParameter(uint32_t AIndex) { return MParameters[AIndex]; }
@@ -248,6 +249,10 @@ public: // children
 
   virtual SAT_Widget* getChild(uint32_t AIndex) {
     return MChildren[AIndex];
+  }
+
+  virtual SAT_WidgetArray* getChildren() {
+    return &MChildren;
   }
 
 //------------------------------
