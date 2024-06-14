@@ -20,6 +20,12 @@ private:
   SAT_Color   MKnobArcBackgroundColor = 0.4;
   double      MKnobArcThickness       = 8.0;
 
+  bool        MDrawKnobNeedle         = true;
+  SAT_Color   MKnobNeedleColor        = SAT_LighterGrey;
+  double      MKnobNeedleStart        = 0.5;
+  double      MKnobNeedleLength       = 1.0;
+  double      MKnobNeedleThickness    = 3.0;
+
 //------------------------------
 public:
 //------------------------------
@@ -57,26 +63,6 @@ public:
 //------------------------------
 public:
 //------------------------------
-
-  /*
-
-
-      if (MDrawModulation) {
-        double mx = 0.0;
-        double mw = 0.0;
-        if (m > v) {
-          mx = x + (v * w);
-          mw = w * (m - v);
-        }
-        else {
-          mx = x + (m * w);
-          mw = w * (v - m);
-        }    
-        //SAT_PRINT("v %.3f m %.3f x %.3f w %.3f mx %.3f mw %.3f\n",v,m,x,w,mx,mw);
-        painter->setFillColor(MModulationColor);
-        painter->fillRect(mx,y,mw,h);
-      }
-  */
 
   virtual void drawKnobArc(SAT_PaintContext* AContext) {
     if (MDrawKnobArc) {
@@ -122,6 +108,43 @@ public:
         painter->setDrawColor(MKnobArcColor);
         painter->drawArc(cx,cy,r,a1,a2);
       }
+
+      // if (MDrawModulation) {
+      //   double mx = 0.0;
+      //   double mw = 0.0;
+      //   if (m > v) {
+      //     mx = x + (v * w);
+      //     mw = w * (m - v);
+      //   }
+      //   else {
+      //     mx = x + (m * w);
+      //     mw = w * (v - m);
+      //   }    
+      //   //SAT_PRINT("v %.3f m %.3f x %.3f w %.3f mx %.3f mw %.3f\n",v,m,x,w,mx,mw);
+      //   painter->setFillColor(MModulationColor);
+      //   painter->fillRect(mx,y,mw,h);
+      // }
+
+      if (MDrawKnobNeedle) {
+
+        double a = SAT_PI2 * (v + 0.35);
+        double rx = cos(a);
+        double ry = sin(a);
+
+        double len     = (r * MKnobNeedleLength) + (MKnobArcThickness * 0.5 * scale);
+        double start = len * MKnobNeedleStart;
+        double end   = len;
+
+        double x1 = cx + (rx * start);
+        double y1 = cy + (ry * start);
+        double x2 = cx + (rx * end);
+        double y2 = cy + (ry * end);
+
+        painter->setLineWidth(MKnobNeedleThickness * scale);
+        painter->setDrawColor(MKnobNeedleColor);
+        painter->drawLine(x1,y1,x2,y2);
+      }
+
     }
   }
 
