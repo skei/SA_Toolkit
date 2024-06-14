@@ -20,11 +20,13 @@ class SAT_LogoWidget
 private:
 //------------------------------
 
-  bool        MDrawLogo   = true;
-  NSVGimage*  MLogoImage  = nullptr;
-  SAT_Color   MLogoColor  = SAT_White;
-  double      MLogoWidth  = 2;
-  char*       MBuffer     = nullptr;
+  bool        MDrawLogo     = true;
+  NSVGimage*  MLogoImage    = nullptr;
+  SAT_Color   MLogoColor    = SAT_White;
+  double      MLogoWidth    = 1.0;
+  char*       MBuffer       = nullptr;
+
+  SAT_Rect    MLogoOffset   = {0,0,0,0};
 
 //------------------------------
 public:
@@ -53,9 +55,10 @@ public:
 public:
 //------------------------------
 
-  virtual void setDrawLogo(bool ADraw=true)   { MDrawLogo = ADraw; }
-  virtual void setLogoColor(SAT_Color AColor) { MLogoColor = AColor; }
-  virtual void setLogoWidth(double AWidth)    { MLogoWidth = AWidth; }
+  virtual void setDrawLogo(bool ADraw=true)     { MDrawLogo = ADraw; }
+  virtual void setLogoColor(SAT_Color AColor)   { MLogoColor = AColor; }
+  virtual void setLogoWidth(double AWidth)      { MLogoWidth = AWidth; }
+  virtual void setLogoOffset(SAT_Rect AOffset)  { MLogoOffset = AOffset; }
 
 //------------------------------
 public:
@@ -72,6 +75,9 @@ public:
       SAT_Assert(painter);
 
       SAT_Rect mrect = getRect();
+      SAT_Rect ofs = MLogoOffset;
+      ofs.scale(S);
+      mrect.shrink(ofs);
 
       if (!MLogoImage) return;
       if (MLogoImage->width <= 0.0 ) return;
