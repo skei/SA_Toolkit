@@ -252,6 +252,11 @@ public:
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
+      SAT_TextEditWidget* textedit1 = new SAT_TextEditWidget(20,"Edit..");
+      left_panel->appendChild(textedit1);
+      textedit1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      textedit1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      textedit1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
       SAT_DragValueWidget* dragvalue1 = new SAT_DragValueWidget(20);
       left_panel->appendChild(dragvalue1);

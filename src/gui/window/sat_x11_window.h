@@ -819,30 +819,30 @@ private:
   // https://github.com/etale-cohomology/xcb/blob/master/loop.c
 
   uint32_t remapKey(uint32_t AKey, uint32_t AState) {
-    // int col = 0;
-    // xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
-    // // keycode = AKey ??
-    // //xcb_keycode_t* keycode  = xcb_key_symbols_get_keycode(MKeySyms,keysym);
-    // //free(keycode);
-    // //char buffer[256] = {0};
-    // //uint32_t num = xkb_keysym_to_utf8(keysym,buffer,255);
-    // //for (uint32_t i=0; i<num; i++) {
-    // //  SAT_DPrint("%i\n",buffer[i]);
-    // //}
-    //uint32_t ks = keysym;
-    // switch (keysym) {
-    //   case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
-    //   case XKB_KEY_KP_Space:    ks = SAT_KEY_SPACE;     break;
-    //   case XKB_KEY_Home:        ks = SAT_KEY_HOME;      break;
-    //   case XKB_KEY_End:         ks = SAT_KEY_END;       break;
-    //   case XKB_KEY_Left:        ks = SAT_KEY_LEFT;      break;
-    //   case XKB_KEY_Right:       ks = SAT_KEY_RIGHT;     break;
-    //   case XKB_KEY_Delete:      ks = SAT_KEY_DELETE;    break;
-    //   case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
-    //   case XKB_KEY_Escape:      ks = SAT_KEY_ESC;       break;
-    // }
-    // return ks;
-    return AKey;
+    int col = 0;
+    xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
+    // keycode = AKey ??
+    //xcb_keycode_t* keycode  = xcb_key_symbols_get_keycode(MKeySyms,keysym);
+    //free(keycode);
+    //char buffer[256] = {0};
+    //uint32_t num = xkb_keysym_to_utf8(keysym,buffer,255);
+    //for (uint32_t i=0; i<num; i++) {
+    //  SAT_DPrint("%i\n",buffer[i]);
+    //}
+    uint32_t ks = keysym;
+    switch (keysym) {
+      case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;
+      case XKB_KEY_KP_Space:    ks = SAT_KEY_SPACE;     break;
+      case XKB_KEY_Home:        ks = SAT_KEY_HOME;      break;
+      case XKB_KEY_End:         ks = SAT_KEY_END;       break;
+      case XKB_KEY_Left:        ks = SAT_KEY_LEFT;      break;
+      case XKB_KEY_Right:       ks = SAT_KEY_RIGHT;     break;
+      case XKB_KEY_Delete:      ks = SAT_KEY_DELETE;    break;
+      case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
+      case XKB_KEY_Escape:      ks = SAT_KEY_ESC;       break;
+    }
+    return ks;
+    //return AKey;
   }
 
 //------------------------------
@@ -949,12 +949,16 @@ private:
       case XCB_KEY_PRESS: {
         //if (!MWindowMapped) break;
         xcb_key_press_event_t* key_press = (xcb_key_press_event_t*)AEvent;
+
         uint8_t  k  = key_press->detail;
         uint16_t s  = key_press->state;
         uint32_t ts = key_press->time;
         uint32_t ks = remapKey(k,s);
+        SAT_PRINT("k %i s %i ts %i ks %i\n",k,s,ts,ks);
+
+        char c = 0;
         s = remapState(s);
-        on_window_keyPress(k,ks,s,ts);
+        on_window_keyPress(ks,c,s,ts);
        break;
       }
 
