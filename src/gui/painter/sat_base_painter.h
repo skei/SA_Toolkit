@@ -37,6 +37,13 @@ public:
 public:
 //------------------------------
 
+  virtual void        setDefaultFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) {}
+  virtual void        setHeaderFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) {}
+  virtual int32_t     getDefaultFont() { return 0; }
+  virtual int32_t     getHeaderFont() { return 0; }
+
+    //
+
   virtual void        beginPainting(int32_t AWidth, int32_t AHeight) {}
   virtual void        endPainting() {}
 

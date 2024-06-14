@@ -158,14 +158,16 @@ public:
       window->setRootWidget(root);
       root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
-      SAT_VisualWidget* bottom_panel = new SAT_VisualWidget(110);
+      SAT_ScrollBoxWidget* bottom_panel = new SAT_ScrollBoxWidget(150,true,true);
       root->appendChild(bottom_panel);
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
-      bottom_panel->setDrawBorder(false);
+      bottom_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,0,5,5);
+      bottom_panel->getContentWidget()->Layout.spacing = SAT_Point(5,5);
       bottom_panel->Layout.innerBorder = SAT_Rect(5,5,5,0);
       bottom_panel->Layout.spacing = SAT_Point(5,5);
+      bottom_panel->setDrawBorder(false);
 
       SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
       root->appendChild(bottom_sizer);
@@ -175,9 +177,9 @@ public:
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
-      left_panel->setDrawBorder(false);
       left_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,0,5,5);
       left_panel->getContentWidget()->Layout.spacing = SAT_Point(5,5);
+      left_panel->setDrawBorder(false);
 
       SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
       root->appendChild(left_sizer);
@@ -277,6 +279,12 @@ public:
       scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+      // SAT_RangeBarWidget* rangebar1 = new SAT_RangeBarWidget(20);
+      // left_panel->appendChild(rangebar1);
+      // rangebar1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      // rangebar1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      // rangebar1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
       SAT_GroupBoxWidget* groupbox1 = new SAT_GroupBoxWidget(80,20,true);
       left_panel->appendChild(groupbox1);
@@ -399,19 +407,59 @@ public:
       image1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       image1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
 
+      SAT_LogoWidget* logo1 = new SAT_LogoWidget(100);
+      bottom_panel->appendChild(logo1);
+      logo1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      logo1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+
+      SAT_TextBoxWidget* textbox1 = new SAT_TextBoxWidget(SAT_Rect(150,100));
+      bottom_panel->appendChild(textbox1);
+      textbox1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      textbox1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+        textbox1->appendLine("Hello world!");
+        textbox1->appendLine("another line");
+        textbox1->appendLine("let's try a much, much longer line, and see if the scrollbars are updated");
+
+      SAT_WaveformWidget* waveform1 = new SAT_WaveformWidget(SAT_Rect(150,100));
+      bottom_panel->appendChild(waveform1);
+      waveform1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      waveform1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      //waveform1->setAudioBuffer(size,buffer,stereo);
+
+      SAT_CircularWaveformWidget* waveform2 = new SAT_CircularWaveformWidget(100,360);
+      bottom_panel->appendChild(waveform2);
+      waveform2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      waveform2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      //waveform2->setAudioBuffer(size,buffer,stereo);
+
+
       //--------------------
       // center panel
       //--------------------
 
-      // SAT_ScrollBoxWidget* scrollbox1 = new SAT_ScrollBoxWidget(100);
-      // center_panel->appendChild(scrollbox1);
-      // scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT;
-      // scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
-      // scrollbox1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_RIGHT;
+      SAT_TimelineWidget* timeline1 = new SAT_TimelineWidget(100);
+      center_panel->appendChild(timeline1);
+      timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
+      timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
 
-      //   for (uint32_t i=0; i< 30; i++) {
-      //     scrollbox1->appendChild( new SAT_SliderWidget(SAT_Rect(5,5+i*25,80,20)));
-      //   }
+        SAT_TimelineTrack* track1 = new SAT_TimelineTrack("Track1");
+        SAT_TimelineTrack* track2 = new SAT_TimelineTrack("T2");
+        SAT_TimelineTrack* track3 = new SAT_TimelineTrack("Automation");
+
+        SAT_TimelineSegment* segment1 = new SAT_TimelineSegment("1",1,10);
+        SAT_TimelineSegment* segment2 = new SAT_TimelineSegment("2",3,5);
+        SAT_TimelineSegment* segment3 = new SAT_TimelineSegment("3",6,10);
+        SAT_TimelineSegment* segment4 = new SAT_TimelineSegment("4",2,7);
+
+        track1->addSegment(segment1);
+        track2->addSegment(segment2);
+        track2->addSegment(segment3);
+        track3->addSegment(segment4);
+
+        timeline1->addTrack(track1);
+        timeline1->addTrack(track2);
+        timeline1->addTrack(track3);
 
       SAT_GraphWidget* graph1 = new SAT_GraphWidget(0);
       center_panel->appendChild(graph1);

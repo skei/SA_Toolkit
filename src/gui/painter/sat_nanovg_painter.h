@@ -119,29 +119,29 @@ public:
 
   //----------
 
-  // void setDefaultFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
-  //   MDefaultFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
-  //   //nvgFontFaceId(MContext,MDefaultFont);
-  // }
+  void setDefaultFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
+    MDefaultFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
+    //nvgFontFaceId(MContext,MDefaultFont);
+  }
 
   //----------
 
-  // void setHeaderFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
-  //   MHeaderFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
-  //   //nvgFontFaceId(MContext,MDefaultFont);
-  // }
+  void setHeaderFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
+    MHeaderFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
+    //nvgFontFaceId(MContext,MDefaultFont);
+  }
 
   //----------
 
-  // int32_t getDefaultFont() final {
-  //   return MDefaultFont;
-  // }
+  int32_t getDefaultFont() final {
+    return MDefaultFont;
+  }
 
   //----------
 
-  // int32_t getHeaderFont() final {
-  //   return MHeaderFont;
-  // }
+  int32_t getHeaderFont() final {
+    return MHeaderFont;
+  }
 
   //----------
   

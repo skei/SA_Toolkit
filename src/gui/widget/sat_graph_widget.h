@@ -722,8 +722,10 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
+
     SAT_Painter* painter = AContext->painter;
-    //MScale = getWindowScale();
+    painter->pushClip(getRect());
+
     double scale = getWindowScale();
     MPaintedScale = scale;
     fillBackground(AContext);
@@ -749,6 +751,8 @@ public:
     
     paintChildren(AContext);
     drawBorder(AContext);
+    
+    painter->popClip();
 
   }
 
