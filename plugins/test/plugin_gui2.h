@@ -406,11 +406,17 @@ public:
       bottom_panel->appendChild(image1);
       image1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       image1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      image1->setDrawBorder(false);
 
-      SAT_LogoWidget* logo1 = new SAT_LogoWidget(100);
+      SAT_LogoWidget* logo1 = new SAT_LogoWidget(SAT_Rect(5,0,100,100));
       bottom_panel->appendChild(logo1);
       logo1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       logo1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      logo1->setLogoColor(0.25);
+      logo1->setLogoWidth(3);
+      logo1->setFillBackground(true);
+      logo1->setBackgroundColor(0.85);
+      logo1->setLogoOffset(SAT_Rect(12,12,12,12));
 
       SAT_TextBoxWidget* textbox1 = new SAT_TextBoxWidget(SAT_Rect(150,100));
       bottom_panel->appendChild(textbox1);
