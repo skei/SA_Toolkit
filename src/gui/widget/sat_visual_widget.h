@@ -274,37 +274,37 @@ public:
   //----------
 
   virtual void drawDropShadow(SAT_PaintContext* AContext) {
-    SAT_Assert(AContext);
-    if (MDrawDropShadow) {
-      double S = getWindowScale(); // AContext->scale;
-      SAT_Painter* painter = AContext->painter;
-      SAT_Assert(painter);
-      SAT_Rect mrect = getRect();
-      if (mrect.w <= 0.0) return;
-      if (mrect.h <= 0.0) return;
-      SAT_Rect sr = mrect;
-      sr.shrink(MDropShadowFeather * (S*0.5));
-      SAT_Color icolor = MDropShadowIColor;
-      SAT_Color ocolor = MDropShadowOColor;
-      // if (State.disabled) {
-      //   icolor.blend(MDisabledColor,MDisabledFactor);
-      //   ocolor.blend(MDisabledColor,MDisabledFactor);
-      // }
-      sat_paint_t shadow;
-      if (MDropShadowInner) {
-        sr.w += (MDropShadowFeather*S*0.5);
-        sr.h += (MDropShadowFeather*S*0.5);
-        shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,ocolor,icolor);//MDropShadowOColor,MDropShadowIColor);
-      }
-      else {
-        shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,icolor,ocolor);//MDropShadowIColor,MDropShadowOColor);
-      }
-      painter->setFillPaint(shadow);
+    // SAT_Assert(AContext);
+    // if (MDrawDropShadow) {
+    //   double S = getWindowScale(); // AContext->scale;
+    //   SAT_Painter* painter = AContext->painter;
+    //   SAT_Assert(painter);
+    //   SAT_Rect mrect = getRect();
+    //   if (mrect.w <= 0.0) return;
+    //   if (mrect.h <= 0.0) return;
+    //   SAT_Rect sr = mrect;
+    //   sr.shrink(MDropShadowFeather * (S*0.5));
+    //   SAT_Color icolor = MDropShadowIColor;
+    //   SAT_Color ocolor = MDropShadowOColor;
+    //   // if (State.disabled) {
+    //   //   icolor.blend(MDisabledColor,MDisabledFactor);
+    //   //   ocolor.blend(MDisabledColor,MDisabledFactor);
+    //   // }
+    //   sat_paint_t shadow;
+    //   if (MDropShadowInner) {
+    //     sr.w += (MDropShadowFeather*S*0.5);
+    //     sr.h += (MDropShadowFeather*S*0.5);
+    //     shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,ocolor,icolor);//MDropShadowOColor,MDropShadowIColor);
+    //   }
+    //   else {
+    //     shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,icolor,ocolor);//MDropShadowIColor,MDropShadowOColor);
+    //   }
+    //   painter->setFillPaint(shadow);
 
-      /*if (MRoundedCorners) painter->fillRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
-      else*/
-      painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
-    }
+    //   /*if (MRoundedCorners) painter->fillRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
+    //   else*/
+    //   painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+    // }
   }
 
   //----------
