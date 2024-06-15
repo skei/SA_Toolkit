@@ -38,11 +38,6 @@ public:
   : SAT_InterleavedProcessor(AOwner) {
   }
 
-  //----------
-
-  virtual ~myProcessor() {
-  }
-
 //------------------------------
 public:
 //------------------------------
@@ -55,8 +50,8 @@ public:
 
   //----------
 
-  // void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) final {
-  // }
+  void processStereoSample(sat_sample_t* spl0, sat_sample_t* spl1) final {
+  }
 
 };
 
@@ -156,10 +151,27 @@ public:
       SAT_Window* window = AEditor->getWindow();
       SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
       window->setRootWidget(root);
-      root->Layout.innerBorder = SAT_Rect(10,10,10,10);
+      root->setDrawBorder(true);
+      root->setBorderColor(0.4);
+
+      //root->Layout.innerBorder  = SAT_Rect(10,10,10,10);
+      //root->Layout.spacing      = SAT_Point(5,5);
+
+      SAT_PluginHeaderWidget* header1 = new SAT_PluginHeaderWidget(40,"plugin_gui2");
+      root->appendChild(header1);
+
+      SAT_PluginFooterWidget* footer1 = new SAT_PluginFooterWidget(20,"...");
+      root->appendChild(footer1);
+
+      SAT_VisualWidget* middle1 = new SAT_VisualWidget(0);
+      root->appendChild(middle1);
+      middle1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT; // not TOP?
+      middle1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+      middle1->Layout.innerBorder  = SAT_Rect(10,10,10,10);
+      middle1->Layout.spacing      = SAT_Point(5,5);
 
       SAT_ScrollBoxWidget* bottom_panel = new SAT_ScrollBoxWidget(150,true,true);
-      root->appendChild(bottom_panel);
+      middle1->appendChild(bottom_panel);
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
@@ -170,10 +182,10 @@ public:
       bottom_panel->setDrawBorder(false);
 
       SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
-      root->appendChild(bottom_sizer);
+      middle1->appendChild(bottom_sizer);
 
       SAT_ScrollBoxWidget* left_panel = new SAT_ScrollBoxWidget(200);
-      root->appendChild(left_panel);
+      middle1->appendChild(left_panel);
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
       left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
@@ -182,10 +194,10 @@ public:
       left_panel->setDrawBorder(false);
 
       SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
-      root->appendChild(left_sizer);
+      middle1->appendChild(left_sizer);
 
       SAT_VisualWidget* center_panel = new SAT_VisualWidget(0);
-      root->appendChild(center_panel);
+      middle1->appendChild(center_panel);
       center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
       center_panel->setDrawBorder(false);

@@ -426,9 +426,9 @@ public:
 
     SAT_Rect mrect = getRect();
     SAT_Rect parent_rect = mrect;
-    parent_rect.shrink(Layout.innerBorder);
+    parent_rect.shrink(inner_border);
     SAT_Rect layout_rect = mrect;
-    layout_rect.shrink(Layout.innerBorder);
+    layout_rect.shrink(inner_border);
 
     double layout_xcenter = layout_rect.x + (layout_rect.w * 0.5);
     double layout_ycenter = layout_rect.y + (layout_rect.h * 0.5);

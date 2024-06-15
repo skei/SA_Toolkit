@@ -2,6 +2,8 @@
 #define sat_plugin_header_included
 //----------------------------------------------------------------------
 
+// 40
+
 #include "sat.h"
 #include "gui/widget/sat_visual_widget.h"
 
