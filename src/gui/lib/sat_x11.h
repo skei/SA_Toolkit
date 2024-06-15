@@ -42,6 +42,12 @@ bool sat_xlib_is_initialized = sat_initialize_xlib();
 //
 //----------------------------------------------------------------------
 
+#ifndef SAT_PAINTER_NANOVG
+  typedef int sat_paint_t;
+#endif
+
+//----------
+
 // https://tronche.com/gui/x/xlib/appendix/b/
 
 const char* SAT_X11_WM_CURSORS[/*SAT_CURSOR_COUNT*/] = {
