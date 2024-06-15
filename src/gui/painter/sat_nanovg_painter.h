@@ -8,8 +8,8 @@
 #include "gui/painter/sat_painter_owner.h"
 #include "gui/sat_surface.h"
 
-//#include "../data/fonts/Roboto/Roboto-Regular.h"
-//#include "../data/fonts/Manjari/Manjari-Thin.h"
+#include "../data/fonts/Roboto/Roboto-Regular.h"
+#include "../data/fonts/Manjari/Manjari-Thin.h"
 
 //typedef NVGpaint sat_nanovg_paint_t;
 
@@ -81,10 +81,10 @@ public:
     //nvgFontFaceId(MContext,MDefaultFont);
     //nvgFontSize(MContext,MTextSize);
 
-//    setDefaultFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
-//    setHeaderFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
-//    selectFont(MDefaultFont);
-//    setTextSize(MTextSize);
+   setDefaultFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
+   setHeaderFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
+   selectFont(MDefaultFont);
+   setTextSize(MTextSize);
 
     //ARenderer->resetCurrent();
 
