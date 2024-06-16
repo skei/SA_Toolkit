@@ -17,6 +17,16 @@ class SAT_MenuItemWidget
 public:
 //------------------------------
 
+  SAT_Color MHoverBackgroundColor   = SAT_DarkGrey;
+  SAT_Color MHoverTextColor         = SAT_White;
+
+  SAT_Color MUnHoverBackgroundColor = SAT_Grey;
+  SAT_Color MUnHoverTextColor       = SAT_Black;
+
+//------------------------------
+public:
+//------------------------------
+
   SAT_MenuItemWidget(SAT_Rect ARect, const char* AText)
   : SAT_TextWidget(ARect,AText) {
     setName("SAT_MenuItemWidget");
@@ -24,6 +34,9 @@ public:
     Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
     setCursor(SAT_CURSOR_FINGER);
+    setDrawBorder(false);
+    setBackgroundColor(MUnHoverBackgroundColor);
+    setTextColor(MUnHoverTextColor);
   }
 
   //----------
@@ -59,6 +72,20 @@ public:
     SAT_TRACE;
     // if ESC
     do_widget_notify(this,-1);
+  }
+
+  void on_widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
+    SAT_TRACE;
+    setBackgroundColor(MHoverBackgroundColor);
+    setTextColor(MHoverTextColor);
+    do_widget_redraw(this,0);
+  }
+
+  void on_widget_leave(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
+    SAT_TRACE;
+    setBackgroundColor(MUnHoverBackgroundColor);
+    setTextColor(MUnHoverTextColor);
+    do_widget_redraw(this,0);
   }
 
 

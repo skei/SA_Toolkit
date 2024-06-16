@@ -290,7 +290,7 @@ public:
 //------------------------------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    //drawDropShadow(AContext);
+    drawDropShadow(AContext);
     fillBackground(AContext);
     recalc_note_rects();
     for (int32_t note=0; note<12; note++) {

@@ -241,12 +241,13 @@ public:
 public:
 //------------------------------
 
-  // void on_widget_preAlign() override {
+  // SAT_Rect on_widget_preAlign(SAT_Rect ARect) override {
+  //   return ARect;
   // }
 
   //----------
 
-  void on_widget_postAlign() override {
+  SAT_Rect on_widget_postAlign(SAT_Rect ARect) override {
     double scale = getWindowScale();
     if (scale != MPaintedScale) {
       double ratio = scale / MPaintedScale;
@@ -258,6 +259,7 @@ public:
         node = node->next();
       }
     }
+    return ARect;
   }
 
 //------------------------------

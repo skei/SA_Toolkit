@@ -59,6 +59,7 @@ private:
   SAT_Rect          MInitialRect                        = {0,0,0,0};      // rect at creation time (unmodified)
   SAT_Rect          MContentRect                        = {0,0,0,0};
 
+//SAT_Point         MLayoutOffset                       = {0,0};
 //SAT_Point         MMovedOffset                        = {0,0};          // manually moved, .. 
 //SAT_Point         MScrolledOffset                     = {0,0};          // scrollbox, ..
 
@@ -193,15 +194,22 @@ public:
         MChildren[i]->setDisabled(AState,ARecursive);
       }
     }
-   }
+  }
+
+  /*
+    MRect is scaled, then moved..
+    so, to 'rescale' it back, we should un-move first, then un-scale
+  */
 
   virtual void setRectAndBase(SAT_Rect ARect) {
     double scale = getWindowScale();
     //SAT_Rect mrect = getRect();
     SAT_Rect rect = ARect;
     setRect(ARect);
-    //rect.x -= MLayoutOffset.x;
-    //rect.y -= MLayoutOffset.y;
+
+//rect.x -= MLayoutOffset.x;
+//rect.y -= MLayoutOffset.y;
+
     //rect.x -= (MLayoutOffset.x * scale);
     //rect.y -= (MLayoutOffset.y * scale);
     rect.scale(1.0 / scale);
@@ -438,10 +446,14 @@ public:
       SAT_Widget* child = MChildren[i];
       uint32_t child_layout = child->Layout.flags;
       SAT_Rect child_rect;
+
   //  SAT_Rect orig_rect;
+
       bool need_realign = child->State.visible || child->Options.realignInvisible;
       if (need_realign) {
-        child->on_widget_preAlign();
+
+//        child_rect = child->on_widget_preAlign(child_rect);
+
         if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
           child_rect = SAT_Rect(mrect.w,mrect.h,mrect.w,mrect.h);
           child_rect.scale(child->getInitialRect());
@@ -461,7 +473,12 @@ public:
           child_rect = child->getBaseRect();
           child_rect.scale(scale);
         }
-  //    orig_rect = child_rect; // before scaling...
+
+//SAT_Rect orig_rect = child_rect;
+
+        // child_rect is scaled (screen pixel coords)
+        child_rect = child->on_widget_preAlign(child_rect);
+
         // anchor
         bool xanchored = false;
         bool yanchored = false;
@@ -484,17 +501,25 @@ public:
         if (child_layout & SAT_WIDGET_LAYOUT_FILL_RIGHT)          { layout_rect.setX2( child_rect.x   ); layout_rect.w -= spacing.x; }
         if (child_layout & SAT_WIDGET_LAYOUT_FILL_BOTTOM)         { layout_rect.setY2( child_rect.y   ); layout_rect.h -= spacing.y; }
         MContentRect.combine(child_rect);
+
         // outer border
+
         SAT_Rect outer_border = child->Layout.outerBorder;
         outer_border.scale(scale);
         child_rect.shrink(outer_border);
-  //    child->MLayoutOffset.x = (child_rect.x - orig_rect.x); //(orig_rect.x * scale));
-  //    child->MLayoutOffset.y = (child_rect.y - orig_rect.y); //(orig_rect.y * scale));
+
+//child->MLayoutOffset.x = (child_rect.x - orig_rect.x);
+//child->MLayoutOffset.y = (child_rect.y - orig_rect.y);
+
+        //child->setRect(child_rect);
+        //child->on_widget_postAlign();
+
+        child_rect = child->on_widget_postAlign(child_rect);
         child->setRect(child_rect);
-        child->on_widget_postAlign();
         if (ARecursive) child->realignChildren(ARecursive);
       } // visible
     } // for
+
     MContentRect.w += inner_border.w;
     MContentRect.h += inner_border.h;
 

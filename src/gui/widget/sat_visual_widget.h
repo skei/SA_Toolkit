@@ -27,18 +27,21 @@ private:
 
   bool        MDrawIndicators   = true;
 
-  // drop shadow
-  
+  bool        MFillGradient               = false;
+  SAT_Color   MGradientColor1             = SAT_Color(0.6, 0.6, 0.6, 1.0 );
+  SAT_Color   MGradientColor2             = SAT_Color(0.4, 0.4, 0.4, 1.0 );
+
   bool        MDrawDropShadow             = false;
   bool        MDropShadowInner            = false;
-  double      MDropShadowFeather          = 10.0;
-  SAT_Color   MDropShadowIColor           = SAT_Color(0.0, 0.0, 0.0, 0.5 );
-  SAT_Color   MDropShadowOColor           = SAT_Color(0.33, 0.33, 0.33, 0.5 );
+  double      MDropShadowFeather          = 5.0;
+  SAT_Color   MDropShadowInnerColor       = SAT_Color(0.0, 0.0, 0.0, 0.4 );
+  SAT_Color   MDropShadowOuterColor       = SAT_Color(0.5, 0.5, 0.5, 0.4 );
   double      MDropShadowCorner           = 0.0;
-  double      MDropShadowXOffset          = 0.0;
-  double      MDropShadowYOffset          = 0.0;
-  // double      MDropShadowXOffsetTMP       = 0.0;
-  // double      MDropShadowYOffsetTMP       = 0.0;
+//SAT_Point   MDropShadowOffset           = {0,0};
+
+  bool        MDrawRoundedCorners         = false;
+  uint32_t    MRoundedCorners             = SAT_CORNER_ALL;
+  double      MRoundedCornerSize          = 5.0;
 
 //------------------------------
 public:
@@ -61,14 +64,32 @@ public:
 public:
 //------------------------------
 
-  void setFillBackground(bool AFill=true)   { MFillBackground = AFill; }
-  void setBackgroundColor(SAT_Color AColor) { MBackgroundColor = AColor; }
+  virtual void setFillBackground(bool AFill=true)         { MFillBackground = AFill; }
+  virtual void setBackgroundColor(SAT_Color AColor)       { MBackgroundColor = AColor; }
 
-  void setDrawBorder(bool ADraw=true)       { MDrawBorder = ADraw; }
-  void setBorderColor(SAT_Color AColor)     { MBorderColor = AColor; }
-  void setBorderWidth(double AWidth)        { MBorderWidth = AWidth; }
+  virtual void setDrawBorder(bool ADraw=true)             { MDrawBorder = ADraw; }
+  virtual void setBorderColor(SAT_Color AColor)           { MBorderColor = AColor; }
+  virtual void setBorderWidth(double AWidth)              { MBorderWidth = AWidth; }
 
-  void setDrawIndicators(bool ADraw)        { MDrawIndicators = ADraw; }
+  virtual void setDrawIndicators(bool ADraw)              { MDrawIndicators = ADraw; }
+
+  //
+
+  virtual void setFillGradient(bool AFill=true)         { MFillGradient = AFill; }
+  virtual void setGradientColor1(SAT_Color AColor)      { MGradientColor1 = AColor; }
+  virtual void setGradientColor2(SAT_Color AColor)      { MGradientColor2 = AColor; }
+
+  virtual void setDrawDropShadow(bool ADraw=true)         { MDrawDropShadow = ADraw; }
+  virtual void setDropShadowInner(bool AInner=true)       { MDropShadowInner = AInner; }
+  virtual void setDropShadowInnerColor(SAT_Color AColor)  { MDropShadowInnerColor = AColor; }
+  virtual void setDropShadowOuterColor(SAT_Color AColor)  { MDropShadowOuterColor = AColor; }
+  virtual void setDropShadowFeather(double AFeather)      { MDropShadowFeather = AFeather; }
+  virtual void setDropShadowCorner(double ACorner)        { MDropShadowCorner = ACorner; }
+//virtual void setDropShadowOffset(SAT_Point AOffset)     { MDropShadowOffset = AOffset; }
+
+  virtual void setDrawRoundedCorners(bool ADraw)          { MDrawRoundedCorners = ADraw; }
+  virtual void setRoundedCorners(uint32_t ACorners)       { MRoundedCorners = ACorners; }
+  virtual void setRoundedCornerSize(double ASize)         { MRoundedCornerSize = ASize; }
 
 //------------------------------
 public:
@@ -125,48 +146,37 @@ public:
   */
 
   virtual void fillBackground(SAT_PaintContext* AContext) {
+    double scale = getWindowScale();
     if (MFillBackground) {
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
       //SAT_PRINT("%.2f, %.2f, %.2f, %.2f\n",rect.x,rect.y,rect.w,rect.h);
-      painter->setFillColor(MBackgroundColor);
-      painter->fillRect(rect.x,rect.y,rect.w,rect.h);
+
+      if (MFillGradient) {
+        SAT_Color c1 = MGradientColor1;
+        SAT_Color c2 = MGradientColor2;
+        painter->setFillLinearGradient(rect.x,rect.y,rect.x,rect.y2(),c1,c2); // top to bottom
+      }
+      else {
+        painter->setFillColor(MBackgroundColor);
+      }
+
+      if (MDrawRoundedCorners) {
+        double size = MRoundedCornerSize * scale;
+        double ul = (MRoundedCorners & SAT_CORNER_UPPER_LEFT)  ? size : 0.0;
+        double ur = (MRoundedCorners & SAT_CORNER_UPPER_RIGHT) ? size : 0.0;
+        double lr = (MRoundedCorners & SAT_CORNER_LOWER_RIGHT) ? size : 0.0;
+        double ll = (MRoundedCorners & SAT_CORNER_LOWER_LEFT)  ? size : 0.0;
+        painter->fillRoundedRect(rect.x,rect.y,rect.w,rect.h,ul,ur,lr,ll);
+      }
+      else {
+        painter->fillRect(rect.x,rect.y,rect.w,rect.h);
+      }
+
     }
   }
 
   //----------
-
-  /*
-  virtual void drawBorder(SAT_PaintContext* AContext) {
-    SAT_Assert(AContext);
-    if (MDrawBorder) {
-      double S = AContext->scale;
-      SAT_Painter* painter = AContext->painter;
-      SAT_Assert(painter);
-      SAT_Rect mrect = getRect();
-      if (mrect.w <= 0.0) return;
-      if (mrect.h <= 0.0) return;
-      if (MDrawDropShadow && !MDropShadowInner) {
-        mrect.shrink(MDropShadowFeather * (S*0.5));
-        mrect.x -= (MDropShadowXOffset*S);
-        mrect.y -= (MDropShadowYOffset*S);
-      }
-      SAT_Color color = MBorderColor;
-      if (!isEnabled()) color.blend(MDisabledColor,MDisabledFactor);
-      painter->setDrawColor(color);
-      painter->setLineWidth(MBorderWidth * S);
-      if (MRoundedCorners) {
-        painter->drawRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
-      }
-      else {
-        if (MBorderEdges & SAT_EDGE_TOP)    painter->drawLine( mrect.x,    mrect.y,    mrect.x2(), mrect.y    );
-        if (MBorderEdges & SAT_EDGE_BOTTOM) painter->drawLine( mrect.x,    mrect.y2(), mrect.x2(), mrect.y2() );
-        if (MBorderEdges & SAT_EDGE_LEFT)   painter->drawLine( mrect.x,    mrect.y,    mrect.x,    mrect.y2() );
-        if (MBorderEdges & SAT_EDGE_RIGHT)  painter->drawLine( mrect.x2(), mrect.y,    mrect.x2(), mrect.y2() );
-      }
-    }
-  }
-  */
 
   virtual void drawBorder(SAT_PaintContext* AContext) {
     if (MDrawBorder) {
@@ -176,7 +186,18 @@ public:
       double scale = getWindowScale();
       painter->setDrawColor(MBorderColor);
       painter->setLineWidth(MBorderWidth*scale);
-      painter->drawRect(rect.x,rect.y,rect.w,rect.h);
+
+      if (MDrawRoundedCorners) {
+        double size = MRoundedCornerSize * scale;
+        double ul = (MRoundedCorners & SAT_CORNER_UPPER_LEFT)  ? size : 0.0;
+        double ur = (MRoundedCorners & SAT_CORNER_UPPER_RIGHT) ? size : 0.0;
+        double lr = (MRoundedCorners & SAT_CORNER_LOWER_RIGHT) ? size : 0.0;
+        double ll = (MRoundedCorners & SAT_CORNER_LOWER_LEFT)  ? size : 0.0;
+        painter->drawRoundedRect(rect.x,rect.y,rect.w,rect.h,ul,ur,lr,ll);
+      }
+      else {
+        painter->drawRect(rect.x,rect.y,rect.w,rect.h);
+      }
     }
   }
 
@@ -274,37 +295,37 @@ public:
   //----------
 
   virtual void drawDropShadow(SAT_PaintContext* AContext) {
-    // SAT_Assert(AContext);
-    // if (MDrawDropShadow) {
-    //   double S = getWindowScale(); // AContext->scale;
-    //   SAT_Painter* painter = AContext->painter;
-    //   SAT_Assert(painter);
-    //   SAT_Rect mrect = getRect();
-    //   if (mrect.w <= 0.0) return;
-    //   if (mrect.h <= 0.0) return;
-    //   SAT_Rect sr = mrect;
-    //   sr.shrink(MDropShadowFeather * (S*0.5));
-    //   SAT_Color icolor = MDropShadowIColor;
-    //   SAT_Color ocolor = MDropShadowOColor;
-    //   // if (State.disabled) {
-    //   //   icolor.blend(MDisabledColor,MDisabledFactor);
-    //   //   ocolor.blend(MDisabledColor,MDisabledFactor);
-    //   // }
-    //   sat_paint_t shadow;
-    //   if (MDropShadowInner) {
-    //     sr.w += (MDropShadowFeather*S*0.5);
-    //     sr.h += (MDropShadowFeather*S*0.5);
-    //     shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,ocolor,icolor);//MDropShadowOColor,MDropShadowIColor);
-    //   }
-    //   else {
-    //     shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,icolor,ocolor);//MDropShadowIColor,MDropShadowOColor);
-    //   }
-    //   painter->setFillPaint(shadow);
+    SAT_Assert(AContext);
+    if (MDrawDropShadow) {
+      double S = getWindowScale(); // AContext->scale;
+      SAT_Painter* painter = AContext->painter;
+      SAT_Assert(painter);
+      SAT_Rect mrect = getRect();
+      if (mrect.w <= 0.0) return;
+      if (mrect.h <= 0.0) return;
+      SAT_Rect sr = mrect;
+      sr.shrink(MDropShadowFeather * (S*0.5));
+      SAT_Color icolor = MDropShadowInnerColor;
+      SAT_Color ocolor = MDropShadowOuterColor;
+      // if (State.disabled) {
+      //   icolor.blend(MDisabledColor,MDisabledFactor);
+      //   ocolor.blend(MDisabledColor,MDisabledFactor);
+      // }
+      sat_paint_t shadow;
+      if (MDropShadowInner) {
+        sr.w += (MDropShadowFeather*S*0.5);
+        sr.h += (MDropShadowFeather*S*0.5);
+        shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,ocolor,icolor);//MDropShadowOColor,MDropShadowIColor);
+      }
+      else {
+        shadow = painter->boxGradient(sr.x,sr.y,sr.w,sr.h,MDropShadowCorner*S,MDropShadowFeather*S,icolor,ocolor);//MDropShadowIColor,MDropShadowOColor);
+      }
+      painter->setFillPaint(shadow);
 
-    //   /*if (MRoundedCorners) painter->fillRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
-    //   else*/
-    //   painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
-    // }
+      /*if (MRoundedCorners) painter->fillRoundedRect(mrect.x,mrect.y,mrect.w,mrect.h,MTLCorner*S,MTRCorner*S,MBRCorner*S,MBLCorner*S);
+      else*/
+      painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+    }
   }
 
   //----------

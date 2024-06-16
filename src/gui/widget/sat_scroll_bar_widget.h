@@ -222,7 +222,7 @@ public: // parent to child
 //  void on_widget_align(bool ARecursive=true) override {}
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    //drawDropShadow(AContext);
+    drawDropShadow(AContext);
     fillBackground(AContext);
     SAT_Painter* painter = AContext->painter;
     recalcThumbRect();
