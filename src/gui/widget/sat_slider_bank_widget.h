@@ -82,7 +82,7 @@ public:
     SAT_Rect mrect = getRect();
     SAT_Painter* painter = AContext->painter;
 
-    //drawDropShadow(AContext);
+    drawDropShadow(AContext);
     fillBackground(AContext);
 
     //STrace("painting %s\n",MName);

@@ -76,7 +76,7 @@ public:
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_PanelWidget::on_widget_paint(AContext);
-    //drawDropShadow(AContext);
+    drawDropShadow(AContext);
     fillBackground(AContext);
     
     SAT_Painter* painter= AContext->painter;

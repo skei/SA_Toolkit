@@ -101,34 +101,34 @@ public:
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
 
-    // SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
-    // appendParameter(p1);
+    SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
+    appendParameter(p1);
 
-    // SAT_Parameter* p2 = new SAT_Parameter( "param2", "", 1.0,  0, 10 );
-    // appendParameter(p2);
-    // p2->setFlag(CLAP_PARAM_IS_STEPPED);
+    SAT_Parameter* p2 = new SAT_Parameter( "param2", "", 1.0,  0, 10 );
+    appendParameter(p2);
+    p2->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    // SAT_Parameter* p3 = new SAT_Parameter( "param3", "", 2.0,  0, 10 );
-    // appendParameter(p3);
-    // p3->setFlag(CLAP_PARAM_IS_STEPPED);
+    SAT_Parameter* p3 = new SAT_Parameter( "param3", "", 2.0,  0, 10 );
+    appendParameter(p3);
+    p3->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    // SAT_Parameter* p4 = new SAT_Parameter( "param4", "", 3.0, -2, 10 );
-    // appendParameter(p4);
-    // p4->setFlag(CLAP_PARAM_IS_STEPPED);
+    SAT_Parameter* p4 = new SAT_Parameter( "param4", "", 3.0, -2, 10 );
+    appendParameter(p4);
+    p4->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    // SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
-    // appendParameter(p5);
-    // p5->setFlag(CLAP_PARAM_IS_STEPPED);
+    SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
+    appendParameter(p5);
+    p5->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    // SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
-    // appendParameter(p6);
+    SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
+    appendParameter(p6);
 
-    // SAT_Parameter* p7 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
-    // appendParameter(p7);
-    // p7->setFlag(CLAP_PARAM_IS_ENUM);
+    SAT_Parameter* p7 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
+    appendParameter(p7);
+    p7->setFlag(CLAP_PARAM_IS_ENUM);
 
-    // SAT_Parameter* p8 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
-    // appendParameter(p8);
+    SAT_Parameter* p8 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
+    appendParameter(p8);
 
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(800,600,1.0,true);
@@ -154,9 +154,6 @@ public:
       root->setDrawBorder(true);
       root->setBorderColor(0.4);
 
-      //root->Layout.innerBorder  = SAT_Rect(10,10,10,10);
-      //root->Layout.spacing      = SAT_Point(5,5);
-
       SAT_PluginHeaderWidget* header1 = new SAT_PluginHeaderWidget(40,"plugin_gui2");
       root->appendChild(header1);
 
@@ -167,42 +164,44 @@ public:
       root->appendChild(middle1);
       middle1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT; // not TOP?
       middle1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
-      middle1->Layout.innerBorder  = SAT_Rect(10,10,10,10);
-      middle1->Layout.spacing      = SAT_Point(5,5);
+      middle1->Layout.innerBorder  = SAT_Rect(5,5,5,5);
+      middle1->Layout.spacing      = SAT_Point(0,0);
 
-      SAT_ScrollBoxWidget* bottom_panel = new SAT_ScrollBoxWidget(150,true,true);
-      middle1->appendChild(bottom_panel);
-      bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
-      bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-      bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
-      bottom_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,0,5,5);
-      bottom_panel->getContentWidget()->Layout.spacing = SAT_Point(5,5);
-      bottom_panel->Layout.innerBorder = SAT_Rect(5,5,5,0);
-      bottom_panel->Layout.spacing = SAT_Point(5,5);
-      bottom_panel->setDrawBorder(false);
+        SAT_ScrollBoxWidget* bottom_panel = new SAT_ScrollBoxWidget(150,true,true);
+        middle1->appendChild(bottom_panel);
+        bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
+        bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+        bottom_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
+        bottom_panel->Layout.innerBorder = SAT_Rect(0,0,0,0);
+        bottom_panel->Layout.spacing = SAT_Point(0,0);
+        bottom_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,5,5,5);
+        bottom_panel->getContentWidget()->Layout.spacing = SAT_Point(5,5);
+        bottom_panel->setDrawBorder(false);
 
-      SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
-      middle1->appendChild(bottom_sizer);
+        SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
+        middle1->appendChild(bottom_sizer);
 
-      SAT_ScrollBoxWidget* left_panel = new SAT_ScrollBoxWidget(200);
-      middle1->appendChild(left_panel);
-      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
-      left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
-      left_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,0,5,5);
-      left_panel->getContentWidget()->Layout.spacing = SAT_Point(5,5);
-      left_panel->setDrawBorder(false);
+        SAT_ScrollBoxWidget* left_panel = new SAT_ScrollBoxWidget(200);
+        middle1->appendChild(left_panel);
+        left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+        left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;
+        left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+        left_panel->Layout.innerBorder = SAT_Rect(0,0,0,0);
+        left_panel->Layout.spacing = SAT_Point(0,0);
+        left_panel->getContentWidget()->Layout.innerBorder = SAT_Rect(0,0,5,5);
+        left_panel->getContentWidget()->Layout.spacing = SAT_Point(0,5);
+        left_panel->setDrawBorder(false);
 
-      SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
-      middle1->appendChild(left_sizer);
+        SAT_SizerWidget* left_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_LEFT,left_panel);
+        middle1->appendChild(left_sizer);
 
-      SAT_VisualWidget* center_panel = new SAT_VisualWidget(0);
-      middle1->appendChild(center_panel);
-      center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
-      center_panel->setDrawBorder(false);
-      center_panel->Layout.innerBorder = SAT_Rect(5,0,0,5);
-      center_panel->Layout.spacing = SAT_Point(5,5);
+        SAT_VisualWidget* center_panel = new SAT_VisualWidget(0);
+        middle1->appendChild(center_panel);
+        center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+        center_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+        center_panel->Layout.innerBorder = SAT_Rect(5,0,0,5);
+        center_panel->Layout.spacing = SAT_Point(5,0);
+        center_panel->setDrawBorder(false);
 
       //--------------------
       // menu
@@ -246,18 +245,23 @@ public:
       value1->setDrawBorder(false);
       value1->setBackgroundColor(0.45);
       value1->setDrawBorder(false);
+      //AEditor->connect(value1,getParameter(0));
 
       SAT_ButtonWidget* button1 = new SAT_ButtonWidget(20);
       left_panel->appendChild(button1);
       button1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       button1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       button1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      //button1->setDrawParamText(false);
+      //AEditor->connect(button1,getParameter(1));
 
       SAT_ButtonWidget* button2 = new SAT_ButtonWidget(20,true);
       left_panel->appendChild(button2);
       button2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       button2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       button2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      //button2->setDrawParamText(false);
+      //AEditor->connect(button2,getParameter(2));
 
       SAT_SelectorWidget* selector1 = new SAT_SelectorWidget(20,"Select..",menu1);
       left_panel->appendChild(selector1);
@@ -265,6 +269,8 @@ public:
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      selector1->setDrawParamText(false);
+      //AEditor->connect(selector1,getParameter(3));
 
       SAT_TextEditWidget* textedit1 = new SAT_TextEditWidget(20,"Edit..");
       left_panel->appendChild(textedit1);
@@ -278,6 +284,7 @@ public:
       dragvalue1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       dragvalue1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
       dragvalue1->setText("DragValue");
+      //AEditor->connect(dragvalue1,getParameter(4));
 
       SAT_SliderWidget* slider1 = new SAT_SliderWidget(20);
       left_panel->appendChild(slider1);
@@ -285,12 +292,14 @@ public:
       slider1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       slider1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
       slider1->setText("Slider");
+      //AEditor->connect(slider1,getParameter(5));
 
       SAT_ScrollBarWidget* scrollbar1 = new SAT_ScrollBarWidget(20);
       left_panel->appendChild(scrollbar1);
       scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      //AEditor->connect(scrollbar1,getParameter(6));
 
       // SAT_RangeBarWidget* rangebar1 = new SAT_RangeBarWidget(20);
       // left_panel->appendChild(rangebar1);
@@ -389,16 +398,22 @@ public:
       bottom_panel->appendChild(knob1);
       knob1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       knob1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      //AEditor->connect(knob1,getParameter(7));
 
       SAT_CurveWidget* curve1 = new SAT_CurveWidget(30,false);
       bottom_panel->appendChild(curve1);
       curve1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       curve1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      curve1->setDrawParamText(false);
+      //AEditor->connect(curve1,getParameter(1));
+
 
       SAT_CurveWidget* curve2 = new SAT_CurveWidget(30,true);
       bottom_panel->appendChild(curve2);
       curve2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       curve2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      curve2->setDrawParamText(false);
+      //AEditor->connect(curve2,getParameter(2));
 
       SAT_SliderWidget* slider2 = new SAT_SliderWidget(SAT_Rect(25,100));
       bottom_panel->appendChild(slider2);
@@ -407,6 +422,8 @@ public:
       slider2->setDrawDirection(SAT_DIRECTION_UP);
       slider2->setDrawText(false);
       slider2->setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
+      slider2->setDrawParamText(false);
+      //AEditor->connect(slider2,getParameter(6));
 
       SAT_ScrollBarWidget* scrollbar2 = new SAT_ScrollBarWidget(SAT_Rect(25,100));
       bottom_panel->appendChild(scrollbar2);
@@ -455,47 +472,110 @@ public:
       // center panel
       //--------------------
 
-      SAT_TimelineWidget* timeline1 = new SAT_TimelineWidget(100);
-      center_panel->appendChild(timeline1);
-      timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
-      timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-      timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
+      SAT_TabsWidget* center_tabs1 = new SAT_TabsWidget(0,15);
+      center_panel->appendChild(center_tabs1);
+      center_tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      center_tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+      center_tabs1->getPages()->setDrawBorder(false);
 
-        SAT_TimelineTrack* track1 = new SAT_TimelineTrack("Track1");
-        SAT_TimelineTrack* track2 = new SAT_TimelineTrack("T2");
-        SAT_TimelineTrack* track3 = new SAT_TimelineTrack("Automation");
+        SAT_VisualWidget* modular_tab1 = new SAT_VisualWidget(15);
+        center_tabs1->appendPage( "Modular", modular_tab1);
+        //modular_tab1->Layout.innerBorder = SAT_Rect(5,5,5,5);
+        modular_tab1->Layout.spacing = SAT_Point(0,5);
+        modular_tab1->setDrawBorder(false);
+        {
+          SAT_TimelineWidget* timeline1 = new SAT_TimelineWidget(100);
+          modular_tab1->appendChild(timeline1);
+          timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
+          timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+          timeline1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
 
-        SAT_TimelineSegment* segment1 = new SAT_TimelineSegment("1",1,10);
-        SAT_TimelineSegment* segment2 = new SAT_TimelineSegment("2",3,5);
-        SAT_TimelineSegment* segment3 = new SAT_TimelineSegment("3",6,10);
-        SAT_TimelineSegment* segment4 = new SAT_TimelineSegment("4",2,7);
+            SAT_TimelineTrack* track1 = new SAT_TimelineTrack("Track1");
+            timeline1->addTrack(track1);
+            SAT_TimelineSegment* segment1 = new SAT_TimelineSegment("1",1,10);
+            SAT_TimelineSegment* segment2 = new SAT_TimelineSegment("2",3,5);
+            SAT_TimelineSegment* segment3 = new SAT_TimelineSegment("3",6,10);
+            SAT_TimelineSegment* segment4 = new SAT_TimelineSegment("4",2,7);
+            track1->addSegment(segment1);
 
-        track1->addSegment(segment1);
-        track2->addSegment(segment2);
-        track2->addSegment(segment3);
-        track3->addSegment(segment4);
+            SAT_TimelineTrack* track2 = new SAT_TimelineTrack("T2");
+            timeline1->addTrack(track2);
+            track2->addSegment(segment2);
+            track2->addSegment(segment3);
 
-        timeline1->addTrack(track1);
-        timeline1->addTrack(track2);
-        timeline1->addTrack(track3);
+            SAT_TimelineTrack* track3 = new SAT_TimelineTrack("Automation");
+            timeline1->addTrack(track3);
+            track3->addSegment(segment4);
 
-      SAT_GraphWidget* graph1 = new SAT_GraphWidget(0);
-      center_panel->appendChild(graph1);
-      graph1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      graph1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
-      //graph1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+          SAT_GraphWidget* graph1 = new SAT_GraphWidget(0);
+          modular_tab1->appendChild(graph1);
+          graph1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+          graph1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+          //graph1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+          graph1->setFillBackground(true);
+          //graph->setAlignment(SAT_EDGE_BOTTOM);
+          //graph->setStretching(SAT_EDGE_RIGHT | SAT_EDGE_BOTTOM);
 
-        graph1->setFillBackground(true);
-        //graph->setAlignment(SAT_EDGE_BOTTOM);
-        //graph->setStretching(SAT_EDGE_RIGHT | SAT_EDGE_BOTTOM);
-        for (uint32_t i=0; i<10; i++) {
-          SAT_GraphModule* module = new SAT_GraphModule();
-          module->numInputs = 2;
-          module->inputs[0] = SAT_PIN_SIGNAL;
-          module->outputs[0] = SAT_PIN_SIGNAL;
-          module->numOutputs = 2;
-          graph1->addModule(module,i*15,i*15,"module");
-        }
+            for (uint32_t i=0; i<10; i++) {
+              SAT_GraphModule* module = new SAT_GraphModule();
+              module->numInputs = 2;
+              module->inputs[0] = SAT_PIN_SIGNAL;
+              module->outputs[0] = SAT_PIN_SIGNAL;
+              module->numOutputs = 2;
+              graph1->addModule(module,i*15,i*15,"module");
+            }
+        } // modular_tab1
+
+        //center_tabs1->appendPage( "t2", new SAT_VisualWidget(0));
+
+        SAT_VisualWidget* t2_tab1 = new SAT_VisualWidget(15);
+        center_tabs1->appendPage( "t2", t2_tab1);
+        //t2_tab1->Layout.innerBorder = SAT_Rect(5,5,5,5);
+        t2_tab1->Layout.spacing = SAT_Point(0,5);
+        t2_tab1->setDrawBorder(false);
+        {
+
+          SAT_VisualWidget* ds1 = new SAT_VisualWidget(SAT_Rect(20,20,100,100));
+          t2_tab1->appendChild(ds1);
+          ds1->setDrawDropShadow(true);
+          //ds1->setDropShadowCorner(5);
+          ds1->setFillBackground(false);
+          ds1->setDrawBorder(false);
+          SAT_VisualWidget* ds2 = new SAT_VisualWidget(SAT_Rect(25,25,90,90));
+          t2_tab1->appendChild(ds2);
+
+          SAT_VisualWidget* ds3 = new SAT_VisualWidget(SAT_Rect(130,20,100,100));
+          t2_tab1->appendChild(ds3);
+          ds3->setDrawDropShadow(true);
+          ds3->setDropShadowInner(true);
+          ds3->setDropShadowCorner(5);
+          ds3->setFillBackground(false);
+          ds3->setDrawBorder(true);
+          // SAT_VisualWidget* ds4 = new SAT_VisualWidget(SAT_Rect(135,25,90,90));
+          // t2_tab1->appendChild(ds4);
+          // ds4->setFillBackground(false);
+          // ds4->setDrawBorder(true);
+
+          SAT_VisualWidget* ds5 = new SAT_VisualWidget(SAT_Rect(240,20,100,100));
+          t2_tab1->appendChild(ds5);
+          ds5->setFillBackground(true);
+          ds5->setFillGradient(true);
+          //ds5->setDrawBorder(true);
+
+          SAT_VisualWidget* ds6 = new SAT_VisualWidget(SAT_Rect(350,20,100,100));
+          t2_tab1->appendChild(ds6);
+          ds6->setFillBackground(true);
+          ds6->setBackgroundColor(SAT_Yellow);
+          ds6->setDrawRoundedCorners(true);
+          ds6->setRoundedCornerSize(20);
+          ds6->setRoundedCorners(SAT_CORNER_UPPER_LEFT | SAT_CORNER_LOWER_RIGHT);
+
+        } // t2_tab
+
+
+        center_tabs1->appendPage( "t3", new SAT_VisualWidget(0));
+
+      center_tabs1->selectPage(0);
 
       //--------------------
       // menu

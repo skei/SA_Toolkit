@@ -18,9 +18,9 @@ struct SAT_Rect {
 //------------------------------
 
   union {
-    struct { double x,y,w,h; };
-    struct { double left,top,right,bottom; };
-    //struct { SAT_Point pos; SAT_Point size; };
+    struct { double x,y,w,h; };               // rect
+    struct { double left,top,right,bottom; }; // edge
+    struct { double tl, tr, br, bl; };        // corners
     double data[4];
   };
 
