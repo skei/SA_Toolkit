@@ -181,7 +181,7 @@ public:
         SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);
         middle1->appendChild(bottom_sizer);
 
-        SAT_ScrollBoxWidget* left_panel = new SAT_ScrollBoxWidget(200);
+        SAT_ScrollBoxWidget* left_panel = new SAT_ScrollBoxWidget(200,true,false);
         middle1->appendChild(left_panel);
         left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
         left_panel->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_VERT;

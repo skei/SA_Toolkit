@@ -3,7 +3,14 @@
 //----------------------------------------------------------------------
 
 #include "gui/widget/sat_button_widget.h"
+#include "gui/widget/sat_symbol_widget.h"
 #include "gui/widget/sat_visual_widget.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 class SAT_GroupBoxWidget
 : public SAT_VisualWidget {
@@ -14,6 +21,7 @@ private:
 
   SAT_ButtonWidget* MHeader     = nullptr;
   SAT_VisualWidget* MContainer  = nullptr;
+  SAT_SymbolWidget* MSymbol     = nullptr;
 
   double            MHeaderSize = 0;
   double            MFullSize   = 0;
@@ -42,7 +50,14 @@ public:
     MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    MHeader->Layout.innerBorder = {0,0,3,3};
     MHeader->setTexts("Closed","open");
+
+      MSymbol = new SAT_SymbolWidget(7,SAT_SYMBOL_FILLED_TRI_DOWN);
+      MHeader->appendChild(MSymbol);
+      MSymbol->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT;
+      MSymbol->setActive(false);
+      MSymbol->setColor(SAT_DarkerGrey);
 
     MContainer = new SAT_VisualWidget(0);
     SAT_VisualWidget::appendChild(MContainer);
@@ -105,6 +120,7 @@ public:
     setBaseRect(rect);
     MContainer->State.active = true;
     MContainer->State.visible = true;
+    MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_DOWN); //(SAT_SYMBOL_FILLED_TRI_UP);
     do_widget_realign(this,0);
     //do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
     //do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
@@ -120,6 +136,7 @@ public:
     setBaseRect(rect);
     MContainer->State.active = false;
     MContainer->State.visible = false;
+    MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_DOWN);
     do_widget_realign(this,0);
   }
 
