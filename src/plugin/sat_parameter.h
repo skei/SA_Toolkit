@@ -18,7 +18,7 @@ typedef SAT_Array<SAT_Parameter*> SAT_ParameterArray;
 class SAT_Parameter {
 
 //------------------------------
-private:
+protected:
 //------------------------------
 
   // CLAP_PARAM_IS_STEPPED
@@ -65,6 +65,7 @@ private:
   void*       MWidget                             = nullptr;
 
   char        MValueText[SAT_MAX_NAME_LENGTH]     = {0};
+  const char* MValueFormat                        = "%.2f";
   sat_param_t MValue                              = {0};
   sat_param_t MModulation                         = 0.0;
 
@@ -91,6 +92,7 @@ public:
     memcpy(&MInfo,AInfo,sizeof(clap_param_info_t));
     MInfo.cookie = this;
     setValue(AInfo->default_value);
+    setValueFormat("%.f");
   }
 
   //----------
@@ -123,6 +125,10 @@ public:
   
   virtual void setWidget(void* AWidget) {
     MWidget = AWidget;
+  }
+
+  virtual void setValueFormat(const char* AFormat) {
+    MValueFormat = AFormat;
   }
 
   virtual void setValue(double AValue) {
@@ -307,7 +313,7 @@ public:
 //------------------------------
 
   virtual const char* valueToText(sat_param_t AValue) {
-    sprintf(MValueText,"%.2f",AValue);
+    sprintf(MValueText,MValueFormat,AValue);
     return MValueText;
   }
 
