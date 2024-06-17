@@ -564,7 +564,7 @@ public: // editor listener
       SAT_Parameter* param = getParameter(AIndex);
       if (param) {
         sat_param_t value = param->denormalize(AValue);
-        //SAT_PRINT("AValue %.3f denormalized value %.3f\n",AValue,value);
+        SAT_PRINT("AValue %.3f denormalized value %.3f\n",AValue,value);
         MQueues.queueParamFromGuiToHost(AIndex,value);
         MQueues.queueParamFromGuiToAudio(AIndex,value);
         // prematurely?

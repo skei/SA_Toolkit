@@ -120,8 +120,9 @@ public:
   virtual void*             getParameter(uint32_t AIndex) { return MParameters[AIndex]; }
   virtual SAT_Widget*       getParent()                   { return MParent; }
   virtual SAT_Rect          getRect()                     { return MRect; }
-  virtual double            getValue()                    { return MValues[MValueIndex]; }
   virtual double            getValue(uint32_t AIndex)     { return MValues[AIndex]; }
+  //virtual double            getValue()                    { return MValues[MValueIndex]; }
+  virtual double            getValue()                    { return getValue(MValueIndex); }
   virtual uint32_t          getValueIndex()               { return MValueIndex; }
 
   virtual bool isRecursivelyActive() {
@@ -160,8 +161,9 @@ public:
   virtual void setPos(SAT_Point APos)                           { MRect.x = APos.x; MRect.y = APos.y; }
   virtual void setRect(SAT_Rect ARect)                          { MRect = ARect; }
   virtual void setSize(SAT_Point ASize)                         { MRect.w = ASize.x; MRect.h = ASize.y; }
-  virtual void setValue(double AValue)                          { MValues[MValueIndex] = AValue; }
   virtual void setValue(double AValue, uint32_t AIndex)         { MValues[AIndex] = AValue; }
+  virtual void setValue(double AValue)                          { setValue(AValue,MValueIndex); }
+  //virtual void setValue(double AValue)                          { MValues[MValueIndex] = AValue; }
   virtual void setValueIndex(uint32_t AIndex)                   { MValueIndex = AIndex; }
 
   virtual void setSize(double AWidth, double AHeight) {
