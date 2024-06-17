@@ -2,8 +2,9 @@
 #define sat_selector_widget_included
 //----------------------------------------------------------------------
 
-#include "gui/widget/sat_text_widget.h"
 #include "gui/widget/sat_menu_widget.h"
+#include "gui/widget/sat_symbol_widget.h"
+#include "gui/widget/sat_text_widget.h"
 
 //----------------------------------------------------------------------
 //
@@ -32,9 +33,20 @@ public:
   : SAT_TextWidget(ARect,AText) {
     setName("SAT_SelectorWidget");
     setCursor(SAT_CURSOR_FINGER);
+    setFillBackground(true);
+    setFillGradient(true);
+    Layout.innerBorder = {0,0,3,3};
+
     MInitialText = AText;
     MMenu = AMenu;
     //if (MMenu) MMenu->setPos(SAT_Point(ARect.x,ARect.y+ARect.h));
+
+    SAT_SymbolWidget* symbol = new SAT_SymbolWidget(7,SAT_SYMBOL_FILLED_TRI_DOWN);
+    appendChild(symbol);
+    symbol->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT;
+    symbol->setActive(false);
+    symbol->setColor(SAT_DarkerGrey);
+
   }
 
   //----------

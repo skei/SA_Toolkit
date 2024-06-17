@@ -15,14 +15,14 @@ private:
 //------------------------------
 
   const char* MOffText            =  "Off";
-  SAT_Color   MOffTextColor       = SAT_Black;
+  SAT_Color   MOffTextColor       = SAT_DarkerGrey;
   SAT_Color   MOffBackgroundColor = SAT_Grey;
   SAT_Color   MOffBorderColor     = SAT_Black;
 
   const char* MOnText             = "On";
-  SAT_Color   MOnTextColor        = SAT_LightGrey;
+  SAT_Color   MOnTextColor        = SAT_Black;
   SAT_Color   MOnBackgroundColor  = SAT_DarkGrey;
-  SAT_Color   MOnBorderColor      = SAT_White;
+  SAT_Color   MOnBorderColor      = SAT_Black;
 
   bool        MMomentary          = true;
 
@@ -35,6 +35,8 @@ public:
     setName("SAT_ButtonWidget");
     setCursor(SAT_CURSOR_FINGER);
     MMomentary = AMomentary;
+    setFillBackground(true);
+    setFillGradient(true);
 
   }
 
