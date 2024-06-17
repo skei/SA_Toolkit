@@ -104,7 +104,7 @@ public:
     SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
     appendParameter(p1);
 
-    SAT_Parameter* p2 = new SAT_Parameter( "param2", "", 1.0,  0, 10 );
+    SAT_Parameter* p2 = new SAT_Parameter( "param2", "", 1,  0, 4 );
     appendParameter(p2);
     p2->setFlag(CLAP_PARAM_IS_STEPPED);
 
@@ -270,7 +270,9 @@ public:
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
       selector1->setDrawParamText(false);
-      //AEditor->connect(selector1,getParameter(3));
+      selector1->select(0);
+
+AEditor->connect(selector1,getParameter(1));
 
       SAT_TextEditWidget* textedit1 = new SAT_TextEditWidget(20,"Edit..");
       left_panel->appendChild(textedit1);

@@ -76,6 +76,7 @@ public:
     if (param) {
       uint32_t index = param->getIndex();
       sat_param_t value = AWidget->getValue();
+      //value = param->denormalize(value);
       MListener->on_editorListener_update(index,value);
     }
   }
@@ -133,7 +134,6 @@ public:
   // (do_widget_redraw doesn't redraw directly, sends invalidate event)
 
   void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) override {
-    //SAT_PRINT("%p = %.3f\n",AParameter,AValue);
     if (MWindow) {
       SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
       if (widget) {

@@ -36,11 +36,9 @@ public:
     setFillBackground(true);
     setFillGradient(true);
     Layout.innerBorder = {0,0,3,3};
-
     MInitialText = AText;
     MMenu = AMenu;
     //if (MMenu) MMenu->setPos(SAT_Point(ARect.x,ARect.y+ARect.h));
-
     SAT_SymbolWidget* symbol = new SAT_SymbolWidget(7,SAT_SYMBOL_FILLED_TRI_DOWN);
     appendChild(symbol);
     symbol->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT;
@@ -66,17 +64,41 @@ public:
 
   //----------
 
+  virtual void select(int32_t AIndex) {
+    MSelected = AIndex;
+    double value = MSelected;
+    if (MSelected >= 0) {
+      SAT_Parameter* param = (SAT_Parameter*)getParameter();
+      if (param) {
+        value = param->normalize(AIndex);
+        SAT_PRINT("AIndex %i = value %.3f\n",AIndex,value);
+        SAT_TextWidget::setValue(value);
+      }
+    }
+  }
+
+  //----------
+
   void on_menuListener_select(int32_t AIndex) override {
     //SAT_PRINT("AIndex %i\n",AIndex);
     SAT_PRINT("AValue %i\n",AIndex);
     if (AIndex >= 0) {
-      MSelected = AIndex;
-      uint32_t numitems = getNumChildren();
-      double value = (double)(MSelected - 1) / (double)numitems;
+      select(AIndex);
+      do_widget_update(this,0);
+      //do_widget_redraw(this,0);
     }
     if (MMenu) MMenu->closeMenu();
-
   }
+
+  //----------
+
+  void setValue(double AValue) override {
+    SAT_PRINT("AValue %.3f\n",AValue);
+    MSelected = AValue;
+    double value = AValue;
+    SAT_TextWidget::setValue(value);
+  }
+
 
 //------------------------------
 public:
@@ -108,23 +130,6 @@ public:
     }
     SAT_TextWidget::on_widget_paint(AContext);
   }
-
-//------------------------------
-public:
-//------------------------------
-
-  // void do_widget_notify(SAT_Widget* AWidget, int32_t AValue) override {
-  //   SAT_PRINT("AValue %i\n",AValue);
-  //   if (AValue == -1) {
-  //     // cancel
-  //   }
-  //   else {
-  //     MSelected = AValue;
-  //     uint32_t numitems = getNumChildren();
-  //     double value = (double)(MSelected - 1) / (double)numitems;
-  //   }
-  //   if (MMenu) MMenu->closeMenu();
-  // }
 
 };
 
