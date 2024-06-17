@@ -1,5 +1,6 @@
 
 #include "plugin/sat_plugin.h"
+#include "plugin/sat_parameters.h"
 #include "plugin/processor/sat_interleaved_processor.h"
 
 //----------------------------------------------------------------------
@@ -77,6 +78,10 @@ private:
     "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"
   };
 
+  const char* MSelectorTexts[5] = {
+    "Off", "Lowpass", "Highpass", "Bandpass", "Notch"
+  };
+
   #include "../../data/img/SA.h"
 
 //------------------------------
@@ -101,34 +106,35 @@ public:
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
 
-    SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
-    appendParameter(p1);
+    SAT_TextParameter* p0 = new SAT_TextParameter( "p0", "", 1,  0, 4 );
+    appendParameter(p0);
+    p0->setFlag(CLAP_PARAM_IS_STEPPED);
+    p0->setText(MSelectorTexts);
 
-    SAT_Parameter* p2 = new SAT_Parameter( "param2", "", 1,  0, 4 );
-    appendParameter(p2);
-    p2->setFlag(CLAP_PARAM_IS_STEPPED);
+    // SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
+    // appendParameter(p1);
 
-    SAT_Parameter* p3 = new SAT_Parameter( "param3", "", 2.0,  0, 10 );
-    appendParameter(p3);
-    p3->setFlag(CLAP_PARAM_IS_STEPPED);
+    // SAT_Parameter* p3 = new SAT_Parameter( "param3", "", 2.0,  0, 10 );
+    // appendParameter(p3);
+    // p3->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    SAT_Parameter* p4 = new SAT_Parameter( "param4", "", 3.0, -2, 10 );
-    appendParameter(p4);
-    p4->setFlag(CLAP_PARAM_IS_STEPPED);
+    // SAT_Parameter* p4 = new SAT_Parameter( "param4", "", 3.0, -2, 10 );
+    // appendParameter(p4);
+    // p4->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
-    appendParameter(p5);
-    p5->setFlag(CLAP_PARAM_IS_STEPPED);
+    // SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
+    // appendParameter(p5);
+    // p5->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
-    appendParameter(p6);
+    // SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
+    // appendParameter(p6);
 
-    SAT_Parameter* p7 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
-    appendParameter(p7);
-    p7->setFlag(CLAP_PARAM_IS_ENUM);
+    // SAT_Parameter* p7 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
+    // appendParameter(p7);
+    // p7->setFlag(CLAP_PARAM_IS_ENUM);
 
-    SAT_Parameter* p8 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
-    appendParameter(p8);
+    // SAT_Parameter* p8 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
+    // appendParameter(p8);
 
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(800,600,1.0,true);
@@ -208,11 +214,9 @@ public:
       //--------------------
 
       SAT_MenuWidget* menu1 = new SAT_MenuWidget(SAT_Rect(100,20*5));
-        menu1->appendItem("Item1");
-        menu1->appendItem("Item2");
-        menu1->appendItem("Item3");
-        menu1->appendItem("Item4");
-        menu1->appendItem("Item5");
+        for (uint32_t i=0; i<5; i++) {
+          menu1->appendItem( MSelectorTexts[i] );
+        }
 
       //--------------------
       // left panel
@@ -272,7 +276,7 @@ public:
       selector1->setDrawParamText(false);
       selector1->select(0);
 
-AEditor->connect(selector1,getParameter(1));
+AEditor->connect(selector1,getParameter(0));
 
       SAT_TextEditWidget* textedit1 = new SAT_TextEditWidget(20,"Edit..");
       left_panel->appendChild(textedit1);
