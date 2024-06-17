@@ -71,7 +71,7 @@ public:
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
         value = param->normalize(AIndex);
-        SAT_PRINT("AIndex %i = value %.3f\n",AIndex,value);
+        //SAT_PRINT("AIndex %i = value %.3f\n",AIndex,value);
         SAT_TextWidget::setValue(value);
       }
     }
@@ -80,8 +80,7 @@ public:
   //----------
 
   void on_menuListener_select(int32_t AIndex) override {
-    //SAT_PRINT("AIndex %i\n",AIndex);
-    SAT_PRINT("AValue %i\n",AIndex);
+    //SAT_PRINT("AValue %i\n",AIndex);
     if (AIndex >= 0) {
       select(AIndex);
       do_widget_update(this,0);
@@ -93,7 +92,7 @@ public:
   //----------
 
   void setValue(double AValue) override {
-    SAT_PRINT("AValue %.3f\n",AValue);
+    //SAT_PRINT("AValue %.3f\n",AValue);
     MSelected = AValue;
     double value = AValue;
     SAT_TextWidget::setValue(value);

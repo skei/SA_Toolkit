@@ -57,7 +57,7 @@ public:
   //----------
 
   virtual void openMenu(int32_t AXpos, int32_t AYpos) {
-    SAT_TRACE;
+    //SAT_TRACE;
     setActive(true);
     setVisible(true);
     SAT_Widget* parent = getParent();
@@ -81,7 +81,7 @@ public:
   //----------
 
   virtual void closeMenu() {
-    SAT_TRACE;
+    //SAT_TRACE;
     setActive(false);
     setVisible(false);
     SAT_Widget* parent = getParent();
@@ -113,7 +113,7 @@ public:
 //------------------------------
 
   void do_widget_notify(SAT_Widget* AWidget, int32_t AValue) override {
-    SAT_PRINT("AValue %i\n",AValue);
+    //SAT_PRINT("AValue %i\n",AValue);
     if (AValue == -1) {
       // cancel
     }
