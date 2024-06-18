@@ -70,12 +70,13 @@ public:
 public:
 //------------------------------
 
-  void on_windowListener_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
-    //SAT_PRINT("%s\n",AWidget->getName());
-    SAT_Parameter* param = (SAT_Parameter*)AWidget->getParameter();
+  void on_windowListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+//    SAT_PRINT("%s,%i\n",AWidget->getName(),AIndex);
+    SAT_Parameter* param = (SAT_Parameter*)AWidget->getParameter(AIndex);
     if (param) {
       uint32_t index = param->getIndex();
-      sat_param_t value = AWidget->getValue();
+      sat_param_t value = AWidget->getValue(AIndex);
+//      SAT_PRINT("index %i value %.3f\n",index,value);
       //value = param->denormalize(value);
       MListener->on_editorListener_update(index,value);
     }
@@ -139,7 +140,7 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setValue(value);
-        widget->do_widget_redraw(widget,SAT_WIDGET_REDRAW_PARAM);
+        widget->do_widget_redraw(widget);
       }
     }
   }
@@ -152,7 +153,7 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setModulation(value);
-        widget->do_widget_redraw(widget,SAT_WIDGET_REDRAW_MOD);
+        widget->do_widget_redraw(widget);
       }
     }
   }

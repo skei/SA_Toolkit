@@ -86,8 +86,8 @@ public: // on_widget
         if (value > 0.5) setValue(0.0);
         else setValue(1.0);
       }
-      do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
-      do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
+      do_widget_update(this);
+      do_widget_redraw(this);
     }
   }
 
@@ -97,8 +97,8 @@ public: // on_widget
     if (AButton == SAT_BUTTON_LEFT) {
       if (MMomentary) {
         setValue(0.0);
-        do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
-        do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
+        do_widget_update(this);
+        do_widget_redraw(this);
       }
     }
   }

@@ -129,7 +129,7 @@ public:
       float scroll = can_scroll * delta;
       MContent->scrollChildren(0,scroll);
       //if (draw) MContent->parentRedraw();
-      if (draw) MContent->do_widget_redraw(MContent,0);
+      if (draw) MContent->do_widget_redraw(MContent);
     }
     else if (ASender == MHorizontalScrollBar) {
       float delta = prev - pos;
@@ -138,7 +138,7 @@ public:
       float scroll = can_scroll * delta;
       MContent->scrollChildren(scroll,0);
       //if (draw) MContent->parentRedraw();
-      if (draw) MContent->do_widget_redraw(MContent,0);
+      if (draw) MContent->do_widget_redraw(MContent);
     }
   }
 
@@ -197,7 +197,7 @@ public:
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode) override {
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     if (AWidget == MVerticalScrollBar) {
       //SAT_Print("vscroll\n");
       float visible = MVerticalScrollBar->getThumbSize();
@@ -214,7 +214,7 @@ public: // child to parent
     }
     else {
       //SAT_Print("%s\n",AWidget->getName());
-      SAT_VisualWidget::do_widget_update(AWidget,AMode);
+      SAT_VisualWidget::do_widget_update(AWidget,AIndex,AMode);
     }
   }
   
@@ -224,7 +224,7 @@ public: // child to parent
     // SAT_Widget* parent = AWidget->getParent();
     // if (parent) {
     //   parent->realignChildren();
-    //   parent->do_widget_redraw(parent,0);
+    //   parent->do_widget_redraw(parent);
     //   //markWidgetDirtyFromGui(parent);
     // }    
     SAT_VisualWidget::do_widget_realign(this,AMode);

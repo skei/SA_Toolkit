@@ -83,8 +83,8 @@ public:
     //SAT_PRINT("AValue %i\n",AIndex);
     if (AIndex >= 0) {
       select(AIndex);
-      do_widget_update(this,0);
-      //do_widget_redraw(this,0);
+      do_widget_update(this);
+      //do_widget_redraw(this);
     }
     if (MMenu) MMenu->closeMenu();
   }

@@ -512,16 +512,16 @@ public: // widget owner
 public: // widget listener
 //------------------------------
 
-  void on_widgetListener_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void on_widgetListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     if (MListener) {
       //SAT_TRACE;
-      MListener->on_windowListener_update(AWidget,AMode);
+      MListener->on_windowListener_update(AWidget,AIndex,AMode);
     }
   }
 
   //----------
 
-  void on_widgetListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
+  void on_widgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
     //SAT_PRINT("%s\n",AWidget->getName());
     //markWidgetDirtyFromGui(AWidget);
     #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
@@ -539,7 +539,7 @@ public: // widget listener
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
       parent->realignChildren();
-      parent->do_widget_redraw(parent,0);
+      parent->do_widget_redraw(parent);
       //markWidgetDirtyFromGui(parent);
     }    
   }
@@ -623,7 +623,7 @@ public: // widget listener
     // if (parent) {
     //   SAT_TRACE;
     //   parent->on_widget_realign();
-    //   parent->do_widget_redraw(parent,0);
+    //   parent->do_widget_redraw(parent);
     // }
   }
 

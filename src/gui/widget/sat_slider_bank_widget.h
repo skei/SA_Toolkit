@@ -128,7 +128,7 @@ public:
       MSliderValues[i] = SAT_Clamp(v,0,1);
       MHoverSlider = i;
       
-      do_widget_redraw(this,0);
+      do_widget_redraw(this);
 
 //      if (Options.autoHideCursor) {
 //        do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
@@ -143,7 +143,7 @@ public:
   void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
-      do_widget_redraw(this,0);
+      do_widget_redraw(this);
       MHoverSlider = -1;
       
 //      if (Options.autoHideCursor) {
@@ -165,11 +165,11 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
       MSliderValues[index] = SAT_Clamp(v,0,1);
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this,0);
+      do_widget_redraw(this);
     }
     else {
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this,0);
+      do_widget_redraw(this);
     }
   }
 
@@ -181,7 +181,7 @@ public:
     //SWidget::on_leave(AWidget);
     if (MHoverSlider >= 0) {
       MHoverSlider = -1;
-      do_widget_redraw(this,0);
+      do_widget_redraw(this);
     }
     //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
     //if (flags.autoHint) do_widgetListener_setHint(this,"");

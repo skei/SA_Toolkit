@@ -31,7 +31,9 @@ public:
   virtual ~SAT_DualSliderWidget() {
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   // find closest (from mouse cursor) value
   // if two values are identical, will fid the first one..
@@ -76,6 +78,12 @@ public:
       return index;
     }
   }
+
+//------------------------------
+public:
+//------------------------------
+
+
 
 };
 

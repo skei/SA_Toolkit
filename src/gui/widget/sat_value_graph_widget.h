@@ -167,7 +167,7 @@ public:
       if (index != MSelected) {
         MSelected = index;
         //STrace("MSelected: %i\n",MSelected);
-        do_widget_redraw(this,0);
+        do_widget_redraw(this);
       }
   }
 
@@ -182,7 +182,7 @@ public:
       //SWidget::on_leave(AWidget);
       if (MSelected>=0) {
         MSelected = -1;
-        do_widget_redraw(this,0);
+        do_widget_redraw(this);
       }
       SAT_Widget::on_widget_leave(ATo,AXpos,AYpos,ATime);
   }

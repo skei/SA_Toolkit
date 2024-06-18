@@ -111,8 +111,8 @@ protected:
 
   // returns 0..1
 
-  double calcValue() {
-    double value = getValue();
+  double calcValue(uint32_t AIndex=0) {
+    double value = getValue(AIndex);
     //SAT_PRINT("value %.3f\n",value);
     SAT_Parameter* param = (SAT_Parameter*)getParameter();
     //SAT_PRINT("param %p\n",param);
@@ -286,8 +286,8 @@ public: // on_widget
         double prev_value = getValue();
 //        if (value != prev_value) {
           setValue(value);
-          do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
-          do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
+          do_widget_update(this);
+          do_widget_redraw(this);
 //        }
 
       } // diff

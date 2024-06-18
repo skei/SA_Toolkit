@@ -95,15 +95,15 @@ public:
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     if (AWidget == MHeader) {
       double value = MHeader->getValue();
       if (value > 0.5) open();
       else close();
-      SAT_VisualWidget::do_widget_update(this,AMode);
+      SAT_VisualWidget::do_widget_update(this,AIndex,AMode);
     }
     else {
-      SAT_VisualWidget::do_widget_update(AWidget,AMode);
+      SAT_VisualWidget::do_widget_update(AWidget,AIndex,AMode);
     }
   }
 
@@ -122,8 +122,8 @@ public:
     MContainer->State.visible = true;
     MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_UP);
     do_widget_realign(this,0);
-    //do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
-    //do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);
+    //do_widget_update(this);
+    //do_widget_redraw(this);
   }
 
   //----------

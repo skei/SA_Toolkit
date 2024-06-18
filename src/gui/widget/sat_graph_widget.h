@@ -841,7 +841,7 @@ public:
 
         } // node
       }
-      if (changed) do_widget_redraw(this,0);
+      if (changed) do_widget_redraw(this);
       SAT_VisualWidget::on_widget_mouse_click(AButton,AState,AXpos,AYpos,ATime);
   }
 
@@ -914,7 +914,7 @@ public:
 
       }
 
-      if (changed) do_widget_redraw(this,0);
+      if (changed) do_widget_redraw(this);
       //inherited;
       SAT_VisualWidget::on_widget_mouse_release(AButton,AState,AXpos,AYpos,ATime);
   }
@@ -1012,7 +1012,7 @@ public:
         changed = true;
       }
 
-      if (changed) do_widget_redraw(this,0);
+      if (changed) do_widget_redraw(this);
       MMousePrevX = AXpos;
       MMousePrevY = AYpos;
 

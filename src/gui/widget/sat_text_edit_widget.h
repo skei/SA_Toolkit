@@ -76,7 +76,7 @@ private:
     //do_widgetListener_update(this);
     do_widget_key_capture(this);
     do_widget_modal(this);
-    do_widget_redraw(this,0);
+    do_widget_redraw(this);
   }
 
   //----------
@@ -87,7 +87,7 @@ private:
     //do_widgetListener_update(this);
     do_widget_key_capture(nullptr);
     do_widget_modal(nullptr);
-    do_widget_redraw(this,0);
+    do_widget_redraw(this);
   }
 
 //------------------------------
@@ -225,42 +225,42 @@ public:
         break;
       case SAT_KEY_HOME:
         MCaretPos = 0;
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_END:
         len = strlen(MText);
         MCaretPos = len;
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_LEFT:
         MCaretPos -= 1;
         if (MCaretPos < 0) MCaretPos = 0;
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_RIGHT:
         len = strlen(MText);
         MCaretPos += 1;
         if (MCaretPos > len) MCaretPos = len;
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
         break;
       case SAT_KEY_DELETE:
         len = strlen(MText);
         if ((uint32_t)MCaretPos < strlen(MText)) {
           SAT_DeleteChar(MText,MCaretPos);
-          do_widget_update(this,0);
-          do_widget_redraw(this,0);
+          do_widget_update(this);
+          do_widget_redraw(this);
         }
         break;
       case SAT_KEY_BACKSPACE:
         if (MCaretPos > 0) {
           MCaretPos -= 1;
           SAT_DeleteChar(MText,MCaretPos);
-          do_widget_update(this,0);
-          do_widget_redraw(this,0);
+          do_widget_update(this);
+          do_widget_redraw(this);
         }
         break;
       default:
@@ -277,8 +277,8 @@ public:
           
           SAT_InsertChar(MText,MCaretPos,c);
           MCaretPos += 1;
-          do_widget_update(this,0);
-          do_widget_redraw(this,0);
+          do_widget_update(this);
+          do_widget_redraw(this);
         }
         break;
     } // switch
