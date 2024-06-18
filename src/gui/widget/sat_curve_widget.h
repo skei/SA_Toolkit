@@ -136,6 +136,7 @@ public:
     fillBackground(AContext);
     drawCurve(AContext);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
   }
 

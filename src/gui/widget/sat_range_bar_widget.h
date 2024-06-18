@@ -242,6 +242,7 @@ public:
     fillBackground(AContext);
     drawThumb(AContext);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
   }
 

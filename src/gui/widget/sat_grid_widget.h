@@ -260,6 +260,7 @@ public:
     }
 
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
 
   }

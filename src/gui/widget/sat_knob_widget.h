@@ -20,11 +20,17 @@ private:
   SAT_Color   MKnobArcBackgroundColor = 0.4;
   double      MKnobArcThickness       = 8.0;
 
-  bool        MDrawKnobNeedle         = true;
+  bool        MDrawKnobNeedle         = false;
   SAT_Color   MKnobNeedleColor        = SAT_LighterGrey;
-  double      MKnobNeedleStart        = 0.5;
+  double      MKnobNeedleStart        = 0.0;
   double      MKnobNeedleLength       = 1.0;
   double      MKnobNeedleThickness    = 3.0;
+
+  bool        MDrawModulation         = true;
+  SAT_Color   MModulationColor        = SAT_Color(1,1,1,0.25);
+
+  bool        MDrawBipolar            = false;
+  double      MBipolarCenter          = 0.5;
 
 //------------------------------
 public:
@@ -51,6 +57,7 @@ public:
 public:
 //------------------------------
 
+
   // void setText(const char* AText)                { MText = AText; }
   // void setTextAlignment(uint32_t AAlignment)     { MTextAlignment = AAlignment; }
 
@@ -59,6 +66,18 @@ public:
   void setKnobArcColor(SAT_Color AColor)            { MKnobArcColor = AColor; }
   void setKnobArcBackgroundColor(SAT_Color AColor)  { MKnobArcBackgroundColor = AColor; }
   void setKnobArcThickness(double AThickness)       { MKnobArcThickness = AThickness; }
+
+  void setDrawKnobNeedle(bool ADraw=true)           { MDrawKnobNeedle = ADraw; }
+  void setKnobNeedleColor(SAT_Color AColor)         { MKnobNeedleColor = AColor; }
+  void setKnobNeedleStart(double AStart)            { MKnobNeedleStart = AStart; }
+  void setKnobNeedleLength(double ALength)          { MKnobNeedleLength = ALength; }
+  void setKnobNeedleThickness(double AThickness)    { MKnobNeedleThickness = AThickness; }
+
+  virtual void setDrawBipolar(bool AState=true)       { MDrawBipolar = AState; }
+  virtual void setBipolarCenter(double AValue)        { MBipolarCenter = AValue; }
+
+  virtual bool isBipolar() { return MDrawBipolar; }
+
 
 //------------------------------
 public:
@@ -100,30 +119,44 @@ public:
 
       v *= 0.8;
       m *= 0.8;
-      //double vw = (v * w);
+      double b = MBipolarCenter * 0.8;
 
-      if (v > 0) {
-        double a1 = SAT_PI2 * (0 + 0.35); //0.65;
-        double a2 = SAT_PI2 * (v + 0.35); //-0.15 + (1 - v);
+      //if (v > 0) {
+        double a05  = SAT_PI2 * (b + 0.35);
+        double a1 = 0.0;
+        double a2 = 0.0;
+        if (MDrawBipolar) {
+          if (v < b) {
+            a1   = SAT_PI2 * (v + 0.35);
+            a2   = SAT_PI2 * (b + 0.35);
+          }
+          else if (v > b){
+            a1   = SAT_PI2 * (b + 0.35);
+            a2   = SAT_PI2 * (v + 0.35);
+          }
+        }
+        else {
+          a1   = SAT_PI2 * (0 + 0.35);
+          a2   = SAT_PI2 * (v + 0.35);
+        }
         painter->setDrawColor(MKnobArcColor);
         painter->drawArc(cx,cy,r,a1,a2);
-      }
+      //}
 
-      // if (MDrawModulation) {
-      //   double mx = 0.0;
-      //   double mw = 0.0;
-      //   if (m > v) {
-      //     mx = x + (v * w);
-      //     mw = w * (m - v);
-      //   }
-      //   else {
-      //     mx = x + (m * w);
-      //     mw = w * (v - m);
-      //   }    
-      //   //SAT_PRINT("v %.3f m %.3f x %.3f w %.3f mx %.3f mw %.3f\n",v,m,x,w,mx,mw);
-      //   painter->setFillColor(MModulationColor);
-      //   painter->fillRect(mx,y,mw,h);
-      // }
+      if (MDrawModulation) {
+        double a1,a2;
+        if (m > v) {
+          a1 = SAT_PI2 * (v + 0.35);
+          a2 = SAT_PI2 * (m + 0.35);
+        }
+        else {
+          a1 = SAT_PI2 * (m + 0.35);
+          a2 = SAT_PI2 * (v + 0.35);
+        }    
+        //SAT_PRINT("v %.3f m %.3f x %.3f w %.3f mx %.3f mw %.3f\n",v,m,x,w,mx,mw);
+        painter->setDrawColor(MModulationColor);
+        painter->drawArc(cx,cy,r,a1,a2);
+      }
 
       if (MDrawKnobNeedle) {
 
@@ -159,6 +192,7 @@ public: // on_widget
     drawText(AContext);
     drawValueText(AContext);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
   }
 

@@ -70,6 +70,8 @@ public:
 public:
 //------------------------------
 
+  virtual void setDragDirection(uint32_t ADirection)      { MDragDirection = ADirection; }
+
   virtual void setSensitivity(double AValue)              { MSensitivity = AValue; }
   virtual void setSensitivity2(double AValue)             { MSensitivity2 = AValue; }
   virtual void setDragButton(uint32_t AButton)            { MDragButton  = AButton; }
@@ -239,8 +241,8 @@ public: // on_widget
       switch (MDragDirection) {
         case SAT_DIRECTION_UP:    diff = MPrevY - AYpos;  break;
         case SAT_DIRECTION_DOWN:  diff = AYpos - MPrevY;  break;
-        case SAT_DIRECTION_LEFT:  diff = AXpos - MPrevX;  break;
-        case SAT_DIRECTION_RIGHT: diff = MPrevX - AXpos;  break;
+        case SAT_DIRECTION_RIGHT: diff = AXpos - MPrevX;  break;
+        case SAT_DIRECTION_LEFT:  diff = MPrevX - AXpos;  break;
       }
 
       bool unsnapkey = (AState & MUnsnapKey);
@@ -304,6 +306,7 @@ public: // on_widget
     drawValueText(AContext);
     drawValueBar(AContext,MDragValue);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
   }  
 

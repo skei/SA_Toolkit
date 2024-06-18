@@ -7,13 +7,19 @@
 
 //----------------------------------------------------------------------
 
-#define SAT_NUM_CLAP_EXTENSIONS 29 // 24 + 5 drafts
+#define SAT_NUM_CLAP_EXTENSIONS         29 // 24 + 5 drafts
+#define SAT_NUM_COMPAT_CLAP_EXTENSIONS  9
 
 typedef SAT_Dictionary<const void*> SAT_ClapExtensions;
 
 struct SAT_ClapExtensionInfo {
   const char* id;
   const void* ptr;
+};
+
+struct SAT_ClapExtensionInfoCompat {
+  const char* compat_id;
+  const char* id;
 };
 
 //----------------------------------------------------------------------
@@ -36,37 +42,51 @@ protected:
 
   const
   SAT_ClapExtensionInfo MAllClapExtensions[SAT_NUM_CLAP_EXTENSIONS] = {
-    { CLAP_EXT_AMBISONIC,                 &MExtAmbisonic },
-    { CLAP_EXT_AUDIO_PORTS,               &MExtAudioPorts },
-    { CLAP_EXT_AUDIO_PORTS_ACTIVATION,    &MExtAudioPortsActivation },
-    { CLAP_EXT_AUDIO_PORTS_CONFIG,        &MExtAudioPortsConfig },
-    { CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,  &MExtConfigurableAudioPorts },
-    { CLAP_EXT_CONTEXT_MENU,              &MExtContextMenu },
-    { CLAP_EXT_GUI,                       &MExtGui },
-    { CLAP_EXT_LATENCY,                   &MExtLatency },
-    { CLAP_EXT_NOTE_NAME,                 &MExtNoteName },
-    { CLAP_EXT_NOTE_PORTS,                &MExtNotePorts },
-    { CLAP_EXT_PARAM_INDICATION,          &MExtParamIndication },
-    { CLAP_EXT_PARAMS,                    &MExtParams },
-    { CLAP_EXT_POSIX_FD_SUPPORT,          &MExtPosixFdSupport },
-    { CLAP_EXT_PRESET_LOAD,               &MExtPresetLoad },
-    { CLAP_EXT_REMOTE_CONTROLS,           &MExtRemoteControls },
-    { CLAP_EXT_RENDER,                    &MExtRender },
-    { CLAP_EXT_STATE,                     &MExtState },
-    { CLAP_EXT_STATE_CONTEXT,             &MExtStateContext },
-    { CLAP_EXT_SURROUND,                  &MExtSurround },
-    { CLAP_EXT_TAIL,                      &MExtTail },
-    { CLAP_EXT_THREAD_POOL,               &MExtThreadPool },
-    { CLAP_EXT_TIMER_SUPPORT,             &MExtTimerSupport },
-    { CLAP_EXT_TRACK_INFO,                &MExtTrackInfo },
-    { CLAP_EXT_VOICE_INFO,                &MExtVoiceInfo },
+    { CLAP_EXT_AMBISONIC,                       &MExtAmbisonic },
+    { CLAP_EXT_AUDIO_PORTS,                     &MExtAudioPorts },
+    { CLAP_EXT_AUDIO_PORTS_ACTIVATION,          &MExtAudioPortsActivation },
+    { CLAP_EXT_AUDIO_PORTS_CONFIG,              &MExtAudioPortsConfig },
+    { CLAP_EXT_CONFIGURABLE_AUDIO_PORTS,        &MExtConfigurableAudioPorts },
+    { CLAP_EXT_CONTEXT_MENU,                    &MExtContextMenu },
+    { CLAP_EXT_GUI,                             &MExtGui },
+    { CLAP_EXT_LATENCY,                         &MExtLatency },
+    { CLAP_EXT_NOTE_NAME,                       &MExtNoteName },
+    { CLAP_EXT_NOTE_PORTS,                      &MExtNotePorts },
+    { CLAP_EXT_PARAM_INDICATION,                &MExtParamIndication },
+    { CLAP_EXT_PARAMS,                          &MExtParams },
+    { CLAP_EXT_POSIX_FD_SUPPORT,                &MExtPosixFdSupport },
+    { CLAP_EXT_PRESET_LOAD,                     &MExtPresetLoad },
+    { CLAP_EXT_REMOTE_CONTROLS,                 &MExtRemoteControls },
+    { CLAP_EXT_RENDER,                          &MExtRender },
+    { CLAP_EXT_STATE,                           &MExtState },
+    { CLAP_EXT_STATE_CONTEXT,                   &MExtStateContext },
+    { CLAP_EXT_SURROUND,                        &MExtSurround },
+    { CLAP_EXT_TAIL,                            &MExtTail },
+    { CLAP_EXT_THREAD_POOL,                     &MExtThreadPool },
+    { CLAP_EXT_TIMER_SUPPORT,                   &MExtTimerSupport },
+    { CLAP_EXT_TRACK_INFO,                      &MExtTrackInfo },
+    { CLAP_EXT_VOICE_INFO,                      &MExtVoiceInfo },
     // draft
-    { CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,    &MExtExtensibleAudioPorts },
-    { CLAP_EXT_RESOURCE_DIRECTORY,        &MExtResourceDirectory },
-    { CLAP_EXT_TRIGGERS,                  &MExtTriggers },
-    { CLAP_EXT_TUNING,                    &MExtTuning },
-    { CLAP_EXT_UNDO,                      &MExtUndo }
+    { CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,          &MExtExtensibleAudioPorts },
+    { CLAP_EXT_RESOURCE_DIRECTORY,              &MExtResourceDirectory },
+    { CLAP_EXT_TRIGGERS,                        &MExtTriggers },
+    { CLAP_EXT_TUNING,                          &MExtTuning },
+    { CLAP_EXT_UNDO,                            &MExtUndo }
   };
+
+  const
+  SAT_ClapExtensionInfoCompat MCompatClapExtensions[SAT_NUM_COMPAT_CLAP_EXTENSIONS] = {
+    { CLAP_EXT_AMBISONIC_COMPAT,                CLAP_EXT_AMBISONIC },
+    { CLAP_EXT_AUDIO_PORTS_ACTIVATION_COMPAT,   CLAP_EXT_AUDIO_PORTS_ACTIVATION },
+    { CLAP_EXT_CONFIGURABLE_AUDIO_PORTS_COMPAT, CLAP_EXT_CONFIGURABLE_AUDIO_PORTS },
+    { CLAP_EXT_CONTEXT_MENU_COMPAT,             CLAP_EXT_CONTEXT_MENU },
+    { CLAP_EXT_PARAM_INDICATION_COMPAT,         CLAP_EXT_PARAM_INDICATION },
+    { CLAP_EXT_PRESET_LOAD_COMPAT,              CLAP_EXT_PRESET_LOAD },
+    { CLAP_EXT_REMOTE_CONTROLS_COMPAT,          CLAP_EXT_REMOTE_CONTROLS },
+    { CLAP_EXT_SURROUND_COMPAT,                 CLAP_EXT_SURROUND },
+    { CLAP_EXT_TRACK_INFO_COMPAT,               CLAP_EXT_TRACK_INFO }
+  };
+
 
 //------------------------------
 public:
@@ -129,6 +149,15 @@ public: // extensions
       if (strcmp(AId,MAllClapExtensions[i].id) == 0) return i;
     }
     return -1;
+  }
+
+  //----------
+
+  const char* findCompatExtension(const char* ACompatId) {
+    for (uint32_t i=0; i<SAT_NUM_COMPAT_CLAP_EXTENSIONS; i++) {
+      if (strcmp(ACompatId,MCompatClapExtensions[i].compat_id) == 0) return MCompatClapExtensions[i].id;
+    }
+    return nullptr;
   }
 
 //------------------------------

@@ -107,10 +107,7 @@ public: // extensions
     int32_t index = findExtension(AId);
     if (index >=0) {
       const void* ptr = getExtensionPtr(index);
-      if (!MSupportedExtensions.hasItem(AId)) {
-        //SAT_PRINT("has %s\n",AId);
-        MSupportedExtensions.addItem(AId,ptr);
-      }
+      if (!MSupportedExtensions.hasItem(AId)) MSupportedExtensions.addItem(AId,ptr);
     }
   }
 
@@ -805,8 +802,21 @@ public: // clap plugin
   //----------
 
   const void* get_extension(const char *id) override {
-    //SAT_PRINT("id %s\n",id);
-    if (MSupportedExtensions.hasItem(id)) return MSupportedExtensions.getItem(id);
+    
+    if (MSupportedExtensions.hasItem(id)) {
+      SAT_PRINT("host asks for %s extension: yes\n",id);
+      return MSupportedExtensions.getItem(id);
+    }
+    const char* compat_id = findCompatExtension(id);
+    if (compat_id) {
+      SAT_PRINT("%s -> %s\n",id,compat_id);
+      if (MSupportedExtensions.hasItem(compat_id)) {
+        SAT_PRINT("host asks for %s extension (compat: %s): yes\n",id,compat_id);
+        return MSupportedExtensions.getItem(compat_id);
+      }
+    }
+
+    SAT_PRINT("host asks for %s extension: no\n",id);
     return nullptr;
   }
 
@@ -1124,6 +1134,7 @@ public: // clap extensions
   //------------------------------
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
+    //SAT_TRACE;
     SAT_Parameter* param = MParameters[param_id];
     // param->setMappingIndication(has_mapping,color,label,description);
     param->setIndicateMapped(has_mapping);
@@ -1135,16 +1146,15 @@ public: // clap extensions
     );
     param->setIndicateMappedColor(C);
     #ifndef SAT_NO_GUI
-
-//      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-//      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,0);
-
+      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+      if (widget) widget->do_widget_redraw(widget,0);
     #endif
   }
 
   //----------
 
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
+    //SAT_TRACE;
     SAT_Parameter* param = MParameters[param_id];
     // param->setAutomationIndication(automation_state,color);
     //param->setAutomationIndication(automation_state,color);
@@ -1157,10 +1167,8 @@ public: // clap extensions
     );
     param->setIndicateAutomationColor(C);
     #ifndef SAT_NO_GUI
-
-//      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-//      if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,0);
-
+      SAT_Widget* widget = (SAT_Widget*)param->getWidget();
+      if (widget) widget->do_widget_redraw(widget,0);
     #endif
   }
 

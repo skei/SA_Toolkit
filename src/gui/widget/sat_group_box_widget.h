@@ -120,7 +120,7 @@ public:
     setBaseRect(rect);
     MContainer->State.active = true;
     MContainer->State.visible = true;
-    MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_DOWN); //(SAT_SYMBOL_FILLED_TRI_UP);
+    MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_UP);
     do_widget_realign(this,0);
     //do_widget_update(this,SAT_WIDGET_UPDATE_VALUE);
     //do_widget_redraw(this,SAT_WIDGET_REDRAW_PARAM);

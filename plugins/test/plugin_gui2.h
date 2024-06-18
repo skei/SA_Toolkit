@@ -46,7 +46,7 @@ public:
   void paramValueEvent(const clap_event_param_value_t* event) final {
     uint32_t id = event->param_id;
     sat_param_t value = event->value;
-    SAT_PRINT("%i = %.3f\n",id,value);
+    //SAT_PRINT("%i = %.3f\n",id,value);
   }
 
   //----------
@@ -103,6 +103,8 @@ public:
 
   bool init() final {
     registerDefaultExtensions();
+    registerExtension(CLAP_EXT_PARAM_INDICATION);
+    registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
 
@@ -111,34 +113,43 @@ public:
     p0->setFlag(CLAP_PARAM_IS_STEPPED);
     p0->setText(MSelectorTexts);
 
-    // SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
-    // appendParameter(p1);
+    SAT_Parameter* p1 = new SAT_Parameter( "p1", "", 0, -5,5 );
+    appendParameter(p1);
 
-    // SAT_Parameter* p3 = new SAT_Parameter( "param3", "", 2.0,  0, 10 );
-    // appendParameter(p3);
-    // p3->setFlag(CLAP_PARAM_IS_STEPPED);
+    SAT_Parameter* p2 = new SAT_Parameter( "p2", "", 0, 0,10 );
+    appendParameter(p2);
+    p2->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    // SAT_Parameter* p4 = new SAT_Parameter( "param4", "", 3.0, -2, 10 );
-    // appendParameter(p4);
-    // p4->setFlag(CLAP_PARAM_IS_STEPPED);
+    SAT_Parameter* p3 = new SAT_Parameter( "p3", "", 0, 0,10 );
+    appendParameter(p3);
+    p3->setFlag(CLAP_PARAM_IS_STEPPED);
 
-    // SAT_Parameter* p5 = new SAT_Parameter( "param5", "", 4.0, -2, 10 );
-    // appendParameter(p5);
-    // p5->setFlag(CLAP_PARAM_IS_STEPPED);
+    SAT_Parameter* p4 = new SAT_Parameter( "p4", "", 0, -1,1 );
+    appendParameter(p4);
 
-    // SAT_Parameter* p6 = new SAT_Parameter( "p6",     "", 5.0, -2, 10 );
-    // appendParameter(p6);
-
-    // SAT_Parameter* p7 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
-    // appendParameter(p7);
-    // p7->setFlag(CLAP_PARAM_IS_ENUM);
-
-    // SAT_Parameter* p8 = new SAT_Parameter( "p7",     "", 0,    0, 1  );
-    // appendParameter(p8);
+    SAT_Parameter* p5 = new SAT_Parameter( "p5", "", 0, 0,1 );
+    appendParameter(p5);
 
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(800,600,1.0,true);
     return SAT_Plugin::init();
+  }
+
+  uint32_t remote_controls_count() override {
+    return 1;
+  }
+
+  bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
+    SAT_Strlcpy(page->page_name,"Perform",CLAP_NAME_SIZE);
+    SAT_Strlcpy(page->section_name,"",CLAP_NAME_SIZE);
+    page->page_id = 0;
+    page->is_for_preset = false;
+    uint32_t numpar = MParameters.size();
+    for (uint32_t i=0; i<8; i++) {
+      if (i < numpar) page->param_ids[i] = i;// CLAP_INVALID_ID;
+      else page->param_ids[i] = CLAP_INVALID_ID;
+    }
+    return true;
   }
 
 //------------------------------
@@ -327,6 +338,7 @@ AEditor->connect(selector1,getParameter(0));
       tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      tabs1->getHeader()->setFillCellsGradient(true);
         SAT_VisualWidget* p1 = new SAT_VisualWidget(15);
         SAT_VisualWidget* p2 = new SAT_VisualWidget(15);
         SAT_VisualWidget* p3 = new SAT_VisualWidget(15);
@@ -402,9 +414,19 @@ AEditor->connect(selector1,getParameter(0));
 
       SAT_KnobWidget* knob1 = new SAT_KnobWidget(100);
       bottom_panel->appendChild(knob1);
+AEditor->connect(knob1,getParameter(4));
       knob1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       knob1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
-      //AEditor->connect(knob1,getParameter(7));
+      knob1->setDragSnap(true);
+      knob1->setDrawBipolar(true);
+
+      SAT_KnobWidget* knob2 = new SAT_KnobWidget(100);
+      bottom_panel->appendChild(knob2);
+AEditor->connect(knob2,getParameter(5));
+      knob2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      knob2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+      //knob2->setDragSnap(true);
+      //knob2->setDrawBipolar(true);
 
       SAT_CurveWidget* curve1 = new SAT_CurveWidget(30,false);
       bottom_panel->appendChild(curve1);
@@ -480,9 +502,11 @@ AEditor->connect(selector1,getParameter(0));
 
       SAT_TabsWidget* center_tabs1 = new SAT_TabsWidget(0,15);
       center_panel->appendChild(center_tabs1);
+
       center_tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       center_tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
       center_tabs1->getPages()->setDrawBorder(false);
+      center_tabs1->getHeader()->setFillCellsGradient(true);
 
         SAT_VisualWidget* modular_tab1 = new SAT_VisualWidget(15);
         center_tabs1->appendPage( "Modular", modular_tab1);
@@ -535,7 +559,7 @@ AEditor->connect(selector1,getParameter(0));
         //center_tabs1->appendPage( "t2", new SAT_VisualWidget(0));
 
         SAT_VisualWidget* t2_tab1 = new SAT_VisualWidget(15);
-        center_tabs1->appendPage( "t2", t2_tab1);
+        center_tabs1->appendPage( "Painting", t2_tab1);
         //t2_tab1->Layout.innerBorder = SAT_Rect(5,5,5,5);
         t2_tab1->Layout.spacing = SAT_Point(0,5);
         t2_tab1->setDrawBorder(false);
@@ -578,8 +602,36 @@ AEditor->connect(selector1,getParameter(0));
 
         } // t2_tab
 
+        //center_tabs1->appendPage( "t3", new SAT_VisualWidget(0));
+        SAT_VisualWidget* t3_tab1 = new SAT_VisualWidget(15);
+        center_tabs1->appendPage( "Parameters", t3_tab1);
+        //t3_tab1->Layout.innerBorder = SAT_Rect(5,5,5,5);
+        t3_tab1->Layout.spacing = SAT_Point(0,5);
+        t3_tab1->setDrawBorder(false);
+        {
 
-        center_tabs1->appendPage( "t3", new SAT_VisualWidget(0));
+          SAT_SliderWidget* t3s1 = new SAT_SliderWidget(SAT_Rect(10,10,300,20));
+          t3_tab1->appendChild(t3s1);
+AEditor->connect(t3s1,getParameter(1));
+          t3s1->setDragSnap(true);
+          t3s1->setDrawValueBar(true);
+
+          SAT_SliderWidget* t3s2 = new SAT_SliderWidget(SAT_Rect(10,40,300,20));
+          t3_tab1->appendChild(t3s2);
+AEditor->connect(t3s2,getParameter(2));
+          t3s2->setDragQuantize(true);
+          t3s2->setDragQuantizeSteps(11);
+          t3s2->setDrawValueBar(true);
+          //t3s2->setDrawQuantized(true);
+
+          SAT_SliderWidget* t3s3 = new SAT_SliderWidget(SAT_Rect(10,70,300,20));
+          t3_tab1->appendChild(t3s3);
+AEditor->connect(t3s3,getParameter(3));
+          t3s3->setCursor(SAT_CURSOR_ARROW_LEFT);
+          t3s3->setDragDirection(SAT_DIRECTION_LEFT);
+          t3s3->setDrawDirection(SAT_DIRECTION_LEFT);
+
+        }
 
       center_tabs1->selectPage(0);
 

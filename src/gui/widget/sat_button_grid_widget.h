@@ -28,6 +28,7 @@ public:
   double        MTextSize           = 12.0;
   bool          MHorizSingle        = false;
   bool          MVertSingle         = false;
+  bool          MFillCellsGradient  = false;
 
   int32_t       MLastClickedX       = 0;
   int32_t       MLastClickedY       = 0;
@@ -77,6 +78,12 @@ public:
   virtual void setSingle(bool AHoriz, bool AVert) {
     MHorizSingle = AHoriz;
     MVertSingle = AVert;
+  }
+
+  //----------
+
+  virtual void setFillCellsGradient(bool AGradient) {
+    MFillCellsGradient = AGradient;
   }
 
   //----------
@@ -168,9 +175,28 @@ public:
     double scale = getWindowScale();
     const char* txt = "";
     int32_t index = (AY * MNumColumns) + AX;
-    if (MStates[index] == 0) painter->setFillColor(MOffBackgroundColor);
-    else painter->setFillColor(MOnBackgroundColor);
+
+    SAT_Color color;
+
+    //if (MStates[index] == 0) painter->setFillColor(MOffBackgroundColor);
+    //else painter->setFillColor(MOnBackgroundColor);
+
+    if (MStates[index] == 0) color = MOffBackgroundColor;
+    else color = MOnBackgroundColor;
+
+    if (MFillCellsGradient) {
+      SAT_Color c1 = color;
+      SAT_Color c2 = color;
+      c1.blend(SAT_White,0.3);
+      c2.blend(SAT_Black,0.2);
+      painter->setFillLinearGradient(ARect.x,ARect.y,ARect.x,ARect.y2(),c1,c2); // top to bottom
+    }
+    else {
+      painter->setFillColor(color);
+    }
+
     painter->fillRect(ARect.x,ARect.y,ARect.w,ARect.h);
+
     txt = MTexts[index];
     if (txt) {
       if (MStates[index] == 0) painter->setTextColor(MOffTextColor);
