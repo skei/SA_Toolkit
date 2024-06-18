@@ -26,6 +26,7 @@ public:
   SAT_SurfaceWidget(SAT_Rect ARect, SAT_Surface* ASurface=nullptr)
   : SAT_VisualWidget(ARect) {
     setName("SAT_SurfaceWidget");
+    setHint("SAT_SurfaceWidget");
     MSurface = ASurface;
   }
 

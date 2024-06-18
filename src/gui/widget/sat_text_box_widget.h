@@ -32,6 +32,7 @@ public:
   //: SAT_ScrollBoxWidget(ARect,true,true) {
   : SAT_ScrollBoxWidget(ARect,true,true) {
     setName("SAT_TextBoxWidget");
+    setHint("SAT_TextBoxWidget");
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(true);
   }

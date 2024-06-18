@@ -19,6 +19,7 @@ public:
   SAT_PluginFooterWidget(SAT_Rect ARect, const char* AText="")
   : SAT_TextWidget(ARect) {
     setName("SAT_PluginFooterWidget");
+    setHint("SAT_PluginFooterWidget");
     setText(AText);
     
     setFillBackground(true);
@@ -26,8 +27,9 @@ public:
     setDrawBorder(false);
     setDrawText(true);
     setTextColor(SAT_LightestGrey);
+    setTextSize(10);
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
-//    setTextOffset(SAT_Rect(5,0,5,0));
+    //setTextOffset(SAT_Rect(5,0,5,0));
 
     //setAlignment(SAT_WIDGET_ALIGN_BOTTOM);
     //setStretching(SAT_WIDGET_STRETCH_HORIZONTAL);
@@ -45,6 +47,12 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  void on_widget_hint(SAT_Widget* AWidget, const char* AHint) override {
+    setText(AHint);
+    do_widget_redraw(this);
+  }
+
   
 };
 

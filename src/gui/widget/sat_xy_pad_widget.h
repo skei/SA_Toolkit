@@ -25,6 +25,7 @@ public:
   SAT_XYPadWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
     setName("SAT_XYPadWidget");
+    setHint("SAT_XYPadWidget");
     setCursor(SAT_CURSOR_FINGER);
     setFillBackground(true);
     setBackgroundColor(0.45);

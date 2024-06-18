@@ -49,6 +49,8 @@ public:
   virtual void      on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void      on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {}
   virtual void      on_widget_timer(double ADelta) {}
+  virtual void      on_widget_hint(SAT_Widget* AWidget, const char* AHint) {}
+
 
 //------------------------------
 public:

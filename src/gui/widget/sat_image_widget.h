@@ -41,6 +41,7 @@ public:
   SAT_ImageWidget(SAT_Rect ARect, void* ABuffer, uint32_t ASize)
   : SAT_VisualWidget(ARect) {
     setName("SAT_ImageWidget");
+    setHint("SAT_ImageWidget");
     setFillBackground(false);
     MBuffer = ABuffer;
     MBufferSize = ASize;

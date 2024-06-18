@@ -37,6 +37,7 @@ public:
   SAT_LogoWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
     setName("SAT_LogoWidget");
+    setHint("SAT_LogoWidget");
     setFillBackground(false);
     setDrawBorder(false);
     #ifdef SAT_PAINTER_NANOVG

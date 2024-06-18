@@ -35,6 +35,7 @@ public:
   SAT_VoicesWidget(SAT_Rect ARect, uint32_t AMaxVoices)
   : SAT_VisualWidget(ARect) {
     setName("SAT_VoicesWidget");
+    setHint("SAT_VoicesWidget");
     MMaxVoices = AMaxVoices;
     setFillBackground(false);
     setDrawBorder(false);

@@ -33,6 +33,7 @@ public:
   SAT_ButtonWidget(SAT_Rect ARect, bool AMomentary=false)
   : SAT_TextWidget(ARect) {
     setName("SAT_ButtonWidget");
+    setHint("SAT_ButtonWidget");
     setCursor(SAT_CURSOR_FINGER);
     MMomentary = AMomentary;
     setFillBackground(true);

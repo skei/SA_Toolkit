@@ -23,7 +23,7 @@ struct SAT_WidgetOptions {
   bool      opaque            = true;   // fully fills its rect
   bool      autoCapture       = false;  // mouse automatically captured
   bool      autoCursor        = true;   // mouse automatically captured
-  bool      autoHint          = false;  // automatically send hint
+  bool      autoHint          = true;   // automatically send hint
   bool      realignInvisible  = false;
   bool      autoClipChildren  = true;
   bool      wantHoverEvents   = false;
@@ -89,6 +89,8 @@ public:
 
   SAT_Widget(SAT_Rect ARect)
   : SAT_BaseWidget() {
+    setName("SAT_Widget");
+    setHint("SAT_Widget");
     MInitialRect = ARect;
     MBaseRect = ARect;
     MRect = ARect;
@@ -121,7 +123,7 @@ public:
   virtual SAT_Widget*       getParent()                   { return MParent; }
   virtual SAT_Rect          getRect()                     { return MRect; }
   virtual double            getValue(uint32_t AIndex)     { return MValues[AIndex]; }
-  //virtual double            getValue()                    { return MValues[MValueIndex]; }
+//virtual double            getValue()                    { return MValues[MValueIndex]; }
   virtual double            getValue()                    { return getValue(MValueIndex); }
   virtual uint32_t          getValueIndex()               { return MValueIndex; }
 
@@ -163,7 +165,7 @@ public:
   virtual void setSize(SAT_Point ASize)                         { MRect.w = ASize.x; MRect.h = ASize.y; }
   virtual void setValue(double AValue, uint32_t AIndex)         { MValues[AIndex] = AValue; }
   virtual void setValue(double AValue)                          { setValue(AValue,MValueIndex); }
-  //virtual void setValue(double AValue)                          { MValues[MValueIndex] = AValue; }
+//virtual void setValue(double AValue)                          { MValues[MValueIndex] = AValue; }
   virtual void setValueIndex(uint32_t AIndex)                   { MValueIndex = AIndex; }
 
   virtual void setSize(double AWidth, double AHeight) {
@@ -668,7 +670,6 @@ public:
 //------------------------------
 
   void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
-    //SAT_PRINT("%s\n",AWidget->getName());
     if (MParent) MParent->do_widget_update(AWidget,AIndex,AMode);
   }
   
@@ -713,15 +714,11 @@ public:
   }
 
   void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
-    //SAT_PRINT("dx %i dy %i\n",ADeltaX,ADeltaY);
     SAT_Rect base_rect = getBaseRect();
-    //base_rect.w += ADeltaX;
-    //base_rect.h += ADeltaY;
     double scale = getWindowScale();
     base_rect.w += (ADeltaX / scale);
     base_rect.h += (ADeltaY / scale);
     setBaseRect(base_rect);
-
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
       parent->on_widget_realign();

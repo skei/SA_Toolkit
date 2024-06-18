@@ -35,6 +35,7 @@ public:
   SAT_SymbolWidget(SAT_Rect ARect, uint32_t ASymbol=SAT_SYMBOL_NONE)
   : SAT_VisualWidget(ARect) {
     setName("SAT_SymbolWidget");
+    setHint("SAT_SymbolWidget");
     MSymbol = ASymbol;
     setFillBackground(false);
     setDrawBorder(false);

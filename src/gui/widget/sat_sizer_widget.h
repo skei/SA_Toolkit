@@ -28,6 +28,7 @@ public:
   SAT_SizerWidget(SAT_Rect ARect,uint32_t AMode=SAT_DIRECTION_NONE,SAT_Widget* ATarget=nullptr)
   : SAT_VisualWidget(ARect) {
     setName("SAT_SizerWidget");
+    setHint("SAT_SizerWidget");
     //setHint("sizer");
     setMode(AMode);
     setTarget(ATarget);

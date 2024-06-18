@@ -39,6 +39,7 @@ public:
   SAT_KnobWidget(SAT_Rect ARect)
   : SAT_DragValueWidget(ARect) {
     setName("SAT_KnobWidget");
+    setHint("SAT_KnobWidget");
     //setFillBackground(true);
     //setBackgroundColor(0.45);
     setDrawBorder(false);

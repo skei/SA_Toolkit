@@ -39,6 +39,7 @@ public:
   SAT_ValueGraphWidget(SAT_Rect ARect, int32_t ANum)
   : SAT_VisualWidget(ARect) {
     setName("SAT_ValueGraphWidget");
+    setHint("SAT_ValueGraphWidget");
     //setHint("valuegraph");
     MNumNodes = ANum;
     memset(MNodes,0,sizeof(MNodes));

@@ -107,6 +107,8 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
+    setProcessor( new myProcessor(this) );
+    setInitialEditorSize(800,600,1.0,true);
 
     // selector
     SAT_TextParameter* p0 = new SAT_TextParameter( "p0", "", 1,  0, 4 );
@@ -152,8 +154,6 @@ public:
     SAT_Parameter* p9 = new SAT_Parameter( "p9", "", 0.75, 0,1 );
     appendParameter(p9);
 
-    setProcessor( new myProcessor(this) );
-    setInitialEditorSize(800,600,1.0,true);
     return SAT_Plugin::init();
   }
 
@@ -196,8 +196,10 @@ public:
       SAT_PluginHeaderWidget* header1 = new SAT_PluginHeaderWidget(40,"plugin_gui2");
       root->appendChild(header1);
 
-      SAT_PluginFooterWidget* footer1 = new SAT_PluginFooterWidget(20,"...");
+      SAT_PluginFooterWidget* footer1 = new SAT_PluginFooterWidget(25,"(hint)");
       root->appendChild(footer1);
+
+      window->setHintWidget(footer1);
 
       SAT_VisualWidget* middle1 = new SAT_VisualWidget(0);
       root->appendChild(middle1);

@@ -32,6 +32,7 @@ public:
   SAT_DualSliderWidget(SAT_Rect ARect)
   : SAT_SliderWidget(ARect) {
     setName("SAT_DualSliderWidget");
+    setHint("SAT_DualSliderWidget");
     setCursor(SAT_CURSOR_DEFAULT);
     setNumValues(2);
     setTextAlignment(SAT_TEXT_ALIGN_CENTER);

@@ -68,6 +68,7 @@ public:
   SAT_KeyboardWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
     setName("SAT_KeyboardWidget");
+    setHint("SAT_KeyboardWidget");
     //setWidgetHint("keyboard");
     setCursor(SAT_CURSOR_FINGER);
     //recalc();

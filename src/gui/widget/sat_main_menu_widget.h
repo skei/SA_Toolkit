@@ -60,6 +60,7 @@ public:
   SAT_MainMenuWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
     setName("SAT_MainMenuWidget");
+    setHint("SAT_MainMenuWidget");
     setDrawBorder(false);
     setFillBackground(true);
     setBackgroundColor(0.35);

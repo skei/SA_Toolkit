@@ -30,6 +30,7 @@ public:
   SAT_PluginHeaderWidget(SAT_Rect ARect, const char* AName/*, const char* AFormat*/)
   : SAT_VisualWidget(ARect) {
     setName("SAT_PluginHeaderWidget");
+    setHint("SAT_PluginHeaderWidget");
 
     // if ( ((AName[0] == 's') || (AName[0] == 'S'))
     //   && ((AName[1] == 'a') || (AName[1] == 'A'))

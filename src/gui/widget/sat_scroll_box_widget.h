@@ -48,6 +48,7 @@ public:
 
   void setup(SAT_Rect ARect) {
     setName("SAT_ScrollBoxWidget");
+    setHint("SAT_ScrollBoxWidget");
     setFillBackground(false);
     setDrawBorder(true);
     //Layout.spacing = 5;

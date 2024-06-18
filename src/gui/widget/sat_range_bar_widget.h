@@ -35,7 +35,8 @@ public:
 
   SAT_RangeBarWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
-    setName("SAT_ScrollBarWidget");
+    setName("SAT_RangebarWidget");
+    setHint("SAT_RangebarWidget");
   }
   
   //----------

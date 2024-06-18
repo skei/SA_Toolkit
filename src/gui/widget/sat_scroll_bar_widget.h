@@ -48,6 +48,8 @@ public:
 
   SAT_ScrollBarWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
+    setName("SAT_ScrollBarWidget");
+    setHint("SAT_ScrollBarWidget");
     //if (AVertical) setFlag(SAT_WIDGET_VERTICAL);
     setBackgroundColor(0.3);
     setDrawBorder(false);

@@ -37,6 +37,7 @@ public:
   SAT_DebugObserverWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
     setName("SAT_DebugObserverWidget");
+    setHint("SAT_DebugObserverWidget");
     //strcpy(MText,AText);
     setFillBackground(true);
   }
