@@ -81,7 +81,7 @@ public:
     do_widget_redraw(this);
   }
 
-  void on_widget_leave(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
+  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
     //SAT_TRACE;
     setBackgroundColor(MUnHoverBackgroundColor);
     setTextColor(MUnHoverTextColor);

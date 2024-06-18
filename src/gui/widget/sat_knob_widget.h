@@ -18,7 +18,7 @@ private:
   bool        MDrawKnobArcBackground  = true;
   SAT_Color   MKnobArcColor           = SAT_LightBlue1;
   SAT_Color   MKnobArcBackgroundColor = 0.4;
-  double      MKnobArcThickness       = 8.0;
+  double      MKnobArcThickness       = 6.0;
 
   bool        MDrawKnobNeedle         = false;
   SAT_Color   MKnobNeedleColor        = SAT_LighterGrey;

@@ -82,6 +82,16 @@ public:
 
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MDragging = true;
+    SAT_Rect rect = getRect();
+    double x = (AXpos - rect.x) / rect.w;
+    double y = (AYpos - rect.y) / rect.h;
+    x = SAT_Clamp(x,0,1);
+    y = SAT_Clamp(y,0,1);
+    setValue(x,0);
+    setValue(y,1);
+    do_widget_update(this,0);
+    do_widget_update(this,1);
+    do_widget_redraw(this);
   }
 
   //----------

@@ -46,7 +46,7 @@ public:
   virtual void      on_widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
   virtual void      on_widget_key_release(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
   virtual void      on_widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void      on_widget_leave(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void      on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void      on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {}
   virtual void      on_widget_timer(double ADelta) {}
 
