@@ -66,6 +66,7 @@ public:
   SAT_WaveformWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
     setName("SAT_WaveformWidget");
+    setHint("SAT_WaveformWidget");
   }
 
   //----------

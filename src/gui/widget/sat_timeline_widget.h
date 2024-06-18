@@ -226,6 +226,7 @@ public:
   SAT_TimelineWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
     setName("SAT_TimelineWidget");
+    setHint("SAT_TimelineWidget");
     //setFlag(SAT_WIDGET_HOVER);
     //setFlag(SAT_WIDGET_CLIP);
     Options.wantHoverEvents = true;

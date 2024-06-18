@@ -75,6 +75,7 @@ public:
   SAT_GridWidget(SAT_Rect ARect, uint32_t AColumns, uint32_t ARows)
   : SAT_VisualWidget(ARect) {
     setName("SAT_GridWidget");
+    setHint("SAT_GridWidget");
     setCursor(SAT_CURSOR_FINGER);
     setNumCells(AColumns,ARows);
     //setDrawBorder(true);
@@ -372,15 +373,6 @@ public:
 
 #if 0
 
-
-
-
-
-
-
-
-
-
 //------------------------------
 public: // parent to child
 //------------------------------
@@ -397,9 +389,5 @@ public: // parent to child
 //  void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {}
 //  void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {}
 //  //void on_widget_connect(SAT_Parameter* AParameter) override {}
-
-
-
-
 
 #endif // 0

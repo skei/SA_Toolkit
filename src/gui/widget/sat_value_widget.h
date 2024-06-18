@@ -32,6 +32,7 @@ public:
   SAT_ValueWidget(SAT_Rect ARect)
   : SAT_TextWidget(ARect) {
     setName("SAT_ValueWidget");
+    setHint("SAT_ValueWidget");
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
   }
 

@@ -219,8 +219,7 @@ public:
   SAT_GraphWidget(SAT_Rect ARect=SAT_Rect())
   : SAT_VisualWidget(ARect) {
     setName("SAT_GraphWidget");
-    //setWidgetName("SAT_GraphWidget");
-    //setHint("graph");
+    setHint("SAT_GraphWidget");
     clearSelection();
     //setFlag(SAT_WIDGET_HOVER);
     ////setFlag(SAT_WIDGET_CLIP);

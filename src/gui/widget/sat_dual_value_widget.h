@@ -16,6 +16,7 @@ public:
   SAT_DualValueWidget(SAT_Rect ARect)
   : SAT_DragValueWidget(ARect) {
     setName("SAT_DualValueWidget");
+    setHint("SAT_DualValueWidget");
     setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);
   }
 

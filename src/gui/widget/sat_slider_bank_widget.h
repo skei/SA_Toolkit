@@ -31,7 +31,7 @@ public:
   : SAT_VisualWidget(ARect) {
 
     setName("SAT_SliderBankWidget");
-    //setHint("aliderbank");
+    setHint("SAT_SliderBankWidget");
     setCursor(SAT_CURSOR_FINGER);
 
 //    Options.wantHoverEvents = true;

@@ -40,7 +40,7 @@ public:
   : SAT_VisualWidget(ARect) {
 
     setName("SAT_TextEditWidget");
-    //MHint = "textedit";
+    setHint("SAT_TextEditWidget");
     setCursor(SAT_CURSOR_IBEAM);
     strncpy(MText,AText,255);
     //MTextSize = 10;

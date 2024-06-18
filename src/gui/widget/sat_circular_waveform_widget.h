@@ -79,6 +79,7 @@ public:
   SAT_CircularWaveformWidget(SAT_Rect ARect, uint32_t ANumLines=DEFAULT_NUM_LINES)
   : SAT_VisualWidget(ARect) {
     setName("SAT_CircularWaveformWidget");
+    setHint("SAT_CircularWaveformWidget");
     setFillBackground(true);
     setBackgroundColor(0.33);
     setDrawBorder(false);

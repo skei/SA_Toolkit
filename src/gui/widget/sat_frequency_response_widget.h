@@ -67,6 +67,7 @@ public:
   SAT_FrequencyResponseWidget(SAT_Rect ARect)
   : SAT_PanelWidget(ARect) {
     setName("SAT_FrequencyResponseWidget");
+    setHint("SAT_FrequencyResponseWidget");
 
     //do_fft();
 

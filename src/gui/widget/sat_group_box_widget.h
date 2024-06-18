@@ -34,6 +34,7 @@ public:
   SAT_GroupBoxWidget(SAT_Rect ARect, double AHeaderSize=20, bool AOpen=true)
   : SAT_VisualWidget(ARect) {
     setName("SAT_GroupBoxWidget");
+    setHint("SAT_GroupBoxWidget");
     MHeaderSize = AHeaderSize;
     MFullSize = ARect.h;
 

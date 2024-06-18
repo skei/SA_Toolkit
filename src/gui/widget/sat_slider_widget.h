@@ -42,6 +42,7 @@ public:
   SAT_SliderWidget(SAT_Rect ARect)
   : SAT_DragValueWidget(ARect) {
     setName("SAT_SliderWidget");
+    setHint("SAT_SliderWidget");
   }
 
   //----------

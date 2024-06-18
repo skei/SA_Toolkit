@@ -53,9 +53,8 @@ public:
   SAT_VisualWidget(SAT_Rect ARect)
   : SAT_Widget(ARect) {
     setName("SAT_VisualWidget");
-
+    setHint("SAT_VisualWidget");
     //Options.autoClip = true;
-
   }
 
   //----------

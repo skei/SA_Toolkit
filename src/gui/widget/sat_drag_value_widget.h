@@ -58,6 +58,7 @@ public:
   SAT_DragValueWidget(SAT_Rect ARect)
   : SAT_ValueWidget(ARect) {
     setName("SAT_DragValueWidget");
+    setHint("SAT_DragValueWidget");
     setCursor(SAT_CURSOR_ARROW_UP_DOWN);
   }
 

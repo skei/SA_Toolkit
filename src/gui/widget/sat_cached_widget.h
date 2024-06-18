@@ -28,6 +28,8 @@ public:
 
   SAT_CachedWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
+    setName("SAT_CachedWidget");
+    setHint("SAT_CachedWidget");
   }
 
   //----------

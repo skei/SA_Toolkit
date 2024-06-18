@@ -30,6 +30,7 @@ public:
   SAT_MenuItemWidget(SAT_Rect ARect, const char* AText)
   : SAT_TextWidget(ARect,AText) {
     setName("SAT_MenuItemWidget");
+    setHint("SAT_MenuItemWidget");
     Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;

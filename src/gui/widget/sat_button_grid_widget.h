@@ -41,6 +41,7 @@ public:
   SAT_ButtonGridWidget(SAT_Rect ARect, uint32_t AColumns, uint32_t ARows, const char** ATexts=nullptr)
   : SAT_GridWidget(ARect,AColumns,ARows) {
     setName("SAT_ButtonGridWidget");
+    setHint("SAT_ButtonGridWidget");
     setCursor(SAT_CURSOR_FINGER);
     //setNumCells(AColumns,ARows);
     uint32_t size = AColumns * ARows * sizeof(uint32_t);

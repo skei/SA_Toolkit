@@ -35,6 +35,7 @@ public:
   SAT_MenuWidget(SAT_Rect ARect, SAT_MenuListener* AListener=nullptr)
   : SAT_VisualWidget(ARect) {
     setName("SAT_MenuWidget");
+    setHint("SAT_MenuWidget");
     MListener = AListener;
     Options.realignInvisible = true;
     State.visible = false;

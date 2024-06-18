@@ -29,6 +29,7 @@ public:
   SAT_TextWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
     setName("SAT_TextWidget");
+    setHint("SAT_TextWidget");
   }
 
   //----------

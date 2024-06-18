@@ -34,6 +34,7 @@ public:
   SAT_TabsWidget(SAT_Rect ARect, uint32_t AHeaderHeight)
   : SAT_Widget(ARect) {
     setName("SAT_TabsWidget");
+    setHint("SAT_TabsWidget");
 
     MHeader = new SAT_ButtonGridWidget(SAT_Rect(AHeaderHeight),0,0);
     MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP;
