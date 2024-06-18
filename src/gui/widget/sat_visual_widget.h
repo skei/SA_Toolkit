@@ -43,8 +43,8 @@ private:
   uint32_t    MRoundedCorners             = SAT_CORNER_ALL;
   double      MRoundedCornerSize          = 5.0;
 
-  double      MMappedIndicatorSize        = 7.0;
-  double      MAutomationIndicatorSize    = 5.0;
+  double      MMappedIndicatorSize        = 8.0;
+  double      MAutomationIndicatorSize    = 4.0;
 
 //------------------------------
 public:
@@ -399,9 +399,14 @@ public:
           SAT_Color color = param->getIndicateAutomationColor();
           painter->setFillColor(color);
           double as = MAutomationIndicatorSize * scale;
-          double xc = rect.x2() - (as * 2);
-          double yc = rect.y    + (as * 2);
+          double xc = rect.x2() - as;
+          double yc = rect.y    + as;
           painter->fillCircle(xc,yc,as);
+
+          color.blend(SAT_White,0.5);
+          painter->setLineWidth(1);
+          painter->setDrawColor(color);
+          painter->drawCircle(xc,yc,as);
         }
       }
     }

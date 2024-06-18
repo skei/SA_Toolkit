@@ -667,13 +667,13 @@ public:
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     //SAT_PRINT("%s\n",AWidget->getName());
-    if (MParent) MParent->do_widget_update(AWidget,AMode);
+    if (MParent) MParent->do_widget_update(AWidget,AIndex,AMode);
   }
   
-  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
-    if (MParent) MParent->do_widget_redraw(AWidget,AMode);
+  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
+    if (MParent) MParent->do_widget_redraw(AWidget,AIndex,AMode);
   }
   
   void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {
@@ -725,7 +725,7 @@ public:
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
       parent->on_widget_realign();
-      parent->do_widget_redraw(parent,0);
+      parent->do_widget_redraw(parent);
     }
 
   }

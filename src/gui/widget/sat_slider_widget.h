@@ -16,7 +16,7 @@ class SAT_SliderWidget
 : public SAT_DragValueWidget {
 
 //------------------------------
-private:
+protected:
 //------------------------------
 
   bool      MDrawSliderBar    = true;
@@ -149,7 +149,7 @@ public:
 
       }
 
-      if (MDrawModulation) {
+      if (MDrawModulation && getParameter()) {
         double mx = 0.0;
         double mw = 0.0;
         double my = 0.0;

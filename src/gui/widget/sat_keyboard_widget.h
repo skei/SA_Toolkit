@@ -311,8 +311,8 @@ public:
       if (note >= 0) {
         if (MActiveMap[note]) deactivate(note);
         else activate(note);
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
       }
     }
   }

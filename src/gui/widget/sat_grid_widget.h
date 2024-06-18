@@ -298,10 +298,10 @@ public:
 //        }
       }
       //on_clickCell(x,y,AButton,AState);
-      //do_widget_redraw(this,0,0);
+      //do_widget_redraw(this);
     }
     on_clickCell(x,y,AButton,AState);
-    do_widget_redraw(this,0);
+    do_widget_redraw(this);
   }
 
   //----------
@@ -315,7 +315,7 @@ public:
 //    }
 
     //on_releaseCell(x,y,AButton,AState);
-    //do_widget_redraw(this,0,0);
+    //do_widget_redraw(this);
   }
 
   //----------
@@ -333,7 +333,7 @@ public:
 
       if (MDragCell) {
         on_dragCell(x,y,MClickedB,AState);
-        do_widget_redraw(this,0);
+        do_widget_redraw(this);
       }
 
       if (MSelectMultipleCells && (MClickedB == SAT_BUTTON_LEFT)) {
@@ -355,7 +355,7 @@ public:
           MSelectedYcount = y - MClickedY + 1;
         }
         on_selectCells(MSelectedX,MSelectedY,MSelectedXcount,MSelectedYcount);
-        do_widget_redraw(this,0);
+        do_widget_redraw(this);
       }
 
     }

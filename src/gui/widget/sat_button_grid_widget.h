@@ -134,7 +134,7 @@ public:
         if ((x == AX) && (y != AY) && MVertSingle) MStates[index] = 0;
       }
     }
-    do_widget_update(this,0);
+    do_widget_update(this);
   }
 
 //------------------------------

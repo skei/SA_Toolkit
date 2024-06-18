@@ -73,7 +73,7 @@ public:
       }
       setBaseRect(rect);
       parent->realignChildren();
-      parent->do_widget_redraw(parent,0);
+      parent->do_widget_redraw(parent);
     }
     do_widget_modal(this);
   }
@@ -87,7 +87,7 @@ public:
     SAT_Widget* parent = getParent();
     if (parent) {
       parent->realignChildren();
-      parent->do_widget_redraw(parent,0);
+      parent->do_widget_redraw(parent);
     }
     do_widget_modal(nullptr);
   }
@@ -128,7 +128,7 @@ public:
     // SAT_Widget* parent = getParent();
     // if (parent) {
     //   parent->realignChildren();
-    //   parent->do_widget_redraw(parent,0);
+    //   parent->do_widget_redraw(parent);
     // }
     // closeMenu();
     //SAT_VisualWidget::do_widget_notify(this,MSelected);

@@ -105,7 +105,7 @@ public:
     MThumbPos = APos;
     MThumbPos = SAT_Clamp(MThumbPos,0.0f,1.0f);
     //recalcThumbRect();
-    if (ARedraw) do_widget_redraw(this,0);
+    if (ARedraw) do_widget_redraw(this);
   }
 
   //----------
@@ -120,7 +120,7 @@ public:
     }
     MThumbSize = SAT_Clamp(MThumbSize,0.0f,1.0f);
     //recalcThumbRect();
-    if (ARedraw) do_widget_redraw(this,0);
+    if (ARedraw) do_widget_redraw(this);
   }
 
   //----------
@@ -256,15 +256,15 @@ public: // parent to child
             MPrevThumbPos = MThumbPos;
             MThumbPos -= MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widget_update(this);
+            do_widget_redraw(this);
           }
           else if (AYpos > MThumbRect.y2()) {
             MPrevThumbPos = MThumbPos;
             MThumbPos += MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widget_update(this);
+            do_widget_redraw(this);
           }
         }
         else {
@@ -272,15 +272,15 @@ public: // parent to child
             MPrevThumbPos = MThumbPos;
             MThumbPos -= MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widget_update(this);
+            do_widget_redraw(this);
           }
           else if (AXpos > MThumbRect.x2()) {
             MPrevThumbPos = MThumbPos;
             MThumbPos += MPageSize;
             //recalcThumbRect();
-            do_widget_update(this,0);
-            do_widget_redraw(this,0);
+            do_widget_update(this);
+            do_widget_redraw(this);
           }
         } // !vertical
       } // !contains
@@ -293,7 +293,7 @@ public: // parent to child
       if (MIsDragging) {
         MIsDragging = false;
         //MIsInteractive = false;
-        do_widget_redraw(this,0);
+        do_widget_redraw(this);
       }
     }
   }
@@ -322,8 +322,8 @@ public: // parent to child
         MThumbPos = MClickedPos + v;
         MThumbPos = SAT_Clamp(MThumbPos,0.0f,1.0f);
         //recalcThumbRect();
-        do_widget_update(this,0);
-        do_widget_redraw(this,0);
+        do_widget_update(this);
+        do_widget_redraw(this);
       }
     }
   }

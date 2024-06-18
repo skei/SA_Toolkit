@@ -46,6 +46,7 @@
 #include "gui/widget/sat_visual_widget.h"
 #include "gui/widget/sat_voices_widget.h"
 #include "gui/widget/sat_waveform_widget.h"
+#include "gui/widget/sat_xy_pad_widget.h"
 
 //----------------------------------------------------------------------
 #endif

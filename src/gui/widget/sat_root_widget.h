@@ -93,13 +93,13 @@ public: // do_widget
 
   // widget -> listener (window)
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     //SAT_PRINT("%s\n",AWidget->getName());
-    if (MListener) MListener->on_widgetListener_update(AWidget,AMode);
+    if (MListener) MListener->on_widgetListener_update(AWidget,AIndex,AMode);
   }
   
-  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
-    if (MListener) MListener->on_widgetListener_redraw(AWidget,AMode);
+  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
+    if (MListener) MListener->on_widgetListener_redraw(AWidget,AIndex,AMode);
   }
 
   void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {

@@ -130,6 +130,12 @@ public:
     SAT_Parameter* p5 = new SAT_Parameter( "p5", "", 0, 0,1 );
     appendParameter(p5);
 
+    SAT_Parameter* p6 = new SAT_Parameter( "px", "", 0, 0,1 );
+    appendParameter(p6);
+
+    SAT_Parameter* p7 = new SAT_Parameter( "py", "", 0, 0,1 );
+    appendParameter(p7);
+
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(800,600,1.0,true);
     return SAT_Plugin::init();
@@ -311,6 +317,12 @@ AEditor->connect(selector1,getParameter(0));
       slider1->setText("Slider");
       //AEditor->connect(slider1,getParameter(5));
 
+      // SAT_DualSliderWidget* dualslider1 = new SAT_DualSliderWidget(20);
+      // left_panel->appendChild(dualslider1);
+      // dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      // dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      // dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
       SAT_ScrollBarWidget* scrollbar1 = new SAT_ScrollBarWidget(20);
       left_panel->appendChild(scrollbar1);
       scrollbar1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -458,6 +470,13 @@ AEditor->connect(knob2,getParameter(5));
       scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       scrollbar2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
       scrollbar2->setDirection(SAT_DIRECTION_VERT);
+
+      SAT_XYPadWidget* xypad1 = new SAT_XYPadWidget(100);
+      bottom_panel->appendChild(xypad1);
+      xypad1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      xypad1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+AEditor->connect(xypad1,getParameter(6),0);
+AEditor->connect(xypad1,getParameter(7),1);
 
       SAT_ImageWidget* image1 = new SAT_ImageWidget(100,(void*)SA_png,SA_png_size);
       bottom_panel->appendChild(image1);
