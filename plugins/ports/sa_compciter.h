@@ -217,25 +217,19 @@ public:
 
 
   bool init() final {
-
     registerDefaultExtensions();
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
-
     appendParameter( new SAT_Parameter( "Drive", "", 0,    0,   60    ));
     appendParameter( new SAT_Parameter( "Dist",  "", 25,   0,   100   ));
     appendParameter( new SAT_Parameter( "HP",    "", 5000, 800, 12000 ));
     appendParameter( new SAT_Parameter( "Wet",   "", -6,  -60,  24    ));
     appendParameter( new SAT_Parameter( "Dry",   "", 0,   -12,  0     ));
-  //appendParameter( new SAT_Parameter( "Dry",   "", 0,   -120, 0     ));
-
     MProcessor = new sa_compciter_processor(this);
     setProcessor(MProcessor);
-
     #ifndef SAT_NO_GUI
-      setInitialEditorSize(640,480,2.0,false);
+      setInitialEditorSize(510,340,1.0,true);
     #endif
-
     return SAT_Plugin::init();
   }
 
@@ -259,43 +253,91 @@ public:
       SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
       window->setRootWidget(root);
 
-      SAT_SliderWidget* s0 = new SAT_SliderWidget(SAT_Rect(10,10,300,25));
-      root->appendChild(s0);
-      AEditor->connect(s0,getParameter(0));
+      //
 
-      SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(10,40,300,25));
-      root->appendChild(s1);
-      AEditor->connect(s1,getParameter(1));
+      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"compciter");
+      root->appendChild(header);
+      header->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      header->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      header->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
-      SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(10,70,300,25));
-      root->appendChild(s2);
-      AEditor->connect(s2,getParameter(2));
+      SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(40,"  ...");
+      root->appendChild(footer);
+      footer->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
+      footer->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      footer->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
 
-      SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(10,100,300,25));
-      root->appendChild(s3);
-      AEditor->connect(s3,getParameter(3));
+      SAT_VisualWidget* center = new SAT_VisualWidget(0);
+      root->appendChild(center);
+      center->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      center->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
 
-      // SAT_SliderWidget* s4 = new SAT_SliderWidget(SAT_Rect(10,130,300,25));
-      // root->appendChild(s4);
-      // AEditor->connect(s4,getParameter(4));
+      //
 
+      SAT_KnobWidget* knob0 = new SAT_KnobWidget(SAT_Rect(30,30,200,200));
+      center->appendChild(knob0);
+      AEditor->connect(knob0,getParameter(0));
+      knob0->setTextSize(20);
+      knob0->setValueTextSize(30);
+      knob0->setKnobArcColor(SAT_Red);
+      knob0->setKnobArcThickness(25);
+      knob0->setDrawKnobNeedle(true);
+      knob0->setKnobNeedleStart(0.57);
+      knob0->setKnobNeedleLength(0.65);
+      knob0->setKnobNeedleThickness(10);
 
-      SAT_KnobWidget* k4 = new SAT_KnobWidget(SAT_Rect(10,130,50,50));
-      root->appendChild(k4);
-      AEditor->connect(k4,getParameter(4));
+      SAT_KnobWidget* knob1 = new SAT_KnobWidget(SAT_Rect(280,30,90,90));
+      center->appendChild(knob1);
+      AEditor->connect(knob1,getParameter(1));
+      knob1->setTextSize(10);
+      knob1->setValueTextSize(10);
+      knob1->setKnobArcColor(SAT_Blue1);
+      knob1->setKnobArcThickness(15);
+      knob1->setDrawKnobNeedle(true);
+      knob1->setKnobNeedleStart(0.66);
+      knob1->setKnobNeedleLength(1.0);
+      knob1->setKnobNeedleThickness(2);
 
+      SAT_KnobWidget* knob2 = new SAT_KnobWidget(SAT_Rect(390,30,90,90));
+      center->appendChild(knob2);
+      AEditor->connect(knob2,getParameter(2));
+      knob2->setTextSize(10);
+      knob2->setValueTextSize(10);
+      knob2->setKnobArcColor(SAT_Blue1);
+      knob2->setKnobArcThickness(15);
+      knob2->setDrawKnobNeedle(true);
+      knob2->setKnobNeedleStart(0.66);
+      knob2->setKnobNeedleLength(1.0);
+      knob2->setKnobNeedleThickness(2);
+
+      SAT_KnobWidget* knob3 = new SAT_KnobWidget(SAT_Rect(290,150,70,70));
+      center->appendChild(knob3);
+      AEditor->connect(knob3,getParameter(3));
+      knob3->setTextSize(10);
+      knob3->setValueTextSize(10);
+      knob3->setKnobArcColor(SAT_DarkerGrey);
+      knob3->setKnobArcThickness(13);
+      knob3->setDrawKnobNeedle(true);
+      knob3->setKnobNeedleStart(0.66);
+      knob3->setKnobNeedleLength(1.0);
+      knob3->setKnobNeedleThickness(2);
+
+      SAT_KnobWidget* knob4 = new SAT_KnobWidget(SAT_Rect(400,150,70,70));
+      center->appendChild(knob4);
+      AEditor->connect(knob4,getParameter(4));
+      knob4->setTextSize(10);
+      knob4->setValueTextSize(10);
+      knob4->setKnobArcColor(SAT_DarkerGrey);
+      knob4->setKnobArcThickness(13);
+      knob4->setDrawKnobNeedle(true);
+      knob4->setKnobNeedleStart(0.66);
+      knob4->setKnobNeedleLength(1.0);
+      knob4->setKnobNeedleThickness(2);
 
       return true;
     }
 
-  #endif // gui
-
-  //----------
-
-  // void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) final {
-  //   SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
-  //   SAT_PRINT("delta %.3f\n",ADelta);
-  // }
+  #endif // nogui
 
 };
 

@@ -231,6 +231,7 @@ public: // parent to child
     if (MDirection == SAT_DIRECTION_HORIZ) vgrad = true;
     draw_thumb(painter,MThumbRect,vgrad);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
   }
 

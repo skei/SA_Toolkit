@@ -105,14 +105,14 @@ public:
           break;
         }
         
-        //case SAT_SYMBOL_TRI_UP:
-        
-        case SAT_SYMBOL_TRI_DOWN: {
+        case SAT_SYMBOL_TRI_UP: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
           double coords[] = {
-            mrect.x,                    mrect.y,
-            mrect.x2(),                 mrect.y,
-            mrect.x + (mrect.w * 0.5),  mrect.y2(),
-            mrect.x,                    mrect.y
+            mrect.x,        mrect.y2(),
+            mrect.x + w05,  mrect.y,
+            mrect.x2(),     mrect.y2(),
+            mrect.x,        mrect.y2()
           };
           painter->setLineWidth(MPenWidth * S);
           painter->setDrawColor(MColor);
@@ -120,25 +120,106 @@ public:
           break;
         }
         
-        //case SAT_SYMBOL_TRI_LEFT:
-        //case SAT_SYMBOL_TRI_RIGHT:
-        
-        //case SAT_SYMBOL_FILLED_TRI_UP:
-        case SAT_SYMBOL_FILLED_TRI_DOWN: {
+        case SAT_SYMBOL_TRI_DOWN: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
           double coords[] = {
-            mrect.x,                    mrect.y,
-            mrect.x2(),                 mrect.y,
-            mrect.x + (mrect.w * 0.5),  mrect.y2(),
-            mrect.x,                    mrect.y
+            mrect.x,        mrect.y,
+            mrect.x2(),     mrect.y,
+            mrect.x + w05,  mrect.y2(),
+            mrect.x,        mrect.y
           };
-          //painter->setLineWidth(MPenWidth * S);
+          painter->setLineWidth(MPenWidth * S);
+          painter->setDrawColor(MColor);
+          painter->drawLineStrip(4,coords);
+          break;
+        }
+        
+        case SAT_SYMBOL_TRI_LEFT: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
+          double coords[] = {
+            mrect.x2(),     mrect.y,
+            mrect.x2(),     mrect.y2(),
+            mrect.x,        mrect.y + h05,
+            mrect.x2(),     mrect.y
+          };
+          painter->setLineWidth(MPenWidth * S);
+          painter->setDrawColor(MColor);
+          painter->drawLineStrip(4,coords);
+          break;
+        }
+
+        case SAT_SYMBOL_TRI_RIGHT: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
+          double coords[] = {
+            mrect.x,        mrect.y,
+            mrect.x2(),     mrect.y + h05,
+            mrect.x,        mrect.y2(),
+            mrect.x,        mrect.y
+          };
+          painter->setLineWidth(MPenWidth * S);
+          painter->setDrawColor(MColor);
+          painter->drawLineStrip(4,coords);
+          break;
+        }
+        
+        case SAT_SYMBOL_FILLED_TRI_UP: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
+          double coords[] = {
+            mrect.x,        mrect.y2(),
+            mrect.x + w05,  mrect.y,
+            mrect.x2(),     mrect.y2(),
+            mrect.x,        mrect.y2()
+          };
+          painter->setFillColor(MColor);
+          painter->fillLineStrip(4,coords);
+          break;
+        }
+
+        case SAT_SYMBOL_FILLED_TRI_DOWN: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
+          double coords[] = {
+            mrect.x,        mrect.y,
+            mrect.x2(),     mrect.y,
+            mrect.x + w05,  mrect.y2(),
+            mrect.x,        mrect.y
+          };
           painter->setFillColor(MColor);
           painter->fillLineStrip(4,coords);
           break;
         }
         
-        //case SAT_SYMBOL_FILLED_TRI_LEFT:
-        //case SAT_SYMBOL_FILLED_TRI_RIGHT:
+        case SAT_SYMBOL_FILLED_TRI_LEFT: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
+          double coords[] = {
+            mrect.x2(),     mrect.y,
+            mrect.x2(),     mrect.y2(),
+            mrect.x,        mrect.y + h05,
+            mrect.x2(),     mrect.y
+          };
+          painter->setFillColor(MColor);
+          painter->fillLineStrip(4,coords);
+          break;
+        }
+
+        case SAT_SYMBOL_FILLED_TRI_RIGHT: {
+          double w05 = (mrect.w * 0.5);
+          double h05 = (mrect.h * 0.5);
+          double coords[] = {
+            mrect.x,        mrect.y,
+            mrect.x2(),     mrect.y + h05,
+            mrect.x,        mrect.y2(),
+            mrect.x,        mrect.y
+          };
+          painter->setFillColor(MColor);
+          painter->fillLineStrip(4,coords);
+          break;
+        }
         
         case SAT_SYMBOL_SINE: {
           double x1 = mrect.x;

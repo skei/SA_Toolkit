@@ -25,14 +25,14 @@ private:
   bool      MDrawModulation   = true;
   SAT_Color MModulationColor  = SAT_Color(1,1,1,0.25);
 
-  bool      MDrawQuantized    = true;
+  bool      MDrawQuantized    = false;
   SAT_Color MQuantizedColor   = SAT_Color(0,0,0,0.5);
   double    MQuantizedWidth   = 1.0;
 
   bool      MDrawBipolar      = false;
   double    MBipolarCenter    = 0.5;
 
-  uint32_t  MDrawDirection    = SAT_DIRECTION_LEFT;
+  uint32_t  MDrawDirection    = SAT_DIRECTION_RIGHT;
 
 
 //------------------------------
@@ -126,15 +126,18 @@ public:
       double vw = (v * w);
       double vh = (v * h);
 
+      if (MDrawBipolar) {
+      }
+
       painter->setFillColor(MSliderBarColor);
 
       if (v > 0) {
         switch (MDrawDirection) {
           case SAT_DIRECTION_LEFT:
-            painter->fillRect(x,y,vw,h);
+            painter->fillRect((x+w-vw),y,vw,h);
             break;
           case SAT_DIRECTION_RIGHT:
-            painter->fillRect((x+w-vw),y,vw,h);
+            painter->fillRect(x,y,vw,h);
             break;
           case SAT_DIRECTION_UP:
             painter->fillRect(x,(y+h-vh),w,vh);
@@ -199,6 +202,7 @@ public: // on_widget
     drawText(AContext);
     drawValueText(AContext);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
   }
 

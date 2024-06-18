@@ -71,7 +71,7 @@ protected:
 
   bool        MIndicateMapped                     = false;
   SAT_Color   MIndicateMappedColor                = SAT_Black;
-  uint32_t    MIndicateAutomationState            = 0;
+  uint32_t    MIndicateAutomationState            = CLAP_PARAM_INDICATION_AUTOMATION_NONE;
   SAT_Color   MIndicateAutomationColor            = SAT_White;
 
 //bool        MGuiAutomationDirty                 = false;

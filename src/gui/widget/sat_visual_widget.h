@@ -43,6 +43,9 @@ private:
   uint32_t    MRoundedCorners             = SAT_CORNER_ALL;
   double      MRoundedCornerSize          = 5.0;
 
+  double      MMappedIndicatorSize        = 7.0;
+  double      MAutomationIndicatorSize    = 5.0;
+
 //------------------------------
 public:
 //------------------------------
@@ -371,29 +374,34 @@ public:
 
   virtual void drawIndicators(SAT_PaintContext* AContext) {
     if (MDrawIndicators) {
-      //SAT_TRACE;
       SAT_Parameter* param = (SAT_Parameter*)getParameter();
       if (param) {
         SAT_Painter* painter = AContext->painter;
         SAT_Rect rect = getRect();
         double scale = getWindowScale();
 
-        if (param->getIndicateMapped()) {
-            SAT_Color color = param->getIndicateMappedColor();
-            painter->setFillColor(color);
-            //painter->drawRect(rect.x,rect.y,rect.w,rect.h);
+        if (param->getIndicateMapped() == true) {
+          //SAT_PRINT("mapped\n");
+          SAT_Color color = param->getIndicateMappedColor();
+          painter->setFillColor(color);
+          double ms = MMappedIndicatorSize * scale;
+          double coords[] = {
+            rect.x,       rect.y,
+            rect.x + ms,  rect.y,
+            rect.x,       rect.y + ms,
+            rect.x,       rect.y
+          };
+          painter->fillLineStrip(4,coords);
         }
-        // switch (param->getIndicateAutomationState() ) {
-        //   case CLAP_PARAM_INDICATION_AUTOMATION_NONE: // The host doesn't have an automation for this parameter
-        //   case CLAP_PARAM_INDICATION_AUTOMATION_PRESENT: // The host has an automation for this parameter, but it isn't playing it
-        //   case CLAP_PARAM_INDICATION_AUTOMATION_PLAYING: // The host is playing an automation for this parameter
-        //   case CLAP_PARAM_INDICATION_AUTOMATION_RECORDING: // The host is recording an automation on this parameter
-        //   case CLAP_PARAM_INDICATION_AUTOMATION_OVERRIDING: // The host should play an automation for this parameter, but the user has started to adjust this parameter and is overriding the automation playback
-        // }
+        
         if (param->getIndicateAutomationState() != CLAP_PARAM_INDICATION_AUTOMATION_NONE) {
+          //SAT_PRINT("automated\n");
           SAT_Color color = param->getIndicateAutomationColor();
-          painter->setDrawColor(color);
-          //painter->drawRect(rect.x,rect.y,rect.w,rect.h);
+          painter->setFillColor(color);
+          double as = MAutomationIndicatorSize * scale;
+          double xc = rect.x2() - (as * 2);
+          double yc = rect.y    + (as * 2);
+          painter->fillCircle(xc,yc,as);
         }
       }
     }

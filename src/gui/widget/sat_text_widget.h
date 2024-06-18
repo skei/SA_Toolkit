@@ -98,6 +98,7 @@ public: // on_widget
     fillBackground(AContext);
     drawText(AContext);
     paintChildren(AContext);
+    drawIndicators(AContext);
     drawBorder(AContext);
   }
 
