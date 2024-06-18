@@ -105,6 +105,8 @@ public:
   virtual double    getSnapDist()       { return MSnapDist; }
   virtual double    getSnapSpeed()      { return MSnapSpeed; }
 
+  virtual bool isDragging() { return MIsDragging; }
+
 //------------------------------
 protected:
 //------------------------------
@@ -114,7 +116,7 @@ protected:
   double calcValue(uint32_t AIndex=0) {
     double value = getValue(AIndex);
     //SAT_PRINT("value %.3f\n",value);
-    SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    SAT_Parameter* param = (SAT_Parameter*)getParameter(AIndex);
     //SAT_PRINT("param %p\n",param);
     if (param) {
       value = param->getNormalizedValue();
@@ -129,9 +131,9 @@ protected:
   // returns 0..1 (final modulated and clamped value)
 
   //double calcModulation(double value) {
-  double calcModulation() {
+  double calcModulation(uint32_t AIndex=0) {
     double modulation = 0.0;//getValue();
-    SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    SAT_Parameter* param = (SAT_Parameter*)getParameter(AIndex);
     if (param) {
       modulation = param->getValue() + param->getModulation();
       modulation = param->normalize(modulation);
@@ -195,8 +197,66 @@ public:
         painter->drawLine(x1,y1,x2,y2);
       }
     }
-
   }
+
+  //
+
+  virtual double calcDragValue(int32_t AXpos, int32_t AYpos, uint32_t AState) {
+    bool unsnapkey = (AState & MUnsnapKey);
+    bool precisekey = (AState & MPreciseKey);
+    int32_t diff = 0;
+    switch (MDragDirection) {
+      case SAT_DIRECTION_UP:    diff = MPrevY - AYpos;  break;
+      case SAT_DIRECTION_DOWN:  diff = AYpos - MPrevY;  break;
+      case SAT_DIRECTION_RIGHT: diff = AXpos - MPrevX;  break;
+      case SAT_DIRECTION_LEFT:  diff = MPrevX - AXpos;  break;
+    }
+    MPrevX = AXpos;
+    MPrevY = AYpos;
+    double value = MDragValue;
+    if (diff != 0) {
+      double sensitivity = MSensitivity;
+      if (precisekey) sensitivity *= MSensitivity2;
+      double delta = (double)diff * sensitivity;;
+      MDragValue += delta;
+      MDragValue = SAT_Clamp(MDragValue,0,1); 
+      if (MSnap) {
+        if (unsnapkey) { // not snap
+          if (!MPrevUnsnapKey) {
+          }
+        }
+        else { // snap
+          value = snapValue(MDragValue);
+        }
+        MPrevUnsnapKey = unsnapkey;
+      }
+      if (MQuantize && !unsnapkey) {
+        value = quantizeValue(MDragValue);
+      }
+      // setValue(value);
+      // do_widget_update(this);
+      // do_widget_redraw(this);
+    } // diff
+    return value;
+  }
+
+  //----------
+
+  virtual void startDrag(int32_t AXpos, int32_t AYpos, uint32_t AIndex) {
+    MIsDragging = true;
+    MPrevX = AXpos;
+    MPrevY = AYpos;
+    do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+    MDragValue = calcValue(AIndex); // starting value
+  }
+
+  //----------
+
+  virtual void endDrag() {
+    MIsDragging = false;
+    do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+  }
+
 
 //------------------------------
 public: // on_widget
@@ -204,20 +264,14 @@ public: // on_widget
 
   void on_widget_open(SAT_WidgetOwner* AOwner) override {
     MDragValue = calcValue();
-    //SAT_PRINT("MDragValue %.3f\n",MDragValue);
     SAT_ValueWidget::on_widget_open(AOwner);
   }
 
   //----------
 
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    //SAT_PRINT("AXpos %i AYpos %i\n",AXpos,AYpos);
     if (AButton == MDragButton) {
-      MIsDragging = true;
-      MPrevX = AXpos;
-      MPrevY = AYpos;
-      do_widget_set_cursor(this,SAT_CURSOR_LOCK);
-      MDragValue = calcValue(); // starting value
+      startDrag(AXpos,AYpos,0);
     }
   }
 
@@ -225,82 +279,22 @@ public: // on_widget
 
   void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == MDragButton) {
-      MIsDragging = false;
-      do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+      endDrag();
     }
   }
 
   //----------
 
   void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
-    //SAT_PRINT("AXpos %i AYpos %i MPrevX %i MPrevY %i\n",AXpos,AYpos,MPrevX,MPrevY);
-
-    if (MIsDragging) {
-
-      int32_t diff = 0;
-      switch (MDragDirection) {
-        case SAT_DIRECTION_UP:    diff = MPrevY - AYpos;  break;
-        case SAT_DIRECTION_DOWN:  diff = AYpos - MPrevY;  break;
-        case SAT_DIRECTION_RIGHT: diff = AXpos - MPrevX;  break;
-        case SAT_DIRECTION_LEFT:  diff = MPrevX - AXpos;  break;
-      }
-
-      bool unsnapkey = (AState & MUnsnapKey);
-      bool precisekey = (AState & MPreciseKey);
-
-      if (diff != 0) {
-
-        double sensitivity = MSensitivity;
-        if (precisekey) sensitivity *= MSensitivity2;
-        double delta = (double)diff * sensitivity;;
-
-        MDragValue += delta;
-        MDragValue = SAT_Clamp(MDragValue,0,1); 
-        //double value = 0.0;
-        double value = MDragValue;
-
-        //
-        
-        if (MSnap) {
-          if (unsnapkey) { // not snap
-            if (!MPrevUnsnapKey) {
-              //SAT_PRINT("shift released\n");              
-              //MDragValue = calcValue();
-            }
-          }
-          else { // snap
-            //if (MPrevUnsnapKey) {
-            //  SAT_PRINT("shift pressed\n");
-            //}
-            value = snapValue(MDragValue);
-          }
-          MPrevUnsnapKey = unsnapkey;
-        }
-
-        //
-
-        if (MQuantize && !unsnapkey) {
-          value = quantizeValue(MDragValue);
-        }
-
-        double prev_value = getValue();
-//        if (value != prev_value) {
-          setValue(value);
-          do_widget_update(this);
-          do_widget_redraw(this);
-//        }
-
-      } // diff
-    } // dragging
-
-    MPrevX = AXpos;
-    MPrevY = AYpos;
+    double value = calcDragValue(AXpos,AYpos,AState);
+    setValue(value,0);
+    do_widget_update(this);
+    do_widget_redraw(this);
   }
 
   //----------
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    //SAT_TRACE;
     fillBackground(AContext);
     drawText(AContext);
     drawValueText(AContext);

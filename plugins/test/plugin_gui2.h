@@ -108,33 +108,49 @@ public:
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
 
+    // selector
     SAT_TextParameter* p0 = new SAT_TextParameter( "p0", "", 1,  0, 4 );
     appendParameter(p0);
     p0->setFlag(CLAP_PARAM_IS_STEPPED);
     p0->setText(MSelectorTexts);
 
+    // t3,slider1
     SAT_Parameter* p1 = new SAT_Parameter( "p1", "", 0, -5,5 );
     appendParameter(p1);
 
+    // t3,slider2
     SAT_Parameter* p2 = new SAT_Parameter( "p2", "", 0, 0,10 );
     appendParameter(p2);
     p2->setFlag(CLAP_PARAM_IS_STEPPED);
 
+    // t3,slider3
     SAT_Parameter* p3 = new SAT_Parameter( "p3", "", 0, 0,10 );
     appendParameter(p3);
     p3->setFlag(CLAP_PARAM_IS_STEPPED);
 
+    // knob1
     SAT_Parameter* p4 = new SAT_Parameter( "p4", "", 0, -1,1 );
     appendParameter(p4);
 
+    // knob2
     SAT_Parameter* p5 = new SAT_Parameter( "p5", "", 0, 0,1 );
     appendParameter(p5);
 
-    SAT_Parameter* p6 = new SAT_Parameter( "px", "", 0, 0,1 );
+    // xypad1.x
+    SAT_Parameter* p6 = new SAT_Parameter( "px", "", 0.25, 0,1 );
     appendParameter(p6);
 
-    SAT_Parameter* p7 = new SAT_Parameter( "py", "", 0, 0,1 );
+    // xypad1.y
+    SAT_Parameter* p7 = new SAT_Parameter( "py", "", 0.75, 0,1 );
     appendParameter(p7);
+
+    // dualslider.1
+    SAT_Parameter* p8 = new SAT_Parameter( "p8", "", 0.25, 0,1 );
+    appendParameter(p8);
+
+    // dualslider.2
+    SAT_Parameter* p9 = new SAT_Parameter( "p9", "", 0.75, 0,1 );
+    appendParameter(p9);
 
     setProcessor( new myProcessor(this) );
     setInitialEditorSize(800,600,1.0,true);
@@ -317,11 +333,14 @@ AEditor->connect(selector1,getParameter(0));
       slider1->setText("Slider");
       //AEditor->connect(slider1,getParameter(5));
 
-      // SAT_DualSliderWidget* dualslider1 = new SAT_DualSliderWidget(20);
-      // left_panel->appendChild(dualslider1);
-      // dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      // dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-      // dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+      SAT_DualSliderWidget* dualslider1 = new SAT_DualSliderWidget(20);
+      left_panel->appendChild(dualslider1);
+      dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      dualslider1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
+AEditor->connect(dualslider1,getParameter(8),0);
+AEditor->connect(dualslider1,getParameter(9),1);
 
       SAT_ScrollBarWidget* scrollbar1 = new SAT_ScrollBarWidget(20);
       left_panel->appendChild(scrollbar1);
@@ -431,14 +450,18 @@ AEditor->connect(knob1,getParameter(4));
       knob1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
       knob1->setDragSnap(true);
       knob1->setDrawBipolar(true);
+      knob1->setDrawKnobNeedle(true);
+      knob1->setKnobNeedleStart(0.45);
+      knob1->setKnobNeedleLength(0.85);
+      knob1->setValueTextSize(15);
 
       SAT_KnobWidget* knob2 = new SAT_KnobWidget(100);
       bottom_panel->appendChild(knob2);
 AEditor->connect(knob2,getParameter(5));
       knob2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       knob2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
-      //knob2->setDragSnap(true);
-      //knob2->setDrawBipolar(true);
+      knob2->setKnobArcThickness(20);
+      knob2->setValueTextSize(20);
 
       SAT_CurveWidget* curve1 = new SAT_CurveWidget(30,false);
       bottom_panel->appendChild(curve1);
