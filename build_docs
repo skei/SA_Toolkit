@@ -1,0 +1,5 @@
+#!/bin/bash
+pushd doc
+doxygen doxygen.cfg
+popd
+open doc/html/index.html
