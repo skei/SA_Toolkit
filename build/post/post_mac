@@ -2,7 +2,15 @@
 
 #----------------------------------------------------------------------
 #
-# create clap, add clap and plist files
+# clean up pre steps
+#
+#----------------------------------------------------------------------
+
+if [ -d "./build/pre/tmp" ]; then rm -rf "./build/pre/tmp"; fi
+
+#----------------------------------------------------------------------
+#
+# create clap bundle and add clap and plist files
 #
 #----------------------------------------------------------------------
 
@@ -52,5 +60,8 @@ EOF
 
 # test the plugin
 
+echo
+echo "Test CLAP Plug-In:"
 ../clap-info/build/clap-info dist/build.clap | grep sat_clap_entry_init_callback
-# nm -g dist/build.clap/Contents/MacOS/build | grep -v U
+nm -g dist/build.clap/Contents/MacOS/build | grep -v U
+echo
