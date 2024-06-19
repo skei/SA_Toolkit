@@ -144,7 +144,7 @@ public:
         painter->drawArc(cx,cy,r,a1,a2);
       //}
 
-      if (MDrawModulation && getParameter()) {
+      if (MDrawModulation && (getParameter() != nullptr)) {
         double a1,a2;
         if (m > v) {
           a1 = SAT_PI2 * (v + 0.35);

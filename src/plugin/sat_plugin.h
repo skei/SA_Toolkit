@@ -538,6 +538,13 @@ public: // editor
 
     //----------
 
+    virtual bool postSetupEditor(SAT_Editor* AEditor) {
+      return true;
+    }
+
+
+    //----------
+
     // called just before editor is shown..
     virtual void cleanupEditor(SAT_Editor* AEditor) {
     }
@@ -972,6 +979,17 @@ public: // clap extensions
     if (MEditor) {
       if (MEditor->create(api,is_floating)) {
         if (setupEditor(MEditor)) {
+
+          // SAT_Window* window = MEditor->getWindow();
+          // SAT_RootWidget* root = window->getRootWidget();
+          // SAT_VisualWidget* overlay = new SAT_VisualWidget(SAT_Rect(0,0,100,100));
+          // root->appendChild(overlay);
+          // overlay->Layout.flags |= SAT_WIDGET_LAYOUT_PERCENT_PARENT;
+          // overlay->setActive(false);
+          // overlay->setFillBackground(true);
+          // overlay->setBackgroundColor(SAT_Color( 0,0,0, 0.5 ));
+          
+          postSetupEditor(MEditor);
           setEditorParameterValues();
           return true;
         }
