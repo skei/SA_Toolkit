@@ -90,7 +90,11 @@ public:
 
   const char* valueToText(sat_param_t AValue) override {
     sat_param_t value = SAT_Trunc(AValue);
-    sprintf(MValueText,MValueFormat,value);//getValue());
+    #ifdef SAT_MAC
+      snprintf(MValueText,sizeof(MValueText),MValueFormat,value);//getValue());
+    #else
+      sprintf(MValueText,MValueFormat,value);//getValue());
+    #endif
     //SAT_Print("AValue %f (fmt %s) -> %s\n",AValue,MValueFormat,MValueText);
     return MValueText;
   }
