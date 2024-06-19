@@ -5,7 +5,7 @@
 ## build the CLAP plugin
 
 ```shell
-./build/compile -i build/build.cpp -o dist/build -f clap -g nogui -d -a -v
+./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d -a -v
 ```
 
 ### nm to debug entry points
