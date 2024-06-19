@@ -37,6 +37,7 @@ public:
   SAT_TextWidget(SAT_Rect ARect, const char* AText)
   : SAT_VisualWidget(ARect) {
     setName("SAT_TextWidget");
+    setHint("SAT_TextWidget");
     MText = AText;
   }
 

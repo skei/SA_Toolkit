@@ -150,7 +150,7 @@ public:
 
       }
 
-      if (MDrawModulation && getParameter()) {
+      if (MDrawModulation && (getParameter() != nullptr)) {
         double mx = 0.0;
         double mw = 0.0;
         double my = 0.0;

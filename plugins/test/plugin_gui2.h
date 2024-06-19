@@ -84,6 +84,10 @@ private:
 
   #include "../../data/img/SA.h"
 
+  //----------
+
+  SAT_MenuWidget* MMenu1 = nullptr;
+
 //------------------------------
 public:
 //------------------------------
@@ -248,10 +252,15 @@ public:
       // menu
       //--------------------
 
-      SAT_MenuWidget* menu1 = new SAT_MenuWidget(SAT_Rect(100,20*5));
+      MMenu1 = new SAT_MenuWidget(SAT_Rect(100,20*5));
         for (uint32_t i=0; i<5; i++) {
-          menu1->appendItem( MSelectorTexts[i] );
+          MMenu1->appendItem( MSelectorTexts[i] );
         }
+
+      // SAT_MenuWidget* menu1 = new SAT_MenuWidget(SAT_Rect(100,20*5));
+      //   for (uint32_t i=0; i<5; i++) {
+      //     menu1->appendItem( MSelectorTexts[i] );
+      //   }
 
       //--------------------
       // left panel
@@ -302,9 +311,10 @@ public:
       //button2->setDrawParamText(false);
       //AEditor->connect(button2,getParameter(2));
 
-      SAT_SelectorWidget* selector1 = new SAT_SelectorWidget(20,"Select..",menu1);
+      // SAT_SelectorWidget* selector1 = new SAT_SelectorWidget(20,"Select..",menu1);
+      SAT_SelectorWidget* selector1 = new SAT_SelectorWidget(20,"Select..",MMenu1);
       left_panel->appendChild(selector1);
-      menu1->setListener(selector1);
+      MMenu1->setListener(selector1);
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       selector1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
@@ -680,13 +690,31 @@ AEditor->connect(t3s3,getParameter(3));
       center_tabs1->selectPage(0);
 
       //--------------------
-      // menu
+      //
       //--------------------
 
-      root->appendChild(menu1);
+      //root->appendChild(MMenu1);
+      return true;
+    }
+
+    //----------
+
+    bool postSetupEditor(SAT_Editor* AEditor) {
+
+      SAT_Window* window = AEditor->getWindow();
+      SAT_RootWidget* root = window->getRootWidget();
+      SAT_VisualWidget* overlay = new SAT_VisualWidget(SAT_Rect(0,0,100,100));
+      root->appendChild(overlay);
+      overlay->Layout.flags |= SAT_WIDGET_LAYOUT_PERCENT_PARENT;
+      overlay->setActive(false);
+      overlay->setFillBackground(true);
+      overlay->setBackgroundColor(SAT_Color(0,0,0, 0.7));
+
+      overlay->appendChild(MMenu1);
 
       return true;
     }
+
 
   #endif // gui
 

@@ -43,6 +43,7 @@ private:
   SAT_Widget*         MMouseCaptureWidget = nullptr;
   SAT_Widget*         MKeyCaptureWidget   = nullptr;
   SAT_Widget*         MHintWidget         = nullptr;
+  SAT_Widget*         MOverlayWidget      = nullptr;
 
   int32_t             MMouseCurrentCursor = SAT_CURSOR_DEFAULT;
   SAT_WidgetArray     MTimerListeners     = {};
@@ -106,7 +107,9 @@ public:
     MRootWidget = ARoot;
   }
 
-  //
+  SAT_RootWidget* getRootWidget() {
+    return MRootWidget;
+  }
 
   //----------
 
@@ -114,8 +117,17 @@ public:
     MHintWidget = AWidget;
   }
 
+  SAT_Widget* getHintWidget() {
+    return MHintWidget;
+  }
+
   //----------
-  //
+
+  SAT_Widget* getOverlayWidget() {
+    return MOverlayWidget;
+  }
+
+  //----------
 
   void setInitialSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
     MInitialWidth = AWidth;

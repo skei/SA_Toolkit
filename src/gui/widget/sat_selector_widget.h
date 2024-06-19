@@ -59,7 +59,7 @@ public:
 
   virtual void setMenu(SAT_MenuWidget* AMenu) {
     MMenu = AMenu;
-    SAT_Rect rect = getRect();
+    //SAT_Rect rect = getRect();
     //if (MMenu) MMenu->setPos(SAT_Point(rect.x,rect.y+rect.h));
   }
 

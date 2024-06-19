@@ -103,7 +103,7 @@ public: // child to parent
   void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     if (AWidget == MHeader) {
       int32_t sel = MHeader->getClickedColumn();
-      SAT_PRINT("sel %i\n",sel);
+      //SAT_PRINT("sel %i\n",sel);
       MPages->setPage(sel);
       MPages->realignChildren();
       do_widget_redraw(MPages);
