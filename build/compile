@@ -153,17 +153,16 @@ fi
 # build count
 #------------------------------
 
-if [[ "$BUILD_COUNT" != "" ]]
-  then
-    count=0
-    if test -f $BUILD_COUNT
-      then
-        read count < $BUILD_COUNT
-    fi
-    ((count=count+1))  
-    echo $count > $BUILD_COUNT
-    #echo build $count
-    FLAGS+=" -DSAT_BUILD_COUNT=$count"
+if [[ "$BUILD_COUNT" != "" ]]; then
+  count=0
+  if test -f $BUILD_COUNT
+    then
+      read count < $BUILD_COUNT
+  fi
+  ((count=count+1))  
+  echo $count > $BUILD_COUNT
+  #echo build $count
+  FLAGS+=" -DSAT_BUILD_COUNT=$count"
 fi
 
 
@@ -321,40 +320,37 @@ fi
 # -s sanitize
 #------------------------------
 
-if $SANITIZE
-  then
-    #PRELIB+=" -lasan"
-    FLAGS+=" -fsanitize=leak"
-    #FLAGS+=" -fsanitize=address"
-    FLAGS+=" -fno-omit-frame-pointer -fno-optimize-sibling-calls"
+if $SANITIZE; then
+  #PRELIB+=" -lasan"
+  FLAGS+=" -fsanitize=leak"
+  #FLAGS+=" -fsanitize=address"
+  FLAGS+=" -fno-omit-frame-pointer -fno-optimize-sibling-calls"
 fi
 
 #------------------------------
 # -t tests
 #------------------------------
 
-if $TESTS
-  then
-    FLAGS+=" -DSAT_INCLUDE_TESTS"
+if $TESTS; then
+  FLAGS+=" -DSAT_INCLUDE_TESTS"
 fi
 
 #------------------------------
 # -w win32
 #------------------------------
 
-if $WIN32
-  then
-    CC="/usr/bin/x86_64-w64-mingw32-g++"
-    FLAGS+=" -static-libgcc"
-    FLAGS+=" -static-libstdc++"
-    LIB+=" -lwsock32"
+if $WIN32; then
+  CC="/usr/bin/x86_64-w64-mingw32-g++"
+  FLAGS+=" -static-libgcc"
+  FLAGS+=" -static-libstdc++"
+  LIB+=" -lwsock32"
+else
+  CC="g++"
+  if $MAC; then  # TODO: for now no gui on macos; timer is only used for the gui
+    LIB+=" -ldl"
   else
-    CC="g++"
-    if $MAC; then  # TODO: for now no gui on macos; timer is only used for the gui
-      LIB+=" -ldl"
-    else
-      LIB+=" -ldl -lrt"
-    fi
+    LIB+=" -ldl -lrt"
+  fi
 fi
 
 #----------------------------------------------------------------------
@@ -399,11 +395,17 @@ runPostSteps() {
 #echo
 
 if $VERBOSE; then
+  echo
+  echo "Verbose:"
+  echo
   echo $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
-fi  
+  echo
+fi
 
 runPreSteps
+echo -n "Compile and link.. "
 $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+echo "[DONE]"
 runPostSteps
 
 #----------------------------------------------------------------------
