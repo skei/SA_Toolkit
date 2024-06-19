@@ -1,2 +1,2 @@
-./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d
-./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui
+./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d  # Depug build
+./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui  # Release build
