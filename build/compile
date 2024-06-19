@@ -239,15 +239,12 @@ if $LIBRARY
         FLAGS+=" -shared"
         FLAGS+=" -fPIC"
         FLAGS+=" -DSAT_LIBRARY"
-        if $MAC; then  # TODO: this is just a sandbox to figure out how to successfully build a CLAP plugin on macos
+        if $MAC; then
           if $MAC_ARM; then
             FLAGS+=" -arch arm64"
           elif $MAC_INTEL; then
             FLAGS+=" -arch x86_64"
           fi
-          FLAGS+=" -target x86_64-apple-macosx10.9"
-          FLAGS+=" -Wmost -Wsuper-class-method-mismatch"  # from clap-plugins/CMakeLists.txt
-          FLAGS+=" -fvisibility=hidden -fvisibility-inlines-hidden -Werror=return-type -Werror=unused-result -Wno-unused-parameter -Wuninitialized -Wvla -Wmultichar -Werror=non-virtual-dtor -Woverloaded-virtual"
           FLAGS+=" -exported_symbols_list ./build/pre/tmp/macos-symbols.txt"
         fi
     fi
