@@ -91,7 +91,6 @@ public:
     appendStereoAudioInputPort();
     appendStereoAudioOutputPort();
 
-    SAT_Parameter* p0 = new SAT_Parameter( "dirksParam", "", 5.0, -12, 30 );
     SAT_Parameter* p1 = new SAT_Parameter( "param1", "", 0.0, -2, 10 );
     SAT_Parameter* p2 = new SAT_Parameter( "param2", "", 1.0,  0, 10 );
     SAT_Parameter* p3 = new SAT_Parameter( "param3", "", 2.0,  0, 10 );
@@ -106,7 +105,6 @@ public:
     p5->setFlag(CLAP_PARAM_IS_STEPPED);
     p7->setFlag(CLAP_PARAM_IS_ENUM);
 
-    appendParameter(p0);
     appendParameter(p1);
     appendParameter(p2);
     appendParameter(p3);
@@ -135,7 +133,6 @@ public:
 
         root->Layout.innerBorder = SAT_Rect(10,10,10,10);
 
-        SAT_SliderWidget* s0 = new SAT_SliderWidget(SAT_Rect(  10, 10, 480, 30 ));
         SAT_SliderWidget* s1 = new SAT_SliderWidget(SAT_Rect(  10, 10+40, 480, 30 ));
         SAT_SliderWidget* s2 = new SAT_SliderWidget(SAT_Rect(  10, 50+40, 480, 30 ));
         SAT_SliderWidget* s3 = new SAT_SliderWidget(SAT_Rect(  10, 90+40, 480, 30 ));
@@ -166,7 +163,6 @@ public:
         b1->setTexts("Off","On");
         b1->setDrawParamText(false);
 
-        root->appendChild(s0);
         root->appendChild(s1);
         root->appendChild(s2);
         root->appendChild(s3);
@@ -175,7 +171,6 @@ public:
         root->appendChild(k1);
         root->appendChild(b1);
 
-        AEditor->connect(s0,getParameter(0));
         AEditor->connect(s1,getParameter(1));
         AEditor->connect(s2,getParameter(2));
         AEditor->connect(s3,getParameter(3));
