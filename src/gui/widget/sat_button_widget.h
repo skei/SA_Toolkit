@@ -79,16 +79,17 @@ public: // on_widget
         else setValue(1.0);
       }
 
-//==========
-      // test tween
+//========== test tween
       SAT_Rect rect = getRect();
       //double starts[4]  = {rect.x,rect.y,rect.w,rect.h};
       //double ends[4]    = {rect.x,rect.y,rect.w,rect.h + 50};
       double starts[4]  = {0,0,0,rect.h};
-      double ends[4]    = {0,0,0,rect.h + 50};
+      double ends[4]    = {0,0,0,rect.h + 100};
       SAT_TweenChain* chain = new SAT_TweenChain();
-      SAT_TweenNode* node = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_INOUT_CUBIC);
-      chain->appendNode(node);
+      SAT_TweenNode* node1 = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
+      chain->appendNode(node1);
+      SAT_TweenNode* node2 = new SAT_TweenNode(this,255,2.0,SAT_TWEEN_RECT,4,ends,starts,SAT_EASING_IN_QUINT);
+      chain->appendNode(node2);
       do_widget_start_tween(this,chain);
 //==========
 

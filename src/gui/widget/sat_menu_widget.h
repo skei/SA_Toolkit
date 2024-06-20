@@ -91,6 +91,7 @@ public:
       parent->do_widget_redraw(parent);
     }
     do_widget_modal(nullptr);
+    // deleteChildren();
   }
 
   //----------
