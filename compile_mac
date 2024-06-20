@@ -1,3 +1,3 @@
 #!/bin/bash
-./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d  # Depug build
-./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui  # Release build
+time ./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d  # Depug build
+time ./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui  # Release build
