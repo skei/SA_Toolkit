@@ -107,6 +107,11 @@ public:
 public:
 //------------------------------
 
+  bool setupOverlay() override {
+    if (MWindow) return MWindow->setupOverlay();
+    return false;
+  }
+
   virtual bool connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
     AWidget->setParameter(AParameter,AIndex);
     AParameter->setWidget(AWidget);

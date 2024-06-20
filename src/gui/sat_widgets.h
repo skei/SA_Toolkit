@@ -22,6 +22,7 @@
 #include "gui/widget/sat_main_menu_widget.h"
 #include "gui/widget/sat_menu_widget.h"
 #include "gui/widget/sat_menu_item_widget.h"
+#include "gui/widget/sat_overlay_widget.h"
 #include "gui/widget/sat_pages_widget.h"
 #include "gui/widget/sat_plugin_footer_widget.h"
 #include "gui/widget/sat_plugin_header_widget.h"

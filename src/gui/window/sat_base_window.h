@@ -23,8 +23,10 @@ public:
 public:
 //------------------------------
 
-  virtual void      show() {};
-  virtual void      hide() {};
+  virtual bool setupOverlay() { return false; }
+
+  virtual void      show() {}
+  virtual void      hide() {}
 
   virtual void      setPos(int32_t AXpos, int32_t AYpos) {}
   virtual void      setSize(uint32_t AWidth, uint32_t AHeight) {}

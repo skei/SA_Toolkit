@@ -143,6 +143,11 @@ public: // do_widget
     if (MListener) MListener->on_widgetListener_resize(AWidget,ADeltaX,ADeltaY);
   }
 
+  void do_widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
+    if (MListener) MListener->on_widgetListener_set_overlay(AWidget,AColor);
+  }
+
+
 
 };
 

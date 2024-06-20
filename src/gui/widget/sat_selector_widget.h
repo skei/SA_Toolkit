@@ -88,6 +88,8 @@ public:
       //do_widget_redraw(this);
     }
     if (MMenu) MMenu->closeMenu();
+    do_widget_set_overlay(this,SAT_Color(0,0,0,0));
+
   }
 
   //----------
@@ -109,7 +111,10 @@ public:
     if (MMenu) {
       switch (AButton) {
         case SAT_BUTTON_LEFT:
-          if (MMenu) MMenu->openMenu(AXpos,AYpos);
+          if (MMenu) {
+            MMenu->openMenu(AXpos,AYpos);
+            do_widget_set_overlay(this,SAT_Color(0,0,0,0.3));
+          }
           break;
         case SAT_BUTTON_RIGHT:
           // if menu is open, close it

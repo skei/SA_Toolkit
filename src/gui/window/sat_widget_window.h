@@ -7,6 +7,7 @@
 #include "gui/widget/sat_widget_listener.h"
 #include "gui/window/sat_buffered_window.h"
 #include "gui/window/sat_window_listener.h"
+#include "gui/widget/sat_overlay_widget.h"
 #include "gui/widget/sat_root_widget.h"
 #include "gui/sat_renderer.h"
 #include "gui/sat_painter.h"
@@ -43,7 +44,7 @@ private:
   SAT_Widget*         MMouseCaptureWidget = nullptr;
   SAT_Widget*         MKeyCaptureWidget   = nullptr;
   SAT_Widget*         MHintWidget         = nullptr;
-  SAT_Widget*         MOverlayWidget      = nullptr;
+  SAT_OverlayWidget*  MOverlayWidget      = nullptr;
 
   int32_t             MMouseCurrentCursor = SAT_CURSOR_DEFAULT;
   SAT_WidgetArray     MTimerListeners     = {};
@@ -123,7 +124,7 @@ public:
 
   //----------
 
-  SAT_Widget* getOverlayWidget() {
+  SAT_OverlayWidget* getOverlayWidget() {
     return MOverlayWidget;
   }
 
@@ -135,6 +136,17 @@ public:
     MInitialScale = AScale;
     MProportional = AProportional;
     MScale = calcScale(AWidth,AHeight);
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool setupOverlay() override {
+    SAT_RootWidget* root = getRootWidget();
+    MOverlayWidget = new SAT_OverlayWidget();
+    root->appendChild(MOverlayWidget);
+    return true;
   }
 
 //------------------------------
@@ -650,6 +662,16 @@ public: // widget listener
     //   parent->do_widget_redraw(parent);
     // }
   }
+
+  void on_widgetListener_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
+    SAT_OverlayWidget* overlay = getOverlayWidget();
+    if (overlay) {
+      overlay->setColor(AColor);
+      SAT_RootWidget* root = getRootWidget();
+      root->do_widget_redraw(root);
+    }
+  }
+
 
 
 };

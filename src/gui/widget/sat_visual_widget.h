@@ -97,6 +97,9 @@ public:
 public:
 //------------------------------
 
+  virtual bool      getFillBackground()   { return MFillBackground; }
+  virtual SAT_Color getBackgroundColor()  { return MBackgroundColor; }
+
 //------------------------------
 public:
 //------------------------------
@@ -426,7 +429,6 @@ public: // on_widget
   // }
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    //SAT_TRACE;
     drawDropShadow(AContext);
     fillBackground(AContext);
     paintChildren(AContext);

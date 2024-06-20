@@ -227,6 +227,10 @@ public:
             MChains[i]->MCurrentNode += 1;
             if (MChains[i]->MCurrentNode >= MChains[i]->MNodes.size()) {
               MChains[i]->MActive = false;
+
+// send end tween msg.. ?
+target->on_widget_tween(node->MId,SAT_TWEEN_FINISHED,0,nullptr);
+
               // //TODO: if looping
               // MChains[i]->MCurrentNode = 0;
               // MChains[i]->MCurrentTime = 0.0;
