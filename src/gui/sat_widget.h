@@ -206,14 +206,11 @@ public:
   */
 
   virtual void setRectAndBase(SAT_Rect ARect) {
-    double scale = getWindowScale();
-    //SAT_Rect mrect = getRect();
     SAT_Rect rect = ARect;
     setRect(ARect);
-
-//rect.x -= MLayoutOffset.x;
-//rect.y -= MLayoutOffset.y;
-
+    //rect.x -= MLayoutOffset.x;
+    //rect.y -= MLayoutOffset.y;
+    double scale = getWindowScale();
     //rect.x -= (MLayoutOffset.x * scale);
     //rect.y -= (MLayoutOffset.y * scale);
     rect.scale(1.0 / scale);
@@ -537,7 +534,8 @@ public:
         SAT_PRINT("AId %i AType %i ACount %i : AData[0] %.3f \n",AId,AType,ACount,AData[0]);
         break;
       case SAT_TWEEN_RECT:
-        setRect(SAT_Rect(AData[0],AData[1],AData[2],AData[3]));
+        SAT_PRINT("%.3f, %.3f, %.3f, %.3f\n",AData[0],AData[1],AData[2],AData[3]);
+        setRectAndBase(SAT_Rect(AData[0],AData[1],AData[2],AData[3]));
         if (MParent) {
           MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
         }
