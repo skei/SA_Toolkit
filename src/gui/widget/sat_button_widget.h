@@ -67,15 +67,6 @@ public:
 public: // on_widget
 //------------------------------
 
-// {
-//   // test tween
-//   double starts[4] = {0,0,0,0};
-//   double ends[4] = {100,100,100,100};
-//   SAT_TweenChain* chain = new SAT_TweenChain();
-//   SAT_TweenNode* node = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_VALUE,1,starts,ends,SAT_EASING_IN_CUBIC);
-//   chain->appendNode(node);
-//   do_widget_start_tween(this,chain);
-// }
 
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
@@ -87,6 +78,20 @@ public: // on_widget
         if (value > 0.5) setValue(0.0);
         else setValue(1.0);
       }
+
+//==========
+      // test tween
+      SAT_Rect rect = getRect();
+      //double starts[4]  = {rect.x,rect.y,rect.w,rect.h};
+      //double ends[4]    = {rect.x,rect.y,rect.w,rect.h + 50};
+      double starts[4]  = {0,0,0,rect.h};
+      double ends[4]    = {0,0,0,rect.h + 50};
+      SAT_TweenChain* chain = new SAT_TweenChain();
+      SAT_TweenNode* node = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_INOUT_CUBIC);
+      chain->appendNode(node);
+      do_widget_start_tween(this,chain);
+//==========
+
       do_widget_update(this);
       do_widget_redraw(this);
     }

@@ -702,17 +702,18 @@ AEditor->connect(t3s3,getParameter(3));
     //----------
 
     bool postSetupEditor(SAT_Editor* AEditor) {
-
       SAT_Window* window = AEditor->getWindow();
       SAT_RootWidget* root = window->getRootWidget();
-      SAT_VisualWidget* overlay = new SAT_VisualWidget(SAT_Rect(0,0,100,100));
-      root->appendChild(overlay);
-      overlay->Layout.flags |= SAT_WIDGET_LAYOUT_PERCENT_PARENT;
-      overlay->setActive(false);
-      overlay->setFillBackground(true);
-      overlay->setBackgroundColor(SAT_Color(0,0,0, 0.7));
 
-      overlay->appendChild(MMenu1);
+      root->appendChild(MMenu1);
+
+      // SAT_VisualWidget* overlay = new SAT_VisualWidget(SAT_Rect(0,0,100,100));
+      // root->appendChild(overlay);
+      // overlay->Layout.flags |= SAT_WIDGET_LAYOUT_PERCENT_PARENT;
+      // overlay->setActive(false);
+      // overlay->setFillBackground(true);
+      // overlay->setBackgroundColor(SAT_Color(0,0,0, 0.7));
+      // overlay->appendChild(MMenu1);
 
       return true;
     }

@@ -490,7 +490,6 @@ public: // timer listener
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(ADelta);
     }
-    // todo: tweening
     MTweenManager.process(ADelta);
     #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
       flushDirtyWidgets();
