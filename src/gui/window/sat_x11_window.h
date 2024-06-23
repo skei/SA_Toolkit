@@ -954,7 +954,7 @@ private:
         uint16_t s  = key_press->state;
         uint32_t ts = key_press->time;
         uint32_t ks = remapKey(k,s);
-        SAT_PRINT("k %i s %i ts %i ks %i\n",k,s,ts,ks);
+        //SAT_PRINT("k %i s %i ts %i ks %i\n",k,s,ts,ks);
 
         char c = 0;
         s = remapState(s);

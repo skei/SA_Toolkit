@@ -695,6 +695,7 @@ AEditor->connect(t3s3,getParameter(3));
       //
       //--------------------
 
+      //root->appendChild(MMenu1);
       return true;
     }
 
@@ -706,7 +707,6 @@ AEditor->connect(t3s3,getParameter(3));
       overlay->appendChild(MMenu1);
       return true;
     }
-
 
   #endif // gui
 

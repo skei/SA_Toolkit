@@ -50,7 +50,7 @@ public:
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
     if (MColor.a > 0.001) {
-      SAT_TRACE;
+      //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
       painter->setFillColor(MColor);

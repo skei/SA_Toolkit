@@ -81,8 +81,6 @@ public: // on_widget
 
 //========== test tween
       SAT_Rect rect = getRect();
-      //double starts[4]  = {rect.x,rect.y,rect.w,rect.h};
-      //double ends[4]    = {rect.x,rect.y,rect.w,rect.h + 50};
       double starts[4]  = {0,0,0,rect.h};
       double ends[4]    = {0,0,0,rect.h + 100};
       SAT_TweenChain* chain = new SAT_TweenChain();
