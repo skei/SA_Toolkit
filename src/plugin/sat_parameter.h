@@ -357,6 +357,41 @@ public:
     return 0.0;
   }
 
+  //----------
+
+  //virtual void updateSmoothing() {
+  //  sat_param_t target = MValue + MModulation;
+  //  MSmoothValue += (target - MSmoothValue) * MSmoothFactor;
+  //}
+
+  //----------
+  
+  // smoothing should be done in modulationmatrix (moduationmanager?)
+  // and include internal modulation, not expressions, ..
+  //
+  // http://www.kvraudio.com/forum/viewtopic.php?p=6515525#p6515525
+
+//  virtual void updateSmoothing(sat_param_t ATolerance=0.001, uint32_t ASteps=1) {
+//    sat_param_t target = MValue + MModulation;
+//    sat_param_t diff = (target - MSmoothValue);
+//    if ( abs(diff) < ATolerance ) MSmoothValue = target;
+//    else {
+//      if (ASteps == 1) {
+//        //updateSmoothing();
+//        MSmoothValue += diff * MSmoothFactor;
+//      }
+//      else {
+//        MSmoothValue += diff * (1.0 - pow( (1.0 - MSmoothFactor), ASteps) );
+//      }
+//    }
+//  }
+
+  //----------
+
+//  virtual sat_param_t getSmoothedValue() {
+//    return MSmoothValue;
+//  }
+
 };
 
 //----------------------------------------------------------------------
