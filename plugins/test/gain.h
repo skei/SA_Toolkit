@@ -29,7 +29,7 @@ class gain_processor
 
 public:
 
-  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(gain_processor)
+  //SAT_DEFAULT_PROCESSOR_CONSTRUCTOR(gain_processor)
 
   gain_processor(SAT_ProcessorOwner* AOwner)
   : SAT_BlockProcessor(AOwner) {
@@ -68,6 +68,7 @@ public:
   }
 
   virtual ~gain() {
+    if (MProcessor) deleteProcessor(MProcessor);
   }
 
 public:

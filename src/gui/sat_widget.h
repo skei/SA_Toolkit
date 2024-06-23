@@ -531,13 +531,13 @@ public:
   virtual void handleTweening(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
     switch(AType) {
       case SAT_TWEEN_FINISHED:
-        SAT_PRINT("AId %i AType SAT_TWEEN_FINISHED\n",AId,AType);
+        //SAT_PRINT("AId %i AType SAT_TWEEN_FINISHED\n",AId,AType);
         break;
       case SAT_TWEEN_VALUE:
-        SAT_PRINT("AId %i AType SAT_TWEEN_VALUE ACount %i : AData[0] %.3f \n",AId,AType,ACount,AData[0]);
+        //SAT_PRINT("AId %i AType SAT_TWEEN_VALUE ACount %i : AData[0] %.3f \n",AId,AType,ACount,AData[0]);
         break;
       case SAT_TWEEN_RECT:
-        SAT_PRINT("%.3f, %.3f, %.3f, %.3f\n",AData[0],AData[1],AData[2],AData[3]);
+        //SAT_PRINT("%.3f, %.3f, %.3f, %.3f\n",AData[0],AData[1],AData[2],AData[3]);
         setRectAndBase(SAT_Rect(AData[0],AData[1],AData[2],AData[3]));
         if (MParent) {
           MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
