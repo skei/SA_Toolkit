@@ -46,6 +46,31 @@ private:
   double      MMappedIndicatorSize        = 8.0;
   double      MAutomationIndicatorSize    = 4.0;
 
+  //
+
+  bool      MSizable            = false;
+  SAT_Rect  MSizableBorder      = SAT_Rect(5,5,5,5);
+  uint32_t  MSizableEdges       = SAT_EDGE_ALL;
+  uint32_t  MSizableFlags       = 0; // not used.. (todo: limit_to_parent)
+
+  bool      MMovable            = false;
+  SAT_Rect  MMovableOffset      = SAT_Rect(0,0,0,0);
+  uint32_t  MMovableDirections  = SAT_DIRECTION_ALL;
+  uint32_t  MMovableFlags       = 0; // 1 = invert_offset, (todo: limit_to_parent)
+
+  //private
+
+  bool      MCanMove            = false;
+  uint32_t  MResizeEdge         = SAT_EDGE_NONE;
+  bool      MMoving             = false;
+  bool      MResizing           = false;
+  int32_t   MMouseClickedX      = 0;
+  int32_t   MMouseClickedY      = 0;
+  int32_t   MMousePreviousX     = 0;
+  int32_t   MMousePreviousY     = 0;
+  // int32_t   MMovedX             = 0.0;
+  // int32_t   MMovedY             = 0.0;
+
 //------------------------------
 public:
 //------------------------------
@@ -93,12 +118,35 @@ public:
   virtual void setRoundedCorners(uint32_t ACorners)       { MRoundedCorners = ACorners; }
   virtual void setRoundedCornerSize(double ASize)         { MRoundedCornerSize = ASize; }
 
+  virtual void setSizable(bool ASizable=true)             { MSizable = ASizable; }
+  virtual void setSizableBorder(SAT_Rect ABorder)         { MSizableBorder = ABorder; }
+  virtual void setSizableEdges(uint32_t AEdges)           { MSizableEdges = AEdges; }
+  virtual void setSizableFlags(uint32_t AFlags)           { MSizableFlags = AFlags; }
+
+  virtual void setMovable(bool AMovable=true)             { MMovable = AMovable; }
+  virtual void setMovableOffset(SAT_Rect AOffset)         { MMovableOffset = AOffset; }
+  virtual void setMovableDirections(uint32_t ADirections) { MMovableDirections = ADirections; }
+  virtual void setMovableFlags(uint32_t AFlags)           { MMovableFlags = AFlags; }
+
+
+
 //------------------------------
 public:
 //------------------------------
 
   virtual bool      getFillBackground()   { return MFillBackground; }
   virtual SAT_Color getBackgroundColor()  { return MBackgroundColor; }
+
+  // virtual bool      isMovable()             { return MMovable; }
+  // virtual SAT_Rect  getMovableOffset()      { return  MMovableOffset; }
+  // virtual uint32_t  getMovableDirections()  { return MMovableDirections; }
+  // virtual uint32_t  getMovableFlags()       { return MMovableFlags; }
+
+  // virtual bool      isSizable()             { return MMovable; }
+  // virtual SAT_Rect  getSizableBorder()      { return MSizableBorder; }
+  // virtual uint32_t  getSizableEdges()       { return MSizableEdges; }
+  // virtual uint32_t  getSizableFlags()       { return MSizableFlags; }
+
 
 //------------------------------
 public:
@@ -335,10 +383,6 @@ public:
 
   //----------
 
-
-
-  //----------
-
   /*
   virtual void drawHostIndicators(SAT_PaintContext* AContext) {
     SAT_Assert(AContext);
@@ -434,6 +478,168 @@ public: // on_widget
     paintChildren(AContext);
     drawIndicators(AContext);
     drawBorder(AContext);
+  }
+
+  //----------
+
+  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (MSizable) {
+      MMouseClickedX = AXpos;
+      MMouseClickedY = AYpos;
+      if (AButton == SAT_BUTTON_LEFT) {
+        if (MSizable && (MResizeEdge != SAT_EDGE_NONE)) {
+          MResizing = true;
+          SAT_PRINT("MResizing %i\n",MResizing);
+        }
+      // else if (MMovable && MCanMove) {
+      //   MMoving = true;
+      //   SAT_PRINT("MMoving %i MResizing %i\n",MMoving,MResizing);
+      // }
+      }
+    }
+  }
+
+  //----------
+
+  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    if (MSizable && MResizing) {
+      SAT_PRINT("MResizing 0\n");
+      // MMoving = false;
+      MResizing = false;
+    }
+  }
+
+  //----------
+
+  /*
+    mrect contains layout, so if we move, and then sets new rect/base based on
+    this.. the base rect will already contain borders, so next time it is aligned,
+    borders will reapply.. on and on..
+    we can only have 
+  */
+
+  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+    // if (MMoving) {
+    // SAT_Rect rect = getRect();
+    double S = getWindowScale();
+    // int32_t x = AXpos - rect.x;
+    // int32_t y = AYpos - rect.y;
+    // SAT_PRINT("x %i y %i S %.3f\n",x,y,S);
+    //   if (MMovableDirections & SAT_DIRECTION_HORIZ) mrect.x += deltax;
+    //   if (MMovableDirections & SAT_DIRECTION_VERT)  mrect.y += deltay;
+    //   // SAT_Point offset = getLayoutOffset();
+    //   // mrect.x -= offset.x;
+    //   // mrect.y -= offset.y;
+    //   // setRect(mrect);
+    //   setRectAndBase(mrect);
+    //   do_widget_realign(this,0);
+    //   //realignParent();
+    // }
+    // else
+
+    if (MResizing) {
+      double deltax = (AXpos - MMousePreviousX);
+      double deltay = (AYpos - MMousePreviousY);
+      if (S > 0.0) {
+        deltax /= S;
+        deltay /= S;
+      }
+      //SAT_Rect rect = getRect();
+      //rect.x -= getLayoutOffset().x;
+      //rect.y -= getLayoutOffset().y;
+      //if (MResizeEdge & SAT_EDGE_LEFT)    { rect.removeLeft(deltax); }
+      //if (MResizeEdge & SAT_EDGE_RIGHT)   { rect.addRight(deltax);   }
+      //if (MResizeEdge & SAT_EDGE_TOP)     { rect.removeTop(deltay);  }
+      //if (MResizeEdge & SAT_EDGE_BOTTOM)  { rect.addBottom(deltay);  }
+      //setRectAndBase(rect);
+
+      if (MResizeEdge & SAT_EDGE_LEFT)    { MManualTween.removeLeft(deltax); }
+      if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualTween.addRight(deltax);   }
+      if (MResizeEdge & SAT_EDGE_TOP)     { MManualTween.removeTop(deltay);  }
+      if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualTween.addBottom(deltay);  }
+
+      do_widget_realign(this,0);
+      //realignParent();
+    }
+    else {
+      checkResizeHover(AXpos,AYpos);
+    }
+    MMousePreviousX = AXpos;
+    MMousePreviousY = AYpos;
+  }
+
+  //----------
+
+  // void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos) override {
+  //   checkHover(AXpos,AYpos);
+  // }
+
+  //----------
+
+  // void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos) override {
+  // }  
+
+//------------------------------
+private:
+//------------------------------
+
+  // returns edge that is (potentially) resizable
+
+  uint32_t checkCanResize(double AXpos, double AYpos) {
+    if (MSizable) {
+      double S = getWindowScale();
+      SAT_Rect rect = getRect();
+      SAT_Rect offset = MSizableBorder;
+      offset.scale(S);
+      rect.shrink(offset);
+      if (rect.contains(AXpos,AYpos))      return SAT_EDGE_NONE;
+      if ((MSizableEdges & SAT_EDGE_LEFT)   && (AXpos < rect.x))     return SAT_EDGE_LEFT;
+      if ((MSizableEdges & SAT_EDGE_RIGHT)  && (AXpos > rect.x2()))  return SAT_EDGE_RIGHT;
+      if ((MSizableEdges & SAT_EDGE_TOP)    && (AYpos < rect.y))     return SAT_EDGE_TOP;
+      if ((MSizableEdges & SAT_EDGE_BOTTOM) && (AYpos > rect.y2()))  return SAT_EDGE_BOTTOM;
+    }
+    return SAT_EDGE_NONE;
+  }
+
+  //----------
+
+  // returns true if we can resize
+
+  // bool checkCanMove(double AXpos, double AYpos) {
+  //   if (MIsMovable) {
+  //     //double S = getWindowScale();
+  //     SAT_Rect mrect = getRect();
+  //     SAT_Rect offset = MMovableOffset;
+  //     //offset.scale(S);
+  //     mrect.shrink(offset);
+  //     if (mrect.contains(AXpos,AYpos)) {
+  //       if (MMovableFlags & 1) return false;
+  //       else return true;
+  //     }
+  //   }
+  //   if (MMovableFlags & 1) return true;
+  //   else return false;
+  // }
+
+  //----------
+
+  void checkResizeHover(double AXpos, double AYpos) {
+    if (MSizable) {
+      MResizeEdge = checkCanResize(AXpos,AYpos);
+      if (MResizeEdge != SAT_EDGE_NONE) {
+        if (MResizeEdge & SAT_EDGE_LEFT)    { do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT);   return; }
+        if (MResizeEdge & SAT_EDGE_RIGHT)   { do_widget_set_cursor(this,SAT_CURSOR_ARROW_RIGHT);  return; }
+        if (MResizeEdge & SAT_EDGE_TOP)     { do_widget_set_cursor(this,SAT_CURSOR_ARROW_UP);     return; }
+        if (MResizeEdge & SAT_EDGE_BOTTOM)  { do_widget_set_cursor(this,SAT_CURSOR_ARROW_DOWN);   return; }
+      }
+      // MCanMove = checkCanMove(AXpos,AYpos);
+      // if (MCanMove) {
+      //   if (MMovableDirections == SAT_DIRECTION_ALL)        { do_widget_set_cursor(this,SAT_CURSOR_MOVE);              return; }
+      //   else if (MMovableDirections == SAT_DIRECTION_HORIZ) { do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);  return; }
+      //    else if (MMovableDirections == SAT_DIRECTION_VERT)  { do_widget_set_cursor(this,SAT_CURSOR_ARROW_UP_DOWN);     return; }
+      // }
+      do_widget_set_cursor(this,SAT_CURSOR_DEFAULT);
+    }
   }
 
 };
