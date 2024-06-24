@@ -529,7 +529,12 @@ AEditor->connect(xypad1,getParameter(7),1);
       logo1->setLogoWidth(3);
       logo1->setFillBackground(true);
       logo1->setBackgroundColor(0.85);
+      logo1->setDrawBorder(true);
+      logo1->setBorderColor(0);
       logo1->setLogoOffset(SAT_Rect(12,12,12,12));
+
+      logo1->setSizable(true);
+      logo1->Options.wantHoverEvents = true;
 
       SAT_TextBoxWidget* textbox1 = new SAT_TextBoxWidget(SAT_Rect(150,100));
       bottom_panel->appendChild(textbox1);

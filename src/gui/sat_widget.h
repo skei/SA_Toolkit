@@ -45,6 +45,8 @@ struct SAT_WidgetState {
 class SAT_Widget
 : public SAT_BaseWidget {
 
+  friend class SAT_VisualWidget;
+
 //------------------------------
 private:
 //------------------------------
@@ -58,6 +60,9 @@ private:
   SAT_Rect          MBaseRect                           = {0,0,0,0};      // basis for re-alignment
   SAT_Rect          MInitialRect                        = {0,0,0,0};      // rect at creation time (unmodified)
   SAT_Rect          MContentRect                        = {0,0,0,0};
+
+  SAT_Rect          MManualTween                        = {0,0,0,0};
+  SAT_Rect          MPrevTween                          = {0,0,0,0};
 
 //SAT_Point         MLayoutOffset                       = {0,0};
 //SAT_Point         MMovedOffset                        = {0,0};          // manually moved, .. 
@@ -114,6 +119,7 @@ public:
   virtual const char*       getHint()                     { return MHint; }
   virtual uint32_t          getIndex()                    { return MIndex; }
   virtual SAT_Rect          getInitialRect()              { return MInitialRect; }
+//virtual SAT_Point         getLayoutOffset()             { return MLayoutOffset; }
   virtual double            getModulation()               { return MModulation; }
   virtual const char*       getName()                     { return MName; }
   virtual SAT_WidgetOwner*  getOwner()                    { return MOwner; }
@@ -448,8 +454,6 @@ public:
       uint32_t child_layout = child->Layout.flags;
       SAT_Rect child_rect;
 
-  //  SAT_Rect orig_rect;
-
       bool need_realign = child->State.visible || child->Options.realignInvisible;
       if (need_realign) {
 
@@ -475,7 +479,13 @@ public:
           child_rect.scale(scale);
         }
 
-//SAT_Rect orig_rect = child_rect;
+        // rect child was created with, before we moved and scaled it
+        // SAT_Rect orig_rect = child_rect;
+
+        SAT_Rect manual = child->MManualTween;
+        manual.scale(scale);
+        child_rect.add(manual);
+        //SAT_PRINT("manual %.2f,%.2f, %.2f,%.2f\n",manual.x,manual.y,manual.w,manual.h);
 
         // child_rect is scaled (screen pixel coords)
         child_rect = child->on_widget_preAlign(child_rect);
@@ -509,15 +519,19 @@ public:
         outer_border.scale(scale);
         child_rect.shrink(outer_border);
 
-//child->MLayoutOffset.x = (child_rect.x - orig_rect.x);
-//child->MLayoutOffset.y = (child_rect.y - orig_rect.y);
+        // how much aignment moved thew widget..
+        // (used when mivng/resizing)
+        // child->MLayoutOffset.x = (child_rect.x - orig_rect.x);
+        // child->MLayoutOffset.y = (child_rect.y - orig_rect.y);
 
         //child->setRect(child_rect);
         //child->on_widget_postAlign();
 
         child_rect = child->on_widget_postAlign(child_rect);
+
         child->setRect(child_rect);
         if (ARecursive) child->realignChildren(ARecursive);
+
       } // visible
     } // for
 
@@ -538,7 +552,30 @@ public:
         break;
       case SAT_TWEEN_RECT:
         //SAT_PRINT("%.3f, %.3f, %.3f, %.3f\n",AData[0],AData[1],AData[2],AData[3]);
-        setRectAndBase(SAT_Rect(AData[0],AData[1],AData[2],AData[3]));
+
+        // rect.x -= getLayoutOffset().x;
+        // rect.y -= getLayoutOffset().y;
+
+//        setRectAndBase(SAT_Rect(AData[0],AData[1],AData[2],AData[3]));
+//        MManualOffset += SAT_Rect(AData[0],AData[1],AData[2],AData[3]);
+
+        //MManualOffset.h += 1;
+
+        SAT_Rect rect = getRect();
+
+        //double S = getWindowScale();
+        //rect.scale(S);
+
+        SAT_Rect tween = SAT_Rect(AData[0],AData[1],AData[2],AData[3]);
+        SAT_Rect prev = MPrevTween;
+        MPrevTween = tween;
+        tween.sub(prev);
+        MManualTween.add(tween);
+
+        //MPrevOffset = MManualOffset;
+
+        SAT_PRINT("MManualTween %.2f,%.2f, %.2f,%.2f\n",MManualTween.x,MManualTween.y,MManualTween.w,MManualTween.h);
+
         if (MParent) {
           MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
         }
