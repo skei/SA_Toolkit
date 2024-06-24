@@ -33,6 +33,14 @@
 #define SAT_WINDOW_THREAD_KILL                    666
 #define SAT_WINDOW_TIMER_MS                       20
 
+//
+
+#define SAT_MODMATRIX_MAX_SRC_COUNT               32
+#define SAT_MODMATRIX_MAX_DST_COUNT               32
+#define SAT_MODMATRIX_MAX_MOD_COUNT               32
+#define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK    1024
+#define SAT_VOICE_MAX_EVENTS_PER_BLOCK            1024
+
 //----------------------------------------------------------------------
 //
 // options

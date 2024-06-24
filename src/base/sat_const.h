@@ -79,6 +79,10 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 //
 //----------------------------------------------------------------------
 
+#define SAT_AUDIO_FILE_READ                     1
+#define SAT_AUDIO_FILE_WRITE                    2
+
+
 #define SAT_BUTTON_NONE                         0
 #ifdef SAT_LINUX
   #define SAT_BUTTON_LEFT                       1

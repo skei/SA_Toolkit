@@ -2,7 +2,7 @@
 #define sat_polyblep_included
 //----------------------------------------------------------------------
 
-#include "base/utils/sat_math.h"
+#include "base/util/sat_math.h"
 
 // tale
 // http://www.kvraudio.com/forum/viewtopic.php?p=5269941#p5269941
