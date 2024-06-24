@@ -2,7 +2,7 @@
 #define sat_voice_included
 //----------------------------------------------------------------------
 
-#include "plugin/sat_process_context.h"
+#include "plugin/processor/sat_process_context.h"
 #include "plugin/sat_note.h"
 #include "audio/sat_voice_context.h"
 

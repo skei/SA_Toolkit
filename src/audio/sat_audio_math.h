@@ -4,7 +4,7 @@
 
 #include <math.h>
 #include "sat.h"
-#include "base/utils/sat_fast_math.h"
+#include "base/util/sat_fast_math.h"
 
 //----------------------------------------------------------------------
 // db
