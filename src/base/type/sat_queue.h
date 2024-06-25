@@ -3,12 +3,17 @@
 //----------------------------------------------------------------------
 
 /*
-
   "..nothing will read the value until the size of the container is
   incremented, so you don't care if the orders of writes of the value itself
   happen in a random order, you only care that the value must be fully written
   before the count is increased.."
+*/
 
+/*
+  (should we add volatile to read/write-pos?
+  Volatile is a qualifier that is applied to a variable when it is declared.
+  It tells the compiler that the value of the variable may change at any time -
+  without any action being taken by the code the compiler finds nearby.
 */
 
 //----------------------------------------------------------------------
@@ -20,16 +25,6 @@
 // lock free (spsc)
 //
 //----------------------------------------------------------------------
-
-/*
-  assumptions:
-  - single producer
-  - single consumer
-  - reading/writing single uint32_t is atomic (x86)
-  - todo: malloc'ed buffer?
-*/
-
-//----------
 
 template<class T, int SIZE>
 class SAT_Queue {

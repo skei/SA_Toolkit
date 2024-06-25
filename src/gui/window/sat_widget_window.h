@@ -651,6 +651,7 @@ public: // widget listener
 
   void on_widgetListener_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
     //SAT_TRACE;
+    AWidget->clearPrevTween();
     MTweenManager.appendChain(ATween);
   }
 

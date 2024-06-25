@@ -88,7 +88,7 @@ public: // on_widget
       SAT_TweenChain* chain = new SAT_TweenChain();
       SAT_TweenNode* node1 = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
       chain->appendNode(node1);
-      SAT_TweenNode* node2 = new SAT_TweenNode(this,255,2.0,SAT_TWEEN_RECT,4,ends,starts,SAT_EASING_IN_QUINT);
+      SAT_TweenNode* node2 = new SAT_TweenNode(this,255,2.0,SAT_TWEEN_RECT,4,ends,starts,SAT_EASING_IN_EXPO);
       chain->appendNode(node2);
       do_widget_start_tween(this,chain);
 //==========
