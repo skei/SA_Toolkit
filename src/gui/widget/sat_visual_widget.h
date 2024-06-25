@@ -540,24 +540,19 @@ public: // on_widget
     if (MResizing) {
       double deltax = (AXpos - MMousePreviousX);
       double deltay = (AYpos - MMousePreviousY);
-      if (S > 0.0) {
-        deltax /= S;
-        deltay /= S;
-      }
-      //SAT_Rect rect = getRect();
-      //rect.x -= getLayoutOffset().x;
-      //rect.y -= getLayoutOffset().y;
-      //if (MResizeEdge & SAT_EDGE_LEFT)    { rect.removeLeft(deltax); }
-      //if (MResizeEdge & SAT_EDGE_RIGHT)   { rect.addRight(deltax);   }
-      //if (MResizeEdge & SAT_EDGE_TOP)     { rect.removeTop(deltay);  }
-      //if (MResizeEdge & SAT_EDGE_BOTTOM)  { rect.addBottom(deltay);  }
-      //setRectAndBase(rect);
-
-      if (MResizeEdge & SAT_EDGE_LEFT)    { MManualTween.removeLeft(deltax); }
-      if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualTween.addRight(deltax);   }
-      if (MResizeEdge & SAT_EDGE_TOP)     { MManualTween.removeTop(deltay);  }
-      if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualTween.addBottom(deltay);  }
-
+      // if (S > 0.0) {
+      //   deltax /= S;
+      //   deltay /= S;
+      // }
+      // if (MResizeEdge & SAT_EDGE_LEFT)    { MManualTween.removeLeft(deltax); }
+      // if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualTween.addRight(deltax);   }
+      // if (MResizeEdge & SAT_EDGE_TOP)     { MManualTween.removeTop(deltay);  }
+      // if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualTween.addBottom(deltay);  }
+      if (MResizeEdge & SAT_EDGE_LEFT)    { MManualMoved.removeLeft(deltax); }
+      if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualMoved.addRight(deltax);   }
+      if (MResizeEdge & SAT_EDGE_TOP)     { MManualMoved.removeTop(deltay);  }
+      if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualMoved.addBottom(deltay);  }
+      SAT_PRINT("%.2f, %.2f, %.2f, %.2f\n",MManualMoved.x,MManualMoved.y,MManualMoved.w,MManualMoved.h);
       do_widget_realign(this,0);
       //realignParent();
     }

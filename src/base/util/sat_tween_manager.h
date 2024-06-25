@@ -211,25 +211,48 @@ public:
         if (node) {
           SAT_Widget* target = (SAT_Widget*)node->MTarget;
           double data[16] = {0};
+
+          // double time_left = node->MDuration - (MChains[i]->MCurrentTime + ADelta);
           for (uint32_t j=0; j<node->MNumValues; j++) {
-            data[j] = SAT_Easing(
-              node->MTweenType,
-              MChains[i]->MCurrentTime,
-              node->MStartValues[j],
-              node->MDeltaValues[j],
-              node->MDuration
-            );
+            // if (next_time >= node->MDuration) {
+            //   data[j] = node->MStartValues[j] + (node->MDeltaValues[j] * node->MDuration);
+            // }
+            // else {
+              data[j] = SAT_Easing(
+                node->MTweenType,
+                MChains[i]->MCurrentTime,
+                node->MStartValues[j],
+                node->MDeltaValues[j],
+                node->MDuration
+              );
+            // }
           }
           target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
+          
           MChains[i]->MCurrentTime += ADelta;
           if (MChains[i]->MCurrentTime >= node->MDuration) {
+
+            // jump to end point..
+
+            for (uint32_t j=0; j<node->MNumValues; j++) {
+              data[j] = SAT_Easing(
+                node->MTweenType,
+                node->MDuration,//MChains[i]->MCurrentTime,
+                node->MStartValues[j],
+                node->MDeltaValues[j],
+                node->MDuration
+              );
+            }
+            target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
+
             MChains[i]->MCurrentTime = 0.0;
+            //MChains[i]->MCurrentTime -= node->MDuration;
             MChains[i]->MCurrentNode += 1;
             if (MChains[i]->MCurrentNode >= MChains[i]->MNodes.size()) {
               MChains[i]->MActive = false;
 
-// send end tween msg.. ?
-target->on_widget_tween(node->MId,SAT_TWEEN_FINISHED,0,nullptr);
+              // send end tween msg.. ?
+              target->on_widget_tween(node->MId,SAT_TWEEN_FINISHED,0,nullptr);
 
               // //TODO: if looping
               // MChains[i]->MCurrentNode = 0;

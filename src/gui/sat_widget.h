@@ -63,10 +63,8 @@ private:
 
   SAT_Rect          MManualTween                        = {0,0,0,0};
   SAT_Rect          MPrevTween                          = {0,0,0,0};
-
-//SAT_Point         MLayoutOffset                       = {0,0};
-//SAT_Point         MMovedOffset                        = {0,0};          // manually moved, .. 
-//SAT_Point         MScrolledOffset                     = {0,0};          // scrollbox, ..
+  SAT_Rect          MManualMoved                        = {0,0,0,0};
+//SAT_Rect          MManualScrolled                     = {0,0,0,0};
 
   void*             MParameters[SAT_WIDGET_NUM_VALUES]  = {0};            // array of values
   uint32_t          MParameterIndex                     = 0;              // index of selected, current value
@@ -487,6 +485,8 @@ public:
         child_rect.add(manual);
         //SAT_PRINT("manual %.2f,%.2f, %.2f,%.2f\n",manual.x,manual.y,manual.w,manual.h);
 
+        child_rect.add(child->MManualMoved);
+
         // child_rect is scaled (screen pixel coords)
         child_rect = child->on_widget_preAlign(child_rect);
 
@@ -542,6 +542,12 @@ public:
 
   //----------
 
+  virtual void clearPrevTween() {
+    MPrevTween = {0,0,0,0};
+  }
+
+  //----------
+
   virtual void handleTweening(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
     switch(AType) {
       case SAT_TWEEN_FINISHED:
@@ -561,8 +567,7 @@ public:
 
         //MManualOffset.h += 1;
 
-        SAT_Rect rect = getRect();
-
+        //SAT_Rect rect = getRect();
         //double S = getWindowScale();
         //rect.scale(S);
 
