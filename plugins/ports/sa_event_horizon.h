@@ -10,61 +10,53 @@
 */
 
 //----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+// #include "plugin/clap/sat_clap.h"
+// #include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
 
 //----------
 
 #define _log2db (20.0f / logf(10.0f))
 #define _db2log (logf(10.0f) / 20.0f)
 
-
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t sa_event_horizon_descriptor = {
+clap_plugin_descriptor_t sa_event_horizon_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_event_horizon",
-  .name         = "sa_port_event_horizon",
+  .id           = "sa_event_horizon-v0",
+  .name         = "sa_event_horizon",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_LIMITER,
-                    nullptr
-                  }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_event_horizon_plugin
-: public SAT_Plugin {
-  
+class sa_event_horizon_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate  = 0.0;
   
   float thresh      = 0.0;
   float threshdb    = 0.0;
@@ -84,73 +76,63 @@ private:
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_event_horizon_plugin)
+  sa_event_horizon_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
 
   //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    appendParameter(new SAT_Parameter( "Threshold", 0,   -30, 0 ));
-    appendParameter(new SAT_Parameter( "Ceiling",  -0.1, -20, 0 ));
-    appendParameter(new SAT_Parameter( "Soft Clip", 2,     0, 6 ));
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+
+  virtual ~sa_event_horizon_processor() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
   //----------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    need_recalc = true;
-    return true;
-  }
-  
-  //----------
-
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
       //float peak = SMax(abs(spl0),abs(spl1));
       spl0 *= makeup;
       spl1 *= makeup;
-
       float sign0 = SAT_Sign(spl0);
       float sign1 = SAT_Sign(spl1);
       float abs0 = fabs(spl0);
       float abs1 = fabs(spl1);
-
       float overdb0 = 2.08136898 * logf(abs0) * _log2db - ceildb; // c++ Log = pascal Ln ?????
       float overdb1 = 2.08136898 * logf(abs1) * _log2db - ceildb;
-
       if (abs0 > scv) spl0 = sign0 * (scv + expf(overdb0*scmult)*_db2log);
       if (abs1 > scv) spl1 = sign1 * (scv + expf(overdb1*scmult)*_db2log);
-
       spl0 = SAT_Min(ceiling,fabs(spl0)) * SAT_Sign(spl0);
       spl1 = SAT_Min(ceiling,fabs(spl1)) * SAT_Sign(spl1);
 
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -176,23 +158,70 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_event_horizon_plugin
+: public SAT_Plugin {
+
+//------------------------------
+private:
+//------------------------------
+
+  sa_event_horizon_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_event_horizon_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_event_horizon_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();
+    appendStereoAudioInputPort();
+    appendStereoAudioOutputPort();
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Threshold", "",  0,   -30, 0, flags ));
+    appendParameter(new SAT_Parameter( "Ceiling",   "", -0.1, -20, 0, flags ));
+    appendParameter(new SAT_Parameter( "Soft Clip", "",  2,     0, 6, flags ));
+    MProcessor = new sa_event_horizon_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry
 //
 //----------------------------------------------------------------------
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(sa_event_horizon_descriptor,sa_event_horizon_plugin)
+  SAT_PLUGIN_ENTRY(sa_event_horizon_descriptor,sa_event_horizon_plugin);
 #endif
 
-
-
-  //  inc = slider1/100;
-  //  // len must be multiple of 2 otherwise there will be drift due to floating point math in 1sdft93hgosdh
-  //  len = floor(slider2/1000*srate/2)*2;
-  //  fade = slider3/100 * len/2;
-
-//----------
+//
 
 #undef _log2db
 #undef _db2log
@@ -204,7 +233,7 @@ private:
 
 
 
-/*
+#if 0
 
 // Copyright 2006, Thomas Scott Stillwell
 // All rights reserved.
@@ -275,4 +304,4 @@ slider3:2.0<0,6.0,0.01>Soft clip (dB)
   spl0=min(ceiling,abs(spl0))*sign(spl0);
   spl1=min(ceiling,abs(spl1))*sign(spl1);
 
-*/
+#endif // 0
