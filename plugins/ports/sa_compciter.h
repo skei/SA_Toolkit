@@ -2,6 +2,7 @@
 #define sa_compciter_included
 //----------------------------------------------------------------------
 
+
 // based on the 'compciter' jesusonic effect by 'loser'
 
 /*
@@ -227,9 +228,9 @@ public:
     appendParameter( new SAT_Parameter( "Dry",   "", 0,   -12,  0     ));
     MProcessor = new sa_compciter_processor(this);
     setProcessor(MProcessor);
-    #ifndef SAT_NO_GUI
-      setInitialEditorSize(510,340,1.0,true);
-    #endif
+    // #ifndef SAT_NO_GUI
+    //   setInitialEditorSize(510,340,1.0,true);
+    // #endif
     return SAT_Plugin::init();
   }
 
@@ -244,100 +245,100 @@ public:
 public:
 //------------------------------
 
-  #ifndef SAT_NO_GUI
-
-    bool setupEditor(SAT_Editor* AEditor) final {
-      SAT_TRACE;
-
-      SAT_Window* window = AEditor->getWindow();
-      SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
-      window->setRootWidget(root);
-
-      //
-
-      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"compciter");
-      root->appendChild(header);
-      header->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      header->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-      header->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
-
-      SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(40,"  ...");
-      root->appendChild(footer);
-      footer->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
-      footer->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-      footer->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
-
-      SAT_VisualWidget* center = new SAT_VisualWidget(0);
-      root->appendChild(center);
-      center->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-      center->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
-
-      //
-
-      SAT_KnobWidget* knob0 = new SAT_KnobWidget(SAT_Rect(30,30,200,200));
-      center->appendChild(knob0);
-      AEditor->connect(knob0,getParameter(0));
-      knob0->setTextSize(20);
-      knob0->setValueTextSize(30);
-      knob0->setKnobArcColor(SAT_Red);
-      knob0->setKnobArcThickness(25);
-      knob0->setDrawKnobNeedle(true);
-      knob0->setKnobNeedleStart(0.57);
-      knob0->setKnobNeedleLength(0.65);
-      knob0->setKnobNeedleThickness(10);
-
-      SAT_KnobWidget* knob1 = new SAT_KnobWidget(SAT_Rect(280,30,90,90));
-      center->appendChild(knob1);
-      AEditor->connect(knob1,getParameter(1));
-      knob1->setTextSize(10);
-      knob1->setValueTextSize(10);
-      knob1->setKnobArcColor(SAT_Blue1);
-      knob1->setKnobArcThickness(15);
-      knob1->setDrawKnobNeedle(true);
-      knob1->setKnobNeedleStart(0.66);
-      knob1->setKnobNeedleLength(1.0);
-      knob1->setKnobNeedleThickness(2);
-
-      SAT_KnobWidget* knob2 = new SAT_KnobWidget(SAT_Rect(390,30,90,90));
-      center->appendChild(knob2);
-      AEditor->connect(knob2,getParameter(2));
-      knob2->setTextSize(10);
-      knob2->setValueTextSize(10);
-      knob2->setKnobArcColor(SAT_Blue1);
-      knob2->setKnobArcThickness(15);
-      knob2->setDrawKnobNeedle(true);
-      knob2->setKnobNeedleStart(0.66);
-      knob2->setKnobNeedleLength(1.0);
-      knob2->setKnobNeedleThickness(2);
-
-      SAT_KnobWidget* knob3 = new SAT_KnobWidget(SAT_Rect(290,150,70,70));
-      center->appendChild(knob3);
-      AEditor->connect(knob3,getParameter(3));
-      knob3->setTextSize(10);
-      knob3->setValueTextSize(10);
-      knob3->setKnobArcColor(SAT_DarkerGrey);
-      knob3->setKnobArcThickness(13);
-      knob3->setDrawKnobNeedle(true);
-      knob3->setKnobNeedleStart(0.66);
-      knob3->setKnobNeedleLength(1.0);
-      knob3->setKnobNeedleThickness(2);
-
-      SAT_KnobWidget* knob4 = new SAT_KnobWidget(SAT_Rect(400,150,70,70));
-      center->appendChild(knob4);
-      AEditor->connect(knob4,getParameter(4));
-      knob4->setTextSize(10);
-      knob4->setValueTextSize(10);
-      knob4->setKnobArcColor(SAT_DarkerGrey);
-      knob4->setKnobArcThickness(13);
-      knob4->setDrawKnobNeedle(true);
-      knob4->setKnobNeedleStart(0.66);
-      knob4->setKnobNeedleLength(1.0);
-      knob4->setKnobNeedleThickness(2);
-
-      return true;
-    }
-
-  #endif // nogui
+  // #ifndef SAT_NO_GUI
+  //
+  //   bool setupEditor(SAT_Editor* AEditor) final {
+  //     SAT_TRACE;
+  //
+  //     SAT_Window* window = AEditor->getWindow();
+  //     SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+  //     window->setRootWidget(root);
+  //
+  //     //
+  //
+  //     SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"compciter");
+  //     root->appendChild(header);
+  //     header->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+  //     header->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+  //     header->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+  //
+  //     SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(40,"  ...");
+  //     root->appendChild(footer);
+  //     footer->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
+  //     footer->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+  //     footer->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
+  //
+  //     SAT_VisualWidget* center = new SAT_VisualWidget(0);
+  //     root->appendChild(center);
+  //     center->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+  //     center->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+  //
+  //     //
+  //
+  //     SAT_KnobWidget* knob0 = new SAT_KnobWidget(SAT_Rect(30,30,200,200));
+  //     center->appendChild(knob0);
+  //     AEditor->connect(knob0,getParameter(0));
+  //     knob0->setTextSize(20);
+  //     knob0->setValueTextSize(30);
+  //     knob0->setKnobArcColor(SAT_Red);
+  //     knob0->setKnobArcThickness(25);
+  //     knob0->setDrawKnobNeedle(true);
+  //     knob0->setKnobNeedleStart(0.57);
+  //     knob0->setKnobNeedleLength(0.65);
+  //     knob0->setKnobNeedleThickness(10);
+  //
+  //     SAT_KnobWidget* knob1 = new SAT_KnobWidget(SAT_Rect(280,30,90,90));
+  //     center->appendChild(knob1);
+  //     AEditor->connect(knob1,getParameter(1));
+  //     knob1->setTextSize(10);
+  //     knob1->setValueTextSize(10);
+  //     knob1->setKnobArcColor(SAT_Blue1);
+  //     knob1->setKnobArcThickness(15);
+  //     knob1->setDrawKnobNeedle(true);
+  //     knob1->setKnobNeedleStart(0.66);
+  //     knob1->setKnobNeedleLength(1.0);
+  //     knob1->setKnobNeedleThickness(2);
+  //
+  //     SAT_KnobWidget* knob2 = new SAT_KnobWidget(SAT_Rect(390,30,90,90));
+  //     center->appendChild(knob2);
+  //     AEditor->connect(knob2,getParameter(2));
+  //     knob2->setTextSize(10);
+  //     knob2->setValueTextSize(10);
+  //     knob2->setKnobArcColor(SAT_Blue1);
+  //     knob2->setKnobArcThickness(15);
+  //     knob2->setDrawKnobNeedle(true);
+  //     knob2->setKnobNeedleStart(0.66);
+  //     knob2->setKnobNeedleLength(1.0);
+  //     knob2->setKnobNeedleThickness(2);
+  //
+  //     SAT_KnobWidget* knob3 = new SAT_KnobWidget(SAT_Rect(290,150,70,70));
+  //     center->appendChild(knob3);
+  //     AEditor->connect(knob3,getParameter(3));
+  //     knob3->setTextSize(10);
+  //     knob3->setValueTextSize(10);
+  //     knob3->setKnobArcColor(SAT_DarkerGrey);
+  //     knob3->setKnobArcThickness(13);
+  //     knob3->setDrawKnobNeedle(true);
+  //     knob3->setKnobNeedleStart(0.66);
+  //     knob3->setKnobNeedleLength(1.0);
+  //     knob3->setKnobNeedleThickness(2);
+  //
+  //     SAT_KnobWidget* knob4 = new SAT_KnobWidget(SAT_Rect(400,150,70,70));
+  //     center->appendChild(knob4);
+  //     AEditor->connect(knob4,getParameter(4));
+  //     knob4->setTextSize(10);
+  //     knob4->setValueTextSize(10);
+  //     knob4->setKnobArcColor(SAT_DarkerGrey);
+  //     knob4->setKnobArcThickness(13);
+  //     knob4->setDrawKnobNeedle(true);
+  //     knob4->setKnobNeedleStart(0.66);
+  //     knob4->setKnobNeedleLength(1.0);
+  //     knob4->setKnobNeedleThickness(2);
+  //
+  //     return true;
+  //   }
+  //
+  // #endif // nogui
 
 };
 
