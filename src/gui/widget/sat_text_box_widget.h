@@ -64,38 +64,45 @@ public:
     so we go throgh them all here, and readjust their widths..
   */
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) override {
-    //SAT_PRINT;
-    //SAT_ScrollBoxWidget::prepare(AOwner);
-    SAT_Window* window = (SAT_Window*)AOwner;
-    double S = getWindowScale();
-    if (window) {
-      MPainter = window->getPainter();
-      if (MPainter) {
-        MPainter->setTextSize(MTextSize * S);
-        //double widest = 0.0;
-        uint32_t num = MContent->getNumChildren();
-        for (uint32_t i=0; i<num; i++) {
-          SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChild(i);
-          const char* text = textwidget->getText();
-          double bounds[4];
-          //if (MPainter->getTextBounds(text,bounds)) {
-          //  double width = bounds[2] - bounds[0];
-            double width = MPainter->getTextBounds(text,bounds);
+  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  //   //SAT_PRINT;
+  //   //SAT_ScrollBoxWidget::prepare(AOwner);
+  //   SAT_Window* window = (SAT_Window*)AOwner;
+  //   double S = getWindowScale();
+  //   if (window) {
+  //     MPainter = window->getPainter();
+  //     if (MPainter) {
+  //       MPainter->setTextSize(MTextSize * S);
+  //       //double widest = 0.0;
+  //       uint32_t num = MContent->getNumChildren();
+  //       for (uint32_t i=0; i<num; i++) {
+  //         SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChild(i);
+  //         SAT_Rect rect = textwidget->getRect();
+  //         const char* text = textwidget->getText();
+  //         double bounds[4];
+  //         //if (MPainter->getTextBounds(text,bounds)) {
+  //         //  double width = bounds[2] - bounds[0];
+  //           double advance = MPainter->getTextBounds(text,bounds);
+  //           SAT_PRINT("bounds %.2f, %.2f, %.2f, %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
+  //           double width = bounds[2] - bounds[0];
+            
+  //           //textwidget->setWidth(width);
+  //           rect.w = width;
+  //           //textwidget->setRectAndBase(rect);
 
-            // textwidget->setWidth(width);
-            // if (width > 0) width /= S;
-            // //if (width > widest) widest = width;
-            // textwidget->setBaseWidth(width);
+  //           // textwidget->setWidth(width);
+  //           // if (width > 0) width /= S;
+  //           // //if (width > widest) widest = width;
+  //           // textwidget->setBaseWidth(width);
 
-//            textwidget->setWidthAndBase(width);
+  //           //textwidget->setWidthAndBase(width);
 
-          //}
-        }
-        //SAT_Widget* context = getContentWidget();
-      }
-    }
-  }
+  //         //}
+  //       }
+  //       //SAT_Widget* context = getContentWidget();
+  //     }
+  //   }
+  // }
 
 //------------------------------
 public:

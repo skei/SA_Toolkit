@@ -95,6 +95,31 @@ public:
 public: // on_widget
 //------------------------------
 
+  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  //   SAT_Rect rect = getRect();
+  //   SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
+  //   double scale = getWindowScale();
+  //   painter->setTextSize(MTextSize * scale);
+  //   double bounds[4] = {0};
+  //   double advance = painter->getTextBounds(MText,bounds);
+  //   SAT_PRINT("bounds %.2f, %.2f, %.2f, %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
+  //   double width = bounds[2] - bounds[0];
+  //   //setWidth(width);
+  //   setRectAndBase(rect);
+  //   SAT_VisualWidget::on_widget_open(AOwner);
+  // };
+
+  // SAT_Rect on_widget_preAlign(SAT_Rect ARect) override {
+  //   SAT_WidgetOwner* owner = getOwner();
+  //   SAT_Painter* painter = owner->on_widgetOwner_getPainter();
+  //   double scale = getWindowScale();
+  //   painter->setTextSize(MTextSize * scale);
+  //   double bounds[4] = {0};
+  //   double width = painter->getTextBounds(MText,bounds);
+  //   ARect.w = width;
+  //   return ARect;
+  // }
+
   void on_widget_paint(SAT_PaintContext* AContext) override {
     //SAT_TRACE;
     fillBackground(AContext);
