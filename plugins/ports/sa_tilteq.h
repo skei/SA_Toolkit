@@ -11,53 +11,53 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+#include "plugin/sat_parameters.h"
+// #include "plugin/sat_plugin.h"
+
+const char* sa_tilteq_process_mode_txt[2] = {
+  "Stereo", "Mono"
+};
 
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_tilteq_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_tilteq",
-  .name         = "sa_port_tilteq",
+  .id           = SAT_VENDOR "/sa_tilteq/v0",
+  .name         = "sa_tilteq",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    //CLAP_PLUGIN_FEATURE_EQUALIZER,
-                    CLAP_PLUGIN_FEATURE_FILTER,
-                    nullptr
-                  }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_FILTER, nullptr }
 };
 
-const char* str_proc[2] = {"Stereo","Mono" };
-
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_tilteq_plugin
-: public SAT_Plugin {
-  
+class sa_tilteq_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
   float amp = 6/log(2); //Ln
   float lp_out    = 0;
@@ -71,61 +71,52 @@ private:
   uint32_t mono   = 0;
 
   float sr3       = 0;
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_tilteq_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_tilteq_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_tilteq_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter(new SAT_TextParameter( "Processing",  0,  0,   1, str_proc ));
-    appendParameter(new SAT_Parameter(     "Center Freq", 50, 0,   100 ));
-    appendParameter(new SAT_Parameter(     "Tilt",        0, -6,   6 ));
-    appendParameter(new SAT_Parameter(     "Gain",        0, -25,  25 ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
+    if (need_recalc) recalc(samplerate);
 
-    sr3 = 3 * MSampleRate;
+    sr3 = 3 * samplerate;
 
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
       float inp,outp, inp_r,outp_r;
       
       if (mono==1) {
@@ -149,11 +140,11 @@ public:
         spl1 = outp_r*outgain;
       }
 
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -200,7 +191,62 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_tilteq_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_tilteq_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_tilteq_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_tilteq_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_TextParameter( "Processing",  "", 0,  0,   1, flags, sa_tilteq_process_mode_txt ));
+    appendParameter(new SAT_Parameter(     "Center Freq", "", 50, 0,   100, flags ));
+    appendParameter(new SAT_Parameter(     "Tilt",        "", 0, -6,   6, flags ));
+    appendParameter(new SAT_Parameter(     "Gain",        "", 0, -25,  25, flags ));
+    MProcessor = new sa_tilteq_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -208,9 +254,6 @@ private:
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_tilteq_descriptor,sa_tilteq_plugin)
 #endif
-
-//----------
-
 
 //----------------------------------------------------------------------
 #endif

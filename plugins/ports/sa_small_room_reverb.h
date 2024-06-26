@@ -2,65 +2,76 @@
 #define sa_small_room_reverb_included
 //----------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+// #include "plugin/sat_parameter.h"
+// #include "plugin/sat_plugin.h"
 
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_small_room_reverb_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_small_room_reverb",
-  .name         = "sa_port_small_room_reverb",
+  .id           = SAT_VENDOR "/sa_small_room_reverb/v0",
+  .name         = "sa_small_room_reverb",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_REVERB,
-                    nullptr
-                  }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_REVERB, nullptr }
 };
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_small_room_reverb_plugin
-: public SAT_Plugin {
-  
+class sa_small_room_reverb_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
   float BUFFER[1024*1024];
 
   //float slider1,slider2,slider3;
 
-  uint32_t a0_pos, a1_pos, a2_pos, a3_pos, a4_pos;
-  uint32_t a0r_pos, a1r_pos, a2r_pos, a3r_pos, a4r_pos;
-  float tmp, tmpr, t, tr;
+  uint32_t a0_pos = 0;
+  uint32_t a1_pos = 0;
+  uint32_t a2_pos = 0;
+  uint32_t a3_pos = 0;
+  uint32_t a4_pos = 0;
+
+  uint32_t a0r_pos = 0;
+  uint32_t a1r_pos = 0;
+  uint32_t a2r_pos = 0;
+  uint32_t a3r_pos = 0;
+  uint32_t a4r_pos = 0;
+
+  float tmp   = 0.0;
+  float tmpr  = 0.0;
+  float t     = 0.0;
+  float tr    = 0.0;
 
   float in, out, g, c;
   float dry, wet;
@@ -70,6 +81,8 @@ private:
   /*float*/ uint32_t   a0,    a1,    a2,    a3,    a4;
   /*float*/ uint32_t   a0r,   a1r,   a2r,   a3r,   a4r;
 
+
+
   uint32_t  a0_len,  a1_len,  a2_len,  a3_len,  a4_len;
   float   a0_in,   a1_in,   a2_in,   a3_in,   a4_in;
   float   a0_out,  a1_out,  a2_out,  a3_out,  a4_out;
@@ -77,74 +90,49 @@ private:
   uint32_t  a0r_len, a1r_len, a2r_len, a3r_len, a4r_len;
   float   a0r_in,  a1r_in,  a2r_in,  a3r_in,  a4r_in;
   float   a0r_out, a1r_out, a2r_out, a3r_out, a4r_out;
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_small_room_reverb_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_small_room_reverb_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_small_room_reverb_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter(new SAT_Parameter( "Dry",      0,  -120, 0 ));
-    appendParameter(new SAT_Parameter( "Wet",     -6,  -120, 0 ));
-    appendParameter(new SAT_Parameter( "Damping",  50,   0,   100 ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    
-      a0_pos = 0;
-      a1_pos = 0;
-      a2_pos = 0;
-      a3_pos = 0;
-      a4_pos = 0;
-      a0r_pos = 0;
-      a1r_pos = 0;
-      a2r_pos = 0;
-      a3r_pos = 0;
-      a4r_pos = 0;
-      tmp = 0;
-      tmpr = 0;
-      t = 0;
-      tr = 0;
-    
-    
-    //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
       // left channel
 
       in = spl0 + tmp*g;
@@ -233,11 +221,11 @@ public:
       out = a0r_out*0.5 + a3r_out*0.5;
       spl1 = spl1*dry + out*wet;
 
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -282,7 +270,61 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_small_room_reverb_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_small_room_reverb_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_small_room_reverb_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_small_room_reverb_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Dry",     "",  0,  -120, 0, flags ));
+    appendParameter(new SAT_Parameter( "Wet",     "", -6,  -120, 0, flags ));
+    appendParameter(new SAT_Parameter( "Damping", "",  50,   0,   100, flags ));
+    MProcessor = new sa_small_room_reverb_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -291,9 +333,6 @@ private:
   SAT_PLUGIN_ENTRY(sa_small_room_reverb_descriptor,sa_small_room_reverb_plugin)
 #endif
 
-//----------
-
-
 //----------------------------------------------------------------------
 #endif
 
@@ -313,11 +352,7 @@ private:
 
 
 
-
-
-
-
-
+  
 
 
 #if 0

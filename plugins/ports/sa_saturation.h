@@ -14,24 +14,30 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+#include "plugin/sat_parameters.h"
+// #include "plugin/sat_plugin.h"
 
 #define scale_ ( 1.1 / 3.0 )
 
+const char* sa_saturation_func_txt[2] = { "sine", "cubic" };
+
+
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_saturation_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_saturation",
-  .name         = "sa_port_saturation",
+  .id           = SAT_VENDOR "/sa_saturation/v0",
+  .name         = "sa_saturation",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -41,81 +47,68 @@ const clap_plugin_descriptor_t sa_saturation_descriptor = {
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
 
-
-const char* txt_func[2] = { "sine", "cubic" };
-
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_saturation_plugin
-: public SAT_Plugin {
-  
+class sa_saturation_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
-//  float     p_saturation;
-//  uint32_t  p_stages;
-//  uint32_t  p_function;
-  float     a, div, gain;
+  float     a     = 0.0;
+  float     div   = 0.0;
+  float     gain  = 0.0;
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_saturation_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_saturation_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_saturation_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter(new SAT_Parameter(     "Saturation", 0,  0,   1 ));
-    appendParameter(new SAT_IntParameter(  "Stages",     1,  1,   10 ));
-    appendParameter(new SAT_TextParameter( "Function",   0,  0,   1, txt_func ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
-      //----------
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
       if (a>0) {
         float x0 = SAT_Max(-1, SAT_Min(1, spl0));
         float x1 = SAT_Max(-1, SAT_Min(1, spl1));
@@ -136,13 +129,12 @@ public:
         spl0 = x0 * gain;
         spl1 = x1 * gain;
       } // a>0
-      //----------
 
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -166,12 +158,66 @@ private:
     }
     need_recalc = false;
   }
-    
+
 };
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_saturation_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_saturation_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_saturation_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_saturation_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter(     "Saturation", "", 0,  0,   1, flags ));
+    appendParameter(new SAT_IntParameter(  "Stages",     "", 1,  1,   10, flags ));
+    appendParameter(new SAT_TextParameter( "Function",   "", 0,  0,   1, flags, sa_saturation_func_txt ));
+    MProcessor = new sa_saturation_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -180,9 +226,8 @@ private:
   SAT_PLUGIN_ENTRY(sa_saturation_descriptor,sa_saturation_plugin)
 #endif
 
-//----------
-
 #undef scale_
+
 
 //----------------------------------------------------------------------
 #endif
@@ -190,6 +235,19 @@ private:
 
 
 
+
+
+
+
+
+
+
+
+
+
+    
+    
+  
 
 //  desc:Another loser/Saturation rewrite, thanks to SaulT!
 //  slider1:0<0,1,0.01>Saturation

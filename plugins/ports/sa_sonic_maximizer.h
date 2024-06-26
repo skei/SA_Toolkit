@@ -23,11 +23,14 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+// #include "plugin/sat_parameter.h"
+// #include "plugin/sat_plugin.h"
 
 //----------
 
@@ -37,17 +40,16 @@
 #define freqLP    224.32
 #define freqHP_p2 (-SAT_PI2 * freqHP)
 #define freqLP_p2 (-SAT_PI2 * freqLP)
-
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_sonic_maximizer_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_sonic_maximizer",
-  .name         = "sa_port_sonic_maximizer",
+  .id           = SAT_VENDOR "/sa_sonic_maximizer/v0",
+  .name         = "sa_sonic_maximizer",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -59,20 +61,19 @@ const clap_plugin_descriptor_t sa_sonic_maximizer_descriptor = {
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_sonic_maximizer_plugin
-: public SAT_Plugin {
-  
+class sa_sonic_maximizer_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
-  //bool  need_precalc = true;
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
   float     param1      = 0.0f;
   float     param2      = 0.0f;
@@ -92,44 +93,33 @@ private:
   float     a0HP        = 0.0f;
   float     b1LP        = 0.0f;
   float     b1HP        = 0.0f;
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_sonic_maximizer_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_sonic_maximizer_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_sonic_maximizer_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("Input");
-    appendStereoAudioOutputPort("Output");
-    appendParameter(new SAT_Parameter( "Low Cont",  1.0,   0.0, 10.0 ));
-    appendParameter(new SAT_Parameter( "Process",   1.0,   0.0, 10.0 ));
-    appendParameter(new SAT_Parameter( "Output",   -3.0, -30.0,  0.0 ));
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    //need_recalc = true;
-    //precalc();
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
-  }
-  
-  bool start_processing() final {
-    precalc();
-    return SAT_Plugin::start_processing();
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    //SAT_Plugin::processParamValueEvent(param_value);
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     uint32_t index = event->param_id;
     float value = event->value;
     switch (index) {
@@ -148,24 +138,21 @@ public:
     }
     //band2 := 1; // exp(0/c_ampdB);
     need_recalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    //if (need_precalc) precalc();
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      
-      float s0  = *in0++;
-      float s1  = *in1++;
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+
+      float s0  = *input0++;
+      float s1  = *input1++;
       tmplLP    = a0LP*s0 - b1LP*tmplLP;// + cDenorm;
       tmprLP    = a0LP*s1 - b1LP*tmprLP;// + cDenorm;
       float sp0 = tmplLP;
@@ -176,12 +163,12 @@ public:
       float sp5 = s1 - tmprHP;
       float sp2 = s0 - sp0 - sp4;
       float sp3 = s1 - sp1 - sp5;
-      *out0++ = (sp0 * band1 + sp2 /* * band2 */ + sp4 * band3) * amp;
-      *out1++ = (sp1 * band1 + sp3 /* * band2 */ + sp5 * band3) * amp;
+      *output0++ = (sp0 * band1 + sp2 /* * band2 */ + sp4 * band3) * amp;
+      *output1++ = (sp1 * band1 + sp3 /* * band2 */ + sp5 * band3) * amp;
 
-    }
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -210,7 +197,61 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_sonic_maximizer_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_sonic_maximizer_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_sonic_maximizer_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_sonic_maximizer_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Low Cont", "",  1.0,   0.0, 10.0, flags ));
+    appendParameter(new SAT_Parameter( "Process",  "",  1.0,   0.0, 10.0, flags ));
+    appendParameter(new SAT_Parameter( "Output",   "", -3.0, -30.0,  0.0, flags ));
+    MProcessor = new sa_sonic_maximizer_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -218,8 +259,6 @@ private:
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_sonic_maximizer_descriptor,sa_sonic_maximizer_plugin)
 #endif
-
-//----------
 
 //#undef cDenorm
 #undef c_ampdB
@@ -230,4 +269,11 @@ private:
 
 //----------------------------------------------------------------------
 #endif
+
+
+
+
+
+
+
 

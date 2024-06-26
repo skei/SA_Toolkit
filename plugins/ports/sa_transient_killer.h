@@ -21,125 +21,115 @@ PLUG-IN YOU RELINQUISH YOUR CLAIM TO SUE IT'S AUTHOR, AS WELL AS THE CLAIM TO
 ENTRUST SOMEBODY ELSE WITH DOING SO.
 
 */
+
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
 
+#include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
 #include "sat.h"
 #include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
 
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_transient_killer_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_transient_killer",
-  .name         = "sa_port_transient_killer",
+  .id           = SAT_VENDOR "/sa_transient_killer/v0",
+  .name         = "sa_transient_killer",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_TRANSIENT_SHAPER,
-                    nullptr
-                  }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_TRANSIENT_SHAPER, nullptr }
 };
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_transient_killer_plugin
-: public SAT_Plugin {
-  
+class sa_transient_killer_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
   float cAmpDB_     = 8.65617025;
   float vol         = 0.0f;
   float db0         = 0.0f;
   float db1         = 0.0f;
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_transient_killer_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_transient_killer_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_transient_killer_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter(new SAT_Parameter( "Threshold", 0,  -12, 1 ));
-    appendParameter(new SAT_Parameter( "Ratio",     1,   1,  50 ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
     float treshDB = getParameterValue(0);
     float ratio   = getParameterValue(1);
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
-      //...
-      
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
       db0 = log(abs(spl0)) * cAmpDB_;
       if (db0 > treshDB) spl0 = exp( (treshDB + (db0 - treshDB)/ratio) / cAmpDB_) * SAT_Sign(spl0);
       db1 = log(abs(spl1)) * cAmpDB_;
       if (db1 > treshDB) spl1 = exp( (treshDB + (db1 - treshDB)/ratio) / cAmpDB_) * SAT_Sign(spl1);
-      *out0++ = spl0 * vol;
-      *out1++ = spl1 * vol;
-      
-    }
+      *output0++ = spl0 * vol;
+      *output1++ = spl1 * vol;
+    }    
+
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -155,7 +145,60 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_transient_killer_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_transient_killer_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_transient_killer_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_transient_killer_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Threshold", "", 0,  -12, 1, flags ));
+    appendParameter(new SAT_Parameter( "Ratio",     "", 1,   1,  50, flags ));
+    MProcessor = new sa_transient_killer_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -164,9 +207,7 @@ private:
   SAT_PLUGIN_ENTRY(sa_transient_killer_descriptor,sa_transient_killer_plugin)
 #endif
 
-//----------
-
-
 //----------------------------------------------------------------------
 #endif
+
 
