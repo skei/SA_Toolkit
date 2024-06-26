@@ -2,57 +2,55 @@
 #define sa_large_room_reverb_included
 //----------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+// #include "plugin/sat_parameter.h"
+// #include "plugin/sat_plugin.h"
 
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_large_room_reverb_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_large_room_reverb",
-  .name         = "sa_port_large_room_reverb",
+  .id           = SAT_VENDOR "/sa_large_room_reverb/v0",
+  .name         = "sa_large_room_reverb",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_REVERB,
-                    nullptr
-                  }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_REVERB, nullptr }
 };
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_large_room_reverb_plugin
-: public SAT_Plugin {
-  
+class sa_large_room_reverb_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
   float BUFFER[1024*1024] = {0};
   
@@ -75,79 +73,49 @@ private:
 
   float     wet, dry;
   float     c, g;
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_large_room_reverb_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_large_room_reverb_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_large_room_reverb_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter(new SAT_Parameter( "Dry",     0,  -120, 0   ));
-    appendParameter(new SAT_Parameter( "Wet",    -6,  -120, 0   ));
-    appendParameter(new SAT_Parameter( "Damping", 50,  0,   100 ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    
-//      a0_pos = 0;
-//      a1_pos = 0;
-//      a2_pos = 0;
-//      a3_pos = 0;
-//      a4_pos = 0;
-//      a5_pos = 0;
-//      a6_pos = 0;
-//      tmp = 0;
-//      t = 0;
-//
-//      a0r_pos = 0;
-//      a1r_pos = 0;
-//      a2r_pos = 0;
-//      a3r_pos = 0;
-//      a4r_pos = 0;
-//      a5r_pos = 0;
-//      a6r_pos = 0;
-//      tmpr = 0;
-//      tr = 0;
-    
-    //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
       float s_in = spl0;
       float in = spl0 + tmp * g;
       
@@ -256,64 +224,119 @@ public:
       
       spl1 = s_in * dry + out * wet;
 
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
 
   void recalc(float srate) {
-      dry = exp(getParameterValue(0) / 8.65617);
-      wet = exp(getParameterValue(1) / 8.65617);
-      g = 1.0 - getParameterValue(2) / 100.0;
-      a0 = 0;
-      a0_len = (srate * 8 / 1000);
-      a0_g = 0.3;
-      a1 = a0 + a0_len + 1;
-      a1_len = (srate * 12 / 1000);
-      a1_g = 0.3;
-      a2 = a1 + a1_len + 1;
-      a2_len = (srate * 87 / 1000);
-      a2_g = 0.5;
-      a3 = a2 + a2_len + 1;
-      a3_len = (srate * 62 / 1000);
-      a3_g = 0.25;
-      a4 = a3 + a3_len + 1;
-      a4_len = (srate * 120 / 1000);
-      a4_g = 0.5;
-      a5 = a4 + a4_len + 1;
-      a5_len = (srate * 76 / 1000);
-      a5_g = 0.25;
-      a6 = a5 + a5_len + 1;
-      a6_len = (srate * 30 / 1000);
-      a6_g = 0.25;
-      uint32_t rndcoef = 50;
-      a0r = a6 + a6_len + 1;
-      a0r_len = ((srate * 8 / 1000)) + rndcoef;
-      a1r = a0r + a0r_len + 1;
-      a1r_len = ((srate * 12 / 1000)) - rndcoef;
-      a2r = a1r + a1r_len + 1;
-      a2r_len = ((srate * 87 / 1000)) + rndcoef;
-      a3r = a2r + a2r_len + 1;
-      a3r_len = ((srate * 62 / 1000)) - rndcoef;
-      a4r = a3r + a3r_len + 1;
-      a4r_len = ((srate * 120 / 1000)) + rndcoef;
-      a5r = a4r + a4r_len + 1;
-      a5r_len = ((srate * 76 / 1000)) - rndcoef;
-      a6r = a5r + a5r_len + 1;
-      a6r_len = ((srate * 30 / 1000)) + rndcoef;
-      c = exp(-2 * 3.14 * 2600 / srate);
+    dry = exp(getParameterValue(0) / 8.65617);
+    wet = exp(getParameterValue(1) / 8.65617);
+    g = 1.0 - getParameterValue(2) / 100.0;
+    a0 = 0;
+    a0_len = (srate * 8 / 1000);
+    a0_g = 0.3;
+    a1 = a0 + a0_len + 1;
+    a1_len = (srate * 12 / 1000);
+    a1_g = 0.3;
+    a2 = a1 + a1_len + 1;
+    a2_len = (srate * 87 / 1000);
+    a2_g = 0.5;
+    a3 = a2 + a2_len + 1;
+    a3_len = (srate * 62 / 1000);
+    a3_g = 0.25;
+    a4 = a3 + a3_len + 1;
+    a4_len = (srate * 120 / 1000);
+    a4_g = 0.5;
+    a5 = a4 + a4_len + 1;
+    a5_len = (srate * 76 / 1000);
+    a5_g = 0.25;
+    a6 = a5 + a5_len + 1;
+    a6_len = (srate * 30 / 1000);
+    a6_g = 0.25;
+    uint32_t rndcoef = 50;
+    a0r = a6 + a6_len + 1;
+    a0r_len = ((srate * 8 / 1000)) + rndcoef;
+    a1r = a0r + a0r_len + 1;
+    a1r_len = ((srate * 12 / 1000)) - rndcoef;
+    a2r = a1r + a1r_len + 1;
+    a2r_len = ((srate * 87 / 1000)) + rndcoef;
+    a3r = a2r + a2r_len + 1;
+    a3r_len = ((srate * 62 / 1000)) - rndcoef;
+    a4r = a3r + a3r_len + 1;
+    a4r_len = ((srate * 120 / 1000)) + rndcoef;
+    a5r = a4r + a4r_len + 1;
+    a5r_len = ((srate * 76 / 1000)) - rndcoef;
+    a6r = a5r + a5r_len + 1;
+    a6r_len = ((srate * 30 / 1000)) + rndcoef;
+    c = exp(-2 * 3.14 * 2600 / srate);
     need_recalc = false;
+
   }
 
 };
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_large_room_reverb_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_large_room_reverb_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_large_room_reverb_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_large_room_reverb_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Dry",     "",  0,  -120, 0,   flags ));
+    appendParameter(new SAT_Parameter( "Wet",     "", -6,  -120, 0,   flags ));
+    appendParameter(new SAT_Parameter( "Damping", "",  50,  0,   100, flags ));
+    MProcessor = new sa_large_room_reverb_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -322,12 +345,33 @@ private:
   SAT_PLUGIN_ENTRY(sa_large_room_reverb_descriptor,sa_large_room_reverb_plugin)
 #endif
 
-//----------
-
-
 //----------------------------------------------------------------------
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
 
 
 

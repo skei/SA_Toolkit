@@ -11,19 +11,22 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_math.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
+// #include "sat.h"
+// #include "audio/sat_audio_math.h"
+// #include "audio/sat_audio_utils.h"
+#include "plugin/sat_parameters.h"
+// #include "plugin/sat_plugin.h"
 
 #define phaserlfoshape  4.0
 #define lfoskipsamples  20
 
 //----------------------------------------------------------------------
 //
-//
+// phaser
 //
 //----------------------------------------------------------------------
 
@@ -111,82 +114,71 @@ public:
 
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_phaser_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_phaser",
-  .name         = "sa_port_phaser",
+  .id           = SAT_VENDOR "/sa_phaser/v0",
+  .name         = "sa_phaser",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_PHASER,
-                    nullptr }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_PHASER, nullptr }
 };
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_phaser_plugin
-: public SAT_Plugin {
-  
+class sa_phaser_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
   SAT_Phaser    MPhaserL = {};
   SAT_Phaser    MPhaserR = {};
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_phaser_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_phaser_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_phaser_plugin)
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
+    MPhaserL.init(ASampleRate);
+    MPhaserR.init(ASampleRate);
+  }
 
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter( new SAT_Parameter(   "LFO Freq",       0.4,  0.05, 5.0 ));
-    appendParameter( new SAT_Parameter(   "LFO StartPhase", 0,    0,    256 ));
-    appendParameter( new SAT_Parameter(   "Feedback",       0,    0,    1 ));
-    appendParameter( new SAT_Parameter(   "Depth",          100,  0,    200 ));
-    appendParameter( new SAT_IntParameter("Stages",         2,    0,    10  ));
-    appendParameter( new SAT_Parameter(   "Dry / Wet",      128,  0,    256 ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+//------------------------------
+public:
+//------------------------------
+
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    MPhaserL.init(sample_rate);
-    MPhaserR.init(sample_rate);
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
-  }
-
-  //----------
-
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
     uint32_t index = event->param_id;
     double   value = event->value;
     switch (index) {
@@ -197,32 +189,29 @@ public:
       case 4: MPhaserL.SetStages(value);        MPhaserR.SetStages(value);        break;
       case 5: MPhaserL.SetDryWet(value);        MPhaserR.SetDryWet(value);        break;
     }
-    //MNeedRecalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
       spl0 = MPhaserL.process(spl0);
       spl1 = MPhaserR.process(spl1);
 
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -235,7 +224,64 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_phaser_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_phaser_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_phaser_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_phaser_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter( new SAT_Parameter(   "LFO Freq",       "", 0.4,  0.05, 5.0, flags ));
+    appendParameter( new SAT_Parameter(   "LFO StartPhase", "", 0,    0,    256, flags ));
+    appendParameter( new SAT_Parameter(   "Feedback",       "", 0,    0,    1,   flags ));
+    appendParameter( new SAT_Parameter(   "Depth",          "", 100,  0,    200, flags ));
+    appendParameter( new SAT_IntParameter("Stages",         "", 2,    0,    10,  flags ));
+    appendParameter( new SAT_Parameter(   "Dry / Wet",      "", 128,  0,    256, flags ));
+    MProcessor = new sa_phaser_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -244,11 +290,21 @@ private:
   SAT_PLUGIN_ENTRY(sa_phaser_descriptor,sa_phaser_plugin)
 #endif
 
-//----------
-
 #undef phaserlfoshape
 #undef lfoskipsamples
 
 //----------------------------------------------------------------------
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
 
