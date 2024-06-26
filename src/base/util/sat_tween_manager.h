@@ -228,16 +228,15 @@ public:
             // }
           }
           target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
-          
+
           MChains[i]->MCurrentTime += ADelta;
           if (MChains[i]->MCurrentTime >= node->MDuration) {
 
             // jump to end point..
-
             for (uint32_t j=0; j<node->MNumValues; j++) {
               data[j] = SAT_Easing(
                 node->MTweenType,
-                node->MDuration,//MChains[i]->MCurrentTime,
+                node->MDuration, //MChains[i]->MCurrentTime,
                 node->MStartValues[j],
                 node->MDeltaValues[j],
                 node->MDuration
@@ -245,15 +244,11 @@ public:
             }
             target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
 
-            MChains[i]->MCurrentTime = 0.0;
-            //MChains[i]->MCurrentTime -= node->MDuration;
+            MChains[i]->MCurrentTime = 0.0; //-= node->MDuration;
             MChains[i]->MCurrentNode += 1;
             if (MChains[i]->MCurrentNode >= MChains[i]->MNodes.size()) {
               MChains[i]->MActive = false;
-
-              // send end tween msg.. ?
-              target->on_widget_tween(node->MId,SAT_TWEEN_FINISHED,0,nullptr);
-
+              target->on_widget_tween(node->MId,SAT_TWEEN_FINISHED,0,nullptr); // send end tween msg..
               // //TODO: if looping
               // MChains[i]->MCurrentNode = 0;
               // MChains[i]->MCurrentTime = 0.0;
@@ -269,8 +264,6 @@ public:
       SAT_TweenChain* chain = MChains[i];
       if (!chain->MActive) {
         MChains.remove(i);
-
-        // this crashes.. :-/
         delete chain;
       }
       i += 1;
