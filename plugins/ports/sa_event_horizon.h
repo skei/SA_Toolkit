@@ -11,10 +11,6 @@
 
 //----------------------------------------------------------------------
 
-// #include "sat.h"
-// #include "audio/sat_audio_utils.h"
-// #include "plugin/clap/sat_clap.h"
-// #include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_interleaved_processor.h"
 
@@ -31,7 +27,7 @@
 
 clap_plugin_descriptor_t sa_event_horizon_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "sa_event_horizon-v0",
+  .id           = SAT_VENDOR "/sa_event_horizon/v0",
   .name         = "sa_event_horizon",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,

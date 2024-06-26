@@ -27,22 +27,20 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
 
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_exciter_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_exciter",
-  .name         = "sa_port_exciter",
+  .id           = SAT_VENDOR "/sa_exciter/v0",
+  .name         = "sa_exciter",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -54,19 +52,19 @@ const clap_plugin_descriptor_t sa_exciter_descriptor = {
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_exciter_plugin
-: public SAT_Plugin {
-  
+class sa_exciter_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
   
   float tmplONE     = 0;
   float tmprONE     = 0;
@@ -88,82 +86,66 @@ private:
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_exciter_plugin)
+  sa_exciter_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
 
   //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    appendParameter(new SAT_Parameter( "Freq",   2000,  100, 18000 ));
-    appendParameter(new SAT_Parameter( "Boost",  0,     0,   6     ));
-    appendParameter(new SAT_Parameter( "Harm",   0,     0,   100   ));
-    appendParameter(new SAT_Parameter( "Mix",   -6,    -120, 0     ));
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+
+  virtual ~sa_exciter_processor() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
   //----------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    need_recalc = true;
-    return true;
-  }
-  
-  //----------
-
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
       float s0 = spl0;
       float s1 = spl1;
-
       tmplONE = a0*s0 - b1*tmplONE;// + cDenorm;
       tmprONE = a0*s1 - b1*tmprONE;// + cDenorm;
-
       //TODO: denorm
-
       s0 -= tmplONE;
       s1 -= tmprONE;;
       s0 = SAT_Min(SAT_Max(s0*clipBoost,-1),1);
       s1 = SAT_Min(SAT_Max(s1*clipBoost,-1),1);
       s0 = (1+foo) * s0 / (1 + foo * abs(spl0));
       s1 = (1+foo) * s1 / (1 + foo * abs(spl1));
-
       tmplTWO = a0*s0 - b1*tmplTWO;// + cDenorm
       tmprTWO = a0*s1 - b1*tmprTWO;// + cDenorm;
-
       //TODO: denorm
-
       s0 -= tmplTWO;
       s1 -= tmprTWO;
-
       spl0 += (s0 * mixBack);
       spl1 += (s1 * mixBack);
-
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -184,7 +166,62 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_exciter_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_exciter_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_exciter_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_exciter_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Freq",  "",  2000,  100, 18000, flags ));
+    appendParameter(new SAT_Parameter( "Boost", "",  0,     0,   6,     flags ));
+    appendParameter(new SAT_Parameter( "Harm",  "",  0,     0,   100,   flags ));
+    appendParameter(new SAT_Parameter( "Mix",   "", -6,    -120, 0,     flags ));
+    MProcessor = new sa_exciter_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -192,9 +229,6 @@ private:
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_exciter_descriptor,sa_exciter_plugin)
 #endif
-
-//----------
-
 
 //----------------------------------------------------------------------
 #endif

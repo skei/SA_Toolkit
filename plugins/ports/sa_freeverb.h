@@ -11,14 +11,30 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_math.h"
-#include "audio/sat_audio_utils.h"
-//#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
 
-const char* mode_txt[] = { "Normal", "Freeze" };
+// #include "sat.h"
+#include "audio/sat_audio_math.h"
+// #include "audio/sat_audio_utils.h"
+#include "plugin/sat_parameters.h"
+// #include "plugin/sat_plugin.h"
+
+//----------------------------------------------------------------------
+//
+// freeverb
+//
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+
+const char* sa_freeverb_mode_txt[] = { "Normal", "Freeze" };
 
 const int	  sa_freeverb_numcombs        = 8;
 const int	  sa_freeverb_numallpasses    = 4;
@@ -416,83 +432,70 @@ public:
 
 };
 
+
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_freeverb_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_freeverb",
-  .name         = "sa_port_freeverb",
+  .id           = SAT_VENDOR "/sa_freeverb/v0",
+  .name         = "sa_freeverb",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_REVERB,
-                    nullptr
-                  }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_REVERB, nullptr }
 };
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_freeverb_plugin
-: public SAT_Plugin {
-  
+class sa_freeverb_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
-  bool  need_recalc = true;
-  float MSampleRate = 0.0;
-  
+  bool  need_recalc         = true;
+  float samplerate          = 0.0;
   SAT_Freeverb  MReverbL    = {};
   SAT_Freeverb  MReverbR    = {};
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_freeverb_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_freeverb_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_freeverb_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter( new SAT_Parameter(     "Roomsize", 0.56, 0.01, 2.0 ));
-    appendParameter( new SAT_Parameter(     "Damp",     0.45, 0.01, 2.0 ));
-    appendParameter( new SAT_Parameter(     "Wet",      0.57, 0.01, 2.0 ));
-    appendParameter( new SAT_Parameter(     "Dry",      0.43, 0.01, 2.0 ));
-    appendParameter( new SAT_Parameter(     "Width",    0.56, 0.01, 2.0 ));
-    appendParameter( new SAT_TextParameter( "Mode",     0,    0,    1, mode_txt ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
-  
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+//------------------------------
+public:
+//------------------------------
+
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     uint32_t index = event->param_id;
     double   value = event->value;
     switch (index) {
@@ -504,44 +507,101 @@ public:
       case 5: MReverbL.setmode(value);      MReverbR.setmode(value);      break;
     }
     //need_recalc = true;
-    return true;
   }
-  
+
   //----------
-  
-  void processAudio(SAT_ProcessContext* AContext) final {
+
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    //if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-    
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
       spl0 = MReverbL.processsample(spl0);
       spl1 = MReverbR.processsample(spl1);
 
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
 
-  //void recalc(float srate) {
-  //  need_recalc = false;
-  //}
+  void recalc(float srate) {
+    need_recalc = false;
+  }
 
 };
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_freeverb_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_freeverb_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_freeverb_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_freeverb_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+
+    appendParameter( new SAT_Parameter(     "Roomsize", "", 0.56, 0.01, 1.0, flags ));
+    appendParameter( new SAT_Parameter(     "Damp",     "", 0.45, 0.01, 1.0, flags ));
+    appendParameter( new SAT_Parameter(     "Wet",      "", 0.57, 0.01, 1.0, flags ));
+    appendParameter( new SAT_Parameter(     "Dry",      "", 0.43, 0.01, 1.0, flags ));
+    appendParameter( new SAT_Parameter(     "Width",    "", 0.56, 0.01, 1.0, flags ));
+    appendParameter( new SAT_TextParameter( "Mode",     "", 0,    0,    1,   flags, sa_freeverb_mode_txt ));
+
+    MProcessor = new sa_freeverb_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -552,4 +612,6 @@ private:
 
 //----------------------------------------------------------------------
 #endif
+
+
 

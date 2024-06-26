@@ -41,7 +41,7 @@
 
 clap_plugin_descriptor_t sa_compciter_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "sa_compciter-v0",
+  .id           = SAT_VENDOR "/sa_compciter/v0",
   .name         = "sa_compciter",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,

@@ -2,7 +2,6 @@
 #define sa_hrtf_included
 //----------------------------------------------------------------------
 
-
 /*
   Copyright (c) 2017 Benno Straub
   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,22 +27,25 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+// #include "plugin/sat_parameter.h"
+// #include "plugin/sat_plugin.h"
 
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_hrtf_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_hrtf",
-  .name         = "sa_port_hrtf",
+  .id           = SAT_VENDOR "/sa_hrtf/v0",
+  .name         = "sa_hrtf",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -55,83 +57,68 @@ const clap_plugin_descriptor_t sa_hrtf_descriptor = {
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_hrtf_plugin
-: public SAT_Plugin {
-  
+class sa_hrtf_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_hrtf_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_hrtf_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_hrtf_plugin)
-
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter(new SAT_Parameter( "Rotate",   0, -180,  180 ));
-    appendParameter(new SAT_Parameter( "Slope",    0, -90,   90  ));
-    appendParameter(new SAT_Parameter( "Distance", 1,  0.01, 2   ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    //need_recalc = true;
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    return true;
   }
-  
+
   //----------
 
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    
-    //for (uint32_t i=0; i<len; i++) {
-    //  float spl0 = *in0++;
-    //  float spl1 = *in1++;
-    //  *out0++ = spl0;
-    //  *out1++ = spl1;
-    //}
-    
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+
     float left, right;
     update(&left,&right);
-    for (uint32_t i=0; i<len; i++) {
-      *out0++ = *in0++ * left;
-      *out1++ = *in1++ * right;
+    for (uint32_t i=0; i<ALength; i++) {
+      *output0++ = *input0++ * left;
+      *output1++ = *input1++ * right;
     }
     
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -140,12 +127,12 @@ private:
     need_recalc = false;
   }
 
-  void update(float* left, float* right) {
+  //----------
 
+  void update(float* left, float* right) {
     float MRotate = getParameterValue(0);
     //float MSlope = getParameterValue(1);
     float MDistance = getParameterValue(2) * getParameterValue(2);
-
     float panl = (cosf(((MRotate + 90.0f) * SAT_PI) / 180.0f) + 1.0f) * 0.5f;
     float panr = 1.0f - panl;
     float pan_intensity = 1.0f / MDistance;
@@ -157,7 +144,61 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_hrtf_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_hrtf_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_hrtf_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_hrtf_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Rotate",   "", 0, -180,  180 ));
+    appendParameter(new SAT_Parameter( "Slope",    "", 0, -90,   90  ));
+    appendParameter(new SAT_Parameter( "Distance", "", 1,  0.01, 2   ));
+    MProcessor = new sa_hrtf_processor(this);
+    setProcessor(MProcessor);
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -166,8 +207,6 @@ private:
   SAT_PLUGIN_ENTRY(sa_hrtf_descriptor,sa_hrtf_plugin)
 #endif
 
-//----------
-
-
 //----------------------------------------------------------------------
 #endif
+

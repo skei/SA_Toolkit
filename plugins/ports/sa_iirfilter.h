@@ -2,22 +2,32 @@
 #define sa_iirfilter_included
 //----------------------------------------------------------------------
 
-
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
 
-
-#include "sat.h"
-#include "audio/sat_audio_math.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
 
-const char* filter_types_txt[] = {
+// #include "sat.h"
+// #include "audio/sat_audio_math.h"
+// #include "audio/sat_audio_utils.h"
+#include "plugin/sat_parameters.h"
+// #include "plugin/sat_plugin.h"
+
+#include <stddef.h>
+//#ifdef __SSE2__
+#include <emmintrin.h>
+//#endif
+
+#define sqr(a) ((a) * (a))
+
+//----------------------------------------------------------------------
+
+const char* sat_iirfilter_types_txt[] = {
   "Low pass",
   "High pass",
   "Band pass 1",
@@ -34,16 +44,9 @@ const char* filter_types_txt[] = {
 
 //----------------------------------------------------------------------
 //
-//
+// iir filter
 //
 //----------------------------------------------------------------------
-
-#include <stddef.h>
-//#ifdef __SSE2__
-#include <emmintrin.h>
-//#endif
-
-#define sqr(a) ((a) * (a))
 
 /* filter types */
 enum {
@@ -61,8 +64,6 @@ enum {
   RIAA_CD     /* CD de-emphasis */
 };
 
-//----------
-
 class SAT_IIRFilter {
 
 private:
@@ -70,6 +71,7 @@ private:
   //#ifdef __SSE2__
 
   __SAT_ALIGNED(SAT_ALIGNMENT_SIMD)
+
 
   __m128 fir_coeff[2]     = {0};
   __m128 fir_buf[2]       = {0};
@@ -354,35 +356,117 @@ public:
 
 };
 
-//----------
-
-#undef sqr
-
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_iirfilter_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_iirfilter",
-  .name         = "sa_port_iirfilter",
+  .id           = SAT_VENDOR "/sa_iirfilter/v0",
+  .name         = "sa_iirfilter",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_FILTER,
-                    nullptr }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_FILTER, nullptr }
 };
 
 //----------------------------------------------------------------------
 //
+// processor
 //
+//----------------------------------------------------------------------
+
+class sa_iirfilter_processor
+: public SAT_InterleavedProcessor {
+
+//------------------------------
+private:
+//------------------------------
+
+  bool  need_recalc = true;
+  float samplerate = 0.0;
+
+  SAT_IIRFilter MLFilter    = {};
+  SAT_IIRFilter MRFilter    = {};
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_iirfilter_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_iirfilter_processor() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void paramValueEvent(const clap_event_param_value_t* event) final {
+    uint32_t index = event->param_id;
+    double   value = event->value;
+    switch (index) {
+      case 0: MLFilter.setMode(value);      MRFilter.setMode(value);      break;
+      case 1: MLFilter.setFrequency(value); MRFilter.setFrequency(value); break;
+      case 2: MLFilter.setQuality(value);   MRFilter.setQuality(value);   break;
+      case 3: MLFilter.setGain(value);      MRFilter.setGain(value);      break;
+    }
+    need_recalc = true;
+  }
+
+  //----------
+
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
+    const clap_process_t* process = AContext->process;
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
+      spl0 = MLFilter.process(spl0);
+      spl1 = MRFilter.process(spl1);
+
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+  void recalc(float srate) {
+    need_recalc = false;
+    MLFilter.init(srate);
+    MRFilter.init(srate);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// plugin
 //
 //----------------------------------------------------------------------
 
@@ -393,95 +477,51 @@ class sa_iirfilter_plugin
 private:
 //------------------------------
 
-  bool  need_recalc = true;
-  float MSampleRate = 0.0;
-
-  SAT_IIRFilter MLFilter    = {};
-  SAT_IIRFilter MRFilter    = {};
+  sa_iirfilter_processor* MProcessor = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_iirfilter_plugin)
+  sa_iirfilter_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
 
   //----------
-  
+
+  virtual ~sa_iirfilter_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   bool init() final {
     registerDefaultExtensions();    
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
-    
-    appendParameter( new SAT_TextParameter( "Mode", 0,      0,   11, filter_types_txt ));
-    appendParameter( new SAT_Parameter(     "Freq", 1024,   50,  16000 ));
-    appendParameter( new SAT_Parameter(     "Q",    0.707,  0.1, 1 ));
-    appendParameter( new SAT_Parameter(     "Gain", 0,      -50, 50 ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    //need_recalc = true;
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter( new SAT_TextParameter( "Mode", "", 0,      0,   11,    flags, sat_iirfilter_types_txt ));
+    appendParameter( new SAT_Parameter(     "Freq", "", 1024,   50,  16000, flags ));
+    appendParameter( new SAT_Parameter(     "Q",    "", 0.707,  0.1, 1,     flags ));
+    appendParameter( new SAT_Parameter(     "Gain", "", 0,      -50, 50,    flags ));
+    MProcessor = new sa_iirfilter_processor(this);
+    setProcessor(MProcessor);
     return SAT_Plugin::init();
   }
   
   //----------
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    need_recalc = true;
+    MProcessor->setSampleRate(sample_rate);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
-  }
-
-  //----------
-
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    uint32_t index = event->param_id;
-    double   value = event->value;
-    switch (index) {
-      case 0: MLFilter.setMode(value);      MRFilter.setMode(value);      break;
-      case 1: MLFilter.setFrequency(value); MRFilter.setFrequency(value); break;
-      case 2: MLFilter.setQuality(value);   MRFilter.setQuality(value);   break;
-      case 3: MLFilter.setGain(value);      MRFilter.setGain(value);      break;
-    }
-    need_recalc = true;
-    return true;
-  }
-  
-  //----------
-
-  void processAudio(SAT_ProcessContext* AContext) final {
-    const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* in0  = process->audio_inputs[0].data32[0];
-    float* in1  = process->audio_inputs[0].data32[1];
-    float* out0 = process->audio_outputs[0].data32[0];
-    float* out1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
-      float spl0 = *in0++;
-      float spl1 = *in1++;
-      
-      spl0 = MLFilter.process(spl0);
-      spl1 = MRFilter.process(spl1);
-
-      *out0++ = spl0;
-      *out1++ = spl1;
-    }
-  }
-  
-//------------------------------
-private:
-//------------------------------
-
-  void recalc(float srate) {
-    MLFilter.init(srate);
-    MRFilter.init(srate);
-    need_recalc = false;
   }
 
 };
 
 //----------------------------------------------------------------------
 //
-//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -490,8 +530,9 @@ private:
   SAT_PLUGIN_ENTRY(sa_iirfilter_descriptor,sa_iirfilter_plugin)
 #endif
 
-//----------
 
+
+#undef sqr
 
 //----------------------------------------------------------------------
 #endif
