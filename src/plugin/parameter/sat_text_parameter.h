@@ -42,8 +42,9 @@ public:
 
   //----------
 
-  SAT_TextParameter(const char* AName, const char* AModule="", sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0, uint32_t AFlags=CLAP_PARAM_IS_AUTOMATABLE)
+  SAT_TextParameter(const char* AName, const char* AModule="", sat_param_t AValue=0.0, sat_param_t AMinValue=0.0, sat_param_t AMaxValue=1.0, uint32_t AFlags=CLAP_PARAM_IS_AUTOMATABLE, const char** AText=nullptr)
   : SAT_IntParameter(AName,AModule,AValue,AMinValue,AMaxValue,AFlags) {
+    MText = AText;
     setValueFormat("%.f%");
   }
 

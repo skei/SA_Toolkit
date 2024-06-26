@@ -79,6 +79,9 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 //
 //----------------------------------------------------------------------
 
+#define SAT_ALIGNMENT_CACHE                     64
+#define SAT_ALIGNMENT_SIMD                      16
+
 #define SAT_AUDIO_FILE_READ                     1
 #define SAT_AUDIO_FILE_WRITE                    2
 
@@ -195,7 +198,6 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_EASING_IN_BOUNCE      39
 #define SAT_EASING_INOUT_BOUNCE   40
 #define SAT_EASING_OUTIN_BOUNCE   41
-
 
 #define SAT_EDGE_NONE                           0
 #define SAT_EDGE_LEFT                           0x01

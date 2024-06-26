@@ -34,58 +34,59 @@
 //
 //----------------------------------------------------------------------
 
-#include "sat.h"
-#include "audio/sat_audio_utils.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/sat_parameter.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
 
-//----------
+// #include "sat.h"
+// #include "audio/sat_audio_utils.h"
+// #include "plugin/sat_parameter.h"
+// #include "plugin/sat_plugin.h"
 
 #define BUFFER_SIZE 1024*1024
 
-
 //----------------------------------------------------------------------
 //
-//
+// descriptor
 //
 //----------------------------------------------------------------------
 
 const clap_plugin_descriptor_t sa_hall_reverb_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_hall_reverb",
-  .name         = "sa_port_hall_reverb",
+  .id           = SAT_VENDOR "/sa_hall_reverb/v0",
+  .name         = "sa_hall_reverb",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
   .version      = SAT_VERSION,
   .description  = "",
-  .features     = (const char*[]) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    CLAP_PLUGIN_FEATURE_REVERB,
-                    nullptr
-                  }
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, CLAP_PLUGIN_FEATURE_REVERB, nullptr }
+
+
 };
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_hall_reverb_plugin
-: public SAT_Plugin {
-  
+class sa_hall_reverb_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
 
   bool  need_recalc = true;
-  float MSampleRate = 0.0;
+  float samplerate = 0.0;
 
-  float BUF[BUFFER_SIZE];
-  float tmp1,tmp2;
+  float BUF[BUFFER_SIZE] = {0};
+
+  float tmp1 = 0.0;
+  float tmp2 = 0.0;
+
   float Rtmp1,Rtmp2;
 
   //float slider1,slider2,slider3,slider4;
@@ -108,63 +109,50 @@ private:
   float  Rout0,Rout1,Rout2,Rout3,Rout4,Rout5,Rout6,Rout7,Rout8,Rout9,Rout10,Rout11,Rout12;
   uint32_t Rp0,  Rp1,  Rp2,  Rp3,  Rp4,  Rp5,  Rp6,  Rp7,  Rp8,  Rp9,  Rp10,  Rp11,  Rp12;
   float  Rt1,Rt2;
+  
+  
+//------------------------------
+public:
+//------------------------------
+
+  sa_hall_reverb_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
+  }
+
+  //----------
+
+  virtual ~sa_hall_reverb_processor() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_hall_reverb_plugin)
+  void setSampleRate(double ASampleRate) {
+    samplerate = ASampleRate;
+  }
 
-  //----------
-  
-  bool init() final {
-    registerDefaultExtensions();    
-    appendStereoAudioInputPort("In");
-    appendStereoAudioOutputPort("Out");
-    
-    appendParameter(new SAT_Parameter( "Dry",      0,   -48,   0 ));
-    appendParameter(new SAT_Parameter( "Wet",     -12,  -48,   0 ));
-    appendParameter(new SAT_Parameter( "Length",   1,    0.01, 3 ));
-    appendParameter(new SAT_Parameter( "PreDelay", 10,   0,    100 ));
-    
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    
-    tmp1 = 0;
-    tmp2 = 0;
-    memset(&BUF,0,sizeof(BUF));
+//------------------------------
+public:
+//------------------------------
+
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     need_recalc = true;
-    
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MSampleRate = sample_rate;
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
   //----------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    need_recalc = true;
-    return true;
-  }
-  
-  //----------
-
-  void processAudio(SAT_ProcessContext* AContext) final {
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-    if (need_recalc) recalc(MSampleRate);
-    uint32_t len = process->frames_count;
-    float* input0  = process->audio_inputs[0].data32[0];
-    float* input1  = process->audio_inputs[0].data32[1];
-    float* output0 = process->audio_outputs[0].data32[0];
-    float* output1 = process->audio_outputs[0].data32[1];
-    for (uint32_t i=0; i<len; i++) {
+    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
       float spl0 = *input0++;
       float spl1 = *input1++;
-      
+
       // left
       float _in = spl0;
       in0=_in;  out0=BUF[b0+p0];        BUF[b0+p0]=in0;         p0=(p0+1) % l0;
@@ -214,9 +202,9 @@ public:
 
       *output0++ = spl0;
       *output1++ = spl1;
-    }
+    }    
   }
-  
+
 //------------------------------
 private:
 //------------------------------
@@ -293,7 +281,68 @@ private:
 
 //----------------------------------------------------------------------
 //
+// plugin
 //
+//----------------------------------------------------------------------
+
+class sa_hall_reverb_plugin
+: public SAT_Plugin {
+  
+//------------------------------
+private:
+//------------------------------
+
+  sa_hall_reverb_processor* MProcessor = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_hall_reverb_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_hall_reverb_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+    registerDefaultExtensions();    
+    appendStereoAudioInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+    appendParameter(new SAT_Parameter( "Dry",      "",  0,   -48,   0   ));
+    appendParameter(new SAT_Parameter( "Wet",      "", -12,  -48,   0   ));
+    appendParameter(new SAT_Parameter( "Length",   "",  1,    0.01, 3   ));
+    appendParameter(new SAT_Parameter( "PreDelay", "",  10,   0,    100 ));
+    MProcessor = new sa_hall_reverb_processor(this);
+    setProcessor(MProcessor);
+
+    // tmp1 = 0;
+    // tmp2 = 0;
+    // memset(&BUF,0,sizeof(BUF));
+    // need_recalc = true;
+
+    return SAT_Plugin::init();
+  }
+  
+  //----------
+
+  bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+    MProcessor->setSampleRate(sample_rate);
+    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+// entry point
 //
 //----------------------------------------------------------------------
 
@@ -302,32 +351,6 @@ private:
   SAT_PLUGIN_ENTRY(sa_hall_reverb_descriptor,sa_hall_reverb_plugin)
 #endif
 
-//----------
-
-
 //----------------------------------------------------------------------
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-#endif // 0
