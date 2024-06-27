@@ -55,11 +55,15 @@ private:
 public:
 //------------------------------
 
-  SAT_DragValueWidget(SAT_Rect ARect)
-  : SAT_ValueWidget(ARect) {
+  SAT_DragValueWidget(SAT_Rect ARect, const char* AText="", double AValue=0.0)
+  : SAT_ValueWidget(ARect,AValue) {
     setName("SAT_DragValueWidget");
     setHint("SAT_DragValueWidget");
     setCursor(SAT_CURSOR_ARROW_UP_DOWN);
+    setText(AText);
+    setFillBackground(true);
+    setBackgroundColor(0.45);
+    setDrawBorder(false);
   }
 
   //----------

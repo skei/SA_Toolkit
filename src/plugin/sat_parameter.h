@@ -92,7 +92,7 @@ public:
     memcpy(&MInfo,AInfo,sizeof(clap_param_info_t));
     MInfo.cookie = this;
     setValue(AInfo->default_value);
-    setValueFormat("%.f");
+    //setValueFormat("%.2f");
   }
 
   //----------
@@ -314,6 +314,7 @@ public:
 
   virtual const char* valueToText(sat_param_t AValue) {
     sprintf(MValueText,MValueFormat,AValue);
+    //SAT_PRINT("AValue %.3f MValueText %s MValueFormat %s\n",AValue,MValueText,MValueFormat);
     return MValueText;
   }
 

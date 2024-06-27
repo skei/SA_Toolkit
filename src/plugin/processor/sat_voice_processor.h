@@ -114,8 +114,8 @@ public:
   void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) {
     MVoiceContext.process_context   = nullptr; //
     MVoiceContext.sample_rate       = sample_rate;
-    MVoiceContext.min_frames_count  = min_frames_count;
-    MVoiceContext.max_frames_count  = max_frames_count;
+//    MVoiceContext.min_frames_count  = min_frames_count;
+//    MVoiceContext.max_frames_count  = max_frames_count;
     MVoiceContext.voice_buffer      = MVoiceBuffer;
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].init(i,&MVoiceContext);
@@ -320,37 +320,42 @@ public:
     }
   }
 
+  // parameters need to be sent to all voices, not just the currently active ones..
+
   void paramValueEvent(const clap_event_param_value_t* event) override {
     //SAT_PRINT("param\n");
     SAT_PRINT("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
-      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
-      if (isActive(voice)) {
+      //#ifdef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
+      //{
+      //#else
+      //if (isActive(voice)) {
       //#endif
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
           MVoices[voice].events.write(ve);
         }
-      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
-      }
-      //#endif
+      //}
     }
   }
+
+  // modulations need to be sent to all voices, not just the currently active ones..
+  // or?
 
   void paramModEvent(const clap_event_param_mod_t* event) override {
     //SAT_PRINT("mod\n");
     //SAT_PRINT("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
     for (int32_t voice=0; voice<COUNT; voice++) {
-      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
-      if (isActive(voice)) {
+      //#ifdef SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
+      //{
+      //#else
+      //if (isActive(voice)) {
       //#endif
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
           MVoices[voice].events.write(ve);
         }
-      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
-      }
-      //#endif
+      //}
     }
   }
 

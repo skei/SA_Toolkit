@@ -36,11 +36,11 @@ private:
 public:
 //------------------------------
 
-  SAT_KnobWidget(SAT_Rect ARect)
-  : SAT_DragValueWidget(ARect) {
+  SAT_KnobWidget(SAT_Rect ARect, const char* AText="", double AValue=0.0)
+  : SAT_DragValueWidget(ARect,AText,AValue) {
     setName("SAT_KnobWidget");
     setHint("SAT_KnobWidget");
-    //setFillBackground(true);
+    setFillBackground(false);
     //setBackgroundColor(0.45);
     setDrawBorder(false);
     setTextSize(10);

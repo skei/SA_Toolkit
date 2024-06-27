@@ -25,15 +25,20 @@ private:
   double      MValueTextSize                  = 10.0;
   uint32_t    MValueTextAlignment             = SAT_TEXT_ALIGN_RIGHT;
 
+  SAT_Rect    MValueTextOffset                = {0,0,0,0};
+  const char* MValueTextFormat                = "%.2f";
+
+
 //------------------------------
 public:
 //------------------------------
 
-  SAT_ValueWidget(SAT_Rect ARect)
+  SAT_ValueWidget(SAT_Rect ARect, double AValue=0.0)
   : SAT_TextWidget(ARect) {
     setName("SAT_ValueWidget");
     setHint("SAT_ValueWidget");
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
+    setValue(AValue);
   }
 
   //----------
@@ -45,10 +50,12 @@ public:
 public:
 //------------------------------
 
-  void setDrawValueText(bool ADraw=true)          { MDrawValueText = ADraw; }
-  void setValueTextColor(SAT_Color AColor)        { MValueTextColor = AColor; }
-  void setValueTextSize(double ASize)             { MValueTextSize = ASize; }
-  void setValueTextAlignment(uint32_t AAlignment) { MValueTextAlignment = AAlignment; }
+  virtual void setDrawValueText(bool ADraw=true)          { MDrawValueText = ADraw; }
+  virtual void setValueTextColor(SAT_Color AColor)        { MValueTextColor = AColor; }
+  virtual void setValueTextSize(double ASize)             { MValueTextSize = ASize; }
+  virtual void setValueTextAlignment(uint32_t AAlignment) { MValueTextAlignment = AAlignment; }
+  virtual void setValueTextOffset(SAT_Rect AOffset)       { MValueTextOffset = AOffset; }
+  virtual void setValueTextFormat(const char* AFormat)    { MValueTextFormat = AFormat; }
 
 //------------------------------
 public:
@@ -77,10 +84,11 @@ public:
       if (param) {
         value = param->getValue();
         text = param->valueToText(value);
+        //SAT_PRINT("value %.3f text %s\n",value,text);
       }
       else {
         value = getValue();
-        sprintf(MValueText,"%.2f",value);
+        sprintf(MValueText,MValueTextFormat,value);
         text = MValueText;
       }
       SAT_Painter* painter = AContext->painter;
