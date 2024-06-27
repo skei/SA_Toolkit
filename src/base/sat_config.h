@@ -18,6 +18,9 @@
 #define SAT_MAX_NAME_LENGTH                       64
 #define SAT_MAX_STRING_LENGTH                     256
 #define SAT_MAX_PATH_LENGTH                       512
+#define SAT_MODMATRIX_MAX_SRC_COUNT               32
+#define SAT_MODMATRIX_MAX_DST_COUNT               32
+#define SAT_MODMATRIX_MAX_MOD_COUNT               32
 #define SAT_PAINTER_CLIP_RECT_STACK_SIZE          32
 #define SAT_PLUGIN_MAX_BLOCK_SIZE                 4096
 #define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK     1024
@@ -28,6 +31,7 @@
 #define SAT_RENDERER_MINOR_VERSION                2
 #define SAT_TWEEN_MAX_VALUES                      4
 #define SAT_TWEEN_CHAIN_QUEUE_SIZE                32
+#define SAT_VOICE_MAX_EVENTS_PER_BLOCK            1024
 #define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
 #define SAT_WIDGET_NUM_VALUES                     16
 #define SAT_WINDOW_THREAD_KILL                    666
@@ -35,11 +39,6 @@
 
 //
 
-#define SAT_MODMATRIX_MAX_SRC_COUNT               32
-#define SAT_MODMATRIX_MAX_DST_COUNT               32
-#define SAT_MODMATRIX_MAX_MOD_COUNT               32
-#define SAT_VOICE_MANAGER_MAX_EVENTS_PER_BLOCK    1024
-#define SAT_VOICE_MAX_EVENTS_PER_BLOCK            1024
 
 //----------------------------------------------------------------------
 //

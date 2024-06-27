@@ -6,9 +6,9 @@
 #include "audio/sat_audio_utils.h"
 #include "plugin/sat_note.h"
 #include "plugin/sat_processor.h"
-#include "plugin/sat_voice.h"
 #include "plugin/processor/sat_process_context.h"
 #include "plugin/processor/sat_processor_owner.h"
+#include "plugin/processor/sat_voice.h"
 
 //----------
 
