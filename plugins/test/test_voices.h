@@ -2,12 +2,6 @@
 #define sa_test_voices_included
 //----------------------------------------------------------------------
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_voice_processor.h"
 #include "audio/sat_audio_math.h"
@@ -50,8 +44,10 @@ private:
   SAT_VoiceContext* MContext  = nullptr;
   float*            MBuffer   = nullptr;
 
-  double ph     = 0.0;
-  double phadd  = 0.0;
+  double            ph        = 0.0;
+  double            phadd     = 0.0;
+  double            vel       = 0.0;
+  double            gain      = 1.0;
 
 //------------------------------
 public:
@@ -70,25 +66,39 @@ public:
     SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
     ph = 0.0;
     phadd = SAT_NoteToHz(AIndex) / MContext->sample_rate;
+    vel = AValue;
     return SAT_VOICE_PLAYING;
   }
+
+  //----------
 
   uint32_t noteOff(uint32_t AIndex, double AValue) {
     SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
     return SAT_VOICE_FINISHED;
   }
 
+  //----------
+
   void noteChoke(uint32_t AIndex, double AValue) {
     SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
   }
+
+  //----------
 
   void noteExpression(uint32_t AIndex, double AValue) {
     SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
   }
 
+  //----------
+
   void parameter(uint32_t AIndex, double AValue) {
     SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
+    switch (AIndex) {
+      case 0: gain = (AValue * AValue); break;
+    }
   }
+
+  //----------
 
   void modulation(uint32_t AIndex, double AValue) {
     SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
@@ -101,12 +111,14 @@ public:
     float* buffer = MBuffer + AOffset;
     for (uint32_t i=0; i<ALength; i++) {
       ph = SAT_Fract(ph);
-      sat_sample_t s = (ph * 2.0) - 1.0;
-      buffer[i] = s * 0.25; // vol 0.25
+      sat_sample_t spl = (ph * 2.0) - 1.0;
+      buffer[i] = spl * (vel * vel) * gain;
       ph += phadd;
     }
     return AState;
   }
+
+  //----------
 
   uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
     return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
@@ -127,6 +139,8 @@ public:
 //----------------------------------------------------------------------
 
 typedef SAT_VoiceProcessor<sa_test_voices_voice,MAX_VOICES> sa_test_voices_processor;
+
+//----------
 
 #if 0
 
@@ -195,7 +209,7 @@ public:
 //------------------------------
 
   bool init() final {
-    registerSynthExtensions();    
+    registerSynthExtensions();
     appendClapNoteInputPort("In");
     appendStereoAudioOutputPort("Out");
     uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;
@@ -214,6 +228,8 @@ public:
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
+  //----------
+
   bool voice_info_get(clap_voice_info_t *info) override {
     //SAT_TRACE;
     info->voice_count     = MAX_VOICES;
@@ -221,6 +237,8 @@ public:
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
     return true;
   }
+
+  //----------
 
   void thread_pool_exec(uint32_t task_index) override {
     MProcessor->threadPoolExec(task_index);

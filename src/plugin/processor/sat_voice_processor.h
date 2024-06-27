@@ -2,17 +2,6 @@
 #define sat_voice_processor_included
 //----------------------------------------------------------------------
 
-// inherit from block_processor ?
-
-
-
-/*
-  - assumes plugin processing mode = SAT_PLUGIN_EVENT_MODE_BLOCK
-    (handles events internally)
-*/
-
-//----------------------------------------------------------------------
-
 #include "sat.h"
 #include "audio/sat_audio_utils.h"
 #include "plugin/sat_note.h"
@@ -92,10 +81,6 @@ public:
 public:
 //------------------------------
 
-  // void setSampleRate(double ASampleRate) {
-  //   MSampleRate = ASampleRate;
-  // }
-
   void setProcessThreaded(bool AThreaded=true) {
     MProcessThreaded = AThreaded;
   }
@@ -135,6 +120,7 @@ public:
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].init(i,&MVoiceContext);
     }
+    // send (initial) parameters to all voices
   }
 
 //------------------------------
@@ -282,7 +268,7 @@ public:
   void noteOnEvent(const clap_event_note_t* event) override {
     //SAT_PRINT("note on\n");
     //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    int32_t voice = findFreeVoice(true/*SAT_VOICE_MANAGER_STEAL_VOICES*/);
+    int32_t voice = findFreeVoice(true/*SAT_VOICE_PROCESSOR_STEAL_VOICES*/);
     if (voice >= 0) {
       MVoices[voice].state        = SAT_VOICE_WAITING;
       MVoices[voice].note.port    = event->port_index;
@@ -334,33 +320,37 @@ public:
     }
   }
 
-  //#ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
-
   void paramValueEvent(const clap_event_param_value_t* event) override {
     //SAT_PRINT("param\n");
-    //SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
+    SAT_PRINT("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
+      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
       if (isActive(voice)) {
+      //#endif
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
           MVoices[voice].events.write(ve);
         }
+      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
       }
+      //#endif
     }
   }
 
-  //#ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
-
   void paramModEvent(const clap_event_param_mod_t* event) override {
     //SAT_PRINT("mod\n");
-    //SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
+    //SAT_PRINT("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
     for (int32_t voice=0; voice<COUNT; voice++) {
+      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
       if (isActive(voice)) {
+      //#endif
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
           MVoices[voice].events.write(ve);
         }
+      //#ifndef SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
       }
+      //#endif
     }
   }
 
@@ -370,7 +360,7 @@ public:
 
   void midiEvent(const clap_event_midi_t* event) override {
     //SAT_PRINT("midi\n");
-    // #ifdef SAT_VOICE_MANAGER_CONVERT_MIDI
+    // #ifdef SAT_VOICE_PROCESSOR_CONVERT_MIDI
     //   uint8_t msg   = event->data[0] & 0xf0;
     //   uint8_t chan  = event->data[0] & 0x0f;
     //   uint8_t index = event->data[1]; // & 0x7f;
