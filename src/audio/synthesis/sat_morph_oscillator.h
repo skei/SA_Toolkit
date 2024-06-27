@@ -1,8 +1,8 @@
-#ifndef sat_oscillator_included
-#define sat_oscillator_included
+#ifndef sat_morph_oscillator_included
+#define sat_morph_oscillator_included
 //----------------------------------------------------------------------
 
-#include "base/utils/sat_math.h"
+#include "base/util/sat_math.h"
 #include "audio/synthesis/sat_polyblep.h"
 
 //----------------------------------------------------------------------

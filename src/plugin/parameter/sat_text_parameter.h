@@ -35,8 +35,9 @@ public:
 
   //----------
 
-  SAT_TextParameter(clap_param_info_t* AInfo)
+  SAT_TextParameter(clap_param_info_t* AInfo, const char** AText=nullptr)
   : SAT_IntParameter(AInfo) {
+    MText = AText;
     setValueFormat("%.f%");
   }
 

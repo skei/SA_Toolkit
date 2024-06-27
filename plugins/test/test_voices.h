@@ -152,6 +152,7 @@ public:
     const clap_process_t* process = AContext->process;
     float** output = process->audio_outputs[0].data32;
     uint32_t length = process->frames_count;
+    // SAT_VoiceProcessor::mixActiveVoices(output,length);
     SAT_ClearStereoBuffer(output,length);
     processEvents(process->in_events,process->out_events);
     processAudio(AContext);
@@ -243,12 +244,3 @@ public:
 
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-
-
-
-
-

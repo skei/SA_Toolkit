@@ -44,7 +44,7 @@ class SAT_Plugin
 , public SAT_ProcessorOwner {
 
 //------------------------------
-protected:
+private:
 //------------------------------
 
   bool                    MIsInitialized        = false;
@@ -77,6 +77,10 @@ protected:
 //sat_atomic_bool_t       MIsEditorClosing      = false;
 
 //------------------------------
+protected:
+//------------------------------
+
+//------------------------------
 public:
 //------------------------------
 
@@ -88,7 +92,9 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
-    deleteProcessor(MProcessor);
+    SAT_PRINT("MProcessor %p\n",MProcessor);
+    if (MProcessor) delete MProcessor;
+    //MProcessor = nullptr;
     #ifndef SAT_NO_AUTODELETE
       deleteAudioInputPorts();
       deleteAudioOutputPorts();
@@ -619,9 +625,9 @@ public: // processor
 
   //----------
 
-  virtual void deleteProcessor(SAT_Processor* AProcessor) {
-    delete AProcessor;
-  }
+  // virtual void deleteProcessor(SAT_Processor* AProcessor) {
+  //   if (AProcessor) delete AProcessor;
+  // }
 
   //----------
 

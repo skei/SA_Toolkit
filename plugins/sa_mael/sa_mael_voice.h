@@ -4,14 +4,14 @@
 
 //#define VOICE_SCALE   0.1
 
-#include "base/utils/sat_interpolation.h"
+#include "base/util/sat_interpolation.h"
 #include "audio/filters/sat_svf_filter.h"
 #include "audio/synthesis/sat_morph_oscillator.h"
 #include "audio/modulation/sat_exp_envelope.h"
 
 //----------------------------------------------------------------------
 
-class sa_mael_Voice {
+class sa_mael_voice {
 
 //------------------------------
 private:
@@ -121,7 +121,10 @@ public:
   //----------
   
   uint32_t noteOn(uint32_t AIndex, double AValue) {
-    SAT_Plugin*     plugin      = MContext->process_context->plugin;
+
+    //SAT_Plugin*     plugin      = MContext->process_context->plugin;
+    SAT_ParameterArray* params = MContext->process_context->parameters;
+
     MKey      = AIndex;
     MVelocity = AValue;
     MPhase1    = 0.0;
@@ -130,38 +133,39 @@ public:
 //    p_tuning  = par_tuning->getValue();
 //    m_tuning  = 0.0;
 
-    SAT_Parameter*  par_tuning  = plugin->getParameter(1);
+    //SAT_Parameter*  par_tuning  = plugin->getParameter(1);
+    SAT_Parameter*  par_tuning  = params->getItem(1);
 
-    p_osc1_squ    = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_SQU);
-    p_osc1_tri    = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_TRI);
-    p_osc1_sin    = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_SIN);
-    p_osc1_width  = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_WIDTH);
-    p_osc1_oct    = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_OCT);
-    p_osc1_semi   = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_SEMI);
-    p_osc1_cent   = plugin->getParameterValue(SA_MAEL_PARAM_OSC1_CENT);
+    p_osc1_squ    = params->getItem(SA_MAEL_PARAM_OSC1_SQU)->getValue();
+    p_osc1_tri    = params->getItem(SA_MAEL_PARAM_OSC1_TRI)->getValue();
+    p_osc1_sin    = params->getItem(SA_MAEL_PARAM_OSC1_SIN)->getValue();
+    p_osc1_width  = params->getItem(SA_MAEL_PARAM_OSC1_WIDTH)->getValue();
+    p_osc1_oct    = params->getItem(SA_MAEL_PARAM_OSC1_OCT)->getValue();
+    p_osc1_semi   = params->getItem(SA_MAEL_PARAM_OSC1_SEMI)->getValue();
+    p_osc1_cent   = params->getItem(SA_MAEL_PARAM_OSC1_CENT)->getValue();
 
-    p_osc2_squ    = plugin->getParameterValue(SA_MAEL_PARAM_OSC2_SQU);
-    p_osc2_tri    = plugin->getParameterValue(SA_MAEL_PARAM_OSC2_TRI);
-    p_osc2_sin    = plugin->getParameterValue(SA_MAEL_PARAM_OSC2_SIN);
-    p_osc2_width  = plugin->getParameterValue(SA_MAEL_PARAM_OSC2_WIDTH);
-    p_osc2_oct    = plugin->getParameterValue(SA_MAEL_PARAM_OSC2_OCT);
-    p_osc2_semi   = plugin->getParameterValue(SA_MAEL_PARAM_OSC2_SEMI);
-    p_osc2_cent   = plugin->getParameterValue(SA_MAEL_PARAM_OSC2_CENT);
+    p_osc2_squ    = params->getItem(SA_MAEL_PARAM_OSC2_SQU)->getValue();
+    p_osc2_tri    = params->getItem(SA_MAEL_PARAM_OSC2_TRI)->getValue();
+    p_osc2_sin    = params->getItem(SA_MAEL_PARAM_OSC2_SIN)->getValue();
+    p_osc2_width  = params->getItem(SA_MAEL_PARAM_OSC2_WIDTH)->getValue();
+    p_osc2_oct    = params->getItem(SA_MAEL_PARAM_OSC2_OCT)->getValue();
+    p_osc2_semi   = params->getItem(SA_MAEL_PARAM_OSC2_SEMI)->getValue();
+    p_osc2_cent   = params->getItem(SA_MAEL_PARAM_OSC2_CENT)->getValue();
 
-    p_mix_type    = plugin->getParameterValue(SA_MAEL_PARAM_MIX_TYPE);
-    p_mix_amount  = plugin->getParameterValue(SA_MAEL_PARAM_MIX_AMOUNT);
+    p_mix_type    = params->getItem(SA_MAEL_PARAM_MIX_TYPE)->getValue();
+    p_mix_amount  = params->getItem(SA_MAEL_PARAM_MIX_AMOUNT)->getValue();
 
-    p_flt1_type   = plugin->getParameterValue(SA_MAEL_PARAM_FLT1_TYPE);
-    p_flt1_freq   = plugin->getParameterValue(SA_MAEL_PARAM_FLT1_FREQ);
+    p_flt1_type   = params->getItem(SA_MAEL_PARAM_FLT1_TYPE)->getValue();
+    p_flt1_freq   = params->getItem(SA_MAEL_PARAM_FLT1_FREQ)->getValue();
     p_flt1_freq   = (p_flt1_freq * p_flt1_freq * p_flt1_freq);
 
-    p_flt1_q      = plugin->getParameterValue(SA_MAEL_PARAM_FLT1_Q);
+    p_flt1_q      = params->getItem(SA_MAEL_PARAM_FLT1_Q)->getValue();
     p_flt1_q      = (p_flt1_q * p_flt1_q * p_flt1_q);
 
-    p_env1_att = plugin->getParameterValue(SA_MAEL_PARAM_ENV1_ATT);
-    p_env1_dec = plugin->getParameterValue(SA_MAEL_PARAM_ENV1_DEC);
-    p_env1_sus = plugin->getParameterValue(SA_MAEL_PARAM_ENV1_SUS);
-    p_env1_rel = plugin->getParameterValue(SA_MAEL_PARAM_ENV1_REL);
+    p_env1_att = params->getItem(SA_MAEL_PARAM_ENV1_ATT)->getValue();
+    p_env1_dec = params->getItem(SA_MAEL_PARAM_ENV1_DEC)->getValue();
+    p_env1_sus = params->getItem(SA_MAEL_PARAM_ENV1_SUS)->getValue();
+    p_env1_rel = params->getItem(SA_MAEL_PARAM_ENV1_REL)->getValue();
 
     m_osc1_oct    = 0.0;
     m_osc1_semi   = 0.0;

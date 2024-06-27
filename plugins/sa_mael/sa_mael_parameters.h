@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/clap/sat_clap.h"
+#include "plugin/lib/sat_clap.h"
 
 //----------------------------------------------------------------------
 
@@ -62,34 +62,34 @@ enum sa_mael_parameter_e {
 
 //const
 clap_param_info_t sa_mael_Parameters[SA_MAEL_PARAM_COUNT] = {
-  { SA_MAEL_PARAM_GAIN,           A,    nullptr, "Gain",      "Global",   0.0,  1.0, 0.5    },
+  { SA_MAEL_PARAM_GAIN,           A,    nullptr, "Gain",      "Global",   0.0,  1.0,  0.5    },
 
-  { SA_MAEL_PARAM_OSC1_SQU,       A|MN, nullptr, "Squ",       "Osc1",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_OSC1_TRI,       A|MN, nullptr, "Tri",       "Osc1",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_OSC1_SIN,       A|MN, nullptr, "Sin",       "Osc1",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_OSC1_WIDTH,     A|MN, nullptr, "Width",     "Osc1",     0.0,  1.0, 0.5    },
-  { SA_MAEL_PARAM_OSC1_OCT,       A|MN, nullptr, "Oct",       "Osc1",    -4,    4,   0      },
-  { SA_MAEL_PARAM_OSC1_SEMI,      A|MN, nullptr, "Semi",      "Osc1",    -12,   12,  0      },
-  { SA_MAEL_PARAM_OSC1_CENT,      A|MN, nullptr, "Cent",      "Osc1",    -1.0,  1.0, 0      },
+  { SA_MAEL_PARAM_OSC1_SQU,       A|MN, nullptr, "Squ",       "Osc1",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_OSC1_TRI,       A|MN, nullptr, "Tri",       "Osc1",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_OSC1_SIN,       A|MN, nullptr, "Sin",       "Osc1",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_OSC1_WIDTH,     A|MN, nullptr, "Width",     "Osc1",     0.0,  1.0,  0.5    },
+  { SA_MAEL_PARAM_OSC1_OCT,       A|MN, nullptr, "Oct",       "Osc1",    -4,    4,    0      },
+  { SA_MAEL_PARAM_OSC1_SEMI,      A|MN, nullptr, "Semi",      "Osc1",    -12,   12,   0      },
+  { SA_MAEL_PARAM_OSC1_CENT,      A|MN, nullptr, "Cent",      "Osc1",    -1.0,  1.0,  0      },
 
-  { SA_MAEL_PARAM_OSC2_SQU,       A|MN, nullptr, "Squ",       "Osc2",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_OSC2_TRI,       A|MN, nullptr, "Tri",       "Osc2",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_OSC2_SIN,       A|MN, nullptr, "Sin",       "Osc2",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_OSC2_WIDTH,     A|MN, nullptr, "Width",     "Osc2",     0.0,  1.0, 0.5    },
-  { SA_MAEL_PARAM_OSC2_OCT,       A|MN, nullptr, "Oct",       "Osc2",    -4,    4,   0      },
-  { SA_MAEL_PARAM_OSC2_SEMI,      A|MN, nullptr, "Semi",      "Osc2",    -12,   12,  0      },
-  { SA_MAEL_PARAM_OSC2_CENT,      A|MN, nullptr, "Cent",      "Osc2",    -1.0,  1.0, 0      },
+  { SA_MAEL_PARAM_OSC2_SQU,       A|MN, nullptr, "Squ",       "Osc2",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_OSC2_TRI,       A|MN, nullptr, "Tri",       "Osc2",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_OSC2_SIN,       A|MN, nullptr, "Sin",       "Osc2",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_OSC2_WIDTH,     A|MN, nullptr, "Width",     "Osc2",     0.0,  1.0,  0.5    },
+  { SA_MAEL_PARAM_OSC2_OCT,       A|MN, nullptr, "Oct",       "Osc2",    -4,    4,    0      },
+  { SA_MAEL_PARAM_OSC2_SEMI,      A|MN, nullptr, "Semi",      "Osc2",    -12,   12,   0      },
+  { SA_MAEL_PARAM_OSC2_CENT,      A|MN, nullptr, "Cent",      "Osc2",    -1.0,  1.0,  0      },
 
-  { SA_MAEL_PARAM_MIX_TYPE,       A|SE, nullptr, "Type",      "PSh",      0,    4,   0      },
-  { SA_MAEL_PARAM_MIX_AMOUNT,     A|MN, nullptr, "Amount",    "PSh",      0,    1,   0      },
+  { SA_MAEL_PARAM_MIX_TYPE,       A|SE, nullptr, "Type",      "PSh",      0,    4,    0      },
+  { SA_MAEL_PARAM_MIX_AMOUNT,     A|MN, nullptr, "Amount",    "PSh",      0,    1,    0      },
 
-  { SA_MAEL_PARAM_FLT1_TYPE,      A|SE, nullptr, "Type",      "Flt1",     0,    9,   1      },
-  { SA_MAEL_PARAM_FLT1_FREQ,      A|MN, nullptr, "Freq",      "Flt1",     0.0,  1.0, 0.75   },
-  { SA_MAEL_PARAM_FLT1_Q,         A|MN, nullptr, "Q",         "Flt1",     0.0,  1.0, 0.2325 },
-  { SA_MAEL_PARAM_ENV1_ATT,       A,    nullptr, "Att",       "Env1",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_ENV1_DEC,       A,    nullptr, "Dec",       "Env1",     0.0,  1.0, 0.0    },
-  { SA_MAEL_PARAM_ENV1_SUS,       A,    nullptr, "Sus",       "Env1",     0.0,  1.0, 1.0    },
-  { SA_MAEL_PARAM_ENV1_REL,       A,    nullptr, "Rel",       "Env1",     0.0,  1.0, 0.0    }
+  { SA_MAEL_PARAM_FLT1_TYPE,      A|SE, nullptr, "Type",      "Flt1",     0,    9,    1      },
+  { SA_MAEL_PARAM_FLT1_FREQ,      A|MN, nullptr, "Freq",      "Flt1",     0.0,  1.0,  0.75   },
+  { SA_MAEL_PARAM_FLT1_Q,         A|MN, nullptr, "Q",         "Flt1",     0.0,  1.0,  0.2325 },
+  { SA_MAEL_PARAM_ENV1_ATT,       A,    nullptr, "Att",       "Env1",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_ENV1_DEC,       A,    nullptr, "Dec",       "Env1",     0.0,  1.0,  0.0    },
+  { SA_MAEL_PARAM_ENV1_SUS,       A,    nullptr, "Sus",       "Env1",     0.0,  1.0,  1.0    },
+  { SA_MAEL_PARAM_ENV1_REL,       A,    nullptr, "Rel",       "Env1",     0.0,  1.0,  0.0    }
 };
 
 const uint32_t num_flt_types  = 10;

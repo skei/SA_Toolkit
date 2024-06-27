@@ -59,20 +59,33 @@ public:
 
   virtual void openMenu(int32_t AXpos, int32_t AYpos) {
     //SAT_TRACE;
+    double x = AXpos;
+    double y = AYpos;
+
+    SAT_Rect mrect = getRect();
+    double window_width = getWindowWidth();
+    double window_height = getWindowHeight();
+    //SAT_PRINT("%.1f, %.1f\n",window_width,window_height);
+    //SAT_PRINT("%.1f, %.1f, %.1f, %.1f\n",mrect.x,mrect.y,mrect.w,mrect.h);
+    if ((AXpos + mrect.w) >= window_width)  x = window_width  - mrect.w;
+    if ((AYpos + mrect.h) >= window_height) y = window_height - mrect.h;
+
     setActive(true);
     setVisible(true);
     SAT_Widget* parent = getParent();
     if (parent) {
-//      setRectAndBase();
-      SAT_Rect rect = getBaseRect();
-      rect.x = AXpos;
-      rect.y = AYpos;
+
+      // setRectAndBase();
+      SAT_Rect baserect = getBaseRect();
+      baserect.x = x;
+      baserect.y = y;
       double scale = getWindowScale();
       if (scale > 0.0) {
-        rect.x = AXpos / scale;
-        rect.y = AYpos / scale;
+        baserect.x = x / scale;
+        baserect.y = y / scale;
       }
-      setBaseRect(rect);
+      setBaseRect(baserect);
+
       parent->realignChildren();
       parent->do_widget_redraw(parent);
     }

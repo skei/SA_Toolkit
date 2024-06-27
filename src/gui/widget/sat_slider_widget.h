@@ -39,10 +39,14 @@ protected:
 public:
 //------------------------------
 
-  SAT_SliderWidget(SAT_Rect ARect)
-  : SAT_DragValueWidget(ARect) {
+  SAT_SliderWidget(SAT_Rect ARect, const char* AText="", double AValue=0.0)
+  : SAT_DragValueWidget(ARect,AText,AValue) {
     setName("SAT_SliderWidget");
     setHint("SAT_SliderWidget");
+    //setBackgroundColor(0.45);
+    setDrawBorder(true);
+    setBorderWidth(0.5);
+    setBorderColor(0.3);
   }
 
   //----------

@@ -19,8 +19,9 @@ private:
   SAT_Color   MTextColor      = SAT_Black;
   double      MTextSize       = 12.0;
   uint32_t    MTextAlignment  = SAT_TEXT_ALIGN_CENTER;
-
   bool        MDrawParamText  = true;
+
+  SAT_Rect    MTextOffset     = {0,0,0,0};
 
 //------------------------------
 public:
@@ -56,6 +57,7 @@ public:
   virtual void setTextColor(SAT_Color AColor)         { MTextColor = AColor; }
   virtual void setTextSize(double ASize)              { MTextSize = ASize; }
   virtual void setTextAlignment(uint32_t AAlignment)  { MTextAlignment = AAlignment; }
+  virtual void setTextOffset(SAT_Rect AOffset)        { MTextOffset = AOffset; }
 
   virtual void setDrawParamText(bool AParam=true)     { MDrawParamText = AParam; }
 
@@ -71,6 +73,11 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
       double scale = getWindowScale();
+
+      SAT_Rect ofs = MTextOffset;
+      ofs.scale(scale);
+      rect.shrink(ofs);
+
       painter->setTextColor(MTextColor);
       painter->setTextSize(MTextSize*scale);
 
