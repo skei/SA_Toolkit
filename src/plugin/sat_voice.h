@@ -4,46 +4,18 @@
 
 #include "sat.h"
 
-template <class VOICE>
-class SAT_Voice {
+// template <class VOICE>
+// class SAT_Voice {
+// public:
+//   SAT_Voice() {
+//     //SAT_TRACE;
+//   }
+//   ~SAT_Voice() {
+//     //SAT_TRACE;
+//   }
+// };
 
-public:
-
-  SAT_Voice() {
-    //SAT_TRACE;
-  }
-
-  ~SAT_Voice() {
-    //SAT_TRACE;
-  }
-
-};
-
-//----------------------------------------------------------------------
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-#include "plugin/sat_process_context.h"
+#include "plugin/processor/sat_process_context.h"
 #include "plugin/sat_note.h"
 #include "audio/sat_voice_context.h"
 
@@ -85,7 +57,7 @@ public:
 
   SAT_Note            note        = {};
   uint32_t            state       = SAT_VOICE_OFF;
-  uint32_t            event_mode  = SAT_PLUGIN_EVENT_MODE_BLOCK;
+  uint32_t            event_mode  = SAT_VOICE_EVENT_MODE_INTERLEAVED;
   SAT_VoiceEventQueue events      = {};
 
 //------------------------------
@@ -115,15 +87,15 @@ public:
 
   void process() {
     switch (event_mode) {
-      case SAT_PLUGIN_EVENT_MODE_BLOCK: {
+      case SAT_VOICE_EVENT_MODE_BLOCK: {
         handleBlockEvents();
         break;
       }
-      case SAT_PLUGIN_EVENT_MODE_INTERLEAVED: {
+      case SAT_VOICE_EVENT_MODE_INTERLEAVED: {
         handleInterleavedEvents();
         break;
       }
-      case SAT_PLUGIN_EVENT_MODE_QUANTIZED: {
+      case SAT_VOICE_EVENT_MODE_QUANTIZED: {
         handleQuantizedEvents();
         break;
       }
@@ -194,9 +166,9 @@ private:
   void handleBlockEvents() {
     SAT_VoiceEvent event;
     while (events.read(&event)) handleEvent(event);
-    uint32_t length = context->process_context->voice_length;
+    uint32_t length = context->block_length;
     state = voice.process(state,0,length);
-    
+   
     SAT_Assert( events.read(&event) == false );
     
   }
@@ -206,7 +178,7 @@ private:
   void handleInterleavedEvents() {
     uint32_t event_count = 0;
     uint32_t current_time = 0;
-    uint32_t remaining = context->process_context->voice_length;
+    uint32_t remaining = context->block_length;         // !!!!! remaining = 0
     SAT_VoiceEvent event = {};
     while (remaining > 0) {
       if (events.read(&event)) {
@@ -215,7 +187,7 @@ private:
         //SAT_Assert((current_time + length) <= context->process_context->voice_length);
         if (length < 0) {
           
-          SAT_Print("events not sorted! voice %i current_time %i, event.time %i type %i event_count %i\n",index,current_time,event.time,event.type,event_count);
+          SAT_PRINT("events not sorted! voice %i current_time %i, event.time %i type %i event_count %i\n",index,current_time,event.time,event.type,event_count);
 
         }
         //else if (length == 0) {
@@ -246,7 +218,7 @@ private:
   //----------
   
   void handleQuantizedEvents() {
-    uint32_t buffer_length = context->process_context->voice_length;
+    uint32_t buffer_length = context->block_length;
     uint32_t current_time  = 0;
     uint32_t remaining     = buffer_length;
     uint32_t next_event    = 0;
@@ -290,5 +262,31 @@ private:
   //----------
 
 };
+
+
+//----------------------------------------------------------------------
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
 
 #endif // 0

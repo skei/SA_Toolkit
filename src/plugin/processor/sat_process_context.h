@@ -15,6 +15,7 @@ struct SAT_ProcessContext {
   uint32_t              maxframescount  = 0;
   uint32_t              process_counter = 0;
   uint32_t              sample_counter  = 0;
+  
 };
 
 //----------------------------------------------------------------------
