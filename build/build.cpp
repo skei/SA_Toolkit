@@ -22,7 +22,7 @@
 // ports
 //------------------------------
 
-#include "../plugins/sa_ports.h"
+//#include "../plugins/sa_ports.h"
 
 //#include "../plugins/ports/template.h"
 
@@ -57,3 +57,4 @@
 //#include "../plugins/test/plugin1.h"
 //#include "../plugins/test/plugin_gui1.h"
 //#include "../plugins/test/plugin_gui2.h"
+#include "../plugins/test/test_voices.h"

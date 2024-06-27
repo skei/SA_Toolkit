@@ -14,32 +14,39 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "audio/sat_audio_utils.h"
+#include "plugin/sat_note.h"
 #include "plugin/sat_processor.h"
 #include "plugin/sat_voice.h"
 #include "plugin/processor/sat_process_context.h"
 #include "plugin/processor/sat_processor_owner.h"
 
-// #include "plugin/sat_note.h"
-// #include "audio/sat_audio_utils.h"
+//----------
 
 typedef SAT_Queue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
 
 template <class VOICE, int COUNT>
 class SAT_VoiceProcessor
 : public SAT_Processor {
 
 //------------------------------
-private:
+protected:
 //------------------------------
 
   // __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   SAT_Voice<VOICE>              MVoices[COUNT]          = {};
+
   // __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE] = {0};
 
-//SAT_VoiceContext              MVoiceContext           = {};
+  SAT_VoiceContext              MVoiceContext           = {};
 
   SAT_NoteQueue                 MNoteEndQueue           = {};
   const clap_plugin_t*          MClapPlugin             = nullptr;
@@ -51,7 +58,9 @@ private:
   uint32_t                      MNumReleasedVoices      = 0; // --"--
   bool                          MProcessThreaded        = false;
 
-//uint32_t                      MEventMode              = SAT_PLUGIN_EVENT_MODE_BLOCK;
+  uint32_t                      MEventMode              = SAT_VOICE_EVENT_MODE_BLOCK;
+
+  double                        MSampleRate             = 0.0;
 
 //------------------------------
 public:
@@ -83,71 +92,74 @@ public:
 public:
 //------------------------------
 
+  // void setSampleRate(double ASampleRate) {
+  //   MSampleRate = ASampleRate;
+  // }
+
   void setProcessThreaded(bool AThreaded=true) {
     MProcessThreaded = AThreaded;
   }
   
   //----------
 
-  // void setEventMode(uint32_t AMode) {
-  //   MEventMode = AMode;
-  //   for (uint32_t i=0; i<COUNT; i++) {
-  //     MVoices[i].event_mode = AMode;
-  //   }
-  // }
+  void setEventMode(uint32_t AMode) {
+    MEventMode = AMode;
+    for (uint32_t i=0; i<COUNT; i++) {
+      MVoices[i].event_mode = AMode;
+    }
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  // void init(const clap_plugin_t* APlugin, const clap_host_t* AHost) {
-  //   //SAT_Plugin* plugin = (SAT_Plugin*)APlugin->plugin_data;
-  //   //MVoiceContext.plugin = plugin;
-  //   MClapPlugin = APlugin;
-  //   MClapHost = AHost;
-  //   if (MClapHost) {
-  //     MThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-  //     //SAT_Log("VOICE MANAGER: thread-pool: %s\n", MThreadPool ? "true" : "false" );
-  //   }
-  // }
+  void init(const clap_plugin_t* APlugin, const clap_host_t* AHost) {
+    //SAT_Plugin* plugin = (SAT_Plugin*)APlugin->plugin_data;
+    //MVoiceContext.plugin = plugin;
+    MClapPlugin = APlugin;
+    MClapHost = AHost;
+    if (MClapHost) {
+      MThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
+      SAT_PRINT("thread-pool: %s\n", MThreadPool ? "true" : "false" );
+    }
+  }
 
   //----------
 
-  // void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) {
-  //   //SAT_Print("AParameters %p\n",AParameters);
-  //   MVoiceContext.process_context   = nullptr; //
-  //   MVoiceContext.voice_buffer      = MVoiceBuffer;
-  //   MVoiceContext.min_frames_count  = min_frames_count;
-  //   MVoiceContext.max_frames_count  = max_frames_count;
-  //   MVoiceContext.sample_rate       = sample_rate;
-  //   for (uint32_t i=0; i<COUNT; i++) {
-  //     MVoices[i].init(i,&MVoiceContext);
-  //   }
-  // }
+  void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) {
+    MVoiceContext.process_context   = nullptr; //
+    MVoiceContext.sample_rate       = sample_rate;
+    MVoiceContext.min_frames_count  = min_frames_count;
+    MVoiceContext.max_frames_count  = max_frames_count;
+    MVoiceContext.voice_buffer      = MVoiceBuffer;
+    for (uint32_t i=0; i<COUNT; i++) {
+      MVoices[i].init(i,&MVoiceContext);
+    }
+  }
 
 //------------------------------
 public:
 //------------------------------
 
-  // bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
-  //   //SAT_Print("index %i noteid %i port %i channel %i key %i = %i,%i,%i,%i",index,noteid,port,channel,key, MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key);
-  //   if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   return false;
-  //   if ((port    != -1) && (MVoices[index].note.port    != port))     return false;
-  //   if ((channel != -1) && (MVoices[index].note.channel != channel))  return false;
-  //   if ((key     != -1) && (MVoices[index].note.key     != key))      return false;
-  //   return true;
-  // }
+  bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
+    //SAT_Print("index %i noteid %i port %i channel %i key %i = %i,%i,%i,%i",index,noteid,port,channel,key, MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key);
+    if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   return false;
+    if ((port    != -1) && (MVoices[index].note.port    != port))     return false;
+    if ((channel != -1) && (MVoices[index].note.channel != channel))  return false;
+    if ((key     != -1) && (MVoices[index].note.key     != key))      return false;
+    return true;
+  }
 
   //----------
   
-  // bool isActive(uint32_t index) {
-  //   if ( (MVoices[index].state == SAT_VOICE_WAITING) 
-  //     || (MVoices[index].state == SAT_VOICE_PLAYING)
-  //     || (MVoices[index].state == SAT_VOICE_RELEASED)) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  bool isActive(uint32_t index) {
+    if ( (MVoices[index].state == SAT_VOICE_WAITING) 
+      || (MVoices[index].state == SAT_VOICE_PLAYING)
+      || (MVoices[index].state == SAT_VOICE_RELEASED)) {
+      return true;
+    }
+    return false;
+  }
 
 //------------------------------
 public:
@@ -162,46 +174,48 @@ public:
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
   */
 
-  // void processAudio(SAT_ProcessContext* AProcessContext) {
-  //   MVoiceContext.process_context = AProcessContext;
-  //   uint32_t blocksize = AProcessContext->voice_length;
-  //   float** output = AProcessContext->voice_buffer;
-  //   SAT_ClearStereoBuffer(output,blocksize);
-  //   // set up active voices
-  //   MNumActiveVoices = 0;
-  //   uint32_t num_playing = 0;
-  //   uint32_t num_released = 0;
-  //   for (uint32_t i=0; i<COUNT; i++) {
-  //     //if isActive(i) ..
-  //     if ((MVoices[i].state == SAT_VOICE_WAITING)
-  //      || (MVoices[i].state == SAT_VOICE_PLAYING)
-  //      || (MVoices[i].state == SAT_VOICE_RELEASED)) {
-  //       MActiveVoices[MNumActiveVoices] = i;
-  //       MNumActiveVoices += 1;
-  //       if (MVoices[i].state == SAT_VOICE_PLAYING) num_playing += 1;
-  //       if (MVoices[i].state == SAT_VOICE_RELEASED) num_released += 1;
-  //     }
-  //   }
-  //   MNumPlayingVoices = num_playing;
-  //   MNumReleasedVoices = num_released;
-  //   // process active voices
-  //   if (MNumActiveVoices > 0) {
-  //     // thread-pool..
-  //     bool processed = false;
-  //     if (MProcessThreaded && MThreadPool) {
-  //       processed = MThreadPool->request_exec(MClapHost,MNumActiveVoices);
-  //       //SAT_Print("request_exec(%i) returned %s\n", MNumActiveVoices, processed ? "true" : "false" );
-  //     }
-  //     // ..or manually
-  //     if (!processed) {
-  //       for (uint32_t i=0; i<MNumActiveVoices; i++) {
-  //         uint32_t v = MActiveVoices[i];
-  //         processVoice(v);
-  //       }
-  //     }
-  //     //mixActiveVoices();
-  //   } // num voices > 0
-  // }
+  void processAudio(SAT_ProcessContext* AProcessContext) {
+    MVoiceContext.process_context = AProcessContext;
+    MVoiceContext.block_length    = AProcessContext->process->frames_count;
+    // set up active voices
+    MNumActiveVoices = 0;
+    uint32_t num_playing = 0;
+    uint32_t num_released = 0;
+    for (uint32_t i=0; i<COUNT; i++) {
+      //if isActive(i) ..
+      if ((MVoices[i].state == SAT_VOICE_WAITING)
+       || (MVoices[i].state == SAT_VOICE_PLAYING)
+       || (MVoices[i].state == SAT_VOICE_RELEASED)) {
+        MActiveVoices[MNumActiveVoices] = i;
+        MNumActiveVoices += 1;
+        if (MVoices[i].state == SAT_VOICE_PLAYING) num_playing += 1;
+        if (MVoices[i].state == SAT_VOICE_RELEASED) num_released += 1;
+      }
+    }
+    MNumPlayingVoices = num_playing;
+    MNumReleasedVoices = num_released;
+    // process active voices
+
+    if (MNumActiveVoices > 0) {
+
+      //SAT_PRINT("MNumActiveVoices %i\n",MNumActiveVoices);
+
+      // thread-pool..
+      bool processed = false;
+      if (MProcessThreaded && MThreadPool) {
+        processed = MThreadPool->request_exec(MClapHost,MNumActiveVoices);
+        //SAT_PRINT("request_exec(%i) returned %s\n", MNumActiveVoices, processed ? "true" : "false" );
+      }
+      // ..or manually
+      if (!processed) {
+        for (uint32_t i=0; i<MNumActiveVoices; i++) {
+          uint32_t v = MActiveVoices[i];
+          processVoice(v);
+        }
+      }
+      //mixActiveVoices();
+    } // num voices > 0
+  }
 
   //----------
 
@@ -225,19 +239,13 @@ public:
 
   void process(SAT_ProcessContext* AContext) override {
     const clap_process_t* process = AContext->process;
+    float** output = process->audio_outputs[0].data32;
     uint32_t length = process->frames_count;
-    // #ifndef SAT_NO_GUI
-    //   clearAutomationToGui();
-    //   clearModulationToGui();
-    // #endif
+    SAT_ClearStereoBuffer(output,length);
     processEvents(process->in_events,process->out_events);
-    processAudio(AContext,0,length);
-    // #ifndef SAT_NO_GUI
-    //   queueAutomationToGui();
-    //   queueModulationToGui();
-    // #endif
+    processAudio(AContext);
+    mixActiveVoices(output,length);
   }
-
 //------------------------------
 public:
 //------------------------------
@@ -245,112 +253,115 @@ public:
   // called by host
   // separate thread for each task/voice
 
-  // void threadPoolExec(uint32_t AIndex) {
-  //   uint32_t v = MActiveVoices[AIndex];
-  //   processVoice(v);
-  // }
+  void threadPoolExec(uint32_t AIndex) {
+    //SAT_TRACE;
+    uint32_t v = MActiveVoices[AIndex];
+    processVoice(v);
+  }
   
   //----------
 
-  // void mixActiveVoices() {
-  //   float** output = MVoiceContext.process_context->voice_buffer;
-  //   uint32_t blocksize = MVoiceContext.process_context->voice_length;
-  //   for (uint32_t i=0; i<MNumActiveVoices; i++) {
-  //     uint32_t voice = MActiveVoices[i];
-  //     float* buffer = MVoiceBuffer;
-  //     uint32_t index = MVoices[voice].index;
-  //     buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
-  //     SAT_AddMonoToStereoBuffer(output,buffer,blocksize);
-  //   }
-  // }
+  // assumes audio outp 0 = stereo floats
+
+  void mixActiveVoices(float** AOutput, uint32_t ALength) {
+    //float** output = MVoiceContext.process_context->process->audio_outputs[0].data32;// voice_buffer;
+    //uint32_t blocksize = MVoiceContext.process_context->process->frames_count;// voice_length;
+    for (uint32_t i=0; i<MNumActiveVoices; i++) {
+      uint32_t voice = MActiveVoices[i];
+      float* buffer = MVoiceBuffer;
+      uint32_t index = MVoices[voice].index;
+      buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
+      SAT_AddMonoToStereoBuffer(AOutput,buffer,ALength);
+    }
+  }
 
 //------------------------------
 public:
 //------------------------------
 
   void noteOnEvent(const clap_event_note_t* event) override {
-    SAT_PRINT("note on\n");
-    // //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    // int32_t voice = findFreeVoice(SAT_VOICE_MANAGER_STEAL_VOICES);
-    // if (voice >= 0) {
-    //   MVoices[voice].state        = SAT_VOICE_WAITING;
-    //   MVoices[voice].note.port    = event->port_index;
-    //   MVoices[voice].note.channel = event->channel;
-    //   MVoices[voice].note.key     = event->key;
-    //   MVoices[voice].note.noteid  = event->note_id;
-    //   MVoices[voice].clearVoiceQueue();
-    //   SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_ON, event->header.time, event->key, event->velocity);
-    //   MVoices[voice].events.write(ve);
-    // }
+    //SAT_PRINT("note on\n");
+    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
+    int32_t voice = findFreeVoice(true/*SAT_VOICE_MANAGER_STEAL_VOICES*/);
+    if (voice >= 0) {
+      MVoices[voice].state        = SAT_VOICE_WAITING;
+      MVoices[voice].note.port    = event->port_index;
+      MVoices[voice].note.channel = event->channel;
+      MVoices[voice].note.key     = event->key;
+      MVoices[voice].note.noteid  = event->note_id;
+      MVoices[voice].clearVoiceQueue();
+      SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_ON, event->header.time, event->key, event->velocity);
+      MVoices[voice].events.write(ve);
+    }
   }
 
   void noteOffEvent(const clap_event_note_t* event) override {
-    SAT_PRINT("note off\n");
-    // //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    // for (int32_t voice=0; voice<COUNT; voice++) {
-    //   if (isActive(voice)) {
-    //     if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-    //       SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-    //       MVoices[voice].events.write(ve);
-    //     }
-    //   }
-    // }
+    //SAT_PRINT("note off\n");
+    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
+    for (int32_t voice=0; voice<COUNT; voice++) {
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
+          MVoices[voice].events.write(ve);
+        }
+      }
+    }
   }
 
   void noteChokeEvent(const clap_event_note_t* event) override {
-    SAT_PRINT("note choke\n");
-    // //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    // for (int32_t voice=0; voice<COUNT; voice++) {
-    //   if (isActive(voice)) {
-    //     if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-    //       SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-    //       MVoices[voice].events.write(ve);
-    //     }
-    //   }
-    // }
+    //SAT_PRINT("note choke\n");
+    //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
+    for (int32_t voice=0; voice<COUNT; voice++) {
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
+          MVoices[voice].events.write(ve);
+        }
+      }
+    }
   }
 
   void noteExpressionEvent(const clap_event_note_expression_t* event) override {
-    SAT_PRINT("note expression\n");
-    // //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
-    // for (int32_t voice=0; voice<COUNT; voice++) {
-    //   if (isActive(voice)) {
-    //     if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-    //       SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-    //       MVoices[voice].events.write(ve);
-    //     }
-    //   }
-    // }
+    //SAT_PRINT("note expression\n");
+    //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
+    for (int32_t voice=0; voice<COUNT; voice++) {
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
+          MVoices[voice].events.write(ve);
+        }
+      }
+    }
   }
 
   //#ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
   void paramValueEvent(const clap_event_param_value_t* event) override {
-    SAT_PRINT("param\n");
-    // //SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
-    // for (int32_t voice=0; voice<COUNT; voice++) {
-    //   if (isActive(voice)) {
-    //     if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-    //       SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-    //       MVoices[voice].events.write(ve);
-    //     }
-    //   }
-    // }
+    //SAT_PRINT("param\n");
+    //SAT_Print("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
+    for (int32_t voice=0; voice<COUNT; voice++) {
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
+          MVoices[voice].events.write(ve);
+        }
+      }
+    }
   }
 
   //#ifdef SAT_VOICE_MANAGER_SEND_GLOBAL_MODS_TO_ALL_VOICES
 
   void paramModEvent(const clap_event_param_mod_t* event) override {
-    SAT_PRINT("mod\n");
-    // //SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
-    // for (int32_t voice=0; voice<COUNT; voice++) {
-    //   if (isActive(voice)) {
-    //     if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
-    //       SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-    //       MVoices[voice].events.write(ve);
-    //     }
-    //   }
-    // }
+    //SAT_PRINT("mod\n");
+    //SAT_Print("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
+    for (int32_t voice=0; voice<COUNT; voice++) {
+      if (isActive(voice)) {
+        if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
+          SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
+          MVoices[voice].events.write(ve);
+        }
+      }
+    }
   }
 
   void transportEvent(const clap_event_transport_t* event) override {
@@ -423,21 +434,21 @@ public:
   // }
 
   void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) override {
-    SAT_PRINT("\n");
-    // for (uint32_t i=0; i<COUNT; i++) {
-    //   if (MVoices[i].state == SAT_VOICE_WAITING) {
-    //     // still waiting, not started? something is wrong..
-    //     MVoices[i].state = SAT_VOICE_OFF;
-    //     queueNoteEnd(MVoices[i].note);      // ???
-    //     //SAT_Print("voice %i -> OFF\n",i);
-    //   }
-    //   if (MVoices[i].state == SAT_VOICE_FINISHED) {
-    //     MVoices[i].state = SAT_VOICE_OFF;
-    //     queueNoteEnd(MVoices[i].note);
-    //     //SAT_Print("voice %i -> OFF\n",i);
-    //   }
-    // }
-    // flushNoteEnds(out_events);
+    //SAT_PRINT("\n");
+     for (uint32_t i=0; i<COUNT; i++) {
+       if (MVoices[i].state == SAT_VOICE_WAITING) {
+         // still waiting, not started? something is wrong..
+         MVoices[i].state = SAT_VOICE_OFF;
+         queueNoteEnd(MVoices[i].note);      // ???
+         //SAT_Print("voice %i -> OFF\n",i);
+       }
+       if (MVoices[i].state == SAT_VOICE_FINISHED) {
+         MVoices[i].state = SAT_VOICE_OFF;
+         queueNoteEnd(MVoices[i].note);
+         //SAT_Print("voice %i -> OFF\n",i);
+       }
+     }
+     flushNoteEnds(out_events);
   }
 
 //------------------------------
@@ -447,9 +458,9 @@ private:
   // if threaded: separate threads for each voice
   // else:        one voice after another
 
-  // void processVoice(uint32_t i) {
-  //   MVoices[i].process();
-  // };
+  void processVoice(uint32_t i) {
+    MVoices[i].process();
+  };
 
   //----------
   
@@ -459,65 +470,65 @@ private:
   
   //----------
   
-  // int32_t findFreeVoice(bool AReleased=false) {
-  //   for (uint32_t i=0; i<COUNT; i++) {
-  //     if ((MVoices[i].state == SAT_VOICE_OFF) /*|| (MVoices[i].state == SAT_VOICE_FINISHED)*/) {
-  //       return i;
-  //     }
-  //   }
-  //   if (AReleased) {
-  //     int32_t lowest_index = -1;
-  //     double  lowest_level = 666.0;
-  //     for (uint32_t i=0; i<COUNT; i++) {
-  //       if (MVoices[i].state == SAT_VOICE_RELEASED) {
-  //         float env_level = MVoices[i].getVoiceLevel();
-  //         if (env_level < lowest_level) {
-  //           lowest_index = i;
-  //           lowest_level = env_level;
-  //         }
-  //       }
-  //     }
-  //     if (lowest_index >= 0) {
-  //       // kill released note..
-  //       queueNoteEnd( MVoices[lowest_index].note );
-  //       return lowest_index;
-  //     }
-  //   }
-  //   return -1;
-  // }
+  int32_t findFreeVoice(bool AReleased=false) {
+    for (uint32_t i=0; i<COUNT; i++) {
+      if ((MVoices[i].state == SAT_VOICE_OFF) /*|| (MVoices[i].state == SAT_VOICE_FINISHED)*/) {
+        return i;
+      }
+    }
+    if (AReleased) {
+      int32_t lowest_index = -1;
+      double  lowest_level = 666.0;
+      for (uint32_t i=0; i<COUNT; i++) {
+        if (MVoices[i].state == SAT_VOICE_RELEASED) {
+          float env_level = MVoices[i].getVoiceLevel();
+          if (env_level < lowest_level) {
+            lowest_index = i;
+            lowest_level = env_level;
+          }
+        }
+      }
+      if (lowest_index >= 0) {
+        // kill released note..
+        queueNoteEnd( MVoices[lowest_index].note );
+        return lowest_index;
+      }
+    }
+    return -1;
+  }
 
   //----------
 
-  // void queueNoteEnd(SAT_Note ANote) {
-  //   MNoteEndQueue.write(ANote);
-  // }
+  void queueNoteEnd(SAT_Note ANote) {
+    MNoteEndQueue.write(ANote);
+  }
 
   //----------
 
   // called at end of postProcessEvents()
   // (end of process.. time should be blocksize-1 ?
 
-  // void flushNoteEnds(const clap_output_events_t* out_events) {
-  //   uint32_t count = 0;
-  //   SAT_Note note = {0};
-  //   uint32_t blocksize = MVoiceContext.process_context->process->frames_count;
-  //   while (MNoteEndQueue.read(&note)) {
-  //     count += 1;
-  //     clap_event_note_t note_event;
-  //     note_event.header.flags     = 0;
-  //     note_event.header.size      = sizeof(clap_event_note_t);
-  //     note_event.header.space_id  = CLAP_CORE_EVENT_SPACE_ID;
-  //     note_event.header.time      = blocksize - 1; //0;
-  //     note_event.header.type      = CLAP_EVENT_NOTE_END;
-  //     note_event.port_index       = note.port;
-  //     note_event.channel          = note.channel;
-  //     note_event.key              = note.key;
-  //     note_event.note_id          = note.noteid;
-  //     note_event.velocity         = 0.0;
-  //     out_events->try_push(out_events,&note_event.header);
-  //   }
-  //   //if (count > 0) { SAT_Print("flushNoteEnds: %i events\n",count); }
-  // }
+  void flushNoteEnds(const clap_output_events_t* out_events) {
+    uint32_t count = 0;
+    SAT_Note note = {0};
+    uint32_t blocksize = MVoiceContext.process_context->process->frames_count;
+    while (MNoteEndQueue.read(&note)) {
+      count += 1;
+      clap_event_note_t note_event;
+      note_event.header.flags     = 0;
+      note_event.header.size      = sizeof(clap_event_note_t);
+      note_event.header.space_id  = CLAP_CORE_EVENT_SPACE_ID;
+      note_event.header.time      = blocksize - 1; //0;
+      note_event.header.type      = CLAP_EVENT_NOTE_END;
+      note_event.port_index       = note.port;
+      note_event.channel          = note.channel;
+      note_event.key              = note.key;
+      note_event.note_id          = note.noteid;
+      note_event.velocity         = 0.0;
+      out_events->try_push(out_events,&note_event.header);
+    }
+    //if (count > 0) { SAT_Print("flushNoteEnds: %i events\n",count); }
+  }
   
 };
 
