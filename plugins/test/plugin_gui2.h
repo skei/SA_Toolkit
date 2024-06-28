@@ -11,8 +11,8 @@
 
 clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "myPlugin-v0",
-  .name         = "myPlugin",
+  .id           = "plugin_gui2-v0",
+  .name         = "plugin_gui2",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

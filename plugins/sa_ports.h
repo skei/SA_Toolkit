@@ -23,7 +23,7 @@
 #include "ports/sa_saturation.h"
 #include "ports/sa_small_room_reverb.h"
 #include "ports/sa_sonic_maximizer.h"
-//#include "ports/sa_stretch.h"
+#include "ports/sa_stretch.h"
 #include "ports/sa_tilteq.h"
 #include "ports/sa_transient_killer.h"
 
@@ -50,7 +50,7 @@ void SAT_Register(SAT_Registry* ARegistry) {
   ARegistry->registerDescriptor(&sa_saturation_descriptor);
   ARegistry->registerDescriptor(&sa_small_room_reverb_descriptor);
   ARegistry->registerDescriptor(&sa_sonic_maximizer_descriptor);
-//ARegistry->registerDescriptor(&sa_stretch_descriptor);
+  ARegistry->registerDescriptor(&sa_stretch_descriptor);
   ARegistry->registerDescriptor(&sa_tilteq_descriptor);
   ARegistry->registerDescriptor(&sa_transient_killer_descriptor);
 }
@@ -76,9 +76,9 @@ SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t
     case 12:  return new sa_saturation_plugin(ADescriptor,AHost);
     case 13:  return new sa_small_room_reverb_plugin(ADescriptor,AHost);
     case 14:  return new sa_sonic_maximizer_plugin(ADescriptor,AHost);
-  //case 15:  return new sa_stretch_plugin(ADescriptor,AHost);
-    case 15:  return new sa_tilteq_plugin(ADescriptor,AHost);
-    case 16:  return new sa_transient_killer_plugin(ADescriptor,AHost);
+    case 15:  return new sa_stretch_plugin(ADescriptor,AHost);
+    case 16:  return new sa_tilteq_plugin(ADescriptor,AHost);
+    case 17:  return new sa_transient_killer_plugin(ADescriptor,AHost);
   }
   return nullptr;
 }

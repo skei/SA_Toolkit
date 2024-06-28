@@ -83,7 +83,7 @@
       MClapGui->create(MClapPlugin,CLAP_WINDOW_API_X11,false);
     #endif
     #ifdef SAT_WIN32
-      MClapGui->create(plugin,CLAP_WINDOW_API_WIN32,false);
+      MClapGui->create(MClapPlugin,CLAP_WINDOW_API_WIN32,false);
     #endif
     MClapGui->set_scale(MClapPlugin,1.0);
     uint32_t width,height;
@@ -94,7 +94,7 @@
       const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
     #endif
     #ifdef SAT_WIN32
-      HWND win32window = HostWindow->getWin32Window();
+      HWND win32window = AHostWindow->getWin32Window();
       const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_WIN32, .win32 = win32window };
     #endif
 

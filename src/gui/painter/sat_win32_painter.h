@@ -1,3 +1,416 @@
+#ifndef sat_win32_painter_included
+#define sat_win32_painter_included
+//----------------------------------------------------------------------
+
+#include "sat.h"
+#include "gui/painter/sat_base_painter.h"
+#include "gui/painter/sat_painter_owner.h"
+#include "gui/painter/sat_paint_target.h"
+#include "gui/lib/sat_win32.h"
+#include "gui/sat_bitmap.h"
+#include "gui/sat_surface.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_Win32Painter
+: public SAT_BasePainter {
+
+//------------------------------
+private:
+//------------------------------
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_Win32Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
+  : SAT_BasePainter(AOwner, ATarget) {
+  }
+
+  //----------
+
+  virtual ~SAT_Win32Painter() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void beginPainting(int32_t AWidth, int32_t AHeight) override {
+  }
+
+  void endPainting() override {
+  }
+
+  void beginFrame(int32_t AWidth, int32_t AHeight, double APixelRatio=1.0) override {
+  }
+
+  void endFrame() override {
+  }
+  
+  void saveState() override {
+  }
+  
+  void restoreState() override {
+  }
+  
+  void resetState() override {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+//
+
+  void setClip(float x, float y, float w, float h) override {
+  }
+  
+  void resetClip() override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  double getTextBounds(const char* AText, double* ABounds) override {
+  }
+  
+  void setDrawColor(SAT_Color AColor) override {
+  }
+  
+  void setFillColor(SAT_Color AColor) override {
+  }
+  
+  void setFillLinearGradient(double AX1, double AY1, double AX2, double AY2, SAT_Color AColor1, SAT_Color AColor2) override {
+  }
+  
+  void setTextColor(SAT_Color AColor) override {
+  }
+  
+  void setTextSize(double ASize) override {
+  }
+  
+  void setTextLetterSpacing(float spacing) override {
+  }
+  
+  void setTextLineHeight(float lineHeight) override {
+  }
+  
+  void setTextAlign(int align) override {
+  }
+  
+  void setLineWidth(double AWidth) override {
+  }
+  
+  void setGlobalAlpha(double AAlpha) override {
+  }
+  
+  void setPathWinding(int dir) override {
+  }
+  
+  void selectFont(int32_t AFont) override {
+  }
+  
+  void selectFont(const char* font) override {
+  }
+  
+  void setFontBlur(float blur) override {
+  }
+  
+  void setShapeAntiAlias(int enabled) override {
+  }
+  
+  // void setDrawPaint(sat_nanovg_paint_t paint) /*final*/ {
+  // }
+  
+  // void setFillPaint(sat_nanovg_paint_t paint) /*final*/ {
+  // }
+  
+  void setMiterLimit(double limit) override {
+  }
+  
+  void setLineCap(int cap) override {
+  }
+  
+  void setLineJoin(int join) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  void beginPath() override {
+  }
+  
+  void stroke() override {
+  }
+  
+  void fill() override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  void moveTo(double x, double y) override {
+  }
+  
+  void lineTo(double x, double y) override {
+  }
+  
+  void arcTo(double x1, double y1, double x2, double y2, double r) override {
+  }
+  
+  void quadTo(double c1x, double c1y, double x2, double y2) override {
+  }
+  
+  void bezierTo(double c1x, double c1y, double c2x, double c2y, double x2, double y2) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  void drawLine(double x1, double y1, double x2, double y2) override {
+  }
+  
+  void drawLines(uint32_t num, double* coords) override {
+  }
+  
+  void drawLineStrip(uint32_t num, double* coords) override {
+  }
+  
+  /*
+    angle 1 = start angle, relative to 3 o'clock
+    angle 2 = 'distance' 0..1, counter-clockwise
+  */
+
+  void drawArc(double cx, double cy, double r, double a1, double a2) override {
+  }
+  
+  void drawRect(double x, double y, double w, double h) override {
+  }
+  
+  void drawRoundedRect(double x, double y, double w, double h, double r) override {
+  }
+  
+  void drawRoundedRect(double x, double y, double w, double h, double rtl, double rtr, double rbr, double rbl) override {
+  }
+  
+  void drawEllipse(double cx, double cy, double rx, double ry) override {
+  }
+  
+  void drawCircle(double cx, double cy, double r) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  void fillLines(uint32_t num, double* coords) override {
+  }
+  
+  void fillLineStrip(uint32_t num, double* coords) override {
+  }
+  
+  // angle 1 = start angle, relative to 3 o'clock
+  // angle 2 = 'distance' 0..1, counter-clockwise
+
+  void fillArc(double cx, double cy, double r, double a1, double a2) override {
+  }
+  
+  void fillRect(double x, double y, double w, double h) override {
+  }
+  
+  void fillRoundedRect(double x, double y, double w, double h, double r) override {
+  }
+  
+  void fillRoundedRect(double x, double y, double w, double h, double rtl, double rtr, double rbr, double rbl) override {
+  }
+  
+  void fillEllipse(double cx, double cy, double rx, double ry) override {
+  }
+  
+  void fillCircle(double cx, double cy, double r) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  void drawCurveQuad(double x1, double y1, double x2, double y2, double c1x, double c1y) override {
+  }
+  
+  void drawCurveBezier(double x1, double y1, double x2, double y2, double c1x, double c1y, double c2x, double c2y) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  float drawText(float x, float y, const char* string, const char* end) override {
+    return 0.0;
+  }
+  
+  void drawText(double x, double y, const char* text) override {
+  }
+  
+  void drawTextBox(float x, float y, float breakRowWidth, const char* string, const char* end) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  int32_t loadFont(const char* AName, const char* AFilename) override {
+    return 0;
+  }
+  
+  int32_t loadFont(const char* AName, void* ABuffer, uint32_t ASize) override {
+    return 0;
+  }
+  
+  int loadFontAtIndex(const char* name, const char* filename, const int fontIndex) override {
+    return 0;
+  }
+  
+  int loadFontMemAtIndex(const char* name, unsigned char* data, int ndata, int freeData, const int fontIndex) override {
+    return 0;
+  }
+  
+  // void deleteFont(int32_t AFont) override {
+  // }
+  
+  int findFont(const char* name) override {
+    return 0;
+  }
+  
+  int addFallbackFontId(int baseFont, int fallbackFont) override {
+    return 0;
+  }
+  
+  int addFallbackFont(const char* baseFont, const char* fallbackFont) override {
+    return 0;
+  }
+  
+  void resetFallbackFontsId(int baseFont) override {
+  }
+  
+  void resetFallbackFonts(const char* baseFont) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  float getTextBounds(float x, float y, const char* string, const char* end, float* bounds) override {
+    return 0.0;
+  }
+  
+  void getTextBoxBounds(float x, float y, float breakRowWidth, const char* string, const char* end, float* bounds) override {
+  }
+  
+  int getTextGlyphPositions(float x, float y, const char* string, const char* end, /*NVGglyphPosition*/void* positions, int maxPositions) override {
+    return 0;
+  }
+  
+  void getTextMetrics(float* ascender, float* descender, float* lineh) override {
+  }
+  
+  int getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) override {
+    return 0;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  int32_t loadImage(const char* AFilename) override {
+    return 0;
+  }
+  
+  int32_t loadImage(void* ABuffer, uint32_t ASize) override {
+    return 0;
+  }
+  
+  int32_t loadImage(int32_t AWidth, int32_t AHeight, void* ABuffer) override {
+    return 0;
+  }
+  
+  void deleteImage(int32_t AImage) override {
+  }
+  
+  void updateImage(int image, const unsigned char* data) override {
+  }
+  
+  void imageSize(int image, int* w, int* h) override {
+  }
+  
+  void setFillImage(int32_t AImage, double xofs, double yofs, double xscale, double yscale, double AAlpha=1.0, double AAngle=0.0) override {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  // sat_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) /*final*/ {}
+  // sat_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*final*/ {}
+  // sat_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) /*final*/ {}
+  // sat_paint_t imagePattern(double ox, double oy, double ex, double ey, double angle, int image, double alpha) /*final*/ {}
+
+//------------------------------
+public:
+//------------------------------
+
+  void* createRenderBuffer(uint32_t AWidth, uint32_t AHeight) override {
+    return nullptr;
+  }
+  
+  void deleteRenderBuffer(void* buffer) override {
+  }
+  
+  int32_t getImageFromRenderBuffer(void* buffer) override {
+    return 0;
+  }
+  
+  void selectRenderBuffer(void* buffer) override {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) override {
+  }
+
+  //----------
+
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) override {
+  }
+  
+  //----------
+
+  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) override {
+  }
+  
+  //----------
+
+  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) override {
+  }
+
+};
+
+//----------------------------------------------------------------------
+#endif
+
+
+
+
 
 
 

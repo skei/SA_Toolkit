@@ -263,7 +263,8 @@
 
   #ifdef SAT_GUI_WIN32
     #define SAT_WINDOW_WIN32
-    #define SAT_SURFACE_WIN32
+    //#define SAT_SURFACE_WIN32
+    #define SAT_SURFACE_NANOVG
     #define SAT_RENDERER_WGL
     #define SAT_PAINTER_NANOVG
   #endif

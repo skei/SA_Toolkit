@@ -9,8 +9,8 @@
 class SAT_Timer;
 
 class SAT_TimerListener {
-  public:
-    virtual void on_timerListener_callback(SAT_Timer* ATimer) {}
+public:
+  virtual void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) {}
 };
 
 //----------------------------------------------------------------------
@@ -32,37 +32,22 @@ class SAT_TimerListener {
 
 class SAT_Timer {
 
-private:
-
   //friend
   //static void sat_timer_callback(sigval val);
 
-//  static void sat_timer_callback(sigval val) {
-//    //SAT_TimerListener* listener = (SAT_TimerListener*)val.sival_ptr;
-//    //if (listener) listener->on_timerCallback(val.sival_int);
-//    SAT_Timer* timer = (SAT_Timer*)val.sival_ptr;
-//    if (timer) {
-//      timer->on_timer();
-//      //if (listener) listener->on_timerCallback(val.sival_int);
-//    }
-//  }
-
-  static void sat_win32_timerproc(HWND hwnd, UINT message, UINT_PTR idTimer, DWORD dwTime) {
-    //SAT_Print("HWND %p WM_TIMER %i idTimer %i dwTime %i\n",hwnd,message,idTimer,dwTime);
-    SAT_Timer* timer = (SAT_Timer*)idTimer;
-    if (timer) {
-      timer->on_timer();
-    }
-  }
-
+//------------------------------
 private:
+//------------------------------
 
   //bool                MRunning        = false;
   std::atomic<bool>   MRunning {false};
   SAT_TimerListener*  MTimerListener  = nullptr;
   HWND                MWinHandle      = NULL;
+  double              MPrevTime       = 0.0;
 
+//------------------------------
 public:
+//------------------------------
 
   SAT_Timer(SAT_TimerListener* AListener) {
     MTimerListener = AListener;
@@ -78,7 +63,9 @@ public:
   ~SAT_Timer() {
   }
 
+//------------------------------
 public:
+//------------------------------
 
   bool isRunning() { return MRunning; }
 
@@ -90,6 +77,7 @@ public:
       //SetTimer(MWinHandle,MTimerId,ms,(TIMERPROC)NULL);
       SetTimer(MWinHandle,(UINT_PTR)this,ms,sat_win32_timerproc);
       MRunning = true;
+      MPrevTime = SAT_GetTime();
     }
   }
 
@@ -112,7 +100,31 @@ public:
   //----------
 
   void on_timer() {
-    if (MTimerListener) MTimerListener->on_timerListener_callback(this);
+    double time = SAT_GetTime();//MS();
+    double delta = time - MPrevTime;
+    if (MTimerListener) MTimerListener->on_timerListener_callback(this,delta);
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+//  static void sat_timer_callback(sigval val) {
+//    //SAT_TimerListener* listener = (SAT_TimerListener*)val.sival_ptr;
+//    //if (listener) listener->on_timerCallback(val.sival_int);
+//    SAT_Timer* timer = (SAT_Timer*)val.sival_ptr;
+//    if (timer) {
+//      timer->on_timer();
+//      //if (listener) listener->on_timerCallback(val.sival_int);
+//    }
+//  }
+
+  static void sat_win32_timerproc(HWND hwnd, UINT message, UINT_PTR idTimer, DWORD dwTime) {
+    //SAT_Print("HWND %p WM_TIMER %i idTimer %i dwTime %i\n",hwnd,message,idTimer,dwTime);
+    SAT_Timer* timer = (SAT_Timer*)idTimer;
+    if (timer) {
+      timer->on_timer();
+    }
   }
 
 };
