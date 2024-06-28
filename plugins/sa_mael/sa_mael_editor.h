@@ -4,8 +4,9 @@
 private:
 //------------------------------
 
-  SAT_MenuWidget* mix_type_menu = nullptr;
-  SAT_MenuWidget* flt1_type_menu = nullptr;
+  SAT_MenuWidget*   mix_type_menu   = nullptr;
+  SAT_MenuWidget*   flt1_type_menu  = nullptr;
+  SAT_VoicesWidget* voices          = nullptr;
 
 //------------------------------
 public:
@@ -275,6 +276,11 @@ public:
     SAT_KnobWidget* gain_knob = new SAT_KnobWidget(SAT_Rect(10,30,50,50),"G",0.1);
     global_panel->appendChild(gain_knob);
     AEditor->connect(gain_knob,getParameter(SA_MAEL_PARAM_GAIN));
+
+    //
+
+    voices = new SAT_VoicesWidget(SAT_Rect(350,105,70,10),MAX_VOICES);
+    root->appendChild(voices);
 
     return true;
   }

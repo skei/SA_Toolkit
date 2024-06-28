@@ -24,8 +24,8 @@ protected:
   bool      MDrawVoices               = true;
   uint32_t  MMaxVoices                = 0;
   SAT_Color MPlayingColor             = SAT_Color(0.8);
-  SAT_Color MReleasedColor            = SAT_Color(0.5);
-  SAT_Color MOffColor                 = SAT_Color(0.2);
+  SAT_Color MReleasedColor            = SAT_Color(0.6);
+  SAT_Color MOffColor                 = SAT_Color(0.45);
   uint32_t  MVoiceStates[MAX_VOICES]  = {0};
 
 //------------------------------

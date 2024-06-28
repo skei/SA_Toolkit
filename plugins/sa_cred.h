@@ -69,7 +69,18 @@ private:
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_cred_plugin)
+  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_cred_plugin)
+
+  sa_cred_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_cred_plugin() {
+  }
+
+
   
 //------------------------------
 public: // fibonacci

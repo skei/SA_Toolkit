@@ -68,7 +68,6 @@ public:
   }
 
   virtual ~gain() {
-    if (MProcessor) deleteProcessor(MProcessor);
   }
 
 public:

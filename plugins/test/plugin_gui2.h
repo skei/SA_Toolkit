@@ -172,7 +172,7 @@ public:
     SAT_Strlcpy(page->section_name,"",CLAP_NAME_SIZE);
     page->page_id = 0;
     page->is_for_preset = false;
-    uint32_t numpar = MParameters.size();
+    uint32_t numpar = getParameters()->size();
     for (uint32_t i=0; i<8; i++) {
       if (i < numpar) page->param_ids[i] = i;// CLAP_INVALID_ID;
       else page->param_ids[i] = CLAP_INVALID_ID;
