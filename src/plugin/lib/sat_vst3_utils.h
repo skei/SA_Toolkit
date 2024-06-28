@@ -1,14 +1,10 @@
-
-
-#if 0
-
 #ifndef sat_vst3_utils_included
 #define sat_vst3_utils_included
 //----------------------------------------------------------------------
 
 // TODO: move to str/string files/classes..
 
-#include "plugin/vst3/sat_vst3.h"
+#include "plugin/lib/sat_vst3.h"
 
 #include <string>
 #include <locale>
@@ -79,28 +75,26 @@ void VST3_PrintIID(const void* iid) {
   const char hex_table[] = "0123456789ABCDEF";
   uint8_t* ptr = (uint8_t*)iid;
   for (uint32_t i=0; i<4; i++) {
-    SAT_DPrint("%c",hex_table[ ptr[i] >> 4 ]);
-    SAT_DPrint("%c",hex_table[ ptr[i] & 15 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] >> 4 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] & 15 ]);
   }
-  SAT_DPrint("-");
+  SAT_DPRINT("-");
   for (uint32_t i=4; i<8; i++) {
-    SAT_DPrint("%c",hex_table[ ptr[i] >> 4 ]);
-    SAT_DPrint("%c",hex_table[ ptr[i] & 15 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] >> 4 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] & 15 ]);
   }
-  SAT_DPrint("-");
+  SAT_DPRINT("-");
   for (uint32_t i=8; i<12; i++) {
-    SAT_DPrint("%c",hex_table[ ptr[i] >> 4 ]);
-    SAT_DPrint("%c",hex_table[ ptr[i] & 15 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] >> 4 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] & 15 ]);
   }
-  SAT_DPrint("-");
+  SAT_DPRINT("-");
   for (uint32_t i=12; i<16; i++) {
-    SAT_DPrint("%c",hex_table[ ptr[i] >> 4 ]);
-    SAT_DPrint("%c",hex_table[ ptr[i] & 15 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] >> 4 ]);
+    SAT_DPRINT("%c",hex_table[ ptr[i] & 15 ]);
   }
 }
 
 
 //----------------------------------------------------------------------
 #endif
-
-#endif // 0

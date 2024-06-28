@@ -30,6 +30,9 @@ struct SAT_ClapExtensionInfoCompat {
 
 class SAT_ClapPlugin {
 
+  friend class SAT_Vst3Factory;
+  friend class SAT_Vst3Plugin;
+
 //------------------------------
 private:
 //------------------------------

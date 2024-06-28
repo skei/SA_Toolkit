@@ -1,14 +1,10 @@
-
-
-#if 0
-
 #ifndef sat_vst3_entry_included
 #define sat_vst3_entry_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/vst3/sat_vst3.h"
-#include "plugin/vst3/sat_vst3_factory.h"
+#include "plugin/lib/sat_vst3.h"
+#include "plugin/factory/sat_vst3_factory.h"
 
 //----------------------------------------------------------------------
 //
@@ -33,7 +29,7 @@ bool vst3_module_exit(void) asm ("ModuleExit");
 //__EXPORT
 __attribute__ ((visibility ("default")))
 IPluginFactory* PLUGIN_API sat_vst3_entry() {
-  SAT_PRINT;
+  SAT_TRACE;
   return new SAT_Vst3Factory();
 }
 
@@ -45,7 +41,7 @@ IPluginFactory* PLUGIN_API sat_vst3_entry() {
 //__EXPORT
 __attribute__ ((visibility ("default")))
 bool vst3_module_entry(void* sharedLibraryHandle)  {
-  SAT_PRINT;
+  SAT_TRACE;
   //if (++counter == 1) {
   //  moduleHandle = sharedLibraryHandle;
   //  return true;
@@ -58,7 +54,7 @@ bool vst3_module_entry(void* sharedLibraryHandle)  {
 //__EXPORT
 __attribute__ ((visibility ("default")))
 bool vst3_module_exit(void) {
-  SAT_PRINT;
+  SAT_TRACE;
   //if (--counter == 0) {
   //  moduleHandle = nullptr;
   //  return true;
@@ -68,5 +64,3 @@ bool vst3_module_exit(void) {
 
 //----------------------------------------------------------------------
 #endif
-
-#endif // 0
