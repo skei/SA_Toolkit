@@ -505,12 +505,17 @@ public: // editor
 
   //----------
 
+  // called by on_editorListener_createWindow by SAT_EmbeddedEditor.create()
+  // override this to create your own window
+
   #ifndef SAT_NO_GUI
     #ifdef SAT_EDITOR_EMBEDDED
 
       virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
         return new SAT_Window(AWidth,AHeight);
       }
+
+      // called by on_editorListener_createWindow by SAT_EmbeddedEditor.destroy()
 
       virtual void deleteWindow(SAT_Window* AWindow) {
         delete AWindow;
@@ -523,11 +528,16 @@ public: // editor
 
   #ifndef SAT_NO_GUI
 
+    // called by SAT_Plugin.init()
+    // override this to create your own editor
+
     virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
       return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
     }
 
     //----------
+
+    // called by SAT_Plugin.destroy()
 
     virtual void deleteEditor(SAT_Editor* AEditor) {
       if (AEditor) delete AEditor;
@@ -535,29 +545,32 @@ public: // editor
 
     //----------
 
+    // called by SAT_Plugin.gui_create()
     // called when the editor (and its window, if embedded) has been created..
+
     virtual bool setupEditor(SAT_Editor* AEditor) {
-      //SAT_TRACE;
-      SAT_Window* window = AEditor->getWindow();
-      SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
-      window->setRootWidget(root);
-
-      // setup default editor..
-
-      for (uint32_t i=0; i<getNumParameters(); i++) {
-        double x = 10;
-        double y = (10 + (i * 35));
-        double w = 300;
-        double h = 30;
-        SAT_DragValueWidget* widget = new SAT_DragValueWidget(SAT_Rect(x,y,w,h));
-        root->appendChild(widget);
-        AEditor->connect(widget,getParameter(i));
-      }
-
+      // //SAT_TRACE;
+      // SAT_Window* window = AEditor->getWindow();
+      // // root
+      // SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+      // window->setRootWidget(root);
+      // // default editor
+      // for (uint32_t i=0; i<getNumParameters(); i++) {
+      //   double x = 10;
+      //   double y = (10 + (i * 35));
+      //   double w = 300;
+      //   double h = 30;
+      //   SAT_DragValueWidget* widget = new SAT_DragValueWidget(SAT_Rect(x,y,w,h));
+      //   root->appendChild(widget);
+      //   AEditor->connect(widget,getParameter(i));
+      // }
       return true;
     }
 
     //----------
+
+    // called by SAT_Plugin.gui_create()
+    // after setupEditor()
 
     virtual bool setupOverlay(SAT_Editor* AEditor) {
       //SAT_TRACE;
@@ -567,7 +580,9 @@ public: // editor
 
     //----------
 
-    // called just before editor is shown..
+    // called by SAT_Plugin.gui_destroy()
+    // just before editor is being destroyed
+
     virtual void cleanupEditor(SAT_Editor* AEditor) {
       //SAT_TRACE;
     }

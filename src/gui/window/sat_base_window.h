@@ -25,6 +25,10 @@ public:
 
   virtual bool setupOverlay() { return false; }
 
+//------------------------------
+public:
+//------------------------------
+
   virtual void      show() {}
   virtual void      hide() {}
 

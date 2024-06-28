@@ -25,8 +25,6 @@
 #define EDITOR_HEIGHT 295
 #define EDITOR_SCALE  3
 
-//typedef SAT_VoiceProcessor<sa_mael_voice,MAX_VOICES> sa_mael_processor;
-
 //----------------------------------------------------------------------
 //
 // descriptor
@@ -51,6 +49,10 @@ const clap_plugin_descriptor_t sa_mael_descriptor = {
 // processor
 //
 //----------------------------------------------------------------------
+
+//typedef SAT_VoiceProcessor<sa_mael_voice,MAX_VOICES> sa_mael_voice_processor;
+
+//
 
 class sa_mael_voice_processor
 : public SAT_VoiceProcessor<sa_mael_voice,MAX_VOICES> {
