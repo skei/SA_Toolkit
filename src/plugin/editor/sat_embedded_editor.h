@@ -71,13 +71,10 @@ public:
 //------------------------------
 
   void on_windowListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
-//    SAT_PRINT("%s,%i\n",AWidget->getName(),AIndex);
     SAT_Parameter* param = (SAT_Parameter*)AWidget->getParameter(AIndex);
     if (param) {
       uint32_t index = param->getIndex();
       sat_param_t value = AWidget->getValue(AIndex);
-//      SAT_PRINT("index %i value %.3f\n",index,value);
-      //value = param->denormalize(value);
       MListener->on_editorListener_update(index,value);
     }
   }
@@ -85,13 +82,11 @@ public:
   //----------
 
   // void on_windowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_PARAM) override {
-  //   SAT_TRACE;
   // }
 
   //----------
 
   void on_windowListener_timer(SAT_Timer* ATimer, double ADelta) override {
-    //SAT_TRACE;
     if (MListener) MListener->on_editorListener_timer(ATimer,ADelta);
   }
 
@@ -106,6 +101,8 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  // called by SAT_Plugin.gui_create
 
   bool setupOverlay() override {
     if (MWindow) return MWindow->setupOverlay();
@@ -168,7 +165,6 @@ public: // clap.gui
 //------------------------------
 
   bool isApiSupported(const char *api, bool is_floating) override {
-    //SAT_PRINT("api %s floating %i\n",api,is_floating);
     if (is_floating) return false;
     #if defined(SAT_GUI_WAYLAND)
       if (strcmp(api,CLAP_WINDOW_API_WAYLAND) == 0) return true;
@@ -183,7 +179,6 @@ public: // clap.gui
   //----------
 
   bool getPreferredApi(const char **api, bool *is_floating) override {
-    //SAT_PRINT("\n");
     *is_floating = false;
     #if defined(SAT_GUI_WAYLAND)
       *api = CLAP_WINDOW_API_WAYLAND;
@@ -201,7 +196,6 @@ public: // clap.gui
   //----------
 
   bool create(const char *api, bool is_floating) override {
-    //SAT_PRINT("api %s floating %i\n",api,is_floating);
     if (is_floating == true) return false;
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
@@ -214,17 +208,14 @@ public: // clap.gui
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
     #endif
-    // setupEditor(MEditor);
     return true;
   }
   
   //----------
 
   void destroy() override {
-    //SAT_PRINT("\n");
     if (MWindow) {
       MWindow->hide();
-      //hide();
       if (MListener) MListener->on_editorListener_deleteWindow(MWindow);
       else delete MWindow;
       MWindow = nullptr;
@@ -234,16 +225,12 @@ public: // clap.gui
   //----------
 
   bool setScale(double scale) override {
-    //SAT_PRINT("AScale %.3f\n",scale);
-    // MScale = scale;
-    // MScale *= scale;
     return true;
   }
 
   //----------
 
   bool getSize(uint32_t *width, uint32_t *height) override {
-    //SAT_PRINT("\n");
     *width = MWidth;
     *height = MHeight;
     return true;
@@ -252,7 +239,6 @@ public: // clap.gui
   //----------
 
   bool canResize() override {
-    //SAT_PRINT("\n");
     return MCanResize;
   }
 
@@ -270,7 +256,6 @@ public: // clap.gui
   //----------
 
   bool adjustSize(uint32_t *width, uint32_t *height) override {
-    //SAT_PRINT("*width %i, *height %i\n",*width,*height);
     return true;
   }
 
@@ -282,7 +267,6 @@ public: // clap.gui
   */
 
   bool setSize(uint32_t width, uint32_t height) override {
-    //SAT_PRINT("*width %i, *height %i\n",width,height);
     MWidth = width;
     MHeight = height;
     if (MWindow /*&& MWindowIsOpen*/) {
@@ -295,31 +279,20 @@ public: // clap.gui
   //----------
 
   bool setParent(const clap_window_t *window) override {
-    //SAT_PRINT("api %s ptr %p\n",window->api,window->ptr);
     #ifdef SAT_GUI_WIN32
       MParent = window->win32;
     #endif
     #ifdef SAT_GUI_X11
       MParent = window->x11;
     #endif
-
     if (MWindow) MWindow->reparent(MParent);
-    // do we need to resize MWindow.renderer/painter?
-    // buffer?
-
-    // MWindow = new SAT_Window(MWidth,MHeight,MParent);
-    // MWindowRenderer = new SAT_Renderer(MWindow);
-    // MWindowPainter = new SAT_Painter(MWindow);
-    // setupEditorWindow(MEditor,window);
-    // setEditorParameterValues();
-
+    // do we need to resize MWindow.renderer/painter? buffer?
     return true;
   }
 
   //----------
 
   bool setTransient(const clap_window_t *window) override {
-    //SAT_PRINT("\n");
     #ifdef SAT_GUI_WIN32
       MTransient = window->win32;
     #endif
@@ -332,7 +305,6 @@ public: // clap.gui
   //----------
 
   void suggestTitle(const char *title) override {
-    //SAT_PRINT("title: %s\n",title);
     MTitle = title;
     if (MWindow) MWindow->setTitle(title);
   }
@@ -340,7 +312,6 @@ public: // clap.gui
   //----------
 
   bool show() override {
-    //SAT_PRINT("\n");
     if (MWindow) {
       MWindow->on_window_show();
       MWindow->show();
@@ -352,7 +323,6 @@ public: // clap.gui
   //----------
 
   bool hide() override {
-    //SAT_PRINT("\n");
     if (MWindow) {
       MWindow->on_window_hide();
       MWindow->hide();

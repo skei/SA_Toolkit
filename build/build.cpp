@@ -17,21 +17,24 @@
 //----------------------------------------------------------------------
 
 
-//#include "../plugins/template.h"
-
-
-////#include "../plugins/sa_automata.h"
-////#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_bulum.h"
-////#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_ports.h"
+
+//#include "../plugins/sa_automata.h"
+//#include "../plugins/sa_botage.h"
+//#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_tyr.h"
 
 
-//------------------------------
+//#include "../plugins/template.h"
+
+
+//----------------------------------------------------------------------
+//
 // ports
-//------------------------------
+//
+//----------------------------------------------------------------------
 
 
 //#include "../plugins/ports/sa_compciter.h"
@@ -67,7 +70,7 @@
 
 //#include "../plugins/test/exe1.h"
 //#include "../plugins/test/plugin_gui1.h"
-//#include "../plugins/test/plugin_gui2.h"
+#include "../plugins/test/plugin_gui2.h"
 //#include "../plugins/test/test_voices.h"
 
 

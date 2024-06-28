@@ -118,7 +118,6 @@ public:
   virtual const char*       getHint()                     { return MHint; }
   virtual uint32_t          getIndex()                    { return MIndex; }
   virtual SAT_Rect          getInitialRect()              { return MInitialRect; }
-//virtual SAT_Point         getLayoutOffset()             { return MLayoutOffset; }
   virtual double            getModulation()               { return MModulation; }
   virtual const char*       getName()                     { return MName; }
   virtual SAT_WidgetOwner*  getOwner()                    { return MOwner; }
@@ -128,7 +127,6 @@ public:
   virtual SAT_Widget*       getParent()                   { return MParent; }
   virtual SAT_Rect          getRect()                     { return MRect; }
   virtual double            getValue(uint32_t AIndex)     { return MValues[AIndex]; }
-//virtual double            getValue()                    { return MValues[MValueIndex]; }
   virtual double            getValue()                    { return getValue(MValueIndex); }
   virtual uint32_t          getValueIndex()               { return MValueIndex; }
 
@@ -170,7 +168,6 @@ public:
   virtual void setSize(SAT_Point ASize)                         { MRect.w = ASize.x; MRect.h = ASize.y; }
   virtual void setValue(double AValue, uint32_t AIndex)         { MValues[AIndex] = AValue; }
   virtual void setValue(double AValue)                          { setValue(AValue,MValueIndex); }
-//virtual void setValue(double AValue)                          { MValues[MValueIndex] = AValue; }
   virtual void setValueIndex(uint32_t AIndex)                   { MValueIndex = AIndex; }
 
   virtual void setSize(double AWidth, double AHeight) {
@@ -221,11 +218,7 @@ public:
   virtual void setRectAndBase(SAT_Rect ARect) {
     SAT_Rect rect = ARect;
     setRect(ARect);
-    //rect.x -= MLayoutOffset.x;
-    //rect.y -= MLayoutOffset.y;
     double scale = getWindowScale();
-    //rect.x -= (MLayoutOffset.x * scale);
-    //rect.y -= (MLayoutOffset.y * scale);
     rect.scale(1.0 / scale);
     setBaseRect(rect);
   }
@@ -340,10 +333,6 @@ public: // owner window
     if (MOwner) {
       scale = MOwner->on_widgetOwner_getScale();
     }
-    else {
-      //SAT_PRINT("no owner\n");
-      //SAT_GLOBAL.DEBUG.CALL_STACK.print();
-    }
     return scale;
   }
 
@@ -394,10 +383,8 @@ public:
     for (uint32_t i=0; i<num; i++) {
       SAT_Widget* child = MChildren[i];
       if (child->State.visible) {
-        //child->setChildrenOffset(AOffsetX,AOffsetY);
         child->MRect.x += AOffsetX;
         child->MRect.y += AOffsetY;
-        // child->addLayoutOffset(AOffsetX,AOffsetY);
         child->scrollChildren(AOffsetX,AOffsetY);
       }
     }
@@ -407,19 +394,14 @@ public:
   // note: doesn't paint itself..
 
   virtual void paintChildren(SAT_PaintContext* AContext) {
-    //SAT_PRINT("\n");
     SAT_Rect mrect = getRect();
     SAT_Painter* painter= AContext->painter;
     uint32_t numchildren = MChildren.size();
     if (numchildren > 0) {
-
       SAT_Rect clip_rect = mrect;
       if (Options.autoClipChildren) painter->pushOverlappingClip(clip_rect);
-
-      //for (int32_t i=(numchildren-1); i>=0; i--) {
       for (uint32_t i=0; i<numchildren; i++) {
         SAT_Widget* widget = MChildren[i];
-        //if (widget->State.visible) {
         if (widget->isRecursivelyVisible()) {
           SAT_Rect widgetrect = widget->getRect();
           widgetrect.overlap(mrect);
@@ -428,16 +410,13 @@ public:
           }
         }
       }
-
       if (Options.autoClipChildren) painter->popClip();
-
     }
   }
 
   //----------
 
   virtual void realignChildren(bool ARecursive=true) {
-    //SAT_PRINT("%s\n",getName());
 
     double scale = getWindowScale();
 
@@ -463,7 +442,6 @@ public:
 
       bool need_realign = child->State.visible || child->Options.realignInvisible;
       if (need_realign) {
-        // child_rect = child->on_widget_preAlign(child_rect);
 
         if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
           child_rect = SAT_Rect(mrect.w,mrect.h,mrect.w,mrect.h);
@@ -544,10 +522,8 @@ public:
   virtual void handleTweening(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
     switch(AType) {
       case SAT_TWEEN_FINISHED:
-        //SAT_PRINT("AId %i AType SAT_TWEEN_FINISHED\n",AId,AType);
         break;
       case SAT_TWEEN_VALUE:
-        //SAT_PRINT("AId %i AType SAT_TWEEN_VALUE ACount %i : AData[0] %.3f \n",AId,AType,ACount,AData[0]);
         break;
       case SAT_TWEEN_RECT:
         SAT_Rect tween = SAT_Rect(AData[0],AData[1],AData[2],AData[3]);
@@ -555,7 +531,6 @@ public:
         MPrevTween = tween;
         tween.sub(prev);
         MManualTween.add(tween);
-        //SAT_PRINT("MManualTween %.2f,%.2f, %.2f,%.2f\n",MManualTween.x,MManualTween.y,MManualTween.w,MManualTween.h);
         if (MParent) {
           MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
         }
@@ -747,7 +722,6 @@ public:
   void do_widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
     if (MParent) MParent->do_widget_set_overlay(AWidget,AColor);
   }
-
   
 };
 
