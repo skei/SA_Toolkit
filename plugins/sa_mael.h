@@ -4,7 +4,6 @@
 
 #include "sat.h"
 #include "audio/sat_audio_math.h"
-//#include "audio/sat_audio_utils.h"
 #include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_voice_processor.h"
@@ -19,18 +18,12 @@
 #include "sa_mael/sa_mael_parameters.h"
 #include "sa_mael/sa_mael_voice.h"
 
-#if !defined (SAT_GUI_NOGUI)
-  //#include "sa_mael/sa_mael_editor.h"
-  //#include "sa_mael/sa_mael_widgets.h"
-#endif
-
 //----------------------------------------------------------------------
 
-//#define PLUGIN_NAME   "sa_mael"
 #define MAX_VOICES    64
 #define EDITOR_WIDTH  430
 #define EDITOR_HEIGHT 295
-#define EDITOR_SCALE  2
+#define EDITOR_SCALE  3
 
 //typedef SAT_VoiceProcessor<sa_mael_voice,MAX_VOICES> sa_mael_processor;
 
@@ -77,18 +70,22 @@ public:
     SAT_TRACE;
   }
 
-  void process(SAT_ProcessContext* AContext) override {
-    const clap_process_t* process = AContext->process;
-    float** output = process->audio_outputs[0].data32;
-    uint32_t length = process->frames_count;
+//------------------------------
+public:
+//------------------------------
 
-    SAT_VoiceProcessor::process(AContext);
+  void process(SAT_ProcessContext* AContext) override {
 
     // SAT_ClearStereoBuffer(output,length);
     // processEvents(process->in_events,process->out_events);
     // processAudio(AContext);
     // mixActiveVoices(output,length);
 
+    SAT_VoiceProcessor::process(AContext);
+
+    const clap_process_t* process = AContext->process;
+    float** output = process->audio_outputs[0].data32;
+    uint32_t length = process->frames_count;
     sat_param_t gain = AContext->parameters->getItem(SA_MAEL_PARAM_GAIN)->getValue();
     SAT_ScaleStereoBuffer(output,gain,length);
   }
@@ -121,7 +118,6 @@ public:
   //----------
 
   virtual ~sa_mael_plugin() {
-    SAT_PRINT("MProcessor %p\n",MProcessor); // never printed...
     //if (MProcessor) delete MProcessor;
   }
 
@@ -130,18 +126,19 @@ public:
 //------------------------------
 
   bool init() final {
+
     registerSynthExtensions();
     registerExtension(CLAP_EXT_PARAM_INDICATION);
-    //registerExtension(CLAP_EXT_PRESET_LOAD);
+    registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_TRACK_INFO);
+
     appendClapNoteInputPort("In");
     appendStereoAudioOutputPort("Out");
-    // uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;
-    // appendParameter(new SAT_Parameter( "Gain",   "", 1, 0,1, flags ));
 
     MProcessor = new sa_mael_voice_processor(this);
     setProcessor(MProcessor);
+
     MProcessor->init(getClapPlugin(),getClapHost());
     MProcessor->setProcessThreaded(true);
     MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
@@ -151,6 +148,7 @@ public:
     #if !defined (SAT_GUI_NOGUI)
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
+
     return SAT_Plugin::init();
   }
   
@@ -208,15 +206,15 @@ public:
   
   //----------
 
-  // bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
-  //   if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
-  //     loadPresetFromFile(location,load_key);
-  //     SAT_Host* host = getHost();
-  //     if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
+    if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
+      loadPresetFromFile(location,load_key);
+      SAT_Host* host = getHost();
+      if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
+      return true;
+    }
+    return false;
+  }
 
   //----------
 
@@ -224,9 +222,19 @@ public:
     #include "sa_mael/sa_mael_editor.h"
   #endif
 
+  //----------
+
+  void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+    SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
+    for (uint32_t i=0; i<MAX_VOICES; i++) {
+      uint32_t state = MProcessor->getVoiceState(i);
+      voices->setVoiceState(i,state);
+    }
+    voices->do_widget_redraw(voices);
+  }  
+
 };
 
-//#undef PLUGIN_NAME
 #undef MAX_VOICES
 #undef EDITOR_WIDTH
 #undef EDITOR_HEIGHT

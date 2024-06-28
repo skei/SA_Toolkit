@@ -280,25 +280,25 @@ public:
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
 
-        sat_param_t osc1_squ    = SAT_Clamp( (p_osc1_squ   + m_osc1_squ),    0, 1 );
-        sat_param_t osc1_tri    = SAT_Clamp( (p_osc1_tri   + m_osc1_tri),    0, 1 );
-        sat_param_t osc1_sin    = SAT_Clamp( (p_osc1_sin   + m_osc1_sin),    0, 1 );
-        sat_param_t osc1_width  = SAT_Clamp( (p_osc1_width + m_osc1_width), -1, 1 );
-        sat_param_t osc1_oct    = SAT_Clamp( (p_osc1_oct  + m_osc1_oct),  -4,  4  );
-        sat_param_t osc1_semi   = SAT_Clamp( (p_osc1_semi + m_osc1_semi), -12, 12 );
-        sat_param_t osc1_cent   = SAT_Clamp( (p_osc1_cent + m_osc1_cent), -1,  1  );
+        sat_param_t osc1_squ    = SAT_Clamp( (p_osc1_squ   + m_osc1_squ),    0,  1  );
+        sat_param_t osc1_tri    = SAT_Clamp( (p_osc1_tri   + m_osc1_tri),    0,  1  );
+        sat_param_t osc1_sin    = SAT_Clamp( (p_osc1_sin   + m_osc1_sin),    0,  1  );
+        sat_param_t osc1_width  = SAT_Clamp( (p_osc1_width + m_osc1_width), -1,  1  );
+        sat_param_t osc1_oct    = SAT_Clamp( (p_osc1_oct   + m_osc1_oct),   -4,  4  );
+        sat_param_t osc1_semi   = SAT_Clamp( (p_osc1_semi  + m_osc1_semi),  -12, 12 );
+        sat_param_t osc1_cent   = SAT_Clamp( (p_osc1_cent  + m_osc1_cent),  -1,  1  );
 
-        sat_param_t osc2_squ    = SAT_Clamp( (p_osc2_squ   + m_osc1_squ),    0, 1 );
-        sat_param_t osc2_tri    = SAT_Clamp( (p_osc2_tri   + m_osc1_tri),    0, 1 );
-        sat_param_t osc2_sin    = SAT_Clamp( (p_osc2_sin   + m_osc1_sin),    0, 1 );
-        sat_param_t osc2_width  = SAT_Clamp( (p_osc2_width + m_osc1_width), -1, 1 );
-        sat_param_t osc2_oct    = SAT_Clamp( (p_osc2_oct  + m_osc2_oct),  -4,  4  );
-        sat_param_t osc2_semi   = SAT_Clamp( (p_osc2_semi + m_osc2_semi), -12, 12 );
-        sat_param_t osc2_cent   = SAT_Clamp( (p_osc2_cent + m_osc2_cent), -1,  1  );
+        sat_param_t osc2_squ    = SAT_Clamp( (p_osc2_squ   + m_osc1_squ),    0,  1  );
+        sat_param_t osc2_tri    = SAT_Clamp( (p_osc2_tri   + m_osc1_tri),    0,  1  );
+        sat_param_t osc2_sin    = SAT_Clamp( (p_osc2_sin   + m_osc1_sin),    0,  1  );
+        sat_param_t osc2_width  = SAT_Clamp( (p_osc2_width + m_osc1_width), -1,  1  );
+        sat_param_t osc2_oct    = SAT_Clamp( (p_osc2_oct   + m_osc2_oct),   -4,  4  );
+        sat_param_t osc2_semi   = SAT_Clamp( (p_osc2_semi  + m_osc2_semi),  -12, 12 );
+        sat_param_t osc2_cent   = SAT_Clamp( (p_osc2_cent  + m_osc2_cent),  -1,  1  );
 
-        sat_param_t mix_amount  = SAT_Clamp( (p_mix_amount + m_mix_amount),  0, 1 );
-        sat_param_t flt1_freq   = SAT_Clamp( (p_flt1_freq  + m_flt1_freq),   0, 1 );
-        sat_param_t flt1_q      = SAT_Clamp( (p_flt1_q     + m_flt1_q),      0, 1 );
+        sat_param_t mix_amount  = SAT_Clamp( (p_mix_amount + m_mix_amount),  0,  1  );
+        sat_param_t flt1_freq   = SAT_Clamp( (p_flt1_freq  + m_flt1_freq),   0,  1  );
+        sat_param_t flt1_q      = SAT_Clamp( (p_flt1_q     + m_flt1_q),      0,  1  );
 
         //MOscillator1.setMorph(osc1_shape);
         //MOscillator2.setMorph(osc2_shape);
@@ -386,7 +386,9 @@ public:
         // osc2_semi = SAT_Trunc(osc2_semi);
         sat_param_t tuning2 = (osc2_oct * 12.0) + osc2_semi + osc2_cent;
         tuning2 += e_tuning;
+
         tuning2 += fm2;
+        
         sat_param_t hz2 = SAT_NoteToHz(MKey + tuning2);
         MOscillator2.setFrequency(hz2);
         //MPhaseAdd2 = 1.0 / SAT_HzToSamples(hz2,MSampleRate);

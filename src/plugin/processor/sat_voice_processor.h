@@ -232,6 +232,7 @@ public:
     processAudio(AContext);
     mixActiveVoices(output,length);
   }
+
 //------------------------------
 public:
 //------------------------------
@@ -327,10 +328,8 @@ public:
     SAT_PRINT("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
       //#ifdef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
-      //{
-      //#else
-      //if (isActive(voice)) {
       //#endif
+      //if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
           MVoices[voice].events.write(ve);
@@ -347,10 +346,8 @@ public:
     //SAT_PRINT("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
     for (int32_t voice=0; voice<COUNT; voice++) {
       //#ifdef SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
-      //{
-      //#else
-      //if (isActive(voice)) {
       //#endif
+      //if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
           MVoices[voice].events.write(ve);

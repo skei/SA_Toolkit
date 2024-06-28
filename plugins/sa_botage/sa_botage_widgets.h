@@ -12,23 +12,23 @@
 //----------------------------------------------------------------------
 
 class sa_botage_header_widget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 public:
 
   sa_botage_header_widget(SAT_Rect ARect)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     setName("sa_botage_header_widget");
     setFillBackground(true);
     setBackgroundColor(SAT_Color(0.1));
     setDrawBorder(false);
     SAT_LogoWidget* logo = new SAT_LogoWidget(SAT_Rect(10,10,40,40));
-    appendChildWidget(logo);
+    appendChild(logo);
     logo->setLogoColor(SAT_White);
   }
   
   void on_widget_paint(SAT_PaintContext* AContext) override {
-    SAT_PanelWidget::on_widget_paint(AContext);
+    SAT_VisualWidget::on_widget_paint(AContext);
     SAT_Painter* painter= AContext->painter;
     SAT_Rect mrect = getRect();
     double S = getWindowScale();
@@ -54,12 +54,12 @@ public:
 //----------------------------------------------------------------------
 
 class sa_botage_footer_widget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 public:
 
   sa_botage_footer_widget(SAT_Rect ARect)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     setName("sa_botage_footer_widget");
     setFillBackground(true);
     setBackgroundColor(SAT_Color(0.1));
@@ -75,12 +75,12 @@ public:
 //----------------------------------------------------------------------
 
 class sa_botage_main_panel_widget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 public:
 
   sa_botage_main_panel_widget(SAT_Rect ARect)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     setName("sa_botage_main_panel_widget");
     setFillBackground(true);
     setBackgroundColor(SAT_Color(0.15));
@@ -105,7 +105,7 @@ public:
     setName("sa_botage_group_widget");
     SAT_ButtonWidget* titlebar  = getTitleBar();
     SAT_SymbolWidget* symbol    = getSymbol();
-    SAT_PanelWidget*  container = getContainer();
+    SAT_VisualWidget*  container = getContainer();
     setClosable(false);
     symbol->setVisible(false);
     titlebar->setFillBackground(true);
@@ -178,12 +178,12 @@ public:
 // small
 
 class sa_botage_text1_widget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 public:
 
   sa_botage_text1_widget(SAT_Rect ARect, const char* AText)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     setText(AText);
     setFillBackground(false);
     //setBackgroundColor(0.18);
@@ -200,12 +200,12 @@ public:
 // medium
 
 class sa_botage_text2_widget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 public:
 
   sa_botage_text2_widget(SAT_Rect ARect, const char* AText)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     setText(AText);
     setFillBackground(false);
     //setBackgroundColor(0.18);
@@ -222,12 +222,12 @@ public:
 // large
 
 class sa_botage_text3_widget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 public:
 
   sa_botage_text3_widget(SAT_Rect ARect, const char* AText)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     setText(AText);
     setFillBackground(false);
     //setBackgroundColor(0.18);

@@ -68,8 +68,8 @@ private:
   SAT_PluginQueues        MQueues               = {};
 
   SAT_Editor*             MEditor               = nullptr;
-  uint32_t                MInitialEditorWidth   = 256;
-  uint32_t                MInitialEditorHeight  = 256;
+  uint32_t                MInitialEditorWidth   = 400;
+  uint32_t                MInitialEditorHeight  = 300;
   double                  MInitialEditorScale   = 1.0;
   bool                    MProportionalEditor   = false;
   
@@ -103,6 +103,14 @@ public:
       deleteParameters();
     #endif
     //if (MHost) delete MHost; // -> .destroy()
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_Host* getHost() {
+    return MHost;
   }
 
 //------------------------------
@@ -358,6 +366,12 @@ public: // parameters
 
   SAT_Parameter* getParameter(uint32_t AIndex) {
     return MParameters[AIndex];;
+  }
+
+  //----------
+
+  SAT_ParameterArray* getParameters() {
+    return &MParameters;
   }
 
   //----------

@@ -205,11 +205,11 @@ public: // clap.gui
     if (is_floating == true) return false;
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
-      // ask plugin to create window
-      // if not, create it ourselves
+      // ask plugin to create window.. if not, create it ourselves
       if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
       else MWindow = new SAT_Window(MWidth,MHeight);
       MWindow->setListener(this);
+
     #endif
     #ifdef SAT_WIN32
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;

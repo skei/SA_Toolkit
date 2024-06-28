@@ -35,7 +35,7 @@ public:
     MStates = AStateBuffer;
     //setSelectCell(true);
     //setSelectMultipleCells(true);
-    setDragCell(true);
+    setCanDragCell(true);
 
   }
 
@@ -169,7 +169,7 @@ private:
 public:
 
   sa_automata_root_widget(SAT_WidgetListener* AListener=nullptr)
-  : SAT_RootWidget(AListener) {
+  : SAT_RootWidget(AListener,0) {
   }
 
   virtual ~sa_automata_root_widget() {
