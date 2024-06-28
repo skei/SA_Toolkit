@@ -1,0 +1,60 @@
+
+----------------------------------------------------------------------
+BASE
+----------------------------------------------------------------------
+
+* SAT_GLOBAL
+
+  move system specific global stuff ingo SAT_GLOBAL
+    SAT_GLOBAL.WIN32 - dllmain module hinstance, register window class
+    SAT_GLOBAL.LINUX - xinitthreads
+
+* un-virtualize many of the set/get methods?
+
+----------------------------------------------------------------------
+GUI
+----------------------------------------------------------------------
+
+* double clicking
+
+* window buffering
+
+  SAT_BufferedWindow
+
+* editor state
+
+  saveEditorState()
+  restoreEditorState()
+
+* editor initial scale
+
+  take initial scale into account when opening the editor for the first time
+
+* x11 fonts
+
+  xft, xrender?
+
+----------------------------------------------------------------------
+GUI : widgets
+----------------------------------------------------------------------
+
+* should each widget has its own scale?
+
+  scales all child widgets during alignment
+  during painting it could just multiply this with window scale
+
+* size/pos limits for size/move-able widgets
+
+* SAT_CachedWidget (draw image once to buffer, then copy, until set to dirty, then redraw)
+- SAT_MipmapImage (at runtime, find closest in size, from multiple images, and draw/scale that one)
+* SAT_ImageStripWidget (knobs, etc), todo: mipmaps..
+* SAT_ShaderWidget (glsl shader)
+* SAT_LayoutWidget (sets layout flags when appending child widgets)
+
+----------------------------------------------------------------------
+PLUGIN
+----------------------------------------------------------------------
+
+* parameter smoothing
+
+  automation, (poly) modulation, note expressions

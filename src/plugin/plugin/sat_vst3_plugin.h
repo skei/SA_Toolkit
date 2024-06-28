@@ -1,7 +1,3 @@
-
-
-#if 0
-
 #ifndef sat_vst3_plugin_included
 #define sat_vst3_plugin_included
 //----------------------------------------------------------------------
@@ -9,12 +5,18 @@
 // clap-as-vst3
 // this is a mess.. work in progress..
 
+#define SAT_PLUGIN_MAX_EVENT_SIZE     256
+#define SAT_PLUGIN_MAX_PARAMETERS     256
+#define SAT_PLUGIN_VST3_MAX_NOTE_IDS  32
+#define SAT_PLUGIN_VST3_TIMER_MS      20
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/vst3/sat_vst3.h"
-#include "plugin/vst3/sat_vst3_utils.h"
+#include "base/system/sat_timer.h"
+#include "plugin/lib/sat_clap.h"
+#include "plugin/lib/sat_vst3.h"
+#include "plugin/lib/sat_vst3_utils.h"
+#include "plugin/plugin/sat_clap_plugin.h"
 
 //----------------------------------------------------------------------
 
@@ -45,13 +47,16 @@ class SAT_Vst3Plugin
 , public IEditController
 , public IEditController2
 , public IPlugView
+, public SAT_TimerListener
+
 #ifdef SAT_LINUX
 , public ITimerHandler
 #endif
+
 #ifdef SAT_WIN32
-, public SAT_TimerListener
 #endif
-/*, public SAT_WindowListener*/ {
+
+/*, public SAT_WindowListener*/  {
 
 //------------------------------
 private:
@@ -74,7 +79,6 @@ private:
     SAT_Timer*                    MTimer              = nullptr;
   #endif
   
-
   uint32_t                        MIoMode             = 0;
   char                            MHostName[129]      = {0};
   bool                            MIsProcessing       = false;
@@ -102,7 +106,7 @@ public:
 //------------------------------
 
   SAT_Vst3Plugin(SAT_ClapPlugin* APlugin) {
-    SAT_PRINT;
+    SAT_TRACE;
     MPlugin     = APlugin;
     MDescriptor = MPlugin->getClapDescriptor();
     MRefCount   = 1;
@@ -112,7 +116,7 @@ public:
   //----------
 
   virtual ~SAT_Vst3Plugin() {
-    SAT_PRINT;
+    SAT_TRACE;
     if (MPlugin) delete MPlugin;
     if (MParamInfos) free(MParamInfos);
   }
@@ -128,7 +132,7 @@ private: // in_events
   //----------
 
   const clap_event_header_t* vst3_input_events_get(uint32_t index) {
-    SAT_Print("index %i\n",index);
+    SAT_PRINT("index %i\n",index);
     uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * index;
     return (const clap_event_header_t*)&MEvents[pos];
   }
@@ -164,47 +168,47 @@ private: // out_events
       switch (event->type) {
         
         case CLAP_EVENT_NOTE_ON:
-          SAT_Print("TODO: send NOTE_ON to host\n");
+          SAT_PRINT("TODO: send NOTE_ON to host\n");
           return true;
           
         case CLAP_EVENT_NOTE_OFF:
-          SAT_Print("TODO: send NOTE_OFF to host\n");
+          SAT_PRINT("TODO: send NOTE_OFF to host\n");
           return true;
           
         case CLAP_EVENT_NOTE_CHOKE:
-          SAT_Print("TODO: send NOTE_CHOKE to host\n");
+          SAT_PRINT("TODO: send NOTE_CHOKE to host\n");
           return true;
           
         case CLAP_EVENT_NOTE_END: {
-          SAT_Print("TODO: send NOTE_END to host\n");
+          SAT_PRINT("TODO: send NOTE_END to host\n");
           return true;
         }
           
         case CLAP_EVENT_NOTE_EXPRESSION:
-          SAT_Print("TODO: send NOTE_EXPRESSION to host\n");
+          SAT_PRINT("TODO: send NOTE_EXPRESSION to host\n");
           return true;
           
         case CLAP_EVENT_PARAM_GESTURE_BEGIN: {
-          SAT_Print("TODO: send PARAM_GESTURE_BEGIN to host\n");
+          SAT_PRINT("TODO: send PARAM_GESTURE_BEGIN to host\n");
           return true;
         }
           
         case CLAP_EVENT_PARAM_GESTURE_END: {
-          SAT_Print("TODO: send PARAM_GESTURE_END to host\n");
+          SAT_PRINT("TODO: send PARAM_GESTURE_END to host\n");
           return true;
         }
 
         case CLAP_EVENT_PARAM_VALUE: {
-          SAT_Print("queueing PARAM_VALUE (to host)\n");
+          SAT_PRINT("queueing PARAM_VALUE (to host)\n");
           clap_event_param_value_t* param_value = (clap_event_param_value_t*)event;
           uint32_t index = param_value->param_id;
           double value = param_value->value;
           clap_param_info_t info;
-          //SAT_Print("\n");
-          //SAT_Print("index %i\n",index);
-          //SAT_Print("&info %p\n",&info);
-          //SAT_Print("MPlugin %p\n",MPlugin);
-          //SAT_Print("\n");
+          //SAT_PRINT("\n");
+          //SAT_PRINT("index %i\n",index);
+          //SAT_PRINT("&info %p\n",&info);
+          //SAT_PRINT("MPlugin %p\n",MPlugin);
+          //SAT_PRINT("\n");
           
           MPlugin->params_get_info(index,&info);
           
@@ -218,23 +222,23 @@ private: // out_events
         }
 
         case CLAP_EVENT_PARAM_MOD:
-          SAT_Print("TODO: send PARAM_MOD to host\n");
+          SAT_PRINT("TODO: send PARAM_MOD to host\n");
           return true;
           
         case CLAP_EVENT_TRANSPORT:
-          SAT_Print("TODO: send TRANSPORT to host\n");
+          SAT_PRINT("TODO: send TRANSPORT to host\n");
           return true;
           
         case CLAP_EVENT_MIDI:
-          SAT_Print("TODO: send MIDI to host\n");
+          SAT_PRINT("TODO: send MIDI to host\n");
           return true;
           
         case CLAP_EVENT_MIDI_SYSEX:
-          SAT_Print("TODO: send MIDI_SYSEX to host\n");
+          SAT_PRINT("TODO: send MIDI_SYSEX to host\n");
           return true;
           
         case CLAP_EVENT_MIDI2:
-          SAT_Print("TODO: send MIDI2 to host\n");
+          SAT_PRINT("TODO: send MIDI2 to host\n");
           return true;
           
       } // switch
@@ -252,7 +256,7 @@ private: // out_events
   //----------
 
   static bool vst3_output_events_try_push_callback(const struct clap_output_events *list, const clap_event_header_t *event) {
-    SAT_PRINT;
+    SAT_TRACE;
     SAT_Vst3Plugin* plugin = (SAT_Vst3Plugin*)list->ctx;
     return plugin->vst3_output_events_try_push(event);
   }
@@ -273,7 +277,7 @@ private:
       uint32_t index;
       while (MHostParamQueue.read(&index)) {
         double value = MQueuedHostParamValues[index];
-        //SAT_Print("flush! %i = %.3f\n",index,value);
+        //SAT_PRINT("flush! %i = %.3f\n",index,value);
         //if (MComponentHandler2) MComponentHandler2->startGroupEdit();
         MComponentHandler->beginEdit(index);          // click
         MComponentHandler->performEdit(index,value);  // drag
@@ -319,7 +323,7 @@ private:
                 param_value_event->channel         = 0; // -1?
                 param_value_event->key             = 0; // -1?
                 param_value_event->value           = value;
-                //SAT_Print("param_value: %i = %.3f\n",paramQueue->getParameterId(),value);
+                //SAT_PRINT("param_value: %i = %.3f\n",paramQueue->getParameterId(),value);
               }
             } // id < param
           } // paramqueue
@@ -580,7 +584,7 @@ private:
   */
 
   void setupParameterInfo() {
-    SAT_PRINT;
+    SAT_TRACE;
     if (!MParamInfos) {
       uint32_t num = MPlugin->params_count();
       MParamInfos = (ParameterInfo*)malloc( num * sizeof(ParameterInfo) );
@@ -615,7 +619,7 @@ public: // FUnknown
   */
 
   uint32 PLUGIN_API addRef() override {
-    //SAT_PRINT;
+    //SAT_TRACE;
     MRefCount++;
     return MRefCount;
   }
@@ -629,10 +633,10 @@ public: // FUnknown
   */
 
   uint32 PLUGIN_API release() override {
-    //SAT_PRINT;
+    //SAT_TRACE;
     uint32_t r = --MRefCount;
     if (r == 0) {
-      SAT_Print("deleting\n");
+      SAT_PRINT("deleting\n");
       delete this;
     };
     return r;
@@ -658,9 +662,9 @@ public: // FUnknown
 
   tresult PLUGIN_API queryInterface(const TUID _iid, void** obj) override {
     
-    SAT_Print("_iid ");
+    SAT_PRINT("_iid ");
     VST3_PrintIID(_iid);
-    SAT_DPrint("\n");
+    SAT_DPRINT("\n");
     
     *obj = nullptr;
     if ( FUnknownPrivate::iidEqual(IAudioProcessor_iid,_iid) ) {
@@ -750,7 +754,7 @@ public: // IPluginBase
   */
 
   tresult PLUGIN_API initialize(FUnknown* context) override {
-    SAT_PRINT;
+    SAT_TRACE;
     MHostApp = (IHostApplication*)context;
     //context->queryInterface(IHostApplication_iid, (void**)&MHostApp);
     if (MHostApp) {
@@ -773,7 +777,7 @@ public: // IPluginBase
   */
 
   tresult PLUGIN_API terminate() override {
-    SAT_PRINT;
+    SAT_TRACE;
     //MPlugin->on_plugin_deinit();
     return kResultOk;
   }
@@ -796,9 +800,9 @@ public: // IComponent
 
   tresult PLUGIN_API getControllerClassId(TUID classId) override {
     
-    SAT_Print("classId ");
+    SAT_PRINT("classId ");
     VST3_PrintIID(classId);
-    SAT_DPrint("\n");
+    SAT_DPRINT("\n");
     
     getEditorId(MDescriptor);
     memcpy(classId,MEditorId,16);
@@ -813,7 +817,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API setIoMode(IoMode mode) override {
-    SAT_Print("mode %i\n",mode);
+    SAT_PRINT("mode %i\n",mode);
     //switch (mode) {
     //  case kSimple:             VST3_Trace("(kSimple)\n"); break;
     //  case kAdvanced:           VST3_Trace("(kAdvanced)\n"); break;
@@ -842,7 +846,7 @@ public: // IComponent
   */
 
   int32 PLUGIN_API getBusCount(MediaType type, BusDirection dir) override {
-    SAT_Print("type %i dir %i\n",type,dir);
+    SAT_PRINT("type %i dir %i\n",type,dir);
     if (type == kAudio) {
       //if (dir == kInput) return MDescriptor->getNumAudioInputs();
       //else if (dir == kOutput) return MDescriptor->getNumAudioOutputs();
@@ -879,7 +883,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API getBusInfo(MediaType type, BusDirection dir, int32 index, BusInfo& bus) override {
-    SAT_Print("type %i dir %i index %i\n",type,dir,index);
+    SAT_PRINT("type %i dir %i index %i\n",type,dir,index);
     if (type == kAudio) {
       bus.mediaType = kAudio;
       if (dir == kInput) {
@@ -938,7 +942,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API getRoutingInfo(RoutingInfo& inInfo, RoutingInfo& outInfo) override {
-    SAT_PRINT;
+    SAT_TRACE;
     outInfo.mediaType = inInfo.mediaType; // MediaTypes::kAudio;
     outInfo.busIndex  = inInfo.busIndex;  // 0;
     outInfo.channel   = -1;
@@ -955,7 +959,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API activateBus(MediaType type, BusDirection dir, int32 index, TBool state) override {
-    SAT_Print("type %i dir %i index %i\n",type,dir,index);
+    SAT_PRINT("type %i dir %i index %i\n",type,dir,index);
     return kResultOk;
   }
 
@@ -966,7 +970,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API setActive(TBool state) override {
-    SAT_Print("state %i\n",state);
+    SAT_PRINT("state %i\n",state);
     if (state) MPlugin->activate(MSampleRate,0,MBlockSize);
     else MPlugin->deactivate();
     return kResultOk;
@@ -1045,7 +1049,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API setState(IBStream* state) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //uint32_t version = 0;
     //uint32_t mode = 0;
     //int32_t size = 0;
@@ -1092,7 +1096,7 @@ public: // IComponent
   */
 
   tresult PLUGIN_API getState(IBStream* state) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //uint32_t  version = MDescriptor->getVersion();
     //uint32_t  mode    = 0;
     //void*     ptr     = nullptr;
@@ -1135,7 +1139,7 @@ public: // IAudioProcessor
   //const SpeakerArrangement kStereo = kSpeakerL | kSpeakerR;
 
   tresult PLUGIN_API setBusArrangements(SpeakerArrangement* inputs, int32 numIns, SpeakerArrangement* outputs, int32 numOuts) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //if ((numIns == 2) && (*inputs == kStereo)) {}
     if ((numIns == 2) && (numOuts == 2)) return kResultTrue;
     return kResultFalse;
@@ -1150,7 +1154,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API getBusArrangement(BusDirection dir, int32 index, SpeakerArrangement& arr) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //if ((dir==kOutput) && (index==0)) {
     //  arr = Steinberg::Vst::kSpeakerL | Steinberg::Vst::kSpeakerR;
     //  return kResultOk;
@@ -1186,7 +1190,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API canProcessSampleSize(int32 symbolicSampleSize) override {
-    //SAT_PRINT;
+    //SAT_TRACE;
     if (symbolicSampleSize==kSample32) {
       return kResultTrue;
     }
@@ -1237,7 +1241,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API setupProcessing(ProcessSetup& setup) override {
-    SAT_PRINT;
+    SAT_TRACE;
     MProcessMode  = setup.processMode;         // kRealtime, kPrefetch, kOffline
     MSampleSize   = setup.symbolicSampleSize; // kSample32, kSample64
     MBlockSize    = setup.maxSamplesPerBlock;
@@ -1259,7 +1263,7 @@ public: // IAudioProcessor
   */
 
   tresult PLUGIN_API setProcessing(TBool state) override {
-    SAT_PRINT;
+    SAT_TRACE;
     MIsProcessing = state;
     return kResultOk;
   }
@@ -1412,7 +1416,7 @@ public: // IAudioProcessor
 
   tresult PLUGIN_API process(ProcessData& data) override {
 
-    //SAT_PRINT;
+    //SAT_TRACE;
     
     MNumEvents = 0;
     prepareEvents(data);
@@ -1479,7 +1483,7 @@ public: // IAudioProcessor
 
     //else {
     //  // flush
-    //  SAT_Print("flusah\n");
+    //  SAT_PRINT("flusah\n");
     //}
 
     // https://forum.juce.com/t/vst3-plugin-wrapper/12323/5
@@ -1558,7 +1562,7 @@ public: // INoteExpressionController
   // Returns number of supported note change types for event bus index and channel.
 
   int32 PLUGIN_API getNoteExpressionCount(int32 busIndex, int16 channel) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //if (busIndex==0) return 1;
     return 2;
   }
@@ -1568,7 +1572,7 @@ public: // INoteExpressionController
   //flags: NoteExpressionTypeInfo::kIsBipolar, kIsOneShot, kIsAbsolute, kAssociatedParameterIDValid
 
   tresult PLUGIN_API getNoteExpressionInfo(int32 busIndex, int16 channel, int32 noteExpressionIndex, NoteExpressionTypeInfo& info) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //if (busIndex==0) {
       switch(noteExpressionIndex) {
         case 0:
@@ -1605,7 +1609,7 @@ public: // INoteExpressionController
   // Gets a user readable representation of the normalized note change value.
 
   tresult PLUGIN_API getNoteExpressionStringByValue(int32 busIndex, int16 channel, NoteExpressionTypeID id, NoteExpressionValue valueNormalized, String128 string) override {
-    SAT_PRINT;
+    SAT_TRACE;
     char temp[100];
     //SAT_FloatToString(temp,valueNormalized);
     sprintf(temp,"%.3f",valueNormalized);
@@ -1618,7 +1622,7 @@ public: // INoteExpressionController
   // Converts the user readable representation to the normalized note change value.
 
   tresult PLUGIN_API getNoteExpressionValueByString(int32 busIndex, int16 channel, NoteExpressionTypeID id, const TChar* string, NoteExpressionValue& valueNormalized) override{
-    SAT_PRINT;
+    SAT_TRACE;
     char temp[129];
     VST3_Utf16ToChar(string,temp);
     //float res = SAT_StringToFloat(temp);
@@ -1646,7 +1650,7 @@ public: // IKeyswitchController
   // Returns number of supported key switches for event bus index and channel.
 
   int32 PLUGIN_API getKeyswitchCount(int32 busIndex, int16 channel) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return 0;
   }
 
@@ -1668,7 +1672,7 @@ public: // IKeyswitchController
   // Returns key switch info.
 
   tresult PLUGIN_API getKeyswitchInfo(int32 busIndex, int16 channel, int32 keySwitchIndex, KeyswitchInfo& info) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
@@ -1699,7 +1703,7 @@ public: // IConnectionPoint
   */
 
   tresult PLUGIN_API connect(IConnectionPoint* other) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //IMessage* msg;
     //msg->setMessageID("test");
     //other->notify(msg);
@@ -1711,7 +1715,7 @@ public: // IConnectionPoint
   //Disconnects a given connection point from this.
 
   tresult PLUGIN_API disconnect(IConnectionPoint* other)  override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
@@ -1730,7 +1734,7 @@ public: // IConnectionPoint
   */
 
   tresult PLUGIN_API notify(IMessage* message) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
@@ -1753,7 +1757,7 @@ public: // IUnitInfo
   // Returns the flat count of units.
 
   int32 PLUGIN_API getUnitCount() override {
-    SAT_PRINT;
+    SAT_TRACE;
     return 1;
   }
 
@@ -1771,7 +1775,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getUnitInfo(int32 unitIndex, UnitInfo& info) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (unitIndex==0) {
       info.id = kRootUnitId; //0;
       info.parentUnitId = kNoParentUnitId;
@@ -1787,7 +1791,7 @@ public: // IUnitInfo
   // Gets the count of Program List.
 
   int32 PLUGIN_API getProgramListCount() override {
-    SAT_PRINT;
+    SAT_TRACE;
     return 0; // 1
   }
 
@@ -1804,7 +1808,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getProgramListInfo(int32 listIndex, ProgramListInfo& info) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (listIndex == 0) {
       info.id = 0;
       VST3_CharToUtf16("program",info.name);
@@ -1819,7 +1823,7 @@ public: // IUnitInfo
   // Gets for a given program list ID and program index its program name.
 
   tresult PLUGIN_API getProgramName(ProgramListID listId, int32 programIndex, String128 name) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if ((listId == 0) && (programIndex == 0)) {
       VST3_CharToUtf16("program",name);
       return kResultOk;
@@ -1836,7 +1840,7 @@ public: // IUnitInfo
 
   //CString attributeId, String128 attributeValue) {
   tresult PLUGIN_API getProgramInfo(ProgramListID listId, int32 programIndex, Steinberg::Vst::CString attributeId, String128 attributeValue) override {
-    SAT_PRINT;
+    SAT_TRACE;
     ////attributeId = "";
     //if ((listId == 0) && (programIndex == 0) /* attributeId */) {
     //  char_to_utf16("",attributeValue);
@@ -1850,7 +1854,7 @@ public: // IUnitInfo
   // Returns kResultTrue if the given program index of a given program list ID supports PitchNames.
 
   tresult PLUGIN_API hasProgramPitchNames(ProgramListID listId, int32 programIndex) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
@@ -1863,7 +1867,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getProgramPitchName(ProgramListID listId, int32 programIndex, int16 midiPitch, String128 name) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //char_to_utf16("pitch",name);
     return kResultFalse;
   }
@@ -1873,7 +1877,7 @@ public: // IUnitInfo
   // Gets the current selected unit.
 
   UnitID PLUGIN_API getSelectedUnit() override {
-    //SAT_PRINT;
+    //SAT_TRACE;
     return 0;
   }
 
@@ -1882,7 +1886,7 @@ public: // IUnitInfo
   // Sets a new selected unit.
 
   tresult PLUGIN_API selectUnit(UnitID unitId) override {
-    //SAT_PRINT;
+    //SAT_TRACE;
     return kResultOk;
   }
 
@@ -1896,7 +1900,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API getUnitByBus(MediaType type, BusDirection dir, int32 busIndex, int32 channel, UnitID& unitId) override {
-    SAT_PRINT;
+    SAT_TRACE;
     unitId = 0;
     return kResultOk;//False;
   }
@@ -1912,7 +1916,7 @@ public: // IUnitInfo
   */
 
   tresult PLUGIN_API setUnitProgramData(int32 listOrUnitId, int32 programIndex, IBStream* data) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
@@ -1935,7 +1939,7 @@ public: // IEditController
   */
 
   tresult PLUGIN_API setComponentState(IBStream* state) override {
-    SAT_PRINT;
+    SAT_TRACE;
     /*
     // we receive the current state of the component (processor part)
     if (state == nullptr) return kResultFalse;
@@ -1981,7 +1985,7 @@ public: // IEditController
 
   //tresult PLUGIN_API setState(IBStream* state) {
   tresult PLUGIN_API setEditorState(IBStream* state) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultOk;
   }
 
@@ -1989,7 +1993,7 @@ public: // IEditController
 
   //tresult PLUGIN_API getState(IBStream* state) {
   tresult PLUGIN_API getEditorState(IBStream* state) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultOk;
   }
 
@@ -2000,7 +2004,7 @@ public: // IEditController
   */
 
   int32 PLUGIN_API getParameterCount() override {
-    SAT_PRINT;
+    SAT_TRACE;
     return MPlugin->params_count();
     //return 0;
   }
@@ -2008,7 +2012,7 @@ public: // IEditController
   //----------
 
   tresult PLUGIN_API getParameterInfo(int32 paramIndex, ParameterInfo& info) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (paramIndex < 0) return kResultFalse;
 
     int32_t num_params = MPlugin->params_count();
@@ -2064,7 +2068,7 @@ public: // IEditController
   //----------
 
   tresult PLUGIN_API getParamValueByString(ParamID id, TChar* string, ParamValue& valueNormalized) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (id < MPlugin->params_count()) {
       //SAT_Parameter* param = MDescriptor->getParameter(id);
       char temp[129];
@@ -2083,7 +2087,7 @@ public: // IEditController
   //----------
 
   ParamValue PLUGIN_API normalizedParamToPlain(ParamID id, ParamValue valueNormalized) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (id < MPlugin->params_count()) {
       //SAT_Parameter* param = MDescriptor->getParameter(id);
       //float v = param->from01(valueNormalized);
@@ -2098,7 +2102,7 @@ public: // IEditController
   //----------
 
   ParamValue PLUGIN_API plainParamToNormalized(ParamID id, ParamValue plainValue) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (id < MPlugin->params_count()) {
       //SAT_Parameter* param = MDescriptor->getParameter(id);
       //float v = param->to01(plainValue);
@@ -2113,7 +2117,7 @@ public: // IEditController
   //----------
 
   ParamValue PLUGIN_API getParamNormalized(ParamID id) override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (id < MPlugin->params_count()) {
       //float v = MPlugin->getParamValue(id);
       SAT_Plugin* plugin = (SAT_Plugin*)MPlugin;
@@ -2145,7 +2149,7 @@ public: // IEditController
   // bitwig sends a ParamID = 0x3f800000
 
   tresult PLUGIN_API setParamNormalized(ParamID id, ParamValue value) override {
-    SAT_Print("%i = %.3f\n",id,value);
+    SAT_PRINT("%i = %.3f\n",id,value);
     //if (id >= MDescriptor->getNumParameters()) {
     //  return kResultFalse; // ???
     //}
@@ -2185,7 +2189,7 @@ public: // IEditController
   */
 
   tresult PLUGIN_API setComponentHandler(IComponentHandler* handler) override {
-    SAT_PRINT;
+    SAT_TRACE;
     MComponentHandler = handler;
     //handler->queryInterface(IComponentHandler2::iid,(void**)&MComponentHandler2);
     //SAT_Vst3Host* host = (SAT_Vst3Host*)MPlugin->getHost();
@@ -2203,7 +2207,7 @@ public: // IEditController
   */
 
   IPlugView* PLUGIN_API createView(FIDString name) override {
-    SAT_PRINT;
+    SAT_TRACE;
     //if (MDescriptor->hasEditor()) {
       if (name && (strcmp(name,ViewType::kEditor) == 0)) {
         addRef();
@@ -2218,21 +2222,21 @@ public: // IEditController2
 //------------------------------
 
   tresult PLUGIN_API setKnobMode(KnobMode mode) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
   //----------
 
   tresult PLUGIN_API openHelp(TBool onlyCheck) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
   //----------
 
   tresult PLUGIN_API openAboutBox(TBool onlyCheck) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultFalse;
   }
 
@@ -2241,7 +2245,7 @@ public: // IPlugView
 //------------------------------
 
   const char* getEditorId(const clap_plugin_descriptor_t* descriptor) {
-    SAT_PRINT;
+    SAT_TRACE;
     uint32_t* id = (uint32_t*)MEditorId;
     id[0] = SAT_MAGIC_EDITOR;
     id[1] = SAT_HashString(descriptor->name);
@@ -2253,7 +2257,7 @@ public: // IPlugView
   //--------------------
 
   tresult PLUGIN_API isPlatformTypeSupported(FIDString type) override {
-    SAT_PRINT;
+    SAT_TRACE;
     // "X11EmbedWindowID"
 
     #ifdef SAT_LINUX
@@ -2283,7 +2287,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API attached(void* parent, FIDString type) override {
-    SAT_PRINT;
+    SAT_TRACE;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
     const clap_plugin_t* plugin = MPlugin->getClapPlugin();
 
@@ -2351,7 +2355,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API removed() override {
-    SAT_PRINT;
+    SAT_TRACE;
     const clap_plugin_gui_t* gui = (const clap_plugin_gui_t*)MPlugin->get_extension(CLAP_EXT_GUI);
     const clap_plugin_t* plugin = MPlugin->getClapPlugin();
     if (gui) {
@@ -2376,21 +2380,21 @@ public: // IPlugView
   //----------
 
   tresult PLUGIN_API onWheel(float distance) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultOk;
   }
 
   //----------
 
   tresult PLUGIN_API onKeyDown(char16 key, int16 keyCode, int16 modifiers) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultOk;
   }
 
   //----------
 
   tresult PLUGIN_API onKeyUp(char16 key, int16 keyCode, int16 modifiers) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultOk;
   }
 
@@ -2401,7 +2405,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API getSize(ViewRect* size) override {
-    SAT_PRINT;
+    SAT_TRACE;
     uint32_t width = 0;
     uint32_t height = 0;
     //SAT_Editor* editor = MPlugin->getEditor();
@@ -2429,7 +2433,7 @@ public: // IPlugView
 
   tresult PLUGIN_API onSize(ViewRect* newSize) override {
     
-    SAT_PRINT;
+    SAT_TRACE;
     //SAT_Assert(newSize);
     
     //MEditorWidth = newSize->getWidth();
@@ -2438,12 +2442,12 @@ public: // IPlugView
     
     uint32_t w = newSize->getWidth();
     uint32_t h = newSize->getHeight();
-    //SAT_Print("w %i h %i\n",w,h);
-    //SAT_Print("MPlugin %p\n",MPlugin);
+    //SAT_PRINT("w %i h %i\n",w,h);
+    //SAT_PRINT("MPlugin %p\n",MPlugin);
     
     // crashed
     if (MPlugin) MPlugin->gui_set_size(w,h);
-    //SAT_PRINT; // not printed
+    //SAT_TRACE; // not printed
     
     return kResultOk;
   }
@@ -2455,7 +2459,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API onFocus(TBool state) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultOk;
   }
 
@@ -2467,7 +2471,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API setFrame(IPlugFrame* frame) override {
-    SAT_PRINT;
+    SAT_TRACE;
     MPlugFrame = frame;
     #ifdef SAT_LINUX
       //tresult res =
@@ -2483,7 +2487,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API canResize() override {
-    SAT_PRINT;
+    SAT_TRACE;
     if (MPlugin->get_extension(CLAP_EXT_GUI)) return kResultTrue;
     else return kResultFalse;
   }
@@ -2496,7 +2500,7 @@ public: // IPlugView
   */
 
   tresult PLUGIN_API checkSizeConstraint(ViewRect* rect) override {
-    SAT_PRINT;
+    SAT_TRACE;
     return kResultOk;//False;
   }
 
@@ -2516,7 +2520,7 @@ public: // ITimerHandler
     void onTimer() override {
       //MPlugin->on_updateEditor(MEditor);
       //MPlugin->flushParamsToHost();
-      //SAT_PRINT;
+      //SAT_TRACE;
       flushHostParams();
     }
   #endif
@@ -2536,8 +2540,8 @@ public: // SAT_TimerListener
     // and what thread should we call flush from?
     // let's try this, and see how it goes..
   
-    void on_timerListener_callback(SAT_Timer* ATimer) override {
-      SAT_Print("\n***\n");
+    void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
+      SAT_PRINT("\n***\n");
       flushHostParams();
     }
 
@@ -2549,8 +2553,3 @@ public: // SAT_TimerListener
 
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-#endif // 0
