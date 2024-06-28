@@ -1,3 +1,260 @@
+#ifndef sat_win32_window_included
+#define sat_win32_window_included
+//----------------------------------------------------------------------
+
+#include "sat.h"
+#include "gui/lib/sat_win32.h"
+#include "gui/window/sat_base_window.h"
+#include "gui/painter/sat_paint_source.h"
+#include "gui/painter/sat_paint_target.h"
+#include "gui/painter/sat_painter_owner.h"
+#include "gui/surface/sat_surface_owner.h"
+#include "gui/renderer/sat_render_source.h"
+#include "gui/renderer/sat_render_target.h"
+#include "gui/renderer/sat_renderer_owner.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_Win32Window
+: public SAT_BaseWindow
+, public SAT_PainterOwner
+, public SAT_RendererOwner
+, public SAT_SurfaceOwner
+, public SAT_PaintTarget
+, public SAT_RenderTarget {
+
+//------------------------------
+private:
+//------------------------------
+
+  HWND        MWinHandle      = nullptr;
+
+  uint32_t    MScreenWidth    = 0;
+  uint32_t    MScreenHeight   = 0;
+  uint32_t    MScreenDepth    = 0;
+  int32_t     MWindowXpos     = 0;
+  int32_t     MWindowYpos     = 0;
+  uint32_t    MWindowWidth    = 0;
+  uint32_t    MWindowHeight   = 0;
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_Win32Window(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
+  : SAT_BaseWindow(AWidth,AHeight,AParent) {
+    SAT_TRACE;
+  }
+
+  //----------
+
+  virtual ~SAT_Win32Window() {
+    SAT_TRACE;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  uint32_t  getWidth()        { return MWindowWidth; }
+  uint32_t  getHeight()       { return MWindowHeight; }
+  uint32_t  getDepth()        { return MScreenDepth; }
+
+  HWND      getWin32Window()  { return MWinHandle; }
+
+//------------------------------
+public:
+//------------------------------
+
+  /*
+
+  #ifdef SAT_PAINTER_NANOVG
+  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
+  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MScreenVisual; }
+  #endif
+
+  #ifdef SAT_PAINTER_X11
+  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
+  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MScreenVisual; }
+  #endif
+
+  //----------
+
+  #ifdef SAT_PAINTER_NANOVG
+  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MWindow; }
+  #endif
+
+  #ifdef SAT_PAINTER_X11
+  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MWindow; }
+  #endif
+
+  //----------
+
+  #ifdef SAT_RENDERER_GLX
+  Display*          on_rendererOwner_getX11Display()    override { return MDisplay; }
+  xcb_drawable_t    on_rendererOwner_getXcbDrawable()   override { return MWindow; }
+  #endif
+
+  #ifdef SAT_RENDERER_X11
+  Display*          on_rendererOwner_getX11Display()    override { return MDisplay; }
+  xcb_drawable_t    on_rendererOwner_getXcbDrawable()   override { return MWindow; }
+  #endif
+
+  //----------
+
+  #ifdef SAT_RENDERER_GLX
+  xcb_drawable_t    on_renderTarget_getXcbDrawable()    override { return MWindow; }
+  #endif
+
+  #ifdef SAT_RENDERER_X11
+  xcb_drawable_t    on_renderTarget_getXcbDrawable()    override { return MWindow; }
+  #endif
+
+  */
+
+  //----------
+
+  uint32_t          on_surfaceOwner_getWidth()          override { return MWindowWidth; }
+  uint32_t          on_surfaceOwner_getHeight()         override { return MWindowHeight; }
+  uint32_t          on_surfaceOwner_getDepth()          override { return MScreenDepth; }
+  
+  #ifdef SAT_SURFACE_NANOVG
+  // xcb_connection_t* on_surfaceOwner_getXcbConnection()  override { return MConnection; }
+  // xcb_drawable_t    on_surfaceOwner_getXcbDrawable()    override { return MWindow; }
+  // xcb_visualid_t    on_surfaceOwner_getXcbVisual()      override { return MScreenVisual; }
+  #endif
+
+  #ifdef SAT_SURFACE_WIN32
+  // xcb_connection_t* on_surfaceOwner_getXcbConnection()  override { return MConnection; }
+  // xcb_drawable_t    on_surfaceOwner_getXcbDrawable()    override { return MWindow; }
+  // xcb_visualid_t    on_surfaceOwner_getXcbVisual()      override { return MScreenVisual; }
+  #endif
+
+//------------------------------
+public: // SAT_BaseWindow
+//------------------------------
+
+  void show() override {
+  }
+
+  //----------
+
+  void hide() override {
+  }
+
+  //----------
+
+  void setPos(int32_t AXpos, int32_t AYpos) override {
+  }
+
+  //----------
+
+  void setSize(uint32_t AWidth, uint32_t AHeight) override {
+  }
+
+  //----------
+
+  void setTitle(const char* ATitle) override {
+  }
+
+  //----------
+
+  void setMousePos(int32_t AXpos, int32_t AYpos) override{
+  }
+
+  //----------
+
+  void setMouseCursor(int32_t ACursor) override {
+  }
+
+  //----------
+
+  void hideMouse() override {
+  }
+
+  //----------
+
+  void showMouse() override {
+  }
+
+  //----------
+
+  void grabMouse() override {
+  }
+
+  //----------
+
+  void releaseMouse() override {
+  }
+
+  //----------
+
+  void reparent(intptr_t AParent) override {
+  }
+
+  //----------
+
+  void invalidate(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
+  }
+
+  //----------
+
+  void sendClientMessage(uint32_t AData, uint32_t AType) override {
+  }
+
+  //----------
+
+  uint32_t eventLoop() override {
+    return 0;
+  }
+
+  //----------
+
+  void startEventThread() override {
+  }
+
+  //----------
+
+  void stopEventThread() override {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  // void fill(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight, uint32_t AColor) { //override {
+  // }
+
+  // void fill(uint32_t AColor) { //override {
+  // }
+    
+  //----------
+
+};
+
+//----------------------------------------------------------------------
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

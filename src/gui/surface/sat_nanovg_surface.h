@@ -77,8 +77,10 @@ public: // owner
 //------------------------------
 
   #ifdef SAT_PAINTER_NANOVG
-  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return nullptr; }  // MConnection; }
-  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return XCB_NONE; } // MScreenVisual; }
+  #ifdef SAT_WINDOW_X11
+    xcb_connection_t* on_painterOwner_getXcbConnection()  override { return nullptr; }  // MConnection; }
+    xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return XCB_NONE; } // MScreenVisual; }
+    #endif
   #endif
 
   #ifdef SAT_PAINTER_X11
@@ -89,7 +91,9 @@ public: // owner
   //----------
 
   #ifdef SAT_PAINTER_NANOVG
+  #ifdef SAT_WINDOW_X11
   xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return XCB_NONE; }
+  #endif
   #endif
 
   #ifdef SAT_PAINTER_X11
@@ -99,7 +103,9 @@ public: // owner
   //----------
 
   #ifdef SAT_PAINTER_NANOVG
+  #ifdef SAT_WINDOW_X11
   xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return XCB_NONE; }
+  #endif
   #endif
 
   #ifdef SAT_PAINTER_X11

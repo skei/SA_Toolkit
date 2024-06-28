@@ -46,7 +46,13 @@ public:
 
   virtual void startTimer(float ms) {
     //SAT_TRACE;
-    if (MTimer) MTimer->start(ms);
+    #ifdef SAT_LINUX
+      if (MTimer) MTimer->start(ms);
+    #endif
+    #ifdef SAT_WIN32
+      HWND hwnd = getWin32Window();
+      if (MTimer) MTimer->start(ms,hwnd);
+    #endif
   }
 
   //----------

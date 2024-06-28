@@ -97,6 +97,21 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
   #define SAT_BUTTON_SIDE_FORWARD               9
 #endif
 
+#ifdef SAT_WIN32
+  #define SAT_BUTTON_LEFT                       1
+  #define SAT_BUTTON_MIDDLE                     2
+  #define SAT_BUTTON_RIGHT                      3
+  #define SAT_BUTTON_SCROLL_UP                  4
+  #define SAT_BUTTON_SCROLL_DOWN                5
+  #define SAT_BUTTON_SIDE_BACKWARD              8
+  #define SAT_BUTTON_SIDE_FORWARD               9
+#endif
+
+#ifdef SAT_WIN32
+#endif
+
+
+
 #define SAT_CORNER_NONE                         0
 #define SAT_CORNER_UPPER_LEFT                   0x01
 #define SAT_CORNER_UPPER_RIGHT                  0x02
@@ -305,6 +320,15 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
   #define SAT_STATE_ALT                         0x08
   #define SAT_STATE_ALTGR                       0x10
 #endif
+
+#ifdef SAT_WIN32
+  #define SAT_STATE_SHIFT                       0x01
+  #define SAT_STATE_CAPS                        0x02
+  #define SAT_STATE_CTRL                        0x04
+  #define SAT_STATE_ALT                         0x08
+  #define SAT_STATE_ALTGR                       0x10
+#endif
+
 
 #define SAT_SYMBOL_NONE                         0
 #define SAT_SYMBOL_RECT                         1
