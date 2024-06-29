@@ -37,9 +37,6 @@
 #define SAT_WINDOW_THREAD_KILL                    666
 #define SAT_WINDOW_TIMER_MS                       20
 
-//
-
-
 //----------------------------------------------------------------------
 //
 // options
@@ -74,12 +71,8 @@
   #define SAT_PLUGIN_INCLUDE_CLAP_PLUGIN_FACTORY
 //#define SAT_PLUGIN_INCLUDE_CLAP_PRESET_DISCOVERY_FACTORY
 //#define SAT_PLUGIN_INCLUDE_CLAP_STATE_CONVERTER_FACTORY
-
   #define SAT_PLUGIN_VST2_NO_SHELL
 //#define SAT_PLUGIN_VST2_VESTIGE
-
-
-
 //#define SAT_PRINT_SOCKET
   #define SAT_PRINT_THREAD
   #define SAT_PRINT_TIME
@@ -90,6 +83,8 @@
 //#define SAT_WINDOW_NO_TIMER_AUTOSTART
   #define SAT_WINDOW_TIMER_REFRESH_WIDGETS
   #define SAT_X11_WAIT_FOR_MAPNOTIFY
+
+//----------
 
 // automatically (compile script, command line):
 
@@ -269,10 +264,12 @@
 
   #ifdef SAT_GUI_WIN32
     #define SAT_WINDOW_WIN32
-    //#define SAT_SURFACE_WIN32
-    #define SAT_SURFACE_NANOVG
     #define SAT_RENDERER_WGL
+    #define SAT_SURFACE_NANOVG
     #define SAT_PAINTER_NANOVG
+    //#define SAT_RENDERER_WIN32
+    //#define SAT_SURFACE_WIN32
+    //#define SAT_PAINTER_WIN32
   #endif
 
   #ifdef SAT_GUI_X11

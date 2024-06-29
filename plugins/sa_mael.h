@@ -22,7 +22,7 @@
 
 #define MAX_VOICES    64
 #define EDITOR_WIDTH  430
-#define EDITOR_HEIGHT 295
+#define EDITOR_HEIGHT (295 + 40 + 25)
 #define EDITOR_SCALE  3
 
 //----------------------------------------------------------------------

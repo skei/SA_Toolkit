@@ -57,7 +57,7 @@ public:
 public: // owner
 //------------------------------
 
-  // SAT_SurfaceOwner (from SAT_X11Window)
+  // SAT_SurfaceOwner
 
   #ifdef SAT_PAINTER_NANOVG
   //bool        on_surfaceOwner_isNanoVG()         override { return true; }

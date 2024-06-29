@@ -77,41 +77,52 @@ public: // owner
 //------------------------------
 
   #ifdef SAT_PAINTER_NANOVG
-  #ifdef SAT_WINDOW_X11
+    #ifdef SAT_WINDOW_WIN32
+    #endif
+    #ifdef SAT_WINDOW_X11
+      xcb_connection_t* on_painterOwner_getXcbConnection()  override { return nullptr; }  // MConnection; }
+      xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return XCB_NONE; } // MScreenVisual; }
+    #endif
+  #endif
+
+  #ifdef SAT_PAINTER_WIN32
+  #endif
+
+  #ifdef SAT_PAINTER_X11
     xcb_connection_t* on_painterOwner_getXcbConnection()  override { return nullptr; }  // MConnection; }
     xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return XCB_NONE; } // MScreenVisual; }
+  #endif
+
+  //----------
+
+  #ifdef SAT_PAINTER_NANOVG
+    #ifdef SAT_WINDOW_WIN32
+    #endif
+    #ifdef SAT_WINDOW_X11
+      xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return XCB_NONE; }
     #endif
   #endif
 
   #ifdef SAT_PAINTER_X11
-  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return nullptr; }  // MConnection; }
-  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return XCB_NONE; } // MScreenVisual; }
+    xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return XCB_NONE; }
   #endif
 
   //----------
 
   #ifdef SAT_PAINTER_NANOVG
-  #ifdef SAT_WINDOW_X11
-  xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return XCB_NONE; }
+    #ifdef SAT_WINDOW_WIN32
+    #endif
+    #ifdef SAT_WINDOW_X11
+      xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return XCB_NONE; }
+    #endif
   #endif
+
+  #ifdef SAT_PAINTER_WIN32
   #endif
 
   #ifdef SAT_PAINTER_X11
-  xcb_drawable_t    on_paintSource_getXcbDrawable()     override { return XCB_NONE; }
+    xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return XCB_NONE; }
   #endif
-
-  //----------
-
-  #ifdef SAT_PAINTER_NANOVG
-  #ifdef SAT_WINDOW_X11
-  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return XCB_NONE; }
-  #endif
-  #endif
-
-  #ifdef SAT_PAINTER_X11
-  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return XCB_NONE; }
-  #endif
-
 
 //------------------------------
 public:

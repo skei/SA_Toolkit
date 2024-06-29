@@ -11,8 +11,8 @@
 
 clap_plugin_descriptor_t myDescriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "plugin_gui2-v0",
-  .name         = "plugin_gui2",
+  .id           = "widgets-v0",
+  .name         = "widgets",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -199,7 +199,7 @@ public:
       root->setDrawBorder(true);
       root->setBorderColor(0.4);
 
-      SAT_PluginHeaderWidget* header1 = new SAT_PluginHeaderWidget(40,"plugin_gui2");
+      SAT_PluginHeaderWidget* header1 = new SAT_PluginHeaderWidget(40,"widgets");
       root->appendChild(header1);
 
       SAT_PluginFooterWidget* footer1 = new SAT_PluginFooterWidget(25,"(hint)");

@@ -14,11 +14,25 @@ public:
 
   bool setupEditor(SAT_Editor* AEditor) final {
     SAT_Window* window = AEditor->getWindow();
+
     SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
     window->setRootWidget(root);
-
     root->setDrawBorder(true);
     root->setBorderColor(0.4);
+
+    SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"mael");
+    root->appendChild(header);
+
+    SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(25,"(hint)");
+    root->appendChild(footer);
+    window->setHintWidget(footer);
+
+    SAT_VisualWidget* middle = new SAT_VisualWidget(0);
+    root->appendChild(middle);
+    middle->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT; // not TOP?
+    middle->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+    //middle->Layout.innerBorder  = SAT_Rect(5,5,5,5);
+    //middle->Layout.spacing      = SAT_Point(0,0);
 
     //------------------------------
     // menus
@@ -54,7 +68,7 @@ public:
     //------------------------------
 
     SAT_VisualWidget* osc1_panel = new SAT_VisualWidget(SAT_Rect(10,10,160,150));
-    root->appendChild(osc1_panel);
+    middle->appendChild(osc1_panel);
 
     SAT_TextWidget* osc1_text = new SAT_TextWidget(SAT_Rect(0,0,160,20));
     osc1_panel->appendChild(osc1_text);
@@ -113,7 +127,7 @@ public:
     //------------------------------
 
     SAT_VisualWidget* osc2_panel = new SAT_VisualWidget(SAT_Rect(180,10,160,150));
-    root->appendChild(osc2_panel);
+    middle->appendChild(osc2_panel);
 
     SAT_TextWidget* osc2_text = new SAT_TextWidget(SAT_Rect(0,0,160,20));
     osc2_panel->appendChild(osc2_text);
@@ -172,7 +186,7 @@ public:
     //------------------------------
 
     SAT_VisualWidget* mix_panel = new SAT_VisualWidget(SAT_Rect(10,170,130,115));
-    root->appendChild(mix_panel);
+    middle->appendChild(mix_panel);
     
     SAT_TextWidget* mix_text = new SAT_TextWidget(SAT_Rect(0,0,130,20));
     mix_panel->appendChild(mix_text);
@@ -194,7 +208,7 @@ public:
     //------------------------------
 
     SAT_VisualWidget* flt1_panel = new SAT_VisualWidget(SAT_Rect(150,170,130,115));
-    root->appendChild(flt1_panel);
+    middle->appendChild(flt1_panel);
     
     SAT_TextWidget* flt1_text = new SAT_TextWidget(SAT_Rect(0,0,130,20));
     flt1_panel->appendChild(flt1_text);
@@ -220,7 +234,7 @@ public:
     //------------------------------
 
     SAT_VisualWidget* env1_panel = new SAT_VisualWidget(SAT_Rect(290,170,120,115));
-    root->appendChild(env1_panel);
+    middle->appendChild(env1_panel);
     
     SAT_TextWidget* env1_text = new SAT_TextWidget(SAT_Rect(0,0,130,20));
     env1_panel->appendChild(env1_text);
@@ -267,7 +281,7 @@ public:
     //------------------------------
 
     SAT_VisualWidget* global_panel = new SAT_VisualWidget(SAT_Rect(350,10,70,85));
-    root->appendChild(global_panel);
+    middle->appendChild(global_panel);
     
     SAT_TextWidget* global_text = new SAT_TextWidget(SAT_Rect(0,0,70,20));
     global_panel->appendChild(global_text);
@@ -280,7 +294,7 @@ public:
     //
 
     voices = new SAT_VoicesWidget(SAT_Rect(350,105,70,10),MAX_VOICES);
-    root->appendChild(voices);
+    middle->appendChild(voices);
 
     return true;
   }

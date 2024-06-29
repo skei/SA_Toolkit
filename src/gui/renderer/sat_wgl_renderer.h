@@ -2,115 +2,6 @@
 #define sat_wgl_renderer_included
 //----------------------------------------------------------------------
 
-
-//----------------------------------------------------------------------
-
-#include "sat.h"
-#include "gui/lib/sat_win32.h"
-#include "gui/renderer/sat_base_renderer.h"
-#include "gui/renderer/sat_renderer_owner.h"
-
-class SAT_Renderer;
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
-
-class SAT_WglRenderer
-: public SAT_BaseRenderer {
-
-//------------------------------
-public:
-//------------------------------
-
-  SAT_WglRenderer(SAT_RendererOwner* AOwner, SAT_RenderTarget* ATarget)
-  : SAT_BaseRenderer(AOwner,ATarget) {
-    SAT_TRACE;
-  }
-
-  virtual ~SAT_WglRenderer() {
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  // bool initialize() {
-  //   return true;
-  // }
-
-  // void cleanup() {
-  // }
-  
-  bool makeCurrent() override {
-    return true;
-  }
-
-  bool resetCurrent() override {
-    return true;
-  }
-  
-  // bool isCurrent() override {
-  //   return true;
-  // }
-  
-  bool beginRendering() override {
-    return true;
-  }
-  
-  bool beginRendering(int32_t AWidth, int32_t AHeight) override {
-    return true;
-  }
-  
-  bool endRendering() override {
-    return true;
-  }
-  
-  bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
-    return true;
-  }
-  
-  bool swapBuffers() override {
-    return true;
-  }
-  
-  bool enableVSync() override {
-    return true;
-  }
-  
-  bool disableVSync() override {
-    return true;
-  }
-  
-};
-
-//----------------------------------------------------------------------
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-#ifndef sat_wgl_renderer_included
-#define sat_wgl_renderer_included
-//----------------------------------------------------------------------
-
 /*
   see:
     https://devblogs.microsoft.com/oldnewthing/20060601-06/?p=31003
@@ -157,8 +48,10 @@ public:
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_renderer_owner.h"
-#include "gui/wgl/sat_wgl.h"
+#include "gui/lib/sat_wgl.h"
+#include "gui/lib/sat_win32.h"
+#include "gui/renderer/sat_base_renderer.h"
+#include "gui/renderer/sat_renderer_owner.h"
 
 //----------------------------------------------------------------------
 
@@ -206,6 +99,8 @@ PIXELFORMATDESCRIPTOR SAT_WglSurfacePFD = {
 //
 //----------------------------------------------------------------------
 
+class SAT_Renderer;
+
   /*
     dc = CreateCompatibleDC(NULL);///////creates a Device context
     memset(&info, 0, sizeof(info));
@@ -232,7 +127,13 @@ PIXELFORMATDESCRIPTOR SAT_WglSurfacePFD = {
     rc = wglCreateContext(dc);
   */
 
-class SAT_WGLRenderer
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_WglRenderer
 : public SAT_BaseRenderer {
 
 //------------------------------
@@ -250,11 +151,9 @@ private:
 public:
 //------------------------------
 
-  //SAT_Win32OpenGL(HWND AWindow) {
-  //}
-
-  SAT_WGLRenderer(SAT_RendererOwner* AOwner)
-  : SAT_BaseRenderer(AOwner) {
+  SAT_WglRenderer(SAT_RendererOwner* AOwner, SAT_RenderTarget* ATarget)
+  : SAT_BaseRenderer(AOwner,ATarget) {
+    SAT_TRACE;
 
     HWND hwnd = AOwner->on_rendererOwner_getHWND();
 
@@ -268,7 +167,7 @@ public:
       SetPixelFormat(MDC, pf, &SAT_WglWindowPFD);
     //}
     //else {
-    //  //SAT_Print("opengl rendering to buffer not supported in windows (yet)..\n");
+    //  //SAT_PRINT("opengl rendering to buffer not supported in windows (yet)..\n");
     //  //exit(1);
     //  HDC tempdc = GetDC(0);
     //  MDC = CreateCompatibleDC(tempdc);
@@ -281,13 +180,13 @@ public:
 
     HGLRC temp_ctx = wglCreateContext(MDC);
     if (temp_ctx) {
-      //SAT_Print("created temp context, making it current\n");
+      //SAT_PRINT("created temp context, making it current\n");
       if (wglMakeCurrent(MDC,temp_ctx) == FALSE) {
-        SAT_Print("wglMakeCurrent error\n");
+        SAT_PRINT("wglMakeCurrent error\n");
       };
     }
     else {
-      SAT_Print("error! couldn't create temp conext\n");
+      SAT_PRINT("error! couldn't create temp conext\n");
       exit(1);
     }
 
@@ -297,11 +196,11 @@ public:
     //    PFNWGLGETEXTENSIONSSTRINGEXTPROC wgl_GetExtensionsStringEXT;
     //    wgl_GetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");
     //    if (!wgl_GetExtensionsStringEXT) {
-    //      SAT_Print("error! wglGetExtensionsStringEXT not found\n");
+    //      SAT_PRINT("error! wglGetExtensionsStringEXT not found\n");
     //      exit(1);
     //    }
     //    else {
-    //      SAT_Print("wglGetExtensionsStringEXT found\n");
+    //      SAT_PRINT("wglGetExtensionsStringEXT found\n");
     //      const char* extensions = wgl_GetExtensionsStringEXT();
     //      if (strstr(extensions, "WGL_ARB_create_context")) {
     //        //ext->create_context_attribs = 1;
@@ -321,7 +220,7 @@ public:
     // load opengl functions
 
     //    if (!sogl_loadOpenGL()) {
-    //      SAT_Print("error! sogl_loadOpenGL failures: \n");
+    //      SAT_PRINT("error! sogl_loadOpenGL failures: \n");
     //      const char** failures = sogl_getFailures();
     //      while (*failures) {
     //        SAT_DPrint("%s ",*failures);
@@ -333,7 +232,7 @@ public:
     //      exit(1);
     //    }
     //    else {
-    //      //SAT_Print("loaded opengl functions (sogl_loadOpenGL)\n");
+    //      //SAT_PRINT("loaded opengl functions (sogl_loadOpenGL)\n");
     //    }
 
     loadExtensions();
@@ -343,23 +242,23 @@ public:
     //    int maj, min;
     //    glGetIntegerv(GL_MAJOR_VERSION, &maj);
     //    glGetIntegerv(GL_MINOR_VERSION, &min);
-    //    SAT_Print("GL_MAJOR_VERSION: %i GL_MINOR_VERSION: %i\n",maj,min);   // GL_MAJOR_VERSION: 3 GL_MINOR_VERSION: 1
+    //    SAT_PRINT("GL_MAJOR_VERSION: %i GL_MINOR_VERSION: %i\n",maj,min);   // GL_MAJOR_VERSION: 3 GL_MINOR_VERSION: 1
     //
-    //    SAT_Print("GL_VERSION: %s\n",     (char*)glGetString(GL_VERSION));    // 3.1 Mesa 21.2.6
-    //    SAT_Print("GL_VENDOR: %s\n",      (char*)glGetString(GL_VENDOR));     // Mesa/X.org
-    //    SAT_Print("GL_RENDERER: %s\n",    (char*)glGetString(GL_RENDERER));   // llvmpipe (LLVM 12.0.0, 256 bits)
-    //    //SAT_Print("GL_EXTENSIONS: %s\n",  (char*)glGetString(GL_EXTENSIONS)); // crashes!
+    //    SAT_PRINT("GL_VERSION: %s\n",     (char*)glGetString(GL_VERSION));    // 3.1 Mesa 21.2.6
+    //    SAT_PRINT("GL_VENDOR: %s\n",      (char*)glGetString(GL_VENDOR));     // Mesa/X.org
+    //    SAT_PRINT("GL_RENDERER: %s\n",    (char*)glGetString(GL_RENDERER));   // llvmpipe (LLVM 12.0.0, 256 bits)
+    //    //SAT_PRINT("GL_EXTENSIONS: %s\n",  (char*)glGetString(GL_EXTENSIONS)); // crashes!
 
     // create context ARB
 
     PFNWGLCREATECONTEXTATTRIBSARBPROC wgl_CreateContextAttribsARB;
     wgl_CreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
     if (!wgl_CreateContextAttribsARB) {
-      SAT_Print("error! wglCreateContextAttribsARB not found\n");
+      SAT_PRINT("error! wglCreateContextAttribsARB not found\n");
       exit(1);
     }
     else {
-      //SAT_Print("wglCreateContextAttribsARBfound\n");
+      //SAT_PRINT("wglCreateContextAttribsARBfound\n");
     }
 
     const int ctx_attribs[] = {
@@ -371,13 +270,13 @@ public:
 
     MGLRC = wgl_CreateContextAttribsARB(MDC, NULL, ctx_attribs);
     if (!MGLRC) {
-      SAT_Print("error creating context\n");
+      SAT_PRINT("error creating context\n");
       wglMakeCurrent(MDC, NULL);
       wglDeleteContext(temp_ctx);
       exit(1);
     }
     else {
-      //SAT_Print("context created\n");
+      //SAT_PRINT("context created\n");
     }
 
     //----------
@@ -392,8 +291,8 @@ public:
 
   //----------
 
-  virtual ~SAT_WGLRenderer() {
-    //SAT_PRINT;
+  virtual ~SAT_WglRenderer() {
+    SAT_TRACE;
     unloadExtensions();
     ReleaseDC(0,MDC);
     wglDeleteContext(MGLRC);
@@ -403,37 +302,12 @@ public:
 public:
 //------------------------------
 
-  uint32_t getType() override {
-    return 0;
-  }
+  // bool initialize() {
+  //   return true;
+  // }
 
-  const char* getTypeName() {
-    return "";
-  }
-
-  bool beginRendering() {
-    makeCurrent();
-    return true;
-  }
-
-  // w/h = viewport size (not update rect)
-
-  bool beginRendering(int32_t AWidth, int32_t AHeight) {
-     makeCurrent();
-     setViewport(0,0,AWidth,AHeight);
-    return true;
-  }
-
-  bool endRendering() {
-    swapBuffers();
-    resetCurrent();
-    return true;
-  }
-
-  bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) {
-    glViewport(AXpos,AYpos,AWidth,AHeight);
-    return true;
-  }
+  // void cleanup() {
+  // }
 
   /*
     The wglMakeCurrent function makes a specified OpenGL rendering context the
@@ -448,9 +322,9 @@ public:
   */
 
   //TODO: save prev context?
-
-  bool makeCurrent() {
-    //SAT_Print("\n");
+  
+  bool makeCurrent() override {
+    //SAT_PRINT("\n");
     bool res = wglMakeCurrent(MDC, MGLRC);
     if (!res) return false;
     MIsCurrent = true;
@@ -463,11 +337,39 @@ public:
   */
 
   //TODO: restore prev context?
-  
-  bool resetCurrent() {
+
+  bool resetCurrent() override {
     bool res = wglMakeCurrent(nullptr,nullptr);
     if (!res) return false;
     MIsCurrent = false;
+    return true;
+  }
+  
+  // bool isCurrent() override {
+  //   return true;
+  // }
+
+  bool beginRendering() override {
+    makeCurrent();
+    return true;
+  }
+  
+  // w/h = viewport size (not update rect)
+
+  bool beginRendering(int32_t AWidth, int32_t AHeight) override {
+    makeCurrent();
+    setViewport(0,0,AWidth,AHeight);
+    return true;
+  }
+  
+  bool endRendering() override {
+    swapBuffers();
+    resetCurrent();
+    return true;
+  }
+  
+  bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
+    glViewport(AXpos,AYpos,AWidth,AHeight);
     return true;
   }
 
@@ -476,12 +378,9 @@ public:
     current pixel format for the window referenced by the specified device
     context includes a back buffer.
   */
-
-  // void swapBuffers() {
-  // }
-
-  bool swapBuffers() {
-    //SAT_Print("\n");
+  
+  bool swapBuffers() override {
+    //SAT_PRINT("\n");
     SwapBuffers(MDC);
     return true;
   }
@@ -489,13 +388,13 @@ public:
   // TODO:
   //   - bool argument -> setVSync(bool AState)
   //   - add the other variants..
-
-  bool disableVSync() {
-    return false;
+  
+  bool enableVSync() override {
+    return true;
   }
-
-  bool enableVSync() {
-    return false;
+  
+  bool disableVSync() override {
+    return true;
   }
 
 //------------------------------
@@ -530,18 +429,18 @@ public: // extensions
   // make context current before calling this
 
   bool loadExtensions() {
-    //SAT_Print("calling sogl_loadOpenGL\n");
+    //SAT_PRINT("calling sogl_loadOpenGL\n");
     if (!sogl_loadOpenGL()) {
-      SAT_Print("sogl_loadOpenGL() failed\n");
+      SAT_PRINT("sogl_loadOpenGL() failed\n");
       const char** failures = sogl_getFailures();
       while (*failures) {
-        SAT_DPrint("> %s\n",*failures);
+        SAT_DPRINT("> %s\n",*failures);
         failures++;
       }
       return false;
     }
     //int result = sogl_loadOpenGL();
-    //SAT_Print("sogl_loadOpenGL() says: %i\n",result);
+    //SAT_PRINT("sogl_loadOpenGL() says: %i\n",result);
     return true;
   }
 
@@ -551,7 +450,6 @@ public: // extensions
     sogl_cleanup();
   }
 
-
 //------------------------------
 public: // utils
 //------------------------------
@@ -559,35 +457,36 @@ public: // utils
   #define SAT_GL_ERROR_CHECK {    \
     GLint err = glGetError();     \
     if (err != GL_NO_ERROR) {     \
-      SAT_Print("");              \
+      SAT_PRINT("");              \
       SAT_PrintGLError(err);      \
     }                             \
   }
 
-  //#define SAT_OPENGL_ERROR_CHECK { SAT_Print("gl error: %i\n",glGetError()); }
+  //#define SAT_OPENGL_ERROR_CHECK { SAT_PRINT("gl error: %i\n",glGetError()); }
 
   void SAT_PrintGLError(GLint err) {
     switch (err) {
-      case GL_NO_ERROR:                       SAT_DPrint("OpenGL Error: No error has been recorded. The value of this symbolic constant is guaranteed to be 0.\n"); break;
-      case GL_INVALID_ENUM:                   SAT_DPrint("OpenGL Error: An unacceptable value is specified for an enumerated argument. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-      case GL_INVALID_VALUE:                  SAT_DPrint("OpenGL Error: A numeric argument is out of range. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-      case GL_INVALID_OPERATION:              SAT_DPrint("OpenGL Error: The specified operation is not allowed in the current state. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-      case GL_INVALID_FRAMEBUFFER_OPERATION:  SAT_DPrint("OpenGL Error: The framebuffer object is not complete. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
-      case GL_OUT_OF_MEMORY:                  SAT_DPrint("OpenGL Error: There is not enough memory left to execute the command. The state of the GL is undefined, except for the state of the error flags, after this error is recorded.\n"); break;
-      case GL_STACK_UNDERFLOW:                SAT_DPrint("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to underflow.\n"); break;
-      case GL_STACK_OVERFLOW:                 SAT_DPrint("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to overflow.\n"); break;
-      default:                                SAT_DPrint("OpenGL Error: Unknown error %i\n",err); break;
+      case GL_NO_ERROR:                       SAT_DPRINT("OpenGL Error: No error has been recorded. The value of this symbolic constant is guaranteed to be 0.\n"); break;
+      case GL_INVALID_ENUM:                   SAT_DPRINT("OpenGL Error: An unacceptable value is specified for an enumerated argument. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_INVALID_VALUE:                  SAT_DPRINT("OpenGL Error: A numeric argument is out of range. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_INVALID_OPERATION:              SAT_DPRINT("OpenGL Error: The specified operation is not allowed in the current state. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_INVALID_FRAMEBUFFER_OPERATION:  SAT_DPRINT("OpenGL Error: The framebuffer object is not complete. The offending command is ignored and has no other side effect than to set the error flag.\n"); break;
+      case GL_OUT_OF_MEMORY:                  SAT_DPRINT("OpenGL Error: There is not enough memory left to execute the command. The state of the GL is undefined, except for the state of the error flags, after this error is recorded.\n"); break;
+      case GL_STACK_UNDERFLOW:                SAT_DPRINT("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to underflow.\n"); break;
+      case GL_STACK_OVERFLOW:                 SAT_DPRINT("OpenGL Error: An attempt has been made to perform an operation that would cause an internal stack to overflow.\n"); break;
+      default:                                SAT_DPRINT("OpenGL Error: Unknown error %i\n",err); break;
     }
   }
 
+
+
+
 };
-
-//----------------------------------------------------------------------
-#endif
-
 
 //HMODULE gl_module = LoadLibrary(TEXT("opengl32.dll"));
 //wgl_GetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)GetProcAddress(gl_module,"wglGetExtensionsStringEXT");
 //FreeLibrary(gl_module);
 
-#endif // 0
+//----------------------------------------------------------------------
+#endif
+

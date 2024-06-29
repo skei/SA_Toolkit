@@ -159,12 +159,8 @@ public:
     memset(MUserCursors,0,sizeof(MUserCursors));
     MCurrentCursor = -1;
     setMouseCursor(SAT_CURSOR_DEFAULT);
-    if (AParent == 0) {
-      createStandaloneWindow(AWidth,AHeight);
-    }
-    else {
-      createEmbeddedWindow(AWidth,AHeight,AParent);
-    }
+    if (AParent == 0) createStandaloneWindow(AWidth,AHeight);
+    else createEmbeddedWindow(AWidth,AHeight,AParent);
     SetWindowLongPtr(MWinHandle,GWLP_USERDATA,(LONG_PTR)this);
   }
 
@@ -182,11 +178,11 @@ public:
 public:
 //------------------------------
 
-  uint32_t  getWidth()        { return MWindowWidth; }
-  uint32_t  getHeight()       { return MWindowHeight; }
-  uint32_t  getDepth()        { return MScreenDepth; }
+  uint32_t  getWidth()            { return MWindowWidth; }
+  uint32_t  getHeight()           { return MWindowHeight; }
+  uint32_t  getDepth()            { return MScreenDepth; }
 
-  HWND      getWin32Window()  { return MWinHandle; }
+  HWND      getWin32Window()      { return MWinHandle; }
 
   HWND      getWinHandle(void)    { return MWinHandle; }
   HDC       getWinPaintDC(void)   { return MWinPaintDC; }
@@ -204,57 +200,44 @@ public:
 public:
 //------------------------------
 
-  /*
+  // painter owner
 
   #ifdef SAT_PAINTER_NANOVG
-  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
-  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MScreenVisual; }
   #endif
 
-  #ifdef SAT_PAINTER_X11
-  xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
-  xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MScreenVisual; }
+  #ifdef SAT_PAINTER_WIN32
   #endif
 
-  //----------
+  // paint target
 
   #ifdef SAT_PAINTER_NANOVG
-  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MWindow; }
   #endif
 
-  #ifdef SAT_PAINTER_X11
-  xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MWindow; }
+  #ifdef SAT_PAINTER_WIN32
   #endif
 
-  //----------
+  // renderer owner
 
-  #ifdef SAT_RENDERER_GLX
-  Display*          on_rendererOwner_getX11Display()    override { return MDisplay; }
-  xcb_drawable_t    on_rendererOwner_getXcbDrawable()   override { return MWindow; }
+  #ifdef SAT_RENDERER_WGL
+    HWND on_rendererOwner_getHWND() override { return MWinHandle; }
   #endif
 
-  #ifdef SAT_RENDERER_X11
-  Display*          on_rendererOwner_getX11Display()    override { return MDisplay; }
-  xcb_drawable_t    on_rendererOwner_getXcbDrawable()   override { return MWindow; }
+  #ifdef SAT_RENDERER_WIN32
   #endif
 
-  //----------
+  // render target
 
-  #ifdef SAT_RENDERER_GLX
-  xcb_drawable_t    on_renderTarget_getXcbDrawable()    override { return MWindow; }
+  #ifdef SAT_RENDERER_WGL
   #endif
 
-  #ifdef SAT_RENDERER_X11
-  xcb_drawable_t    on_renderTarget_getXcbDrawable()    override { return MWindow; }
+  #ifdef SAT_RENDERER_WIN32
   #endif
 
-  */
+  // surface owner
 
-  //----------
-
-  uint32_t          on_surfaceOwner_getWidth()          override { return MWindowWidth; }
-  uint32_t          on_surfaceOwner_getHeight()         override { return MWindowHeight; }
-  uint32_t          on_surfaceOwner_getDepth()          override { return MScreenDepth; }
+  uint32_t on_surfaceOwner_getWidth()   override { return MWindowWidth; }
+  uint32_t on_surfaceOwner_getHeight()  override { return MWindowHeight; }
+  uint32_t on_surfaceOwner_getDepth()   override { return MScreenDepth; }
   
   #ifdef SAT_SURFACE_NANOVG
   // xcb_connection_t* on_surfaceOwner_getXcbConnection()  override { return MConnection; }
@@ -628,6 +611,39 @@ private:
   }
 
 //------------------------------
+private:
+//------------------------------
+
+  /*
+    The BeginPaint function prepares the specified window for painting and
+    fills a PAINTSTRUCT structure with information about the painting.
+    The BeginPaint function automatically sets the clipping region of the
+    device context to exclude any area outside the update region. The update
+    region is set by the InvalidateRect or InvalidateRgn function and by the
+    system after sizing, moving, creating, scrolling, or any other operation
+    that affects the client area.
+  */
+
+  void beginPaint() {
+    MWinPaintDC = BeginPaint(MWinHandle,&MWinPaintStruct);
+  }
+
+  //----------
+
+  /*
+    The EndPaint function marks the end of painting in the specified window.
+    This function is required for each call to the BeginPaint function, but
+    only after painting is complete.
+    EndPaint releases the display device context that BeginPaint retrieved.
+  */
+
+  void endPaint() {
+    //flush();
+    EndPaint(MWinHandle,&MWinPaintStruct);
+    //UpdateWindow(MWinHandle);
+  }
+
+//------------------------------
 private: // event handler
 //------------------------------
 
@@ -870,7 +886,7 @@ private:
       }
 
       case WM_PAINT: {
-//        beginPaint();
+        beginPaint();
         int32_t x = MWinPaintStruct.rcPaint.left;
         int32_t y = MWinPaintStruct.rcPaint.top;
         int32_t w = MWinPaintStruct.rcPaint.right  - MWinPaintStruct.rcPaint.left;// + 1;
@@ -878,7 +894,7 @@ private:
         //SAT_PRINT("WM_PAINT %s x %i y %i w %i h %i\n",MWindowType,x,y,w,h);
 //        if (MFillBackground) fillColor(x,y,w,h,MBackgroundColor);
         on_window_paint(x,y,w,h);
-//        endPaint();
+        endPaint();
         break;
       }
 
@@ -1174,36 +1190,6 @@ char* SAT_Win32ClassName() {
 
 
 #if 0
-
-  /*
-    The BeginPaint function prepares the specified window for painting and
-    fills a PAINTSTRUCT structure with information about the painting.
-    The BeginPaint function automatically sets the clipping region of the
-    device context to exclude any area outside the update region. The update
-    region is set by the InvalidateRect or InvalidateRgn function and by the
-    system after sizing, moving, creating, scrolling, or any other operation
-    that affects the client area.
-  */
-
-  void beginPaint()  override {
-    MWinPaintDC = BeginPaint(MWinHandle,&MWinPaintStruct);
-  }
-
-  //----------
-
-  /*
-    The EndPaint function marks the end of painting in the specified window.
-    This function is required for each call to the BeginPaint function, but
-    only after painting is complete.
-    EndPaint releases the display device context that BeginPaint retrieved.
-  */
-
-  void endPaint()  override {
-    //flush();
-    EndPaint(MWinHandle,&MWinPaintStruct);
-    //UpdateWindow(MWinHandle);
-  }
-
 
   //----------
 

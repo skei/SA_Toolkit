@@ -280,7 +280,7 @@ public: // window
   //----------
 
   void on_window_hide() override {
-    if (MRootWidget) MRootWidget->closeOwnerWindow(this);
+    if (MRootWidget) MRootWidget->ownerWindowClose(this);
     SAT_BufferedWindow::on_window_hide();
   }
 
@@ -419,6 +419,9 @@ public: // window
 //------------------------------
 public: // timer listener
 //------------------------------
+
+  // timer-thread
+  // (could gui-thread be pushing dirty widgets at the same time?)
 
   void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
     if (MListener) MListener->on_windowListener_timer(ATimer,ADelta);

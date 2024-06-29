@@ -23,8 +23,8 @@
 
 const clap_plugin_descriptor_t sa_test_voices_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_test_voices/v0",
-  .name         = "sa_test_voices",
+  .id           = SAT_VENDOR "/voices/v0",
+  .name         = "voices",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",

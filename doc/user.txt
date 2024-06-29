@@ -1,0 +1,38 @@
+[todo, in progress]
+
+
+
+----------------------------------------------------------------------
+install
+----------------------------------------------------------------------
+
+* download from github
+* install dependencies
+* download/install external sdks
+* config
+* copy template
+* build
+* run/test
+
+----------
+
+(copy-paste from older text file..)
+
+just completely wiped my system disk, and reinstalled linux..
+and during re-installation of my development setup, i wrote down the
+dependencies i had to install before i compiled correctly:
+
+  libx11-dev
+  libx11-xcb-dev
+  (libxcb1-dev)
+  libxcb-util-dev
+  xcb-keysyms1-dev
+  libxkbcommon-dev
+  libxcb-xkb-dev
+  (libopengl-dev)
+  mesa-common-dev
+  libglu1-mesa-dev
+  freeglut3-dev
+
+() = not sure if needed, or automatically dragged in
+     as dependency for some of the other deps..
