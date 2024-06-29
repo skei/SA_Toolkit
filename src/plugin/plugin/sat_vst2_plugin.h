@@ -1,7 +1,3 @@
-
-
-#if 0
-
 #ifndef sat_vst2_plugin_included
 #define sat_vst2_plugin_included
 //----------------------------------------------------------------------
@@ -14,11 +10,11 @@
 //----------
 
 #include "sat.h"
-#include "base/types/sat_queue.h"
-#include "plugin/clap/sat_clap.h"
-#include "plugin/vst2/sat_vst2.h"
-#include "plugin/vst2/sat_vst2_host_implementation.h"
-#include "plugin/vst2/sat_vst2_utils.h"
+#include "base/type/sat_queue.h"
+#include "plugin/lib/sat_clap.h"
+#include "plugin/lib/sat_vst2.h"
+#include "plugin/lib/sat_vst2_utils.h"
+#include "plugin/sat_host_implementation.h"
 
 //----------------------------------------------------------------------
 
@@ -50,7 +46,8 @@ private:
   const clap_plugin_descriptor_t* MDescriptor           = nullptr;
   AEffect                         MAEffect              = {0};
   audioMasterCallback             MAudioMaster          = nullptr;
-  SAT_Vst2HostImplementation*     MVst2Host             = nullptr;
+  //SAT_Vst2HostImplementation*     MVst2Host             = nullptr;
+  SAT_HostImplementation*     MVst2Host             = nullptr;
 
   const clap_plugin_gui_t*        MGui                  = nullptr;
   const clap_plugin_params_t*     MParams               = nullptr;
@@ -88,7 +85,7 @@ public:
 //------------------------------
 
   SAT_Vst2Plugin(const clap_host_t* host, const clap_plugin_t* plugin, audioMasterCallback audioMaster) {
-    //SAT_Print("\n");
+    //SAT_PRINT("\n");
     MHost = host;
     MPlugin = plugin;
     MDescriptor = MPlugin->desc;
@@ -106,7 +103,7 @@ public:
   //----------
   
   ~SAT_Vst2Plugin() {
-    //SAT_Print("\n");
+    //SAT_PRINT("\n");
     free(MParameterValues);
     if (MPlugin) MPlugin->destroy(MPlugin);
     if (MVst2Host) delete MVst2Host;
@@ -122,7 +119,11 @@ public:
   
   //----------
   
-  void setHost(SAT_Vst2HostImplementation* AHost) {
+  // void setHost(SAT_Vst2HostImplementation* AHost) {
+  //   MVst2Host = AHost;
+  // }
+  
+  void setHost(SAT_HostImplementation* AHost) {
     MVst2Host = AHost;
   }
   
@@ -213,7 +214,7 @@ public:
 //------------------------------
 
   void vst2_setParameter(VstInt32 index, float parameter) {
-    //SAT_Print("index %i parameter %f\n",index,parameter);
+    //SAT_PRINT("index %i parameter %f\n",index,parameter);
     MParameterValues[index] = parameter;
     queueProcessMessage(index);
     #ifndef SAT_NO_GUI
@@ -224,7 +225,7 @@ public:
   //----------
 
   float vst2_getParameter(VstInt32 index) {
-    //SAT_Print("index %i -> %f\n",index,MParameterValues[index]);
+    //SAT_PRINT("index %i -> %f\n",index,MParameterValues[index]);
     return MParameterValues[index];
     return 0.0;
   }
@@ -257,7 +258,7 @@ public:
   //----------
 
   void vst2_processDouble(double** inputs, double** outputs, VstInt32 sampleFrames) {
-    SAT_Print("\n");
+    SAT_PRINT("\n");
   }
     
   //----------
@@ -277,7 +278,7 @@ public:
       */
 
       case effOpen: { // 0
-        //SAT_Print("effOpen\n");
+        //SAT_PRINT("effOpen\n");
         MIsOpen = true;
 
         //MPlugin->init(MPlugin);
@@ -296,7 +297,7 @@ public:
       */
 
       case effClose: { // 1
-        //SAT_Print("effClose\n");
+        //SAT_PRINT("effClose\n");
         MIsOpen = false;
         //MInstance->on_plugin_destroy();
 
@@ -309,7 +310,7 @@ public:
 
       case effSetProgram: { // 2
         uint32_t program = (uint32_t)value;
-        //SAT_Print("effSetProgram %i\n",program);
+        //SAT_PRINT("effSetProgram %i\n",program);
         if (program != MCurrentProgram) {
           //on_programChange(program);
           MCurrentProgram = program;
@@ -327,7 +328,7 @@ public:
       */
 
       case effGetProgram: { // 3
-        //SAT_Print("effGetProgram -> %i\n",MCurrentProgram);
+        //SAT_PRINT("effGetProgram -> %i\n",MCurrentProgram);
         return MCurrentProgram;
         break;
       }
@@ -342,7 +343,7 @@ public:
       */
 
       case effSetProgramName: { // 4
-        //SAT_Print("effSetProgramName '%s'\n",ptr);
+        //SAT_PRINT("effSetProgramName '%s'\n",ptr);
         //SAT_Strcpy(MProgramName,txt);
         break;
       }
@@ -357,7 +358,7 @@ public:
       */
 
       case effGetProgramName: { // 5
-        //SAT_Print("effGetProgramName\n");
+        //SAT_PRINT("effGetProgramName\n");
         *cptr = 0;
         break;
         //SAT_Strcpy((char*)ptr,MProgramName);
@@ -377,7 +378,7 @@ public:
       */
 
       case effGetParamLabel: { // 6
-        //SAT_Print("effGetParamLabel -> ''\n");
+        //SAT_PRINT("effGetParamLabel -> ''\n");
         strcpy((char*)ptr,"");
         return 1;
 //        break;
@@ -394,11 +395,11 @@ public:
       case effGetParamDisplay: { // 7
         float value = MParameterValues[index];
         if (MParams->value_to_text(MPlugin,index,value,cptr,strlen(cptr))) {
-          //SAT_Print("effGetParamDisplay %i -> '%s'\n",index,cptr);
+          //SAT_PRINT("effGetParamDisplay %i -> '%s'\n",index,cptr);
           return 1;
         }
         else {
-          //SAT_Print("effGetParamDisplay %i -> ?'\n",index);
+          //SAT_PRINT("effGetParamDisplay %i -> ?'\n",index);
         }
         break;
       }
@@ -416,11 +417,11 @@ public:
         clap_param_info_t info;
         if (MParams->get_info(MPlugin,index,&info)) {
           strcpy((char*)ptr,info.name);
-          //SAT_Print("effGetParamName %i -> '%s'\n",index,ptr);
+          //SAT_PRINT("effGetParamName %i -> '%s'\n",index,ptr);
           return 1;
         }
         else {
-          //SAT_Print("effGetParamName %i -> ?'\n",index);
+          //SAT_PRINT("effGetParamName %i -> ?'\n",index);
         }
         break;
       }
@@ -435,7 +436,7 @@ public:
       */
 
       case effSetSampleRate: { // 10
-        //SAT_Print("effSetSamplerate %f\n",opt);
+        //SAT_PRINT("effSetSamplerate %f\n",opt);
         MSampleRate = opt;
 //        MInstance->on_sampleRate(MSampleRate);
         break;
@@ -450,7 +451,7 @@ public:
       */
 
       case effSetBlockSize: { // 11
-        //SAT_Print("effSetBlockSize %i\n",value);
+        //SAT_PRINT("effSetBlockSize %i\n",value);
         MMaxBlockSize = (VstInt32)value;
         break;
       }
@@ -490,14 +491,14 @@ public:
       */
 
       case effMainsChanged: { // 12
-        //SAT_Print("effMainsChanged %i\n",value);
+        //SAT_PRINT("effMainsChanged %i\n",value);
         //SAT_Vst2Trace("vst2: dispatcher/effMainsChanged %i\n",(int)value);
         if (value == 0) { // suspend
           MIsProcessing = false;
           MIsSuspended = true;
           //MInstance->on_plugin_deactivate();
 
-          SAT_Print("deactivate\n");
+          SAT_PRINT("deactivate\n");
           MPlugin->deactivate(MPlugin);
 
         }
@@ -510,7 +511,7 @@ public:
           MIsSuspended = false;
           //MInstance->on_plugin_activate(MSampleRate,0,MMaxBlockSize);
 
-          SAT_Print("activate\n");
+          SAT_PRINT("activate\n");
           MPlugin->activate(MPlugin,MSampleRate,0,MMaxBlockSize);
 
         }
@@ -528,7 +529,7 @@ public:
       */
 
       case effEditGetRect: { // 13
-        //SAT_Print("effEditGetRect\n");
+        //SAT_PRINT("effEditGetRect\n");
         //SAT_Vst2Trace("vst2: dispatcher/effEditGetRect\n");
         if (MGui) {
           uint32_t width  = 0;
@@ -555,7 +556,7 @@ public:
       */
 
       case effEditOpen: { // 14
-        //SAT_Print("effEditOpen\n");
+        //SAT_PRINT("effEditOpen\n");
         #ifndef SAT_NO_GUI
 
           #ifdef SAT_LINUX
@@ -610,7 +611,7 @@ public:
       */
 
       case effEditClose: { // 15
-        //SAT_Print("effEditClose\n");
+        //SAT_PRINT("effEditClose\n");
         #ifndef SAT_NO_GUI
           if (MGui) {
             if (MIsEditorOpen) {
@@ -638,7 +639,7 @@ public:
       */
 
       case effEditIdle: { // 19
-        //SAT_Print("effEditIdle\n");
+        //SAT_PRINT("effEditIdle\n");
         #ifndef SAT_NO_GUI
 //          if (MGui) {
 //            if (MIsEditorOpen) {
@@ -698,7 +699,7 @@ public:
       */
 
       case effGetChunk: { // 23
-        //SAT_Print("effGetChunk\n");
+        //SAT_PRINT("effGetChunk\n");
         //if (index==0) return MInstance->on_saveBank((void**)ptr);
         //else return MInstance->on_saveProgram((void**)ptr);
         {
@@ -731,7 +732,7 @@ public:
       */
 
       case effSetChunk: { // 24
-        //SAT_Print("effSetChunk\n");
+        //SAT_PRINT("effSetChunk\n");
 //          //if (index==0) return MInstance->on_loadBank(ptr,value); // was not retrurn
 //          //else  /*if (index==1)*/ return MInstance->on_loadProgram(ptr,value);
 //          float* buffer = (float*)ptr;
@@ -775,7 +776,7 @@ public:
       */
 
       case effProcessEvents: { // 25
-        //SAT_Print("effProcessEvents\n");
+        //SAT_PRINT("effProcessEvents\n");
         //if ((MDescriptor->isSynth()) || (MDescriptor->canReceiveMidi())) {
         //if (strstr(MDescriptor->features,"instrument")) {
           VstEvents* ev = (VstEvents*)ptr;
@@ -802,7 +803,7 @@ public:
       */
 
       case effCanBeAutomated: { // 26
-        //SAT_Print("effCanBeAutomated\n");
+        //SAT_PRINT("effCanBeAutomated\n");
         //if (MParams) {
         //  clap_param_info_t info;
         //  MParams->get_info(MPlugin,index,&info);
@@ -833,7 +834,7 @@ public:
       */
 
       case effString2Parameter: { // 27
-        //SAT_Print("effString2Parameter\n");
+        //SAT_PRINT("effString2Parameter\n");
         //TODO
         break;
       }
@@ -850,7 +851,7 @@ public:
       */
 
       case effGetProgramNameIndexed: { // 29
-        //SAT_Print("effGetProgramNameIndexed\n");
+        //SAT_PRINT("effGetProgramNameIndexed\n");
         //KStrcpy((char*)ptr,MProgramName);
         //return (VstIntPtr)MPrograms[index]->getName();
         strncpy((char*)ptr,"default",24);
@@ -884,7 +885,7 @@ public:
 
       //TODO
       case effGetInputProperties: { // 33
-        //SAT_Print("effGetInputProperties\n");
+        //SAT_PRINT("effGetInputProperties\n");
         VstPinProperties* pin = (VstPinProperties*)ptr;
         /* char* pc = */ strcpy(pin->label,"input "); // returns ptr to end of string? ptr to the '\0', or after the 0?
         /* *pc++ = SAT_HEX_TABLE[index&0x0f];
@@ -901,7 +902,7 @@ public:
 
       //TODO
       case effGetOutputProperties: { // 34
-        //SAT_Print("effGetOutputProperties\n");
+        //SAT_PRINT("effGetOutputProperties\n");
         VstPinProperties* pin = (VstPinProperties*)ptr;
         /* char* pc = */ strcpy(pin->label,"output ");
         /* *pc++ = SAT_HEX_TABLE[index&0x0f];
@@ -938,7 +939,7 @@ public:
         #ifndef SAT_PLUGIN_VST2_NO_SHELL
           if (MShellPluginCurrentId == 0) {
             if (SAT_GLOBAL.REGISTRY.getNumDescriptors() > 1) {
-              //SAT_Print("effGetPlugCategory -> shell\n");
+              //SAT_PRINT("effGetPlugCategory -> shell\n");
               res = kPlugCategShell;
               MShellPluginLastQueried = 0;
             }
@@ -949,7 +950,7 @@ public:
           if (strstr(MDescriptor->id,"instrument")) res = kPlugCategSynth;
           else if (strstr(MDescriptor->id,"audio_effect")) res = kPlugCategEffect;
           //if (MPlugin->hasFlag(kpf_tool)) res = kPlugCategGenerator;
-          //SAT_Print("effGetPluginCategory -> %i\n",res);
+          //SAT_PRINT("effGetPluginCategory -> %i\n",res);
         }
         return res;
       }
@@ -977,7 +978,7 @@ public:
       */
 
       case effOfflinePrepare: { // 39
-        //SAT_Print("effOfflinePrepare\n");
+        //SAT_PRINT("effOfflinePrepare\n");
         break;
       }
 
@@ -990,7 +991,7 @@ public:
       */
 
       case effOfflineRun: { // 40
-        //SAT_Print("effOfflineRun\n");
+        //SAT_PRINT("effOfflineRun\n");
         break;
       }
 
@@ -1002,7 +1003,7 @@ public:
       */
 
       case effProcessVarIo: { // 41
-        //SAT_Print("effProcessVarIo\n");
+        //SAT_PRINT("effProcessVarIo\n");
         break;
       }
 
@@ -1015,7 +1016,7 @@ public:
       */
 
       case effSetSpeakerArrangement: { // 42
-        //SAT_Print("effSetSpeakerArrangement\n");
+        //SAT_PRINT("effSetSpeakerArrangement\n");
         break;
       }
 
@@ -1034,7 +1035,7 @@ public:
       */
 
       case effSetBypass: { // 44
-        //SAT_Print("effSetBypass %i\n",value);
+        //SAT_PRINT("effSetBypass %i\n",value);
         return 1;
       }
 
@@ -1046,7 +1047,7 @@ public:
       */
 
       case effGetEffectName: { // 45
-        //SAT_Print("effGetEffectName -> '%s'\n",MDescriptor->name);
+        //SAT_PRINT("effGetEffectName -> '%s'\n",MDescriptor->name);
         strcpy((char*)ptr,MDescriptor->name);
 //        strcpy(str,MDescriptor->name);
         //#ifdef SAT_32BIT
@@ -1070,7 +1071,7 @@ public:
       */
 
       case effGetVendorString: { // 47
-        //SAT_Print("effGetVendorString -> '%s'\n",MDescriptor->vendor);
+        //SAT_PRINT("effGetVendorString -> '%s'\n",MDescriptor->vendor);
         strcpy((char*)ptr,(char*)MDescriptor->vendor);
         break;
       }
@@ -1083,7 +1084,7 @@ public:
       */
 
       case effGetProductString: { // 48
-        //SAT_Print("effGetProductStringn -> '%s'",MDescriptor->description);
+        //SAT_PRINT("effGetProductStringn -> '%s'",MDescriptor->description);
         strcpy((char*)ptr,(char*)MDescriptor->description);
         break;
       }
@@ -1098,7 +1099,7 @@ public:
       */
 
       case effGetVendorVersion: { // 49
-        //SAT_Print("effGetVendorVersion\n");
+        //SAT_PRINT("effGetVendorVersion\n");
         return 1;//MDescriptor->getVersion();
         //break;
       }
@@ -1124,7 +1125,7 @@ public:
       */
 
       case effVendorSpecific: { // 50
-        //SAT_Print("effVendorSpecific\n");
+        //SAT_PRINT("effVendorSpecific\n");
         break;
       }
 
@@ -1156,7 +1157,7 @@ public:
       */
 
       case effCanDo: { // 51
-        //SAT_Print("effCanDo '%s'\n",ptr);
+        //SAT_PRINT("effCanDo '%s'\n",ptr);
         char* p = (char*)ptr;
 
         // plug-in will send Vst/MIDI events to Host
@@ -1204,7 +1205,7 @@ public:
       */
 
       case effGetTailSize: { // 52
-        //SAT_Print("effGetTailSize -> 0\n");
+        //SAT_PRINT("effGetTailSize -> 0\n");
         //if (MTail == -1) return 1;
         return 0;
         //break;
@@ -1236,7 +1237,7 @@ public:
       */
 
       case effGetParameterProperties: { // 56
-        //SAT_Print("effGetParameterProperties %i\n",index);
+        //SAT_PRINT("effGetParameterProperties %i\n",index);
         break;
       }
 
@@ -1247,7 +1248,7 @@ public:
       */
 
       case effGetVstVersion: { // 58
-        //SAT_Print("effGetVstVersion -> 2\n");
+        //SAT_PRINT("effGetVstVersion -> 2\n");
         //SAT_Vst2Trace("vst2: dispatcher/effGetVstVersion\n");
         return 2;
         //break;
@@ -1395,7 +1396,7 @@ public:
       */
 
       case effGetSpeakerArrangement: { // 69
-        //SAT_Print("effGetSpeakerArrangement\n");
+        //SAT_PRINT("effGetSpeakerArrangement\n");
         break;
       }
 
@@ -1422,7 +1423,7 @@ public:
           const char* name = descriptor->name;
           uint32_t unique_id = sat_vst2_create_unique_id(descriptor);
           strncat((char*)ptr,name,64);
-          SAT_Print("effShellGetNextPlugin %i name '%s' id %i\n",MShellPluginLastQueried,name,unique_id);
+          SAT_PRINT("effShellGetNextPlugin %i name '%s' id %i\n",MShellPluginLastQueried,name,unique_id);
           return unique_id;
         #endif
         break;
@@ -1457,7 +1458,7 @@ public:
       */
 
       case effStartProcess: { //71
-        //SAT_Print("effStartProcess\n");
+        //SAT_PRINT("effStartProcess\n");
         MIsProcessing = true;
         break;
       }
@@ -1470,7 +1471,7 @@ public:
       */
 
       case effStopProcess: { // 72
-        //SAT_Print("effStopProcess\n");
+        //SAT_PRINT("effStopProcess\n");
         MIsProcessing = false;
         break;
       }
@@ -1537,7 +1538,7 @@ public:
       */
 
       case effSetProcessPrecision: { // 77
-        //SAT_Print("effSetprocessPrecision\n");
+        //SAT_PRINT("effSetprocessPrecision\n");
         break;
       }
 
@@ -1581,6 +1582,3 @@ public:
 
 //----------------------------------------------------------------------
 #endif
-
-
-#endif // 0

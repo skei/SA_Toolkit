@@ -1,6 +1,3 @@
-
-#if 0
-
 #ifndef sat_vst2_entry_included
 #define sat_vst2_entry_included
 //----------------------------------------------------------------------
@@ -9,14 +6,16 @@
 
 #include "sat.h"
 #include "base/system/sat_paths.h"
-//#include "plugin/sat_registry.h"
 #include "plugin/sat_plugin.h"
-#include "plugin/clap/sat_clap.h"
+#include "plugin/lib/sat_clap.h"
+#include "plugin/lib/sat_vst2.h"
+#include "plugin/lib/sat_vst2_utils.h"
+#include "plugin/sat_host_implementation.h"
+#include "plugin/plugin/sat_vst2_plugin.h"
+
+//#include "plugin/sat_registry.h"
 //#include "plugin/clap/sat_clap_host.h"
-#include "plugin/vst2/sat_vst2.h"
-#include "plugin/vst2/sat_vst2_host_implementation.h"
-#include "plugin/vst2/sat_vst2_plugin.h"
-#include "plugin/vst2/sat_vst2_utils.h"
+//#include "plugin/vst2/sat_vst2_host_implementation.h"
 
 //----------------------------------------------------------------------
 //
@@ -37,13 +36,13 @@ public:
 //------------------------------
 
   SAT_Vst2Entry() {
-    SAT_Print("\n");
+    SAT_PRINT("\n");
   }
 
   //----------
 
   ~SAT_Vst2Entry() {
-    SAT_Print("\n");
+    SAT_PRINT("\n");
   }
 
 //------------------------------
@@ -55,7 +54,7 @@ public:
 
 
   AEffect* entry(audioMasterCallback audioMaster) {
-    SAT_Print("\n");
+    SAT_PRINT("\n");
     
     uint32_t index = 0;
 
@@ -63,26 +62,26 @@ public:
     #ifndef SAT_PLUGIN_VST2_NO_SHELL
       uint32_t current_id = 0;
       if ( audioMaster(nullptr,audioMasterCanDo,0,0,(void*)"shellCategory",0) == 1) {
-        //SAT_Print("host supports shellCategory\n");
+        //SAT_PRINT("host supports shellCategory\n");
         current_id = audioMaster(nullptr,audioMasterCurrentId,0,0,nullptr,0);
-        SAT_Print("shellCategory.. current_id: %i\n",current_id);
+        SAT_PRINT("shellCategory.. current_id: %i\n",current_id);
         for (int32_t i=0; i<(int32_t)SAT_GLOBAL.REGISTRY.getNumDescriptors(); i++) {
           const clap_plugin_descriptor_t* desc = SAT_GLOBAL.REGISTRY.getDescriptor(i);
           if (current_id == sat_vst2_create_unique_id(desc)) {
-            SAT_Print("found plugin %i = '%s'\n",i,desc->name);
+            SAT_PRINT("found plugin %i = '%s'\n",i,desc->name);
             index = i;
             break;
           }
         }
       }
       //if ( audioMaster(effect,audioMasterCanDo,0,0,(void*)"shellCategorycurID",0) == 1) {
-      //  SAT_Print("host supports shellCategorycurID\n");
+      //  SAT_PRINT("host supports shellCategorycurID\n");
       //}
     #endif
 
     char path[1024] = {};
     const char* plugin_path = SAT_GetLibFilename(path);
-    SAT_Print("plugin_path '%s'\n",plugin_path);
+    SAT_PRINT("plugin_path '%s'\n",plugin_path);
     //SAT_GLOBAL.REGISTRY.setPath(plugin_path);
     
 //    SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);      // deleted in SAT_Vst2Plugin destructor
@@ -93,7 +92,11 @@ public:
 //    SAT_Vst2Plugin* vst2_plugin  = new SAT_Vst2Plugin(host,plugin,audioMaster);               // deleted in vst2_dispatcher_callback(effClose)
 
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
-    SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);        // deleted in SAT_Vst2Plugin destructor
+
+    //SAT_Vst2HostImplementation* vst2_host = new SAT_Vst2HostImplementation(audioMaster);        // deleted in SAT_Vst2Plugin destructor
+
+    SAT_HostImplementation* vst2_host = new SAT_HostImplementation();        // deleted in SAT_Vst2Plugin destructor
+
     const clap_host_t* claphost = vst2_host->getClapHost();
 
 //    const clap_plugin_t* clapplugin = SAT_CreatePlugin(index,descriptor,claphost);              // destroy() called in SAT_Vst2Plugin destructor
@@ -103,7 +106,7 @@ public:
     const clap_plugin_t* clapplugin = satclapplugin->getClapPlugin();
     SAT_Plugin* plugin = (SAT_Plugin*)satclapplugin;
 
-    plugin->setPluginFormat("VST2");
+//    plugin->setPluginFormat("VST2");
 
     plugin->init();
     //SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(plugin);
@@ -140,7 +143,7 @@ public:
     uint32_t i = 0;
     while (descriptor->features[i]) {
       const char* str = descriptor->features[i++];
-      SAT_Print("feature %i: '%s'\n",i,str);
+      SAT_PRINT("feature %i: '%s'\n",i,str);
       if (strcmp(str,CLAP_PLUGIN_FEATURE_INSTRUMENT) == 0) flags |= effFlagsIsSynth;
     }
     
@@ -156,7 +159,7 @@ public:
     // move all of the below to vst2plugin ?
 
     AEffect* effect = vst2plugin->getAEffect();
-    vst2_host->setAEffect(effect);
+//    vst2_host->setAEffect(effect);
     memset(effect,0,sizeof(AEffect));
 
     //
@@ -254,7 +257,7 @@ SAT_Vst2Entry GLOBAL_VST2_PLUGIN_ENTRY;
 //__SAT_EXPORT
 __attribute__ ((visibility ("default")))
 AEffect* sat_vst2_entry(audioMasterCallback audioMaster) {
-  SAT_Print("\n");
+  SAT_PRINT("\n");
   if (!audioMaster(0,audioMasterVersion,0,0,0,0)) return 0;
   return GLOBAL_VST2_PLUGIN_ENTRY.entry(audioMaster);
 }
@@ -265,6 +268,3 @@ AEffect* sat_vst2_entry(audioMasterCallback audioMaster) {
 
 //----------------------------------------------------------------------
 #endif
-
-
-#endif // 0

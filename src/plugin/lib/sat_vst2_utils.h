@@ -1,10 +1,8 @@
-#if 0
-
 #ifndef sat_vst2_utils_included
 #define sat_vst2_utils_included
 //----------------------------------------------------------------------
 
-#include "plugin/vst2/sat_vst2.h"
+#include "plugin/lib/sat_vst2.h"
 
 // why not id?
 
@@ -20,5 +18,3 @@ uint32_t sat_vst2_create_unique_id(const clap_plugin_descriptor_t* descriptor) {
 
 //----------------------------------------------------------------------
 #endif
-
-#endif // 0
