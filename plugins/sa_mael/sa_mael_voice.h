@@ -280,6 +280,8 @@ public:
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
 
+        // move these outside of for loop?
+        
         sat_param_t osc1_squ    = SAT_Clamp( (p_osc1_squ   + m_osc1_squ),    0,  1  );
         sat_param_t osc1_tri    = SAT_Clamp( (p_osc1_tri   + m_osc1_tri),    0,  1  );
         sat_param_t osc1_sin    = SAT_Clamp( (p_osc1_sin   + m_osc1_sin),    0,  1  );

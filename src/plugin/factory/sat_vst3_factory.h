@@ -6,7 +6,6 @@
 #include "base/util/sat_strutils.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/lib/sat_clap.h"
-// #include "plugin/clap/sat_clap_utils.h"
 #include "plugin/lib/sat_vst3.h"
 #include "plugin/lib/sat_vst3_utils.h"
 #include "plugin/sat_host_implementation.h"
@@ -144,7 +143,6 @@ public: // IPluginFactory
 
   //----------
 
-
   int32 PLUGIN_API countClasses() override {
     SAT_TRACE;
     return SAT_GLOBAL.REGISTRY.getNumDescriptors();
@@ -159,10 +157,8 @@ public: // IPluginFactory
     memcpy(info->cid,long_id,16);
     info->cardinality = PClassInfo::kManyInstances;
 
-    //TODO: if (SAT_ClapIsInstrument(descriptor)) .. ??
-    //if (SAT_ClapIsInstrument(descriptor)) strcpy(info->subCategories,Vst::PlugType::kInstrument);
-    //else strcpy(info->subCategories,Vst::PlugType::kFx);
-
+//    if (SAT_ClapIsInstrument(descriptor)) strcpy(info->subCategories,Vst::PlugType::kInstrument);
+//    else strcpy(info->subCategories,Vst::PlugType::kFx);
 
     strncpy(info->category,kVstAudioEffectClass,PClassInfo::kCategorySize);
     
@@ -189,7 +185,6 @@ public: // IPluginFactory
     const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
 
 //    SAT_Vst3HostImplementation* vst3_host = new SAT_Vst3HostImplementation();
-
     SAT_HostImplementation* vst3_host = new SAT_HostImplementation();
 
     SAT_ClapPlugin* plugin = SAT_CreatePlugin(index,descriptor,vst3_host->getClapHost());

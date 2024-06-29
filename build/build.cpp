@@ -18,7 +18,7 @@
 
 
 //#include "../plugins/sa_bulum.h"
-//#include "../plugins/sa_mael.h"
+#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_ports.h"
 
 //#include "../plugins/sa_automata.h"
@@ -70,7 +70,7 @@
 
 //#include "../plugins/test/exe1.h"
 //#include "../plugins/test/plugin_gui1.h"
-#include "../plugins/test/plugin_gui2.h"
+//#include "../plugins/test/plugin_gui2.h"
 //#include "../plugins/test/test_voices.h"
 
 
