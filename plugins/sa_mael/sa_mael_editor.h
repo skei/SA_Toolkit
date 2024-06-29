@@ -23,7 +23,7 @@ public:
     SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"mael");
     root->appendChild(header);
 
-    SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(25,"(hint)");
+    SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(25,"  ...");
     root->appendChild(footer);
     window->setHintWidget(footer);
 

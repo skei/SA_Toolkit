@@ -55,6 +55,34 @@
 
 //----------------------------------------------------------------------
 
+  /*
+    dc = CreateCompatibleDC(NULL);///////creates a Device context
+    memset(&info, 0, sizeof(info));
+    info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    info.bmiHeader.biWidth = 768;
+    info.bmiHeader.biHeight = 576;
+    info.bmiHeader.biPlanes = 1;
+    info.bmiHeader.biBitCount = 8*3;
+    info.bmiHeader.biCompression = BI_RGB;
+    bitmap = CreateDIBSection(dc, &info, DIB_RGB_COLORS,(void **)&outbits, NULL,0);
+    HGDIOBJ res = SelectObject(dc, bitmap);
+    memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
+    pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_BITMAP | PFD_SUPPORT_OPENGL | PFD_SUPPORT_GDI ;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 8*3;
+    pfd.cRedBits = 8;
+    pfd.cGreenBits = 8;
+    pfd.cBlueBits = 8;
+    pfd.cDepthBits = 32;
+    pf = ChoosePixelFormat(dc, &pfd);
+    int result = SetPixelFormat(dc, pf, &pfd);
+    rc = wglCreateContext(dc);
+  */
+
+//----------
+
 PIXELFORMATDESCRIPTOR SAT_WglWindowPFD = {
   sizeof(SAT_WglWindowPFD),
   1,
@@ -93,39 +121,9 @@ PIXELFORMATDESCRIPTOR SAT_WglSurfacePFD = {
   0, 0, 0, 0
 };
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
+//----------
 
 class SAT_Renderer;
-
-  /*
-    dc = CreateCompatibleDC(NULL);///////creates a Device context
-    memset(&info, 0, sizeof(info));
-    info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    info.bmiHeader.biWidth = 768;
-    info.bmiHeader.biHeight = 576;
-    info.bmiHeader.biPlanes = 1;
-    info.bmiHeader.biBitCount = 8*3;
-    info.bmiHeader.biCompression = BI_RGB;
-    bitmap = CreateDIBSection(dc, &info, DIB_RGB_COLORS,(void **)&outbits, NULL,0);
-    HGDIOBJ res = SelectObject(dc, bitmap);
-    memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
-    pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
-    pfd.nVersion = 1;
-    pfd.dwFlags = PFD_DRAW_TO_BITMAP | PFD_SUPPORT_OPENGL | PFD_SUPPORT_GDI ;
-    pfd.iPixelType = PFD_TYPE_RGBA;
-    pfd.cColorBits = 8*3;
-    pfd.cRedBits = 8;
-    pfd.cGreenBits = 8;
-    pfd.cBlueBits = 8;
-    pfd.cDepthBits = 32;
-    pf = ChoosePixelFormat(dc, &pfd);
-    int result = SetPixelFormat(dc, pf, &pfd);
-    rc = wglCreateContext(dc);
-  */
 
 //----------------------------------------------------------------------
 //
@@ -283,8 +281,20 @@ public:
 
     wglMakeCurrent(MDC,NULL);
     wglDeleteContext(temp_ctx);
-    wglMakeCurrent(MDC,MGLRC);
 
+    // const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
+
+    // if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
+    //   glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
+    // }
+
+    // if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
+    //   glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
+    // }
+
+    disableVSync();
+
+    wglMakeCurrent(MDC,MGLRC);
     MIsCurrent = true;
 
   }

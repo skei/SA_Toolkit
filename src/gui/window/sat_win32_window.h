@@ -902,7 +902,7 @@ private:
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
         //if (MListener) MListener->on_mouseMove(this,x,y,remapKey(wParam));
-//        on_window_mouse_move(remapMouseState(wParam),x,y,0);
+        on_window_mouseMove(x,y,remapMouseState(wParam),0);
         MMouseXpos = x;
         MMouseYpos = y;
         break;
@@ -925,7 +925,7 @@ private:
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
         //if (MListener) MListener->on_mouseDown(this,x,y,b,remapKey(wParam));
-//        on_window_mouse_click(b,remapMouseState(wParam),x,y,0);
+        on_window_mouseClick(x,y,b,remapMouseState(wParam),0);
         //        if (MFlags & s3_wf_capture) grabCursor();
         break;
       }
@@ -944,7 +944,7 @@ private:
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
         //if (MListener) MListener->on_mouseUp(this,x,y,b,remapKey(wParam));
-//        on_window_mouse_release(b,remapMouseState(wParam),x,y,0);
+        on_window_mouseRelease(x,y,b,remapMouseState(wParam),0);
         //        if (MFlags&s3_wf_capture) releaseCursor();
         break;
       }
@@ -991,22 +991,28 @@ private:
         d = GET_WHEEL_DELTA_WPARAM(wParam);
         //if (d>0) { if (MListener) MListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelUp,  smb_none); }
         //if (d<0) { if (MListener) MListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelDown,smb_none); }
-//        if (d > 0) { on_window_mouse_click(SAT_BUTTON_SCROLL_UP,   SAT_STATE_NONE, MMouseXpos,MMouseYpos,0); }
-//        if (d < 0) { on_window_mouse_click(SAT_BUTTON_SCROLL_DOWN, SAT_STATE_NONE, MMouseXpos,MMouseYpos,0); }
+        if (d > 0) { on_window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_UP,   SAT_STATE_NONE, 0); }
+        if (d < 0) { on_window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_DOWN, SAT_STATE_NONE, 0); }
         break;
       }
 
       case WM_KEYDOWN: {
         //if (MListener) MListener->on_keyDown(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-//        on_window_key_press(wParam,lParam,0);
+        uint32_t ke = wParam;
+        uint32_t ch = 0;
+        uint32_t st = lParam;
+        on_window_keyPress(ke,ch,st,0);
         break;
       }
 
       case WM_KEYUP: {
         //if (MListener) MListener->on_keyUp(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-//        on_window_key_release(wParam,lParam,0);
+        uint32_t ke = wParam;
+        uint32_t ch = 0;
+        uint32_t st = lParam;
+        on_window_keyRelease(ke,ch,st,0);
         break;
       }
 
@@ -1059,9 +1065,15 @@ LRESULT CALLBACK sat_win32_eventproc(HWND hWnd, UINT message, WPARAM wParam, LPA
   return window->eventHandler(hWnd, message, wParam, lParam);
 }
 
+
+
+
+
 //----------------------------------------------------------------------
 // window class
 //----------------------------------------------------------------------
+
+// TODO: move all of this to SAT_GLOBAL.WIN32 ?
 
 /*
   https://msdn.microsoft.com/en-us/library/windows/desktop/ms633586%28v=vs.85%29.aspx
@@ -1152,8 +1164,6 @@ SAT_Win32WindowClass SAT_GLOBAL_WIN32_WINDOW_CLASS = {};
 char* SAT_Win32ClassName() {
   return SAT_GLOBAL_WIN32_WINDOW_CLASS.getWindowClass();
 }
-
-
 
 //----------------------------------------------------------------------
 #endif

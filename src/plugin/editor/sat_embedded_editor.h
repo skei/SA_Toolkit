@@ -203,10 +203,14 @@ public: // clap.gui
       if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
       else MWindow = new SAT_Window(MWidth,MHeight);
       MWindow->setListener(this);
-
     #endif
     #ifdef SAT_WIN32
+      //if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
+      // ask plugin to create window.. if not, create it ourselves
+      if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
+      else MWindow = new SAT_Window(MWidth,MHeight);
+      MWindow->setListener(this);
     #endif
     return true;
   }
