@@ -2,8 +2,8 @@ sa_toolkit
 (or yapf - yet another plugin framework)
 
 * c++
-* linux (gcc), win32 (mingw)
-* clap, vst3, standalone exe, (vst2, lv2, ladspa, dssi)
+* linux (gcc), win32 (mingw), (mac (clang)?)
+* clap, vst3, vst2, standalone exe, (lv2, ladspa, dssi)
 * x11/win32/opengl, wayland/gles, nanovg
 
 
