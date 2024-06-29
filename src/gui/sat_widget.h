@@ -67,6 +67,8 @@ private:
   SAT_Rect          MManualMoved                        = {0,0,0,0};
 //SAT_Rect          MManualScrolled                     = {0,0,0,0};
 
+  // both parameter index & value index?
+
   void*             MParameters[SAT_WIDGET_NUM_VALUES]  = {0};            // array of values
   uint32_t          MParameterIndex                     = 0;              // index of selected, current value
 
@@ -266,6 +268,8 @@ public: // children
     return MChildren[AIndex];
   }
 
+  //----------
+
   virtual SAT_WidgetArray* getChildren() {
     return &MChildren;
   }
@@ -276,6 +280,7 @@ public: // owner window
 
   // called from
   //   SAT_WidgetWindow.on_window_show()
+  // (after show, scale, size, realign)
 
   virtual void ownerWindowOpened(SAT_WidgetOwner* AOwner) {
     MOwner = AOwner;
@@ -290,11 +295,12 @@ public: // owner window
 
   // called from
   //   SAT_WidgetWindow.on_window_hide()
+  // (before hiding window)
 
-  virtual void closeOwnerWindow(SAT_WidgetOwner* AOwner) {
+  virtual void ownerWindowClose(SAT_WidgetOwner* AOwner) {
     for (uint32_t i=0; i<MChildren.size(); i++) {
       SAT_Widget* widget = MChildren[i];
-      widget->closeOwnerWindow(AOwner);
+      widget->ownerWindowClose(AOwner);
     }
     on_widget_close(AOwner);
   }
@@ -500,6 +506,7 @@ public:
         child_rect.shrink(outer_border);
 
         child_rect = child->on_widget_postAlign(child_rect);
+        
         child->setRect(child_rect);
         if (ARecursive) child->realignChildren(ARecursive);
 
@@ -551,7 +558,7 @@ public:
   //----------
 
   // called from:
-  //   SAT_Widget.closeOwnerWindow
+  //   SAT_Widget.ownerWindowClose
 
   void on_widget_close(SAT_WidgetOwner* AOwner) override {
   }
@@ -716,7 +723,6 @@ public:
       parent->on_widget_realign();
       parent->do_widget_redraw(parent);
     }
-
   }
 
   void do_widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {

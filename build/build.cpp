@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------
 
 #ifdef SAT_PLUGIN_EXE
-  //#define SAT_DEBUG_MEMTRACE
+  #define SAT_DEBUG_MEMTRACE
 #else
   #define SAT_PRINT_SOCKET
 #endif
@@ -25,7 +25,6 @@
 //#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_cred.h"
 //#include "../plugins/sa_tyr.h"
-
 
 //#include "../plugins/template.h"
 
@@ -66,11 +65,8 @@
 //----------------------------------------------------------------------
 
 
+//#include "../plugins/test/exe.h"
 //#include "../plugins/test/gain.h"
-
-//#include "../plugins/test/exe1.h"
-//#include "../plugins/test/plugin_gui1.h"
-//#include "../plugins/test/plugin_gui2.h"
-//#include "../plugins/test/test_voices.h"
-
+//#include "../plugins/test/widgets.h"
+//#include "../plugins/test/voices.h"
 

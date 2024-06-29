@@ -285,7 +285,7 @@ public: // clap.gui
     #ifdef SAT_GUI_X11
       MParent = window->x11;
     #endif
-    if (MWindow) MWindow->reparent(MParent);
+    if (MWindow) MWindow->reparent((intptr_t)MParent);
     // do we need to resize MWindow.renderer/painter? buffer?
     return true;
   }
