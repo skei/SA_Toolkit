@@ -553,7 +553,7 @@ public: // on_widget
       if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualMoved.addRight(deltax);   }
       if (MResizeEdge & SAT_EDGE_TOP)     { MManualMoved.removeTop(deltay);  }
       if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualMoved.addBottom(deltay);  }
-      SAT_PRINT("%.2f, %.2f, %.2f, %.2f\n",MManualMoved.x,MManualMoved.y,MManualMoved.w,MManualMoved.h);
+      //SAT_PRINT("%.2f, %.2f, %.2f, %.2f\n",MManualMoved.x,MManualMoved.y,MManualMoved.w,MManualMoved.h);
       do_widget_realign(this,0);
       //realignParent();
     }
