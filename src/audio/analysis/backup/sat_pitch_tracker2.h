@@ -2,7 +2,7 @@
 #define mip_pitchtracker2_included
 //----------------------------------------------------------------------
 
-#include "common/mip_math.h"
+#include "base/util/sat_math.h"
 
 class MIP_PitchTracker2 {
 
@@ -30,7 +30,7 @@ class MIP_PitchTracker2 {
       // Filter coefs for power averaging
       // Trapezoidal filter gave me more accurate power at
       // high frequencies than standard EWMA
-      float tc = tan( 1000.0 / (sample_rate * milliseconds) * MIP_PI );
+      float tc = tan( 1000.0 / (sample_rate * milliseconds) * SAT_PI );
       b0 = tc / ( 1.0 + tc );
       a1 = ( tc - 1 ) / ( tc + 1 );
     }
@@ -52,6 +52,7 @@ class MIP_PitchTracker2 {
       // Calculate inverse of transfer function
       f = sqrtf( -f / (f  - 1) ); // Function is positive for valid input values. 0 <= f < 1
       return f;
+      // f_hz = sample_rate * atan(f) / SAT_PI;
     }
 
 };

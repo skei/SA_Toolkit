@@ -66,10 +66,10 @@ class SAT_LinkwitzRileyFilter {
       T sq_tmp1 = sqrt2*wc3*k;
       T sq_tmp2 = sqrt2*wc*k3;
       T a_tmp   = 4*wc2*k2+2*sq_tmp1+k4+2*sq_tmp2+wc4;
-      b1  = (4*(wc4+sq_tmp1-k4-sq_tmp2))/a_tmp;
-      b2  = (6*wc4-8*wc2*k2+6*k4)/a_tmp;
-      b3  = (4*(wc4-sq_tmp1+sq_tmp2-k4))/a_tmp;
-      b4  = (k4-2*sq_tmp1+wc4-2*sq_tmp2+4*wc2*k2)/a_tmp;
+      b1        = (4*(wc4+sq_tmp1-k4-sq_tmp2))/a_tmp;
+      b2        = (6*wc4-8*wc2*k2+6*k4)/a_tmp;
+      b3        = (4*(wc4-sq_tmp1+sq_tmp2-k4))/a_tmp;
+      b4        = (k4-2*sq_tmp1+wc4-2*sq_tmp2+4*wc2*k2)/a_tmp;
       switch(AMode) {
         case 0: // lowpass
           a0 = wc4/a_tmp;

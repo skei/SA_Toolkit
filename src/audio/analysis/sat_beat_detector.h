@@ -61,7 +61,7 @@ class SAT_BeatDetector {
 
     //----------
 
-    void process(T AInput) {
+    bool process(T AInput) {
       T EnvIn;
       // Step 1 : 2nd order low pass filter (made of two 1st order RC filter)
       MFilter1Out = MFilter1Out + ( MBeatFilter * (AInput-MFilter1Out) );
@@ -86,6 +86,7 @@ class SAT_BeatDetector {
       MBeatPulse = false;
       if (MBeatTrigger && !MPrevBeatPulse) MBeatPulse = true;
       MPrevBeatPulse = MBeatTrigger;
+      return MBeatPulse;
     }
 
 };
