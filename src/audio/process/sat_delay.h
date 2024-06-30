@@ -2,7 +2,7 @@
 #define sat_delay_included
 //----------------------------------------------------------------------
 
-#include "base/utils/sat_math.h"
+#include "base/util/sat_math.h"
 #include "audio/sat_audio_math.h"
 //#include "audio/filters/sat_dc_filter.h"
 
@@ -12,6 +12,8 @@ template<typename T>
 struct SAT_NoLoopFx {
   T process(T x) { return x; }
 };
+
+//----------
 
 template<typename T>
 struct SAT_HardClipFx {

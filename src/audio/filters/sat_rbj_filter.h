@@ -281,16 +281,16 @@ class SAT_RbjFilter {
   public:
 
     uint32_t  filterType(void)    { return MFilterType; }
-    T   freq(void)          { return MFreq; }
-    T   q(void)             { return MQ; }
-    T   dbGain(void)        { return MDBGain; }
-    bool    qIsBandWidth(void)  { return MQIsBandWidth; }
+    T         freq(void)          { return MFreq; }
+    T         q(void)             { return MQ; }
+    T         dbGain(void)        { return MDBGain; }
+    bool      qIsBandWidth(void)  { return MQIsBandWidth; }
 
-    void    filterType(uint32_t AType)          { MFilterType = AType; }
-    void    freq(T AFreq)                 { MFreq = AFreq; }
-    void    q(T AQ)                       { MQ = AQ; }
-    void    dbGain(T ADBGain)             { MDBGain = ADBGain; }
-    void    qIsBandWidth(T AQisBandwidth) { MQIsBandWidth = AQisBandwidth; }
+    void filterType(uint32_t AType)    { MFilterType = AType; }
+    void freq(T AFreq)                 { MFreq = AFreq; }
+    void q(T AQ)                       { MQ = AQ; }
+    void dbGain(T ADBGain)             { MDBGain = ADBGain; }
+    void qIsBandWidth(T AQisBandwidth) { MQIsBandWidth = AQisBandwidth; }
 
 };
 

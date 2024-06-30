@@ -12,7 +12,7 @@
 #include "extern/pffft/pffft.c.h"
 
 //#include "common/mip_math_fast.h"
-#include "common/mip_math_int.h"
+#include "base/util/sat_integer_math.h"
 //#include "base/mip_integer.h"
 
 //----------------------------------------------------------------------
@@ -21,7 +21,7 @@ class MIP_Fft {
 
   private:
     PFFFT_Setup*  MFft;
-    int32_t         MFftSize;
+    int32_t       MFftSize;
     float         MFftSizeInv;
     float*        MFftBuffer;
     float         MSampleRate;

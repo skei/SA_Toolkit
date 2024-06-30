@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 //#include <math.h> // expf
-#include "base/utils/sat_fast_math.h" // SAT_ExpF
+#include "base/util/sat_fast_math.h" // SAT_ExpF
 
 //----------
 

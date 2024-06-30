@@ -20,13 +20,13 @@ class SAT_CombFilter {
 
   private:
 
-    T   _Buffer[MAX_BUFFER]; // was 8192
+    T       _Buffer[MAX_BUFFER]; // was 8192
     int32_t _Pos;
-    T   _History;
+    T       _History;
     int32_t _Size;
-    T   _Damp1;
-    T   _Damp2;
-    T   _Feedback;
+    T       _Damp1;
+    T       _Damp2;
+    T       _Feedback;
 
   //------------------------------
   //
