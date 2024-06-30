@@ -19,6 +19,15 @@ template<class _T>
 class SAT_Array {
 
 //------------------------------
+private:
+//------------------------------
+
+  _T*             MBuffer     = nullptr;
+  uint32_t	      MBufferSize = 0;
+  uint32_t	      MSize       = 0;
+  const uint32_t	MTypeSize   = sizeof(_T);
+
+//------------------------------
 public:
 //------------------------------
 
@@ -268,15 +277,6 @@ public:
     removeTail();
     return MBuffer[MSize];
   }
-
-//------------------------------
-private:
-//------------------------------
-
-  const uint32_t	MTypeSize   = sizeof(_T);
-  _T*             MBuffer     = nullptr;
-  uint32_t	      MBufferSize = 0;
-  uint32_t	      MSize       = 0;
 
 };
 

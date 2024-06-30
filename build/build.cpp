@@ -70,17 +70,16 @@
 //----------------------------------------------------------------------
 
 
-// compile with -t, #define SAT_INCLUDE_TESTS
-// #include "../test/tests/sat_all_tests.h"
-
-//----------
-
 // #include "../test/exe/test_window.h"
 
 //----------
 
 // #include "../test/plugin/gain.h"
-#include "../test/plugin/widgets.h"
+// #include "../test/plugin/widgets.h"
 // #include "../test/plugin/voices.h"
 
+//------------------------------
+
+// compile with -t, #define SAT_INCLUDE_TESTS
+#include "../test/tests/sat_all_tests.h"
 
