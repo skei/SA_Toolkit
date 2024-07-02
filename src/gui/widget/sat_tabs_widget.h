@@ -31,12 +31,12 @@ protected:
 public:
 //------------------------------
 
-  SAT_TabsWidget(SAT_Rect ARect, uint32_t AHeaderHeight)
+  SAT_TabsWidget(SAT_Rect ARect, uint32_t AHeaderHeight/*, uint32_t w=0, uint32_t h=0*/)
   : SAT_Widget(ARect) {
     setName("SAT_TabsWidget");
     setHint("SAT_TabsWidget");
 
-    MHeader = new SAT_ButtonGridWidget(SAT_Rect(AHeaderHeight),0,0);
+    MHeader = new SAT_ButtonGridWidget(SAT_Rect(AHeaderHeight),0,0); // ,w,h);
     MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP;
     MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_LEFT;
     MHeader->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
@@ -90,6 +90,7 @@ public:
   //----------
 
   virtual void selectPage(int32_t AIndex) {
+    SAT_PRINT("AIndex %i getNumColumns %i\n",AIndex,MHeader->getNumColumns());
     if (AIndex < MHeader->getNumColumns()) {
       MHeader->selectCell(AIndex,0);
       MPages->setPage(AIndex);

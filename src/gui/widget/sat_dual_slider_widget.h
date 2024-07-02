@@ -29,8 +29,8 @@ private:
 public:
 //------------------------------
 
-  SAT_DualSliderWidget(SAT_Rect ARect)
-  : SAT_SliderWidget(ARect) {
+  SAT_DualSliderWidget(SAT_Rect ARect, const char* AText="")
+  : SAT_SliderWidget(ARect,AText/*,AValue)*/) {
     setName("SAT_DualSliderWidget");
     setHint("SAT_DualSliderWidget");
     setCursor(SAT_CURSOR_DEFAULT);

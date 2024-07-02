@@ -29,6 +29,7 @@ public:
   bool          MHorizSingle        = false;
   bool          MVertSingle         = false;
   bool          MFillCellsGradient  = false;
+  bool          MCanDeselectAll     = true;
 
   int32_t       MLastClickedX       = 0;
   int32_t       MLastClickedY       = 0;
@@ -87,6 +88,8 @@ public:
     MFillCellsGradient = AGradient;
   }
 
+  virtual void setCanDeselectAll(bool AState) { MCanDeselectAll = AState; }
+
   //----------
 
   virtual void resize(int32_t AX, int32_t AY) {
@@ -125,7 +128,17 @@ public:
       MStates[index] = 1;
     }
     else {
-      MStates[index] = 0;
+      //MStates[index] = 0;
+      uint32_t total = 0;
+      for (int32_t y=0; y<MNumRows; y++) {
+        for (int32_t x=0; x<MNumColumns; x++) {
+          uint32_t idx = (y * MNumColumns) + x;
+          total += MStates[idx];
+        }
+      }
+      if ((total == 1) && MCanDeselectAll) {
+        MStates[index] = 0;
+      }
     }
     index = 0;
     for (int32_t y=0; y<MNumRows; y++) {

@@ -1,4 +1,4 @@
-// included directly into sa_mael_plugin.h
+// included directly into sa_mael.h
 
 //------------------------------
 private:

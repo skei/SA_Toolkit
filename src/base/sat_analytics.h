@@ -70,6 +70,8 @@ public:
 public: // queues
 //------------------------------
 
+  // report_*_count()
+
   void set_ParamFromHostToGui(uint32_t count) {
     #ifdef SAT_INCLUDE_ANALYTICS
       if (count > _ParamFromHostToGui) _ParamFromHostToGui = count;

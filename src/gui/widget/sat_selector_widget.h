@@ -113,7 +113,7 @@ public:
         case SAT_BUTTON_LEFT:
           if (MMenu) {
             MMenu->openMenu(AXpos,AYpos);
-            do_widget_set_overlay(this,SAT_Color(0,0,0,0.5));
+            do_widget_set_overlay(this,SAT_Color(0,0,0,0.2));
           }
           break;
         case SAT_BUTTON_RIGHT:

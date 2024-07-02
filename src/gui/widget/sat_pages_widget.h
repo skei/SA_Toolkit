@@ -28,6 +28,7 @@ public:
   : SAT_VisualWidget(ARect) {
     setName("SAT_PagesWidget");
     setHint("SAT_PagesWidget");
+    Options.realignInvisible = true;
   }
 
   //----------
@@ -50,7 +51,13 @@ public:
     //APage->State.active = false;
     APage->setActive(false);
     APage->setVisible(false);
-    return appendChild(APage)->getIndex();
+
+    APage->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    APage->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+    APage->Options.realignInvisible = true;
+
+    appendChild(APage);
+    return APage->getIndex();
   }
 
   //----------

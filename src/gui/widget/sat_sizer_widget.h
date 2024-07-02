@@ -19,7 +19,7 @@ class SAT_SizerWidget
     bool        MIsDragging = false;
     SAT_Widget* MTarget     = nullptr;
     uint32_t    MMode       = SAT_DIRECTION_NONE;
-    SAT_Color   MFillColor  = SAT_Color( 0.45 );
+    //SAT_Color   MFillColor  = SAT_Color( 0.45 );
 
 //------------------------------
 public:
@@ -76,9 +76,11 @@ public:
       //  setCursor(SAT_CURSOR_CROSS2);
       //  break;
     }
+
     setFillBackground(true);
     setBackgroundColor(0.3);
     setDrawBorder(false);
+    
   }
 
   virtual ~SAT_SizerWidget() {
@@ -104,9 +106,9 @@ public:
     MTarget = ATarget;
   }
 
-  virtual void setFillColor(SAT_Color AColor) {
-    MFillColor = AColor;
-  }
+  // virtual void setFillColor(SAT_Color AColor) {
+  //   MFillColor = AColor;
+  // }
 
 //------------------------------
 public:
