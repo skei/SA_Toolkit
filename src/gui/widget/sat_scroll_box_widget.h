@@ -46,6 +46,17 @@ public:
 public:
 //------------------------------
 
+  virtual void setShowHorizontalScrollBar(bool AShow)   { showHorizontalScrollBar = AShow; }
+  virtual void setShowVerticalScrollBar(bool AShow)     { showVerticalScrollBar = AShow; }
+
+  virtual SAT_ScrollBarWidget* getVerticalScrollBar()   { return MVerticalScrollBar; }
+  virtual SAT_ScrollBarWidget* getHorizontalScrollBar() { return MHorizontalScrollBar; }
+  virtual SAT_VisualWidget*    getContentWidget()       { return MContent; }
+
+//------------------------------
+public:
+//------------------------------
+
   void setup(SAT_Rect ARect) {
     setName("SAT_ScrollBoxWidget");
     setHint("SAT_ScrollBoxWidget");
@@ -107,12 +118,6 @@ public:
 
     //MContent->Options.autoClip = true;
     
-  }
-
-  //----------
-
-  virtual SAT_VisualWidget* getContentWidget() {
-    return MContent;
   }
 
   //----------

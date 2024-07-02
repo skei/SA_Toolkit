@@ -56,7 +56,7 @@ public:
 //------------------------------
 
   SAT_DragValueWidget(SAT_Rect ARect, const char* AText="", double AValue=0.0)
-  : SAT_ValueWidget(ARect,AValue) {
+  : SAT_ValueWidget(ARect,AText,AValue) {
     setName("SAT_DragValueWidget");
     setHint("SAT_DragValueWidget");
     setCursor(SAT_CURSOR_ARROW_UP_DOWN);

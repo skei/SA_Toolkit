@@ -33,8 +33,8 @@ private:
 public:
 //------------------------------
 
-  SAT_ValueWidget(SAT_Rect ARect, double AValue=0.0)
-  : SAT_TextWidget(ARect) {
+  SAT_ValueWidget(SAT_Rect ARect, const char* AText="", double AValue=0.0)
+  : SAT_TextWidget(ARect,AText) {
     setName("SAT_ValueWidget");
     setHint("SAT_ValueWidget");
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);

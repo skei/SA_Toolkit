@@ -12,16 +12,32 @@
 
 //----------------------------------------------------------------------
 //
+//
+//
+//----------------------------------------------------------------------
+
+
+//#include "../plugins/test/test_window.h"
+
+// #include "../plugins/test/plugin/gain.h"
+// #include "../plugins/test/plugin/widgets.h"
+// #include "../plugins/test/plugin/voices.h"
+
+// #include "../plugins/templates/template.h"
+
+
+//----------------------------------------------------------------------
+//
 // plugins
 //
 //----------------------------------------------------------------------
 
 
+#include "../plugins/sa_demo.h"
+
 // #include "../plugins/sa_bulum.h"
 // #include "../plugins/sa_mael.h"
 // #include "../plugins/sa_ports.h"
-
-// #include "../plugins/template.h"
 
 //----------
 
@@ -29,7 +45,6 @@
 // #include "../plugins/sa_botage.h"
 // #include "../plugins/sa_cred.h"
 // #include "../plugins/sa_tyr.h"
-
 
 
 //----------------------------------------------------------------------
@@ -70,16 +85,7 @@
 //----------------------------------------------------------------------
 
 
-// #include "../test/exe/test_window.h"
+// -t, #define SAT_INCLUDE_TESTS
 
-//----------
-
-// #include "../test/plugin/gain.h"
-// #include "../test/plugin/widgets.h"
-// #include "../test/plugin/voices.h"
-
-//------------------------------
-
-// compile with -t, #define SAT_INCLUDE_TESTS
-#include "../test/tests/sat_all_tests.h"
+// #include "../test/tests/sat_all_tests.h"
 

@@ -90,6 +90,11 @@ public:
 
   //----------
 
+  virtual void setRoundedThumb(double ARounded) {
+    MRoundedThumb = ARounded;
+  }
+
+
   virtual void setThumbColor(SAT_Color AColor) {
     MThumbColor = AColor;
   }

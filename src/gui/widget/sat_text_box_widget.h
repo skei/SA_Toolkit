@@ -19,7 +19,7 @@ protected:
 //float         MTextHeight = 20.0;
 
   SAT_Painter*  MPainter        = nullptr;
-  float         MTextSize       = 10.0;
+  float         MTextSize       = 12.0;
   uint32_t      MTextAlignment  = SAT_TEXT_ALIGN_LEFT;
   uint32_t      MNumLines       = 0;
   uint32_t      MMaxLines       = 100;
@@ -35,6 +35,8 @@ public:
     setHint("SAT_TextBoxWidget");
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(true);
+    getContentWidget()->Layout.spacing = {0,3};
+
   }
 
   //----------
@@ -115,17 +117,34 @@ public:
     double width = 600;//getWidth();
     double S = getWindowScale();
 
-    SAT_Window* window = (SAT_Window*)getOwner();       // !!!
-    if (window) {
-      SAT_Painter* painter = window->getPainter();
+    // SAT_Window* window = (SAT_Window*)getOwner();       // !!!
+    // if (window) {
+    //   SAT_Painter* painter = window->getPainter();
+    //   painter->setTextSize(MTextSize * S);
+    //   double bounds[4];
+    //   if (painter->getTextBounds(AText,bounds)) {
+    //     width = bounds[2] - bounds[0];
+    //     if (width > 0) width /= S;
+    //   }
+    // }
+
+/*
+    SAT_WidgetOwner* owner = getOwner();
+    SAT_Painter* painter = owner->on_widgetOwner_getPainter();
+    if (painter) {
+      double bounds[4] = {0,0,0,0};
       painter->setTextSize(MTextSize * S);
-      double bounds[4];
-      if (painter->getTextBounds(AText,bounds)) {
-        width = bounds[2] - bounds[0];
-        if (width > 0) width /= S;
-      }
+      double advance = painter->getTextBounds(AText,bounds);
+      //SAT_PRINT("text %s size %.2f scale %.2f bounds %.2f,%.2f,%.2f,%.2f advance %.2f\n",text,textsize,scale,bounds[0],bounds[1],bounds[2],bounds[3],advance);
+      width = advance;
     }
-    
+*/    
+
+    // SAT_Rect rect = item->getBaseRect();
+    // rect.w = advance;
+    // rect.w /= scale;
+    // item->setBaseRect(rect);
+
 //    if (MPainter) {
 //      SAT_Print("yes, we have a painter\n");
 //    }
@@ -140,10 +159,10 @@ public:
     MNumLines += 1;
 
     textwidget->setText(AText);
-    textwidget->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP;
+    textwidget->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP;
     textwidget->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
     //textwidget->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_LEFT;
-    textwidget->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+//    textwidget->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
 
     textwidget->setFillBackground(false);
     textwidget->setDrawBorder(false);
@@ -155,8 +174,9 @@ public:
 //    textwidget->setBackgroundColor(SAT_LightGreen);
     //textwidget->setBackgroundColor(0.55);
 
-//    MContent->realignChildWidgets();
+//    MContent->realignChildren();
 //    if (ARedraw) do_widget_redraw(MContent); // only if visible?
+
   }
 
   //----------

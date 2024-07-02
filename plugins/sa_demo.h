@@ -1,5 +1,5 @@
-#ifndef sa_template_included
-#define sa_template_included
+#ifndef sa_demo_included
+#define sa_demo_included
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
@@ -10,7 +10,29 @@
 
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_interleaved_processor.h"
-//#include "audio/sat_audio_utils.h"
+#include "sa_demo/sa_demo_parameters.h"
+//#include "sa_demo/sa_demo_voice.h"
+
+#ifndef SAT_NO_GUI
+  #include "plugin/sat_editor.h"
+  #include "sa_demo/sa_demo_widgets.h"
+  #include "sa_demo/sa_demo_page_blank.h"
+  #include "sa_demo/sa_demo_page_widgets.h"
+  #include "sa_demo/sa_demo_page_parameters.h"
+  
+  // #include "sa_demo/sa_demo_page_base.h"
+  // #include "sa_demo/sa_demo_page_plugin.h"
+  // #include "sa_demo/sa_demo_page_gui.h"
+
+#endif
+
+//----------
+
+
+#define MAX_VOICES    64
+#define EDITOR_WIDTH  800
+#define EDITOR_HEIGHT 600
+#define EDITOR_SCALE  1.0
 
 //----------------------------------------------------------------------
 //
@@ -18,10 +40,10 @@
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t sa_template_descriptor = {
+const clap_plugin_descriptor_t sa_demo_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_template/v0",
-  .name         = "sa_template",
+  .id           = SAT_VENDOR "/sa_demo/v0",
+  .name         = "sa_demo",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -37,7 +59,7 @@ const clap_plugin_descriptor_t sa_template_descriptor = {
 //
 //----------------------------------------------------------------------
 
-class sa_template_processor
+class sa_demo_processor
 : public SAT_InterleavedProcessor {
 
 //------------------------------
@@ -51,13 +73,13 @@ private:
 public:
 //------------------------------
 
-  sa_template_processor(SAT_ProcessorOwner* AOwner)
+  sa_demo_processor(SAT_ProcessorOwner* AOwner)
   : SAT_InterleavedProcessor(AOwner) {
   }
 
   //----------
 
-  virtual ~sa_template_processor() {
+  virtual ~sa_demo_processor() {
   }
 
 //------------------------------
@@ -112,26 +134,26 @@ private:
 //
 //----------------------------------------------------------------------
 
-class sa_template_plugin
+class sa_demo_plugin
 : public SAT_Plugin {
   
 //------------------------------
 private:
 //------------------------------
 
-  sa_template_processor* MProcessor = nullptr;
+  sa_demo_processor* MProcessor = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  sa_template_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  sa_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
   }
 
   //----------
 
-  virtual ~sa_template_plugin() {
+  virtual ~sa_demo_plugin() {
   }
 
 //------------------------------
@@ -139,16 +161,20 @@ public:
 //------------------------------
 
   bool init() final {
+
     registerDefaultExtensions();    
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
-    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
-    // appendParameter(new SAT_Parameter( "Freq",  "",  2000,  100, 18000, flags ));
-    // appendParameter(new SAT_Parameter( "Boost", "",  0,     0,   6,     flags ));
-    // appendParameter(new SAT_Parameter( "Harm",  "",  0,     0,   100,   flags ));
-    // appendParameter(new SAT_Parameter( "Mix",   "", -6,    -120, 0,     flags ));
-    MProcessor = new sa_template_processor(this);
+
+    MProcessor = new sa_demo_processor(this);
     setProcessor(MProcessor);
+
+    sa_demo_SetupParameters(this);
+
+    #ifndef SAT_NO_GUI
+      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
+    #endif
+
     return SAT_Plugin::init();
   }
   
@@ -159,7 +185,29 @@ public:
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
+  //----------
+
+  #ifndef SAT_NO_GUI
+    #include "sa_demo/sa_demo_gui.h"
+  #endif
+
+  //----------
+
+  void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+    // SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
+    // for (uint32_t i=0; i<MAX_VOICES; i++) {
+    //   uint32_t state = MProcessor->getVoiceState(i);
+    //   voices->setVoiceState(i,state);
+    // }
+    // voices->do_widget_redraw(voices);
+  }  
+
 };
+
+#undef MAX_VOICES
+#undef EDITOR_WIDTH
+#undef EDITOR_HEIGHT
+#undef EDITOR_SCALE
 
 //----------------------------------------------------------------------
 //
@@ -169,17 +217,9 @@ public:
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(sa_template_descriptor,sa_template_plugin)
+  SAT_PLUGIN_ENTRY(sa_demo_descriptor,sa_demo_plugin)
 #endif
 
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-
-
-
-
 

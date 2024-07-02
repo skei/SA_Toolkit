@@ -2,6 +2,135 @@
 #define sat_main_menu_widget_included
 //----------------------------------------------------------------------
 
+#include "sat.h"
+#include "gui/widget/sat_menu_widget.h"
+#include "gui/widget/sat_text_widget.h"
+#include "gui/widget/sat_visual_widget.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_MainMenuItemWidget
+: public SAT_ButtonWidget {
+
+//------------------------------
+private:
+//------------------------------
+
+  const char*     MText = "menuitem";
+  SAT_MenuWidget* MMenu = nullptr;
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_MainMenuItemWidget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu)
+  : SAT_ButtonWidget(ARect,true) {
+    MText = AText;
+    MMenu = AMenu;
+    Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
+    setTextOffset(SAT_Rect(5,0,5,0));
+    setTexts(AText,AText);
+  }
+
+  //----------
+
+  virtual ~SAT_MainMenuItemWidget() {
+  }
+
+  virtual const char* getText() { return MText; }
+
+};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class SAT_MainMenuWidget
+: public SAT_VisualWidget {
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_Array<SAT_MainMenuItemWidget*>  MMenus        = {};
+  double                              MMenuSpacing  = 10.0;
+
+//------------------------------
+public:
+//------------------------------
+
+  SAT_MainMenuWidget(SAT_Rect ARect)
+  : SAT_VisualWidget(ARect) {
+    Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+    Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    setFillBackground(true);
+    setBackgroundColor(0.45);
+    setDrawBorder(false);
+  }
+
+  //----------
+
+  virtual ~SAT_MainMenuWidget() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+
+    double scale = getWindowScale();
+    SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
+
+    for (uint32_t i=0; i<MMenus.size(); i++) {
+      SAT_MainMenuItemWidget* item = MMenus[i];
+      const char* text = item->getText();
+      double textsize = item->getTextSize();
+      painter->setTextSize(textsize * scale);
+      double bounds[4] = {0,0,0,0};
+      double advance = painter->getTextBounds(text,bounds);
+      //SAT_PRINT("text %s size %.2f scale %.2f bounds %.2f,%.2f,%.2f,%.2f advance %.2f\n",text,textsize,scale,bounds[0],bounds[1],bounds[2],bounds[3],advance);
+
+      //item->setWidth(advance);
+      SAT_Rect rect = item->getBaseRect();
+      rect.w = advance + MMenuSpacing;
+      rect.w /= scale;
+      item->setBaseRect(rect);
+
+    }
+  }
+
+
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual int32_t appendMenu(const char* AText, SAT_MenuWidget* AMenu) {
+    uint32_t index = MMenus.size();
+    SAT_MainMenuItemWidget* item = new SAT_MainMenuItemWidget(20,AText,AMenu);
+    MMenus.append(item);
+    appendChild(item);
+    return index;
+  }
+
+};
+
+//----------------------------------------------------------------------
+#endif
+
+
+
+
+
 #if 0
 
 #include "sat.h"
@@ -173,6 +302,4 @@ public:
 
 #endif // 0
 
-//----------------------------------------------------------------------
-#endif
 

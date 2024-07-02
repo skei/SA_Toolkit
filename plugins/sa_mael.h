@@ -220,7 +220,7 @@ public:
 
   //----------
 
-  #if !defined (SAT_NO_GUI)  
+  #ifndef SAT_NO_GUI
     #include "sa_mael/sa_mael_editor.h"
   #endif
 

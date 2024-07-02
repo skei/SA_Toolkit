@@ -61,7 +61,8 @@ public:
 
   virtual void setDrawParamText(bool AParam=true)     { MDrawParamText = AParam; }
 
-  virtual const char* getText() { return MText; }
+  virtual const char* getText()     { return MText; }
+  virtual double      getTextSize() { return MTextSize; }
 
 //------------------------------
 public:

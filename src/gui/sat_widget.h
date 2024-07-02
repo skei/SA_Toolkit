@@ -440,13 +440,18 @@ public:
     double layout_xcenter = layout_rect.x + (layout_rect.w * 0.5);
     double layout_ycenter = layout_rect.y + (layout_rect.h * 0.5);
     MContentRect = SAT_Rect( mrect.x,mrect.y, 0,0 );
+
+    double stackx          = 0;
+    double stacky          = 0;
+    double stack_highest   = 0;
+    double stack_widest    = 0;
     
     for (uint32_t i=0; i<MChildren.size(); i++) {
       SAT_Widget* child = MChildren[i];
       uint32_t child_layout = child->Layout.flags;
       SAT_Rect child_rect;
 
-      bool need_realign = child->State.visible || child->Options.realignInvisible;
+      bool need_realign = (child->State.visible || child->Options.realignInvisible);
       if (need_realign) {
 
         if (child_layout & SAT_WIDGET_LAYOUT_PERCENT) {
@@ -486,8 +491,82 @@ public:
         if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM)       { yanchored = true; child_rect.y += (layout_rect.y2()  - child_rect.h); }
         if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_HORIZ) { xanchored = true; child_rect.x += (layout_xcenter - (child_rect.w * 0.5)); }
         if (child_layout & SAT_WIDGET_LAYOUT_ANCHOR_CENTER_VERT)  { yanchored = true; child_rect.y += (layout_ycenter - (child_rect.h * 0.5)); }
+
+        if (child_layout & SAT_WIDGET_LAYOUT_STACK_HORIZ) {
+          if ((stackx + child_rect.w /*+ border.w - spacing.x*/) >= layout_rect.w) {
+            if (stackx != 0) {  // first widget..
+              stackx = 0;
+              stacky += stack_highest + spacing.y;
+              stack_highest = 0;
+            }
+          }
+          xanchored = true;
+          yanchored = true;
+          child_rect.x += (layout_rect.x + stackx);
+          child_rect.y += (layout_rect.y + stacky);
+          stackx += child_rect.w + spacing.x;
+          if (child_rect.h > stack_highest) stack_highest = child_rect.h;
+        }
+
+        if (child_layout & SAT_WIDGET_LAYOUT_STACK_VERT) {
+          // xanchored = true;
+          // yanchored = true;
+          if ((stacky + child_rect.h /*+ border.h - spacing.y*/) >= layout_rect.h) {
+            if (stacky != 0) {  // first widget..
+              stacky = 0;
+              stackx += stack_widest + spacing.x;
+              stack_widest = 0;
+            }
+          }
+          xanchored = true;
+          yanchored = true;
+          child_rect.x += (layout_rect.x + stackx);
+          child_rect.y += (layout_rect.y + stacky);
+          stacky += child_rect.h + spacing.y;
+          if (child_rect.w > stack_widest) stack_widest = child_rect.w;
+        }
+
+        /*
+        if (child_layout & SAT_WIDGET_LAYOUT_STACK_END) {
+          if (alignment != MIP_WIDGET_ALIGN_STACK_HORIZ)
+            float h = (stacky + stack_highest + spacing.y);
+            client_rect.y += h;//(stacky + stack_highest + spacing.y);
+            client_rect.h -= h;//
+          }
+        }
+        */
+
+        /*
+        //  if we were stacking, but isn't now (end stacking)
+          if (prev_alignment == MIP_WIDGET_ALIGN_STACK_VERT) {
+            if (alignment != MIP_WIDGET_ALIGN_STACK_VERT)
+              float w = (stackx + stack_widest + spacing.x);
+              client_rect.x += w;//(stackx + stack_widest + spacing.x);
+              client_rect.w -= w;
+            }
+          }
+          // start new stacking run
+          if (alignment == MIP_WIDGET_ALIGN_STACK_HORIZ) {
+            if (prev_alignment != MIP_WIDGET_ALIGN_STACK_HORIZ) {
+              stackx = 0;
+              stacky = 0;
+              stack_highest = 0;
+              stack_widest = 0;
+            }
+          }
+          if (alignment == MIP_WIDGET_ALIGN_STACK_VERT) {
+            if (prev_alignment != MIP_WIDGET_ALIGN_STACK_VERT) {
+              stackx = 0;
+              stacky = 0;
+              stack_highest = 0;
+              stack_widest = 0;
+            }
+          }
+        */
+
         if (!xanchored) child_rect.x += mrect.x;
         if (!yanchored) child_rect.y += mrect.y;
+
         // stretch
         if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_LEFT)        { child_rect.setX1( layout_rect.x   ); }
         if (child_layout & SAT_WIDGET_LAYOUT_STRETCH_TOP)         { child_rect.setY1( layout_rect.y   ); }
@@ -498,6 +577,20 @@ public:
         if (child_layout & SAT_WIDGET_LAYOUT_FILL_TOP)            { layout_rect.setY1( child_rect.y2()); layout_rect.y += spacing.y; layout_rect.h -= spacing.y; }
         if (child_layout & SAT_WIDGET_LAYOUT_FILL_RIGHT)          { layout_rect.setX2( child_rect.x   ); layout_rect.w -= spacing.x; }
         if (child_layout & SAT_WIDGET_LAYOUT_FILL_BOTTOM)         { layout_rect.setY2( child_rect.y   ); layout_rect.h -= spacing.y; }
+
+        if (child_layout & SAT_WIDGET_LAYOUT_STACK_END) {
+          if (child_layout & SAT_WIDGET_LAYOUT_STACK_VERT) {
+            float w = (stackx + stack_widest + spacing.x);
+            layout_rect.x += w;
+            layout_rect.w -= w;
+          }
+          if (child_layout & SAT_WIDGET_LAYOUT_STACK_HORIZ) {
+            float h = (stacky + stack_highest + spacing.y);
+            layout_rect.y += h;
+            layout_rect.h -= h;
+          }
+        }
+
         MContentRect.combine(child_rect);
 
         // outer border
