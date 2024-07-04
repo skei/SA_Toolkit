@@ -108,13 +108,8 @@ public:
     float* output0 = process->audio_outputs[0].data32[0] + AOffset;
     float* output1 = process->audio_outputs[0].data32[1] + AOffset;
     for (uint32_t i=0; i<ALength; i++) {
-      float spl0 = *input0++;
-      float spl1 = *input1++;
-
-      //...
-
-      *output0++ = spl0;
-      *output1++ = spl1;
+      *output0++ = *input0++;
+      *output1++ = *input1++;
     }    
   }
 

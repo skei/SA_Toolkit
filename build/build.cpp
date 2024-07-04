@@ -87,5 +87,5 @@
 
 // -t, #define SAT_INCLUDE_TESTS
 
-// #include "../test/tests/sat_all_tests.h"
+// #include "../test/sat_all_tests.h"
 

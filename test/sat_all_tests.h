@@ -7,7 +7,7 @@
 
 #include "sat.h"
 
-#include "test/tests/sat_array_test.h"
+#include "../test/tests/sat_array_test.h"
 
 //----------
 

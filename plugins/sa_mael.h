@@ -140,7 +140,6 @@ public:
 
     MProcessor = new sa_mael_voice_processor(this);
     setProcessor(MProcessor);
-
     MProcessor->init(getClapPlugin(),getClapHost());
     MProcessor->setProcessThreaded(true);
     MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
