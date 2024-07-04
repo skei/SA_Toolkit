@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/clap/sat_clap.h"
+#include "plugin/lib/sat_clap.h"
 #include "plugin/sat_parameter.h"
 
 //----------------------------------------------------------------------
@@ -19,11 +19,11 @@ class sa_botage_ScalePercentParameter
 
 public:
 
-  sa_botage_ScalePercentParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0, uint32_t AFlags=0)
-  : SAT_Parameter(AName,AValue,AMin,AMax,AFlags) {
+  sa_botage_ScalePercentParameter(const char* AName="", const char* AModule="", double AValue=0.0, double AMin=-1.0, double AMax=1.0, uint32_t AFlags=0)
+  : SAT_Parameter(AName,AModule,AValue,AMin,AMax,AFlags) {
   }
 
-  sa_botage_ScalePercentParameter(const clap_param_info_t* AInfo)
+  sa_botage_ScalePercentParameter(clap_param_info_t* AInfo)
   : SAT_Parameter(AInfo) {
     //setValueFormat("%.f");
     //setValueFormat("%i");
@@ -50,11 +50,11 @@ class sa_botage_PercentParameter
 
 public:
 
-  sa_botage_PercentParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0, uint32_t AFlags=0)
-  : SAT_Parameter(AName,AValue,AMin,AMax,AFlags) {
+  sa_botage_PercentParameter(const char* AName="", const char* AModule="", double AValue=0.0, double AMin=-1.0, double AMax=1.0, uint32_t AFlags=0)
+  : SAT_Parameter(AName,AModule,AValue,AMin,AMax,AFlags) {
   }
 
-  sa_botage_PercentParameter(const clap_param_info_t* AInfo)
+  sa_botage_PercentParameter(clap_param_info_t* AInfo)
   : SAT_Parameter(AInfo) {
     //setValueFormat("%.f");
     //setValueFormat("%i");
@@ -81,11 +81,11 @@ class sa_botage_OffsetParameter
 
 public:
 
-  sa_botage_OffsetParameter(const char* AName="", double AValue=0.0, double AMin=-1.0, double AMax=1.0, uint32_t AFlags=0)
-  : SAT_Parameter(AName,AValue,AMin,AMax,AFlags) {
+  sa_botage_OffsetParameter(const char* AName="", const char* AModule="", double AValue=0.0, double AMin=-1.0, double AMax=1.0, uint32_t AFlags=0)
+  : SAT_Parameter(AName,AModule,AValue,AMin,AMax,AFlags) {
   }
 
-  sa_botage_OffsetParameter(const clap_param_info_t* AInfo)
+  sa_botage_OffsetParameter(clap_param_info_t* AInfo)
   : SAT_Parameter(AInfo) {
     //setValueFormat("%.f");
     //setValueFormat("%i");

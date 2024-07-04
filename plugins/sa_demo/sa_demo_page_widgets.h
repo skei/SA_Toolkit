@@ -312,13 +312,13 @@ public:
       symbol_container->appendChild(symbol);
     }
 
-    for (uint32_t i=0; i<10; i++) {
+    for (uint32_t i=0; i<20; i++) {
       SAT_KnobWidget* knob = new SAT_KnobWidget(25);
       right_panel->appendChild(knob);
       knob->Layout.flags  = SAT_WIDGET_LAYOUT_STACK_HORIZ;
       knob->setDrawValueText(false);
       knob->setDrawText(false);
-      if (i==9) {
+      if (i == 19) {
         knob->Layout.flags |= SAT_WIDGET_LAYOUT_STACK_END;
       }
     }
@@ -550,9 +550,7 @@ public:
           t3s3->setDragDirection(SAT_DIRECTION_LEFT);
           t3s3->setDrawDirection(SAT_DIRECTION_LEFT);
 
-        // center_tabs1->getPages()->setPage(0);
         center_tabs1->selectPage(0);
-        //center_tabs1->realignChildren();
 
 
   }

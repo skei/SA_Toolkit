@@ -91,7 +91,7 @@ public:
   virtual void setDragSnapDist(double AValue)             { MSnapDist = AValue; }
   virtual void setDragSnapSpeed(double AValue)            { MSnapSpeed = AValue; }
 
-
+  // move to SAT_VisualWidget (like indicators)?
   virtual void setDrawValueBar(bool ADraw=true)           { MDrawValueBar = ADraw; }
   virtual void setValueBarColor(SAT_Color AColor)         { MValueBarColor = AColor; }
   virtual void setValueBarThickness(double ASize)         { MValueBarThickness = ASize; }
@@ -185,6 +185,8 @@ protected:
 public:
 //------------------------------
 
+  // move to SAT_VisualWidget (like indicators)?
+  
   virtual void drawValueBar(SAT_PaintContext* AContext, double AValue) {
     if (MDrawValueBar) {
       //SAT_TRACE;
