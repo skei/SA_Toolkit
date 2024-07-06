@@ -6,6 +6,7 @@
 #include "gui/widget/sat_visual_widget.h"
 
 #include "../../data/img/SA.h"
+#include "../../data/img/knob3_60x60_131.h"
 
 //----------------------------------------------------------------------
 //
@@ -34,6 +35,8 @@ public:
     "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
     "50", "51", "52", "53", "54", "55", "56", "57", "58", "59"
   };
+
+  SAT_Bitmap* MImageStrip = nullptr;
 
 //------------------------------
 public:
@@ -360,6 +363,14 @@ public:
       curve2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
       curve2->setDrawParamText(false);
       //AEditor->connect(curve2,getParameter(2));
+
+MImageStrip = new SAT_Bitmap(knob3_60x60_131,knob3_60x60_131_size);
+
+SAT_ImageStripWidget* imagestrip2 = new SAT_ImageStripWidget(60,MImageStrip);
+bottom_panel->appendChild(imagestrip2);
+imagestrip2->setupTiles(1,131);
+imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
 
       SAT_SliderWidget* slider2 = new SAT_SliderWidget(SAT_Rect(25,100));
       bottom_panel->appendChild(slider2);

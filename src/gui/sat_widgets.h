@@ -16,6 +16,7 @@
 #include "gui/widget/sat_grid_widget.h"
 #include "gui/widget/sat_group_box_widget.h"
 #include "gui/widget/sat_image_widget.h"
+#include "gui/widget/sat_image_strip_widget.h"
 #include "gui/widget/sat_keyboard_widget.h"
 #include "gui/widget/sat_knob_widget.h"
 #include "gui/widget/sat_logo_widget.h"
