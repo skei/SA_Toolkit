@@ -11,6 +11,8 @@ BASE
 
 * un-virtualize many of the set/get methods?
 
+* investigate SAT_Queue, volatile read/write pos?
+
 ----------------------------------------------------------------------
 GUI
 ----------------------------------------------------------------------
@@ -32,7 +34,12 @@ GUI
 
 * x11 fonts
 
-  xft, xrender?
+  xft?
+  xrender?
+
+* x11 scale/blend bitmaps
+
+  xrender
 
 ----------------------------------------------------------------------
 GUI : widgets
@@ -44,6 +51,8 @@ GUI : widgets
   during painting it could just multiply this with window scale
 
 * size/pos limits for size/move-able widgets
+  flags: insideParent
+  update scrollbars (resize, parent.realign)
 
 * SAT_CachedWidget (draw image once to buffer, then copy, until set to dirty, then redraw)
 - SAT_MipmapImage (at runtime, find closest in size, from multiple images, and draw/scale that one)
@@ -57,4 +66,4 @@ PLUGIN
 
 * parameter smoothing
 
-  automation, (poly) modulation, note expressions
+  gui, automation, (poly) modulation, note expressions

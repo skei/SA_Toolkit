@@ -33,11 +33,11 @@ class SAT_Queue {
 private:
 //------------------------------
 
-  T*        MBuffer;
-  uint32_t  MBufferSize;
-  uint32_t  MBufferMask;
-  uint32_t  MReadPos;
-  uint32_t  MWritePos;
+  T*                      MBuffer;
+  uint32_t                MBufferSize;
+  uint32_t                MBufferMask;
+  /*volatile*/  uint32_t  MReadPos;
+  /*volatile*/  uint32_t  MWritePos;
 
 //------------------------------
 public:
