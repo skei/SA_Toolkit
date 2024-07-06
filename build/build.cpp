@@ -19,9 +19,9 @@
 
 //#include "../plugins/test/test_window.h"
 
-// #include "../plugins/test/plugin/gain.h"
-// #include "../plugins/test/plugin/widgets.h"
-// #include "../plugins/test/plugin/voices.h"
+//#include "../plugins/test/gain.h"
+// #include "../plugins/test/widgets.h"
+// #include "../plugins/test/voices.h"
 
 // #include "../plugins/templates/template.h"
 
