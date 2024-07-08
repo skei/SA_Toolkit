@@ -256,6 +256,7 @@ public:
     tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
     tabs1->getHeader()->setFillCellsGradient(true);
     SAT_VisualWidget* p1 = new SAT_VisualWidget(15);
     SAT_VisualWidget* p2 = new SAT_VisualWidget(15);

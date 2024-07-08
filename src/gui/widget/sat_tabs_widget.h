@@ -90,10 +90,10 @@ public:
   //----------
 
   virtual void selectPage(int32_t AIndex) {
-    SAT_PRINT("AIndex %i getNumColumns %i\n",AIndex,MHeader->getNumColumns());
+    //SAT_PRINT("AIndex %i getNumColumns %i\n",AIndex,MHeader->getNumColumns());
     if (AIndex < MHeader->getNumColumns()) {
       MHeader->selectCell(AIndex,0);
-      MPages->setPage(AIndex);
+      MPages->selectPage(AIndex);
       // MPages->realignChildren();
       // do_widget_redraw(MPages);
     }
@@ -107,7 +107,7 @@ public: // child to parent
     if (AWidget == MHeader) {
       int32_t sel = MHeader->getClickedColumn();
       //SAT_PRINT("sel %i\n",sel);
-      MPages->setPage(sel);
+      MPages->selectPage(sel);
       MPages->realignChildren();
       do_widget_redraw(MPages);
     }

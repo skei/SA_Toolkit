@@ -80,7 +80,7 @@ public:
   void on_clickCell(int32_t AX, int32_t AY, int32_t AB, int32_t AS) override {
     SAT_ButtonGridWidget::on_clickCell(AX,AY,AB,AS);
     if (MPages) {
-      MPages->setPage(AY);
+      MPages->selectPage(AY);
       MPages->realignChildren();
       MPages->do_widget_redraw(MPages);
 
