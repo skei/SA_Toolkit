@@ -160,7 +160,10 @@ private:
   SAT_Painter*  MPainter        = nullptr;
   SAT_Rect      MPaintRect      = SAT_Rect(0,0);
   double        MModuleNameSize = 10.0;
-  double        MPaintedScale   = 1.0;
+//double        MPaintedScale   = 1.0;
+  double        MPrevScale      = 1.0;
+
+
 
 //  bool          has_been_scaled = false;
 //  SAT_Rect      orig_rect       = SAT_Rect(0,0);
@@ -240,7 +243,21 @@ public:
 public:
 //------------------------------
 
+  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  //   MPrevScale = getWindowScale();
+  // }
+
+  //----------
+
   // SAT_Rect on_widget_preAlign(SAT_Rect ARect) override {
+  //   double scale = MPrevScale;
+  //   SAT_ListNode* node = MModules.head();
+  //   while (node) {
+  //     SAT_GraphModule* module = (SAT_GraphModule*)node;
+  //     module->xpos /= scale;
+  //     module->ypos /= scale;
+  //     node = node->next();
+  //   }
   //   return ARect;
   // }
 
@@ -248,15 +265,21 @@ public:
 
   SAT_Rect on_widget_postAlign(SAT_Rect ARect) override {
     double scale = getWindowScale();
-    if (scale != MPaintedScale) {
-      double ratio = scale / MPaintedScale;
-      SAT_ListNode* node = MModules.head();
-      while (node) {
-        SAT_GraphModule* module = (SAT_GraphModule*)node;
-        module->xpos *= ratio;
-        module->ypos *= ratio;
-        node = node->next();
+    //SAT_Assert(scale > 0.0);
+    if (scale > 0.0) {
+      SAT_Assert(MPrevScale > 0.0);
+      double ratio = scale / MPrevScale;
+      SAT_PRINT("ratio %f\n",ratio);
+      if (ratio > 0.0) {
+        SAT_ListNode* node = MModules.head();
+        while (node) {
+          SAT_GraphModule* module = (SAT_GraphModule*)node;
+          module->xpos *= ratio;
+          module->ypos *= ratio;
+          node = node->next();
+        }
       }
+      MPrevScale = scale;
     }
     return ARect;
   }
@@ -501,9 +524,9 @@ public: // selection
     SAT_ListNode* node = MModules.head();
     while (node) {
       SAT_GraphModule* module = (SAT_GraphModule*)node;
-      if ( ( module->xpos                <= x2)
+      if ( ( module->xpos                    <= x2)
         && ((module->xpos+(MODULE_WIDTH*S))  >= x1)
-        && ( module->ypos                <= y2)
+        && ( module->ypos                    <= y2)
         && ((module->ypos+(MODULE_HEIGHT*S)) >= y1)) {
         module->selected = true;
       }
@@ -728,7 +751,7 @@ public:
     painter->pushClip(getRect());
 
     double scale = getWindowScale();
-    MPaintedScale = scale;
+    //MPaintedScale = scale;
     fillBackground(AContext);
     MPainter = AContext->painter;
     //MPaintRect = AContext->update_rect;
