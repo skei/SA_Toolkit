@@ -150,6 +150,7 @@ public:
 
   void processNoteOnEvent(const clap_event_note_t* event) {
     //SAT_PRINT("\n");
+    SAT_Assert(event);
     noteOnEvent(event);
   }
 
@@ -157,6 +158,7 @@ public:
 
   void processNoteOffEvent(const clap_event_note_t* event) {
     //SAT_PRINT("\n");
+    SAT_Assert(event);
     noteOffEvent(event);
   }
 
@@ -164,6 +166,7 @@ public:
 
   void processNoteChokeEvent(const clap_event_note_t* event) {
     //SAT_PRINT("\n");
+    SAT_Assert(event);
     noteChokeEvent(event);
   }
 
@@ -171,12 +174,14 @@ public:
 
   void processNoteExpressionEvent(const clap_event_note_expression_t* event) {
     //SAT_PRINT("\n");
+    SAT_Assert(event);
     noteExpressionEvent(event);
   }
 
   //----------
 
   void processParamValueEvent(const clap_event_param_value_t* event) {
+    SAT_Assert(event);
     uint32_t index = event->param_id;
     double value = event->value;
     //SAT_PRINT("index %i value %.3f\n",index,value);
@@ -194,6 +199,7 @@ public:
   //----------
 
   void processParamModEvent(const clap_event_param_mod_t* event) {
+    SAT_Assert(event);
     uint32_t index = event->param_id;
     double value = event->amount;
     //SAT_PRINT("index %i value %.3f\n",index,value);
@@ -211,7 +217,6 @@ public:
   //----------
 
   void processTransportEvent(const clap_event_transport_t* event) {
-    SAT_TRACE;
     SAT_Assert(event);
     if (event->flags & CLAP_TRANSPORT_HAS_TEMPO) {
       //MProcessContext.has_tempo = true
@@ -241,14 +246,13 @@ public:
     if (event->flags & CLAP_TRANSPORT_IS_RECORDING) {}
     if (event->flags & CLAP_TRANSPORT_IS_LOOP_ACTIVE) {}
     if (event->flags & CLAP_TRANSPORT_IS_WITHIN_PRE_ROLL) {}
-    SAT_TRACE;
     transportEvent(event);
-    SAT_TRACE;
   }
 
   //----------
 
   void processMidiEvent(const clap_event_midi_t* event) {
+    SAT_Assert(event);
     //SAT_PRINT("\n");
     // #ifdef SAT_PLUGIN_CONVERT_MIDI_TO_CLAP
     //   uint8_t msg0 = event->data[0];
@@ -327,6 +331,7 @@ public:
 
   void processMidiSysexEvent(const clap_event_midi_sysex_t* event) {
     //SAT_PRINT("\n");
+    SAT_Assert(event);
     midiSysexEvent(event);
   }
 
@@ -334,6 +339,7 @@ public:
 
   void processMidi2Event(const clap_event_midi2_t* event) {
     //SAT_PRINT("\n");
+    SAT_Assert(event);
     midi2Event(event);
   }
 

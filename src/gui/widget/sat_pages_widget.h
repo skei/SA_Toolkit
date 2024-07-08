@@ -49,8 +49,8 @@ public:
   int32_t appendPage(SAT_Widget* APage) {
     //SAT_Print("index %i\n",getNumChildWidgets());
     //APage->State.active = false;
-    // APage->setActive(false);
-    // APage->setVisible(false);
+    //APage->setActive(false,false);
+    //APage->setVisible(false,false);
     APage->Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     APage->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
     APage->Options.realignInvisible = true;
@@ -60,19 +60,21 @@ public:
 
   //----------
 
-  void setPage(int32_t APage) {
-    //SAT_Print("page %i\n",APage);
+  void selectPage(int32_t APage) {
+    //SAT_PRINT("page %i\n",APage);
     int num = getNumChildren();//MChildren.size();
     if (APage >= num) APage = num - 1;
     for (int32_t i=0; i<num; i++) {
       SAT_Widget* wdg = getChild(i);//MChildren[i];
       if (i == APage) {
-        wdg->setActive(true);
-        wdg->setVisible(true);
+        //SAT_PRINT("... %i = active/visible\n",i);
+        wdg->setActive(true,false);
+        wdg->setVisible(true,false);
       }
       else {
-        wdg->setActive(false);
-        wdg->setVisible(false);
+        //SAT_PRINT("... %i = inactive/invisible\n",i);
+        wdg->setActive(false,false);
+        wdg->setVisible(false,false);
       }
     }
     MActivePage = APage;
