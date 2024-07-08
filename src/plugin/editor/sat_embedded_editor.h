@@ -52,13 +52,15 @@ public:
   SAT_EmbeddedEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false)
   : SAT_BaseEditor(AListener,AWidth,AHeight,AScale,AProportional) {
     MListener       = AListener;
-    MWidth          = AWidth;
-    MHeight         = AHeight;
     MInitialWidth   = AWidth;
     MInitialHeight  = AHeight;
     MInitialScale   = AScale;
     MProportional   = AProportional;
   //MScale          = AScale;
+    MWidth          = AWidth * AScale;
+    MHeight         = AHeight * AScale;
+
+
   }
 
   //----------
@@ -199,6 +201,7 @@ public: // clap.gui
     if (is_floating == true) return false;
     #ifdef SAT_LINUX
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
+      //SAT_PRINT("MWidth %i MHeight %i\n",MWidth,MHeight);
       // ask plugin to create window.. if not, create it ourselves
       if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
       else MWindow = new SAT_Window(MWidth,MHeight);
