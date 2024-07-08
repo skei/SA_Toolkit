@@ -160,7 +160,9 @@ public:
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   bool voice_info_get(clap_voice_info_t *info) override {
     //SAT_TRACE;

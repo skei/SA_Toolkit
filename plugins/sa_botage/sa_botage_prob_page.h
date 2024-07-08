@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------
 
 class sa_botage_prob_page_widget
-: public SAT_PanelWidget
+: public SAT_VisualWidget
 , public SAT_MenuListener {
 
 //------------------------------
@@ -98,7 +98,7 @@ public:
 //------------------------------
 
   sa_botage_prob_page_widget(SAT_Rect ARect, SAT_MenuWidget* fx_menu)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     
     setFillBackground(true);
     setBackgroundColor(0.18);
@@ -134,14 +134,14 @@ public:
     range_fx_text         = new sa_botage_text2_widget(       SAT_Rect( 55,     20+200+10,  95, 18 ), "FX" );
     range_fx_minmax       = new sa_botage_dualslider_widget(  SAT_Rect( 55,     20+200+32,  95, 18 ), "%", 0.25, 0.75 );
 
-    range_length_minmax->setSnap(true);
-    range_length_minmax->setSnapPos(0.5);
-    range_speed_minmax->setSnap(true);
-    range_speed_minmax->setSnapPos(0.5);
-    range_offset_minmax->setQuantize(true);
-    range_offset_minmax->setQuantizeSteps(17);
-    range_fx_minmax->setSnap(true);
-    range_fx_minmax->setSnapPos(0.5);
+    range_length_minmax->setDragSnap(true);
+    range_length_minmax->setDragSnapPos(0.5);
+    range_speed_minmax->setDragSnap(true);
+    range_speed_minmax->setDragSnapPos(0.5);
+    range_offset_minmax->setDragQuantize(true);
+    range_offset_minmax->setDragQuantizeSteps(17);
+    range_fx_minmax->setDragSnap(true);
+    range_fx_minmax->setDragSnapPos(0.5);
     
     // loop
     
@@ -164,132 +164,132 @@ public:
     loop_fx_text          = new sa_botage_text2_widget(       SAT_Rect( 150+55, 20+200+10,  95, 18 ), "FX" );
     loop_fx_minmax        = new sa_botage_dualslider_widget(  SAT_Rect( 150+55, 20+200+32,  95, 18 ), "%", 0.25, 0.75 );
     
-    loop_length_minmax->setSnap(true);
-    loop_length_minmax->setSnapPos(0.5);
-    loop_speed_minmax->setSnap(true);
-    loop_speed_minmax->setSnapPos(0.5);
-    loop_offset_minmax->setQuantize(true);
-    loop_offset_minmax->setQuantizeSteps(17);
-    loop_fx_minmax->setSnap(true);
-    loop_fx_minmax->setSnapPos(0.5);
+    loop_length_minmax->setDragSnap(true);
+    loop_length_minmax->setDragSnapPos(0.5);
+    loop_speed_minmax->setDragSnap(true);
+    loop_speed_minmax->setDragSnapPos(0.5);
+    loop_offset_minmax->setDragQuantize(true);
+    loop_offset_minmax->setDragQuantizeSteps(17);
+    loop_fx_minmax->setDragSnap(true);
+    loop_fx_minmax->setDragSnapPos(0.5);
     
     // fx
     
     fx1_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+10,      40, 40 ), "%", 0.0 );
-    fx1_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+10,      95, 18 ), "FX1", fx_menu, this);
+    fx1_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+10,      95, 18 ), "FX1", fx_menu);
     fx1_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+32,      18, 18 ), "fx1 arg1", 0.5 );
     fx1_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+32,      18, 18 ), "fx1 arg2", 0.5 );
     fx1_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+32,      18, 18 ), "fx1 arg3", 0.5 );
 
     fx2_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+50+10,   40, 40 ), "%", 0.0 );
-    fx2_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+50+10,   95, 18 ), "FX2", fx_menu, this);
+    fx2_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+50+10,   95, 18 ), "FX2", fx_menu);
     fx2_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+50+32,   18, 18 ), "fx2 arg1", 0.5 );
     fx2_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+50+32,   18, 18 ), "fx2 arg2", 0.5  );
     fx2_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+50+32,   18, 18 ), "fx2 arg3", 0.5 );
 
     fx3_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+100+10,  40, 40 ), "%", 0.0 );
-    fx3_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+100+10,  95, 18 ), "FX3", fx_menu, this);
+    fx3_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+100+10,  95, 18 ), "FX3", fx_menu);
     fx3_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+100+32,  18, 18 ), "fx3 arg1", 0.5 );
     fx3_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+100+32,  18, 18 ), "fx3 arg2", 0.5 );
     fx3_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+100+32,  18, 18 ), "fx3 arg3", 0.5 );
 
     fx4_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+150+10,  40, 40 ), "%", 0.0 );
-    fx4_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+150+10,  95, 18 ), "FX4", fx_menu, this);
+    fx4_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+150+10,  95, 18 ), "FX4", fx_menu);
     fx4_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+150+32,  18, 18 ), "fx4 arg1", 0.5 );
     fx4_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+150+32,  18, 18 ), "fx4 arg2", 0.5 );
     fx4_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+150+32,  18, 18 ), "fx4 arg3", 0.5 );
 
     fx5_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+200+10,  40, 40 ), "%", 0.0 );
-    fx5_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+200+10,  95, 18 ), "FX5", fx_menu, this);
+    fx5_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+200+10,  95, 18 ), "FX5", fx_menu);
     fx5_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+200+32,  18, 18 ), "fx5 arg1", 0.5 );
     fx5_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+200+32,  18, 18 ), "fx5 arg2", 0.5 );
     fx5_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+200+32,  18, 18 ), "fx5 arg3", 0.5 );
 
     // range
     
-    appendChildWidget( new sa_botage_text3_widget(SAT_Rect(10,10,140,15),"RANGE"));
-    appendChildWidget( new sa_botage_text3_widget(SAT_Rect(160,10,140,15),"LOOP"));
-    appendChildWidget( new sa_botage_text3_widget(SAT_Rect(310,10,140,15),"FX"));
+    appendChild( new sa_botage_text3_widget(SAT_Rect(10,10,140,15),"RANGE"));
+    appendChild( new sa_botage_text3_widget(SAT_Rect(160,10,140,15),"LOOP"));
+    appendChild( new sa_botage_text3_widget(SAT_Rect(310,10,140,15),"FX"));
 
 
-    appendChildWidget(range_length_prob);
-    appendChildWidget(range_length_text);
-    appendChildWidget(range_length_minmax);
+    appendChild(range_length_prob);
+    appendChild(range_length_text);
+    appendChild(range_length_minmax);
     
-    appendChildWidget(range_speed_prob);
-    appendChildWidget(range_speed_text);
-    appendChildWidget(range_speed_minmax);
+    appendChild(range_speed_prob);
+    appendChild(range_speed_text);
+    appendChild(range_speed_minmax);
     
-    appendChildWidget(range_offset_prob);
-    appendChildWidget(range_offset_text);
-    appendChildWidget(range_offset_minmax);
+    appendChild(range_offset_prob);
+    appendChild(range_offset_text);
+    appendChild(range_offset_minmax);
     
-    appendChildWidget(range_reverse_prob);
-    appendChildWidget(range_reverse_text);
-    //appendChildWidget(range_reverse_minmax);
+    appendChild(range_reverse_prob);
+    appendChild(range_reverse_text);
+    //appendChild(range_reverse_minmax);
     
-    appendChildWidget(range_fx_prob);
-    appendChildWidget(range_fx_text);
-    appendChildWidget(range_fx_minmax);
+    appendChild(range_fx_prob);
+    appendChild(range_fx_text);
+    appendChild(range_fx_minmax);
     
     // loop
     
-    appendChildWidget(loop_length_prob);
-    appendChildWidget(loop_length_text);
-    appendChildWidget(loop_length_minmax);
+    appendChild(loop_length_prob);
+    appendChild(loop_length_text);
+    appendChild(loop_length_minmax);
     
-    appendChildWidget(loop_speed_prob);
-    appendChildWidget(loop_speed_text);
-    appendChildWidget(loop_speed_minmax);
+    appendChild(loop_speed_prob);
+    appendChild(loop_speed_text);
+    appendChild(loop_speed_minmax);
     
-    appendChildWidget(loop_offset_prob);
-    appendChildWidget(loop_offset_text);
-    appendChildWidget(loop_offset_minmax);
+    appendChild(loop_offset_prob);
+    appendChild(loop_offset_text);
+    appendChild(loop_offset_minmax);
     
-    appendChildWidget(loop_reverse_prob);
-    appendChildWidget(loop_reverse_text);
-    //appendChildWidget(loop_reverse_minmax);
+    appendChild(loop_reverse_prob);
+    appendChild(loop_reverse_text);
+    //appendChild(loop_reverse_minmax);
     
-    appendChildWidget(loop_fx_prob);
-    appendChildWidget(loop_fx_text);
-    appendChildWidget(loop_fx_minmax);
+    appendChild(loop_fx_prob);
+    appendChild(loop_fx_text);
+    appendChild(loop_fx_minmax);
     
     // fx
     
-    appendChildWidget(fx1_prob);
-    appendChildWidget(fx1_type);
-    appendChildWidget(fx1_arg1);
-    appendChildWidget(fx1_arg2);
-    appendChildWidget(fx1_arg3);
+    appendChild(fx1_prob);
+    appendChild(fx1_type);
+    appendChild(fx1_arg1);
+    appendChild(fx1_arg2);
+    appendChild(fx1_arg3);
     
-    appendChildWidget(fx2_prob);
-    appendChildWidget(fx2_type);
-    appendChildWidget(fx2_arg1);
-    appendChildWidget(fx2_arg2);
-    appendChildWidget(fx2_arg3);
+    appendChild(fx2_prob);
+    appendChild(fx2_type);
+    appendChild(fx2_arg1);
+    appendChild(fx2_arg2);
+    appendChild(fx2_arg3);
     
-    appendChildWidget(fx3_prob);
-    appendChildWidget(fx3_type);
-    appendChildWidget(fx3_arg1);
-    appendChildWidget(fx3_arg2);
-    appendChildWidget(fx3_arg3);
+    appendChild(fx3_prob);
+    appendChild(fx3_type);
+    appendChild(fx3_arg1);
+    appendChild(fx3_arg2);
+    appendChild(fx3_arg3);
     
-    appendChildWidget(fx4_prob);
-    appendChildWidget(fx4_type);
-    appendChildWidget(fx4_arg1);
-    appendChildWidget(fx4_arg2);
-    appendChildWidget(fx4_arg3);
+    appendChild(fx4_prob);
+    appendChild(fx4_type);
+    appendChild(fx4_arg1);
+    appendChild(fx4_arg2);
+    appendChild(fx4_arg3);
     
-    appendChildWidget(fx5_prob);
-    appendChildWidget(fx5_type);
-    appendChildWidget(fx5_arg1);
-    appendChildWidget(fx5_arg2);
-    appendChildWidget(fx5_arg3);
+    appendChild(fx5_prob);
+    appendChild(fx5_type);
+    appendChild(fx5_arg1);
+    appendChild(fx5_arg2);
+    appendChild(fx5_arg3);
     
     
     //----------
     
-//    appendChildWidget(fx_type_menu);
+//    appendChild(fx_type_menu);
     
   }
   

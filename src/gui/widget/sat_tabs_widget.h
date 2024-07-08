@@ -75,7 +75,7 @@ public:
 
   virtual int32_t appendPage(const char* ATitle, SAT_Widget* AWidget) {
 
-    AWidget->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP;
+    AWidget->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP;
     AWidget->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_LEFT;
     AWidget->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
     int32_t result = MPages->appendPage(AWidget);
@@ -94,6 +94,8 @@ public:
     if (AIndex < MHeader->getNumColumns()) {
       MHeader->selectCell(AIndex,0);
       MPages->setPage(AIndex);
+      // MPages->realignChildren();
+      // do_widget_redraw(MPages);
     }
   }
 

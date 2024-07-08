@@ -18,7 +18,7 @@ class sa_demo_page_blank
 public:
 //------------------------------
 
-  sa_demo_page_blank()
+  sa_demo_page_blank(SAT_Plugin* APlugin, SAT_Editor* AEditor)
   : SAT_VisualWidget(0) {
     setName("sa_demo_page_blank");
     setHint("sa_demo_page_blank");

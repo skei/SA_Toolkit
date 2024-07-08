@@ -56,7 +56,6 @@ GUI : widgets
 
 * SAT_CachedWidget (draw image once to buffer, then copy, until set to dirty, then redraw)
 - SAT_MipmapImage (at runtime, find closest in size, from multiple images, and draw/scale that one)
-* SAT_ImageStripWidget (knobs, etc), todo: mipmaps..
 * SAT_ShaderWidget (glsl shader)
 * SAT_LayoutWidget (sets layout flags when appending child widgets)
 

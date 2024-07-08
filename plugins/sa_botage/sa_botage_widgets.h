@@ -101,21 +101,25 @@ class sa_botage_group_widget
 public:
 
   sa_botage_group_widget(SAT_Rect ARect, const char* AText)
-  : SAT_GroupBoxWidget(ARect,15,false) {
+  : SAT_GroupBoxWidget(ARect,15,true) {
     setName("sa_botage_group_widget");
-    SAT_ButtonWidget* titlebar  = getTitleBar();
-    SAT_SymbolWidget* symbol    = getSymbol();
-    SAT_VisualWidget*  container = getContainer();
-    setClosable(false);
+    SAT_ButtonWidget* titlebar  = getHeaderWidget();
+    SAT_SymbolWidget* symbol    = getSymbolWidget();
+    SAT_VisualWidget*  container = getContainerWidget();
+
+    setIsClosable(false);
     symbol->setVisible(false);
+
     titlebar->setFillBackground(true);
-    titlebar->setBackgroundColors(0.1,0.1);
+    //titlebar->setBackgroundColors(0.1,0.1);
+    titlebar->setBackgroundColor(0.1);
     titlebar->setDrawBorder(false);
     titlebar->setCursor(SAT_CURSOR_DEFAULT);
     titlebar->setTexts(AText,AText);
     titlebar->setTextSize(8);
     titlebar->setTextColors(0.5,0.5);
     titlebar->setTextAlignment(SAT_TEXT_ALIGN_CENTER);
+
     container->setFillBackground(true);
     container->setBackgroundColor(0.18);
     container->setDrawBorder(false);
@@ -135,11 +139,11 @@ class sa_botage_tabs_widget
 
 public:
 
-  sa_botage_tabs_widget(SAT_Rect ARect, uint32_t ANum, uint32_t AHeaderHeight)
-  : SAT_TabsWidget(ARect,ANum,AHeaderHeight) {
+  sa_botage_tabs_widget(SAT_Rect ARect, /*uint32_t ANum,*/ uint32_t AHeaderHeight)
+  : SAT_TabsWidget(ARect,/*ANum,*/AHeaderHeight) {
     
     //MHeader->setDrawRoundedBottom(false);
-    SAT_ButtonRowWidget* header = getHeader();
+    SAT_ButtonGridWidget* header = getHeader();
     SAT_PagesWidget* pages = getPages();
     
     header->setSize(SAT_Point(10,10));
@@ -151,16 +155,16 @@ public:
     header->setBackgroundColor(0.2);
     //header->setCornerSizes(6,6,0,0);
     
-    header->setTextSize(8);
-    header->setTextColor(0.6);
-    header->setActiveTextColor(0.6);
+    // header->setTextSize(8);
+    // header->setTextColor(0.6);
+    // header->setActiveTextColor(0.6);
   
-    header->setCellFillBackground(true);
-    header->setCellBackgroundColor(0.14);
-    header->setCellActiveBackgroundColor(0.1);
+    header->setFillBackground(true);
+//    header->setCellBackgroundColor(0.14);
+//    header->setCellActiveBackgroundColor(0.1);
 
-    header->setCellDrawBorder(true);
-    header->setCellBorderColor(0.1);
+//    header->setDrawBorder(true);
+//    header->setCellBorderColor(0.1);
     
     pages->setFillBackground(false);
     pages->setDrawBorder(false);
@@ -178,18 +182,18 @@ public:
 // small
 
 class sa_botage_text1_widget
-: public SAT_VisualWidget {
+: public SAT_TextWidget {
 
 public:
 
   sa_botage_text1_widget(SAT_Rect ARect, const char* AText)
-  : SAT_VisualWidget(ARect) {
+  : SAT_TextWidget(ARect,AText) {
     setText(AText);
     setFillBackground(false);
     //setBackgroundColor(0.18);
     setDrawBorder(true);
     setBorderColor(0.3);
-    setBorderEdges(SAT_EDGE_BOTTOM);
+//    setBorderEdges(SAT_EDGE_BOTTOM);
     setTextColor(0.5);
     setTextSize(9);
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
@@ -200,18 +204,18 @@ public:
 // medium
 
 class sa_botage_text2_widget
-: public SAT_VisualWidget {
+: public SAT_TextWidget {
 
 public:
 
   sa_botage_text2_widget(SAT_Rect ARect, const char* AText)
-  : SAT_VisualWidget(ARect) {
+  : SAT_TextWidget(ARect) {
     setText(AText);
     setFillBackground(false);
     //setBackgroundColor(0.18);
     setDrawBorder(true);
     setBorderColor(0.25);
-    setBorderEdges(SAT_EDGE_BOTTOM);
+//    setBorderEdges(SAT_EDGE_BOTTOM);
     setTextColor(0.5);
     setTextSize(9);
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
@@ -222,18 +226,18 @@ public:
 // large
 
 class sa_botage_text3_widget
-: public SAT_VisualWidget {
+: public SAT_TextWidget {
 
 public:
 
   sa_botage_text3_widget(SAT_Rect ARect, const char* AText)
-  : SAT_VisualWidget(ARect) {
+  : SAT_TextWidget(ARect) {
     setText(AText);
     setFillBackground(false);
     //setBackgroundColor(0.18);
     setDrawBorder(true);
     setBorderColor(0.3);
-    setBorderEdges(SAT_EDGE_BOTTOM);
+//    setBorderEdges(SAT_EDGE_BOTTOM);
     setTextColor(0.5);
     setTextSize(10);
     setTextAlignment(SAT_TEXT_ALIGN_CENTER);
@@ -323,10 +327,10 @@ public:
     setBackgroundColor(0.18);
 //    setDrawBorder(false);
 //    setBorderColor(0.2);
-    setDrawValue(false);
     setDrawText(false);
-    setArcThickness(4);
-    setArcValueColor(0.5);
+    setDrawValueText(false);
+    setKnobArcThickness(4);
+    setKnobArcColor(0.5);
 //    setBipolar(true);
 //    setSnap(true);
 //    setSnapPos(0.5);
@@ -355,11 +359,11 @@ public:
     setDrawText(true);
     setTextColor(0.4);
     setTextSize(10);
-    setArcValueColor(0.5);
-    setDrawValue(true);
-    setValueColor(0.5);
-    setValueSize(7);
-    setArcThickness(6);
+    setKnobArcColor(0.5);
+    setDrawValueText(true);
+    setValueTextColor(0.5);
+    setValueTextSize(7);
+    setKnobArcThickness(6);
     //setSnap(true);
     //setSnapPos(0.5);
     setDrawParamText(false);
@@ -387,11 +391,11 @@ public:
     setDrawText(true);
     setTextColor(0.4);
     setTextSize(10);
-    setDrawValue(true);
-    setValueColor(0.5);
-    setValueSize(12);
-    setArcThickness(10);
-    setArcValueColor(0.5);
+    setDrawValueText(true);
+    setValueTextColor(0.5);
+    setValueTextSize(12);
+    setKnobArcThickness(10);
+    setKnobArcColor(0.5);
     //setSnap(true);
     //setSnapPos(0.5);
     setDrawParamText(false);
@@ -419,10 +423,10 @@ public:
     //setBorderColor(0.2);
     setTextColor(0);
     setTextSize(7);
-    setValueColor(0);
-    setValueSize(8);
+    setValueTextColor(0);
+    setValueTextSize(8);
     setSliderBarColor(0.4);
-    setSliderEdgeColor(0.5);
+//    setSliderEdgeColor(0.5);
   }
   
 };
@@ -430,15 +434,16 @@ public:
 //----------
 
 class sa_botage_dualslider_widget
-//: public SAT_DualSliderWidget {
-: public SAT_SliderWidget {
+: public SAT_DualSliderWidget {
 
 public:
 
-  sa_botage_dualslider_widget(SAT_Rect ARect, const char* AText, double AValue1, double AValue2)
-  : SAT_SliderWidget(ARect,AText,AValue1) {
+  sa_botage_dualslider_widget(SAT_Rect ARect, const char* AText, double AValue1=0.0, double AValue2=1.0)
+  : SAT_DualSliderWidget(ARect,AText) {
 
     setNumValues(2);
+    
+    setValue(AValue1,0);
     setValue(AValue2,1);
 
     setFillBackground(true);
@@ -452,17 +457,17 @@ public:
     setCursor(SAT_CURSOR_ARROW_LEFT_RIGHT);    
     setDragDirection(SAT_DIRECTION_RIGHT);    
 
-    setValueColor(0);
-    setValueSize(8);
-    setValueOffset(SAT_Rect(2,0,2,0));
+    setValueTextColor(0);
+    setValueTextSize(8);
+    setValueTextOffset(SAT_Rect(2,0,2,0));
 
     setSliderBarColor(0.4);
-    setSliderEdgeColor(0.5);
+//    setSliderEdgeColor(0.5);
 
     setDrawParamText(false);
     setTextAlignment(SAT_TEXT_ALIGN_CENTER);
 
-    setDrawIndicator(false);
+    setDrawIndicators(false);
     //setIndicatorColor
     //setIndicatorThickness
     //setIndicatorValue
@@ -476,27 +481,21 @@ public:
 //
 //----------------------------------------------------------------------
 
-class sa_botage_buttonrow_widget
-: public SAT_ButtonRowWidget {
+class sa_botage_buttongrid_widget
+: public SAT_ButtonGridWidget {
 
 public:
 
-  sa_botage_buttonrow_widget(SAT_Rect ARect, int32_t ANum, const char** ATxt=nullptr, int32_t AMode=SAT_BUTTON_ROW_SINGLE, bool AVertical=false)
-  : SAT_ButtonRowWidget(ARect,ANum,ATxt,AMode,AVertical) {
-    //setFillBackground(true);
-    //setBackgroundColor(0.18);
-    //setDrawBorder(false);
-    //setBorderColor(0.2);
-    setTextColor(0.5);
-    setActiveTextColor(0.0);
-    setCellFillBackground(true);
-    setCellBackgroundColor(0.2);
-    setCellActiveBackgroundColor(0.4);
-    setCellDrawBorder(false);
-    setCellBorderColor(0.3);
-
+  sa_botage_buttongrid_widget(SAT_Rect ARect, int32_t AColumns, int32_t ARows, const char** AText=nullptr)
+  : SAT_ButtonGridWidget(ARect,AColumns,ARows,AText) {
+    // setTextColor(0.5);
+    // setActiveTextColor(0.0);
+    // setCellFillBackground(true);
+    // setCellBackgroundColor(0.2);
+    // setCellActiveBackgroundColor(0.4);
+    // setCellDrawBorder(false);
+    // setCellBorderColor(0.3);
     // setValueIsBits(true,8);
-    
   }
   
 };
@@ -512,13 +511,13 @@ class sa_botage_selector_widget
 
 public:
 
-  sa_botage_selector_widget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu, SAT_MenuListener* AListener=nullptr)
-  : SAT_SelectorWidget(ARect,AText,AMenu,AListener) {
+  sa_botage_selector_widget(SAT_Rect ARect, const char* AText, SAT_MenuWidget* AMenu)
+  : SAT_SelectorWidget(ARect,AText,AMenu) {
     setFillBackground(false);
     //setBackgroundColor(0.18);
     setDrawBorder(true);
     setBorderColor(0.3);
-    setBorderEdges(SAT_EDGE_BOTTOM);
+//    setBorderEdges(SAT_EDGE_BOTTOM);
     setTextColor(0.5);
     setTextSize(9);
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);

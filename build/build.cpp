@@ -17,11 +17,11 @@
 //----------------------------------------------------------------------
 
 
-//#include "../plugins/test/test_window.h"
-
-//#include "../plugins/test/gain.h"
-// #include "../plugins/test/widgets.h"
+// #include "../plugins/test/exe.h"
+// #include "../plugins/test/gain.h"
 // #include "../plugins/test/voices.h"
+
+//----------
 
 // #include "../plugins/templates/template.h"
 
@@ -33,18 +33,18 @@
 //----------------------------------------------------------------------
 
 
-#include "../plugins/sa_demo.h"
+// #include "../plugins/sa_demo.h"
 
+// #include "../plugins/sa_automata.h"
+// #include "../plugins/sa_botage.h"
+ #include "../plugins/sa_cred.h"
 // #include "../plugins/sa_bulum.h"
 // #include "../plugins/sa_mael.h"
 // #include "../plugins/sa_ports.h"
 
 //----------
 
-// #include "../plugins/sa_automata.h"
-// #include "../plugins/sa_botage.h"
-// #include "../plugins/sa_cred.h"
-// #include "../plugins/sa_tyr.h"
+//// #include "../plugins/sa_tyr.h"
 
 
 //----------------------------------------------------------------------

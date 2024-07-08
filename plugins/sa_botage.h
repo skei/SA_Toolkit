@@ -2,6 +2,12 @@
 #define sa_botage_included
 //----------------------------------------------------------------------
 
+#include "sat.h"
+
+#include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_interleaved_processor.h"
+//#include "audio/sat_audio_utils.h"
+
 #include "plugin/sat_parameters.h"
 #include "plugin/sat_editor.h"
 #include "plugin/sat_plugin.h"
@@ -19,16 +25,6 @@ const char* fx_type_text[NUM_FX_TYPES] = {
 
 //----------
 
-#define PLUGIN_NAME   "sa_botage"
-#define PLUGIN_DESC   "sabotage your loops!"
-#define PLUGIN_VER    "0.9.0"
-
-#define EDITOR_WIDTH  840
-#define EDITOR_HEIGHT 510
-#define EDITOR_SCALE  1.5
-
-//----------
-
 #include "sa_botage/sa_botage_parameters.h"
 #include "sa_botage/sa_botage_widgets.h"
 #include "sa_botage/sa_botage_prob_page.h"
@@ -38,6 +34,16 @@ const char* fx_type_text[NUM_FX_TYPES] = {
 #include "sa_botage/sa_botage_processor.h"
 
 //----------------------------------------------------------------------
+
+#define PLUGIN_NAME   "sa_botage"
+#define PLUGIN_DESC   "sabotage your loops!"
+#define PLUGIN_VER    "0.9.0"
+
+#define EDITOR_WIDTH  840
+#define EDITOR_HEIGHT 510
+#define EDITOR_SCALE  1.5
+
+//----------------------------------------------------------------------
 //
 // descriptor
 //
@@ -45,18 +51,15 @@ const char* fx_type_text[NUM_FX_TYPES] = {
 
 const clap_plugin_descriptor_t sa_botage_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/" PLUGIN_NAME,
-  .name         = PLUGIN_NAME,
+  .id           = SAT_VENDOR "/sa_botage/v0",
+  .name         = "sa_botage",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
-  .version      = PLUGIN_VER,
-  .description  = PLUGIN_DESC,
-  .features     = (const char* []) {
-                    CLAP_PLUGIN_FEATURE_AUDIO_EFFECT,
-                    nullptr
-                  }
+  .version      = SAT_VERSION,
+  .description  = "",
+  .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_AUDIO_EFFECT, nullptr }
 };
 
 //----------------------------------------------------------------------
@@ -72,81 +75,89 @@ class sa_botage_plugin
 private:
 //------------------------------
 
-  sa_botage_processor   MProcessor = {};
+  sa_botage_processor* MProcessor = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_botage_plugin)
+  sa_botage_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
 
   //----------
-  
+
+  virtual ~sa_botage_plugin() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   bool init() final {
-    registerDefaultExtensions();
+    registerDefaultExtensions();    
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
-    setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
-    if (!sa_botage_SetupParameters(this)) return false;
+    uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE;
+
+    // appendParameter(new SAT_Parameter( "Freq",  "",  2000,  100, 18000, flags ));
+    // appendParameter(new SAT_Parameter( "Boost", "",  0,     0,   6,     flags ));
+    // appendParameter(new SAT_Parameter( "Harm",  "",  0,     0,   100,   flags ));
+    // appendParameter(new SAT_Parameter( "Mix",   "", -6,    -120, 0,     flags ));
+
+    //if (!sa_botage_SetupParameters(this)) return false;
+    sa_botage_SetupParameters(this);
+
+    MProcessor = new sa_botage_processor(this);
+    setProcessor(MProcessor);
+
+    #ifndef SAT_NO_GUI
+      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
+    #endif
+
     return SAT_Plugin::init();
   }
-
-  //----------
   
+  //----------
+
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MProcessor.activate(sample_rate);
+    //MProcessor.activate(sample_rate);
+    MProcessor->setSampleRate(sample_rate);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
-  
-  //----------
-
-  void processAudio(SAT_ProcessContext* AContext) final {
-    MProcessor.process(AContext);
-  }
 
   //----------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    uint32_t index = event->param_id;
-    double value = event->value;
-    MProcessor.setParamValue(index,value);
-    return true;
-  }
+  #ifndef SAT_NO_GUI
 
-  bool on_plugin_transport(const clap_event_transport_t* event) final {
-    uint32_t flags = event->flags;
-    MProcessor.transport(flags);
-    return true;
-  }
+  #ifndef SAT_NO_GUI
+    #include "sa_botage/sa_botage_gui.h"
+  #endif
+
+    // bool setupEditor(SAT_Editor* AEditor) final {
+    //   SAT_Window* window = AEditor->getWindow();
+    //   SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+    //   window->setRootWidget(root);
+    //   return true;
+    // }
+
+    // bool setupOverlay(SAT_Editor* AEditor) final {
+    //   //SAT_Window* window = AEditor->getWindow();
+    //   //SAT_Widget* overlay = window->getOverlayWidget();
+    //   return true;
+    // }
+
+  #endif
 
   //----------
-  
-  #include "sa_botage/sa_botage_gui.h"
 
-  //----------
-
-  void on_editorListener_timer(SAT_Timer* ATimer, double AElapsed) final {
-    SAT_Plugin::on_editorListener_timer(ATimer,AElapsed);
-    updateProbIndicators(&MProcessor);
-    updateWaveformWidget(&MProcessor);
-  }
+  void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+    SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
+//    updateProbIndicators(&MProcessor);
+//    updateWaveformWidget(&MProcessor);
+  }  
 
 };
-
-//----------------------------------------------------------------------
-//
-// entry
-//
-//----------------------------------------------------------------------
-
-#ifndef SAT_NO_ENTRY
-
-  #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(sa_botage_descriptor,sa_botage_plugin)
-  
-#endif
-
-//----------------------------------------------------------------------
 
 #undef PLUGIN_NAME
 #undef PLUGIN_DESC
@@ -156,5 +167,15 @@ public:
 #undef EDITOR_SCALE
 
 //----------------------------------------------------------------------
+//
+// entry point
+//
+//----------------------------------------------------------------------
+
+#ifndef SAT_NO_ENTRY
+  #include "plugin/sat_entry.h"
+  SAT_PLUGIN_ENTRY(sa_botage_descriptor,sa_botage_plugin)
 #endif
 
+//----------------------------------------------------------------------
+#endif

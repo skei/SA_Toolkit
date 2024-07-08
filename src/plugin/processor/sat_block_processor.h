@@ -36,22 +36,21 @@ public:
 
   void process(SAT_ProcessContext* AContext) override {
     //SAT_TRACE;
+    MProcessContext = AContext;
     const clap_process_t* process = AContext->process;
     uint32_t length = process->frames_count;
-
     // #ifndef SAT_NO_GUI
     //   clearAutomationToGui();
     //   clearModulationToGui();
     // #endif
-
     processEvents(process->in_events,process->out_events);
     processAudio(AContext,0,length);
-
     // #ifndef SAT_NO_GUI
     //   queueAutomationToGui();
     //   queueModulationToGui();
     // #endif
-    
+    MProcessContext = nullptr;
+
   }
 
 };

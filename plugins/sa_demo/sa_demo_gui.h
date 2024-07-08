@@ -130,9 +130,11 @@ public:
     main_panel->appendChild(pages);
     pages->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     pages->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
-    pages->appendPage( new sa_demo_page_blank() );
-    pages->appendPage( new sa_demo_page_widgets() );
-    pages->appendPage( new sa_demo_page_parameters() );
+
+    pages->appendPage( new sa_demo_page_blank(this,AEditor) );
+    pages->appendPage( new sa_demo_page_widgets(this,AEditor) );
+    pages->appendPage( new sa_demo_page_parameters(this,AEditor) );
+
     pages->setPage(0);
     pages->realignChildren();
 

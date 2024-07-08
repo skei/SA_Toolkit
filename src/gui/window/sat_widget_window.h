@@ -224,13 +224,16 @@ private:
       count += 1;
       SAT_Rect rect = widget->getRect();
       queuePaintWidget(widget);
-      if (has_update) update_rect.combine(rect);
+      if (has_update) {
+        update_rect.combine(rect);
+      }
       else {
         update_rect = rect;
         has_update = true;
       }
     }
     if (has_update) {
+      //SAT_PRINT("invalidating %.f,%.f %.f,%.f\n",update_rect.x,update_rect.y,update_rect.w,update_rect.h);
       invalidate(update_rect.x,update_rect.y,update_rect.w,update_rect.h);
     }
   }
@@ -240,6 +243,8 @@ private:
   // called from flushDirtyWidgets()
 
   void queuePaintWidget(SAT_Widget* AWidget) {
+    // since we 'cheat', and paint everything in flushPaintWidgets,
+    // we just ignore everything here..
   }
 
   //----------
@@ -252,8 +257,8 @@ private:
 
   void flushPaintWidgets(SAT_PaintContext* AContext) {
     //SAT_Rect rect = AContext->update_rect;
+    //SAT_PRINT("%.f,%.f,%.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
     if (MRootWidget) {
-      //SAT_PRINT("%.f,%.f,%.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
       MRootWidget->on_widget_paint(AContext);
     }
   }

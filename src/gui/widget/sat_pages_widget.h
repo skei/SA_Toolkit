@@ -49,13 +49,11 @@ public:
   int32_t appendPage(SAT_Widget* APage) {
     //SAT_Print("index %i\n",getNumChildWidgets());
     //APage->State.active = false;
-    APage->setActive(false);
-    APage->setVisible(false);
-
-    APage->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    // APage->setActive(false);
+    // APage->setVisible(false);
+    APage->Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     APage->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
     APage->Options.realignInvisible = true;
-
     appendChild(APage);
     return APage->getIndex();
   }

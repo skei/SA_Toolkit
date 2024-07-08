@@ -1,5 +1,5 @@
-#ifndef sa_demo_root_widget_included
-#define sa_demo_root_widget_included
+#ifndef sa_demo_widgets_included
+#define sa_demo_widgets_included
 //----------------------------------------------------------------------
 
 #include "sat.h"

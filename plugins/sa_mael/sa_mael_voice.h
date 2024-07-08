@@ -215,7 +215,7 @@ public:
 
   void parameter(uint32_t AIndex, sat_param_t AValue) {
     //SAT_Print("%i = %f\n",AIndex,AValue);
-    sat_param_t a3 = (AValue*AValue*AValue);
+    sat_param_t a3 = (AValue * AValue * AValue);
     sat_param_t a5 = (AValue * 5.0);
     int32_t ivalue = (int32_t)AValue;
     switch (AIndex) {

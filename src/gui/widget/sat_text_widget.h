@@ -63,6 +63,7 @@ public:
 
   virtual const char* getText()     { return MText; }
   virtual double      getTextSize() { return MTextSize; }
+  virtual SAT_Rect    getTextOffset() { return MTextOffset; }
 
 //------------------------------
 public:

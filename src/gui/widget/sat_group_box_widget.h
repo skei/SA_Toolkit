@@ -26,6 +26,7 @@ private:
   double            MHeaderSize = 0;
   double            MFullSize   = 0;
   bool              MIsOpen     = true;
+  bool              MIsClosable = true;
 
 //------------------------------
 public:
@@ -54,11 +55,13 @@ public:
     MHeader->Layout.innerBorder = {0,0,3,3};
     MHeader->setTexts("Closed","open");
 
+      //if (MClosable) {
       MSymbol = new SAT_SymbolWidget(7,SAT_SYMBOL_FILLED_TRI_DOWN);
       MHeader->appendChild(MSymbol);
       MSymbol->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT;
       MSymbol->setActive(false);
       MSymbol->setColor(SAT_DarkerGrey);
+      //}
 
     MContainer = new SAT_VisualWidget(0);
     SAT_VisualWidget::appendChild(MContainer);
@@ -81,8 +84,11 @@ public:
 
   SAT_ButtonWidget* getHeaderWidget() { return MHeader; }
   SAT_VisualWidget* getContainerWidget() { return MContainer; }
+  SAT_SymbolWidget* getSymbolWidget() { return MSymbol; }
 
   bool isOpen() { return MIsOpen; }
+
+  void setIsClosable(bool AClosable) { MIsClosable = AClosable; }
 
 //------------------------------
 public:
@@ -97,17 +103,37 @@ public:
 //------------------------------
 
   void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
-    if (AWidget == MHeader) {
+    if ((AWidget == MHeader) && MIsClosable) {
+      double scale = getWindowScale();
       double value = MHeader->getValue();
-      if (value > 0.5) open();
-      else close();
+      if (value > 0.5) {
+        open();
+        SAT_Rect rect = getRect();
+        double pos = MFullSize - MHeaderSize;
+        double starts[4]  = {0,0,0,0};
+        double ends[4]    = {0,0,0,pos};
+        SAT_TweenChain* chain = new SAT_TweenChain();
+        SAT_TweenNode* node1 = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
+        chain->appendNode(node1);
+        do_widget_start_tween(this,chain);
+      }
+      else {
+        close(); // postpone this to tween_end..
+        SAT_Rect rect = getRect();
+        double pos = -(rect.h / scale) + MHeaderSize;
+        double starts[4]  = {0,0,0,0};
+        double ends[4]    = {0,0,0,pos};
+        SAT_TweenChain* chain = new SAT_TweenChain();
+        SAT_TweenNode* node1 = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
+        chain->appendNode(node1);
+        do_widget_start_tween(this,chain);
+      }
       SAT_VisualWidget::do_widget_update(this,AIndex,AMode);
     }
     else {
       SAT_VisualWidget::do_widget_update(AWidget,AIndex,AMode);
     }
   }
-
 
 //------------------------------
 public:
@@ -116,9 +142,9 @@ public:
   virtual void open() {
     MHeader->setValue(1);
     MIsOpen = true;
-    SAT_Rect rect = getBaseRect();
-    rect.h = MFullSize;
-    setBaseRect(rect);
+    // SAT_Rect rect = getBaseRect();
+    // rect.h = MFullSize;
+    // setBaseRect(rect);
     MContainer->State.active = true;
     MContainer->State.visible = true;
     MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_UP);
@@ -132,9 +158,9 @@ public:
   virtual void close() {
     MHeader->setValue(0);
     MIsOpen = false;
-    SAT_Rect rect = getBaseRect();
-    rect.h = MHeaderSize;
-    setBaseRect(rect);
+    // SAT_Rect rect = getBaseRect();
+    // rect.h = MHeaderSize;
+    // setBaseRect(rect);
     MContainer->State.active = false;
     MContainer->State.visible = false;
     MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_DOWN);

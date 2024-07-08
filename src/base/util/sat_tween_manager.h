@@ -47,6 +47,7 @@ public:
 //------------------------------
 
   SAT_TweenNode(void* ATarget, uint32_t AId, double ADuration, uint32_t AType, uint32_t ANumValues=0, double* AStartValues=nullptr, double* AEndValues=nullptr, uint32_t ATween=0) {
+    SAT_TRACE;
     MType         = AType;
     MId           = AId;
     MDuration     = ADuration;
@@ -62,6 +63,7 @@ public:
   //----------
   
   ~SAT_TweenNode() {
+    SAT_TRACE;
   }
   
 };
@@ -88,12 +90,14 @@ public:
 //------------------------------
 
   SAT_TweenChain() {
+    SAT_TRACE;
   }
   
   //----------
   
   ~SAT_TweenChain() {
-    #if !defined (SAT_NO_AUTODELETE)
+    SAT_TRACE;
+    #ifndef SAT_NO_AUTODELETE
       deleteNodes();
     #endif
   }
@@ -109,6 +113,12 @@ public:
 
   void deleteNodes() {
     for (uint32_t i=0; i<MNodes.size(); i++) delete MNodes[i];
+  }
+
+  //----------
+
+  uint32_t getNumNodes() {
+    return MNodes.size();
   }
   
   //----------
