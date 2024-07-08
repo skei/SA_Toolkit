@@ -63,13 +63,13 @@ public:
 
   sa_mael_voice_processor(SAT_ProcessorOwner* AOwner)
   : SAT_VoiceProcessor(AOwner) {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
   //----------
 
   virtual ~sa_mael_voice_processor() {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
 //------------------------------

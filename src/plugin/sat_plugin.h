@@ -92,7 +92,7 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
-    SAT_PRINT("MProcessor %p\n",MProcessor);
+    //SAT_PRINT("MProcessor %p\n",MProcessor);
     if (MProcessor) delete MProcessor;
     //MProcessor = nullptr;
     #ifndef SAT_NO_AUTODELETE
@@ -494,6 +494,7 @@ public: // editor
 //------------------------------
 
   void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
+    //SAT_PRINT("AWidth %i AHeight %i AScale %.3f\n",AWidth,AHeight,AScale);
     MInitialEditorWidth = AWidth;
     MInitialEditorHeight = AHeight;
     MInitialEditorScale = AScale;
@@ -629,6 +630,7 @@ public: // editor listener
     #ifdef SAT_EDITOR_EMBEDDED
 
     SAT_Window* on_editorListener_createWindow(uint32_t AWidth, uint32_t AHeight) override {
+      //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
       SAT_Window* window = createWindow(AWidth,AHeight);
       window->setInitialSize(MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
       return window;
@@ -849,19 +851,21 @@ public: // clap plugin
   const void* get_extension(const char *id) override {
     
     if (MSupportedExtensions.hasItem(id)) {
-      SAT_PRINT("host asks for %s extension: yes\n",id);
+      //SAT_PRINT("supported extension '%s'\n",id);
       return MSupportedExtensions.getItem(id);
     }
     const char* compat_id = findCompatExtension(id);
     if (compat_id) {
-      SAT_PRINT("%s -> %s\n",id,compat_id);
       if (MSupportedExtensions.hasItem(compat_id)) {
-        SAT_PRINT("host asks for %s extension (compat: %s): yes\n",id,compat_id);
+        //SAT_PRINT("unsupported '%s', compatible '%s'\n",id, compat_id);
         return MSupportedExtensions.getItem(compat_id);
       }
+      else {
+        //SAT_PRINT("unsupported '%s', compatible '%s' (unsupported)\n",id, compat_id);
+        return nullptr;
+      }
     }
-
-    SAT_PRINT("host asks for %s extension: no\n",id);
+    //SAT_PRINT("unsupported '%s'\n",id);
     return nullptr;
   }
 

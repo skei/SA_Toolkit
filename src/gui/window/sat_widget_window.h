@@ -124,6 +124,7 @@ public:
   //----------
 
   void setInitialSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
+    //SAT_PRINT("AWidth %i AHeight %i AScale %.3f\n",AWidth,AHeight,AScale);
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
     MInitialScale = AScale;

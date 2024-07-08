@@ -47,7 +47,7 @@ public:
 //------------------------------
 
   SAT_TweenNode(void* ATarget, uint32_t AId, double ADuration, uint32_t AType, uint32_t ANumValues=0, double* AStartValues=nullptr, double* AEndValues=nullptr, uint32_t ATween=0) {
-    SAT_TRACE;
+    //SAT_TRACE;
     MType         = AType;
     MId           = AId;
     MDuration     = ADuration;
@@ -63,7 +63,7 @@ public:
   //----------
   
   ~SAT_TweenNode() {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
   
 };
@@ -90,13 +90,13 @@ public:
 //------------------------------
 
   SAT_TweenChain() {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
   
   //----------
   
   ~SAT_TweenChain() {
-    SAT_TRACE;
+    //SAT_TRACE;
     #ifndef SAT_NO_AUTODELETE
       deleteNodes();
     #endif
