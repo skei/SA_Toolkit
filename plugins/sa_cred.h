@@ -9,6 +9,8 @@
 #include "plugin/sat_plugin.h"
 #include "gui/sat_widgets.h"
 
+#include "plugin/processor/sat_interleaved_processor.h"
+
 //----------------------------------------------------------------------
 
 //#ifdef SAT_DEBUG
@@ -41,13 +43,13 @@ const clap_plugin_descriptor_t sa_cred_descriptor = {
 
 //----------------------------------------------------------------------
 //
-//
+// processor
 //
 //----------------------------------------------------------------------
 
-class sa_cred_plugin
-: public SAT_Plugin {
-  
+class sa_cred_processor
+: public SAT_InterleavedProcessor {
+
 //------------------------------
 private:
 //------------------------------
@@ -69,19 +71,15 @@ private:
 public:
 //------------------------------
 
-  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_cred_plugin)
-
-  sa_cred_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
-  : SAT_Plugin(ADescriptor,AHost) {
+  sa_cred_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
   }
 
   //----------
 
-  virtual ~sa_cred_plugin() {
+  virtual ~sa_cred_processor() {
   }
 
-
-  
 //------------------------------
 public: // fibonacci
 //------------------------------
@@ -112,27 +110,9 @@ public: // fibonacci
 public:
 //------------------------------
 
-  bool init() final {
-
-    registerDefaultExtensions();    
-
-    registerExtension(CLAP_EXT_NOTE_PORTS);
-    appendClapNoteInputPort("In");
-    appendClapNoteOutputPort("Out");
-
-    appendParameter( new SAT_IntParameter( "Value1", 0, -12, 12 ));
-    appendParameter( new SAT_IntParameter( "Value2", 1, -12, 12 ));
-    appendParameter( new SAT_IntParameter( "Modulo", 12,  1, 24 ));
-    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
-    
-    return SAT_Plugin::init();
-  }
-  
-  //----------
-
-  bool on_plugin_noteOn(const clap_event_note_t* event) final {
-    //SAT_PRINT;
+  void noteOnEvent(const clap_event_note_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
+    SAT_Assert(context);
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
     int32_t key = event->key;
@@ -143,12 +123,11 @@ public:
     new_event.key += value;
     out_events->try_push(out_events,(const clap_event_header_t*)&new_event);
     next_fibo();
-    return true;
   }
 
   //----------
 
-  bool on_plugin_noteOff(const clap_event_note_t* event) final {
+  void noteOffEvent(const clap_event_note_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
@@ -160,12 +139,11 @@ public:
     memcpy(&new_event,event,sizeof(clap_event_note_t));
     new_event.key += value;
     out_events->try_push(out_events,(const clap_event_header_t*)&new_event);
-    return true;
   }
 
   //----------
 
-  bool on_plugin_noteChoke(const clap_event_note_t* event) final {
+  void noteChokeEvent(const clap_event_note_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
@@ -177,12 +155,11 @@ public:
     memcpy(&new_event,event,sizeof(clap_event_note_t));
     new_event.key += value;
     out_events->try_push(out_events,(const clap_event_header_t*)&new_event);
-    return true;
   }
 
   //----------
 
-  bool on_plugin_noteExpression(const clap_event_note_expression_t* event) final {
+  void noteExpressionEvent(const clap_event_note_expression_t* event) final {
     SAT_ProcessContext* context = getProcessContext();
     const clap_output_events_t *out_events = context->process->out_events;
     int32_t channel = event->channel;
@@ -194,12 +171,11 @@ public:
     memcpy(&new_event,event,sizeof(clap_event_note_expression_t));
     new_event.key += value;
     out_events->try_push(out_events,(const clap_event_header_t*)&new_event);
-    return true;
   }
 
   //----------
 
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
+  void paramValueEvent(const clap_event_param_value_t* event) final {
     uint32_t index = event->param_id;
     double value = event->value;
     switch (index) {
@@ -216,12 +192,11 @@ public:
         restart_fibo();
         break;
     }
-    return true;
   }
 
   //----------
 
-  bool on_plugin_paramMod(const clap_event_param_mod_t* event) final {
+  void paramModEvent(const clap_event_param_mod_t* event) final {
     uint32_t index = event->param_id;
     double value = event->amount;
     switch (index) {
@@ -238,20 +213,73 @@ public:
         //restart_fibo();
         break;
     }
-    return true;
   }
 
   //----------
 
-  bool on_plugin_transport(const clap_event_transport_t* event) final {
+  void transportEvent(const clap_event_transport_t* event) final {
+    SAT_TRACE;
     bool is_playing = (event->flags & CLAP_TRANSPORT_IS_PLAYING);
     if (is_playing && !MWasPlaying) {
-      SAT_Print("start\n");
+      SAT_PRINT("start\n");
       restart_fibo();
     }
     MWasPlaying = is_playing;
-    return true; // false;
+    SAT_TRACE;
   }
+
+};
+
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class sa_cred_plugin
+: public SAT_Plugin {
+ 
+
+//------------------------------
+public:
+//------------------------------
+
+  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_cred_plugin)
+
+  sa_cred_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_cred_plugin() {
+  }
+  
+//------------------------------
+public:
+//------------------------------
+
+  bool init() final {
+
+    registerDefaultExtensions();    
+
+    registerExtension(CLAP_EXT_NOTE_PORTS);
+    appendClapNoteInputPort("In");
+    appendClapNoteOutputPort("Out");
+
+    appendParameter( new SAT_IntParameter( "Value1", "", 0, -12, 12, CLAP_PARAM_IS_AUTOMATABLE ));
+    appendParameter( new SAT_IntParameter( "Value2", "", 1, -12, 12, CLAP_PARAM_IS_AUTOMATABLE ));
+    appendParameter( new SAT_IntParameter( "Modulo", "", 12,  1, 24, CLAP_PARAM_IS_AUTOMATABLE ));
+//    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+
+    sa_cred_processor* processor = new sa_cred_processor(this);
+    setProcessor(processor);
+    
+    return SAT_Plugin::init();
+  }
+  
+  //----------
   
 };
 

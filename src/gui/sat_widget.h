@@ -18,6 +18,8 @@ struct SAT_WidgetLayout {
   //uint32_t  direction         = SAT_DIRECTION_RIGHT;
   //SAT_Rect  clipOffset        = {0,0,0,0};
   //double    childScale        = 1.0;
+  SAT_Rect  minSize           = {-1,-1,-1,-1};
+  SAT_Rect  maxSize           = {-1,-1,-1,-1};
 };
 
 struct SAT_WidgetOptions {
@@ -171,6 +173,28 @@ public:
   virtual void setValue(double AValue, uint32_t AIndex)         { MValues[AIndex] = AValue; }
   virtual void setValue(double AValue)                          { setValue(AValue,MValueIndex); }
   virtual void setValueIndex(uint32_t AIndex)                   { MValueIndex = AIndex; }
+
+
+
+  virtual void setMinPos(double AXpos, double AYpos) {
+    Layout.minSize.x = AXpos;
+    Layout.minSize.y = AYpos;
+  }
+
+  virtual void setMinSize(double AWidth, double AHeight) {
+    Layout.minSize.w = AWidth;
+    Layout.minSize.h = AHeight;
+  }
+
+  virtual void setMaxPos(double AXpos, double AYpos) {
+    Layout.maxSize.x = AXpos;
+    Layout.maxSize.y = AYpos;
+  }
+
+  virtual void setMaxSize(double AWidth, double AHeight) {
+    Layout.maxSize.w = AWidth;
+    Layout.maxSize.h = AHeight;
+  }
 
   virtual void setSize(double AWidth, double AHeight) {
     MRect.w = AWidth;
@@ -553,6 +577,15 @@ public:
           }
         }
 
+        double min_width  = child->Layout.minSize.w * scale;
+        double min_height = child->Layout.minSize.h * scale;
+        double max_width  = child->Layout.maxSize.w * scale;
+        double max_height = child->Layout.maxSize.h * scale;
+        if ((min_width  >= 0) && (child_rect.w < min_width )) child_rect.w = min_width;
+        if ((min_height >= 0) && (child_rect.h < min_height)) child_rect.h = min_height;
+        if ((max_width  >= 0) && (child_rect.w > max_width )) child_rect.w = max_width;
+        if ((max_height >= 0) && (child_rect.h > max_height)) child_rect.h = max_height;
+
         MContentRect.combine(child_rect);
 
         // outer border
@@ -563,7 +596,14 @@ public:
         child_rect = child->on_widget_postAlign(child_rect);
         
         child->setRect(child_rect);
+
         if (ARecursive) child->realignChildren(ARecursive);
+
+          // child->realignChildren(ARecursive);
+          // if (child_layout & SAT_WIDGET_LAYOUT_CONTENT_SIZE) {
+          //   SAT_Rect child_content = child->getContentRect();
+          //   child->setRect(child_content);
+          // }
 
       } // visible
     } // for
@@ -772,6 +812,22 @@ public:
     double scale = getWindowScale();
     base_rect.w += (ADeltaX / scale);
     base_rect.h += (ADeltaY / scale);
+
+    double min_width  = Layout.minSize.w;// * scale;
+    double min_height = Layout.minSize.h;// * scale;
+    double max_width  = Layout.maxSize.w;// * scale;
+    double max_height = Layout.maxSize.h;// * scale;
+    
+    if ((min_width  >= 0) && (base_rect.w < min_width )) base_rect.w = min_width;
+    if ((min_height >= 0) && (base_rect.h < min_height)) base_rect.h = min_height;
+    if ((max_width  >= 0) && (base_rect.w > max_width )) base_rect.w = max_width;
+    if ((max_height >= 0) && (base_rect.h > max_height)) base_rect.h = max_height;
+
+    // if ((Layout.minSize.w >= 0) && (base_rect.w < Layout.minSize.w)) base_rect.w = Layout.minSize.w;
+    // if ((Layout.minSize.h >= 0) && (base_rect.h < Layout.minSize.h)) base_rect.h = Layout.minSize.h;
+    // if ((Layout.maxSize.h >= 0) && (base_rect.w > Layout.maxSize.w)) base_rect.w = Layout.maxSize.w;
+    // if ((Layout.maxSize.w >= 0) && (base_rect.h > Layout.maxSize.h)) base_rect.h = Layout.maxSize.h;
+
     setBaseRect(base_rect);
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {

@@ -189,7 +189,7 @@ public:
   //----------
 
   void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
-    // SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
+    SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
     // for (uint32_t i=0; i<MAX_VOICES; i++) {
     //   uint32_t state = MProcessor->getVoiceState(i);
     //   voices->setVoiceState(i,state);

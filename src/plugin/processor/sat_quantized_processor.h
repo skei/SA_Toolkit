@@ -36,6 +36,7 @@ public:
 //------------------------------
 
   void process(SAT_ProcessContext* AContext) override {
+    MProcessContext = AContext;
     uint32_t buffer_length = AContext->process->frames_count;
     uint32_t remaining = buffer_length;
     uint32_t current_time = 0;
@@ -90,6 +91,7 @@ public:
     //  queueAutomationToGui();
     //  queueModulationToGui();
     //#endif
+    MProcessContext = nullptr;
   }
 
 };

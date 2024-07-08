@@ -19,7 +19,8 @@
 //
 //----------------------------------------------------------------------
 
-class sa_botage_processor {
+class sa_botage_processor
+: public SAT_InterleavedProcessor {
 
   friend class sa_botage_plugin;
   //friend class sa_botage_editor;
@@ -265,13 +266,58 @@ private:
 public:
 //------------------------------
 
-  sa_botage_processor() {
+  sa_botage_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_InterleavedProcessor(AOwner) {
   }
 
   //----------
 
-  ~sa_botage_processor() {
+  virtual ~sa_botage_processor() {
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setSampleRate(double ASampleRate) {
+    MSampleRate= ASampleRate;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  // void paramValueEvent(const clap_event_param_value_t* event) final {
+  //   need_recalc = true;
+  // }
+
+  //----------
+
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
+    const clap_process_t* process = AContext->process;
+//    if (need_recalc) recalc(samplerate);
+    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    for (uint32_t i=0; i<ALength; i++) {
+      float spl0 = *input0++;
+      float spl1 = *input1++;
+
+      //...
+
+      *output0++ = spl0;
+      *output1++ = spl1;
+    }    
+  }
+
+//------------------------------
+private:
+//------------------------------
+
+  // void recalc(float srate) {
+  //   need_recalc = false;
+  // }
 
 //------------------------------
 public:
@@ -1170,27 +1216,3 @@ private:
 #endif
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-
-#endif // 0

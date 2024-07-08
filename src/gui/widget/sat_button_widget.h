@@ -80,7 +80,7 @@ public: // on_widget
       }
 
 //========== test tween
-
+/*
       SAT_Rect rect = getRect();
       double starts[4]  = {0,0,0,0};
       double ends[4]    = {0,0,0,100};
@@ -90,7 +90,7 @@ public: // on_widget
       SAT_TweenNode* node2 = new SAT_TweenNode(this,255,2.0,SAT_TWEEN_RECT,4,ends,starts,SAT_EASING_IN_EXPO);
       chain->appendNode(node2);
       do_widget_start_tween(this,chain);
-
+*/
 //==========
 
       do_widget_update(this);

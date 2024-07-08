@@ -224,6 +224,7 @@ public:
   */
 
   void process(SAT_ProcessContext* AContext) override {
+    MProcessContext = AContext;
     const clap_process_t* process = AContext->process;
     float** output = process->audio_outputs[0].data32;
     uint32_t length = process->frames_count;
@@ -231,6 +232,7 @@ public:
     processEvents(process->in_events,process->out_events);
     processAudio(AContext);
     mixActiveVoices(output,length);
+    MProcessContext = nullptr;
   }
 
 //------------------------------

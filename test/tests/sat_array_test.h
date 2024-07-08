@@ -13,9 +13,13 @@
 
 #define DUMP_ARRAY /*SAT_PRINT("");*/ for (uint32_t i=0; i<array.size(); i++) { SAT_DPRINT("%s ",array[i]); } SAT_DPRINT("\n")
 
-//----------
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
-bool sat_array_test() {
+bool sat_array_test1() {
 
   const char* t1 = "t1";
   const char* t2 = "t2";
@@ -56,7 +60,7 @@ bool sat_array_test() {
 //
 //----------------------------------------------------------------------
 
-SAT_TEST("/base/type/sat_array",sat_array_test);
+SAT_TEST("/base/type/sat_array/test1",sat_array_test1);
 
 //----------------------------------------------------------------------
 #endif

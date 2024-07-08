@@ -18,7 +18,7 @@ class sa_demo_page_parameters
 public:
 //------------------------------
 
-  sa_demo_page_parameters()
+  sa_demo_page_parameters(SAT_Plugin* APlugin, SAT_Editor* AEditor)
   : SAT_VisualWidget(0) {
     setName("sa_demo_page_parameters");
     setHint("sa_demo_page_parameters");
@@ -48,6 +48,15 @@ public:
     appendChild(knob7);
     appendChild(knob8);
 
+    AEditor->connect(knob1,APlugin->getParameter(SA_DEMO_PARAM_P1));
+    AEditor->connect(knob2,APlugin->getParameter(SA_DEMO_PARAM_P2));
+    AEditor->connect(knob3,APlugin->getParameter(SA_DEMO_PARAM_P3));
+    AEditor->connect(knob4,APlugin->getParameter(SA_DEMO_PARAM_P4));
+    AEditor->connect(knob5,APlugin->getParameter(SA_DEMO_PARAM_P5));
+    AEditor->connect(knob6,APlugin->getParameter(SA_DEMO_PARAM_P6));
+    AEditor->connect(knob7,APlugin->getParameter(SA_DEMO_PARAM_P7));
+    AEditor->connect(knob8,APlugin->getParameter(SA_DEMO_PARAM_P8));
+
     knob1->setKnobArcThickness(15);
 
   }
@@ -56,7 +65,6 @@ public:
 
   virtual ~sa_demo_page_parameters() {
   }
-
 
 };
 

@@ -42,7 +42,7 @@ public:
 public:
 //------------------------------
 
-  sa_demo_page_widgets()
+  sa_demo_page_widgets(SAT_Plugin* APlugin, SAT_Editor* AEditor)
   : SAT_VisualWidget(0) {
     setName("sa_demo_page_widgets");
     setHint("sa_demo_page_widgets");
@@ -129,6 +129,9 @@ public:
     left_panel->getVerticalScrollBar()->setDrawRoundedCorners(true);
     left_panel->getVerticalScrollBar()->setRoundedCorners(SAT_CORNER_ALL);
     left_panel->getVerticalScrollBar()->setRoundedCornerSize(5.0);
+
+    left_panel->setMinSize(50,-1);
+    left_panel->setMaxSize(300,-1);
 
     // left_sizer
 
@@ -217,6 +220,13 @@ public:
     // SAT_Widget* endstack1 = new SAT_Widget(0);
     // left_panel->appendChild(endstack1);
     // endstack1->Layout.flags = SAT_WIDGET_LAYOUT_STACK_HORIZ;
+
+    // SAT_TreeItemWidget* treeitem1 = new SAT_TreeItemWidget(20,"TreeItem");
+    // left_panel->appendChild(treeitem1);
+    //   treeitem1->appendItem("item1");
+    //   treeitem1->appendItem("item2");
+    //   treeitem1->appendItem("item3");
+    // treeitem1->open();
 
     //------------------------------
     // right_panel

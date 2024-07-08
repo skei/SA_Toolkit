@@ -27,12 +27,14 @@ class SAT_Processor {
 protected:
 //------------------------------
 
-  SAT_ProcessorOwner* MOwner        = nullptr;
-  SAT_AudioPortArray* MAudioInputs  = nullptr;
-  SAT_AudioPortArray* MAudioOutputs = nullptr;
-  SAT_NotePortArray*  MNoteInputs   = nullptr;
-  SAT_NotePortArray*  MNoteOutputs  = nullptr;
-  SAT_ParameterArray* MParameters   = nullptr;
+  SAT_ProcessorOwner* MOwner          = nullptr;
+  SAT_AudioPortArray* MAudioInputs    = nullptr;
+  SAT_AudioPortArray* MAudioOutputs   = nullptr;
+  SAT_NotePortArray*  MNoteInputs     = nullptr;
+  SAT_NotePortArray*  MNoteOutputs    = nullptr;
+  SAT_ParameterArray* MParameters     = nullptr;
+
+  SAT_ProcessContext* MProcessContext = nullptr; // valud during process() calls
 
 //------------------------------
 public:
@@ -59,11 +61,14 @@ public:
 public:
 //------------------------------
 
-  SAT_AudioPortArray* getAudioInputs()  { return MAudioInputs; }
-  SAT_AudioPortArray* getAudioOutputs() { return MAudioOutputs; }
-  SAT_NotePortArray*  getNoteInputs()   { return MNoteInputs; }
-  SAT_NotePortArray*  getNoteOutputs()  { return MNoteOutputs; }
-  SAT_ParameterArray* getParameters()   { return MParameters; }
+  SAT_ProcessorOwner* getProcessorOwner() { return MOwner; }
+  SAT_ProcessContext* getProcessContext() { return MProcessContext; }
+
+  SAT_AudioPortArray* getAudioInputs()    { return MAudioInputs; }
+  SAT_AudioPortArray* getAudioOutputs()   { return MAudioOutputs; }
+  SAT_NotePortArray*  getNoteInputs()     { return MNoteInputs; }
+  SAT_NotePortArray*  getNoteOutputs()    { return MNoteOutputs; }
+  SAT_ParameterArray* getParameters()     { return MParameters; }
 
   uint32_t            getNumParameters()                  { return MParameters->size(); }
   SAT_Parameter*      getParameter(uint32_t AIndex)       { return MParameters->getItem(AIndex); }
@@ -206,7 +211,8 @@ public:
   //----------
 
   void processTransportEvent(const clap_event_transport_t* event) {
-    //SAT_PRINT("\n");
+    SAT_TRACE;
+    SAT_Assert(event);
     if (event->flags & CLAP_TRANSPORT_HAS_TEMPO) {
       //MProcessContext.has_tempo = true
       //MProcessContext.tempo     = event->tempo;             // in bpm
@@ -235,7 +241,9 @@ public:
     if (event->flags & CLAP_TRANSPORT_IS_RECORDING) {}
     if (event->flags & CLAP_TRANSPORT_IS_LOOP_ACTIVE) {}
     if (event->flags & CLAP_TRANSPORT_IS_WITHIN_PRE_ROLL) {}
+    SAT_TRACE;
     transportEvent(event);
+    SAT_TRACE;
   }
 
   //----------
@@ -351,6 +359,7 @@ public:
   // advice: override this with your own..
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
+    //MProcessContext = AContext;
     const clap_process_t* process = AContext->process;
     bool have_audio_inputs = (process->audio_inputs_count > 0);
     bool have_audio_outputs = (process->audio_outputs_count > 0);
@@ -401,6 +410,7 @@ public:
         }
       }
     } // no outputs
+    //MProcessContext = nullptr;
   }
 
   //----------
@@ -416,8 +426,10 @@ public:
 //------------------------------
 
   virtual void process(SAT_ProcessContext* AContext) {
+    MProcessContext = AContext;
     // default: do nothing
     // (no audio/event pssthrough)
+    MProcessContext = nullptr;
   }
 
 //------------------------------

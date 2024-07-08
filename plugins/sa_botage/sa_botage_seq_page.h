@@ -12,12 +12,12 @@
 //----------------------------------------------------------------------
 
 class sa_botage_seq_page_widget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 public:
 
   sa_botage_seq_page_widget(SAT_Rect ARect)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     
     setFillBackground(true);
     setBackgroundColor(0.18);
