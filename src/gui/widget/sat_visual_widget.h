@@ -16,9 +16,6 @@ class SAT_VisualWidget
 private:
 //------------------------------
 
-//uint32_t    MCursor           = SAT_CURSOR_DEFAULT;
-//const char* MHint             = "";
-
   bool        MFillBackground   = true;
   bool        MDrawBorder       = true;
 
@@ -69,8 +66,10 @@ private:
   int32_t   MMouseClickedY      = 0;
   int32_t   MMousePreviousX     = 0;
   int32_t   MMousePreviousY     = 0;
-  // int32_t   MMovedX             = 0.0;
-  // int32_t   MMovedY             = 0.0;
+
+  double    MPrevScale          = 1.0;
+
+
 
 //------------------------------
 public:
@@ -473,6 +472,25 @@ public: // on_widget
   //   if (MSurface) delete MSurface;
   // }
 
+  //----------
+
+  SAT_Rect on_widget_postAlign(SAT_Rect ARect) override {
+    double scale = getWindowScale();
+    //SAT_Assert(scale > 0.0);
+    if (scale > 0.0) {
+      SAT_Assert(MPrevScale > 0.0);
+      double ratio = scale / MPrevScale;
+      //SAT_PRINT("ratio %f\n",ratio);
+      if (ratio > 0.0) {
+        MManualMoved *= ratio;
+      }
+      MPrevScale = scale;
+    }
+    return ARect;
+  }
+
+  //----------
+
   void on_widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
@@ -490,7 +508,7 @@ public: // on_widget
       if (AButton == SAT_BUTTON_LEFT) {
         if (MSizable && (MResizeEdge != SAT_EDGE_NONE)) {
           MResizing = true;
-          SAT_PRINT("MResizing %i\n",MResizing);
+          //SAT_PRINT("MResizing %i\n",MResizing);
         }
       // else if (MMovable && MCanMove) {
       //   MMoving = true;
@@ -504,7 +522,7 @@ public: // on_widget
 
   void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (MSizable && MResizing) {
-      SAT_PRINT("MResizing 0\n");
+      //SAT_PRINT("MResizing 0\n");
       // MMoving = false;
       MResizing = false;
     }
