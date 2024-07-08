@@ -169,35 +169,36 @@ private:
     ext.tuning              = (clap_host_tuning_t*)MHost->get_extension(MHost,CLAP_EXT_TUNING);
     ext.undo                = (clap_host_undo_t*)MHost->get_extension(MHost,CLAP_EXT_UNDO);
 
-    if (ext.ambisonic)          { SAT_PRINT("host supports: CLAP_EXT_AMBISONIC\n"); }
-    if (ext.audio_ports)        { SAT_PRINT("host supports: CLAP_EXT_AUDIO_PORTS\n"); }
-    if (ext.audio_ports_config) { SAT_PRINT("host supports: CLAP_EXT_AUDIO_PORTS_CONFIG\n"); }
-    if (ext.context_menu)       { SAT_PRINT("host supports: CLAP_EXT_CONTEXT_MENU\n"); }
-    if (ext.event_registry)     { SAT_PRINT("host supports: CLAP_EXT_EVENT_REGISTRY\n"); }
-    if (ext.gui)                { SAT_PRINT("host supports: CLAP_EXT_GUI\n"); }
-    if (ext.latency)            { SAT_PRINT("host supports: CLAP_EXT_LATENCY\n"); }
-    if (ext.log)                { SAT_PRINT("host supports: CLAP_EXT_LOG\n"); }
-    if (ext.note_name)          { SAT_PRINT("host supports: CLAP_EXT_NOTE_NAME\n"); }
-    if (ext.note_ports)         { SAT_PRINT("host supports: CLAP_EXT_NOTE_PORTS\n"); }
-    if (ext.params)             { SAT_PRINT("host supports: CLAP_EXT_PARAMS\n"); }
-    if (ext.posix_fd_support)   { SAT_PRINT("host supports: CLAP_EXT_POSIX_FD_SUPPORT\n"); }
-    if (ext.preset_load)        { SAT_PRINT("host supports: CLAP_EXT_PRESET_LOAD\n"); }
-    if (ext.remote_controls)    { SAT_PRINT("host supports: CLAP_EXT_REMOTE_CONTROLS\n"); }
-    if (ext.state)              { SAT_PRINT("host supports: CLAP_EXT_STATE\n"); }
-    if (ext.surround)           { SAT_PRINT("host supports: CLAP_EXT_SURROUND\n"); }
-    if (ext.tail)               { SAT_PRINT("host supports: CLAP_EXT_TAIL\n"); }
-    if (ext.thread_check)       { SAT_PRINT("host supports: CLAP_EXT_THREAD_CHECK\n"); }
-    if (ext.thread_pool)        { SAT_PRINT("host supports: CLAP_EXT_THREAD_POOL\n"); }
-    if (ext.timer_support)      { SAT_PRINT("host supports: CLAP_EXT_TIMER_SUPPORT\n"); }
-    if (ext.track_info)         { SAT_PRINT("host supports: CLAP_EXT_TRACK_INFO\n"); }
-    if (ext.voice_info)         { SAT_PRINT("host supports: CLAP_EXT_VOICE_INFO\n"); }
+    /*
+    if (ext.ambisonic)          { SAT_PRINT("host supports '%s'\n",CLAP_EXT_AMBISONIC); }
+    if (ext.audio_ports)        { SAT_PRINT("host supports '%s'\n",CLAP_EXT_AUDIO_PORTS); }
+    if (ext.audio_ports_config) { SAT_PRINT("host supports '%s'\n",CLAP_EXT_AUDIO_PORTS_CONFIG); }
+    if (ext.context_menu)       { SAT_PRINT("host supports '%s'\n",CLAP_EXT_CONTEXT_MENU); }
+    if (ext.event_registry)     { SAT_PRINT("host supports '%s'\n",CLAP_EXT_EVENT_REGISTRY); }
+    if (ext.gui)                { SAT_PRINT("host supports '%s'\n",CLAP_EXT_GUI); }
+    if (ext.latency)            { SAT_PRINT("host supports '%s'\n",CLAP_EXT_LATENCY); }
+    if (ext.log)                { SAT_PRINT("host supports '%s'\n",CLAP_EXT_LOG); }
+    if (ext.note_name)          { SAT_PRINT("host supports '%s'\n",CLAP_EXT_NOTE_NAME); }
+    if (ext.note_ports)         { SAT_PRINT("host supports '%s'\n",CLAP_EXT_NOTE_PORTS); }
+    if (ext.params)             { SAT_PRINT("host supports '%s'\n",CLAP_EXT_PARAMS); }
+    if (ext.posix_fd_support)   { SAT_PRINT("host supports '%s'\n",CLAP_EXT_POSIX_FD_SUPPORT); }
+    if (ext.preset_load)        { SAT_PRINT("host supports '%s'\n",CLAP_EXT_PRESET_LOAD); }
+    if (ext.remote_controls)    { SAT_PRINT("host supports '%s'\n",CLAP_EXT_REMOTE_CONTROLS); }
+    if (ext.state)              { SAT_PRINT("host supports '%s'\n",CLAP_EXT_STATE); }
+    if (ext.surround)           { SAT_PRINT("host supports '%s'\n",CLAP_EXT_SURROUND); }
+    if (ext.tail)               { SAT_PRINT("host supports '%s'\n",CLAP_EXT_TAIL); }
+    if (ext.thread_check)       { SAT_PRINT("host supports '%s'\n",CLAP_EXT_THREAD_CHECK); }
+    if (ext.thread_pool)        { SAT_PRINT("host supports '%s'\n",CLAP_EXT_THREAD_POOL); }
+    if (ext.timer_support)      { SAT_PRINT("host supports '%s'\n",CLAP_EXT_TIMER_SUPPORT); }
+    if (ext.track_info)         { SAT_PRINT("host supports '%s'\n",CLAP_EXT_TRACK_INFO); }
+    if (ext.voice_info)         { SAT_PRINT("host supports '%s'\n",CLAP_EXT_VOICE_INFO); }
     // draft
-    if (ext.resource_directory) { SAT_PRINT("host supports: CLAP_EXT_RESOURCE_DIRECTORY\n"); }
-    if (ext.transport_control)  { SAT_PRINT("host supports: CLAP_EXT_TRANSPORT_CONTROL\n"); }
-    if (ext.triggers)           { SAT_PRINT("host supports: CLAP_EXT_TRIGGERS\n"); }
-    if (ext.tuning)             { SAT_PRINT("host supports: CLAP_EXT_TUNING\n"); }
-    if (ext.undo)               { SAT_PRINT("host supports: CLAP_EXT_UNDO\n"); }
-
+    if (ext.resource_directory) { SAT_PRINT("host supports '%s'\n",CLAP_EXT_RESOURCE_DIRECTORY); }
+    if (ext.transport_control)  { SAT_PRINT("host supports '%s'\n",CLAP_EXT_TRANSPORT_CONTROL); }
+    if (ext.triggers)           { SAT_PRINT("host supports '%s'\n",CLAP_EXT_TRIGGERS); }
+    if (ext.tuning)             { SAT_PRINT("host supports '%s'\n",CLAP_EXT_TUNING); }
+    if (ext.undo)               { SAT_PRINT("host supports '%s'\n",CLAP_EXT_UNDO); }
+    */
 
   }
 

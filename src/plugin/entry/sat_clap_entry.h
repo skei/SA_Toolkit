@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------
 
 bool sat_clap_entry_init_callback(const char *plugin_path) {
-  SAT_PRINT("plugin_path: %s\n",plugin_path);
+  //SAT_PRINT("plugin_path: %s\n",plugin_path);
   //SAT_GLOBAL.setPluginPath(plugin_path);
   SAT_GLOBAL.clapInit(plugin_path);
   return true;
@@ -18,14 +18,13 @@ bool sat_clap_entry_init_callback(const char *plugin_path) {
 //----------
 
 void sat_clap_entry_deinit_callback(void) {
-  SAT_PRINT("\n");
+  //SAT_PRINT("\n");
   SAT_GLOBAL.clapDeInit();
 }
 
 //----------
 
 const void* sat_clap_entry_get_factory_callback(const char* factory_id) {
-
   //SAT_PRINT("factory_id: %s\n",factory_id);
 
   int32_t index = SAT_GLOBAL.REGISTRY.findFactory(factory_id);

@@ -68,13 +68,13 @@ public:
 
   SAT_VoiceProcessor(SAT_ProcessorOwner* AOwner)
   : SAT_Processor(AOwner) {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
   //----------
 
   virtual ~SAT_VoiceProcessor() {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
 //------------------------------
@@ -120,7 +120,7 @@ public:
     MClapHost = AHost;
     if (MClapHost) {
       MThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-      SAT_PRINT("thread-pool: %s\n", MThreadPool ? "true" : "false" );
+      //SAT_PRINT("thread-pool: %s\n", MThreadPool ? "true" : "false" );
     }
   }
 

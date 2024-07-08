@@ -158,7 +158,9 @@ public: // extensions
 
   const char* findCompatExtension(const char* ACompatId) {
     for (uint32_t i=0; i<SAT_NUM_COMPAT_CLAP_EXTENSIONS; i++) {
-      if (strcmp(ACompatId,MCompatClapExtensions[i].compat_id) == 0) return MCompatClapExtensions[i].id;
+      if (strcmp(ACompatId,MCompatClapExtensions[i].compat_id) == 0) {
+        return MCompatClapExtensions[i].id;
+      }
     }
     return nullptr;
   }
