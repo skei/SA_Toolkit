@@ -32,7 +32,7 @@
 #define MAX_VOICES    64
 #define EDITOR_WIDTH  800
 #define EDITOR_HEIGHT 600
-#define EDITOR_SCALE  1.0
+#define EDITOR_SCALE  1.5
 
 //----------------------------------------------------------------------
 //

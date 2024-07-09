@@ -124,7 +124,7 @@ public:
       //validateImage(painter);
 
       if (!MImageValid && MBitmap) {
-        SAT_PRINT("loading image\n");
+        //SAT_PRINT("loading image\n");
         MImage = painter->loadImage(MImageWidth,MImageHeight,MImageBuffer);
         MImageValid = true;
       }
