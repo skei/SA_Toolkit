@@ -217,6 +217,7 @@ public: // SAT_BaseWindow
   //----------
 
   void hide() override {
+    //SAT_TRACE;
     on_window_hide(); // check if not called multiple times!
     if (MIsEmbedded) stopEventThread();
     xcb_unmap_window(MConnection,MWindow);

@@ -269,7 +269,7 @@ public:
     if (scale > 0.0) {
       SAT_Assert(MPrevScale > 0.0);
       double ratio = scale / MPrevScale;
-      SAT_PRINT("ratio %f\n",ratio);
+      //SAT_PRINT("ratio %f\n",ratio);
       if (ratio > 0.0) {
         SAT_ListNode* node = MModules.head();
         while (node) {

@@ -112,7 +112,7 @@ public:
 //------------------------------
 
   void on_widget_open(SAT_WidgetOwner* AOwner) override {
-    SAT_TRACE;
+    //SAT_TRACE;
     MPainter = AOwner->on_widgetOwner_getPainter();
   }
     
@@ -121,7 +121,7 @@ public:
   SAT_Rect on_widget_preAlign(SAT_Rect ARect) override {
     if (MPainter) {
       double scale = getWindowScale();
-      SAT_PRINT("MPainter %p scale %f\n",MPainter,scale);
+      //SAT_PRINT("MPainter %p scale %f\n",MPainter,scale);
       calcLineWidths(MPainter,scale);
     }
     return ARect;

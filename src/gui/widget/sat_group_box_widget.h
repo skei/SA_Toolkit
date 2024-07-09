@@ -146,7 +146,7 @@ public:
       if (AType == SAT_TWEEN_FINISHED) {
         //close();
         if (!MIsOpen) {
-          SAT_PRINT("tween finished closing\n");
+          //SAT_PRINT("tween finished closing\n");
           close();
         }
       }

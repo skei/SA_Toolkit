@@ -309,14 +309,13 @@ public: // window
   // }
 
   //----------
-
   
+  // looks like Reaper is sending us negative coords (int16_t), 
+  // but in the x11 event, w,h is uint16_t,
+  // so we get widths like 65532, etc..
+
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
     //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
-
-    // Reaper is sending us negative coords (int16_t), 
-    // but in the x11 event, w,h is uint16_t,
-    // so we get widths like 65532, etc..
 
     if (AWidth >= 32768) AWidth = 0;
     if (AHeight >= 32768) AHeight = 0;
