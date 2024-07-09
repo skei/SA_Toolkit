@@ -2,6 +2,10 @@
 #define sat_basic_window_included
 //---------------------------------------------------------------------
 
+// SAT_TimerWindow?
+// or maybe we need something more herelater..
+// (ouch, abstract, over-engineering, premature optimization)
+
 #include "sat.h"
 #include "base/system/sat_timer.h"
 #include "gui/window/sat_implemented_window.h"

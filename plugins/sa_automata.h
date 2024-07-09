@@ -180,19 +180,10 @@ public:
   // }
 
   void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
-
     MProcessContext = AContext;
-
     const clap_process_t* process = AContext->process;
     //if (need_recalc) recalc(samplerate);
-    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
-    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
-    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
-    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
     for (uint32_t i=0; i<ALength; i++) {
-      float spl0 = *input0++;
-      float spl1 = *input1++;
-
       if ((p_timing_num > 0) && (p_timing_denom > 0)) {
         MTiming = (double)p_timing_num / (double)p_timing_denom;
       }
@@ -205,9 +196,6 @@ public:
         }
       }
       //MTempo += MTempoInc;
-
-      *output0++ = spl0;
-      *output1++ = spl1;
     }    
   }
 
@@ -554,7 +542,7 @@ public:
     setProcessor(MProcessor);
 
     #if !defined (SAT_GUI_NOGUI)
-      setInitialEditorSize( 420, 560, 1.0 );
+      setInitialEditorSize( 420, 560, 1.0, true );
     #endif
 
 

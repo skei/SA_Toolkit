@@ -139,6 +139,8 @@ public:
 public:
 //------------------------------
 
+  // painter owner
+
   #ifdef SAT_PAINTER_NANOVG
   xcb_connection_t* on_painterOwner_getXcbConnection()  override { return MConnection; }
   xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MScreenVisual; }
@@ -149,7 +151,7 @@ public:
   xcb_visualid_t    on_painterOwner_getXcbVisual()      override { return MScreenVisual; }
   #endif
 
-  //----------
+  // paint target
 
   #ifdef SAT_PAINTER_NANOVG
   xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MWindow; }
@@ -159,7 +161,7 @@ public:
   xcb_drawable_t    on_paintTarget_getXcbDrawable()     override { return MWindow; }
   #endif
 
-  //----------
+  // renderer owner
 
   #ifdef SAT_RENDERER_GLX
   Display*          on_rendererOwner_getX11Display()    override { return MDisplay; }
@@ -171,7 +173,7 @@ public:
   xcb_drawable_t    on_rendererOwner_getXcbDrawable()   override { return MWindow; }
   #endif
 
-  //----------
+  // render target
 
   #ifdef SAT_RENDERER_GLX
   xcb_drawable_t    on_renderTarget_getXcbDrawable()    override { return MWindow; }
@@ -181,7 +183,7 @@ public:
   xcb_drawable_t    on_renderTarget_getXcbDrawable()    override { return MWindow; }
   #endif
 
-  //----------
+  // surface owner
 
   uint32_t          on_surfaceOwner_getWidth()          override { return MWindowWidth; }
   uint32_t          on_surfaceOwner_getHeight()         override { return MWindowHeight; }

@@ -52,7 +52,7 @@ private:
   bool  need_recalc = true;
   float samplerate = 0.0;
 
-  float BUFFER[1024*1024];
+  float BUFFER[1024*1024] = {0};
 
   //float slider1,slider2,slider3;
 
