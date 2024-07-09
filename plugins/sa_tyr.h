@@ -2,19 +2,28 @@
 #define sa_tyr_included
 //----------------------------------------------------------------------
 
-#include "audio/sat_voice_manager.h"
+#include "sat.h"
+#include "audio/sat_audio_math.h"
+#include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
+#include "plugin/processor/sat_voice_processor.h"
 
 #if !defined (SAT_GUI_NOGUI)
   #include "plugin/sat_editor.h"
   #include "gui/sat_widgets.h"
 #endif
 
-#include "sa_tyr/sa_tyr_voice.h"
-
 //----------
 
+//#include "sa_tyr/sa_tyr_parameters.h"
+#include "sa_tyr/sa_tyr_voice.h"
+
+//----------------------------------------------------------------------
+
 #define MAX_VOICES    32
+#define EDITOR_WIDTH  430
+#define EDITOR_HEIGHT (295 + 40 + 25)
+#define EDITOR_SCALE  2
 
 //----------------------------------------------------------------------
 //
@@ -24,15 +33,62 @@
 
 const clap_plugin_descriptor_t sa_tyr_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = "skei.audio/sa_tyr",
+  .id           = SAT_VENDOR "/sa_tyr/v0",
   .name         = "sa_tyr",
-  .vendor       = "skei.audio",
-  .url          = "https://github.com/skei/SA_Toolkit",
+  .vendor       = SAT_VENDOR,
+  .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
-  .version      = "0.0.0",
+  .version      = SAT_VERSION,
   .description  = "",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
+};
+
+//----------------------------------------------------------------------
+//
+// processor
+//
+//----------------------------------------------------------------------
+
+//typedef SAT_VoiceProcessor<sa_tyr_voice,MAX_VOICES> sa_tyr_voice_processor;
+
+//
+
+class sa_tyr_voice_processor
+: public SAT_VoiceProcessor<sa_tyr_voice,MAX_VOICES> {
+
+//------------------------------
+public:
+//------------------------------
+
+  sa_tyr_voice_processor(SAT_ProcessorOwner* AOwner)
+  : SAT_VoiceProcessor(AOwner) {
+    SAT_TRACE;
+  }
+
+  //----------
+
+  virtual ~sa_tyr_voice_processor() {
+    SAT_TRACE;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void process(SAT_ProcessContext* AContext) override {
+    // SAT_ClearStereoBuffer(output,length);
+    // processEvents(process->in_events,process->out_events);
+    // processAudio(AContext);
+    // mixActiveVoices(output,length);
+    SAT_VoiceProcessor::process(AContext);
+    // const clap_process_t* process = AContext->process;
+    // float** output = process->audio_outputs[0].data32;
+    // uint32_t length = process->frames_count;
+    // sat_param_t gain = AContext->parameters->getItem(SA_TYR_PARAM_GAIN)->getValue();
+    // SAT_ScaleStereoBuffer(output,gain,length);
+  }
+
 };
 
 //----------------------------------------------------------------------
@@ -43,179 +99,152 @@ const clap_plugin_descriptor_t sa_tyr_descriptor = {
 
 class sa_tyr_plugin
 : public SAT_Plugin {
-
+  
 //------------------------------
 private:
 //------------------------------
 
-  SAT_VoiceManager<sa_tyr_voice,MAX_VOICES>  MVoiceManager = {};
+  sa_tyr_voice_processor* MProcessor = nullptr;
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_tyr_plugin);
+  sa_tyr_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  : SAT_Plugin(ADescriptor,AHost) {
+  }
+
+  //----------
+
+  virtual ~sa_tyr_plugin() {
+  }
 
 //------------------------------
 public:
 //------------------------------
 
   bool init() final {
-
     registerDefaultSynthExtensions();
-
-    appendClapNoteInputPort("Note Input");
-    appendStereoAudioInputPort("Audio Input");
-    appendStereoAudioOutputPort("Audio Output");
-
-    // all params mod per note id
+    appendClapNoteInputPort("In");
+    appendStereoAudioOutputPort("Out");
+    MProcessor = new sa_tyr_voice_processor(this);
+    setProcessor(MProcessor);
+    MProcessor->init(getClapPlugin(),getClapHost());
+    MProcessor->setProcessThreaded(true);
+    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
+    //sa_tyr_SetupParameters(this);
     clap_param_info_flags flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;
-    appendParameter(new SAT_Parameter("Gain",   1,  0, 1, flags));  // 0
-    appendParameter(new SAT_Parameter("Tuning", 0, -1, 1, flags));  // 1
-    appendParameter(new SAT_Parameter("Filter", 1,  0, 1, flags));  // 2
-
+    appendParameter(new SAT_Parameter("Gain",   "", 1,  0, 1, flags));  // 0
+    appendParameter(new SAT_Parameter("Tuning", "", 0, -1, 1, flags));  // 1
+    appendParameter(new SAT_Parameter("Filter", "", 1,  0, 1, flags));  // 2
     #if !defined (SAT_GUI_NOGUI)
-      setInitialEditorSize(256,256,1.0);
+      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
-
-    MVoiceManager.init(getClapPlugin(),getClapHost());
-    MVoiceManager.setProcessThreaded(true);
-    MVoiceManager.setEventMode(SAT_PLUGIN_EVENT_MODE_QUANTIZED);
-
     return SAT_Plugin::init();
   }
-
+  
   //----------
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
-    MVoiceManager.activate(sample_rate,min_frames_count,max_frames_count);
+    MProcessor->activate(sample_rate,min_frames_count,max_frames_count);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-  void thread_pool_exec(uint32_t task_index) final {
-    MVoiceManager.threadPoolExec(task_index);
-  }
-
-  //----------
-
-  bool voice_info_get(clap_voice_info_t *info) final {
+  bool voice_info_get(clap_voice_info_t *info) override {
+    //SAT_TRACE;
     info->voice_count     = MAX_VOICES;
     info->voice_capacity  = MAX_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
     return true;
   }
 
-//------------------------------
-public: // events
-//------------------------------
+  //----------
 
-  bool on_plugin_noteOn(const clap_event_note_t* event) final {
-    MVoiceManager.handleNoteOn(event);
-    return true;
-  }
-
-  bool on_plugin_noteOff(const clap_event_note_t* event) final {
-    MVoiceManager.handleNoteOff(event);
-    return true;
-  }
-
-  bool on_plugin_noteChoke(const clap_event_note_t* event) final {
-    MVoiceManager.handleNoteChoke(event);
-    return true;
-  }
-
-  bool on_plugin_noteExpression(const clap_event_note_expression_t* event) final {
-    MVoiceManager.handleNoteExpression(event);
-    return true;
-  }
-
-  bool on_plugin_paramValue(const clap_event_param_value_t* event) final {
-    MVoiceManager.handleParamValue(event);
-    return true;
-  }
-
-  bool on_plugin_paramMod(const clap_event_param_mod_t* event) final {
-    MVoiceManager.handleParamMod(event);
-    return true;
-  }
-
-  //bool on_plugin_transport(const clap_event_transport_t* event) final {
-  //  return true;
-  //}
-
-  bool on_plugin_midi(const clap_event_midi_t* event) final {
-    MVoiceManager.handleMidi(event);
-    return true;
-  }
-
-  bool on_plugin_midiSysex(const clap_event_midi_sysex_t* event) final {
-    MVoiceManager.handleMidiSysex(event);
-    return true;
-  }
-
-  bool on_plugin_midi2(const clap_event_midi2_t* event) final {
-    MVoiceManager.handleMidi2(event);
-    return true;
+  void thread_pool_exec(uint32_t task_index) override {
+    MProcessor->threadPoolExec(task_index);
   }
 
   //----------
 
-  void postProcessEvents(const clap_input_events_t* in_events, const clap_output_events_t* out_events) final {
-    MVoiceManager.postProcessEvents(in_events,out_events);
-  }
+  // uint32_t remote_controls_count() final {
+  //   return 1;
+  // }  
+  
+  //----------
 
-//------------------------------
-public: // process
-//------------------------------
+  // bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) final {
+  //   switch (page_index) {
+  //     case 0: {
+  //       strcpy(page->section_name,"Section");
+  //       page->page_id = 0;
+  //       strcpy(page->page_name,"SA_Synth parameters");
+  //       page->param_ids[0] = SA_MAEL_PARAM_OSC1_SQU;
+  //       page->param_ids[1] = SA_MAEL_PARAM_OSC1_TRI;
+  //       page->param_ids[2] = SA_MAEL_PARAM_OSC1_SIN;
+  //       page->param_ids[3] = SA_MAEL_PARAM_OSC1_WIDTH;
+  //       page->param_ids[4] = SA_MAEL_PARAM_OSC2_SQU;
+  //       page->param_ids[5] = SA_MAEL_PARAM_OSC2_TRI;
+  //       page->param_ids[6] = SA_MAEL_PARAM_OSC2_SIN;
+  //       page->param_ids[7] = SA_MAEL_PARAM_OSC2_WIDTH;
+  //       page->is_for_preset = false;
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }  
+  
+  //----------
 
-  // block
-  void processAudio(SAT_ProcessContext* AContext) final {
-    const clap_process_t* process = AContext->process;
-    uint32_t length = process->frames_count;
-    float** outputs = process->audio_outputs[0].data32;
-    AContext->voice_buffer = outputs;
-    AContext->voice_length = length;
-    MVoiceManager.processAudio(AContext);
-    MVoiceManager.mixActiveVoices();
-  }
-
-//------------------------------
-public: // gui
-//------------------------------
-
-  // #if !defined (SAT_GUI_NOGUI)
-  //  
-  // void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
-  //   SAT_RootWidget* root = new SAT_RootWidget(AWindow);
-  //   AWindow->setRootWidget(root);
-  //   //SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(50,50,100,100),"Gain",0.1);
-  //   //root->appendChildWidget(knob);
-  //   //knob->setTextSize(15);
-  //   //knob->setValueSize(25);
-  //   //AEditor->connect(knob,getParameter(0));
+  // bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
+  //   if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
+  //     loadPresetFromFile(location,load_key);
+  //     SAT_Host* host = getHost();
+  //     if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
+  //     return true;
+  //   }
+  //   return false;
   // }
-  //
-  // #endif // nogui
+
+  //----------
+
+  #ifndef SAT_NO_GUI
+    #include "sa_tyr/sa_tyr_gui.h"
+  #endif
+
+  //----------
+
+  // void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+  //   SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
+  //   for (uint32_t i=0; i<MAX_VOICES; i++) {
+  //     uint32_t state = MProcessor->getVoiceState(i);
+  //     voices->setVoiceState(i,state);
+  //   }
+  //   voices->do_widget_redraw(voices);
+  // }  
 
 };
 
+#undef MAX_VOICES
+#undef EDITOR_WIDTH
+#undef EDITOR_HEIGHT
+#undef EDITOR_SCALE
+
 //----------------------------------------------------------------------
 //
-// entry
+// entry point
 //
 //----------------------------------------------------------------------
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(sa_tyr_descriptor,sa_tyr_plugin);
+  SAT_PLUGIN_ENTRY(sa_tyr_descriptor,sa_tyr_plugin)
 #endif
 
-//----------
-
 #undef MAX_VOICES
-#undef VOICE_SCALE
 
 //----------------------------------------------------------------------
 #endif
