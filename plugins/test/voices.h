@@ -210,7 +210,7 @@ public:
 //------------------------------
 
   bool init() final {
-    registerSynthExtensions();
+    registerDefaultSynthExtensions();
     appendClapNoteInputPort("In");
     appendStereoAudioOutputPort("Out");
     uint32_t flags = CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_MODULATABLE | CLAP_PARAM_IS_MODULATABLE_PER_NOTE_ID;

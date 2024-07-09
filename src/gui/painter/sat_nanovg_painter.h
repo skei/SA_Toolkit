@@ -8,6 +8,7 @@
 #include "gui/painter/sat_painter_owner.h"
 #include "gui/sat_surface.h"
 
+//TODO: these should be in SAT_Painter, not here...
 #include "../data/fonts/Roboto/Roboto-Regular.h"
 #include "../data/fonts/Manjari/Manjari-Thin.h"
 
