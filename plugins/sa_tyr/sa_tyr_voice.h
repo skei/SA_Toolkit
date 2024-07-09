@@ -85,86 +85,26 @@ public:
 
   //----------
 
-  uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
-
-    float* input = MContext->process_context->process->audio_inputs[0].data32[0];
-    input += AOffset;
-
-    float* output = MContext->voice_buffer;
-    output += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
-    output += AOffset;
-
-    if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
-      for (uint32_t i=0; i<ALength; i++) {
-
-        double tu = MPTuning + MMTuning;
-        tu = SAT_Clamp(tu,-1,1);
-        tu +=  METuning;
-        float hz = SAT_NoteToHz(MNoteOnKey + tu);
-        float delay = SAT_HzToSamples(hz,MSampleRate);
-        MPhaseAdd = 1.0 / delay;
-        MPhase = SAT_Fract(MPhase);
-
-        sat_sample_t env = MEnvelope.process();
-
-        float in = *input++;
-        float out = 0.0;
-        //float feedback = 0.0;
-
-        if (MDelay.hasWrapped()) {
-          out = MDelay.process( 0.0, delay, 1.0 );
-        }
-
-        else {
-          //out = in;
-          out = MDelay.process( in, delay, 1.0 );
-        }
-
-        *output++ = out * env;
-         MPhase += MPhaseAdd;
-
-      } // for length
-    } // playing
-
-    else {
-      memset(output,0,ALength * sizeof(float));
-    }
-
-    if (MEnvelope.getStage() == SAT_ENVELOPE_FINISHED) return SAT_VOICE_FINISHED;
-    else return AState;
-
-  }
-
-  //----------
-
-  uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
-    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
-  }
-
-  //----------
-
   uint32_t noteOn(uint32_t AIndex, double AValue) {
-    SAT_Plugin*     plugin      = MContext->process_context->plugin;
-    SAT_Parameter*  par_tuning  = plugin->getParameter(1);
+    // SAT_Plugin*     plugin      = MContext->process_context->plugin;
+    // SAT_Parameter*  par_tuning  = plugin->getParameter(1);
+
+    SAT_ParameterArray* params = MContext->process_context->parameters;
+    SAT_Parameter*  par_tuning = params->getItem(1);
 
     // reset voice
-
     MNoteOnKey  = AIndex;
     MNoteOnVel  = AValue;
     MPhase      = 0.0;
     MPTuning    = par_tuning->getValue();
     MMTuning    = 0.0;
     METuning    = 0.0;
-
     //MDelay.reset();
     MDelay.start();
-
     MEnvelope.reset();
     MEnvelope.setADSR(0,0,1,2.5);
     MEnvelope.noteOn();    
-
     MFilter.resetState();
-
     return SAT_VOICE_PLAYING;
   }
 
@@ -217,13 +157,72 @@ public:
     }
   }
 
+  //----------
+
+  uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
+
+//    float* input = MContext->process_context->process->audio_inputs[0].data32[0];
+//    input += AOffset;
+
+    float* output = MContext->voice_buffer;
+    output += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
+    output += AOffset;
+
+    if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
+      for (uint32_t i=0; i<ALength; i++) {
+
+        double tu = MPTuning + MMTuning;
+        tu = SAT_Clamp(tu,-1,1);
+        tu +=  METuning;
+        float hz = SAT_NoteToHz(MNoteOnKey + tu);
+        float delay = SAT_HzToSamples(hz,MSampleRate);
+        MPhaseAdd = 1.0 / delay;
+        MPhase = SAT_Fract(MPhase);
+
+        sat_sample_t env = MEnvelope.process();
+
+        float in = 0.0;//*input++;
+        float out = 0.0;
+        //float feedback = 0.0;
+
+        if (MDelay.hasWrapped()) {
+          out = MDelay.process( 0.0, delay, 1.0 );
+        }
+
+        else {
+          //out = in;
+          out = MDelay.process( in, delay, 1.0 );
+        }
+
+        *output++ = out * env;
+         MPhase += MPhaseAdd;
+
+      } // for length
+    } // playing
+
+    else {
+      memset(output,0,ALength * sizeof(float));
+    }
+
+    if (MEnvelope.getStage() == SAT_ENVELOPE_FINISHED) return SAT_VOICE_FINISHED;
+    else return AState;
+
+  }
+
+  //----------
+
+  uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
+    return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
+  }
+
+  //----------
+
+
 };
 
 //----------
 
 #undef SA_TYR_DELAY_SIZE
-
-
 
 //----------------------------------------------------------------------
 #endif
