@@ -28,10 +28,6 @@ GUI
   saveEditorState()
   restoreEditorState()
 
-* editor initial scale
-
-  take initial scale into account when opening the editor for the first time
-
 * x11 fonts
 
   xft?

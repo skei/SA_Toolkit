@@ -280,64 +280,51 @@ public:
 //------------------------------
 
   void setSampleRate(double ASampleRate) {
-    MSampleRate= ASampleRate;
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  // void paramValueEvent(const clap_event_param_value_t* event) final {
-  //   need_recalc = true;
-  // }
-
-  //----------
-
-  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
-    const clap_process_t* process = AContext->process;
-//    if (need_recalc) recalc(samplerate);
-    float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
-    float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
-    float* output0 = process->audio_outputs[0].data32[0] + AOffset;
-    float* output1 = process->audio_outputs[0].data32[1] + AOffset;
-    for (uint32_t i=0; i<ALength; i++) {
-      float spl0 = *input0++;
-      float spl1 = *input1++;
-
-      //...
-
-      *output0++ = spl0;
-      *output1++ = spl1;
-    }    
-  }
-
-//------------------------------
-private:
-//------------------------------
-
-  // void recalc(float srate) {
-  //   need_recalc = false;
-  // }
-
-//------------------------------
-public:
-//------------------------------
-
-  bool hasWrapped() { return MLoopWrapped; }
-
-//------------------------------
-public:
-//------------------------------
-
-  void activate(double sample_rate) {
-    MSampleRate = sample_rate;
+    MSampleRate = ASampleRate;
   }
 
   //----------
 
-  void setParamValue(uint32_t param_id,double value) {
+  bool hasWrapped() {
+    return MLoopWrapped;
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+
+  void transportEvent(const clap_event_transport_t* event) override {
+    if (event->flags & CLAP_TRANSPORT_IS_PLAYING) {
+      MIsPlaying = true;
+    }
+    else {
+      MIsPlaying = false;
+      MRange = false;
+      MLoop = false;
+      MReadPos = 0.0;
+      MWritePos = 0;
+    }
+    if (MIsPlaying && !MWasPlaying) {
+      //SAT_Print("play\n");
+      MPrevSlice = -1;
+      MReadPos = 0.0;
+      MWritePos = 0;
+      MReadSpeed = 1.0;
+      MBufferWrapped = false;
+    }
+    else if (MWasPlaying && !MIsPlaying) {
+      //SAT_Print("stop\n");
+      // reset waveform areas/markers..
+    }
+    MWasPlaying = MIsPlaying;
+  }
+
+  void paramValueEvent(const clap_event_param_value_t* event) final {
+    //need_recalc = true;
     //SAT_Print("param_id %i value %.3f\n",param_id,value);
-    switch (param_id) {
+    double value = event->value;
+    switch (event->param_id) {
     //case SA_BOTAGE_PARAM_GAIN:
       case SA_BOTAGE_PARAM_ENV_LOOP_ATTACK:       par_loop_env_attack         = value;          break;
       case SA_BOTAGE_PARAM_ENV_LOOP_DECAY:        par_loop_env_decay          = 25.0 - value;   break;
@@ -405,72 +392,16 @@ public:
 
   //----------
 
-  void transport(uint32_t flags) {
-    if (flags & CLAP_TRANSPORT_IS_PLAYING) {
-      MIsPlaying = true;
-    }
-    else {
-      MIsPlaying = false;
-      MRange = false;
-      MLoop = false;
-      MReadPos = 0.0;
-      MWritePos = 0;
-    }
-    if (MIsPlaying && !MWasPlaying) {
-      //SAT_Print("play\n");
-      MPrevSlice = -1;
-      MReadPos = 0.0;
-      MWritePos = 0;
-      MReadSpeed = 1.0;
-      MBufferWrapped = false;
-    }
-    else if (MWasPlaying && !MIsPlaying) {
-      //SAT_Print("stop\n");
-      // reset waveform areas/markers..
-    }
-    MWasPlaying = MIsPlaying;
-  }
-
-//------------------------------
-public:
-//------------------------------
-
-  // void process(SAT_ProcessContext* AContext) {
-  //   float**  inputs  = AContext->process->audio_inputs[0].data32;
-  //   float**  outputs = AContext->process->audio_outputs[0].data32;
-  //   uint32_t length  = AContext->process->frames_count;
-  //   float* input0 = inputs[0];
-  //   float* input1 = inputs[1];
-  //   float* output0 = outputs[0];
-  //   float* output1 = outputs[1];
-  //   for (uint32_t i=0; i<length; i++) {
-  //     // input
-  //     float in0 = *input0++;
-  //     float in1 = *input1++;
-  //     // read from buffer
-  //     float out0 = MBuffer[(MReadPos*2)  ];
-  //     float out1 = MBuffer[(MReadPos*2)+1];
-  //     MReadPos = ((MReadPos + 1) % MBufferSize);
-  //     // write to buffer
-  //     MBuffer[(MWritePos*2)  ] = in0;
-  //     MBuffer[(MWritePos*2)+1] = in1;
-  //     MWritePos = ((MWritePos + 1) % MBufferSize);
-  //     // output
-  //     *output0++ = out0;
-  //     *output1++ = out1;
-  //   }
-  // }
-
-  //----------
-
-  void process(SAT_ProcessContext* AContext) {
-
+  void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     const clap_process_t* process = AContext->process;
-
-    float* audioin0  = process->audio_inputs[0].data32[0];
-    float* audioin1  = process->audio_inputs[0].data32[1];
-    float* audioout0 = process->audio_outputs[0].data32[0];
-    float* audioout1 = process->audio_outputs[0].data32[1];
+    // float* input0  = process->audio_inputs[0].data32[0]  + AOffset;
+    // float* input1  = process->audio_inputs[0].data32[1]  + AOffset;
+    // float* output0 = process->audio_outputs[0].data32[0] + AOffset;
+    // float* output1 = process->audio_outputs[0].data32[1] + AOffset;
+    float* audioin0  = process->audio_inputs[0].data32[0] + AOffset;
+    float* audioin1  = process->audio_inputs[0].data32[1] + AOffset;
+    float* audioout0 = process->audio_outputs[0].data32[0] + AOffset;
+    float* audioout1 = process->audio_outputs[0].data32[1] + AOffset;
 
     // buffer length
 
@@ -480,16 +411,24 @@ public:
 
     double seconds_per_beat = 60.0 / process->transport->tempo;
     double samples_per_beat = seconds_per_beat * MSampleRate;
+
     MBufferLengthF = (double)par_num_beats * samples_per_beat;
     MBufferLength = ceil(MBufferLengthF);
 
-    uint32_t len = process->frames_count;
+    // uint32_t len = process->frames_count;
 
     if (MIsPlaying) {
-
       double slice_length = MBufferLengthF / (double)(par_num_beats * par_num_slices);
 
-      for (uint32_t i=0; i<len; i++) {
+      // for (uint32_t i=0; i<ALength; i++) {
+      //   float spl0 = *input0++;
+      //   float spl1 = *input1++;
+      //   //...
+      //   *output0++ = spl0;
+      //   *output1++ = spl1;
+      // }
+
+      for (uint32_t i=0; i<ALength; i++) {
 
         // get input
 
@@ -572,10 +511,11 @@ public:
         *audioout0++ = out0;
         *audioout1++ = out1;
       }
-    }
+
+    } // is playing
 
     else { // playing
-      for (uint32_t i=0; i<len; i++) {
+      for (uint32_t i=0; i<ALength; i++) {
         float spl0 = *audioin0++;
         float spl1 = *audioin1++;
         *audioout0++ = spl0;

@@ -59,6 +59,7 @@ private:
 
   int32_t par_value1            = 0;
   int32_t par_value2            = 1;
+  int32_t par_modulo            = 12;
 
   int32_t mod_value1            = 0;
   int32_t mod_value2            = 0;
@@ -107,6 +108,7 @@ public: // fibonacci
   void restart_fibo() {
     MValue1 = par_value1;
     MValue2 = par_value2;
+    MModulo = par_modulo;
   }
 
 //------------------------------
@@ -191,7 +193,8 @@ public:
         restart_fibo();
         break;
       case 2:
-        MModulo = value;
+        //MModulo = value;
+        par_modulo = value;
         restart_fibo();
         break;
     }
@@ -221,14 +224,14 @@ public:
   //----------
 
   void transportEvent(const clap_event_transport_t* event) final {
-    SAT_TRACE;
+    //SAT_TRACE;
     bool is_playing = (event->flags & CLAP_TRANSPORT_IS_PLAYING);
     if (is_playing && !MWasPlaying) {
       SAT_PRINT("start\n");
       restart_fibo();
     }
     MWasPlaying = is_playing;
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
 };
@@ -266,23 +269,31 @@ public:
   bool init() final {
 
     registerDefaultExtensions();    
-
     registerExtension(CLAP_EXT_NOTE_PORTS);
     appendClapNoteInputPort("In");
     appendClapNoteOutputPort("Out");
 
-    appendParameter( new SAT_IntParameter( "Value1", "", 0, -12, 12, CLAP_PARAM_IS_AUTOMATABLE ));
-    appendParameter( new SAT_IntParameter( "Value2", "", 1, -12, 12, CLAP_PARAM_IS_AUTOMATABLE ));
-    appendParameter( new SAT_IntParameter( "Modulo", "", 12,  1, 24, CLAP_PARAM_IS_AUTOMATABLE ));
-//    setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
+    appendParameter( new SAT_IntParameter( "Value1", "", 0, -12, 12, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
+    appendParameter( new SAT_IntParameter( "Value2", "", 1, -12, 12, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
+    appendParameter( new SAT_IntParameter( "Modulo", "", 12,  1, 24, CLAP_PARAM_IS_AUTOMATABLE | CLAP_PARAM_IS_STEPPED ));
+    //setAllParameterFlags(CLAP_PARAM_IS_MODULATABLE);
 
     sa_cred_processor* processor = new sa_cred_processor(this);
     setProcessor(processor);
+
+    // processor->init(getClapPlugin(),getClapHost());
+    // processor->setProcessThreaded(true);
+    // processor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
     
     return SAT_Plugin::init();
   }
   
   //----------
+
+  // bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
+  //   MProcessor->setSampleRate(sample_rate);
+  //   return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  // }
   
 };
 
