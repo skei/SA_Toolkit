@@ -18,10 +18,10 @@ class SAT_BufferedWindow
 private:
 //------------------------------
 
-  // void*               MRenderBuffer         = nullptr;
-  // uint32_t            MBufferWidth          = 0;
-  // uint32_t            MBufferHeight         = 0;
-
+  bool      MBufferAllocated  = false;
+  void*     MRenderBuffer     = nullptr;
+  uint32_t  MBufferWidth      = 0;
+  uint32_t  MBufferHeight     = 0;
 
 //------------------------------
 public:
@@ -29,51 +29,151 @@ public:
 
   SAT_BufferedWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
   : SAT_PaintedWindow(AWidth,AHeight,AParent) {
-    //SAT_Painter* painter = getPainter();
-    //SAT_PRINT("painter: %p\n",painter);
-    //void* MRenderBuffer = painter->createRenderBuffer(AWidth,AHeight);
-    //SAT_PRINT("MRenderBuffer: %p\n",MRenderBuffer);
   }
 
   //----------
 
   virtual ~SAT_BufferedWindow() {
-    //SAT_Painter* painter = getPainter();
-    //if (painter) {
-    //   if (MRenderBuffer) painter->deleteRenderBuffer(MRenderBuffer);
-    //}
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  // void on_window_show() override {
-  //   SAT_TRACE;
-  //   SAT_PaintedWindow::on_window_show();
-  //   SAT_Painter* painter = getPainter();
-  //   SAT_PRINT("painter: %p\n",painter);
-  //   void* MRenderBuffer = painter->createRenderBuffer(getWidth(),getHeight());
-  //   SAT_PRINT("MRenderBuffer: %p\n",MRenderBuffer);
+  #ifdef SAT_WINDOW_BUFFERED    
+
+  //----------
+
+  void on_window_show() override {
+    SAT_TRACE;
+    SAT_PaintedWindow::on_window_show();
+    if (!MBufferAllocated) {
+      SAT_Renderer* renderer = getRenderer();
+      renderer->makeCurrent();
+      uint32_t w = getWidth();
+      uint32_t h = getHeight();
+      createRenderBuffer(w,h);
+      MBufferAllocated = true;
+      renderer->resetCurrent();
+    }
+  }
+
+  //----------
+
+  void on_window_hide() override {
+    SAT_TRACE;
+    SAT_PaintedWindow::on_window_hide();
+    if (MBufferAllocated) {
+      SAT_Renderer* renderer = getRenderer();
+      renderer->makeCurrent();
+      deleteRenderBuffer();
+      MBufferAllocated = false;
+      renderer->resetCurrent();
+    }
+  }
+
+  //----------
+
+  void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
+    SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+    SAT_PaintedWindow::on_window_resize(AWidth,AHeight);
+    if (MBufferAllocated) {
+      resizeRenderBuffer(AWidth,AHeight);
+    }
+  }
+
+  //----------
+
+  // void on_window_prerender(uint32_t AWidth, uint32_t AHeight) override {
+  //   SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+  //   SAT_PaintedWindow::on_window_prerender(AWidth,AHeight);
   // }
 
   //----------
 
-  // void on_window_hide() override {
-  //   SAT_TRACE;
-  //   SAT_PaintedWindow::on_window_hide();
-  //   SAT_Painter* painter = getPainter();
-  //   if (painter && MRenderBuffer) painter->deleteRenderBuffer(MRenderBuffer);
+  void on_window_prepaint(uint32_t AWidth, uint32_t AHeight) override {
+    SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+    SAT_PaintedWindow::on_window_prepaint(AWidth,AHeight);
+  }
+
+  //----------
+
+  // void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
+  //   SAT_PRINT("AXpos %i AYpos %i AWidth %i AHeight %i\n",AXpos,AYpos,AWidth,AHeight);
+  //   SAT_PaintedWindow::on_window_paint(AXpos,AYpos,AWidth,AHeight);
   // }
 
   //----------
 
-  // resize
-  // dirty, redraw, ..
+  void on_window_postpaint() override {
+    SAT_TRACE;
+    SAT_PaintedWindow::on_window_postpaint();
+  }
+
+  //----------
+
+  // void on_window_postrender() override {
+  //   SAT_TRACE;
+  //   SAT_PaintedWindow::on_window_postrender();
+  // }
+
+  //----------
+
+  // void on_window_realign() override {
+  //   SAT_TRACE;
+  //   SAT_PaintedWindow::on_window_realign();
+  // }
+
+  //----------
+
+  #endif // buffered
 
 //------------------------------
-public:
+private:
 //------------------------------
+
+  bool createRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
+    SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+    SAT_Painter* painter = getPainter();
+    SAT_Assert(painter);
+    if (painter) {
+      MBufferWidth = AWidth;
+      MBufferHeight = AHeight;
+      MRenderBuffer = painter->createRenderBuffer(AWidth,AHeight);
+      //SAT_PRINT("painter %p MRenderBuffer %p\n",painter,MRenderBuffer);
+      SAT_Assert(MRenderBuffer);
+      return true;
+    }
+    return false;
+  }
+
+  //----------
+
+  void deleteRenderBuffer() {
+    SAT_Painter* painter = getPainter();
+    if (painter && MRenderBuffer) {
+      painter->deleteRenderBuffer(MRenderBuffer);
+      MBufferWidth = 0;
+      MBufferHeight = 0;
+      MRenderBuffer = nullptr;
+    }
+  }
+
+  //----------
+
+  bool resizeRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
+    SAT_PRINT("MBufferWidth %i MBufferHeight %i -> AWidth %i AHeight %i\n",MBufferWidth,MBufferHeight,AWidth,AHeight);
+    deleteRenderBuffer();
+    return createRenderBuffer(AWidth,AHeight);
+  }
+
+};
+
+//----------------------------------------------------------------------
+#endif
+
+
+
 
   // v1
 
@@ -190,8 +290,3 @@ public:
   }
 
   #endif // 0
-
-};
-
-//----------------------------------------------------------------------
-#endif
