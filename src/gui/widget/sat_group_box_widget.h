@@ -118,7 +118,10 @@ public:
         do_widget_start_tween(this,chain);
       }
       else {
-        close(); // postpone this to tween_end..
+
+        //close();
+        MIsOpen = false;
+
         SAT_Rect rect = getRect();
         double pos = -(rect.h / scale) + MHeaderSize;
         double starts[4]  = {0,0,0,0};
@@ -132,6 +135,21 @@ public:
     }
     else {
       SAT_VisualWidget::do_widget_update(AWidget,AIndex,AMode);
+    }
+  }
+
+  //----------
+
+  void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
+    SAT_VisualWidget::on_widget_tween(AId,AType,ACount,AData);
+    if (AId == 255) {
+      if (AType == SAT_TWEEN_FINISHED) {
+        //close();
+        if (!MIsOpen) {
+          SAT_PRINT("tween finished closing\n");
+          close();
+        }
+      }
     }
   }
 
