@@ -21,7 +21,10 @@
 
 #include "plugin/sat_plugin.h"
 #include "plugin/sat_parameters.h"
-#include "gui/sat_widgets.h"
+
+#ifndef SAT_NO_GUI
+  #include "gui/sat_widgets.h"
+#endif
 
 #define MAX_GRAINS  1024
 #define BUFFERSIZE  (1024*1024)
