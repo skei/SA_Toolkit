@@ -16,6 +16,15 @@
   without any action being taken by the code the compiler finds nearby.
 */
 
+/*
+  volatile informs the compiler that the object (variable) is side effects prone.
+  It means that it can be changed by something which is not visible for the compiler
+  in a normal program execution path. For example by the hardware (DMA, hardware
+  register) or signal (exception) handler which is not called by the program.
+*/
+
+// https://blog.regehr.org/archives/28
+
 //----------------------------------------------------------------------
 
 #include "sat.h"

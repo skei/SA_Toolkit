@@ -447,6 +447,18 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
       waveform2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
       //waveform2->setAudioBuffer(size,buffer,stereo);
 
+      for (uint32_t i=0; i<20; i++) {
+        SAT_KnobWidget* knob = new SAT_KnobWidget(25);
+        bottom_panel->appendChild(knob);
+        knob->Layout.flags  = SAT_WIDGET_LAYOUT_STACK_VERT;
+        knob->setDrawValueText(false);
+        knob->setDrawText(false);
+        if (i == 19) {
+          knob->Layout.flags |= SAT_WIDGET_LAYOUT_STACK_END;
+        }
+      }
+
+
     //------------------------------
     // center_panel
     //------------------------------

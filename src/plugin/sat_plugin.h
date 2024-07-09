@@ -92,7 +92,7 @@ public:
   //----------
 
   virtual ~SAT_Plugin() {
-    //SAT_PRINT("MProcessor %p\n",MProcessor);
+    SAT_PRINT("MProcessor %p\n",MProcessor);
     if (MProcessor) delete MProcessor;
     //MProcessor = nullptr;
     #ifndef SAT_NO_AUTODELETE
@@ -156,7 +156,7 @@ public: // extensions
 
   //----------
 
-  void registerSynthExtensions() {
+  void registerDefaultSynthExtensions() {
     registerDefaultExtensions();
     registerExtension(CLAP_EXT_NOTE_PORTS);
     registerExtension(CLAP_EXT_THREAD_POOL);
@@ -651,6 +651,7 @@ public: // processor
 //------------------------------
 
   virtual void setProcessor(SAT_Processor* AProcessor) {
+    SAT_PRINT("AProcessor %p\n",AProcessor);
     MProcessor = AProcessor;
   }
 

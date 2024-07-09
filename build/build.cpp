@@ -33,7 +33,7 @@
 //----------------------------------------------------------------------
 
 
-#include "../plugins/sa_demo.h"
+// #include "../plugins/sa_demo.h"
 
 // #include "../plugins/sa_automata.h"
 // #include "../plugins/sa_botage.h"
@@ -44,7 +44,7 @@
 
 //----------
 
-//// #include "../plugins/sa_tyr.h"
+#include "../plugins/sa_tyr.h"
 
 
 //----------------------------------------------------------------------
