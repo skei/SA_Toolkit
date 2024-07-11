@@ -25,8 +25,8 @@ protected:
 public:
 //------------------------------
 
-  SAT_TextBoxWidget(SAT_Rect ARect)
-  : SAT_ScrollBoxWidget(ARect,true,true) {
+  SAT_TextBoxWidget(SAT_Rect ARect, bool AVertical=true, bool AHorizontal=true)
+  : SAT_ScrollBoxWidget(ARect,AVertical,AHorizontal) {
     setName("SAT_TextBoxWidget");
     setHint("SAT_TextBoxWidget");
     //MContent->layout.innerBorder = 0;

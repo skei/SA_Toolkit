@@ -10,6 +10,9 @@
   #define SAT_PRINT_SOCKET
 #endif
 
+//#define SAT_DEBUG_WINDOW
+//#define SAT_DEBUG_OBSERVER
+
 //----------------------------------------------------------------------
 //
 //

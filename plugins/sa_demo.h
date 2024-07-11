@@ -75,6 +75,7 @@ public:
 
   sa_demo_processor(SAT_ProcessorOwner* AOwner)
   : SAT_InterleavedProcessor(AOwner) {
+    //SAT_GLOBAL.DEBUG.OBSERVER.observe(SAT_OBSERVE_FLOAT,&samplerate,"samplerate");
   }
 
   //----------
@@ -137,6 +138,8 @@ private:
 //------------------------------
 
   sa_demo_processor* MProcessor = nullptr;
+
+  double obs_test = 1.2;
 
 //------------------------------
 public:

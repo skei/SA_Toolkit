@@ -58,18 +58,27 @@ class sa_mael_voice_processor
 : public SAT_VoiceProcessor<sa_mael_voice,MAX_VOICES> {
 
 //------------------------------
+private:
+//------------------------------
+
+    uint32_t sample_pos = 0;
+
+//------------------------------
 public:
 //------------------------------
 
   sa_mael_voice_processor(SAT_ProcessorOwner* AOwner)
   : SAT_VoiceProcessor(AOwner) {
-    //SAT_TRACE;
+    SAT_TRACE;
+
+    SAT_Observe(SAT_OBSERVE_UINT32,&sample_pos,"sample_pos");
+
   }
 
   //----------
 
   virtual ~sa_mael_voice_processor() {
-    //SAT_TRACE;
+    SAT_TRACE;
   }
 
 //------------------------------
@@ -82,6 +91,8 @@ public:
     // processEvents(process->in_events,process->out_events);
     // processAudio(AContext);
     // mixActiveVoices(output,length);
+
+    sample_pos = AContext->sample_counter;
 
     SAT_VoiceProcessor::process(AContext);
 

@@ -10,5 +10,12 @@
 #include "base/sat_types.h"
 #include "base/sat_global.h"
 
+//----------
+
+#ifdef SAT_DEBUG_WINDOW
+  #include "base/debug/sat_debug_window.h"
+  SAT_DebugWindow SAT_GLOBAL_DEBUG_WINDOW = {};
+#endif
+
 //----------------------------------------------------------------------
 #endif

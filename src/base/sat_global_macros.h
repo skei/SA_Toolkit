@@ -81,6 +81,22 @@
 
 //----------------------------------------------------------------------
 //
+// observers
+//
+//----------------------------------------------------------------------
+
+#ifdef SAT_DEBUG_OBSERVER
+  #define SAT_Observe(type,ptr,txt) SAT_GLOBAL.DEBUG.OBSERVER.observe(type,ptr,txt)
+  #define SAT_Unobserve(ptr) SAT_GLOBAL.DEBUG.OBSERVER.unobserve(ptr)
+  #define SAT_PrintObservers SAT_GLOBAL.DEBUG.OBSERVER.print_observers()
+#else
+  #define SAT_Observe(type,ptr,txt) {}
+  #define SAT_Unobserve(ptr) {}
+  #define SAT_PrintObservers {}
+#endif
+
+//----------------------------------------------------------------------
+//
 // print
 //
 //----------------------------------------------------------------------
