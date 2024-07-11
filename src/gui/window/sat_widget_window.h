@@ -204,7 +204,8 @@ private:
 
   //----------
 
-  // called from on_widgetListener_redraw()
+  // called from
+  //   SAT_WidgetWindow.on_widgetListener_redraw()
 
   void queueDirtyWidget(SAT_Widget* AWidget) {
     if (!MDirtyWidgets.write(AWidget)) {
@@ -213,7 +214,9 @@ private:
 
   //----------
 
-  // called from timer
+  // called from
+  //   on_timerListener_callback
+
   // TODO: check widget if already set to be drawn (render frame #)
 
   void flushDirtyWidgets() {
@@ -241,7 +244,8 @@ private:
 
   //----------
 
-  // called from flushDirtyWidgets()
+  // called from
+  // SAT_WidgetWindow.flushDirtyWidgets()
 
   void queuePaintWidget(SAT_Widget* AWidget) {
     // since we 'cheat', and paint everything in flushPaintWidgets,
@@ -250,8 +254,9 @@ private:
 
   //----------
 
-  // called from on_window_paint()
-  //
+  // called from
+  //   SAY_WidgetWindow.on_window_paint()
+
   // TODO:
   // - paint to buffer
   // - copy update rect

@@ -792,46 +792,33 @@ private:
 
   //----------
 
-  //  xcb_keycode_t* keycode = xcb_key_symbols_get_keycode(MKeySyms,keysym);
-  //  SAT_PRINT("AKey %i AState %i keysym %i keycode %i\n",AKey,AState,keysym,keycode[0]);
-    /*
-    //SAT_PRINT("AKey %i : keysym %i keycode ",AKey, keysym);
-    if (*keycode != XCB_NO_SYMBOL) {
-      uint32_t i = 0;
-      while (keycode[i] != XCB_NO_SYMBOL) {
-        uint8_t c = keycode[i];
-        //SAT_DPrint("%i '%c' ",c,c);
-        i++;
-      }
-      //SAT_DPrint(" (%i)\n",i);
-    }
-    */
-    /*
-    char keysym_name[64];
-    xkb_keysym_get_name(keysym, keysym_name, sizeof(keysym_name));
-    SAT_DPrint("  keysym_name '%s'\n",keysym_name);
-    */
-    //uint32_t ks = 0;
-    //free(keycode);
-    
   /*
   if (sym == XKB_KEY_KP_Space) codepoint = XKB_KEY_space & 0x7f;
   else codepoint = sym & 0x7f;
   */    
   
   // https://github.com/etale-cohomology/xcb/blob/master/loop.c
+  // https://stackoverflow.com/questions/43004441/how-to-get-unicode-input-from-xcb-without-further-ado
+  // https://opensource.apple.com/source/X11libs/X11libs-40/xcb-util/xcb-util-0.3.3/keysyms/keysyms.c.auto.html
 
   uint32_t remapKey(uint32_t AKey, uint32_t AState) {
     int col = 0;
     xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
-    // keycode = AKey ??
-    //xcb_keycode_t* keycode  = xcb_key_symbols_get_keycode(MKeySyms,keysym);
-    //free(keycode);
-    //char buffer[256] = {0};
-    //uint32_t num = xkb_keysym_to_utf8(keysym,buffer,255);
-    //for (uint32_t i=0; i<num; i++) {
-    //  SAT_DPrint("%i\n",buffer[i]);
-    //}
+
+    // xcb_keycode_t* keycode  = xcb_key_symbols_get_keycode(MKeySyms,keysym);
+    // free(keycode);
+   
+    // char buffer[256] = {0};
+    // int32_t num = xkb_keysym_to_utf8(keysym,buffer,255);
+    // SAT_DPRINT("%c\n",buffer[0]);
+
+    // "Alt_L, Return, etc"
+    // num = xkb_keysym_get_name(keysym,buffer,255);
+    // if (num > 0) {
+    //   //for (int32_t i=0; i<num; i++) {  }
+    //   SAT_DPRINT("%s\n",buffer);
+    // }
+
     uint32_t ks = keysym;
     switch (keysym) {
       case XKB_KEY_Return:      ks = SAT_KEY_ENTER;     break;

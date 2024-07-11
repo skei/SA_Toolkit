@@ -24,8 +24,7 @@
   imaginary."
 
   "is it possible to add index array for wavetables for scanning synthesis so that
-  the wavetable can change over time
-  like the ppg system"
+  the wavetable can change over time like the ppg system"
 
   "Yes, absolutely. The oscillator has one dimension of wavetables, and you would
   add another, to implement multiple sets of wavetables per oscillator. If you

@@ -74,7 +74,7 @@ public: // host -> gui
   //----------
 
   // called from [timer]
-  //   todo
+  //   SAT_Plugin.on_editorListener_timer  
 
   void flushParamFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     uint32_t count = 0;
@@ -107,7 +107,7 @@ public: // host -> gui
   //----------
 
   // called from [timer]
-  //   todo
+  //   SAT_Plugin.on_editorListener_timer
 
   void flushModFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     SAT_PluginQueueItem item;

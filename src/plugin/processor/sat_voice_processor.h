@@ -438,6 +438,7 @@ public:
        }
        if (MVoices[i].state == SAT_VOICE_FINISHED) {
          MVoices[i].state = SAT_VOICE_OFF;
+         // some voice cleanup here?
          queueNoteEnd(MVoices[i].note);
          //SAT_Print("voice %i -> OFF\n",i);
        }
