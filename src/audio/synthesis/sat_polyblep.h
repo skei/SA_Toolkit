@@ -47,7 +47,6 @@ T SAT_PolyBlep(T t, T dt) {
 // h = transition height (negative for falling transitions)
 // (after Valimaki + Huovilainen, IEEE SPM, Vol.24, No.2, p.121)
 // add result to naive saw..
-// skei: assume t is phase-wrapped (%1)
 
 template <typename T>
 T SAT_PolyBlep(T t, T dt, T h) {
