@@ -800,17 +800,22 @@ private:
   // https://github.com/etale-cohomology/xcb/blob/master/loop.c
   // https://stackoverflow.com/questions/43004441/how-to-get-unicode-input-from-xcb-without-further-ado
   // https://opensource.apple.com/source/X11libs/X11libs-40/xcb-util/xcb-util-0.3.3/keysyms/keysyms.c.auto.html
+  // https://dreamswork.github.io/qt4/qxcbkeyboard_8cpp_source.html
+  // https://github.com/paul/awesome/blob/master/keyresolv.c
 
-  uint32_t remapKey(uint32_t AKey, uint32_t AState) {
+  uint32_t remapKey(uint32_t AKey, uint32_t AState, char* AChar) {
     int col = 0;
+    
     xcb_keysym_t keysym = xcb_key_symbols_get_keysym(MKeySyms,AKey,col);
-
-    // xcb_keycode_t* keycode  = xcb_key_symbols_get_keycode(MKeySyms,keysym);
-    // free(keycode);
+    xcb_keycode_t* keycode  = xcb_key_symbols_get_keycode(MKeySyms,keysym);
+    free(keycode);
    
-    // char buffer[256] = {0};
-    // int32_t num = xkb_keysym_to_utf8(keysym,buffer,255);
-    // SAT_DPRINT("%c\n",buffer[0]);
+    char buffer[256] = {0};
+    int32_t num = xkb_keysym_to_utf8(keysym,buffer,255);
+    char c = buffer[0];
+    //SAT_DPRINT("%c\n",buffer[0]);
+
+//  SAT_PRINT("AKey %i AState %i keysym %i c %i\n",AKey,AState,keysym,c);
 
     // "Alt_L, Return, etc"
     // num = xkb_keysym_get_name(keysym,buffer,255);
@@ -831,6 +836,8 @@ private:
       case XKB_KEY_BackSpace:   ks = SAT_KEY_BACKSPACE; break;
       case XKB_KEY_Escape:      ks = SAT_KEY_ESC;       break;
     }
+
+    *AChar = c;
     return ks;
     //return AKey;
   }
@@ -943,10 +950,10 @@ private:
         uint8_t  k  = key_press->detail;
         uint16_t s  = key_press->state;
         uint32_t ts = key_press->time;
-        uint32_t ks = remapKey(k,s);
+        char c = 0;
+        uint32_t ks = remapKey(k,s,&c);
         //SAT_PRINT("k %i s %i ts %i ks %i\n",k,s,ts,ks);
 
-        char c = 0;
         s = remapState(s);
         on_window_keyPress(ks,c,s,ts);
        break;
@@ -958,9 +965,11 @@ private:
         uint8_t  k  = key_release->detail;
         uint16_t s  = key_release->state;
         uint32_t ts = key_release->time;
-        uint32_t ks = remapKey(k,s);
+        char c = 0;
+        uint32_t ks = remapKey(k,s,&c);
         s = remapState(s);
-        on_window_keyRelease(k,ks,s,ts);
+        //on_window_keyRelease(k,ks,s,ts);
+        on_window_keyRelease(ks,c,s,ts);
         break;
       }
 

@@ -28,9 +28,9 @@
   #include "base/debug/sat_debug_observer.h"
 #endif
 
-#ifdef SAT_DEBUG_WINDOW
-  #include "base/debug/sat_debug_window.h"
-#endif
+// #ifdef SAT_DEBUG_WINDOW
+//   #include "base/debug/sat_debug_window.h"
+// #endif
 
 //----------------------------------------------------------------------
 //
@@ -69,9 +69,9 @@ public:
     SAT_Observer OBSERVER = {};
   #endif
 
-  #ifdef SAT_DEBUG_WINDOW
-    SAT_DebugWindow WINDOW = {};
-  #endif
+  // #ifdef SAT_DEBUG_WINDOW
+  //   SAT_DebugWindow WINDOW = {};
+  // #endif
 
 //------------------------------
 public:
@@ -121,9 +121,9 @@ public:
       if (!OBSERVER.initialize(APrint)) return false;
     #endif
 
-    #ifdef SAT_DEBUG_WINDOW
-      if (!WINDOW.initialize(APrint)) return false;
-    #endif
+    // #ifdef SAT_DEBUG_WINDOW
+    //   if (!WINDOW.initialize(APrint)) return false;
+    // #endif
 
     return true;
   }
@@ -132,9 +132,9 @@ public:
 
   void cleanup() {
 
-    #ifdef SAT_DEBUG_WINDOW
-      WINDOW.cleanup();
-    #endif
+    // #ifdef SAT_DEBUG_WINDOW
+    //   WINDOW.cleanup();
+    // #endif
 
     #ifdef SAT_DEBUG_OBSERVER
       OBSERVER.cleanup();

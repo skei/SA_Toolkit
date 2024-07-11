@@ -18,8 +18,8 @@ class sa_demo_root_widget
 public:
 //------------------------------
 
-  sa_demo_root_widget(SAT_WidgetListener* AListener, SAT_Rect ARect)
-  : SAT_RootWidget(AListener,ARect) {
+  sa_demo_root_widget(SAT_WidgetListener* AListener/*, SAT_Rect ARect*/)
+  : SAT_RootWidget(AListener/*,ARect*/) {
     setName("sa_demo_root_widget");
     setHint("sa_demo_root_widget");
   }

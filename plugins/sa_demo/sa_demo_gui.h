@@ -25,7 +25,7 @@ public:
 
     // root
 
-    sa_demo_root_widget* root = new sa_demo_root_widget( window, SAT_Rect() );
+    sa_demo_root_widget* root = new sa_demo_root_widget( window/*, SAT_Rect()*/ );
     window->setRootWidget(root);
     root->setFillBackground(false);
     root->setDrawBorder(false);

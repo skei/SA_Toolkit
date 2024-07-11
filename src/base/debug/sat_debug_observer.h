@@ -2,53 +2,53 @@
 #define sat_debug_observer_included
 //----------------------------------------------------------------------
 
-#ifdef SAT_DEBUG_OBSERVER
+#include "sat.h"
 
-  #include "sat.h"
+//----------------------------------------------------------------------
 
-  //----------------------------------------------------------------------
+struct SAT_Observable {
+  uint32_t    type;
+  void*       ptr;
+  const char* desc;
+};
 
-  struct SAT_Observable {
-    uint32_t    type;
-    void*       ptr;
-    const char* desc;
-  };
+typedef SAT_Array<SAT_Observable> SAT_Observables;
 
-  typedef SAT_Array<SAT_Observable> SAT_Observables;
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
-  //----------------------------------------------------------------------
-  //
-  //
-  //
-  //----------------------------------------------------------------------
+//#ifdef SAT_DEBUG_MEMTRACE
 
-  //#ifdef SAT_DEBUG_MEMTRACE
+class SAT_Observer {
 
+//------------------------------
+private:
+//------------------------------
 
-  class SAT_Observer {
+  SAT_Print* MPrint = nullptr;
 
-  //------------------------------
-  private:
-  //------------------------------
-
+  #ifdef SAT_DEBUG_OBSERVER
     //uint32_t        MNumObservables                         = 0;
     //SAT_Observable  MObservables[SAT_DEBUG_MAX_OBSERVABLES] = {0};
     SAT_Observables  MObservables = {};
-    SAT_Print* MPrint = nullptr;
+  #endif
 
-  //------------------------------
-  public:
-  //------------------------------
+//------------------------------
+public:
+//------------------------------
 
-    SAT_Observer() {
-    }
-    
-    //----------
+  SAT_Observer() {
+  }
+  
+  //----------
 
-    ~SAT_Observer() {
-    }
-    
-  //------------------------------
+  ~SAT_Observer() {
+  }
+  
+//------------------------------
 public:
 //------------------------------
 
@@ -66,9 +66,10 @@ public:
 
 //------------------------------
   public: // observer
-  //------------------------------
+//------------------------------
 
-    void observe(uint32_t AType, void* APtr, const char* ADesc) {
+  void observe(uint32_t AType, void* APtr, const char* ADesc) {
+    #ifdef SAT_DEBUG_OBSERVER
       //MObservables[MNumObservables].type = AType;
       //MObservables[MNumObservables].ptr  = APtr;
       //MObservables[MNumObservables].desc = ADesc;
@@ -77,22 +78,26 @@ public:
       obs.ptr  = APtr;
       obs.desc = ADesc;
       MObservables.append(obs);
-    }
-    
-    //----------
-    
-    void unobserve(void* APtr) {
+    #endif
+  }
+  
+  //----------
+  
+  void unobserve(void* APtr) {
+    #ifdef SAT_DEBUG_OBSERVER
       for (uint32_t i=0; i<MObservables.size(); i++) {
         if (MObservables[i].ptr == APtr) {
           MObservables.remove(i);
           return;
         }
       }
-    }
-    
-    //----------
+    #endif
+  }
+  
+  //----------
 
-    void print_observers() {
+  void print_observers() {
+    #ifdef SAT_DEBUG_OBSERVER
       if (MObservables.size() > 0) {
         MPrint->print("\nObserved:\n");
         for (uint32_t i=0; i<MObservables.size(); i++) {
@@ -107,40 +112,47 @@ public:
         }
         //print("\n");
       }
-    }
-    
-    //----------
-    
-    uint32_t getNumObservers() {
-      return MObservables.size();
-    }
-    
-    //----------
-    
-    SAT_Observable* getObserver(uint32_t AIndex) {
-      return &MObservables[AIndex];
-    }
-
-  };
-
-  //------------------------------
-
-  SAT_Observer SAT_GLOBAL_OBSERVER = {};
+    #endif
+  }
   
   //----------
-
-  void SAT_PrintObservers() {
-    SAT_GLOBAL_OBSERVER.print_observers();
+  
+  uint32_t getNumObservers() {
+    #ifdef SAT_DEBUG_OBSERVER
+      return MObservables.size();
+    #else
+      return 0;
+    #endif
   }
+  
+  //----------
+  
+  SAT_Observable* getObserver(uint32_t AIndex) {
+    #ifdef SAT_DEBUG_OBSERVER
+      return &MObservables[AIndex];
+    #else
+      return 0;
+    #endif
+  }
+
+};
+
+//------------------------------
+
+SAT_Observer SAT_GLOBAL_OBSERVER = {};
+
+//----------
+
+// void SAT_PrintObservers() {
+//   SAT_GLOBAL_OBSERVER.print_observers();
+// }
   
 //------------------------------
 
-#else // !SAT_DEBUG_OBSERVER
-
-  void SAT_PrintObservers() {
-  }
-
-#endif // SAT_DEBUG_OBSERVER
+// #else // !SAT_DEBUG_OBSERVER
+//   void SAT_PrintObservers() {
+//   }
+// #endif // SAT_DEBUG_OBSERVER
 
 //----------------------------------------------------------------------
 #endif

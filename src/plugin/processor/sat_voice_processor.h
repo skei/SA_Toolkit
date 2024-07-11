@@ -68,13 +68,13 @@ public:
 
   SAT_VoiceProcessor(SAT_ProcessorOwner* AOwner)
   : SAT_Processor(AOwner) {
-    //SAT_TRACE;
+    SAT_TRACE;
   }
 
   //----------
 
   virtual ~SAT_VoiceProcessor() {
-    //SAT_TRACE;
+    SAT_TRACE;
   }
 
 //------------------------------
