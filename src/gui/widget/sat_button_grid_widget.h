@@ -34,6 +34,8 @@ public:
   int32_t       MLastClickedX       = 0;
   int32_t       MLastClickedY       = 0;
 
+  uint32_t      MNumBits            = 0;
+  bool          MValueIsBits        = false;
 
 //------------------------------
 public:
@@ -64,6 +66,85 @@ public:
 public:
 //------------------------------
 
+  void setNumBits(uint32_t ANum) { MNumBits = ANum; }
+  void setValueIsBits(bool ABits) { MValueIsBits = ABits; }
+  void setValueIsBits(bool ABits, uint32_t ANum) { MValueIsBits = ABits; MNumBits = ANum; }
+
+//------------------------------
+public:
+//------------------------------
+
+  uint32_t getButtonBits() {
+    uint32_t bits = 0;
+    for (uint32_t i=0; i<MNumBits; i++) {
+      if (MStates[i] == 1) bits |= (1 << i);
+    }
+    return bits;
+  }
+
+  //----------
+
+  uint32_t getNumActiveBits() {
+    uint32_t bits = 0;
+    for (uint32_t i=0; i<MNumBits; i++) {
+      if (MStates[i] == 1) bits += 1;
+    }
+    return bits;
+  }
+
+  //----------
+
+  void setButtonBits(uint32_t ABits) {
+    for (uint32_t i=0; i<MNumBits; i++) {
+      if ( ABits & (1 << i) ) MStates[i] = 1;
+      else MStates[i] = 0;
+    }
+  }
+
+  //----------
+
+
+
+//----------
+//----------
+
+  //double getValue(uint32_t AIndex=0) override {
+  double getValue(uint32_t AIndex) override {
+    if (MValueIsBits) {
+      uint32_t bits = getButtonBits();
+      SAT_PRINT("%i\n",bits);
+      return bits;
+    }
+    else {
+      return SAT_GridWidget::getValue(AIndex);
+    }
+  }
+
+  //----------
+
+  /*
+    i have no idea why / 255.0 works here..
+    probably doing a wrong scaling 0..1 <-> 0..255 somewhere
+  */
+
+  //void setValue(double AValue, uint32_t AIndex=0) override {
+  void setValue(double AValue, uint32_t AIndex) override {
+    if (MValueIsBits) {
+      int i = (int)(AValue / 255.0);
+      SAT_PRINT("%i\n",i);
+      setButtonBits(i);
+      //SAT_GridWidget::setValue(AValue,AIndex);
+    }
+    else {
+      SAT_GridWidget::setValue(AValue,AIndex);
+      //selectCell( (int)AValue, 0 );
+    }
+  }
+
+//------------------------------
+public:
+//------------------------------
+
   virtual void setButtonText(const char* AText, int32_t AX, int32_t AY) {
     uint32_t index = (AY * MNumColumns) + AX;
     MTexts[index] = AText;
@@ -73,6 +154,11 @@ public:
 
   virtual void setButtonTexts(const char** ATexts) {
     MTexts = ATexts;
+  }
+
+  virtual void setBackgroundColors(SAT_Color AOnColor, SAT_Color AOffColor) {
+    MOnBackgroundColor = AOnColor;
+    MOffBackgroundColor = AOffColor;
   }
 
   //----------
@@ -88,7 +174,9 @@ public:
     MFillCellsGradient = AGradient;
   }
 
-  virtual void setCanDeselectAll(bool AState) { MCanDeselectAll = AState; }
+  virtual void setCanDeselectAll(bool AState) {
+    MCanDeselectAll = AState;
+  }
 
   //----------
 
@@ -136,9 +224,10 @@ public:
           total += MStates[idx];
         }
       }
-      if ((total == 1) && MCanDeselectAll) {
-        MStates[index] = 0;
+      if (total == 1) {
+        if (MCanDeselectAll) MStates[index] = 0;
       }
+      else MStates[index] = 0;
     }
     index = 0;
     for (int32_t y=0; y<MNumRows; y++) {
@@ -148,7 +237,11 @@ public:
         if ((x == AX) && (y != AY) && MVertSingle) MStates[index] = 0;
       }
     }
+
+    SAT_PRINT("%i\n",MStates[index]);
+
     do_widget_update(this);
+//    do_widget_redraw(this);
   }
 
 //------------------------------

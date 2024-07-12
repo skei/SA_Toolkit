@@ -68,6 +68,11 @@ public:
   public: // observer
 //------------------------------
 
+  /*
+    todo: check if observed variable already exists..
+          (name or ptr?)
+  */
+
   void observe(uint32_t AType, void* APtr, const char* ADesc) {
     #ifdef SAT_DEBUG_OBSERVER
       //MObservables[MNumObservables].type = AType;
