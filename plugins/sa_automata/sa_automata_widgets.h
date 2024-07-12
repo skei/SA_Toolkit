@@ -169,7 +169,7 @@ private:
 public:
 
   sa_automata_root_widget(SAT_WidgetListener* AListener=nullptr)
-  : SAT_RootWidget(AListener,0) {
+  : SAT_RootWidget(AListener) {
   }
 
   virtual ~sa_automata_root_widget() {

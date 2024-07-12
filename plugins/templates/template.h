@@ -167,7 +167,7 @@ public:
 
     bool setupEditor(SAT_Editor* AEditor) final {
       SAT_Window* window = AEditor->getWindow();
-      SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+      SAT_RootWidget* root = new SAT_RootWidget(window);
       window->setRootWidget(root);
       return true;
     }
