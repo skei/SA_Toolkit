@@ -54,7 +54,7 @@ public:
   //void setupEditorWindow(SAT_Editor* AEditor, SAT_Window* AWindow) final {
   bool setupEditor(SAT_Editor* AEditor) final {
     SAT_Window* window = AEditor->getWindow();
-    SAT_RootWidget* root_panel = new SAT_RootWidget( window, SAT_Rect() );
+    SAT_RootWidget* root_panel = new SAT_RootWidget(window);
     window->setRootWidget(root_panel);
 
     root_panel->setBackgroundColor(SAT_Black);
@@ -98,6 +98,9 @@ public:
       buffer_beats_slider  = new SAT_SliderWidget( SAT_Rect(  10, 10/*25*/, 160, 15 ), "Beats" );
       buffer_slices_slider = new SAT_SliderWidget( SAT_Rect( 180, 10/*25*/, 160, 15 ), "Slices" );
 
+      buffer_beats_slider->setBackgroundColor(0.3);
+      buffer_slices_slider->setBackgroundColor(0.3);
+
       buffer_panel->appendChild(  buffer_beats_slider );
       buffer_panel->appendChild(  buffer_slices_slider );
 
@@ -128,6 +131,7 @@ public:
       env_loop_dec_slider   = new sa_botage_slider_widget( SAT_Rect(10,25,80,10),"Loop Dec",0);
       slice_loop_att_slider = new sa_botage_slider_widget( SAT_Rect(10,45,80,10),"Slice Att",0);
       slice_loop_dec_slider = new sa_botage_slider_widget( SAT_Rect(10,60,80,10),"Slice Dec",0);
+
       env_panel->appendChild( env_loop_att_slider );
       env_panel->appendChild( env_loop_dec_slider );
       env_panel->appendChild( slice_loop_att_slider );

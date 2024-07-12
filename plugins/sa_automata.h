@@ -583,7 +583,7 @@ public: // gui
     bool setupEditor(SAT_Editor* AEditor) final {
       //SAT_TRACE;
       SAT_Window* window = AEditor->getWindow();
-      SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
+      SAT_RootWidget* root = new SAT_RootWidget(window);
       window->setRootWidget(root);
 
       w_grid          = new sa_automata_grid(     SAT_Rect( 10, 10, 400,400), 16, 16, MProcessor->getStates() );
