@@ -111,8 +111,8 @@ public:
     symbol->setVisible(false);
 
     titlebar->setFillBackground(true);
-    //titlebar->setBackgroundColors(0.1,0.1);
-    titlebar->setBackgroundColor(0.1);
+    titlebar->setBackgroundColors(0.1,0.1);
+    //titlebar->setBackgroundColor(0.1);
     titlebar->setDrawBorder(false);
     titlebar->setCursor(SAT_CURSOR_DEFAULT);
     titlebar->setTexts(AText,AText);
@@ -160,6 +160,8 @@ public:
     // header->setActiveTextColor(0.6);
   
     header->setFillBackground(true);
+    header->setBackgroundColors(0.25, 0.35);
+
 //    header->setCellBackgroundColor(0.14);
 //    header->setCellActiveBackgroundColor(0.1);
 
@@ -331,6 +333,7 @@ public:
     setDrawValueText(false);
     setKnobArcThickness(4);
     setKnobArcColor(0.5);
+    setKnobArcBackgroundColor(0.3);
 //    setBipolar(true);
 //    setSnap(true);
 //    setSnapPos(0.5);
@@ -360,6 +363,7 @@ public:
     setTextColor(0.4);
     setTextSize(10);
     setKnobArcColor(0.5);
+    setKnobArcBackgroundColor(0.3);
     setDrawValueText(true);
     setValueTextColor(0.5);
     setValueTextSize(7);
@@ -396,6 +400,7 @@ public:
     setValueTextSize(12);
     setKnobArcThickness(10);
     setKnobArcColor(0.5);
+    setKnobArcBackgroundColor(0.3);
     //setSnap(true);
     //setSnapPos(0.5);
     setDrawParamText(false);
@@ -490,12 +495,15 @@ public:
   : SAT_ButtonGridWidget(ARect,AColumns,ARows,AText) {
     // setTextColor(0.5);
     // setActiveTextColor(0.0);
-    // setCellFillBackground(true);
-    // setCellBackgroundColor(0.2);
-    // setCellActiveBackgroundColor(0.4);
+    //setCellFillBackground(true);
+    //setCellBackgroundColor(0.2);
+    //setCellActiveBackgroundColor(0.4);
     // setCellDrawBorder(false);
     // setCellBorderColor(0.3);
-    // setValueIsBits(true,8);
+    setValueIsBits(true,8);
+    setSingle(false,false);
+    setCanDeselectAll(false);
+
   }
   
 };

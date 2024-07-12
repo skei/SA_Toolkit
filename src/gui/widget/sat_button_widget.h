@@ -37,7 +37,7 @@ public:
     setCursor(SAT_CURSOR_FINGER);
     MMomentary = AMomentary;
     setFillBackground(true);
-    setFillGradient(true);
+    //setFillGradient(true);
 
   }
 
@@ -58,6 +58,11 @@ public:
   void setTextColors(SAT_Color AOff, SAT_Color AOn) {
     MOffTextColor = AOff;
     MOnTextColor = AOn;
+  }
+
+  void setBackgroundColors(SAT_Color AOff, SAT_Color AOn) {
+    MOffBackgroundColor = AOff;
+    MOnBackgroundColor = AOn;
   }
 
   // void setTextColor(SAT_Color AColor) { MTextColor = AColor; }

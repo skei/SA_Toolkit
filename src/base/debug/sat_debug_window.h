@@ -2,6 +2,13 @@
 #define sat_debug_window_included
 //----------------------------------------------------------------------
 
+/*
+  todo:
+    - conditions for each observed varianle
+      for example, draw text differently if certain conditions are true
+      (null ptr, value < 0.0, ..)
+*/
+
 //#ifdef SAT_DEBUG_WINDOW
 
 #define SAT_DEBUG_WINDOW_WIDTH  640
@@ -45,18 +52,20 @@ public:
 
     SAT_RootWidget* root = new SAT_RootWidget(this);
     setRootWidget(root);
+    root->Layout.innerBorder = {10,10,10,10};
+
+    MTextBox = new SAT_TextBoxWidget(200,true,true);
+    MTextBox->Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT | SAT_WIDGET_LAYOUT_STRETCH_VERT | SAT_WIDGET_LAYOUT_FILL_RIGHT;
+    root->appendChild(MTextBox);
 
     #ifdef SAT_DEBUG_OBSERVER
-      MObserver = new SAT_DebugObserverWidget(SAT_Rect(10,10,300,480));
+      MObserver = new SAT_DebugObserverWidget(200);
       root->appendChild(MObserver);
-      //MObserver->setLayout(SAT_WIDGET_ALIGN_TOP_LEFT, SAT_WIDGET_STRETCH_VERTICAL);
+      MObserver->Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT | SAT_WIDGET_LAYOUT_STRETCH_VERT | SAT_WIDGET_LAYOUT_FILL_LEFT;
       MObserver->setFillBackground(true);
       MObserver->setBackgroundColor(SAT_Grey);
     #endif
 
-    MTextBox = new SAT_TextBoxWidget(SAT_Rect(0,0,320,480),true,false);
-    MTextBox->Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_RIGHT | SAT_WIDGET_LAYOUT_STRETCH_VERT;
-    root->appendChild(MTextBox);
 
     show();
     startEventThread();
