@@ -25,6 +25,12 @@ public:
 
   virtual bool setupOverlay() { return false; }
 
+  virtual void preRender(uint32_t AWidth, uint32_t AHeight) {}
+  virtual void prePaint(uint32_t AWidth, uint32_t AHeight) {}
+  virtual void paint(SAT_PaintContext* AContext) {}
+  virtual void postPaint() {}
+  virtual void postRender() {}
+
 //------------------------------
 public:
 //------------------------------
@@ -59,12 +65,7 @@ public:
   virtual void on_window_hide() {}
   virtual void on_window_move(int32_t AXpos, int32_t AYpos) {}
   virtual void on_window_resize(uint32_t AWidth, uint32_t AHeight) {}
-
-  // virtual void on_window_prerender(uint32_t AWidth, uint32_t AHeight) {}
-  // virtual void on_window_prepaint(uint32_t AWidth, uint32_t AHeight) {}
   virtual void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) {}
-  // virtual void on_window_postpaint() {}
-  // virtual void on_window_postrender() {}
 
   virtual void on_window_realign() {}
   

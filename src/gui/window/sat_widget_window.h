@@ -147,6 +147,21 @@ public:
     return true;
   }
 
+  //----------
+
+  void paint(SAT_PaintContext* AContext) override {
+    //SAT_TRACE;
+    //SAT_BufferedWindow::on_window_paint(AContext);
+    SAT_Painter* painter = AContext->painter;
+    //MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
+    uint32_t screenwidth = getWidth();
+    uint32_t screenheight = getHeight();
+    painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
+    painter->setClip(0,0,screenwidth,screenheight);
+    flushPaintWidgets(AContext);
+    painter->resetClip();
+  }
+
 //------------------------------
 private:
 //------------------------------
@@ -255,7 +270,7 @@ private:
   //----------
 
   // called from
-  //   SAY_WidgetWindow.on_window_paint()
+  //   SAT_WidgetWindow.on_window_paint()
 
   // TODO:
   // - paint to buffer
@@ -296,18 +311,6 @@ public: // window
   }
 
   //----------
-  
-  void on_window_paint(SAT_PaintContext* AContext) override {
-    SAT_Painter* painter = AContext->painter;
-    uint32_t width = getWidth();
-    uint32_t height = getHeight();
-    painter->setClipRect(SAT_Rect(0,0,width,height));
-    painter->setClip(0,0,width,height);
-    flushPaintWidgets(AContext);
-    painter->resetClip();
-  }
-
-  //----------
 
   // void on_window_move(int32_t AXpos, int32_t AYpos) override {
   //   SAT_BufferedWindow::on_window_move(AXpos,AYpos);
@@ -325,7 +328,8 @@ public: // window
     if (AWidth >= 32768) AWidth = 0;
     if (AHeight >= 32768) AHeight = 0;
 
-    //SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
+    SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
+
     if (MRootWidget) {
       MWindowScale = calcScale(AWidth,AHeight);
       MRootWidget->on_widget_resize(AWidth,AHeight);

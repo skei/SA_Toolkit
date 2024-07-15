@@ -21,9 +21,9 @@ class SAT_PaintedWindow
 protected:
 //------------------------------
 
-  SAT_Renderer*     MWindowRenderer = nullptr;
-  SAT_Painter*      MWindowPainter  = nullptr;
-  SAT_PaintContext  MPaintContext   = {};
+  SAT_Renderer*     MWindowRenderer     = nullptr;
+  SAT_Painter*      MWindowPainter      = nullptr;
+  SAT_PaintContext  MWindowPaintContext = {};
 
 //------------------------------
 public:
@@ -34,7 +34,7 @@ public:
     //SAT_PRINT("\n");
     MWindowRenderer = new SAT_Renderer(this,this);
     MWindowPainter = new SAT_Painter(this,this);
-    MPaintContext.painter = MWindowPainter;
+    MWindowPaintContext.painter = MWindowPainter;
     MWindowRenderer->resetCurrent();
   }
 
@@ -49,7 +49,7 @@ public:
 public:
 //------------------------------
 
-  SAT_PaintContext* getPaintContext() { return &MPaintContext; }
+  SAT_PaintContext* getPaintContext() { return &MWindowPaintContext; }
   SAT_Painter*      getPainter()      { return MWindowPainter; }
   SAT_Renderer*     getRenderer()     { return MWindowRenderer; }
 
@@ -68,47 +68,33 @@ public: // owner
 public:
 //------------------------------
 
-  virtual void on_window_prerender(uint32_t AWidth, uint32_t AHeight) {}
-  virtual void on_window_prepaint(uint32_t AWidth, uint32_t AHeight) {}
-  virtual void on_window_paint(SAT_PaintContext* AContext) {}
-  virtual void on_window_postpaint() {}
-  virtual void on_window_postrender() {}
+  // virtual void preRender(uint32_t AWidth, uint32_t AHeight) {}
+  // virtual void prePaint(uint32_t AWidth, uint32_t AHeight) {}
+  // virtual void paint(SAT_PaintContext* AContext) {}
+  // virtual void postPaint() {}
+  // virtual void postRender() {}
 
 //------------------------------
 public: // window
 //------------------------------
 
-  // void on_window_show() override {
-  //   SAT_BasicWindow::on_window_show();
-  // }
-
-  // void on_window_hide() override {
-  //   SAT_BasicWindow::on_window_hide();
-  // }
-
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
     //SAT_PRINT("x %i y %i w %i h %i\n",AXpos,AYpos,AWidth,AHeight);
-    MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
+    MWindowPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
-    on_window_prerender(screenwidth,screenheight);
+    preRender(screenwidth,screenheight);
     MWindowRenderer->beginRendering(screenwidth,screenheight);
-    on_window_prepaint(screenwidth,screenheight);
+    prePaint(screenwidth,screenheight);
     MWindowPainter->beginPainting(screenwidth,screenheight);
     MWindowPainter->beginFrame(screenwidth,screenheight);
-    on_window_paint(&MPaintContext);
+    paint(&MWindowPaintContext);
     MWindowPainter->endFrame();
     MWindowPainter->endPainting();
-    on_window_postpaint();
+    postPaint();
     MWindowRenderer->endRendering();
-    on_window_postrender();
+    postRender();
   }
-
-  //----------
-
-  // void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
-  //   //SAT_PRINT("w %i h %i\n",AWidth,AHeight);
-  // }
 
 };
 
