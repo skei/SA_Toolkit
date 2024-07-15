@@ -622,6 +622,9 @@ private:
 
   void startRange() {
     uint32_t remain = (par_num_beats * par_num_slices) - MSlice;
+
+    SAT_PRINT("par_range_slice_count %i\n",par_range_slice_count);
+
     uint32_t num_slices = randomBit(par_range_slice_count);
     //num_slices = SAT_MaxI(num_slices,1);
     //num_slices = SAT_MinI(num_slices,remain);

@@ -448,6 +448,17 @@ public: // timer listener
   // (could gui-thread be pushing dirty widgets at the same time?)
 
   void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
+
+    if (MIsClosing) {
+      //SAT_PRINT("isClosing\n");
+      return;
+    }
+
+    if (MIsPainting) {
+      //SAT_PRINT("isPainting\n");
+      return;
+    }
+
     if (MListener) MListener->on_windowListener_timer(ATimer,ADelta);
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(ADelta);

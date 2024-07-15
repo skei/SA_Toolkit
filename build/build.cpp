@@ -13,6 +13,8 @@
 //#define SAT_DEBUG_WINDOW
 //#define SAT_DEBUG_OBSERVER
 
+#define SAT_WINDOW_BUFFERED
+
 //----------------------------------------------------------------------
 //
 //
@@ -26,7 +28,7 @@
 
 //----------
 
-#include "../plugins/templates/template.h"
+//#include "../plugins/templates/template.h"
 
 
 //----------------------------------------------------------------------
@@ -36,7 +38,7 @@
 //----------------------------------------------------------------------
 
 
-//#include "../plugins/sa_demo.h"
+#include "../plugins/sa_demo.h"
 
 //#include "../plugins/sa_automata.h"
 //#include "../plugins/sa_botage.h"

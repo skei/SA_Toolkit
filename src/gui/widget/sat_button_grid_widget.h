@@ -108,37 +108,56 @@ public:
 //----------
 //----------
 
-  //double getValue(uint32_t AIndex=0) override {
   double getValue(uint32_t AIndex) override {
-    if (MValueIsBits) {
-      uint32_t bits = getButtonBits();
-      SAT_PRINT("%i\n",bits);
-      return bits;
-    }
-    else {
-      return SAT_GridWidget::getValue(AIndex);
-    }
+
+    //double value = SAT_GridWidget::getValue(AIndex);
+    uint32_t bits = getButtonBits();
+    double value = bits;
+    SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    if (param) value = param->normalize(bits);
+    SAT_PRINT("bits %i value %f\n",bits,value);
+    return value;
+
+    // if (MValueIsBits) {
+    //   uint32_t bits = getButtonBits();
+    //   double value = bits;
+    //   SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    //   if (param) value = param->normalize(value);
+    //   SAT_PRINT("bits %i value %f\n",bits,value);
+    //   //return bits;
+    //   return value;
+    // }
+    // else {
+    //   return SAT_GridWidget::getValue(AIndex);
+    // }
   }
 
   //----------
 
-  /*
-    i have no idea why / 255.0 works here..
-    probably doing a wrong scaling 0..1 <-> 0..255 somewhere
-  */
-
-  //void setValue(double AValue, uint32_t AIndex=0) override {
   void setValue(double AValue, uint32_t AIndex) override {
-    if (MValueIsBits) {
-      int i = (int)(AValue / 255.0);
-      SAT_PRINT("%i\n",i);
-      setButtonBits(i);
-      //SAT_GridWidget::setValue(AValue,AIndex);
-    }
-    else {
-      SAT_GridWidget::setValue(AValue,AIndex);
-      //selectCell( (int)AValue, 0 );
-    }
+
+    //SAT_GridWidget::setValue(AValue,AIndex);
+    //SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    //if (param) value = param->normalize(value);
+
+    uint32_t bits = (uint32_t)AValue;
+    SAT_PRINT("AValue %f bits %i\n",AValue,bits);
+    setButtonBits(bits);
+
+    // double value = AValue;
+    // if (MValueIsBits) {
+    //   SAT_Parameter* param = (SAT_Parameter*)getParameter();
+    //   if (param) value = param->normalize(value);
+    //   //int i = (int)(AValue / 255.0);
+    //   int i = (int)value;
+    //   SAT_PRINT("AValue %f value %f i %i\n",AValue,value,i);
+    //   setButtonBits(i);
+    //   //SAT_GridWidget::setValue(AValue,AIndex);
+    // }
+    // else {
+       SAT_GridWidget::setValue(AValue,AIndex);
+    //   //selectCell( (int)AValue, 0 );
+    // }
   }
 
 //------------------------------
@@ -238,7 +257,7 @@ public:
       }
     }
 
-    SAT_PRINT("%i\n",MStates[index]);
+//    SAT_PRINT("%i\n",MStates[index]);
 
     do_widget_update(this);
 //    do_widget_redraw(this);
