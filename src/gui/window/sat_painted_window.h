@@ -25,6 +25,9 @@ protected:
   SAT_Painter*      MWindowPainter      = nullptr;
   SAT_PaintContext  MWindowPaintContext = {};
 
+  sat_atomic_bool_t MIsPainting         = false;
+  sat_atomic_bool_t MIsClosing          = false;
+
 //------------------------------
 public:
 //------------------------------
@@ -52,6 +55,9 @@ public:
   SAT_PaintContext* getPaintContext() { return &MWindowPaintContext; }
   SAT_Painter*      getPainter()      { return MWindowPainter; }
   SAT_Renderer*     getRenderer()     { return MWindowRenderer; }
+
+  bool isPainting() { return MIsPainting; }
+  bool isClosing()  { return MIsClosing; }
 
 //------------------------------
 public: // owner
@@ -83,6 +89,9 @@ public: // window
     MWindowPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
+
+    MIsPainting = true;
+
     preRender(screenwidth,screenheight);
     MWindowRenderer->beginRendering(screenwidth,screenheight);
     prePaint(screenwidth,screenheight);
@@ -94,6 +103,9 @@ public: // window
     postPaint();
     MWindowRenderer->endRendering();
     postRender();
+
+    MIsPainting = false;
+
   }
 
 };

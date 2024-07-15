@@ -2,8 +2,6 @@
 #define sat_buffered_window_included
 //----------------------------------------------------------------------
 
-#define SAT_WINDOW_BUFFERED
-
 #include "sat.h"
 #include "gui/window/sat_painted_window.h"
 
@@ -68,12 +66,14 @@ public: // window
       MBufferAllocated = true;
       renderer->resetCurrent();
     }
+    MIsClosing = false;
   }
 
   //----------
 
   void on_window_hide() override {
     SAT_TRACE;
+    MIsClosing = true;
     SAT_PaintedWindow::on_window_hide();
     if (MBufferAllocated) {
       SAT_Renderer* renderer = getRenderer();
@@ -100,11 +100,16 @@ public: // window
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
+
+if (MIsClosing || MIsPainting) return;
+
     //SAT_PRINT("x %i y %i w %i h %i\n",AXpos,AYpos,AWidth,AHeight);
     MWindowPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
-
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
+
+MIsPainting = true;
+
     preRender(screenwidth,screenheight);
 
     MWindowRenderer->beginRendering(screenwidth,screenheight);
@@ -139,6 +144,9 @@ public: // window
       MWindowRenderer->setViewport(0,0,screenwidth,screenheight);
       MWindowPainter->beginFrame(screenwidth,screenheight,1.0);
       MWindowPainter->resetClip();
+
+if (MRenderBuffer) {
+
       int32_t image = MWindowPainter->getImageFromRenderBuffer(MRenderBuffer);
       if (MResized) {
         MWindowPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
@@ -148,59 +156,20 @@ public: // window
         MWindowPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
         MWindowPainter->fillRect(AXpos,AYpos,AWidth,AHeight);
       }
+
+}
+
       MWindowPainter->endFrame();
 
     MWindowPainter->endPainting();
-    //postPaint();
+    postPaint();
     MWindowRenderer->endRendering();
-    //postRender();
+    postRender();
+
+MIsPainting = false;
 
     MResized = false;
   }
-
-//------------------------------
-public: // painting
-//------------------------------
-
-  //renderer->setViewport(0,0,MBufferWidth,MBufferHeight);
-
-  // void preRender(uint32_t AWidth, uint32_t AHeight) override {
-  //   //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
-  //   SAT_PaintedWindow::preRender(AWidth,AHeight);
-  // }
-
-  //----------
-
-  // void postRender() override {
-  //   //SAT_PRINT("\n");
-  //   SAT_PaintedWindow::postRender();
-  // }
-
-  //----------
-
-
-  // void prePaint(uint32_t AWidth, uint32_t AHeight) override {
-  //   //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
-  //   SAT_PaintedWindow::prePaint(AWidth,AHeight);
-  //   // painter->selectRenderBuffer(MRenderBuffer);
-  //   // painter->beginFrame(MBufferWidth,MBufferHeight,1.0);
-  //   // painter->setClipRect(SAT_Rect(0,0,window_width,window_height));
-  //   // painter->setClip(0,0,window_width,window_height);
-  // }
-
-  //----------
-
-  // void postPaint() override {
-  //   //SAT_PRINT("\n");
-  //   SAT_PaintedWindow::postPaint();
-  // }
-
-  //----------
-
-  // void paint(SAT_PaintContext* AContext) override {
-  //   SAT_PRINT("\n");
-  //   SAT_PaintedWindow::paint(AContext);
-  // }
   
 //------------------------------
 private: // buffer
@@ -236,11 +205,6 @@ private: // buffer
   }
 
   //----------
-
-  /*
-    note: does the context have to be current before resizing?
-    should we only resize buffer during painting?
-  */      
 
   bool resizeRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
     // bool resized = false;
@@ -278,25 +242,6 @@ private: // buffer
 
 
 #if 0
-
-  // void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
-  //   //SAT_PRINT("x %i y %i w %i h %i\n",AXpos,AYpos,AWidth,AHeight);
-  //   //SAT_PaintedWindow::on_window_paint(AXpos,AYpos,AWidth,AHeight);
-  //   MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
-  //   uint32_t screenwidth = getWidth();
-  //   uint32_t screenheight = getHeight();
-  //   MWindowRenderer->beginRendering(screenwidth,screenheight);
-  //   MWindowPainter->beginPainting(screenwidth,screenheight);
-  //   MWindowPainter->beginFrame(screenwidth,screenheight);
-  //   //on_window_paint(&MPaintContext);
-  //   MWindowPainter->endFrame();
-  //   MWindowPainter->endPainting();
-  //   MWindowRenderer->endRendering();
-  // }
-
-  //----------
-
-  // v1
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
     //SAT_Print("AXpos %i AYpos %i AWidth %i AHeight %i counter %i MRenderBuffer %p (%i,%i)\n",AXpos,AYpos,AWidth,AHeight,MPaintContext.counter,MRenderBuffer,MBufferWidth,MBufferHeight);
