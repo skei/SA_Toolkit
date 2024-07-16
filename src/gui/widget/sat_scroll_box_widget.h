@@ -109,6 +109,7 @@ public:
 //    MContent->setStretching(SAT_WIDGET_STRETCH_ALL);
     MContent->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
 
+
     //MContent->layout.spacing = 5;
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(false);
@@ -117,6 +118,8 @@ public:
     //MContent->setBackgroundColor(SAT_COLOR_DARK_GREEN);
 
     //MContent->Options.autoClip = true;
+
+    MContent->Options.opaque = true;
     
   }
 

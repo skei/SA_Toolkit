@@ -195,7 +195,7 @@ public:
     AEditor->connect( prob_page_widget->loop_fx_prob,        getParameter(SA_BOTAGE_PARAM_PROB_LOOP_FX) );
     AEditor->connect( prob_page_widget->loop_fx_minmax,      getParameter(SA_BOTAGE_PARAM_PROB_LOOP_FX_MIN), 0 );
     AEditor->connect( prob_page_widget->loop_fx_minmax,      getParameter(SA_BOTAGE_PARAM_PROB_LOOP_FX_MAX), 1 );
-
+/*
     AEditor->connect( prob_page_widget->fx1_prob,            getParameter(SA_BOTAGE_PARAM_PROB_FX1 ));
     AEditor->connect( prob_page_widget->fx1_type,            getParameter(SA_BOTAGE_PARAM_PROB_FX1_TYPE ));
     AEditor->connect( prob_page_widget->fx1_arg1,            getParameter(SA_BOTAGE_PARAM_PROB_FX1_ARG1 ));
@@ -221,7 +221,7 @@ public:
     AEditor->connect( prob_page_widget->fx5_arg1,            getParameter(SA_BOTAGE_PARAM_PROB_FX5_ARG1 ));
     AEditor->connect( prob_page_widget->fx5_arg2,            getParameter(SA_BOTAGE_PARAM_PROB_FX5_ARG2 ));
     AEditor->connect( prob_page_widget->fx5_arg3,            getParameter(SA_BOTAGE_PARAM_PROB_FX5_ARG3 ));
-
+*/
     return true;
   }
 

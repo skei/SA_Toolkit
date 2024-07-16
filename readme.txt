@@ -21,21 +21,3 @@ https://www.youtube.com/@torhelgeskei
  accurate..), voice manager with threaded voices, etc, etc.. simplified,
  abstracted, streamlined for rapid installation/setup, prototyping, and
  further iterations.."
-
-
-note:
-
-* header-only
-* un-modern c++
-* lock/wait-free
-* very little std::
-* no build system (kind of)
-* ..
-
-but:
-
-* (almost) no dependencies
-* short compilation times
-* slim & performant binaries
-* very flexible
-* ..

@@ -120,6 +120,9 @@ MIsPainting = true;
       resizeRenderBuffer(MPendingWidth,MPendingHeight);
     }
 
+    //SAT_PRINT("MRenderBuffer %p\n",MRenderBuffer);
+    SAT_Assert(MRenderBuffer);
+
     //MWindowRenderer->setViewport(0,0,screenwidth,screenheight);
 
     prePaint(screenwidth,screenheight);
@@ -133,9 +136,11 @@ MIsPainting = true;
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowRenderer->setViewport(0,0,MBufferWidth,MBufferHeight);
 
-      MWindowPainter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
-      MWindowPainter->setClip(0,0,screenwidth,screenheight);
+      //MWindowPainter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
+      //MWindowPainter->setClip(0,0,screenwidth,screenheight);
+
       paint(&MWindowPaintContext);
+
       MWindowPainter->endFrame();
 
     // copy updated part of buffer to screen/window
@@ -143,7 +148,7 @@ MIsPainting = true;
     MWindowPainter->selectRenderBuffer(nullptr);
       MWindowRenderer->setViewport(0,0,screenwidth,screenheight);
       MWindowPainter->beginFrame(screenwidth,screenheight,1.0);
-      MWindowPainter->resetClip();
+      //MWindowPainter->resetClip();
 
 if (MRenderBuffer) {
 

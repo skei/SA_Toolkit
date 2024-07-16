@@ -12,8 +12,7 @@
 
 //#define SAT_DEBUG_WINDOW
 //#define SAT_DEBUG_OBSERVER
-
-#define SAT_WINDOW_BUFFERED
+//#define SAT_WINDOW_BUFFERED
 
 //----------------------------------------------------------------------
 //
