@@ -27,6 +27,7 @@ public:
     setName("SAT_RootWidget");
     setHint("SAT_RootWidget");
     MListener = AListener;
+    Options.opaque = true;
   }
 
   //----------

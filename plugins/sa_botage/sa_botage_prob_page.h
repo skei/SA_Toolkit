@@ -173,8 +173,8 @@ public:
     loop_fx_minmax->setDragSnap(true);
     loop_fx_minmax->setDragSnapPos(0.5);
     
+/*    
     // fx
-    
     fx1_prob              = new sa_botage_knob2_widget(       SAT_Rect( 300+10, 20+10,      40, 40 ), "%", 0.0 );
     fx1_type              = new sa_botage_selector_widget(    SAT_Rect( 300+55, 20+10,      95, 18 ), "FX1", fx_menu);
     fx1_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+32,      18, 18 ), "fx1 arg1", 0.5 );
@@ -204,7 +204,7 @@ public:
     fx5_arg1              = new sa_botage_knob1_widget(       SAT_Rect( 300+55, 20+200+32,  18, 18 ), "fx5 arg1", 0.5 );
     fx5_arg2              = new sa_botage_knob1_widget(       SAT_Rect( 320+55, 20+200+32,  18, 18 ), "fx5 arg2", 0.5 );
     fx5_arg3              = new sa_botage_knob1_widget(       SAT_Rect( 340+55, 20+200+32,  18, 18 ), "fx5 arg3", 0.5 );
-
+*/
     // range
     
     appendChild( new sa_botage_text3_widget(SAT_Rect(10,10,140,15),"RANGE"));
@@ -255,7 +255,7 @@ public:
     appendChild(loop_fx_minmax);
     
     // fx
-    
+/*    
     appendChild(fx1_prob);
     appendChild(fx1_type);
     appendChild(fx1_arg1);
@@ -285,7 +285,7 @@ public:
     appendChild(fx5_arg1);
     appendChild(fx5_arg2);
     appendChild(fx5_arg3);
-    
+*/    
     
     //----------
     

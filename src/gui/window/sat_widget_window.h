@@ -263,8 +263,7 @@ private:
   // SAT_WidgetWindow.flushDirtyWidgets()
 
   void queuePaintWidget(SAT_Widget* AWidget) {
-    // since we 'cheat', and paint everything in flushPaintWidgets,
-    // we just ignore everything here..
+    MPaintWidgets.write(AWidget);
   }
 
   //----------
@@ -277,11 +276,28 @@ private:
   // - copy update rect
 
   void flushPaintWidgets(SAT_PaintContext* AContext) {
-    //SAT_Rect rect = AContext->update_rect;
-    //SAT_PRINT("%.f,%.f,%.f,%.f\n",rect.x,rect.y,rect.w,rect.h);
-    if (MRootWidget) {
-      MRootWidget->on_widget_paint(AContext);
+    
+    // SAT_Widget* widget = nullptr;
+    // while (MPaintWidgets.read(&widget)) {}
+    // if (MRootWidget) MRootWidget->on_widget_paint(AContext);
+
+    SAT_Painter* painter = AContext->painter;
+    SAT_Widget* widget = nullptr;
+    while (MPaintWidgets.read(&widget)) {
+      painter->pushClip(widget->getRect());
+      SAT_Widget* parent = widget->findOpaqueParent();
+      if (parent) {
+        painter->pushOverlappingClip( parent->getRect() );
+        parent->on_widget_paint(AContext);
+        painter->popClip();
+      }
+      else {
+        //painter->pushOverlappingClip( widget->getRect() );
+        widget->on_widget_paint(AContext);
+      }
+      painter->popClip();
     }
+
   }
 
 //------------------------------
@@ -300,6 +316,7 @@ public: // window
       MRootWidget->setSize(w,h);
       MRootWidget->realignChildren();
       MRootWidget->ownerWindowOpened(this);
+      queueDirtyWidget(MRootWidget);
     }
   }
 
@@ -334,6 +351,7 @@ public: // window
       MWindowScale = calcScale(AWidth,AHeight);
       MRootWidget->on_widget_resize(AWidth,AHeight);
       MRootWidget->realignChildren();
+      queueDirtyWidget(MRootWidget);
     }
   }
 

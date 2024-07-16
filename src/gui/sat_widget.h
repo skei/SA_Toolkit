@@ -23,7 +23,7 @@ struct SAT_WidgetLayout {
 };
 
 struct SAT_WidgetOptions {
-  bool      opaque            = true;   // fully fills its rect
+  bool      opaque            = false;   // fully fills its rect
   bool      autoCapture       = false;  // mouse automatically captured
   bool      autoCursor        = true;   // mouse automatically captured
   bool      autoHint          = true;   // automatically send hint
@@ -150,6 +150,14 @@ public:
     if (!State.disabled) return false;
     if (!MParent) return true;
     return MParent->isRecursivelyDisabled();
+  }
+
+  virtual SAT_Widget* findOpaqueParent() {
+    if (Options.opaque == true) return this;
+    else {
+      if (MParent) return MParent->findOpaqueParent();
+      else return nullptr;
+    }
   }
 
 //------------------------------

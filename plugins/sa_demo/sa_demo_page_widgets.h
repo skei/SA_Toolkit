@@ -106,6 +106,8 @@ public:
     bottom_panel->getVerticalScrollBar()->setRoundedCorners(SAT_CORNER_ALL);
     bottom_panel->getVerticalScrollBar()->setRoundedCornerSize(5.0);
 
+    bottom_panel->Options.opaque = true;
+
     // bottom_sizer
 
     SAT_SizerWidget* bottom_sizer = new SAT_SizerWidget(5,SAT_DIRECTION_DOWN,bottom_panel);

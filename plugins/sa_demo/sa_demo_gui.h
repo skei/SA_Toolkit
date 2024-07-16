@@ -135,6 +135,8 @@ public:
     pages->appendPage( new sa_demo_page_widgets(this,AEditor) );
     pages->appendPage( new sa_demo_page_parameters(this,AEditor) );
 
+    //pages->setDrawBorder(false);
+
     pages->selectPage(0);
     pages->realignChildren();
 
