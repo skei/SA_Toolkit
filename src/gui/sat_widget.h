@@ -153,11 +153,14 @@ public:
   }
 
   virtual SAT_Widget* findOpaqueParent() {
-    if (Options.opaque == true) return this;
-    else {
-      if (MParent) return MParent->findOpaqueParent();
+    //if (Options.opaque == true) return this;
+    //else {
+      if (MParent) {
+        if (MParent->Options.opaque == true) return MParent;
+        else return MParent->findOpaqueParent();
+      }
       else return nullptr;
-    }
+    //}
   }
 
 //------------------------------

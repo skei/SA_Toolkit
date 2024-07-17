@@ -149,7 +149,7 @@ public:
 
   //----------
 
-  void paint(SAT_PaintContext* AContext) override {
+  void paint(SAT_PaintContext* AContext, bool ARoot=false) override {
     //SAT_TRACE;
     //SAT_BufferedWindow::on_window_paint(AContext);
     SAT_Painter* painter = AContext->painter;
@@ -158,9 +158,34 @@ public:
     uint32_t screenheight = getHeight();
     painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
     painter->setClip(0,0,screenwidth,screenheight);
-    flushPaintWidgets(AContext);
+
+    if (ARoot) {
+      flushRootWidget(AContext);
+    }
+    else {
+      flushPaintWidgets(AContext);
+    }
+
     painter->resetClip();
   }
+
+  //----------
+
+  void paintRoot(SAT_PaintContext* AContext) {
+    SAT_Painter* painter = AContext->painter;
+    uint32_t screenwidth = getWidth();
+    uint32_t screenheight = getHeight();
+    painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
+    painter->setClip(0,0,screenwidth,screenheight);
+
+    //flushPaintWidgets(AContext);
+    SAT_Widget* widget = nullptr;
+    while (MPaintWidgets.read(&widget)) {}
+    if (MRootWidget) MRootWidget->on_widget_paint(AContext);
+
+    painter->resetClip();
+  }
+
 
 //------------------------------
 private:
@@ -300,6 +325,14 @@ private:
 
   }
 
+  //----------
+
+  void flushRootWidget(SAT_PaintContext* AContext) {
+    SAT_Widget* widget = nullptr;
+    while (MPaintWidgets.read(&widget)) {}
+    if (MRootWidget) MRootWidget->on_widget_paint(AContext);
+  }
+
 //------------------------------
 public: // window
 //------------------------------
@@ -345,14 +378,15 @@ public: // window
     if (AWidth >= 32768) AWidth = 0;
     if (AHeight >= 32768) AHeight = 0;
 
-    SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
-
     if (MRootWidget) {
       MWindowScale = calcScale(AWidth,AHeight);
       MRootWidget->on_widget_resize(AWidth,AHeight);
       MRootWidget->realignChildren();
-      queueDirtyWidget(MRootWidget);
+    //queueDirtyWidget(MRootWidget);
     }
+
+    SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
+
   }
 
   //----------

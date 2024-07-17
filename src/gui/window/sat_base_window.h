@@ -27,7 +27,7 @@ public:
 
   virtual void preRender(uint32_t AWidth, uint32_t AHeight) {}
   virtual void prePaint(uint32_t AWidth, uint32_t AHeight) {}
-  virtual void paint(SAT_PaintContext* AContext) {}
+  virtual void paint(SAT_PaintContext* AContext, bool ARoot=false) {}
   virtual void postPaint() {}
   virtual void postRender() {}
 
