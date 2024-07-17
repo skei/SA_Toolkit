@@ -141,7 +141,7 @@ public:
     //if (param) value = param->normalize(value);
 
     uint32_t bits = (uint32_t)AValue;
-    SAT_PRINT("AValue %f bits %i\n",AValue,bits);
+    //SAT_PRINT("AValue %f bits %i\n",AValue,bits);
     setButtonBits(bits);
 
     // double value = AValue;

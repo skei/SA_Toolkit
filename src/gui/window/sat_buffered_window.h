@@ -50,7 +50,7 @@ public: // window
   //----------
 
   void on_window_show() override {
-    SAT_TRACE;
+    //SAT_TRACE;
     SAT_PaintedWindow::on_window_show();
     if (!MBufferAllocated) {
       SAT_Renderer* renderer = getRenderer();
@@ -69,7 +69,7 @@ public: // window
   //----------
 
   void on_window_hide() override {
-    SAT_TRACE;
+    //SAT_TRACE;
     MIsClosing = true;
     SAT_PaintedWindow::on_window_hide();
     if (MBufferAllocated) {
@@ -172,7 +172,7 @@ private: // buffer
     SAT_Painter* painter = getPainter();
     SAT_Assert(painter);
     if (painter) {
-      SAT_PRINT("%i,%i\n",w2,h2);
+      //SAT_PRINT("%i,%i\n",w2,h2);
       MRenderBuffer = painter->createRenderBuffer(w2,h2);
       SAT_Assert(MRenderBuffer);
       MBufferWidth = w2;
@@ -187,7 +187,7 @@ private: // buffer
   void deleteRenderBuffer() {
     SAT_Painter* painter = getPainter();
     if (painter && MRenderBuffer) {
-      SAT_PRINT("\n");
+      //SAT_PRINT("\n");
       painter->deleteRenderBuffer(MRenderBuffer);
       MBufferWidth = 0;
       MBufferHeight = 0;
@@ -198,16 +198,16 @@ private: // buffer
   //----------
 
   bool resizeRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
-    SAT_TRACE;
+    //SAT_TRACE;
     // bool resized = false;
     uint32_t w2 = SAT_NextPowerOfTwo(AWidth);
     uint32_t h2 = SAT_NextPowerOfTwo(AHeight);
     if ((w2 == MBufferWidth) && (h2 == MBufferHeight)) return true;
-    SAT_TRACE;
+    //SAT_TRACE;
     SAT_Painter* painter = getPainter();
     SAT_Assert(painter);
     if (painter && MRenderBuffer) {
-      SAT_PRINT("resizing %i,%i\n",w2,h2);
+      //SAT_PRINT("resizing %i,%i\n",w2,h2);
       void* buffer = painter->createRenderBuffer(w2,h2);
       SAT_Assert(buffer);
       // potentially copy buffer here..
