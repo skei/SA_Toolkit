@@ -41,7 +41,7 @@ public:
 //------------------------------
 
   SAT_Processor(SAT_ProcessorOwner* AOwner) {
-    SAT_TRACE;
+    //SAT_TRACE;
     MOwner = AOwner;
     MAudioInputs = AOwner->on_processorOwner_getAudioInputPorts();
     MAudioOutputs = AOwner->on_processorOwner_getAudioOutputPorts();
@@ -54,7 +54,7 @@ public:
   //----------
 
   virtual ~SAT_Processor() {
-    SAT_TRACE;
+    //SAT_TRACE;
   }
 
 //------------------------------
