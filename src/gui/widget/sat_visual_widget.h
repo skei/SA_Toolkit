@@ -93,7 +93,7 @@ public:
 
   virtual void setFillBackground(bool AFill=true) {
     MFillBackground = AFill;
-    if (AFill) Options.opaque = true;
+//    if (AFill) Options.opaque = true;
   }
 
   virtual void setBackgroundColor(SAT_Color AColor)       { MBackgroundColor = AColor; }

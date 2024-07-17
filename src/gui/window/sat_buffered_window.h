@@ -85,6 +85,7 @@ public: // window
 
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
     //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+    //if (MIsClosing || MIsPainting) return;
     SAT_PaintedWindow::on_window_resize(AWidth,AHeight);
     MResized = true;
     MPendingWidth = SAT_NextPowerOfTwo(AWidth);
@@ -97,41 +98,61 @@ public: // window
   //----------
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
-    //if (MIsClosing || MIsPainting) return;
-    if (MIsClosing) return;
+    //SAT_PRINT("AXpos %i AYpos %i AWidth %i AHeight %i\n",AXpos,AYpos,AWidth,AHeight);
+    if (MIsClosing || MIsPainting) return;
+    //if (MIsClosing) return;
+    // if ((MPendingWidth != MBufferWidth) || (MPendingHeight != MBufferHeight)) {
+    //   MResized = true;
+    // }
     MWindowPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
+    
+    // begin painting
+
     MIsPainting = true;
     preRender(screenwidth,screenheight);
     MWindowRenderer->beginRendering(screenwidth,screenheight);
+
+    // resize buffer
+
     if (MResized) {
       resizeRenderBuffer(MPendingWidth,MPendingHeight);
+      //SAT_PRINT("pending %i,%i -> buffer %i,%i\n",MPendingWidth,MPendingHeight,MBufferWidth,MBufferHeight);
     }
+
+    // paint widgets to buffer
+
     //SAT_Assert(MRenderBuffer);
     prePaint(screenwidth,screenheight);
     MWindowPainter->beginPainting(screenwidth,screenheight);
-    // paint widgets
     MWindowPainter->selectRenderBuffer(MRenderBuffer);
     MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
     MWindowRenderer->setViewport(0,0,MBufferWidth,MBufferHeight);
-    paint(&MWindowPaintContext);
+    //if (MResized) paint(&MWindowPaintContext,true);
+    //else paint(&MWindowPaintContext,false);
+    paint(&MWindowPaintContext,MResized);
     MWindowPainter->endFrame();
-    // copy updated part of buffer to screen/window
+
+    // copy buffer to screen
+
     MWindowPainter->selectRenderBuffer(nullptr);
     MWindowRenderer->setViewport(0,0,screenwidth,screenheight);
     MWindowPainter->beginFrame(screenwidth,screenheight,1.0);
-    if (MRenderBuffer) {
+    //if (MRenderBuffer) {
       int32_t image = MWindowPainter->getImageFromRenderBuffer(MRenderBuffer);
-      if (MResized) {
+      //if (MResized) {
         MWindowPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
         MWindowPainter->fillRect(0,0,screenwidth,screenheight);
-      }
-      else {
-        MWindowPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
-        MWindowPainter->fillRect(AXpos,AYpos,AWidth,AHeight);
-      }
-    }
+      //}
+      //else {
+      //  MWindowPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);
+      //  MWindowPainter->fillRect(AXpos,AYpos,AWidth,AHeight);
+      //}
+    //}
+
+    // end painting
+
     MWindowPainter->endFrame();
     MWindowPainter->endPainting();
     postPaint();
@@ -151,11 +172,11 @@ private: // buffer
     SAT_Painter* painter = getPainter();
     SAT_Assert(painter);
     if (painter) {
+      SAT_PRINT("%i,%i\n",w2,h2);
       MRenderBuffer = painter->createRenderBuffer(w2,h2);
       SAT_Assert(MRenderBuffer);
       MBufferWidth = w2;
       MBufferHeight = h2;
-      //SAT_PRINT("AWidth %i AHeight %i MRenderBuffer %p -> %i,%i\n",AWidth,AHeight,MRenderBuffer,w2,h2);
       return true;
     }
     return false;
@@ -166,7 +187,7 @@ private: // buffer
   void deleteRenderBuffer() {
     SAT_Painter* painter = getPainter();
     if (painter && MRenderBuffer) {
-      //SAT_PRINT("MRenderBuffer %p\n",MRenderBuffer);
+      SAT_PRINT("\n");
       painter->deleteRenderBuffer(MRenderBuffer);
       MBufferWidth = 0;
       MBufferHeight = 0;
@@ -177,13 +198,16 @@ private: // buffer
   //----------
 
   bool resizeRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
+    SAT_TRACE;
     // bool resized = false;
     uint32_t w2 = SAT_NextPowerOfTwo(AWidth);
     uint32_t h2 = SAT_NextPowerOfTwo(AHeight);
-    //SAT_PRINT("MBufferWidth %i MBufferHeight %i -> w2 %i h2 %i (AWidth %i AHeight %i)\n",MBufferWidth,MBufferHeight,w2,h2,AWidth,AHeight);
     if ((w2 == MBufferWidth) && (h2 == MBufferHeight)) return true;
+    SAT_TRACE;
     SAT_Painter* painter = getPainter();
+    SAT_Assert(painter);
     if (painter && MRenderBuffer) {
+      SAT_PRINT("resizing %i,%i\n",w2,h2);
       void* buffer = painter->createRenderBuffer(w2,h2);
       SAT_Assert(buffer);
       // potentially copy buffer here..

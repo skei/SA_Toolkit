@@ -97,7 +97,7 @@ public: // window
     prePaint(screenwidth,screenheight);
     MWindowPainter->beginPainting(screenwidth,screenheight);
     MWindowPainter->beginFrame(screenwidth,screenheight);
-    paint(&MWindowPaintContext);
+    paint(&MWindowPaintContext,false);
     MWindowPainter->endFrame();
     MWindowPainter->endPainting();
     postPaint();
