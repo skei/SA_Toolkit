@@ -11,17 +11,15 @@ BASE
 
 * un-virtualize many of the set/get methods?
 
-* investigate SAT_Queue, volatile read/write pos?
+* investigate SAT_Queue
+  - volatile read/write pos?
+  - atomic
 
 ----------------------------------------------------------------------
 GUI
 ----------------------------------------------------------------------
 
 * double clicking
-
-* window buffering
-
-  SAT_BufferedWindow
 
 * editor state
 
