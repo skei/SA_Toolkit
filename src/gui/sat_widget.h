@@ -23,10 +23,10 @@ struct SAT_WidgetLayout {
 };
 
 struct SAT_WidgetOptions {
-  bool      opaque            = false;   // fully fills its rect
-  bool      autoCapture       = false;  // mouse automatically captured
-  bool      autoCursor        = true;   // mouse automatically captured
-  bool      autoHint          = true;   // automatically send hint
+  bool      opaque            = false;    // fully fills its rect
+  bool      autoCapture       = false;    // mouse automatically captured
+  bool      autoCursor        = true;     // mouse automatically captured
+  bool      autoHint          = true;     // automatically send hint
   bool      realignInvisible  = false;
   bool      autoClipChildren  = true;
   bool      wantHoverEvents   = false;

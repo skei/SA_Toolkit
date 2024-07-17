@@ -91,7 +91,11 @@ public:
 public:
 //------------------------------
 
-  virtual void setFillBackground(bool AFill=true)         { MFillBackground = AFill; }
+  virtual void setFillBackground(bool AFill=true) {
+    MFillBackground = AFill;
+    if (AFill) Options.opaque = true;
+  }
+
   virtual void setBackgroundColor(SAT_Color AColor)       { MBackgroundColor = AColor; }
 
   virtual void setDrawBorder(bool ADraw=true)             { MDrawBorder = ADraw; }
