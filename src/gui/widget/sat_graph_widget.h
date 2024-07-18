@@ -747,37 +747,30 @@ public:
 
   void on_widget_paint(SAT_PaintContext* AContext) override {
 
-    SAT_Painter* painter = AContext->painter;
-    painter->pushClip(getRect());
-
+    MPainter = AContext->painter;
+    SAT_Rect rect = getRect();
     double scale = getWindowScale();
     //MPaintedScale = scale;
-    fillBackground(AContext);
-    MPainter = AContext->painter;
     //MPaintRect = AContext->update_rect;
-    
+    fillBackground(AContext);
+    MPainter->pushOverlappingClip(rect);
     drawModules();
     drawWires();
-    
     if (MDraggingWire) {
-      painter->setDrawColor( SAT_Black );
-      painter->setLineWidth(0.5 * scale);
-      painter->drawLine(MDragWireX1,MDragWireY1,MDragWireX2,MDragWireY2);
+      MPainter->setDrawColor( SAT_Black );
+      MPainter->setLineWidth(0.5 * scale);
+      MPainter->drawLine(MDragWireX1,MDragWireY1,MDragWireX2,MDragWireY2);
     }
-    
     if (MDraggingSelect) {
       float w = MDragSelectX2 - MDragSelectX1;
       float h = MDragSelectY2 - MDragSelectY1;
-      painter->setDrawColor( SAT_White );
-      painter->setLineWidth(0.5 * scale);
-      painter->drawRect(MDragSelectX1,MDragSelectY1,w,h);
+      MPainter->setDrawColor( SAT_White );
+      MPainter->setLineWidth(0.5 * scale);
+      MPainter->drawRect(MDragSelectX1,MDragSelectY1,w,h);
     }
-    
+    MPainter->popClip();
     paintChildren(AContext);
     drawBorder(AContext);
-    
-    painter->popClip();
-
   }
 
   //----------
@@ -786,85 +779,85 @@ public:
   // x,y = local coords (graph)
 
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-      SAT_ListNode* node;
-      SAT_GraphModule* module;
-      int32_t pin;
-      bool changed;
-      double x,y;
+    SAT_ListNode* node;
+    SAT_GraphModule* module;
+    int32_t pin;
+    bool changed;
+    double x,y;
 
-      x = AXpos - getRect().x;
-      y = AYpos - getRect().y;
-      double scale = getWindowScale();
+    x = AXpos - getRect().x;
+    y = AYpos - getRect().y;
+    double scale = getWindowScale();
 
-      SAT_Assert(scale > 0.0);
-      //x /= scale;
-      //y /= scale;
+    SAT_Assert(scale > 0.0);
+    //x /= scale;
+    //y /= scale;
 
-      changed = false;
-      if (AButton == SAT_BUTTON_LEFT) {
-        MMousePrevX = AXpos;
-        MMousePrevY = AYpos;
-        module = nullptr;
-        node = MModules.tail();
-        while (node) {
-          module = (SAT_GraphModule*)node;
-          if (module->inside(x,y,scale)) {
+    changed = false;
+    if (AButton == SAT_BUTTON_LEFT) {
+      MMousePrevX = AXpos;
+      MMousePrevY = AYpos;
+      module = nullptr;
+      node = MModules.tail();
+      while (node) {
+        module = (SAT_GraphModule*)node;
+        if (module->inside(x,y,scale)) {
 
-            // inputs
+          // inputs
 
-            pin = module->insideInput(x,y,scale);
-            if ((pin >= 0) && (!MDraggingModules)) {
-              startDragInput(module,pin);
-              break;
-            } else
+          pin = module->insideInput(x,y,scale);
+          if ((pin >= 0) && (!MDraggingModules)) {
+            startDragInput(module,pin);
+            break;
+          } else
 
-            // base
+          // base
 
-            if (module->insideBase(x,y,scale)) {
-              if (AState & SAT_STATE_CTRL) {
-                toggleModule(module);
-                changed = true;
-              }
-              else {
-                if (!module->selected) clearSelection();
-                selectModule(module);
-                MDraggingModules = true;
-                changed = true;
-              }
-              break;
-            } else
-
-            // outputs
-
-            pin = module->insideOutput(x,y,scale);
-            if ((pin >= 0) && (!MDraggingModules)) {
-              startDragOutput(module,pin);
-              break;
-            }
-
-          } // inside module
-          node = node->prev();
-        } // while
-
-        if (!node) {
-
-          if (hasSelection()) {
-            if (!(AState & SAT_STATE_CTRL)) {
-              clearSelection();
+          if (module->insideBase(x,y,scale)) {
+            if (AState & SAT_STATE_CTRL) {
+              toggleModule(module);
               changed = true;
             }
+            else {
+              if (!module->selected) clearSelection();
+              selectModule(module);
+              MDraggingModules = true;
+              changed = true;
+            }
+            break;
+          } else
+
+          // outputs
+
+          pin = module->insideOutput(x,y,scale);
+          if ((pin >= 0) && (!MDraggingModules)) {
+            startDragOutput(module,pin);
+            break;
           }
 
-          if (!MDraggingSelect) {
-            if (!(AState & SAT_STATE_CTRL))
-              clearSelection();
-            startDragSelect(AXpos,AYpos);
-          }
+        } // inside module
+        node = node->prev();
+      } // while
 
-        } // node
-      }
-      if (changed) do_widget_redraw(this);
-      SAT_VisualWidget::on_widget_mouse_click(AButton,AState,AXpos,AYpos,ATime);
+      if (!node) {
+
+        if (hasSelection()) {
+          if (!(AState & SAT_STATE_CTRL)) {
+            clearSelection();
+            changed = true;
+          }
+        }
+
+        if (!MDraggingSelect) {
+          if (!(AState & SAT_STATE_CTRL))
+            clearSelection();
+          startDragSelect(AXpos,AYpos);
+        }
+
+      } // node
+    }
+    if (changed) do_widget_redraw(this);
+    SAT_VisualWidget::on_widget_mouse_click(AButton,AState,AXpos,AYpos,ATime);
   }
 
   //----------
