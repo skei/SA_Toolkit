@@ -12,23 +12,7 @@
 #include "../data/fonts/Roboto/Roboto-Regular.h"
 #include "../data/fonts/Manjari/Manjari-Thin.h"
 
-//typedef NVGpaint sat_nanovg_paint_t;
-
-  /*
-  enum NVGblendFactor {
-    NVG_ZERO                = 0,
-    NVG_ONE                 = 1,
-    NVG_SRC_COLOR           = 2,
-    NVG_ONE_MINUS_SRC_COLOR = 4,
-    NVG_DST_COLOR           = 8,
-    NVG_ONE_MINUS_DST_COLOR = 16,
-    NVG_SRC_ALPHA           = 32,
-    NVG_ONE_MINUS_SRC_ALPHA = 64,
-    NVG_DST_ALPHA           = 128,
-    NVG_ONE_MINUS_DST_ALPHA = 256,
-    NVG_SRC_ALPHA_SATURATE  = 512,
-  };  
-  */
+//typedef NVGpaint sat_paint_t;
 
 #define SAT_PAINTER_BLEND_ZERO                NVG_ZERO
 #define SAT_PAINTER_BLEND_ONE                 NVG_ONE
@@ -449,13 +433,13 @@ public: // set
 
   //----------
 
-  void setDrawPaint(sat_nanovg_paint_t paint) /*final*/ {
+  void setDrawPaint(sat_paint_t paint) /*final*/ {
     nvgStrokePaint(MContext,paint);
   }
 
   //----------
 
-  void setFillPaint(sat_nanovg_paint_t paint) /*final*/ {
+  void setFillPaint(sat_paint_t paint) /*final*/ {
     nvgFillPaint(MContext,paint);
   }
 
@@ -1009,7 +993,6 @@ public: // paints
   sat_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*final*/ {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
-    //sat_nanovg_paint_t paint;
     return nvgBoxGradient(MContext,x,y,w,h,r,f,ic,oc);
   }
 
