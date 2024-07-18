@@ -14,6 +14,46 @@
 
 //typedef NVGpaint sat_nanovg_paint_t;
 
+  /*
+  enum NVGblendFactor {
+    NVG_ZERO                = 0,
+    NVG_ONE                 = 1,
+    NVG_SRC_COLOR           = 2,
+    NVG_ONE_MINUS_SRC_COLOR = 4,
+    NVG_DST_COLOR           = 8,
+    NVG_ONE_MINUS_DST_COLOR = 16,
+    NVG_SRC_ALPHA           = 32,
+    NVG_ONE_MINUS_SRC_ALPHA = 64,
+    NVG_DST_ALPHA           = 128,
+    NVG_ONE_MINUS_DST_ALPHA = 256,
+    NVG_SRC_ALPHA_SATURATE  = 512,
+  };  
+  */
+
+#define SAT_PAINTER_BLEND_ZERO                NVG_ZERO
+#define SAT_PAINTER_BLEND_ONE                 NVG_ONE
+#define SAT_PAINTER_BLEND_SRC_COLOR           NVG_SRC_COLOR
+#define SAT_PAINTER_BLEND_ONE_MINUS_SRC_COLOR NVG_ONE_MINUS_SRC_COLOR
+#define SAT_PAINTER_BLEND_DST_COLOR           NVG_DST_COLOR
+#define SAT_PAINTER_BLEND_ONE_MINUS_DST_COLOR NVG_ONE_MINUS_DST_COLOR
+#define SAT_PAINTER_BLEND_SRC_ALPHA           NVG_SRC_ALPHA
+#define SAT_PAINTER_BLEND_ONE_MINUS_SRC_ALPHA NVG_ONE_MINUS_SRC_ALPHA
+#define SAT_PAINTER_BLEND_DST_ALPHA           NVG_DST_ALPHA
+#define SAT_PAINTER_BLEND_ONE_MINUS_DST_ALPHA NVG_ONE_MINUS_DST_ALPHA
+#define SAT_PAINTER_BLEND_SRC_ALPHA_SATURATE  NVG_SRC_ALPHA_SATURATE
+
+#define SAT_PAINTER_COMPOSITE_SRC_OVER        NVG_SOURCE_OVER
+#define SAT_PAINTER_COMPOSITE_SRC_IN          NVG_SOURCE_IN
+#define SAT_PAINTER_COMPOSITE_SRC_OUT         NVG_SOURCE_OUT
+#define SAT_PAINTER_COMPOSITE_ATOP            NVG_ATOP
+#define SAT_PAINTER_COMPOSITE_DST_OVER        NVG_DESTINATION_OVER
+#define SAT_PAINTER_COMPOSITE_DST_IN          NVG_DESTINATION_IN
+#define SAT_PAINTER_COMPOSITE_DST_OUT         NVG_DESTINATION_OUT
+#define SAT_PAINTER_COMPOSITE_DST_ATOP        NVG_DESTINATION_ATOP
+#define SAT_PAINTER_COMPOSITE_LIGHTER         NVG_LIGHTER
+#define SAT_PAINTER_COMPOSITE_COPY            NVG_COPY
+#define SAT_PAINTER_COMPOSITE_XOR             NVG_XOR
+
 //----------------------------------------------------------------------
 //
 //
@@ -322,6 +362,50 @@ public: // set
 
   void setGlobalAlpha(double AAlpha) final {
     nvgGlobalAlpha(MContext,AAlpha);
+  }
+
+  //----------
+
+  /*
+  enum NVGcompositeOperation {
+    NVG_SOURCE_OVER,      // 0
+    NVG_SOURCE_IN,        // 1
+    NVG_SOURCE_OUT,       // 2
+    NVG_ATOP,             // 3
+    NVG_DESTINATION_OVER, // 4
+    NVG_DESTINATION_IN,   // 5
+    NVG_DESTINATION_OUT,  // 6
+    NVG_DESTINATION_ATOP, // 7
+    NVG_LIGHTER,          // 8
+    NVG_COPY,             // 9
+    NVG_XOR,              // 10
+  };
+  */
+  
+  void setGlobalCompositeMode(uint32_t AMode) final {
+    nvgGlobalCompositeOperation(MContext,AMode);
+  }
+
+  //----------
+
+  /*
+  enum NVGblendFactor {
+    NVG_ZERO                = 0,
+    NVG_ONE                 = 1,
+    NVG_SRC_COLOR           = 2,
+    NVG_ONE_MINUS_SRC_COLOR = 4,
+    NVG_DST_COLOR           = 8,
+    NVG_ONE_MINUS_DST_COLOR = 16,
+    NVG_SRC_ALPHA           = 32,
+    NVG_ONE_MINUS_SRC_ALPHA = 64,
+    NVG_DST_ALPHA           = 128,
+    NVG_ONE_MINUS_DST_ALPHA = 256,
+    NVG_SRC_ALPHA_SATURATE  = 512,
+  };  
+  */
+  
+  void setGlobalBlendMode(uint32_t ASrc, uint32_t ADst) final {
+    nvgGlobalCompositeBlendFunc(MContext,ASrc,ADst);
   }
 
   //----------

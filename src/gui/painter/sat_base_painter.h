@@ -69,6 +69,10 @@ public:
   virtual void        setTextAlign(int align) {}
   virtual void        setLineWidth(double AWidth) {}
   virtual void        setGlobalAlpha(double AAlpha) {}
+
+  virtual void        setGlobalCompositeMode(uint32_t AMode) {}
+  virtual void        setGlobalBlendMode(uint32_t ASrc, uint32_t ADst) {}
+
   virtual void        setPathWinding(int dir) {}
   virtual void        selectFont(int32_t AFont) {}
   virtual void        selectFont(const char* font) {}
