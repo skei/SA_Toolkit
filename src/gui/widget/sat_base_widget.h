@@ -70,6 +70,101 @@ public:
   virtual void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
   virtual void do_widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) {}
 
+//------------------------------
+public:
+//------------------------------
+
+  /*
+
+  virtual SAT_Rect          getBaseRect()
+  virtual SAT_Rect          getContentRect()
+  virtual int32_t           getCursor()
+  virtual const char*       getHint()
+  virtual uint32_t          getIndex()
+  virtual SAT_Rect          getInitialRect()
+  virtual double            getModulation()
+  virtual const char*       getName()
+  virtual SAT_WidgetOwner*  getOwner()
+  virtual uint32_t          getNumValues()
+  virtual void*             getParameter()
+  virtual void*             getParameter(uint32_t AIndex)
+  virtual SAT_Widget*       getParent()
+  virtual SAT_Rect          getRect()
+  virtual double            getValue(uint32_t AIndex)
+  virtual double            getValue()
+  virtual uint32_t          getValueIndex()
+
+  virtual bool              isRecursivelyActive()
+  virtual bool              isRecursivelyVisible()
+  virtual bool              isRecursivelyDisabled()
+  virtual SAT_Widget*       findOpaqueParent()
+
+  */
+
+  /*
+
+  virtual void setBaseRect(SAT_Rect ARect)
+  virtual void setHint(const char* AHint)
+  virtual void setIndex(uint32_t AIndex)
+  virtual void setModulation(double AValue)
+  virtual void setCursor(int32_t ACursor)
+  virtual void setName(const char* AName)
+  virtual void setNumValues(uint32_t ANum)
+  virtual void setOwner(SAT_WidgetOwner* AOwner)
+  virtual void setParameter(void* AParameter)
+  virtual void setParameter(void* AParameter, uint32_t AIndex)
+  virtual void setParameterIndex(uint32_t AIndex)
+  virtual void setParent(SAT_Widget* AParent)
+  virtual void setPos(SAT_Point APos)
+  virtual void setRect(SAT_Rect ARect)
+  virtual void setSize(SAT_Point ASize)
+  virtual void setValue(double AValue, uint32_t AIndex)
+  virtual void setValue(double AValue)
+  virtual void setValueIndex(uint32_t AIndex)
+
+  virtual void setMinPos(double AXpos, double AYpos)
+  virtual void setMinSize(double AWidth, double AHeight)
+  virtual void setMaxPos(double AXpos, double AYpos)
+  virtual void setMaxSize(double AWidth, double AHeight)
+  virtual void setSize(double AWidth, double AHeight)
+  virtual void setWidth(double AWidth)
+  virtual void setHeight(double AHeight)
+  virtual void setActive(bool AState=true, bool ARecursive=true)
+  virtual void setVisible(bool AState=true, bool ARecursive=true)
+  virtual void setDisabled(bool AState=true, bool ARecursive=true)
+  virtual void setRectAndBase(SAT_Rect ARect)
+
+  */
+
+//------------------------------
+public:
+//------------------------------
+
+  /*
+
+  virtual SAT_Widget*       appendChild(SAT_Widget* AWidget)
+  virtual void              removeChild(SAT_Widget* AWidget)
+  virtual void              deleteChildren()
+  virtual uint32_t          getNumChildren()
+  virtual SAT_Widget*       getChild(uint32_t AIndex)
+  virtual SAT_WidgetArray*  getChildren()
+
+  virtual void              ownerWindowOpened(SAT_WidgetOwner* AOwner)
+  virtual void              ownerWindowClose(SAT_WidgetOwner* AOwner)
+  virtual double            getWindowWidth()
+  virtual double            getWindowHeight()
+  virtual double            getWindowScale()
+
+  virtual SAT_Widget*       findWidget(int32_t AXpos, int32_t AYpos, bool ARecursive=true)
+  virtual SAT_Widget*       findWidget(const char* AName, bool ARecursive=true)
+  virtual void              scrollChildren(double AOffsetX, double AOffsetY)
+  virtual void              paintChildren(SAT_PaintContext* AContext)
+  virtual void              realignChildren(bool ARecursive=true)
+  virtual void              clearPrevTween()
+  virtual void              handleTweening(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData)
+
+  */
+
 };
 
 //----------------------------------------------------------------------
