@@ -38,7 +38,6 @@ public:
   //----------
 
   virtual ~SAT_BufferedWindow() {
-    //deleteRenderBuffer();
   }
 
 //------------------------------
