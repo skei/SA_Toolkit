@@ -15,7 +15,7 @@ class SAT_Painter;
 
 #ifdef SAT_PAINTER_NANOVG
   #include "gui/lib/sat_nanovg.h"
-  typedef NVGpaint sat_nanovg_paint_t;
+  typedef NVGpaint sat_paint_t;
 #endif
 
 //----------------------------------------------------------------------
@@ -78,8 +78,8 @@ public:
   virtual void        selectFont(const char* font) {}
   virtual void        setFontBlur(float blur) {}
   virtual void        setShapeAntiAlias(int enabled) {}
-//virtual void        setDrawPaint(sat_nanovg_paint_t paint) /*final*/ {}
-//virtual void        setFillPaint(sat_nanovg_paint_t paint) /*final*/ {}
+//virtual void        setDrawPaint(sat_paint_t paint) /*final*/ {}
+//virtual void        setFillPaint(sat_paint_t paint) /*final*/ {}
   virtual void        setMiterLimit(double limit) {}
   virtual void        setLineCap(int cap) {}
   virtual void        setLineJoin(int join) {}

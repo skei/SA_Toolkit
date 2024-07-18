@@ -125,10 +125,10 @@ public:
   void setShapeAntiAlias(int enabled) override {
   }
   
-  // void setDrawPaint(sat_nanovg_paint_t paint) /*final*/ {
+  // void setDrawPaint(sat_paint_t paint) /*final*/ {
   // }
   
-  // void setFillPaint(sat_nanovg_paint_t paint) /*final*/ {
+  // void setFillPaint(sat_paint_t paint) /*final*/ {
   // }
   
   void setMiterLimit(double limit) override {
