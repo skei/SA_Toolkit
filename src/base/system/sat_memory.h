@@ -18,8 +18,7 @@ void* SAT_Malloc_Aligned(uint32_t ASize, uint32_t AAlignment) {
 
 //----------
 
-void SAT_Free_Aligned(void *p)
-{
+void SAT_Free_Aligned(void *p) {
   free(((void**)p)[-1]);
 }
 

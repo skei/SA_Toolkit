@@ -18,8 +18,9 @@ class SAT_TreeItemWidget
 private:
 //------------------------------
 
-  bool MIsOpen = false;
-  double MHeight = 0.0;
+  bool              MIsOpen   = false;
+  double            MHeight   = 0.0;
+  SAT_VisualWidget* MSubItems = nullptr;
 
 //------------------------------
 public:
@@ -40,10 +41,22 @@ public:
     Options.realignInvisible = true;
     MHeight = getRect().h;
     MIsOpen = AOpen;
-    // MSubItems sub_items = new SAT_Widget(MHeight);
-    // sub_items->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-    // sub_items->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-    // sub_items->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    MSubItems = new SAT_VisualWidget(MHeight);
+    appendChild(MSubItems);
+    //MSubItems->setName("SAT_TreeItemWidget");
+    //MSubItems->setHint("SAT_TreeItemWidget");
+
+    MSubItems->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    MSubItems->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+    MSubItems->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    if (MIsOpen) {
+      MSubItems->setActive(true);
+      MSubItems->setVisible(true);
+    }
+    else {
+      MSubItems->setActive(false);
+      MSubItems->setVisible(false);
+    }
   }
 
   //----------
@@ -57,7 +70,10 @@ public:
 
   virtual void appendItem(const char* AText) {
     SAT_TreeItemWidget* item = new SAT_TreeItemWidget(MHeight,AText);
-    appendChild(item);
+    MSubItems->appendChild(item);
+    item->setName("SAT_TreeItemWidget");
+    item->setHint("SAT_TreeItemWidget");
+
     if (MIsOpen) {
       item->State.active = true;
       item->State.visible = true;
@@ -72,16 +88,18 @@ public:
 
   virtual void open() {
     MIsOpen = true;
-    uint32_t num_children = getNumChildren();
+    uint32_t num_children = MSubItems->getNumChildren();
     SAT_Rect rect = getBaseRect();
     double height = MHeight * num_children;
     SAT_PRINT("height %.2f\n",height);
     rect.h = height;
-    setBaseRect(rect);
-    for (uint32_t i=0; i<num_children; i++) {
-      getChild(i)->State.active = true;
-      getChild(i)->State.visible = true;
-    }
+    MSubItems->setBaseRect(rect);
+    //for (uint32_t i=0; i<num_children; i++) {
+    //  getChild(i)->State.active = true;
+    //  getChild(i)->State.visible = true;
+    //}
+    MSubItems->setActive(true,true);
+    MSubItems->setVisible(true,true);
     do_widget_realign(this);
     // do_widget_redraw(this);
   }
@@ -90,16 +108,18 @@ public:
   
   virtual void close() {
     MIsOpen = false;
-    uint32_t num_children = getNumChildren();
+    uint32_t num_children = MSubItems->getNumChildren();
     SAT_Rect rect = getBaseRect();
     double height = MHeight;
     SAT_PRINT("height %.2f\n",height);
     rect.h = height;
     setBaseRect(rect);
-    for (uint32_t i=0; i<num_children; i++) {
-      getChild(i)->State.active = false;
-      getChild(i)->State.visible = false;
-    }
+    //for (uint32_t i=0; i<num_children; i++) {
+    //  getChild(i)->State.active = false;
+    //  getChild(i)->State.visible = false;
+    //}
+    MSubItems->setActive(true,true);
+    MSubItems->setVisible(true,true);
     do_widget_realign(this);
     // do_widget_redraw(this);
   }
@@ -116,6 +136,7 @@ public:
 //------------------------------
 
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    SAT_TRACE;
     if (AButton == SAT_BUTTON_LEFT) {
       if (getNumChildren() > 0) {
         toggle();

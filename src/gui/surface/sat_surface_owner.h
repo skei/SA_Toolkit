@@ -15,6 +15,12 @@ public:
   virtual uint32_t              on_surfaceOwner_getHeight()         = 0; //{ return 0; }
   virtual uint32_t              on_surfaceOwner_getDepth()          = 0; //{ return 0; }
 
+  #ifdef SAT_SURFACE_BITMAP
+  #endif
+
+  #ifdef SAT_SURFACE_CAIRO
+  #endif
+
   #ifdef SAT_SURFACE_NANOVG
     virtual NVGcontext*         on_surfaceOwner_getNanoVGContext()  = 0; // { return nullptr; }
     #ifdef SAT_WINDOW_X11
@@ -22,6 +28,9 @@ public:
       virtual xcb_drawable_t    on_surfaceOwner_getXcbDrawable()    = 0; //{ return XCB_NONE; }
       virtual xcb_visualid_t    on_surfaceOwner_getXcbVisual()      = 0; //{ return XCB_NONE; }
     #endif
+  #endif
+
+  #ifdef SAT_SURFACE_WIN32
   #endif
 
   #ifdef SAT_SURFACE_X11

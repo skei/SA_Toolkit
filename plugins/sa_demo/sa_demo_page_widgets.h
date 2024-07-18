@@ -223,8 +223,11 @@ public:
     // left_panel->appendChild(endstack1);
     // endstack1->Layout.flags = SAT_WIDGET_LAYOUT_STACK_HORIZ;
 
-    // SAT_TreeItemWidget* treeitem1 = new SAT_TreeItemWidget(20,"TreeItem");
+    // SAT_TreeItemWidget* treeitem1 = new SAT_TreeItemWidget(20,"TreeItem",true);
     // left_panel->appendChild(treeitem1);
+    // treeitem1->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    // treeitem1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+    // treeitem1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
     //   treeitem1->appendItem("item1");
     //   treeitem1->appendItem("item2");
     //   treeitem1->appendItem("item3");

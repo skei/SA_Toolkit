@@ -11,6 +11,9 @@
 class SAT_RendererOwner {
 public:
 
+  #ifdef SAT_RENDERER_EGL
+  #endif
+
   #ifdef SAT_RENDERER_GLX
     virtual Display*        on_rendererOwner_getX11Display()  = 0;//{ return nullptr; }
     virtual xcb_drawable_t  on_rendererOwner_getXcbDrawable() = 0;//{ return XCB_NONE; }

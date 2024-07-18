@@ -1,14 +1,14 @@
 #if 0
 
-#ifndef kode_hosted_dssi_plugin_included
-#define kode_hosted_dssi_plugin_included
+#ifndef sat_hosted_dssi_plugin_included
+#define sat_hosted_dssi_plugin_included
 //----------------------------------------------------------------------
 
 #include "base/kode.h"
-#include "host/kode_hosted_plugin.h"
+#include "host/sat_hosted_plugin.h"
 
-class KODE_HostedDssiPlugin
-: public KODE_HostedPlugin {
+class SAT_HostedDssiPlugin
+: public SAT_HostedPlugin {
 };
 
 //----------------------------------------------------------------------
@@ -27,48 +27,49 @@ class KODE_HostedDssiPlugin
 
 #if 0
 
-#ifndef kode_dssi_included
-#define kode_dssi_included
+#ifndef sat_dssi_included
+#define sat_dssi_included
 //----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
 // interface
 //----------------------------------------------------------------------
 
-#define KODE_DSSI_MAX_MIDI_EVENTS   256
-#define KODE_DSSI_MAX_NUM_PROGRAMS  1024
+#define SAT_DSSI_MAX_MIDI_EVENTS   256
+#define SAT_DSSI_MAX_NUM_PROGRAMS  1024
 
-#include "audio/wrappers/kode_wrap_ladspa.h"
-#include "base/kode_array.h"
+#include "audio/wrappers/sat_wrap_ladspa.h"
+#include "base/sat_array.h"
 #include "extern/dssi/dssi.h"
 
 //----------
 
-//typedef KArray<const DSSI_Program_Descriptor*> KDssiPrograms;
+//typedef KArray<const DSSI_Program_Descriptor*> SAT_DssiPrograms;
 
-struct KODE_DssiProgram {
+struct SAT_DssiProgram {
 //char    name[25];
   char    name[56];   // 56 = 64 - sizeof(int32)*2 -> align/cache, etc..
   uint32  bank;
   uint32  program;
 };
 
-//typedef KArray<KDssiProgram> KDssiPrograms;
+//typedef KArray<SAT_DssiProgram> SAT_DssiPrograms;
 
 //----------
 
-class KODE_Dssi : public KLadspa {
+class SAT_Dssi
+: public SAT_Ladspa {
   protected:
     const DSSI_Descriptor*    MDssiDescriptor;
     DSSI_Descriptor_Function  MGetDssiDescriptor;
     uint32                    MNumMidiEvents;
-    snd_seq_event_t           MMidiEvents[KODE_DSSI_MAX_MIDI_EVENTS];
-  //KDssiPrograms             MPrograms;
+    snd_seq_event_t           MMidiEvents[SAT_DSSI_MAX_MIDI_EVENTS];
+  //SAT_DssiPrograms             MPrograms;
     uint32                    MNumPrograms;
-    KDssiProgram              MPrograms[KODE_DSSI_MAX_NUM_PROGRAMS];
+    SAT_DssiProgram              MPrograms[SAT_DSSI_MAX_NUM_PROGRAMS];
   public:
-    KDssi();
-    virtual ~KDssi();
+    SAT_Dssi();
+    virtual ~SAT_Dssi();
   public:
     virtual bool        load(const char* AFilename) override;
     virtual uint32      countDescriptors(void) override;
@@ -96,17 +97,17 @@ class KODE_Dssi : public KLadspa {
 // implementation
 //----------------------------------------------------------------------
 
-KDssi::KDssi()
-: KLadspa() {
-  MDssiDescriptor = KODE_NULL;
-  MGetDssiDescriptor = KODE_NULL;
+SAT_Dssi::SAT_Dssi()
+: SAT_Ladspa() {
+  MDssiDescriptor = nullptr;
+  MGetDssiDescriptor = nullptr;
   MNumMidiEvents = 0;
   KMemset(MMidiEvents,0,sizeof(MMidiEvents));
 }
 
 //----------
 
-KDssi::~KDssi() {
+SAT_Dssi::~SAT_Dssi() {
 }
 
 //----------------------------------------
@@ -115,8 +116,8 @@ KDssi::~KDssi() {
 
 // we don't check for ladspa_descriptor..
 
-bool KDssi::load(const char* AFilename) {
-  //KDTrace("KDssi::load %s\n",AFilename);
+bool SAT_Dssi::load(const char* AFilename) {
+  //KDTrace("SAT_Dssi::load %s\n",AFilename);
   if (KLibrary::load(AFilename)) {
     MGetDssiDescriptor = (DSSI_Descriptor_Function)getSymbol("dssi_descriptor");
     return (MGetDssiDescriptor);
@@ -124,15 +125,15 @@ bool KDssi::load(const char* AFilename) {
   return false;
 }
 
-//bool KDssi::init(void) {
+//bool SAT_Dssi::init(void) {
 //  MGetDssiDescriptor = (DSSI_Descriptor_Function)getLibrarySymbol("dssi_descriptor");
 //  return (MGetDssiDescriptor);
 //}
 
 //----------
 
-uint32 KDssi::countDescriptors(void) {
-  //KDTrace("KDssi::countDescriptors\n");
+uint32 SAT_Dssi::countDescriptors(void) {
+  //KDTrace("SAT_Dssi::countDescriptors\n");
   uint32 num = 0;
   if (MGetDssiDescriptor) {
     const DSSI_Descriptor* desc = MGetDssiDescriptor(num);
@@ -146,7 +147,7 @@ uint32 KDssi::countDescriptors(void) {
 
 //----------
 
-bool KDssi::initDescriptor(uint32 AIndex) {
+bool SAT_Dssi::initDescriptor(uint32 AIndex) {
   if (MGetDssiDescriptor) {
     MDssiDescriptor = MGetDssiDescriptor(AIndex);
     if (MDssiDescriptor) {
@@ -159,12 +160,12 @@ bool KDssi::initDescriptor(uint32 AIndex) {
 
 //----------
 
-//void KDssi::initPorts(void) {
+//void SAT_Dssi::initPorts(void) {
 //}
 
 //----------
 
-void KDssi::initPrograms(void) {
+void SAT_Dssi::initPrograms(void) {
   const DSSI_Program_Descriptor* prog_descr;
   MNumPrograms = 0;
   prog_descr = get_program(MNumPrograms);
@@ -179,19 +180,19 @@ void KDssi::initPrograms(void) {
 
 //----------
 
-uint32 KDssi::numPrograms(void) {
+uint32 SAT_Dssi::numPrograms(void) {
   return MNumPrograms;
 }
 
 //----------
 
-const char* KDssi::getProgramName(uint32 AIndex) {
+const char* SAT_Dssi::getProgramName(uint32 AIndex) {
   return MPrograms[AIndex].name;
 }
 
 //----------
 
-void KDssi::setProgram(uint32 AIndex) {
+void SAT_Dssi::setProgram(uint32 AIndex) {
   uint32 bank = MPrograms[AIndex].bank;
   uint32 program = MPrograms[AIndex].program;
   set_program(bank,program);
@@ -201,7 +202,7 @@ void KDssi::setProgram(uint32 AIndex) {
 //
 //----------------------------------------
 
-void KDssi::dumpDssiDescriptor(void) {
+void SAT_Dssi::dumpDssiDescriptor(void) {
   KDTrace("DSSI_Descriptor:\n");
   KDTrace("  api version:                   %i\n",     MDssiDescriptor->DSSI_API_Version);
   KDTrace("  ladspa descriptor:             0x%08x\n", MDssiDescriptor->LADSPA_Plugin);
@@ -217,9 +218,9 @@ void KDssi::dumpDssiDescriptor(void) {
 
 //----------
 
-void KDssi::midiEvent(uint32 AOffset, uint8 AMsg1, uint8 AMsg2, uint8 AMsg3) {
+void SAT_Dssi::midiEvent(uint32 AOffset, uint8 AMsg1, uint8 AMsg2, uint8 AMsg3) {
   //KTrace("midi.. offset %i : %i %i %i\n",AOffset,AMsg1,AMsg2,AMsg3);
-  if (MNumMidiEvents < KODE_DSSI_MAX_MIDI_EVENTS) {
+  if (MNumMidiEvents < SAT_DSSI_MAX_MIDI_EVENTS) {
     uint32 chan = AMsg1 & 0x0f;
     uint32 msg  = AMsg1 & 0xf0;
     switch(msg) {
@@ -257,7 +258,7 @@ void KDssi::midiEvent(uint32 AOffset, uint8 AMsg1, uint8 AMsg2, uint8 AMsg3) {
   }
 }
 
-void KDssi::resetMidi(void) {
+void SAT_Dssi::resetMidi(void) {
   MNumMidiEvents = 0;
   KMemset(MMidiEvents,0,sizeof(MMidiEvents));
 }
@@ -266,8 +267,8 @@ void KDssi::resetMidi(void) {
 //
 //----------------------------------------
 
-char* KDssi::configure(const char *Key, const char *Value) {
-  //KDTrace("KDssi::configure %s %s\n",Key,Value);
+char* SAT_Dssi::configure(const char *Key, const char *Value) {
+  //KDTrace("SAT_Dssi::configure %s %s\n",Key,Value);
   if (MInstantiated) {
     if (MDssiDescriptor) {
       if (MDssiDescriptor->configure) {
@@ -275,12 +276,12 @@ char* KDssi::configure(const char *Key, const char *Value) {
       }
     }
   }
-  return KODE_NULL;
+  return nullptr;
 }
 
 //----------
 
-const DSSI_Program_Descriptor* KDssi::get_program(uint32 Index) {
+const DSSI_Program_Descriptor* SAT_Dssi::get_program(uint32 Index) {
   if (MInstantiated) {
     if (MDssiDescriptor) {
       if (MDssiDescriptor->get_program) {
@@ -288,13 +289,13 @@ const DSSI_Program_Descriptor* KDssi::get_program(uint32 Index) {
       }
     }
   }
-  return KODE_NULL;
+  return nullptr;
 }
 
 //----------
 
-void KDssi::set_program(uint32 Bank, uint32 Program) {
-  //KDTrace("KDssi::set_program %i %i\n",Bank,Program);
+void SAT_Dssi::set_program(uint32 Bank, uint32 Program) {
+  //KDTrace("SAT_Dssi::set_program %i %i\n",Bank,Program);
   if (MInstantiated) {
     if (MDssiDescriptor) {
       if (MDssiDescriptor->select_program) {
@@ -306,7 +307,7 @@ void KDssi::set_program(uint32 Bank, uint32 Program) {
 
 //----------
 
-int32 KDssi::get_midi_controller_for_port(uint32 Port) {
+int32 SAT_Dssi::get_midi_controller_for_port(uint32 Port) {
   if (MInstantiated) {
     if (MDssiDescriptor) {
       if (MDssiDescriptor->get_midi_controller_for_port) {
@@ -319,7 +320,7 @@ int32 KDssi::get_midi_controller_for_port(uint32 Port) {
 
 //----------
 
-void KDssi::run_synth(uint32 ANumSamples) {
+void SAT_Dssi::run_synth(uint32 ANumSamples) {
   if (MActivated) {
     if (MDssiDescriptor) {
       if (MDssiDescriptor->run_synth) {
@@ -332,7 +333,7 @@ void KDssi::run_synth(uint32 ANumSamples) {
 
 //----------
 
-void KDssi::run_synth_adding(uint32 ANumSamples) {
+void SAT_Dssi::run_synth_adding(uint32 ANumSamples) {
   if (MActivated) {
     if (MDssiDescriptor) {
       if (MDssiDescriptor->run_synth_adding) {
@@ -345,7 +346,7 @@ void KDssi::run_synth_adding(uint32 ANumSamples) {
 
 //----------
 
-//void KDssi::run_multiple_synths(uint32 InstanceCount, LADSPA_Handle* Instances, uint32 ANumSamples) {
+//void SAT_Dssi::run_multiple_synths(uint32 InstanceCount, LADSPA_Handle* Instances, uint32 ANumSamples) {
 //  if (MDssiDescriptor) {
 //    if (MDssiDescriptor->run_multiple_synths) {
 //      MDssiDescriptor->run_multiple_synths(InstanceCount,Instances,ANumSamples,MMidiEvents,MNumMidiEvents);
@@ -356,7 +357,7 @@ void KDssi::run_synth_adding(uint32 ANumSamples) {
 
 //----------
 
-//void KDssi::run_multiple_synths_adding(uint32 InstanceCount, LADSPA_Handle* Instances, uint32 ANumSamples) {
+//void SAT_Dssi::run_multiple_synths_adding(uint32 InstanceCount, LADSPA_Handle* Instances, uint32 ANumSamples) {
 //  if (MDssiDescriptor) {
 //    if (MDssiDescriptor->run_multiple_synths_adding) {
 //      MDssiDescriptor->run_multiple_synths_adding(InstanceCount,Instances,ANumSamples,MMidiEvents,MNumMidiEvents);

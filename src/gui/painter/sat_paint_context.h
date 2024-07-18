@@ -7,7 +7,8 @@
 
 struct SAT_PaintContext {
   SAT_Painter*  painter     = nullptr;
-  SAT_Rect      update_rect = {0,0,0,0};;
+  SAT_Rect      update_rect = {0,0,0,0};
+  uint32_t      counter     = 0;
 };
 
 //----------------------------------------------------------------------

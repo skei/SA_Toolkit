@@ -124,7 +124,6 @@ public:
   //----------
 
   void setInitialSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
-    //SAT_PRINT("AWidth %i AHeight %i AScale %.3f\n",AWidth,AHeight,AScale);
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
     MInitialScale = AScale;
@@ -150,22 +149,13 @@ public:
   //----------
 
   void paint(SAT_PaintContext* AContext, bool ARoot=false) override {
-    //SAT_TRACE;
-    //SAT_BufferedWindow::on_window_paint(AContext);
     SAT_Painter* painter = AContext->painter;
-    //MPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
     painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
     painter->setClip(0,0,screenwidth,screenheight);
-
-    if (ARoot) {
-      flushRootWidget(AContext);
-    }
-    else {
-      flushPaintWidgets(AContext);
-    }
-
+    if (ARoot) flushRootWidget(AContext);
+    else flushPaintWidgets(AContext);
     painter->resetClip();
   }
 
@@ -177,12 +167,10 @@ public:
     uint32_t screenheight = getHeight();
     painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
     painter->setClip(0,0,screenwidth,screenheight);
-
     //flushPaintWidgets(AContext);
     SAT_Widget* widget = nullptr;
     while (MPaintWidgets.read(&widget)) {}
     if (MRootWidget) MRootWidget->on_widget_paint(AContext);
-
     painter->resetClip();
   }
 
@@ -256,7 +244,7 @@ private:
 
   // called from
   //   on_timerListener_callback
-
+  //
   // TODO: check widget if already set to be drawn (render frame #)
 
   void flushDirtyWidgets() {
@@ -277,7 +265,6 @@ private:
       }
     }
     if (has_update) {
-      //SAT_PRINT("invalidating %.f,%.f %.f,%.f\n",update_rect.x,update_rect.y,update_rect.w,update_rect.h);
       invalidate(update_rect.x,update_rect.y,update_rect.w,update_rect.h);
     }
   }
@@ -295,17 +282,12 @@ private:
 
   // called from
   //   SAT_WidgetWindow.on_window_paint()
-
+  //
   // TODO:
   // - paint to buffer
   // - copy update rect
 
   void flushPaintWidgets(SAT_PaintContext* AContext) {
-    
-    // SAT_Widget* widget = nullptr;
-    // while (MPaintWidgets.read(&widget)) {}
-    // if (MRootWidget) MRootWidget->on_widget_paint(AContext);
-
     SAT_Painter* painter = AContext->painter;
     SAT_Widget* widget = nullptr;
     while (MPaintWidgets.read(&widget)) {
@@ -317,7 +299,6 @@ private:
         painter->popClip();
       }
       else {
-        //painter->pushOverlappingClip( widget->getRect() );
         widget->on_widget_paint(AContext);
       }
       painter->popClip();
@@ -368,13 +349,15 @@ public: // window
 
   //----------
   
-  // looks like Reaper is sending us negative coords (int16_t), 
+  // looks like Reaper is sending us negative coords (int16_t), ???
   // but in the x11 event, w,h is uint16_t,
   // so we get widths like 65532, etc..
+  //
+  // TODO: be sure to handle zero width/height elsewhere
+  // when creating render-buffer, for example!
+
 
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
-    //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
-
     if (AWidth >= 32768) AWidth = 0;
     if (AHeight >= 32768) AHeight = 0;
 
@@ -382,7 +365,7 @@ public: // window
       MWindowScale = calcScale(AWidth,AHeight);
       MRootWidget->on_widget_resize(AWidth,AHeight);
       MRootWidget->realignChildren();
-    //queueDirtyWidget(MRootWidget);
+      //queueDirtyWidget(MRootWidget);
     }
 
     SAT_BufferedWindow::on_window_resize(AWidth,AHeight);
@@ -500,17 +483,8 @@ public: // timer listener
   // (could gui-thread be pushing dirty widgets at the same time?)
 
   void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
-
-    if (MIsClosing) {
-      //SAT_PRINT("isClosing\n");
-      return;
-    }
-
-    if (MIsPainting) {
-      //SAT_PRINT("isPainting\n");
-      return;
-    }
-
+    if (MIsClosing) return;
+    if (MIsPainting) return;
     if (MListener) MListener->on_windowListener_timer(ATimer,ADelta);
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(ADelta);
