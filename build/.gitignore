@@ -1,7 +1,6 @@
 *
+*/
 !.gitignore
 !compile
 !build.cpp
-!compile2
-!build2.cpp
 

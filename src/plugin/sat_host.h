@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/host/sat_clap_host.h"
+#include "plugin/clap/sat_clap_host.h"
 
 class SAT_Host
 : public SAT_ClapHost {

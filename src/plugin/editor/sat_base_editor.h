@@ -3,7 +3,20 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "plugin/clap/sat_clap.h"
 #include "plugin/editor/sat_editor_listener.h"
+
+//----------
+
+//struct clap_gui_resize_hints_t;
+//struct clap_window_t;
+class SAT_EditorListener;
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 class SAT_BaseEditor {
 
@@ -11,13 +24,8 @@ class SAT_BaseEditor {
 public:
 //------------------------------
 
-  SAT_BaseEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
-  }
-
-  //----------
-
-  virtual ~SAT_BaseEditor() {
-  }
+  SAT_BaseEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {}
+  virtual ~SAT_BaseEditor() {}
 
 //------------------------------
 public:
@@ -49,7 +57,6 @@ public:
   virtual void suggestTitle(const char *title) {}
   virtual bool show() { return false; }
   virtual bool hide() { return false; }
-
 
 };
 

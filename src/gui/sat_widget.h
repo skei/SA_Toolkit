@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/widget/sat_base_widget.h"
+#include "gui/base/sat_base_widget.h"
 
 class SAT_Widget;
 typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
@@ -345,7 +345,7 @@ public: // owner window
   // asks owner window about its width
 
   virtual double getWindowWidth() {
-    if (MOwner) return MOwner->on_widgetOwner_getWidth();
+    if (MOwner) return MOwner->on_WidgetOwner_getWidth();
     else return 0.0;
   }
   
@@ -354,7 +354,7 @@ public: // owner window
   // asks owner window about its height
 
   virtual double getWindowHeight() {
-    if (MOwner) return MOwner->on_widgetOwner_getHeight();
+    if (MOwner) return MOwner->on_WidgetOwner_getHeight();
     else return 0.0;
   }
   
@@ -372,7 +372,7 @@ public: // owner window
   virtual double getWindowScale() {
     double scale = 1.0;
     if (MOwner) {
-      scale = MOwner->on_widgetOwner_getScale();
+      scale = MOwner->on_WidgetOwner_getScale();
     }
     return scale;
   }

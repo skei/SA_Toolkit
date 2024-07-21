@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/surface/sat_base_surface.h"
-#include "gui/surface/sat_surface_owner.h"
+#include "gui/base/sat_base_surface.h"
+#include "gui/base/sat_surface_owner.h"
 
 //----------
 
@@ -20,7 +20,7 @@
 // #endif
 
 #ifdef SAT_SURFACE_NANOVG
-  #include "gui/surface/sat_nanovg_surface.h"
+  #include "gui/nanovg/sat_nanovg_surface.h"
   typedef SAT_NanoVGSurface SAT_ImplementedSurface;
 #endif
 

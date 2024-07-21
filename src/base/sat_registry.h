@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "base/sat_print.h"
-#include "plugin/lib/sat_clap.h"
+#include "plugin/clap/sat_clap.h"
 
 typedef SAT_Array<const clap_plugin_descriptor_t*> SAT_ClapDescriptorArray;
 typedef SAT_Array<const void*> SAT_ClapFactoryArray;

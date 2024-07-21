@@ -35,6 +35,7 @@
 #define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
 #define SAT_WIDGET_NUM_VALUES                     16
 #define SAT_WINDOW_THREAD_KILL                    666
+#define SAT_WINDOW_BUFFER_MIN_SIZE                256
 #define SAT_WINDOW_TIMER_MS                       20
 
 //----------------------------------------------------------------------
@@ -43,47 +44,129 @@
 //
 //----------------------------------------------------------------------
 
-//#define SAT_DEBUG
+  // enable debugging features
+  //#define SAT_DEBUG
+
+  // enable SAT_Assert
   #define SAT_DEBUG_ASSERT
+
+  // enable SAT_BreakPoint
   #define SAT_DEBUG_BREAKPOINT
+
+  // enable dumping the call stack when/if crashing
   #define SAT_DEBUG_CALLSTACK
+
+  // capture crashes.. print some info, dump call srack..
   #define SAT_DEBUG_CRASH_HANDLER
-//#define SAT_DEBUG_MEMTRACE
-//#define SAT_DEBUG_OBSERVER
-//#define SAT_DEBUG_PRINT_ALWAYS
-//#define SAT_DEBUG_WINDOW
+
+  // enable mem leak tracker..
+  // (unreliable in a plugim, so default is disabled)
+  //#define SAT_DEBUG_MEMTRACE
+
+  // enable debug observers
+  //#define SAT_DEBUG_OBSERVER
+
+  // enable SAT_PRINT even in non-debug mode
+  //#define SAT_DEBUG_PRINT_ALWAYS
+
+  // enbald debug window
+  //#define SAT_DEBUG_WINDOW
+
+  // select embedded (editor reparented to host window)
+  // or remote (handle everything yourself) editor
   #define SAT_EDITOR_EMBEDDED
-//#define SAT_EDITOR_REMOTE
-//#define SAT_INCLUDE_TESTS
-//#define SAT_INCLUDE_ANALYTICS
-//#define SAT_INCLUDE_LOG
+  //#define SAT_EDITOR_REMOTE
+
+  // include unit testing
+  //#define SAT_INCLUDE_TESTS
+
+  // include (debug) 'analytics'
+  //#define SAT_INCLUDE_ANALYTICS
+
+  // include logging
+  #define SAT_INCLUDE_LOG
+
+  // print thread in when logging
   #define SAT_LOG_THREAD
+
+  // print time in when logging
   #define SAT_LOG_TIME
-  #define SAT_NANOVG_TEXT_PATCH
-//#define SAT_NO_BITMAP_PNG
-//#define SAT_NO_BITMAP_PNG_FILE
-//#define SAT_NO_STDLIB
-//#define SAT_NO_GUI
-//#define SAT_PLUGIN_DEFAULT_EDITOR
-//#define SAT_PLUGIN_EXE_NO_MAIN
-//#define SAT_PLUGIN_INCLUDE_CLAP_ARA_FACTORY
-//#define SAT_PLUGIN_INCLUDE_CLAP_INVALIDATION_FACTORY
+
+  // use nanovg patch for sub-pixel text placement
+  // blurrier fonts (?)
+  //#define SAT_NANOVG_TEXT_PATCH
+
+  // remove bitmap decoding from SAT_Bitmap
+  //#define SAT_NO_BITMAP_PNG
+
+  // remove file loading & parsoing from SAT_Bitmap
+  //#define SAT_NO_BITMAP_PNG_FILE
+
+  // (not used)
+  // remove all stdlib stuff..
+  // (handle everything yourself!)
+  //#define SAT_NO_STDLIB
+
+  // compiule wothout a gui
+  // removes all traces of gui code!
+  //#define SAT_NO_GUI
+
+  // set up a default editor if you don't provide one yourself
+  //#define SAT_PLUGIN_DEFAULT_EDITOR
+
+  // don't include a main() function for SAT_PLUGIN_EXE
+  //#define SAT_PLUGIN_EXE_NO_MAIN
+
+  // select which clap factories to include
+  //#define SAT_PLUGIN_INCLUDE_CLAP_ARA_FACTORY
+  //#define SAT_PLUGIN_INCLUDE_CLAP_INVALIDATION_FACTORY
   #define SAT_PLUGIN_INCLUDE_CLAP_PLUGIN_FACTORY
-//#define SAT_PLUGIN_INCLUDE_CLAP_PRESET_DISCOVERY_FACTORY
-//#define SAT_PLUGIN_INCLUDE_CLAP_STATE_CONVERTER_FACTORY
+  //#define SAT_PLUGIN_INCLUDE_CLAP_PRESET_DISCOVERY_FACTORY
+  //#define SAT_PLUGIN_INCLUDE_CLAP_STATE_CONVERTER_FACTORY
+
+  // disable shell plugin functionality from vst2 wrapper
   #define SAT_PLUGIN_VST2_NO_SHELL
-//#define SAT_PLUGIN_VST2_VESTIGE
-//#define SAT_PRINT_SOCKET
+
+  // use vestige header instead of vst2 sdk
+  //#define SAT_PLUGIN_VST2_VESTIGE
+
+  // send SAT_PRINT output through a socked, so it can be captured
+  // in another console with 'nc -U -l -k /tmp/sat.socket'
+  //#define SAT_PRINT_SOCKET
+
+  // print thread id with SAT_PRINT
   #define SAT_PRINT_THREAD
+
+  // print time with SAT_PRINT
   #define SAT_PRINT_TIME
-//#define SAT_PRINT_PRETTY_FUNCTION
-//#define SAT_TESTS_EXIT_ON_FAILURE
-//#define SAT_VOICE_MANAGER_CONVERT_MIDI
+
+  // print function names 'prettified' in SAT_PRINT
+  //#define SAT_PRINT_PRETTY_FUNCTION
+
+  // unit testing will exit on failing a test
+  //#define SAT_TESTS_EXIT_ON_FAILURE
+
+  // convert midi events to note events
+  //#define SAT_VOICE_MANAGER_CONVERT_MIDI
+
+  // if events have no recipients (note_id, pck = -1), meaning they're global,
+  // send them (individually) to all voices
   #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
   #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
+
+  // draw (and keep around) to a buffer, and copy from it to the screen,
+  // instead of drawing directly to the screen (or opewngl backbuffer)
+  // 'retained mode' - ish
   #define SAT_WINDOW_BUFFERED
-//#define SAT_WINDOW_NO_TIMER_AUTOSTART
-  #define SAT_WINDOW_TIMER_REFRESH_WIDGETS
+
+  // autostart the window timer
+  #define SAT_WINDOW_TIMER_AUTOSTART
+
+  // if this is not defined, updated widgets will not be queued
+  // or flushed from the dirty widget queue.. not redrawn..
+  #define SAT_WINDOW_TIMER_FLUSH_WIDGETS
+
+  // waits for window to actually appear on the screen
   #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 //----------

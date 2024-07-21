@@ -151,8 +151,8 @@ public:
 
   //----------
 
-  void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
-    SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
+  void on_EditorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+    SAT_Plugin::on_EditorListener_timer(ATimer,ADelta);
 //    updateProbIndicators(&MProcessor);
     updateWaveformWidget(MProcessor);
   }  

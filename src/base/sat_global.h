@@ -66,6 +66,7 @@ public:
       if (!ANALYTICS.initialize(&PRINT)) return false;
       MInitialized = true;
     }
+    LOG.print("SAT_GLOBAL initialized\n");
     return true;
   }
 
@@ -89,14 +90,14 @@ public:
 public:
 //------------------------------
 
-  void clapInit(const char *APath) {
-    setPluginPath(APath);
-  }
+  // void clapInit(const char *APath) {
+  //   setPluginPath(APath);
+  // }
 
   //----------
 
-  void clapDeInit() {
-  }
+  // void clapDeInit() {
+  // }
 
   //----------
 

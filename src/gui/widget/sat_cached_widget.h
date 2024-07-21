@@ -42,7 +42,7 @@ public:
 //------------------------------
 
   void on_widget_open(SAT_WidgetOwner* AOwner) override {
-    SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
+    SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
     MRenderBuffer = painter->createRenderBuffer(256,256);
     SAT_VisualWidget::on_widget_open(AOwner);
   }
@@ -50,7 +50,7 @@ public:
   //----------
 
   void on_widget_close(SAT_WidgetOwner* AOwner) override {
-    SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
+    SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
     painter->deleteRenderBuffer(MRenderBuffer);
     SAT_VisualWidget::on_widget_close(AOwner);
   }

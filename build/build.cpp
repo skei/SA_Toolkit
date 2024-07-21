@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------
 
 #ifdef SAT_PLUGIN_EXE
-  #define SAT_DEBUG_MEMTRACE
+  //#define SAT_DEBUG_MEMTRACE
 #else
   #define SAT_PRINT_SOCKET
 #endif
@@ -89,4 +89,108 @@
 // -t, #define SAT_INCLUDE_TESTS
 
 //#include "../test/sat_all_tests.h"
+
+
+
+
+
+
+
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+
+#if 0
+
+#define SAT_DEBUG_MEMTRACE
+
+#include "sat.h"
+#include "gui/sat_window.h"
+#include "gui/sat_widgets.h"
+
+#include "plugin/sat_plugin.h"
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+class myMainClass
+: public SAT_WindowListener {
+
+//------------------------------
+public:
+//------------------------------
+
+  int main() {
+    SAT_PRINT("Hello world!\n");
+    SAT_Window* window = new SAT_Window(this,640,480,0);
+    window->setTitle("Hello world!");
+    SAT_RootWidget* root = new SAT_RootWidget(window);
+    window->setRootWidget(root);
+    //window->setOverlayWidget( new SAT_OverlayWidget() );
+
+      SAT_KnobWidget* knob = new SAT_KnobWidget(SAT_Rect(270,190,100,100));
+      root->appendChild(knob);
+
+      SAT_AnimTestWidget* anim = new SAT_AnimTestWidget(SAT_Rect(100,100,150,100));
+      root->appendChild(anim);
+
+    window->show();
+    window->eventLoop();
+    window->hide();
+    delete window;
+    return 0;
+  }
+
+  //----------
+
+  void on_WindowListener_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) final {
+    //SAT_TRACE;
+  }
+
+  //----------
+  
+  void on_WindowListener_timer(SAT_Timer* ATimer, double ADelta) final {
+    //SAT_TRACE;
+  }
+
+};
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+int main() {
+  myMainClass main = {};
+  return main.main();
+}
+
+  // SAT_AtomicQueue<int,32> myQueue;
+  // myQueue.write(2);
+  // int test = 1;
+  // myQueue.read(test);
+  // SAT_PRINT("test %i\n",test); // prints 2
+
+#endif // 0
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -14,8 +14,8 @@
 #include "plugin/sat_processor.h"
 
 #include "plugin/editor/sat_editor_listener.h"
-#include "plugin/lib/sat_clap.h"
-#include "plugin/plugin/sat_clap_plugin.h"
+#include "plugin/clap/sat_clap.h"
+#include "plugin/clap/sat_clap_plugin.h"
 
 #include "plugin/processor/sat_process_context.h"
 #include "plugin/processor/sat_processor_owner.h"
@@ -74,7 +74,7 @@ private:
   bool                    MProportionalEditor   = false;
   
 //double                  MEditorAspectRatio    = 1.0;
-//sat_atomic_bool_t       MIsEditorClosing      = false;
+//sat_atomic_bool_t       MIsEditorClosing      { false };
 
 //------------------------------
 protected:
@@ -506,17 +506,17 @@ public: // editor
 
   //----------
 
-  // called by on_editorListener_createWindow by SAT_EmbeddedEditor.create()
+  // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.create()
   // override this to create your own window
 
   #ifndef SAT_NO_GUI
     #ifdef SAT_EDITOR_EMBEDDED
 
       virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
-        return new SAT_Window(AWidth,AHeight);
+        return new SAT_Window(nullptr,AWidth,AHeight);
       }
 
-      // called by on_editorListener_createWindow by SAT_EmbeddedEditor.destroy()
+      // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.destroy()
 
       virtual void deleteWindow(SAT_Window* AWindow) {
         delete AWindow;
@@ -574,8 +574,8 @@ public: // editor
     // after setupEditor()
 
     virtual bool setupOverlay(SAT_Editor* AEditor) {
-      //SAT_TRACE;
-      return true;
+      SAT_TRACE;
+      return false;
     }
 
 
@@ -602,7 +602,7 @@ public: // editor listener
     // value is in widget-space
     // todo: convert to parameter-space (denormalize)
 
-    void on_editorListener_update(uint32_t AIndex, sat_param_t AValue) override {
+    void on_EditorListener_update(uint32_t AIndex, sat_param_t AValue) override {
       //SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
       SAT_Parameter* param = getParameter(AIndex);
       if (param) {
@@ -619,7 +619,7 @@ public: // editor listener
 
     //----------
 
-    void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+    void on_EditorListener_timer(SAT_Timer* ATimer, double ADelta) override {
       //SAT_TRACE;
       MQueues.flushParamFromHostToGui(&MParameters,MEditor);
       MQueues.flushModFromHostToGui(&MParameters,MEditor);
@@ -629,7 +629,7 @@ public: // editor listener
 
     #ifdef SAT_EDITOR_EMBEDDED
 
-    SAT_Window* on_editorListener_createWindow(uint32_t AWidth, uint32_t AHeight) override {
+    SAT_Window* on_EditorListener_createWindow(SAT_WindowListener* AListener, uint32_t AWidth, uint32_t AHeight) override {
       //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
       SAT_Window* window = createWindow(AWidth,AHeight);
       window->setInitialSize(MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
@@ -638,7 +638,7 @@ public: // editor listener
 
     //----------
 
-    void on_editorListener_deleteWindow(SAT_Window* AWindow) override {
+    void on_EditorListener_deleteWindow(SAT_Window* AWindow) override {
       deleteWindow(AWindow);
     }
 

@@ -5,15 +5,15 @@
 #include "sat.h"
 
 //#ifdef SAT_PLUGIN_CLAP
-  #include "plugin/entry/sat_clap_entry.h"
+  #include "plugin/clap/sat_clap_entry.h"
 //#endif
 
 #ifdef SAT_PLUGIN_DSSI
-  #include "plugin/entry/sat_dssi_entry.h"
+  #include "plugin/dssi/sat_dssi_entry.h"
 #endif
 
 #ifdef SAT_PLUGIN_EXE
-  #include "plugin/entry/sat_exe_entry.h"
+  #include "plugin/exe/sat_exe_entry.h"
 #endif
 
 // #ifdef SAT_PLUGIN_EXELIB
@@ -21,19 +21,19 @@
 // #endif
 
 #ifdef SAT_PLUGIN_LADSPA
-  #include "plugin/entry/sat_ladspa_entry.h"
+  #include "plugin/ladspa/sat_ladspa_entry.h"
 #endif
 
 #ifdef SAT_PLUGIN_LV2
-  #include "plugin/entry/sat_lv2_entry.h"
+  #include "plugin/lv2/sat_lv2_entry.h"
 #endif
 
 #ifdef SAT_PLUGIN_VST2
-  #include "plugin/entry/sat_vst2_entry.h"
+  #include "plugin/vst2/sat_vst2_entry.h"
 #endif
 
 #ifdef SAT_PLUGIN_VST3
-  #include "plugin/entry/sat_vst3_entry.h"
+  #include "plugin/vst3/sat_vst3_entry.h"
 #endif
 
 //----------------------------------------------------------------------

@@ -113,7 +113,7 @@ public:
 
   void on_widget_open(SAT_WidgetOwner* AOwner) override {
     //SAT_TRACE;
-    MPainter = AOwner->on_widgetOwner_getPainter();
+    MPainter = AOwner->on_WidgetOwner_getPainter();
   }
     
   //----------
