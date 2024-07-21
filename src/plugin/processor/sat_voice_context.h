@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/lib/sat_clap.h"
+#include "plugin/clap/sat_clap.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_process_context.h"
 

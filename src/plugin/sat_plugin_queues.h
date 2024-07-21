@@ -74,7 +74,7 @@ public: // host -> gui
   //----------
 
   // called from [timer]
-  //   SAT_Plugin.on_editorListener_timer  
+  //   SAT_Plugin.on_EditorListener_timer  
 
   void flushParamFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     uint32_t count = 0;
@@ -107,7 +107,7 @@ public: // host -> gui
   //----------
 
   // called from [timer]
-  //   SAT_Plugin.on_editorListener_timer
+  //   SAT_Plugin.on_EditorListener_timer
 
   void flushModFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     SAT_PluginQueueItem item;
@@ -129,7 +129,7 @@ public: // gui -> host
   #ifndef SAT_NO_GUI
 
   // called from [gui]
-  //   SAT_Plugin.on_editorListener_update
+  //   SAT_Plugin.on_EditorListener_update
   //   (from SAT_EmbeddedEditor.on_windowListener_update)
   //        (SAT_WidgetWindow.on_widgetListener_update)
   //        (SAT_RootWidget.do_widget_update)
@@ -214,7 +214,7 @@ public: // gui -> audio
   #ifndef SAT_NO_GUI
 
   // called from [gui]
-  //   SAT_Plugin.on_editorListener_update
+  //   SAT_Plugin.on_EditorListener_update
   //   (from SAT_EmbeddedEditor.on_windowListener_update)
   //        (SAT_WidgetWindow.on_widgetListener_update)
   //        (SAT_RootWindow.do_widget_update)

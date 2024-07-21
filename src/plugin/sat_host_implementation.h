@@ -4,8 +4,8 @@
 // the host ptr you give to hosted plugins
 
 #include "sat.h"
-#include "plugin/lib/sat_clap.h"
-#include "plugin/host/sat_clap_host_implementation.h"
+#include "plugin/clap/sat_clap.h"
+#include "plugin/clap/sat_clap_host_implementation.h"
 //#include "plugin/host/sat_host_window.h"
 
 //----------------------------------------------------------------------

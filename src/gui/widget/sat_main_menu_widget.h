@@ -88,7 +88,7 @@ public:
   void on_widget_open(SAT_WidgetOwner* AOwner) override {
 
     double scale = getWindowScale();
-    SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
+    SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
 
     for (uint32_t i=0; i<MMenus.size(); i++) {
       SAT_MainMenuItemWidget* item = MMenus[i];

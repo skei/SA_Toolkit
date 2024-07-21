@@ -2,6 +2,7 @@
 #define sat_widgets_included
 //----------------------------------------------------------------------
 
+#include "gui/widget/sat_anim_test_widget.h"
 #include "gui/widget/sat_button_widget.h"
 #include "gui/widget/sat_button_grid_widget.h"
 #include "gui/widget/sat_cached_widget.h"

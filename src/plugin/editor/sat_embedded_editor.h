@@ -1,11 +1,8 @@
-#ifndef sat_embedded_editor_included
-#define sat_embedded_editor_included
-//----------------------------------------------------------------------
 
 #include "sat.h"
 #include "plugin/editor/sat_editor_listener.h"
 #include "plugin/editor/sat_base_editor.h"
-#include "gui/window/sat_window_listener.h"
+#include "gui/base/sat_window_listener.h"
 #include "gui/sat_window.h"
 
 
@@ -72,12 +69,12 @@ public:
 public:
 //------------------------------
 
-  void on_windowListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void on_WindowListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     SAT_Parameter* param = (SAT_Parameter*)AWidget->getParameter(AIndex);
     if (param) {
       uint32_t index = param->getIndex();
       sat_param_t value = AWidget->getValue(AIndex);
-      MListener->on_editorListener_update(index,value);
+      MListener->on_EditorListener_update(index,value);
     }
   }
 
@@ -88,8 +85,8 @@ public:
 
   //----------
 
-  void on_windowListener_timer(SAT_Timer* ATimer, double ADelta) override {
-    if (MListener) MListener->on_editorListener_timer(ATimer,ADelta);
+  void on_WindowListener_timer(SAT_Timer* ATimer, double ADelta) override {
+    if (MListener) MListener->on_EditorListener_timer(ATimer,ADelta);
   }
 
 //------------------------------
@@ -203,17 +200,19 @@ public: // clap.gui
       if (strcmp(api,CLAP_WINDOW_API_X11) != 0) return false;
       //SAT_PRINT("MWidth %i MHeight %i\n",MWidth,MHeight);
       // ask plugin to create window.. if not, create it ourselves
-      if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
-      else MWindow = new SAT_Window(MWidth,MHeight);
-      MWindow->setListener(this);
+
+      if (MListener) MWindow = MListener->on_EditorListener_createWindow(this,MWidth,MHeight);
+      else MWindow = new SAT_Window(this,MWidth,MHeight);
+      //MWindow->setListener(this); // not needed?
+
     #endif
     #ifdef SAT_WIN32
       //if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
       // ask plugin to create window.. if not, create it ourselves
-      if (MListener) MWindow = MListener->on_editorListener_createWindow(MWidth,MHeight);
-      else MWindow = new SAT_Window(MWidth,MHeight);
-      MWindow->setListener(this);
+      if (MListener) MWindow = MListener->on_EditorListener_createWindow(this,MWidth,MHeight);
+      else MWindow = new SAT_Window(this,MWidth,MHeight);
+      //MWindow->setListener(this);
     #endif
     return true;
   }
@@ -223,7 +222,8 @@ public: // clap.gui
   void destroy() override {
     if (MWindow) {
       MWindow->hide();
-      if (MListener) MListener->on_editorListener_deleteWindow(MWindow);
+      //delete MWindow;
+      if (MListener) MListener->on_EditorListener_deleteWindow(MWindow);
       else delete MWindow;
       MWindow = nullptr;
     }
@@ -340,5 +340,3 @@ public: // clap.gui
   
 };
 
-//----------------------------------------------------------------------
-#endif

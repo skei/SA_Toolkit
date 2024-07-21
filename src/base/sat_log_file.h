@@ -28,7 +28,7 @@
 #include "base/system/sat_file.h"
 #include "base/system/sat_paths.h"
 #include "base/system/sat_time.h"
-#include "plugin/lib/sat_clap.h"
+#include "plugin/clap/sat_clap.h"
 
 //----------------------------------------------------------------------
 //

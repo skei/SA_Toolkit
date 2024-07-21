@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/widget/sat_widget_listener.h"
+#include "gui/base/sat_widget_listener.h"
 #include "gui/widget/sat_visual_widget.h"
 #include "gui/sat_widget.h"
 
@@ -22,7 +22,7 @@ private:
 public:
 //------------------------------
 
-  SAT_RootWidget(SAT_WidgetListener* AListener)
+  SAT_RootWidget(SAT_WidgetListener* AListener=nullptr)
   : SAT_VisualWidget(0) {
     setName("SAT_RootWidget");
     setHint("SAT_RootWidget");
@@ -33,6 +33,14 @@ public:
   //----------
 
   virtual ~SAT_RootWidget() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  void setListener(SAT_WidgetListener* AListener) {
+    MListener = AListener;
   }
 
 //------------------------------
@@ -96,55 +104,55 @@ public: // do_widget
   // widget -> listener (window)
 
   void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
-    if (MListener) MListener->on_widgetListener_update(AWidget,AIndex,AMode);
+    if (MListener) MListener->on_WidgetListener_update(AWidget,AIndex,AMode);
   }
   
   void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
-    if (MListener) MListener->on_widgetListener_redraw(AWidget,AIndex,AMode);
+    if (MListener) MListener->on_WidgetListener_redraw(AWidget,AIndex,AMode);
   }
 
   void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {
-    if (MListener) MListener->on_widgetListener_realign(AWidget,AMode);
+    if (MListener) MListener->on_WidgetListener_realign(AWidget,AMode);
   }
   
   void do_widget_notify(SAT_Widget* AWidget, int32_t AValue) override {
-    if (MListener) MListener->on_widgetListener_notify(AWidget,AValue);
+    if (MListener) MListener->on_WidgetListener_notify(AWidget,AValue);
   }
   
   void do_widget_mouse_capture(SAT_Widget* AWidget) override {
-    if (MListener) MListener->on_widgetListener_mouse_capture(AWidget);
+    if (MListener) MListener->on_WidgetListener_mouse_capture(AWidget);
   }
   
   void do_widget_key_capture(SAT_Widget* AWidget) override {
-    if (MListener) MListener->on_widgetListener_key_capture(AWidget);
+    if (MListener) MListener->on_WidgetListener_key_capture(AWidget);
   }
   
   void do_widget_modal(SAT_Widget* AWidget) override {
-    if (MListener) MListener->on_widgetListener_modal(AWidget);
+    if (MListener) MListener->on_WidgetListener_modal(AWidget);
   }
 
   void do_widget_set_cursor(SAT_Widget* AWidget, int32_t ACursor) override {
-    if (MListener) MListener->on_widgetListener_set_cursor(AWidget,ACursor);
+    if (MListener) MListener->on_WidgetListener_set_cursor(AWidget,ACursor);
   }
   
   void do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) override {
-    if (MListener) MListener->on_widgetListener_set_hint(AWidget,AHint);
+    if (MListener) MListener->on_WidgetListener_set_hint(AWidget,AHint);
   }
 
   void do_widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) override {
-    if (MListener) MListener->on_widgetListener_want_timer(AWidget,AWantTimer);
+    if (MListener) MListener->on_WidgetListener_want_timer(AWidget,AWantTimer);
   }
 
   void do_widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
-    if (MListener) MListener->on_widgetListener_start_tween(AWidget,ATween);
+    if (MListener) MListener->on_WidgetListener_start_tween(AWidget,ATween);
   }
 
   void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
-    if (MListener) MListener->on_widgetListener_resize(AWidget,ADeltaX,ADeltaY);
+    if (MListener) MListener->on_WidgetListener_resize(AWidget,ADeltaX,ADeltaY);
   }
 
   void do_widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
-    if (MListener) MListener->on_widgetListener_set_overlay(AWidget,AColor);
+    if (MListener) MListener->on_WidgetListener_set_overlay(AWidget,AColor);
   }
 
 

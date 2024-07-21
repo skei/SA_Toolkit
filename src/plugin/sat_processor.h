@@ -10,7 +10,7 @@
 #include "sat.h"
 #include "plugin/processor/sat_process_context.h"
 #include "plugin/processor/sat_processor_owner.h"
-#include "plugin/lib/sat_clap.h"
+#include "plugin/clap/sat_clap.h"
 #include "plugin/sat_audio_port.h"
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"

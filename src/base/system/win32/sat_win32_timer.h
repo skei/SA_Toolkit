@@ -10,7 +10,7 @@ class SAT_Timer;
 
 class SAT_TimerListener {
 public:
-  virtual void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) {}
+  virtual void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) {}
 };
 
 //----------------------------------------------------------------------
@@ -102,7 +102,7 @@ public:
   void on_timer() {
     double time = SAT_GetTime();//MS();
     double delta = time - MPrevTime;
-    if (MTimerListener) MTimerListener->on_timerListener_callback(this,delta);
+    if (MTimerListener) MTimerListener->on_TimerListener_update(this,delta);
   }
 
 //------------------------------

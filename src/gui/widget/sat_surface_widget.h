@@ -2,6 +2,8 @@
 #define sat_surface_widget_included
 //----------------------------------------------------------------------
 
+#if 0
+
 #include "sat.h"
 #include "gui/widget/sat_visual_widget.h"
 #include "gui/sat_surface.h"
@@ -69,6 +71,8 @@ public: // on_widget
   }
 
 };
+
+#endif // 0
 
 //----------------------------------------------------------------------
 #endif

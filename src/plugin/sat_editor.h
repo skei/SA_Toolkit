@@ -5,7 +5,7 @@
 #include "plugin/sat_parameter.h"
 
 #ifndef SAT_NO_GUI
-  #include "gui/window/sat_window_listener.h"
+  #include "gui/base/sat_window_listener.h"
   #include "gui/sat_widget.h"
 #endif
 

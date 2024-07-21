@@ -3,48 +3,26 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/painter/sat_base_painter.h"
-#include "gui/painter/sat_paint_target.h"
-#include "gui/painter/sat_painter_owner.h"
 
-// #include "../../data/fonts/Roboto/Roboto-Regular.h"
-// #include "../../data/fonts/Manjari/Manjari-Thin.h"
+#include "../data/fonts/Roboto/Roboto-Regular.h"
+#include "../data/fonts/Manjari/Manjari-Thin.h"
 
 typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_ClipRectStack;
 
-//----------
+//----------------------------------------------------------------------
+//
+// implemented window
+//
+//----------------------------------------------------------------------
 
-#ifdef SAT_PAINTER_USER_DEFINED
+//#include "gui/base/sat_base_painter.h"
+//typedef SAT_BasePainter SAT_Painter;
 
-  typedef SAT_PAINTER_USER_DEFINED SAT_ImplementedRenderer;
+//
 
-#else
-
-  #ifdef SAT_NO_PAINTER
-    //#include "gui/painter/sat_no_painter.h"
-    typedef SAT_BasePainter SAT_ImplementedPainter;
-  #endif
-
-  #ifdef SAT_PAINTER_CAIRO
-    #include "gui/painter/sat_cairo_painter.h"
-    typedef SAT_CairoPainter SAT_ImplementedPainter;
-  #endif
-
-  #ifdef SAT_PAINTER_NANOVG
-    #include "gui/painter/sat_nanovg_painter.h"
-    typedef SAT_NanoVGPainter SAT_ImplementedPainter;
-  #endif
-
-  #ifdef SAT_PAINTER_WIN32
-    #include "gui/painter/sat_win32_painter.h"
-    typedef SAT_Win32Painter SAT_ImplementedPainter;
-  #endif
-
-  #ifdef SAT_PAINTER_X11
-    #include "gui/painter/sat_x11_painter.h"
-    typedef SAT_X11Painter SAT_ImplementedPainter;
-  #endif
-
+#ifdef SAT_PAINTER_NANOVG
+  #include "gui/nanovg/sat_nanovg_painter.h"
+  typedef SAT_NanoVGPainter SAT_ImplementedPainter;
 #endif
 
 //----------------------------------------------------------------------
@@ -77,6 +55,12 @@ public:
     // MHeaderFont = loadFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
     // selectFont(MDefaultFont);
     // setTextSize(12.0);
+
+    setDefaultFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
+    setHeaderFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
+    selectFont(getDefaultFont());
+    setTextSize(MTextSize);
+
   }
 
   //----------

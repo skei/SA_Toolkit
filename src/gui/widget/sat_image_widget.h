@@ -110,7 +110,7 @@ public:
     if (MInitialized) {
       //SAT_Window* window = AOwner->on_widgetOwner_getWindow();
       //SAT_Painter* painter = window->getPainter();
-      SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
+      SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
       painter->deleteImage(MImage);
       MInitialized = false;
     }

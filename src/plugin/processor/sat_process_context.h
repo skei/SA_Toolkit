@@ -2,7 +2,7 @@
 #define sat_process_context_included
 //----------------------------------------------------------------------
 
-#include "plugin/lib/sat_clap.h"
+#include "plugin/clap/sat_clap.h"
 #include "plugin/sat_parameter.h"
 
 //

@@ -181,7 +181,7 @@ public: // parent to child
 
   void on_widget_close(SAT_WidgetOwner* AOwner) override {
     if (MImageValid) {
-      SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
+      SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
       painter->deleteImage(MImage);
       MImageValid = false;
     }

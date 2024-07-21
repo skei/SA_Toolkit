@@ -20,7 +20,7 @@ class SAT_Timer;
 
 class SAT_TimerListener {
 public:
-  virtual void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) {}
+  virtual void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) {}
 };
 
 //----------------------------------------------------------------------
@@ -190,7 +190,7 @@ public:
     double time = SAT_GetTime();//MS();
     double delta = time - MPrevTime;
     //SAT_PRINT("delta %.3f\n",delta);
-    if (MTimerListener && MIsRunning) MTimerListener->on_timerListener_callback(this,delta);
+    if (MTimerListener && MIsRunning) MTimerListener->on_TimerListener_update(this,delta);
     MPrevTime = time;
   }
 
