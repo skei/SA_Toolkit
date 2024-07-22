@@ -68,7 +68,7 @@ private:
 
   SAT_WidgetQueue     MDirtyWidgets         = {};
   SAT_WidgetQueue     MPaintWidgets         = {};
-//SAT_WidgetQueue     MTimerWidgets         = {};
+  SAT_WidgetQueue     MTimerWidgets         = {};
 
   // timer
 
@@ -276,16 +276,11 @@ private: // queues
     SAT_Widget* widget;
     bool have_rect = false;
     SAT_Rect update_rect = {0,0,0,0};
-
     while (MDirtyWidgets.read(&widget)) {
       SAT_Assert(widget);
-
       queuePaintWidget(widget);
-
       SAT_Rect rect = widget->getRect();
-      if (have_rect) {
-        update_rect.combine(rect);
-      }
+      if (have_rect) update_rect.combine(rect);
       else {
         update_rect = rect;
         have_rect = true;
@@ -305,11 +300,11 @@ private: // queues
 
   // [TIMER THREAD]
 
-  // void queueTimerWidget(SAT_Widget* AWidget) {
-  //   if (!MTimerWidgets.write(AWidget)) {
-  //     SAT_PRINT("Error! Couldn't write to timer widget queue\n");
-  //   }
-  // }
+  void queueTimerWidget(SAT_Widget* AWidget) {
+    if (!MTimerWidgets.write(AWidget)) {
+      SAT_PRINT("Error! Couldn't write to timer widget queue\n");
+    }
+  }
 
   //----------
 
@@ -320,35 +315,27 @@ private: // queues
 
   // [TIMER THREAD]
 
-  // SAT_Rect flushTimerWidgets() {
-  //   uint32_t count = 0;
-  //   SAT_Widget* widget;
-  //   bool have_rect = false;
-  //   SAT_Rect update_rect = {0,0,0,0};
-  //   while (MTimerWidgets.read(&widget)) {
-  //     SAT_Assert(widget);
-  //     queuePaintWidget(widget);
-  //     SAT_Rect rect = widget->getRect();
-  //     if (have_rect) {
-  //       update_rect.combine(rect);
-  //     }
-  //     else {
-  //       update_rect = rect;
-  //       have_rect = true;
-  //     }
-  //     count += 1;
-  //   }
-  //   if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
-  //   return update_rect;
-  //   // if (have_rect) {
-  //   //   SAT_PRINT("%.f, %.f, %.f, %.f\n",update_rect.x,update_rect.y,update_rect.w,update_rect.h);
-  //   //   //invalidate(update_rect.x,update_rect.y,update_rect.w,update_rect.h);
-  //   //   return update_rect;
-  //   // }
-  //   // else {
-  //   //   return SAT_Rect(0,0,0,0);
-  //   // }
-  // }
+  SAT_Rect flushTimerWidgets() {
+    uint32_t count = 0;
+    SAT_Widget* widget;
+    bool have_rect = false;
+    SAT_Rect update_rect = {0,0,0,0};
+    while (MTimerWidgets.read(&widget)) {
+      SAT_Assert(widget);
+
+//      queuePaintWidget(widget);
+//      SAT_Rect rect = widget->getRect();
+//      if (have_rect) update_rect.combine(rect);
+//      else {
+//        update_rect = rect;
+//        have_rect = true;
+//      }
+
+      count += 1;
+    }
+    //if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
+    return update_rect;
+  }
 
   //----------
 
@@ -396,7 +383,6 @@ private: // queues
       }
       else {
         widget->on_widget_paint(AContext);
-      
       }
       //painter->popClip();
     }
@@ -437,6 +423,7 @@ public: // timer
 
   void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
     MTimerDelta += ADelta;
+
     if (MIsClosing) {
       //SAT_PRINT("MIsClosing\n");
       return;
@@ -452,22 +439,24 @@ public: // timer
     // if widgets called by this, calls do_widget_redraw..
     // it crashes somewhere in stbtt__Rasterize.. :-/
     
-//    for (uint32_t i=0; i<MTimerListeners.size(); i++) {
-//      MTimerListeners[i]->on_widget_timer(MTimerDelta);
-//    }
+    for (uint32_t i=0; i<MTimerListeners.size(); i++) {
+      MTimerListeners[i]->on_widget_timer(MTimerDelta);
+    }
 
     MTweenManager.process(MTimerDelta);
+    MTimerDelta = 0;
 
     #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
       SAT_Rect dirty_rect = flushDirtyWidgets();
       //SAT_Rect timer_rect = flushTimerWidgets();
-      //dirty_rect.combine(timer_rect);
-      if (dirty_rect.isNotEmpty()) {
-        invalidate(dirty_rect.x,dirty_rect.y,dirty_rect.w,dirty_rect.h);
-      }
+
+      //if (dirty_rect.isEmpty()) { if (timer_rect.isNotEmpty()) dirty_rect = timer_rect; }
+      //else                      { if (timer_rect.isNotEmpty()) dirty_rect.combine(timer_rect); }
+
+      if (dirty_rect.isNotEmpty()) invalidate(dirty_rect.x,dirty_rect.y,dirty_rect.w,dirty_rect.h);
+
     #endif
 
-    MTimerDelta = 0;
   }
 
 //------------------------------
@@ -499,13 +488,15 @@ public: // widget listener
 
   void on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) override {
       #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
-        queueDirtyWidget(AWidget);
-        // if (AMode == SAT_WIDGET_REDRAW_TIMER) {
-        //   queueTimerWidget(AWidget);
-        // }
-        // else {
-        //   queueDirtyWidget(AWidget);
-        // }
+        //queueDirtyWidget(AWidget);
+         if (AMode == SAT_WIDGET_REDRAW_TIMER) {
+           //SAT_TRACE;
+//           queueTimerWidget(AWidget);
+//           queueDirtyWidget(AWidget);
+         }
+         else {
+           queueDirtyWidget(AWidget);
+         }
       #else
         SAT_Rect rect = AWidget->getRect();
         invalidate(rect.x,rect.y,rect.w,rect.h);
