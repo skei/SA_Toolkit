@@ -99,6 +99,8 @@ public:
 //
 //----------------------------------------------------------------------
 
+#if 0
+
 class sa_demo_animated_widget
 : public SAT_VisualWidget {
 
@@ -229,6 +231,8 @@ public:
   }
 
 };
+
+#endif // 0
 
 
 

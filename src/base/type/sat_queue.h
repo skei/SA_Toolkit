@@ -115,14 +115,14 @@ public:
 // http://linux-audio.4202.n7.nabble.com/Realtime-inter-thread-communication-td99157.html
 // write single, read buffer (all)
 
-template<class _T, int SIZE>
+template<class T, int SIZE>
 class SAT_QueueBuffer {
 
 //------------------------------
 private:
 //------------------------------
 
-  _T                MData[SIZE];
+  T                 MData[SIZE];
   /*volatile*/ int  MWritePos;  // volatile?
   /*volatile*/ int  MReadPos;
 
@@ -131,24 +131,24 @@ private:
 //------------------------------
 
   SAT_QueueBuffer() {
-    memset(MData,0,SIZE*(sizeof(_T)));
+    memset(MData,0,SIZE*(sizeof(T)));
     MWritePos = 0;
     MReadPos = 0;
   }
 
-  void write(_T AData) {
+  void write(T AData) {
     MData[MWritePos] = AData;
     MWritePos = (MWritePos + 1) % SIZE; // & SIZE if ^2
   }
 
-  int read(_T* ABuffer) {
+  int read(T* ABuffer) {
     int count = 0;
     int writepos = MWritePos;
     if (MReadPos > writepos) {
       memcpy(
         (char*)&ABuffer[count],
         (char*)&MData[MReadPos],
-        (SIZE - MReadPos) * sizeof(_T)
+        (SIZE - MReadPos) * sizeof(T)
       );
       count = SIZE - MReadPos;
       MReadPos = 0;
@@ -156,7 +156,7 @@ private:
     memcpy(
       (char*)&ABuffer[count],
       (char*)&MData[MReadPos],
-      (writepos - MReadPos) * sizeof(_T)
+      (writepos - MReadPos) * sizeof(T)
     );
     count += writepos - MReadPos;
     MReadPos = writepos;
@@ -231,7 +231,8 @@ public:
   // element  The element to add
   // True when the element was added, false when the queue is full
 
-  bool write(const T& element) {
+  //bool write(const T& element) {
+  bool write(const T element) {
     const size_t oldWritePosition = MWritePos.load();
     const size_t newWritePosition = getPositionAfter(oldWritePosition);
     const size_t readPosition = MReadPos.load();
@@ -250,13 +251,15 @@ public:
   // element The returned element
   // True when succeeded, false when the queue is empty
 
-  bool read(T& element) {
+  //bool read(T& element) {
+  bool read(T* element) {
     if (empty()) {
       // The queue is empty
       return false;
     }
     const size_t readPosition = MReadPos.load();
-    element = std::move(MBuffer[readPosition]);
+    //element = std::move(MBuffer[readPosition]);
+    *element = std::move(MBuffer[readPosition]);
     MReadPos.store(getPositionAfter(readPosition));
     return true;
   }

@@ -11,7 +11,7 @@ typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_ClipRectStack;
 
 //----------------------------------------------------------------------
 //
-// implemented window
+// implemented painter
 //
 //----------------------------------------------------------------------
 
@@ -38,6 +38,8 @@ class SAT_Painter
 private:
 //------------------------------
 
+  bool fonts_initialized = false;
+
 //SAT_PainterOwner* MOwner        = nullptr;
   SAT_Rect          MClipRect     = {};
   SAT_ClipRectStack MClipStack    = {};
@@ -51,10 +53,12 @@ public:
 
   SAT_Painter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
   : SAT_ImplementedPainter(AOwner,ATarget) {
+    
     // MDefaultFont = loadFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
     // MHeaderFont = loadFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
-    // selectFont(MDefaultFont);
-    // setTextSize(12.0);
+    // nvgFontFaceId(MContext,MDefaultFont);
+    // MTextSize = 12.0;
+    // nvgFontSize(MContext,ASize);
 
     setDefaultFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
     setHeaderFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
@@ -67,6 +71,27 @@ public:
 
   virtual ~SAT_Painter() {
   }
+
+//------------------------------
+public:
+//------------------------------
+
+  // void beginPainting(int32_t AWidth, int32_t AHeight) override {
+  //   SAT_ImplementedPainter::beginPainting(AWidth,AHeight);
+  //   // if (!fonts_initialized) {
+  //   //   setDefaultFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
+  //   //   setHeaderFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
+  //   //   selectFont(getDefaultFont());
+  //   //   setTextSize(MTextSize);
+  //   //   fonts_initialized = true;
+  //   // }
+  // }
+
+  //----------
+
+  // void endPainting() override {
+  //   SAT_ImplementedPainter::endPainting();
+  // }
 
 //------------------------------
 public: // clip

@@ -914,8 +914,20 @@ private:
       xcb_connection_t* connection = window->MConnection;
       xcb_flush(connection);
       while (window->MIsEventThreadActive) {
+
+        // Returns the next event or error from the server, or returns null in the event of an I/O error.
+        // Blocks until either an event or error arrive, or an I/O error occurs.
+
         xcb_generic_event_t* event = xcb_wait_for_event(connection);
         if (event) {
+
+          // when you get an event with response_type == 0, cast the pointer to xcb_generic_error_t*.
+          if (event->response_type == 0) {
+            xcb_generic_error_t* error = (xcb_generic_error_t*)event;
+            SAT_PRINT("xcb_wait_for_event: received X11 error %d\n", error->error_code);
+            free(event);
+            continue;
+          }
 
           //if ((event->response_type & ~0x80) == XCB_CLIENT_MESSAGE) {
           //  xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;

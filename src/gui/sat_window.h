@@ -13,8 +13,8 @@
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 
-typedef SAT_AtomicQueue<SAT_Widget*,1024> SAT_WidgetQueue;
-//typedef SAT_Queue<SAT_Widget*,1024> SAT_WidgetQueue;
+//typedef SAT_AtomicQueue<SAT_Widget*,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_WidgetQueue;
+typedef SAT_Queue<SAT_Widget*,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_WidgetQueue;
 
 //----------------------------------------------------------------------
 //
@@ -68,6 +68,7 @@ private:
 
   SAT_WidgetQueue     MDirtyWidgets         = {};
   SAT_WidgetQueue     MPaintWidgets         = {};
+//SAT_WidgetQueue     MTimerWidgets         = {};
 
   // timer
 
@@ -79,8 +80,8 @@ private:
 public:
 //------------------------------
 
-  SAT_Window(SAT_WindowListener* AListener, uint32_t AWidth, uint32_t AHeight, intptr_t AParent=0)
-  : SAT_SimpleWindow(AListener,AWidth,AHeight,AParent) {
+  SAT_Window(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener=nullptr, intptr_t AParent=0)
+  : SAT_SimpleWindow(AWidth,AHeight,AListener,AParent) {
   }
 
   //----------
@@ -138,7 +139,6 @@ public:
 //------------------------------
 
   bool setupOverlay() override {
-    SAT_TRACE;
     SAT_RootWidget* root = getRootWidget();
     if (root) {
       MOverlayWidget = new SAT_OverlayWidget();
@@ -243,15 +243,18 @@ private: // queues
 
   /*
     push widget onto dirty widgets queue
+
     called from  [GUI THREAD]
       on_window_show()            - opening editor
       on_window_resize()          - resizing editor
       on_widgetListener_redraw()  - tweaking knob
   */
 
+  // [GUI THREAD]
+
   void queueDirtyWidget(SAT_Widget* AWidget) {
     if (!MDirtyWidgets.write(AWidget)) {
-      SAT_PRINT("Error! Couldnæt write to dirty widget queue\n");
+      SAT_PRINT("Error! Couldn't write to dirty widget queue\n");
     }
   }
 
@@ -261,40 +264,102 @@ private: // queues
     pops all widgets from dirty que and push them onto paint queue
     invalidates combined rect
     TODO: check widget if already set to be drawn (render frame #)
+
     called from
-      on_TimerListener_update [TIMER THREAD]
+      on_TimerListener_update
   */
 
-  void flushDirtyWidgets() {
+  // [TIMER THREAD]
+
+  SAT_Rect flushDirtyWidgets() {
     uint32_t count = 0;
     SAT_Widget* widget;
-    bool has_update = false;
-    SAT_Rect update_rect;
-    //while (MDirtyWidgets.read(&widget)) {
-    while (MDirtyWidgets.read(widget)) {
-      count += 1;
-      SAT_Rect rect = widget->getRect();
+    bool have_rect = false;
+    SAT_Rect update_rect = {0,0,0,0};
+
+    while (MDirtyWidgets.read(&widget)) {
+      SAT_Assert(widget);
+
       queuePaintWidget(widget);
-      if (has_update) {
+
+      SAT_Rect rect = widget->getRect();
+      if (have_rect) {
         update_rect.combine(rect);
       }
       else {
         update_rect = rect;
-        has_update = true;
+        have_rect = true;
       }
+      count += 1;
     }
-    if (has_update) {
-      invalidate(update_rect.x,update_rect.y,update_rect.w,update_rect.h);
-    }
-    // if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
+    //if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
+    return update_rect;
   }
 
   //----------
 
   /*
-    called from
-      SAT_WidgetWindow.flushDirtyWidgets() [TIMER THREAD]
+    called from  [GUI THREAD]
+      on_widgetListener_redraw (if SAT_WIDGET_REDRAW_GUI)
   */
+
+  // [TIMER THREAD]
+
+  // void queueTimerWidget(SAT_Widget* AWidget) {
+  //   if (!MTimerWidgets.write(AWidget)) {
+  //     SAT_PRINT("Error! Couldn't write to timer widget queue\n");
+  //   }
+  // }
+
+  //----------
+
+  /*
+    called from
+      on_TimerListener_update
+  */
+
+  // [TIMER THREAD]
+
+  // SAT_Rect flushTimerWidgets() {
+  //   uint32_t count = 0;
+  //   SAT_Widget* widget;
+  //   bool have_rect = false;
+  //   SAT_Rect update_rect = {0,0,0,0};
+  //   while (MTimerWidgets.read(&widget)) {
+  //     SAT_Assert(widget);
+  //     queuePaintWidget(widget);
+  //     SAT_Rect rect = widget->getRect();
+  //     if (have_rect) {
+  //       update_rect.combine(rect);
+  //     }
+  //     else {
+  //       update_rect = rect;
+  //       have_rect = true;
+  //     }
+  //     count += 1;
+  //   }
+  //   if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
+  //   return update_rect;
+  //   // if (have_rect) {
+  //   //   SAT_PRINT("%.f, %.f, %.f, %.f\n",update_rect.x,update_rect.y,update_rect.w,update_rect.h);
+  //   //   //invalidate(update_rect.x,update_rect.y,update_rect.w,update_rect.h);
+  //   //   return update_rect;
+  //   // }
+  //   // else {
+  //   //   return SAT_Rect(0,0,0,0);
+  //   // }
+  // }
+
+  //----------
+
+  /*
+    called from
+      flushDirtyWidgets()
+      flushTimerWidgets()
+
+  */
+
+  // [TIMER THREAD] 
 
   void queuePaintWidget(SAT_Widget* AWidget) {
     if (!MPaintWidgets.write(AWidget)) {
@@ -308,19 +373,21 @@ private: // queues
     pops all widgets from paint queue
     search upwards (parent) until we find an opaque widget
       set clipping, paint
+
     called from
-      paint() [GUI THREAD]
+      paint()
       
   */
+
+  // [GUI THREAD]
 
   void flushPaintWidgets(SAT_PaintContext* AContext) {
     uint32_t count = 0;
     SAT_Painter* painter = AContext->painter;
     SAT_Widget* widget = nullptr;
-    //while (MPaintWidgets.read(&widget)) {
-    while (MPaintWidgets.read(widget)) {
+    while (MPaintWidgets.read(&widget)) {
       count += 1;
-      painter->pushOverlappingClip(widget->getRect());
+      //painter->pushOverlappingClip(widget->getRect());
       SAT_Widget* parent = widget->findOpaqueParent();
       if (parent) {
         painter->pushOverlappingClip( parent->getRect() );
@@ -329,10 +396,11 @@ private: // queues
       }
       else {
         widget->on_widget_paint(AContext);
+      
       }
-      painter->popClip();
+      //painter->popClip();
     }
-    // if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
+    //if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
   }
 
   //----------
@@ -340,20 +408,22 @@ private: // queues
   /*
     empties paint queue
     draw root widget (and children)
+
     called from
       paint() (ifdef SAT_WINDOW_BUFFERED) [GUI THREAD]
       paintRoot()
   */
 
+  // [GUI THREAD]
+
   void flushRootWidget(SAT_PaintContext* AContext) {
     uint32_t count = 0;
     SAT_Widget* widget = nullptr;
-    //while (MPaintWidgets.read(&widget)) {
-    while (MPaintWidgets.read(widget)) {
+    while (MPaintWidgets.read(&widget)) {
       count += 1;
     }
     if (MRootWidget) MRootWidget->on_widget_paint(AContext);
-    // if (count > 0) { SAT_PRINT("dumped %i widgets\n",count); }
+    //if (count > 0) { SAT_PRINT("dumped %i widgets\n",count); }
   }
 
 //------------------------------
@@ -361,11 +431,9 @@ public: // timer
 //------------------------------
 
   /*
-    [TIMER THREAD]
-    (could gui-thread be pushing dirty widgets at the same time?)
-
-    todo: if we skip frames, remember delta, and add it to the next?
   */
+
+  // [TIMER THREAD]
 
   void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
     MTimerDelta += ADelta;
@@ -377,14 +445,28 @@ public: // timer
       //SAT_PRINT("MIsPainting\n");
       return;
     }
+
     if (MListener) MListener->on_WindowListener_timer(ATimer,MTimerDelta);
-    for (uint32_t i=0; i<MTimerListeners.size(); i++) {
-      MTimerListeners[i]->on_widget_timer(MTimerDelta);
-    }
+
+    // ugh..
+    // if widgets called by this, calls do_widget_redraw..
+    // it crashes somewhere in stbtt__Rasterize.. :-/
+    
+//    for (uint32_t i=0; i<MTimerListeners.size(); i++) {
+//      MTimerListeners[i]->on_widget_timer(MTimerDelta);
+//    }
+
     MTweenManager.process(MTimerDelta);
+
     #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
-      flushDirtyWidgets();
+      SAT_Rect dirty_rect = flushDirtyWidgets();
+      //SAT_Rect timer_rect = flushTimerWidgets();
+      //dirty_rect.combine(timer_rect);
+      if (dirty_rect.isNotEmpty()) {
+        invalidate(dirty_rect.x,dirty_rect.y,dirty_rect.w,dirty_rect.h);
+      }
     #endif
+
     MTimerDelta = 0;
   }
 
@@ -411,13 +493,23 @@ public: // widget listener
 
   //----------
 
-  void on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
-    #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
-      queueDirtyWidget(AWidget);
-    #else
-      SAT_Rect rect = AWidget->getRect();
-      invalidate(rect.x,rect.y,rect.w,rect.h);
-    #endif
+  /*
+    if AMode is SAT_WIDGET_REDRAW_TIMER, we are being called from a timer thread!
+  */
+
+  void on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) override {
+      #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
+        queueDirtyWidget(AWidget);
+        // if (AMode == SAT_WIDGET_REDRAW_TIMER) {
+        //   queueTimerWidget(AWidget);
+        // }
+        // else {
+        //   queueDirtyWidget(AWidget);
+        // }
+      #else
+        SAT_Rect rect = AWidget->getRect();
+        invalidate(rect.x,rect.y,rect.w,rect.h);
+      #endif
   }
 
   //----------
@@ -510,12 +602,12 @@ public: // widget listener
   //----------
 
   void on_WidgetListener_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
-    // SAT_OverlayWidget* overlay = getOverlayWidget();
-    // if (overlay) {
-    //   overlay->setColor(AColor);
-    //   SAT_RootWidget* root = getRootWidget();
-    //   root->do_widget_redraw(root);
-    // }
+    SAT_OverlayWidget* overlay = getOverlayWidget();
+    if (overlay) {
+      overlay->setColor(AColor);
+      SAT_RootWidget* root = getRootWidget();
+      root->do_widget_redraw(root);
+    }
   }
 
 //------------------------------

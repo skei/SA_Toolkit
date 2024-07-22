@@ -141,33 +141,33 @@ public:
 
   //----------
 
-  void setDefaultFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
+  void setDefaultFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) override {
     MDefaultFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
     //nvgFontFaceId(MContext,MDefaultFont);
   }
 
   //----------
 
-  void setHeaderFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) final {
+  void setHeaderFont(const char* AName, uint8_t* ABuffer, uint32_t ASize) override {
     MHeaderFont = nvgCreateFontMem(MContext,AName,ABuffer,ASize,0);
     //nvgFontFaceId(MContext,MDefaultFont);
   }
 
   //----------
 
-  int32_t getDefaultFont() final {
+  int32_t getDefaultFont() override {
     return MDefaultFont;
   }
 
   //----------
 
-  int32_t getHeaderFont() final {
+  int32_t getHeaderFont() override {
     return MHeaderFont;
   }
 
   //----------
   
-  //void* getRenderBuffer() final {
+  //void* getRenderBuffer() override {
   //  return MCurrentRenderBuffer;
   //}
 
@@ -175,26 +175,26 @@ public:
 public:
 //------------------------------
 
-  void beginPainting(int32_t AWidth, int32_t AHeight) final {
+  void beginPainting(int32_t AWidth, int32_t AHeight) override {
     // viewport
   }
 
   //----------
 
-  void endPainting() final {
+  void endPainting() override {
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  void beginFrame(int32_t AWidth, int32_t AHeight, double APixelRatio=1.0) final {
+  void beginFrame(int32_t AWidth, int32_t AHeight, double APixelRatio=1.0) override {
     nvgBeginFrame(MContext,AWidth,AHeight,APixelRatio);
   }
 
   //----------
 
-  void endFrame() final {
+  void endFrame() override {
     nvgEndFrame(MContext);
   }
 
@@ -202,17 +202,17 @@ public:
 public: // state
 //------------------------------
 
-  void saveState() final {
+  void saveState() override {
     nvgSave(MContext);
   }
 
   //----------
 
-  void restoreState() final {
+  void restoreState() override {
     nvgRestore(MContext);
   }
 
-  void resetState() final {
+  void resetState() override {
     nvgReset(MContext);
   }
 
@@ -240,14 +240,14 @@ public: // clip
 
   // is pixel coordinate 0,0 center, or upper left of pixel?
 
-  void setClip(float x, float y, float w, float h) final {
+  void setClip(float x, float y, float w, float h) override {
     //SAT_Print("%.2f,%.2f - %.2f,%.2f\n",ARect.x,ARect.y,ARect.w,ARect.h);
     nvgScissor(MContext,x,y,w,h);
   }
 
   //----------
 
-  void resetClip() final {
+  void resetClip() override {
     nvgResetScissor(MContext);
   }
 
@@ -272,21 +272,21 @@ public:
 public: // set
 //------------------------------
 
-  void setDrawColor(SAT_Color AColor) final {
+  void setDrawColor(SAT_Color AColor) override {
     MDrawColor = AColor;
     nvgStrokeColor(MContext,nvg_color(AColor));
   }
 
   //----------
 
-  void setFillColor(SAT_Color AColor) final {
+  void setFillColor(SAT_Color AColor) override {
     MFillColor = AColor;
     nvgFillColor(MContext,nvg_color(AColor));
   }
 
   //----------
 
-  void setFillLinearGradient(double AX1, double AY1, double AX2, double AY2, SAT_Color AColor1, SAT_Color AColor2) final {
+  void setFillLinearGradient(double AX1, double AY1, double AX2, double AY2, SAT_Color AColor1, SAT_Color AColor2) override {
     NVGcolor icol = nvg_color(AColor1);
     NVGcolor ocol = nvg_color(AColor2);
     NVGpaint paint = nvgLinearGradient(MContext,AX1,AY1,AX2,AY2,icol,ocol);
@@ -295,7 +295,7 @@ public: // set
 
   //----------
 
-  void setTextColor(SAT_Color AColor) final {
+  void setTextColor(SAT_Color AColor) override {
     MTextColor = AColor;
     //nvgStrokeColor(MContext,nvg_color(AColor));
     nvgFillColor(MContext,nvg_color(AColor));
@@ -303,7 +303,7 @@ public: // set
 
   //----------
 
-  void setTextSize(double ASize) final {
+  void setTextSize(double ASize) override {
     MTextSize = ASize;
     nvgFontSize(MContext,ASize);
   }
@@ -311,13 +311,13 @@ public: // set
 
   //----------
 
-  void setTextLetterSpacing(float spacing) final {
+  void setTextLetterSpacing(float spacing) override {
     nvgTextLetterSpacing(MContext,spacing);
   }
 
   //----------
 
-  void setTextLineHeight(float lineHeight) final {
+  void setTextLineHeight(float lineHeight) override {
     nvgTextLineHeight(MContext,lineHeight);
   }
 
@@ -328,20 +328,20 @@ public: // set
   // 8=top, 16=middle, 32=bottom
   // 64=baseline
 
-  void setTextAlign(int align) final {
+  void setTextAlign(int align) override {
     nvgTextAlign(MContext,align);
   }
 
   //----------
 
-  void setLineWidth(double AWidth) final {
+  void setLineWidth(double AWidth) override {
     MLineWidth = AWidth;
     nvgStrokeWidth(MContext,AWidth);
   }
 
   //----------
 
-  void setGlobalAlpha(double AAlpha) final {
+  void setGlobalAlpha(double AAlpha) override {
     nvgGlobalAlpha(MContext,AAlpha);
   }
 
@@ -363,7 +363,7 @@ public: // set
   };
   */
   
-  void setGlobalCompositeMode(uint32_t AMode) final {
+  void setGlobalCompositeMode(uint32_t AMode) override {
     nvgGlobalCompositeOperation(MContext,AMode);
   }
 
@@ -385,7 +385,7 @@ public: // set
   };  
   */
   
-  void setGlobalBlendMode(uint32_t ASrc, uint32_t ADst) final {
+  void setGlobalBlendMode(uint32_t ASrc, uint32_t ADst) override {
     nvgGlobalCompositeBlendFunc(MContext,ASrc,ADst);
   }
 
@@ -393,56 +393,56 @@ public: // set
   
   // 1=ccw, 2=cw
 
-  void setPathWinding(int dir) final {
+  void setPathWinding(int dir) override {
     nvgPathWinding(MContext,dir);
   }
 
   //----------
 
-  void selectFont(int32_t AFont) final {
+  void selectFont(int32_t AFont) override {
     nvgFontFaceId(MContext,AFont);
   }
 
   //----------
 
-  void selectFont(const char* font) final {
+  void selectFont(const char* font) override {
     nvgFontFace(MContext,font);
   }
 
   //----------
 
-  void setFontBlur(float blur) final {
+  void setFontBlur(float blur) override {
     nvgFontBlur(MContext,blur);
   }
 
   //----------
 
 //  // nanovg-rgb2hsv
-//  void setFontDilate(float dilate) final {
+//  void setFontDilate(float dilate) override {
 //    nvgFontDilate(MContext,dilate);
 //  }
 
   //----------
 
-  void setShapeAntiAlias(int enabled) final {
+  void setShapeAntiAlias(int enabled) override {
     nvgShapeAntiAlias(MContext,enabled);
   }
 
   //----------
 
-  void setDrawPaint(sat_paint_t paint) /*final*/ {
+  void setDrawPaint(sat_paint_t paint) /*override*/ {
     nvgStrokePaint(MContext,paint);
   }
 
   //----------
 
-  void setFillPaint(sat_paint_t paint) /*final*/ {
+  void setFillPaint(sat_paint_t paint) /*override*/ {
     nvgFillPaint(MContext,paint);
   }
 
   //----------
 
-  void setMiterLimit(double limit) final {
+  void setMiterLimit(double limit) override {
     nvgMiterLimit(MContext,limit);
   }
 
@@ -450,7 +450,7 @@ public: // set
   
   // 0=NVG_BUTT (default), 1=NVG_ROUND, 2=NVG_SQUARE
 
-  void setLineCap(int cap) final {
+  void setLineCap(int cap) override {
     nvgLineCap(MContext,cap);
   }
 
@@ -458,14 +458,14 @@ public: // set
 
   // 4=NVG_MITER (default), 1=NVG_ROUND, 3=NVG_BEVEL
 
-  void setLineJoin(int join) final {
+  void setLineJoin(int join) override {
     nvgLineJoin(MContext,join);
   }
 
   //----------
 
 //  // nanovg-rgb2hsv
-//  void setLineStyle(int style) final {
+//  void setLineStyle(int style) override {
 //    nvgLineStyle(MContext,style);
 //  }
 
@@ -473,35 +473,35 @@ public: // set
 public:
 //------------------------------
 
-  void beginPath() final {
+  void beginPath() override {
     nvgBeginPath(MContext);
   }
 
-  void stroke() final {
+  void stroke() override {
     nvgStroke(MContext);
   }
 
-  void fill() final {
+  void fill() override {
     nvgFill(MContext);
   }
 
-  void moveTo(double x, double y) final {
+  void moveTo(double x, double y) override {
     nvgMoveTo(MContext,x,y);
   }
 
-  void lineTo(double x, double y) final {
+  void lineTo(double x, double y) override {
     nvgLineTo(MContext,x,y);
   }
 
-  void arcTo(double x1, double y1, double x2, double y2, double r) final {
+  void arcTo(double x1, double y1, double x2, double y2, double r) override {
     nvgArcTo(MContext,x1,y1,x2,y2,r);
   }
 
-  void quadTo(double c1x, double c1y, double x2, double y2) final {
+  void quadTo(double c1x, double c1y, double x2, double y2) override {
     nvgQuadTo(MContext,c1x,c1y,x2,y2);
   }
 
-  void bezierTo(double c1x, double c1y, double c2x, double c2y, double x2, double y2) final {
+  void bezierTo(double c1x, double c1y, double c2x, double c2y, double x2, double y2) override {
     nvgBezierTo(MContext,c1x,c1y,c2x,c2y,x2,y2);
   }
 
@@ -509,7 +509,7 @@ public:
 public: // draw
 //------------------------------
 
-  void drawLine(double x1, double y1, double x2, double y2) final {
+  void drawLine(double x1, double y1, double x2, double y2) override {
     nvgBeginPath(MContext);
     nvgMoveTo(MContext,x1,y1);
     nvgLineTo(MContext,x2,y2);
@@ -518,7 +518,7 @@ public: // draw
 
   //----------
 
-  void drawLines(uint32_t num, double* coords) final {
+  void drawLines(uint32_t num, double* coords) override {
     if (num >= 2) {
       nvgBeginPath(MContext);
       for (uint32_t i=0; i<num; i++) {
@@ -535,7 +535,7 @@ public: // draw
 
   //----------
 
-  void drawLineStrip(uint32_t num, double* coords) final {
+  void drawLineStrip(uint32_t num, double* coords) override {
     if (num >= 2) {
       nvgBeginPath(MContext);
       double x = *coords++;
@@ -552,7 +552,7 @@ public: // draw
 
   //----------
 
-  void drawArc(double cx, double cy, double r, double a1, double a2) final {
+  void drawArc(double cx, double cy, double r, double a1, double a2) override {
     nvgBeginPath(MContext);
     nvgArc(MContext,cx,cy,r,a1,a2,2);
     nvgStroke(MContext);
@@ -560,7 +560,7 @@ public: // draw
 
   //----------
 
-  void drawRect(double x, double y, double w, double h) final {
+  void drawRect(double x, double y, double w, double h) override {
     nvgBeginPath(MContext);
     nvgRect(MContext,x,y,w,h);
     nvgStroke(MContext);
@@ -568,7 +568,7 @@ public: // draw
 
   //----------
 
-  void drawRoundedRect(double x, double y, double w, double h, double r) final {
+  void drawRoundedRect(double x, double y, double w, double h, double r) override {
     nvgBeginPath(MContext);
     nvgRoundedRect(MContext,x,y,w,h,r);
     nvgStroke(MContext);
@@ -576,7 +576,7 @@ public: // draw
 
   //----------
 
-  void drawRoundedRect(double x, double y, double w, double h, double rtl, double rtr, double rbr, double rbl) final {
+  void drawRoundedRect(double x, double y, double w, double h, double rtl, double rtr, double rbr, double rbl) override {
     nvgBeginPath(MContext);
     nvgRoundedRectVarying(MContext,x,y,w,h,rtl,rtr,rbr,rbl);
     nvgStroke(MContext);
@@ -584,7 +584,7 @@ public: // draw
 
   //----------
 
-  void drawEllipse(double cx, double cy, double rx, double ry) final {
+  void drawEllipse(double cx, double cy, double rx, double ry) override {
     nvgBeginPath(MContext);
     nvgEllipse(MContext,cx,cy,rx,ry);
     nvgStroke(MContext);
@@ -592,7 +592,7 @@ public: // draw
 
   //----------
 
-  void drawCircle(double cx, double cy, double r) final {
+  void drawCircle(double cx, double cy, double r) override {
     nvgBeginPath(MContext);
     nvgCircle(MContext,cx,cy,r);
     nvgStroke(MContext);
@@ -602,7 +602,7 @@ public: // draw
 public: // fill
 //------------------------------
 
-  void fillLines(uint32_t num, double* coords) final {
+  void fillLines(uint32_t num, double* coords) override {
     if (num >= 2) {
       nvgBeginPath(MContext);
       for (uint32_t i=1; i<num; i++) {
@@ -620,7 +620,7 @@ public: // fill
 
   //----------
 
-  void fillLineStrip(uint32_t num, double* coords) final {
+  void fillLineStrip(uint32_t num, double* coords) override {
     if (num >= 2) {
       nvgBeginPath(MContext);
       double x = *coords++;
@@ -637,7 +637,7 @@ public: // fill
 
   //----------
 
-  void fillArc(double cx, double cy, double r, double a1, double a2) final {
+  void fillArc(double cx, double cy, double r, double a1, double a2) override {
     nvgBeginPath(MContext);
     ////a2 += a1;
     //a2 = a1 - a2;
@@ -648,7 +648,7 @@ public: // fill
 
   //----------
 
-  void fillRect(double x, double y, double w, double h) final {
+  void fillRect(double x, double y, double w, double h) override {
     nvgBeginPath(MContext);
     nvgRect(MContext,x,y,w,h);
     nvgFill(MContext);
@@ -656,7 +656,7 @@ public: // fill
 
   //----------
 
-  void fillRoundedRect(double x, double y, double w, double h, double r) final {
+  void fillRoundedRect(double x, double y, double w, double h, double r) override {
     nvgBeginPath(MContext);
     nvgRoundedRect(MContext,x,y,w,h,r);
     nvgFill(MContext);
@@ -664,7 +664,7 @@ public: // fill
 
   //----------
 
-  void fillRoundedRect(double x, double y, double w, double h, double rtl, double rtr, double rbr, double rbl) final {
+  void fillRoundedRect(double x, double y, double w, double h, double rtl, double rtr, double rbr, double rbl) override {
     nvgBeginPath(MContext);
     nvgRoundedRectVarying(MContext,x,y,w,h,rtl,rtr,rbr,rbl);
     nvgFill(MContext);
@@ -672,7 +672,7 @@ public: // fill
 
   //----------
 
-  void fillEllipse(double cx, double cy, double rx, double ry) final {
+  void fillEllipse(double cx, double cy, double rx, double ry) override {
     nvgBeginPath(MContext);
     nvgEllipse(MContext,cx,cy,rx,ry);
     nvgFill(MContext);
@@ -680,7 +680,7 @@ public: // fill
 
   //----------
 
-  void fillCircle(double cx, double cy, double r) final {
+  void fillCircle(double cx, double cy, double r) override {
     nvgBeginPath(MContext);
     nvgCircle(MContext,cx,cy,r);
     nvgFill(MContext);
@@ -690,7 +690,7 @@ public: // fill
 public: // curve
 //------------------------------
 
-  void drawCurveQuad(double x1, double y1, double x2, double y2, double c1x, double c1y) final {
+  void drawCurveQuad(double x1, double y1, double x2, double y2, double c1x, double c1y) override {
     nvgBeginPath(MContext);
     nvgMoveTo(MContext,x1,y1);
     nvgQuadTo(MContext,c1x,c1y,x2,y2);
@@ -699,7 +699,7 @@ public: // curve
 
   //----------
 
-  void drawCurveBezier(double x1, double y1, double x2, double y2, double c1x, double c1y, double c2x, double c2y) final {
+  void drawCurveBezier(double x1, double y1, double x2, double y2, double c1x, double c1y, double c2x, double c2y) override {
     nvgBeginPath(MContext);
     nvgMoveTo(MContext,x1,y1);
     nvgBezierTo(MContext,c1x,c1y,c2x,c2y,x2,y2);
@@ -710,19 +710,19 @@ public: // curve
 public: // text
 //------------------------------
 
-  float drawText(float x, float y, const char* string, const char* end) final {
+  float drawText(float x, float y, const char* string, const char* end) override {
     return nvgText(MContext,x,y,string,end);
   }
 
   //----------
 
-  void drawText(double x, double y, const char* text) final {
+  void drawText(double x, double y, const char* text) override {
     nvgText(MContext,x,y,text,nullptr);
   }
 
   //----------
 
-  void drawTextBox(float x, float y, float breakRowWidth, const char* string, const char* end) final {
+  void drawTextBox(float x, float y, float breakRowWidth, const char* string, const char* end) override {
     nvgTextBox(MContext,x,y,breakRowWidth,string,end);
   }
 
@@ -732,27 +732,27 @@ public: // text
 public: // font
 //------------------------------
 
-  int32_t loadFont(const char* AName, const char* AFilename) final {
+  int32_t loadFont(const char* AName, const char* AFilename) override {
     int font = nvgCreateFont(MContext,AName,AFilename);
     return font;
   }
 
   //----------
 
-  int32_t loadFont(const char* AName, void* ABuffer, uint32_t ASize) final {
+  int32_t loadFont(const char* AName, void* ABuffer, uint32_t ASize) override {
     int font = nvgCreateFontMem(MContext,AName,(unsigned char*)ABuffer,ASize,0);
     return font;
   }
 
   //----------
 
-  int loadFontAtIndex(const char* name, const char* filename, const int fontIndex) final {
+  int loadFontAtIndex(const char* name, const char* filename, const int fontIndex) override {
     return nvgCreateFontAtIndex(MContext,name,filename,fontIndex);
   }
 
   //----------
 
-  int loadFontMemAtIndex(const char* name, unsigned char* data, int ndata, int freeData, const int fontIndex) final {
+  int loadFontMemAtIndex(const char* name, unsigned char* data, int ndata, int freeData, const int fontIndex) override {
     return nvgCreateFontMemAtIndex(MContext,name,data,ndata,freeData,fontIndex);
   }
 
@@ -761,69 +761,69 @@ public: // font
   //void deleteFont(int32_t AFont) {
   //}
 
-  int findFont(const char* name) final {
+  int findFont(const char* name) override {
     return nvgFindFont(MContext,name);
   }
 
   //----------
 
-  int addFallbackFontId(int baseFont, int fallbackFont) final {
+  int addFallbackFontId(int baseFont, int fallbackFont) override {
     return nvgAddFallbackFontId(MContext,baseFont,fallbackFont);
   }
 
   //----------
 
-  int addFallbackFont(const char* baseFont, const char* fallbackFont) final {
+  int addFallbackFont(const char* baseFont, const char* fallbackFont) override {
     return nvgAddFallbackFont(MContext,baseFont,fallbackFont);
   }
 
   //----------
 
-  void resetFallbackFontsId(int baseFont) final {
+  void resetFallbackFontsId(int baseFont) override {
     nvgResetFallbackFontsId(MContext,baseFont);
   }
 
   //----------
 
-  void resetFallbackFonts(const char* baseFont) final {
+  void resetFallbackFonts(const char* baseFont) override {
     nvgResetFallbackFonts(MContext,baseFont);
   }
 
   //----------
 
-  float getTextBounds(float x, float y, const char* string, const char* end, float* bounds) final {
+  float getTextBounds(float x, float y, const char* string, const char* end, float* bounds) override {
     return nvgTextBounds(MContext,x,y,string,end,bounds);
   }
 
   //----------
 
-  void getTextBoxBounds(float x, float y, float breakRowWidth, const char* string, const char* end, float* bounds) final {
+  void getTextBoxBounds(float x, float y, float breakRowWidth, const char* string, const char* end, float* bounds) override {
     nvgTextBoxBounds(MContext,x,y,breakRowWidth,string,end,bounds);
   }
 
   //----------
 
-  int getTextGlyphPositions(float x, float y, const char* string, const char* end, /*NVGglyphPosition*/void* positions, int maxPositions) final {
+  int getTextGlyphPositions(float x, float y, const char* string, const char* end, /*NVGglyphPosition*/void* positions, int maxPositions) override {
     return nvgTextGlyphPositions(MContext,x,y,string,end,(NVGglyphPosition*)positions,maxPositions);
   }
 
   //----------
 
-  void getTextMetrics(float* ascender, float* descender, float* lineh) final {
+  void getTextMetrics(float* ascender, float* descender, float* lineh) override {
     nvgTextMetrics(MContext,ascender,descender,lineh);
   }
 
   //----------
 
-  // orig
-  int getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) final {
-    return nvgTextBreakLines(MContext,string,end,breakRowWidth,(NVGtextRow*)rows,maxRows);
-  }
+  // // orig
+  // int getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) override {
+  //   return nvgTextBreakLines(MContext,string,end,breakRowWidth,(NVGtextRow*)rows,maxRows);
+  // }
   
-//  // nanovg-rgb2hsv
-//  int getTextBreakLines(NVGcontext* ctx, const char* string, const char* end, float breakRowWidth, NVGtextRow* rows, int maxRows, int skipSpaces) final {
-//    return nvgTextBreakLines(MContext,string,end,breakRowWidth,rows,maxRows,skipSpaces);
-//  }
+  // nanovg-rgb2hsv
+  int getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows, int skipSpaces) override {
+    return nvgTextBreakLines(MContext,string,end,breakRowWidth,(NVGtextRow*)rows,maxRows,skipSpaces);
+  }
   
   
 
@@ -833,7 +833,7 @@ public: // image
 
   // load & parse image from disk
 
-  int32_t loadImage(const char* AFilename) final {
+  int32_t loadImage(const char* AFilename) override {
     int flags = 0;
     //flags |= NVG_IMAGE_GENERATE_MIPMAPS;  // Generate mipmaps during creation of the image.
     //flags |= NVG_IMAGE_REPEATX;           // Repeat image in X direction.
@@ -853,7 +853,7 @@ public: // image
 
   // load & parse image from memory
 
-  int32_t loadImage(void* ABuffer, uint32_t ASize) final {
+  int32_t loadImage(void* ABuffer, uint32_t ASize) override {
     int flags = 0;
     int image = nvgCreateImageMem(MContext,flags,(unsigned char*)ABuffer,ASize);
     return image;
@@ -863,7 +863,7 @@ public: // image
   
   // load image (rgba) from memory
   
-  int32_t loadImage(int32_t AWidth, int32_t AHeight, void* ABuffer) final {
+  int32_t loadImage(int32_t AWidth, int32_t AHeight, void* ABuffer) override {
     int flags = 0;
     //flags |= NVG_IMAGE_GENERATE_MIPMAPS;  // Generate mipmaps during creation of the image.
     flags |= NVG_IMAGE_REPEATX;           // Repeat image in X direction.
@@ -877,19 +877,19 @@ public: // image
 
   //----------
 
-  void deleteImage(int32_t AImage) final {
+  void deleteImage(int32_t AImage) override {
     nvgDeleteImage(MContext,AImage);
   }
 
   //----------
 
-  void updateImage(int image, const unsigned char* data) final {
+  void updateImage(int image, const unsigned char* data) override {
     nvgUpdateImage(MContext,image,data);
   }
 
   //----------
 
-  void imageSize(int image, int* w, int* h) final {
+  void imageSize(int image, int* w, int* h) override {
     nvgImageSize(MContext,image,w,h);
   }
 
@@ -926,13 +926,13 @@ public: // image
 
     float drawImage(NVGcontext* vg, int image, float alpha,
                     float sx, float sy, float sw, float sh, // sprite location on texture
-                    float x, float y, float w, float h) {   // position and size of the sprite rectangle updateImage(int image, const unsigned char* data) final {
+                    float x, float y, float w, float h) {   // position and size of the sprite rectangle updateImage(int image, const unsigned char* data) override {
     nvgUpdateImage(MContext,image,data);
   }
 
   //----------
 
-  void imageSize(int image, int* w, int* h) final on screen
+  void imageSize(int image, int* w, int* h) //final on screen
       float ax, ay;
       int iw,ih;
       NVGpaint img;
@@ -949,7 +949,7 @@ public: // image
     }
   */
 
-  void setFillImage(int32_t AImage, double xofs, double yofs, double xscale, double yscale, double AAlpha=1.0, double AAngle=0.0) final {
+  void setFillImage(int32_t AImage, double xofs, double yofs, double xscale, double yscale, double AAlpha=1.0, double AAngle=0.0) override {
     int iw,ih;
     nvgImageSize(MContext,AImage,&iw,&ih);
     // sprite location on texture
@@ -979,7 +979,7 @@ public: // image
 public: // paints
 //------------------------------
 
-  sat_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) /*final*/ {
+  sat_paint_t linearGradient(double sx, double sy, double ex, double ey, SAT_Color icol, SAT_Color ocol) /*override*/ {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
     return nvgLinearGradient(MContext,sx,sy,ex,ey,ic,oc);
@@ -987,7 +987,7 @@ public: // paints
 
   //----------
 
-  sat_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*final*/ {
+  sat_paint_t boxGradient(double x, double y, double w, double h, double r, double f, SAT_Color icol, SAT_Color ocol) /*override*/ {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
     return nvgBoxGradient(MContext,x,y,w,h,r,f,ic,oc);
@@ -995,7 +995,7 @@ public: // paints
 
   //----------
 
-  sat_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) /*final*/ {
+  sat_paint_t radialGradient(double cx, double cy, double inr, double outr, SAT_Color icol, SAT_Color ocol) /*override*/ {
     NVGcolor ic = nvg_color(icol);
     NVGcolor oc = nvg_color(ocol);
     return nvgRadialGradient(MContext,cx,cy,inr,outr,ic,oc);
@@ -1003,7 +1003,7 @@ public: // paints
 
   //----------
 
-  sat_paint_t imagePattern(double ox, double oy, double ex, double ey, double angle, int image, double alpha) /*final*/ {
+  sat_paint_t imagePattern(double ox, double oy, double ex, double ey, double angle, int image, double alpha) /*override*/ {
     return nvgImagePattern(MContext,ox,oy,ex,ey,angle,image,alpha);
   }
 
@@ -1024,7 +1024,7 @@ public: // render buffer
       NVG_IMAGE_NODELETE          Do not delete GL texture handle.
   */
 
-  void* createRenderBuffer(uint32_t AWidth, uint32_t AHeight) final {
+  void* createRenderBuffer(uint32_t AWidth, uint32_t AHeight) override {
     int flags = 0;
     NVGLUframebuffer* fb = nvgluCreateFramebuffer(MContext,AWidth,AHeight,flags);
     //SAT_Print("fb %p\n",fb);
@@ -1033,7 +1033,7 @@ public: // render buffer
 
   //----------
 
-  void deleteRenderBuffer(void* buffer) final {
+  void deleteRenderBuffer(void* buffer) override {
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     nvgluBindFramebuffer(nullptr);
     nvgluDeleteFramebuffer(fb);
@@ -1044,7 +1044,7 @@ public: // render buffer
   // get image from fbo/renderbuffer
   // (use as fillImage)
   
-  int32_t getImageFromRenderBuffer(void* buffer) final {
+  int32_t getImageFromRenderBuffer(void* buffer) override {
 //    SAT_Assert(buffer);
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     return fb->image;
@@ -1054,7 +1054,7 @@ public: // render buffer
 
   // set fbo/renderbuffer as target for painting
 
-  void selectRenderBuffer(void* buffer) final {
+  void selectRenderBuffer(void* buffer) override {
     MCurrentRenderBuffer = buffer;
     NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
     nvgluBindFramebuffer(fb);
@@ -1065,7 +1065,7 @@ public: // render buffer
   // set fbo/renderbuffer as target for painting
   // and sets opengl viewport (0,0,w,h)
 
-//  void selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) final {
+//  void selectRenderBuffer(void* buffer, uint32_t width, uint32_t height) override {
 //    MCurrentRenderBuffer = buffer;
 //    NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
 //    nvgluBindFramebuffer(fb);
@@ -1077,7 +1077,7 @@ public: // render buffer
   // set fbo/renderbuffer as target for painting
   // and sets opengl viewport (x,y,w,h)
 
-//  void selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) final {
+//  void selectRenderBuffer(void* buffer, uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height) override {
 //    MCurrentRenderBuffer = buffer;
 //    NVGLUframebuffer* fb = (NVGLUframebuffer*)buffer;
 //    nvgluBindFramebuffer(fb);
@@ -1088,22 +1088,22 @@ public: // render buffer
 public:
 //------------------------------
 
-  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) final {
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap) override {
     //SAT_TRACE;
   }
 
-  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) final {
+  void drawBitmap(double AXpos, double AYpos, SAT_Bitmap* ABitmap, SAT_Rect ASrc) override {
     //SAT_TRACE;
   }
   
-  // void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) final {
+  // void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) override {
   //   //SAT_TRACE;
   //   //ASurface->select();
   //   //fillRect(AXpos,AYpos,ASurface->getWidth(),ASurface->getHeight());
   //   //ASurface->deselect();
   // }
   
-  // void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) final {
+  // void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) override {
   //   // //SAT_TRACE;
   //   //   // ASurface->select();
   //   //   //   setFillColor(SAT_Red);

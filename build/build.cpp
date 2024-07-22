@@ -129,7 +129,7 @@ public:
 
   int main() {
     SAT_PRINT("Hello world!\n");
-    SAT_Window* window = new SAT_Window(this,640,480,0);
+    SAT_Window* window = new SAT_Window(640,480,this,0);
     window->setTitle("Hello world!");
     SAT_RootWidget* root = new SAT_RootWidget(window);
     window->setRootWidget(root);

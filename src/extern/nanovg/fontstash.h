@@ -28,14 +28,15 @@ enum FONSflags {
 
 enum FONSalign {
 	// Horizontal align
-	FONS_ALIGN_LEFT 	= 1<<0,	// Default
-	FONS_ALIGN_CENTER 	= 1<<1,
-	FONS_ALIGN_RIGHT 	= 1<<2,
+	FONS_ALIGN_LEFT          = 1<<0, // Default
+	FONS_ALIGN_CENTER        = 1<<1,
+	FONS_ALIGN_RIGHT         = 1<<2,
 	// Vertical align
-	FONS_ALIGN_TOP 		= 1<<3,
-	FONS_ALIGN_MIDDLE	= 1<<4,
-	FONS_ALIGN_BOTTOM	= 1<<5,
-	FONS_ALIGN_BASELINE	= 1<<6, // Default
+	FONS_ALIGN_TOP           = 1<<3,
+	FONS_ALIGN_MIDDLE        = 1<<4,
+	FONS_ALIGN_MIDDLE_ASCENT = 1<<5,
+	FONS_ALIGN_BOTTOM        = 1<<6,
+	FONS_ALIGN_BASELINE      = 1<<7, // Default
 };
 
 enum FONSglyphBitmap {
@@ -76,7 +77,7 @@ typedef struct FONSquad FONSquad;
 struct FONStextIter {
 	float x, y, nextx, nexty, scale, spacing;
 	unsigned int codepoint;
-	short isize, iblur;
+	short isize, iblur, idilate;
 	struct FONSfont* font;
 	int prevGlyphIndex;
 	const char* str;
@@ -116,6 +117,7 @@ void fonsSetSize(FONScontext* s, float size);
 void fonsSetColor(FONScontext* s, unsigned int color);
 void fonsSetSpacing(FONScontext* s, float spacing);
 void fonsSetBlur(FONScontext* s, float blur);
+void fonsSetDilate(FONScontext* s, float dilate);
 void fonsSetAlign(FONScontext* s, int align);
 void fonsSetFont(FONScontext* s, int font);
 
@@ -165,7 +167,9 @@ static void* fons__tmpalloc(size_t size, void* up);
 static void fons__tmpfree(void* ptr, void* up);
 #define STBTT_malloc(x,u)    fons__tmpalloc(x,u)
 #define STBTT_free(x,u)      fons__tmpfree(x,u)
-#include "extern/stb/stb_truetype.h"
+//SKEI
+//#include "stb_truetype.h"
+#include "../stb/stb_truetype.h"
 
 struct FONSttFontImpl {
 	stbtt_fontinfo font;
@@ -225,7 +229,7 @@ struct FONSglyph
 	unsigned int codepoint;
 	int index;
 	int next;
-	short size, blur;
+	short size, blur, dilate;
 	short x0,y0,x1,y1;
 	short xadv,xoff,yoff;
 };
@@ -257,6 +261,7 @@ struct FONSstate
 	float size;
 	unsigned int color;
 	float blur;
+	float dilate;
 	float spacing;
 };
 typedef struct FONSstate FONSstate;
@@ -373,7 +378,7 @@ void fons__tt_renderGlyphBitmap(FONSttFontImpl *font, unsigned char *output, int
 {
 	FT_GlyphSlot ftGlyph = font->font->glyph;
 	int ftGlyphOffset = 0;
-	unsigned int x, y;
+	int x, y;
 	FONS_NOTUSED(outWidth);
 	FONS_NOTUSED(outHeight);
 	FONS_NOTUSED(scaleX);
@@ -834,6 +839,10 @@ void fonsSetBlur(FONScontext* stash, float blur)
 {
 	fons__getState(stash)->blur = blur;
 }
+void fonsSetDilate(FONScontext* stash, float dilate)
+{
+	fons__getState(stash)->dilate = dilate;
+}
 
 void fonsSetAlign(FONScontext* stash, int align)
 {
@@ -874,6 +883,7 @@ void fonsClearState(FONScontext* stash)
 	state->color = 0xffffffff;
 	state->font = 0;
 	state->blur = 0;
+	state->dilate= 0;
 	state->spacing = 0;
 	state->align = FONS_ALIGN_LEFT | FONS_ALIGN_BASELINE;
 }
@@ -1069,12 +1079,143 @@ static void fons__blur(FONScontext* stash, unsigned char* dst, int w, int h, int
 	fons__blurCols(dst, w, h, dstStride, alpha);
 	fons__blurRows(dst, w, h, dstStride, alpha);
 	fons__blurCols(dst, w, h, dstStride, alpha);
-//	fons__blurrows(dst, w, h, dstStride, alpha);
-//	fons__blurcols(dst, w, h, dstStride, alpha);
+}
+
+static void fons__maxRows(unsigned char* dst, int w, int h, int dstStride)
+{
+	int x, y;
+	unsigned char prev, current;
+	unsigned char* ptr;
+	for (x = 0; x < w; x++) {
+		prev=dst[0];
+		for (y = dstStride; y < h*dstStride; y += dstStride) {
+			ptr=&dst[y];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+		for (y = (h-2)*dstStride; y >= 0; y -= dstStride) {
+			ptr=&dst[y];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+		dst++;
+	}
+}
+
+static void fons__maxCols(unsigned char* dst, int w, int h, int dstStride)
+{
+	int x, y;
+	unsigned char prev, current;
+	unsigned char* ptr;
+	for (y = 0; y < h; y++) {
+		prev=dst[0];
+		for (x = 1; x < w; x++) {
+			ptr=&dst[x];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+		for (x = w-2; x >= 0; x--) {
+			ptr=&dst[x];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+		dst += dstStride;
+	}
+}
+
+static void fons__maxDiagUp(unsigned char* dst, int w, int h, int dstStride)
+{
+	int t, y;
+	const int a =dstStride-1;
+	const int d=w+h;
+	unsigned char prev, current;
+	unsigned char* ptr;
+	for(t=0;t<d;t++){
+		const int y_min=(t-w<0)?0:t-w;
+		const int y_max=(t<h-1)?t:h-1;
+		prev=dst[t+y_min*a];
+		for(y=y_min;y<=y_max;y++){
+			ptr=&dst[t+y*a];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+		for(y=y_max-1;y>=y_min;y--){
+			ptr=&dst[t+y*a];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+	}
+}
+
+static void fons__maxDiagDown(unsigned char* dst, int w, int h, int dstStride)
+{
+	int t, y;
+	const int a=(h-1)*dstStride;
+	const int b=dstStride+1;
+	const int d=w+h;
+	unsigned char prev, current;
+	unsigned char* ptr;
+	for(t=0;t<d;t++){
+		const int y_min=(t-w<0)?0:t-w;
+		const int y_max=(t<h-1)?t:h-1;
+		prev=dst[t-y_min*b+a];
+		for(y=y_min;y<=y_max;y++){
+			ptr=&dst[t-y*b+a];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+		for(y=y_max-1;y>=y_min;y--){
+			ptr=&dst[t-y*b+a];
+			current=*ptr;
+			if(prev > current){
+				*ptr=prev;
+			}
+			prev=current;
+		}
+	}
+}
+
+// Gray level morphological dilation approximated by convolving with a max stencil along
+// Diagonal convolution overlaps with horizontal & vertical, so we alternate between vertical & horizontal
+// and diagonal directions to prevent the dilation from being too large.
+static void fons__dilate(FONScontext* stash, unsigned char* dst, int w, int h, int dstStride, int dilate)
+{
+	(void)stash;
+
+	for(int iter=0;iter<dilate;iter++){
+		if(iter%2==0){
+			fons__maxRows(dst, w, h, dstStride);
+			fons__maxCols(dst, w, h, dstStride);
+		} else {
+			fons__maxDiagUp(dst,w,h,dstStride);
+			fons__maxDiagDown(dst,w, h,dstStride);
+		}
+	}
 }
 
 static FONSglyph* fons__getGlyph(FONScontext* stash, FONSfont* font, unsigned int codepoint,
-								 short isize, short iblur, int bitmapOption)
+								 short isize, short iblur, short idilate, int bitmapOption)
 {
 	int i, g, advance, lsb, x0, y0, x1, y1, gw, gh, gx, gy, x, y;
 	float scale;
@@ -1088,7 +1229,9 @@ static FONSglyph* fons__getGlyph(FONScontext* stash, FONSfont* font, unsigned in
 
 	if (isize < 2) return NULL;
 	if (iblur > 20) iblur = 20;
-	pad = iblur+2;
+	if (idilate > 20) idilate = 20;
+	const int antiAliasBonus = 2;
+	pad = antiAliasBonus + iblur + idilate;
 
 	// Reset allocator.
 	stash->nscratch = 0;
@@ -1097,7 +1240,9 @@ static FONSglyph* fons__getGlyph(FONScontext* stash, FONSfont* font, unsigned in
 	h = fons__hashint(codepoint) & (FONS_HASH_LUT_SIZE-1);
 	i = font->lut[h];
 	while (i != -1) {
-		if (font->glyphs[i].codepoint == codepoint && font->glyphs[i].size == isize && font->glyphs[i].blur == iblur) {
+		if (font->glyphs[i].codepoint == codepoint && font->glyphs[i].size == isize
+				&& font->glyphs[i].blur == iblur
+				&& font->glyphs[i].dilate == idilate) {
 			glyph = &font->glyphs[i];
 			if (bitmapOption == FONS_GLYPH_BITMAP_OPTIONAL || (glyph->x0 >= 0 && glyph->y0 >= 0)) {
 			  return glyph;
@@ -1151,6 +1296,7 @@ static FONSglyph* fons__getGlyph(FONScontext* stash, FONSfont* font, unsigned in
 		glyph->codepoint = codepoint;
 		glyph->size = isize;
 		glyph->blur = iblur;
+		glyph->dilate = idilate;
 		glyph->next = 0;
 
 		// Insert char to hash lookup.
@@ -1195,6 +1341,13 @@ static FONSglyph* fons__getGlyph(FONScontext* stash, FONSfont* font, unsigned in
 		}
 	}*/
 
+	// Dilate
+	if (idilate > 0) {
+		stash->nscratch = 0;
+		bdst = &stash->texData[glyph->x0 + glyph->y0 * stash->params.width];
+		fons__dilate(stash, bdst, gw, gh, stash->params.width, idilate);
+	}
+
 	// Blur
 	if (iblur > 0) {
 		stash->nscratch = 0;
@@ -1218,7 +1371,7 @@ static void fons__getQuad(FONScontext* stash, FONSfont* font,
 
 	if (prevGlyphIndex != -1) {
 		float adv = fons__tt_getGlyphKernAdvance(&font->font, prevGlyphIndex, glyph->index) * scale;
-		*x += (int)(adv + spacing + 0.5f);
+		*x += adv + spacing;
 	}
 
 	// Each glyph has 2px border to allow good interpolation,
@@ -1232,8 +1385,8 @@ static void fons__getQuad(FONScontext* stash, FONSfont* font,
 	y1 = (float)(glyph->y1-1);
 
 	if (stash->params.flags & FONS_ZERO_TOPLEFT) {
-		rx = floorf(*x + xoff);
-		ry = floorf(*y + yoff);
+		rx = *x + xoff;
+		ry = *y + yoff;
 
 		q->x0 = rx;
 		q->y0 = ry;
@@ -1245,8 +1398,8 @@ static void fons__getQuad(FONScontext* stash, FONSfont* font,
 		q->s1 = x1 * stash->itw;
 		q->t1 = y1 * stash->ith;
 	} else {
-		rx = floorf(*x + xoff);
-		ry = floorf(*y - yoff);
+		rx = *x + xoff;
+		ry = *y - yoff;
 
 		q->x0 = rx;
 		q->y0 = ry;
@@ -1259,7 +1412,7 @@ static void fons__getQuad(FONScontext* stash, FONSfont* font,
 		q->t1 = y1 * stash->ith;
 	}
 
-	*x += (int)(glyph->xadv / 10.0f + 0.5f);
+	*x += glyph->xadv / 10.0f;
 }
 
 static void fons__flush(FONScontext* stash)
@@ -1300,6 +1453,8 @@ static float fons__getVertAlign(FONScontext* stash, FONSfont* font, int align, s
 			return font->ascender * (float)isize/10.0f;
 		} else if (align & FONS_ALIGN_MIDDLE) {
 			return (font->ascender + font->descender) / 2.0f * (float)isize/10.0f;
+		} else if (align & FONS_ALIGN_MIDDLE_ASCENT) {
+			return (font->ascender) / 2.0f * (float)isize/10.0f;
 		} else if (align & FONS_ALIGN_BASELINE) {
 			return 0.0f;
 		} else if (align & FONS_ALIGN_BOTTOM) {
@@ -1310,6 +1465,8 @@ static float fons__getVertAlign(FONScontext* stash, FONSfont* font, int align, s
 			return -font->ascender * (float)isize/10.0f;
 		} else if (align & FONS_ALIGN_MIDDLE) {
 			return -(font->ascender + font->descender) / 2.0f * (float)isize/10.0f;
+		} else if (align & FONS_ALIGN_MIDDLE_ASCENT) {
+			return -(font->ascender) / 2.0f * (float)isize/10.0f;
 		} else if (align & FONS_ALIGN_BASELINE) {
 			return 0.0f;
 		} else if (align & FONS_ALIGN_BOTTOM) {
@@ -1331,6 +1488,7 @@ float fonsDrawText(FONScontext* stash,
 	int prevGlyphIndex = -1;
 	short isize = (short)(state->size*10.0f);
 	short iblur = (short)state->blur;
+	short idilate = (short)state->dilate;
 	float scale;
 	FONSfont* font;
 	float width;
@@ -1361,7 +1519,7 @@ float fonsDrawText(FONScontext* stash,
 	for (; str != end; ++str) {
 		if (fons__decutf8(&utf8state, &codepoint, *(const unsigned char*)str))
 			continue;
-		glyph = fons__getGlyph(stash, font, codepoint, isize, iblur, FONS_GLYPH_BITMAP_REQUIRED);
+		glyph = fons__getGlyph(stash, font, codepoint, isize, iblur, idilate, FONS_GLYPH_BITMAP_REQUIRED);
 		if (glyph != NULL) {
 			fons__getQuad(stash, font, prevGlyphIndex, glyph, scale, state->spacing, &x, &y, &q);
 
@@ -1398,6 +1556,7 @@ int fonsTextIterInit(FONScontext* stash, FONStextIter* iter,
 
 	iter->isize = (short)(state->size*10.0f);
 	iter->iblur = (short)state->blur;
+	iter->idilate = (short)state->dilate;
 	iter->scale = fons__tt_getPixelHeightScale(&iter->font->font, (float)iter->isize/10.0f);
 
 	// Align horizontally
@@ -1445,7 +1604,7 @@ int fonsTextIterNext(FONScontext* stash, FONStextIter* iter, FONSquad* quad)
 		// Get glyph and quad
 		iter->x = iter->nextx;
 		iter->y = iter->nexty;
-		glyph = fons__getGlyph(stash, iter->font, iter->codepoint, iter->isize, iter->iblur, iter->bitmapOption);
+		glyph = fons__getGlyph(stash, iter->font, iter->codepoint, iter->isize, iter->iblur, iter->idilate, iter->bitmapOption);
 		// If the iterator was initialized with FONS_GLYPH_BITMAP_OPTIONAL, then the UV coordinates of the quad will be invalid.
 		if (glyph != NULL)
 			fons__getQuad(stash, iter->font, iter->prevGlyphIndex, glyph, iter->scale, iter->spacing, &iter->nextx, &iter->nexty, quad);
@@ -1518,6 +1677,7 @@ float fonsTextBounds(FONScontext* stash,
 	int prevGlyphIndex = -1;
 	short isize = (short)(state->size*10.0f);
 	short iblur = (short)state->blur;
+	short idilate = (short)state->dilate;
 	float scale;
 	FONSfont* font;
 	float startx, advance;
@@ -1543,7 +1703,7 @@ float fonsTextBounds(FONScontext* stash,
 	for (; str != end; ++str) {
 		if (fons__decutf8(&utf8state, &codepoint, *(const unsigned char*)str))
 			continue;
-		glyph = fons__getGlyph(stash, font, codepoint, isize, iblur, FONS_GLYPH_BITMAP_OPTIONAL);
+		glyph = fons__getGlyph(stash, font, codepoint, isize, iblur, idilate, FONS_GLYPH_BITMAP_OPTIONAL);
 		if (glyph != NULL) {
 			fons__getQuad(stash, font, prevGlyphIndex, glyph, scale, state->spacing, &x, &y, &q);
 			if (q.x0 < minx) minx = q.x0;

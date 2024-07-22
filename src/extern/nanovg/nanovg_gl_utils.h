@@ -124,7 +124,7 @@ void nvgluBindFramebuffer(NVGLUframebuffer* fb)
 {
 #ifdef NANOVG_FBO_VALID
 	if (defaultFBO == -1) glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, fb != NULL ? fb->fbo : defaultFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, fb != NULL ? fb->fbo : (GLuint)defaultFBO);
 #else
 	NVG_NOTUSED(fb);
 #endif
