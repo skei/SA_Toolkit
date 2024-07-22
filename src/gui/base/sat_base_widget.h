@@ -57,7 +57,7 @@ public:
 //------------------------------
 
   virtual void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
-  virtual void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) {}
+  virtual void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) {}
   virtual void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) {}
   virtual void do_widget_notify(SAT_Widget* AWidget, int32_t AValue) {}
   virtual void do_widget_mouse_capture(SAT_Widget* AWidget) {}

@@ -132,7 +132,8 @@ public:
   virtual void        getTextBoxBounds(float x, float y, float breakRowWidth, const char* string, const char* end, float* bounds) {}
   virtual int         getTextGlyphPositions(float x, float y, const char* string, const char* end, /*NVGglyphPosition*/void* positions, int maxPositions) { return 0; }
   virtual void        getTextMetrics(float* ascender, float* descender, float* lineh) {}
-  virtual int         getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) { return 0; }
+//virtual int         getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) { return 0; }
+  virtual int         getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows, int skipSpaces) { return 0; }
 
   virtual int32_t     loadImage(const char* AFilename) { return 0; }
   virtual int32_t     loadImage(void* ABuffer, uint32_t ASize) { return 0; }

@@ -107,7 +107,7 @@ public: // do_widget
     if (MListener) MListener->on_WidgetListener_update(AWidget,AIndex,AMode);
   }
   
-  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_ALL) override {
+  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) override {
     if (MListener) MListener->on_WidgetListener_redraw(AWidget,AIndex,AMode);
   }
 

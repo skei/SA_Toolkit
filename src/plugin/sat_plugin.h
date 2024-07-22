@@ -513,7 +513,7 @@ public: // editor
     #ifdef SAT_EDITOR_EMBEDDED
 
       virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
-        return new SAT_Window(nullptr,AWidth,AHeight);
+        return new SAT_Window(AWidth,AHeight);
       }
 
       // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.destroy()

@@ -69,7 +69,7 @@ public:
 public:
 //------------------------------
 
-  void on_WindowListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void on_WindowListener_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
     SAT_Parameter* param = (SAT_Parameter*)AWidget->getParameter(AIndex);
     if (param) {
       uint32_t index = param->getIndex();
@@ -80,7 +80,7 @@ public:
 
   //----------
 
-  // void on_windowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_PARAM) override {
+  // void on_windowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) override {
   // }
 
   //----------
@@ -202,7 +202,7 @@ public: // clap.gui
       // ask plugin to create window.. if not, create it ourselves
 
       if (MListener) MWindow = MListener->on_EditorListener_createWindow(this,MWidth,MHeight);
-      else MWindow = new SAT_Window(this,MWidth,MHeight);
+      else MWindow = new SAT_Window(MWidth,MHeight,this);
       //MWindow->setListener(this); // not needed?
 
     #endif
@@ -211,7 +211,7 @@ public: // clap.gui
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
       // ask plugin to create window.. if not, create it ourselves
       if (MListener) MWindow = MListener->on_EditorListener_createWindow(this,MWidth,MHeight);
-      else MWindow = new SAT_Window(this,MWidth,MHeight);
+      else MWindow = new SAT_Window(MWidth,MHeight,this);
       //MWindow->setListener(this);
     #endif
     return true;

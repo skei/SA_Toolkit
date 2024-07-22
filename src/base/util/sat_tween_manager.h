@@ -20,8 +20,8 @@ class SAT_TweenChain;
 typedef SAT_Array<SAT_TweenNode*> SAT_TweenNodeArray;
 typedef SAT_Array<SAT_TweenChain*> SAT_TweenChainArray;
 
-//typedef SAT_Queue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
 typedef SAT_AtomicQueue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
+//typedef SAT_Queue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
 
 //----------------------------------------------------------------------
 //
@@ -196,9 +196,8 @@ public:
 
   void deleteChains() {
     for (uint32_t i=0; i<MChains.size(); i++) delete MChains[i];
-    SAT_TweenChain* chain;
-    //while (MPending.read(&chain)) { delete chain; }
-    while (MPending.read(chain)) { delete chain; }
+    SAT_TweenChain* chain = nullptr;
+    while (MPending.read(&chain)) { delete chain; }
   }
   
   //----------
@@ -211,8 +210,7 @@ public:
     //SAT_TRACE;
 
     SAT_TweenChain* chain;
-    //while (MPending.read(&chain)) {
-    while (MPending.read(chain)) {
+    while (MPending.read(&chain)) {
       MChains.append(chain);
     }
 

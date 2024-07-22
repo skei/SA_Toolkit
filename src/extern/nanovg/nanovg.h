@@ -41,6 +41,7 @@ struct NVGcolor {
 	};
 };
 typedef struct NVGcolor NVGcolor;
+typedef struct NVGcolor NVGcolor;
 
 struct NVGpaint {
 	float xform[6];
@@ -63,6 +64,13 @@ enum NVGsolidity {
 	NVG_HOLE = 2,			// CW
 };
 
+enum NVGlineStyle {
+	NVG_LINE_SOLID = 1,
+	NVG_LINE_DASHED = 2,
+	NVG_LINE_DOTTED = 3,
+	NVG_LINE_GLOW = 4
+};
+
 enum NVGlineCap {
 	NVG_BUTT,
 	NVG_ROUND,
@@ -73,14 +81,15 @@ enum NVGlineCap {
 
 enum NVGalign {
 	// Horizontal align
-	NVG_ALIGN_LEFT 		= 1<<0,	// Default, align text horizontally to left.
-	NVG_ALIGN_CENTER 	= 1<<1,	// Align text horizontally to center.
-	NVG_ALIGN_RIGHT 	= 1<<2,	// Align text horizontally to right.
+	NVG_ALIGN_LEFT          = 1<<0, // Default, align text horizontally to left.
+	NVG_ALIGN_CENTER        = 1<<1, // Align text horizontally to center.
+	NVG_ALIGN_RIGHT         = 1<<2, // Align text horizontally to right.
 	// Vertical align
-	NVG_ALIGN_TOP 		= 1<<3,	// Align text vertically to top.
-	NVG_ALIGN_MIDDLE	= 1<<4,	// Align text vertically to middle.
-	NVG_ALIGN_BOTTOM	= 1<<5,	// Align text vertically to bottom.
-	NVG_ALIGN_BASELINE	= 1<<6, // Default, align text vertically to baseline.
+	NVG_ALIGN_TOP           = 1<<3, // Align text vertically to top.
+	NVG_ALIGN_MIDDLE        = 1<<4, // Align text vertically to middle.
+	NVG_ALIGN_MIDDLE_ASCENT = 1<<5, // Align text vertically to middle of ascent.
+	NVG_ALIGN_BOTTOM        = 1<<6, // Align text vertically to bottom.
+	NVG_ALIGN_BASELINE      = 1<<7  // Default, align text vertically to baseline.
 };
 
 enum NVGblendFactor {
@@ -229,6 +238,9 @@ void nvgRestore(NVGcontext* ctx);
 // Resets current render state to default values. Does not affect the render state stack.
 void nvgReset(NVGcontext* ctx);
 
+// Gets the current scissor bounds
+struct NVGscissorBounds nvgCurrentScissor(NVGcontext* ctx);
+
 //
 // Render styles
 //
@@ -259,6 +271,10 @@ void nvgMiterLimit(NVGcontext* ctx, float limit);
 
 // Sets the stroke width of the stroke style.
 void nvgStrokeWidth(NVGcontext* ctx, float size);
+
+// Sets how line is drawn.
+// Can be one of NVG_LINE_SOLID (default), NVG_LINE_GLOW, NVG_LINE_DASHED, NVG LINE_DOTTED
+void nvgLineStyle(NVGcontext* ctx, int lineStyle);
 
 // Sets how the end of the line (cap) is drawn,
 // Can be one of: NVG_BUTT (default), NVG_ROUND, NVG_SQUARE.
@@ -537,7 +553,7 @@ void nvgStroke(NVGcontext* ctx);
 //		const char* txt = "Text me up.";
 //		nvgTextBounds(vg, x,y, txt, NULL, bounds);
 //		nvgBeginPath(vg);
-//		nvgRoundedRect(vg, bounds[0],bounds[1], bounds[2]-bounds[0], bounds[3]-bounds[1]);
+//		nvgRect(vg, bounds[0],bounds[1], bounds[2]-bounds[0], bounds[3]-bounds[1]);
 //		nvgFill(vg);
 //
 // Note: currently only solid color fill is supported for text.
@@ -577,6 +593,9 @@ void nvgFontSize(NVGcontext* ctx, float size);
 // Sets the blur of current text style.
 void nvgFontBlur(NVGcontext* ctx, float blur);
 
+// Sets the dilation of current text style.
+void nvgFontDilate(NVGcontext* ctx, float dilate);
+
 // Sets the letter spacing of current text style.
 void nvgTextLetterSpacing(NVGcontext* ctx, float spacing);
 
@@ -591,6 +610,18 @@ void nvgFontFaceId(NVGcontext* ctx, int font);
 
 // Sets the font face based on specified name of current text style.
 void nvgFontFace(NVGcontext* ctx, const char* font);
+
+// Gets the font size of current text style.
+int nvgGetFontFaceId(NVGcontext* ctx);
+
+// Get the font size
+float nvgGetFontSize(NVGcontext* ctx);
+
+//Get Stroke width
+float nvgGetStrokeWidth(NVGcontext* ctx);
+
+// Get text alignment
+int nvgGetTextAlign(NVGcontext* ctx);
 
 // Draws text string at specified location. If end is specified only the sub-string up to the end is drawn.
 float nvgText(NVGcontext* ctx, float x, float y, const char* string, const char* end);
@@ -622,7 +653,10 @@ void nvgTextMetrics(NVGcontext* ctx, float* ascender, float* descender, float* l
 // Breaks the specified text into lines. If end is specified only the sub-string will be used.
 // White space is stripped at the beginning of the rows, the text is split at word boundaries or when new-line characters are encountered.
 // Words longer than the max width are slit at nearest character (i.e. no hyphenation).
-int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, float breakRowWidth, NVGtextRow* rows, int maxRows);
+int nvgTextBreakLines(NVGcontext* ctx, const char* string, const char* end, float breakRowWidth, NVGtextRow* rows, int maxRows, int skipSpaces);
+
+// Get image texture Id
+int nvgGetImageTextureId(NVGcontext* ctx, int handle);
 
 //
 // Internal Render API
@@ -638,14 +672,23 @@ struct NVGscissor {
 };
 typedef struct NVGscissor NVGscissor;
 
+struct NVGscissorBounds {
+	float x;
+	float y;
+	float w;
+	float h;
+};
+typedef struct NVGscissorBounds NVGscissorBounds;
+
 struct NVGvertex {
-	float x,y,u,v;
+	float x,y,u,v,s,t;
 };
 typedef struct NVGvertex NVGvertex;
 
 struct NVGpath {
 	int first;
 	int count;
+	int reversed;
 	unsigned char closed;
 	int nbevel;
 	NVGvertex* fill;
@@ -665,11 +708,12 @@ struct NVGparams {
 	int (*renderDeleteTexture)(void* uptr, int image);
 	int (*renderUpdateTexture)(void* uptr, int image, int x, int y, int w, int h, const unsigned char* data);
 	int (*renderGetTextureSize)(void* uptr, int image, int* w, int* h);
+	int (*renderGetImageTextureId)(void* uptr, int handle);
 	void (*renderViewport)(void* uptr, float width, float height, float devicePixelRatio);
 	void (*renderCancel)(void* uptr);
 	void (*renderFlush)(void* uptr);
 	void (*renderFill)(void* uptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, const float* bounds, const NVGpath* paths, int npaths);
-	void (*renderStroke)(void* uptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, float strokeWidth, const NVGpath* paths, int npaths);
+	void (*renderStroke)(void* uptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, float fringe, float strokeWidth, int lineStyle, const NVGpath* paths, int npaths);
 	void (*renderTriangles)(void* uptr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor, const NVGvertex* verts, int nverts, float fringe);
 	void (*renderDelete)(void* uptr);
 };

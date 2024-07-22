@@ -84,7 +84,7 @@ public:
   void on_widget_timer(double ADelta) final {
     //SAT_PRINT("delta %f\n",ADelta);
     updateCoords(ADelta);
-    do_widget_redraw(this);
+    do_widget_redraw(this,0,SAT_WIDGET_REDRAW_TIMER);
   }
 
   //----------

@@ -36,6 +36,7 @@
 #define SAT_WIDGET_NUM_VALUES                     16
 #define SAT_WINDOW_THREAD_KILL                    666
 #define SAT_WINDOW_BUFFER_MIN_SIZE                256
+#define SAT_WINDOW_DIRTY_QUEUE_SIZE               1024
 #define SAT_WINDOW_TIMER_MS                       20
 
 //----------------------------------------------------------------------
@@ -91,10 +92,6 @@
 
   // print time in when logging
   #define SAT_LOG_TIME
-
-  // use nanovg patch for sub-pixel text placement
-  // blurrier fonts (?)
-  //#define SAT_NANOVG_TEXT_PATCH
 
   // remove bitmap decoding from SAT_Bitmap
   //#define SAT_NO_BITMAP_PNG

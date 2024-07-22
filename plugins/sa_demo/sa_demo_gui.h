@@ -9,7 +9,7 @@ private:
   SAT_MenuWidget*           edit_menu = nullptr;
   SAT_PagesWidget*          pages     = nullptr;
 
-  sa_demo_animated_widget*  animated  = nullptr;
+  SAT_AnimTestWidget*       animated  = nullptr;
 
   #define button_grid_count 3
   const char* button_grid_texts[button_grid_count] = {
@@ -147,7 +147,7 @@ public:
     //
     //------------------------------
 
-    animated = new sa_demo_animated_widget(SAT_Rect(10,370,130,130));
+    animated = new SAT_AnimTestWidget(SAT_Rect(10,370,130,130));
     root->appendChild(animated);
 
     //------------------------------
@@ -168,7 +168,7 @@ public:
   //----------
 
   bool setupOverlay(SAT_Editor* AEditor) final {
-    SAT_TRACE;
+
     SAT_Window* window = AEditor->getWindow();
     SAT_Assert(window);
 
@@ -180,10 +180,9 @@ public:
     
     overlay->appendChild(widgets_page->MMenu1);
 
-    // animated = new sa_demo_animated_widget(SAT_Rect(10,370,130,130));
+    // animated = new SAT_AnimTestWidget(SAT_Rect(10,370,130,130));
     // overlay->appendChild(animated);
 
-    SAT_TRACE;
     return true;
   }
 
