@@ -342,6 +342,8 @@ public: // window
   // on_window_resize and on_window_paint will not be called concurrently, will they?
   // ..resize while we're painting...
 
+  // (we don't care about the update rect..)
+
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
 
     if (MIsClosing || MIsPainting) return;

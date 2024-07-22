@@ -81,9 +81,14 @@ public:
 
   //----------
 
+  // can we call do_widget_redraw here?
+  // [TIMER THREAD]
+
   void on_widget_timer(double ADelta) final {
     //SAT_PRINT("delta %f\n",ADelta);
     updateCoords(ADelta);
+
+    // ugh.. this crashes!
     do_widget_redraw(this,0,SAT_WIDGET_REDRAW_TIMER);
   }
 
