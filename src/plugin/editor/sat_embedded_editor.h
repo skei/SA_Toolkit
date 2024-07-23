@@ -70,6 +70,7 @@ public:
 //------------------------------
 
   void on_WindowListener_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
+    //SAT_TRACE;
     SAT_Parameter* param = (SAT_Parameter*)AWidget->getParameter(AIndex);
     if (param) {
       uint32_t index = param->getIndex();
@@ -133,7 +134,9 @@ public:
   // called from
   //   SAT_Queues.flushParamFromHostToGui (todo: timer call this)
   //   SAT_Plugin.on_processorOwner_updateParamFromHostToGui
-  // (do_widget_redraw doesn't redraw directly, sends invalidate event)
+  // (do_widget_redraw doesn't redraw directly, ultimately sends invalidate event)
+
+  // [AUDIO THREAD]
 
   void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) override {
     if (MWindow) {
@@ -141,12 +144,14 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setValue(value);
-        widget->do_widget_redraw(widget);
+        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_AUDIO);
       }
     }
   }
 
   //----------
+
+  // [AUDIO THREAD]
 
   void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) override {
     if (MWindow) {
@@ -154,7 +159,7 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setModulation(value);
-        widget->do_widget_redraw(widget);
+        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_AUDIO);
       }
     }
   }
@@ -201,7 +206,7 @@ public: // clap.gui
       //SAT_PRINT("MWidth %i MHeight %i\n",MWidth,MHeight);
       // ask plugin to create window.. if not, create it ourselves
 
-      if (MListener) MWindow = MListener->on_EditorListener_createWindow(this,MWidth,MHeight);
+      if (MListener) MWindow = MListener->on_EditorListener_createWindow(MWidth,MHeight,this);
       else MWindow = new SAT_Window(MWidth,MHeight,this);
       //MWindow->setListener(this); // not needed?
 
@@ -210,7 +215,7 @@ public: // clap.gui
       //if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
       if (strcmp(api,CLAP_WINDOW_API_WIN32) != 0) return false;
       // ask plugin to create window.. if not, create it ourselves
-      if (MListener) MWindow = MListener->on_EditorListener_createWindow(this,MWidth,MHeight);
+      if (MListener) MWindow = MListener->on_EditorListener_createWindow(MWidth,MHeight,this);
       else MWindow = new SAT_Window(MWidth,MHeight,this);
       //MWindow->setListener(this);
     #endif

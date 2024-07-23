@@ -4,17 +4,10 @@
 
 #include "sat.h"
 #include "base/system/sat_timer.h"
-//#include "base/util/sat_tween_manager.h"
 #include "gui/base/sat_paint_context.h"
 #include "gui/base/sat_window_listener.h"
-//#include "gui/widget/sat_overlay_widget.h"
-//#include "gui/widget/sat_root_widget.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_renderer.h"
-//#include "gui/sat_widget.h"
-
-//typedef SAT_AtomicQueue<bool,64> SAT_WindowResizeQueue;
-//typedef SAT_Queue<bool,64> SAT_WindowResizeQueue;
 
 //----------------------------------------------------------------------
 //
@@ -104,8 +97,10 @@ public:
     MTimer = new SAT_Timer(this);
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
-    MPendingWidth = AWidth;
-    MPendingHeight = AHeight;
+    #ifdef SAT_WINDOW_BUFFERED    
+      MPendingWidth = AWidth;
+      MPendingHeight = AHeight;
+    #endif
   }
 
   //----------
@@ -261,9 +256,10 @@ public: // timer
 
   // (overridden by SAT_Window)
 
-  void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
-    //SAT_TRACE;
-  }
+  // void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
+  //   //SAT_TRACE;
+  //   sendClientMessage(SAT_WINDOW_THREAD_TIMER,0);
+  // }
 
 //------------------------------
 public: // window
@@ -370,10 +366,16 @@ public: // window
       MWindowPainter->beginFrame(MBufferWidth,MBufferHeight);
       MWindowRenderer->setViewport(0,0,MBufferWidth,MBufferHeight);
 
-      paintRoot(&MWindowPaintContext);
+      // if we have a transparent widget on top of for example a knob,
+      // the following lines will only redraw the knob, and not
+      // the transp widget on top of it..
+      // we have to draw entirely from the root to 'catch' all layers.-
+      // :-/
 
-      //if (resized) paintRoot(&MWindowPaintContext);
-      //else paint(&MWindowPaintContext);
+      // if (resized) paintRoot(&MWindowPaintContext);
+      // else paint(&MWindowPaintContext);
+
+      paintRoot(&MWindowPaintContext);
 
       // --- copy buffer to screen
       MWindowPainter->selectRenderBuffer(nullptr);
@@ -449,6 +451,12 @@ public: // window
   //----------
 
   // void on_window_clientMessage(uint32_t AData) override {
+  // }
+
+  //----------
+
+  // void on_window_timer() override {
+  //   SAT_TRACE;
   // }
 
 };

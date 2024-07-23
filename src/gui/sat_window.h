@@ -66,10 +66,12 @@ private:
   SAT_Widget*         MKeyCaptureWidget     = nullptr;
   SAT_Widget*         MHintWidget           = nullptr;
 
-  SAT_WidgetQueue     MDirtyWidgets         = {};
-  SAT_WidgetQueue     MPaintWidgets         = {};
-  SAT_WidgetQueue     MTimerWidgets         = {};
+  SAT_WidgetQueue     MDirtyGuiWidgets      = {};
+  SAT_WidgetQueue     MDirtyTimerWidgets    = {};
+  SAT_WidgetQueue     MDirtyAudioWidgets    = {};
 
+  SAT_WidgetQueue     MPaintWidgets         = {};
+  
   // timer
 
   double              MTimerDelta           = 0;
@@ -82,6 +84,7 @@ public:
 
   SAT_Window(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener=nullptr, intptr_t AParent=0)
   : SAT_SimpleWindow(AWidth,AHeight,AListener,AParent) {
+    //SAT_PRINT("AListener %p\n",AListener);
   }
 
   //----------
@@ -113,6 +116,7 @@ public: // setup
   //----------
 
   void setListener(SAT_WindowListener* AListener) {
+    SAT_PRINT("AListener %p\n",AListener);
     MListener = AListener;
   }
 
@@ -209,7 +213,7 @@ public: // painting
     #ifdef SAT_WINDOW_BUFFERED
       flushPaintWidgets(AContext);
     #else
-      flushRootWidget(AContext);
+      flushPaintRootWidget(AContext);
     #endif
     painter->resetClip();
 
@@ -223,7 +227,7 @@ public: // painting
     uint32_t screenheight = getHeight();
     painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
     painter->setClip(0,0,screenwidth,screenheight);
-    flushRootWidget(AContext);
+    flushPaintRootWidget(AContext);
     painter->resetClip();
   }
 
@@ -252,9 +256,9 @@ private: // queues
 
   // [GUI THREAD]
 
-  void queueDirtyWidget(SAT_Widget* AWidget) {
-    if (!MDirtyWidgets.write(AWidget)) {
-      SAT_PRINT("Error! Couldn't write to dirty widget queue\n");
+  void queueDirtyGuiWidget(SAT_Widget* AWidget) {
+    if (!MDirtyGuiWidgets.write(AWidget)) {
+      SAT_PRINT("Error! Couldn't write to dirty gui widget queue\n");
     }
   }
 
@@ -271,15 +275,16 @@ private: // queues
 
   // [TIMER THREAD]
 
-  SAT_Rect flushDirtyWidgets() {
+  SAT_Rect flushDirtyGuiWidgets() {
     uint32_t count = 0;
     SAT_Widget* widget;
     bool have_rect = false;
     SAT_Rect update_rect = {0,0,0,0};
-    while (MDirtyWidgets.read(&widget)) {
+    while (MDirtyGuiWidgets.read(&widget)) {
       SAT_Assert(widget);
       queuePaintWidget(widget);
       SAT_Rect rect = widget->getRect();
+      //update_rect.combine(rect);
       if (have_rect) update_rect.combine(rect);
       else {
         update_rect = rect;
@@ -300,9 +305,9 @@ private: // queues
 
   // [TIMER THREAD]
 
-  void queueTimerWidget(SAT_Widget* AWidget) {
-    if (!MTimerWidgets.write(AWidget)) {
-      SAT_PRINT("Error! Couldn't write to timer widget queue\n");
+  void queueDirtyTimerWidget(SAT_Widget* AWidget) {
+    if (!MDirtyTimerWidgets.write(AWidget)) {
+      SAT_PRINT("Error! Couldn't write to dirty timer widget queue\n");
     }
   }
 
@@ -315,22 +320,65 @@ private: // queues
 
   // [TIMER THREAD]
 
-  SAT_Rect flushTimerWidgets() {
+  SAT_Rect flushDirtyTimerWidgets() {
     uint32_t count = 0;
     SAT_Widget* widget;
     bool have_rect = false;
     SAT_Rect update_rect = {0,0,0,0};
-    while (MTimerWidgets.read(&widget)) {
+    while (MDirtyTimerWidgets.read(&widget)) {
       SAT_Assert(widget);
+      queuePaintWidget(widget);
+      SAT_Rect rect = widget->getRect();
+      //update_rect.combine(rect);
+      if (have_rect) update_rect.combine(rect);
+      else {
+        update_rect = rect;
+        have_rect = true;
+      }
+      count += 1;
+    }
+    //if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
+    return update_rect;
+  }
+  //----------
 
-//      queuePaintWidget(widget);
-//      SAT_Rect rect = widget->getRect();
-//      if (have_rect) update_rect.combine(rect);
-//      else {
-//        update_rect = rect;
-//        have_rect = true;
-//      }
+  /*
+    called from  [AUDIO THREAD]
+      on_widgetListener_redraw (if SAT_WIDGET_REDRAW_AUDIO)
+  */
 
+  // [AUDIO THREAD]
+
+  void queueDirtyAudioWidget(SAT_Widget* AWidget) {
+    if (!MDirtyAudioWidgets.write(AWidget)) {
+      SAT_PRINT("Error! Couldn't write to dirty audio widget queue\n");
+    }
+  }
+
+  //----------
+
+  /*
+    called from
+      on_TimerListener_update
+  */
+
+  // [TIMER THREAD]
+
+  SAT_Rect flushDirtyAudioWidgets() {
+    uint32_t count = 0;
+    SAT_Widget* widget;
+    bool have_rect = false;
+    SAT_Rect update_rect = {0,0,0,0};
+    while (MDirtyAudioWidgets.read(&widget)) {
+      SAT_Assert(widget);
+      queuePaintWidget(widget);
+      SAT_Rect rect = widget->getRect();
+      //update_rect.combine(rect);
+      if (have_rect) update_rect.combine(rect);
+      else {
+        update_rect = rect;
+        have_rect = true;
+      }
       count += 1;
     }
     //if (count > 0) { SAT_PRINT("flushed %i widgets\n",count); }
@@ -341,8 +389,9 @@ private: // queues
 
   /*
     called from
-      flushDirtyWidgets()
-      flushTimerWidgets()
+      flushDirtyGuiWidgets()
+      flushDirtyTimerWidgets()
+      flushDirtyAudioWidgets()
 
   */
 
@@ -350,7 +399,7 @@ private: // queues
 
   void queuePaintWidget(SAT_Widget* AWidget) {
     if (!MPaintWidgets.write(AWidget)) {
-      SAT_PRINT("Error! Couldnæt write to paint widget queue\n");
+      SAT_PRINT("Error! Couldn't write to paint widget queue\n");
     }
   }
 
@@ -402,7 +451,7 @@ private: // queues
 
   // [GUI THREAD]
 
-  void flushRootWidget(SAT_PaintContext* AContext) {
+  void flushPaintRootWidget(SAT_PaintContext* AContext) {
     uint32_t count = 0;
     SAT_Widget* widget = nullptr;
     while (MPaintWidgets.read(&widget)) {
@@ -421,42 +470,47 @@ public: // timer
 
   // [TIMER THREAD]
 
+  //----------
+
+  // void on_window_timer(double ADelta) override {
+  // }
+
+  //----------
+
   void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
+    //SAT_TRACE;
     MTimerDelta += ADelta;
-
-    if (MIsClosing) {
-      //SAT_PRINT("MIsClosing\n");
-      return;
-    }
-    if (MIsPainting) {
-      //SAT_PRINT("MIsPainting\n");
-      return;
-    }
-
-    if (MListener) MListener->on_WindowListener_timer(ATimer,MTimerDelta);
-
-    // ugh..
-    // if widgets called by this, calls do_widget_redraw..
-    // it crashes somewhere in stbtt__Rasterize.. :-/
-    
+    if (MIsClosing)  { /* SAT_PRINT("MIsClosing\n");  */ return; }
+    if (MIsPainting) { /* SAT_PRINT("MIsPainting\n"); */ return; }
+    if (MListener) MListener->on_WindowListener_timer(nullptr,MTimerDelta);
+    //else { SAT_PRINT("MListener: %p\n",MListener); } // prints null
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(MTimerDelta);
     }
-
     MTweenManager.process(MTimerDelta);
     MTimerDelta = 0;
-
+    //
     #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
-      SAT_Rect dirty_rect = flushDirtyWidgets();
-      //SAT_Rect timer_rect = flushTimerWidgets();
-
-      //if (dirty_rect.isEmpty()) { if (timer_rect.isNotEmpty()) dirty_rect = timer_rect; }
-      //else                      { if (timer_rect.isNotEmpty()) dirty_rect.combine(timer_rect); }
-
-      if (dirty_rect.isNotEmpty()) invalidate(dirty_rect.x,dirty_rect.y,dirty_rect.w,dirty_rect.h);
-
+      SAT_Rect dirty_gui_rect   = flushDirtyGuiWidgets();
+      SAT_Rect dirty_timer_rect = flushDirtyTimerWidgets();
+      SAT_Rect dirty_audio_rect = flushDirtyAudioWidgets();
+      //dirty_rect.combine(timer_rect);
+      //dirty_rect.combine(audio_rect);
+      SAT_Rect rect = {0,0,0,0};
+      if (dirty_gui_rect.isNotEmpty()) {
+        rect = dirty_gui_rect;
+        rect.combine(dirty_timer_rect);
+        rect.combine(dirty_audio_rect);
+      }
+      else if (dirty_timer_rect.isNotEmpty()) {
+        rect = dirty_timer_rect;
+        rect.combine(dirty_audio_rect);
+      }
+      else {
+        rect = dirty_audio_rect;
+      }
+      if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
     #endif
-
   }
 
 //------------------------------
@@ -474,7 +528,10 @@ public: // widget listener
 
   // [GUI THREAD]
 
+  // ouch.. MListener = null...
+
   void on_WidgetListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+    //SAT_PRINT("MListener: %p\n",MListener);;
     if (MListener) {
       MListener->on_WindowListener_update(AWidget,AIndex,AMode);
     }
@@ -483,24 +540,29 @@ public: // widget listener
   //----------
 
   /*
-    if AMode is SAT_WIDGET_REDRAW_TIMER, we are being called from a timer thread!
+    if AMode is SAT_WIDGET_REDRAW_TIMER, we are being called from a timer thread
   */
 
   void on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) override {
-      #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
-        //queueDirtyWidget(AWidget);
-         if (AMode == SAT_WIDGET_REDRAW_TIMER) {
-           //SAT_TRACE;
-//           queueTimerWidget(AWidget);
-//           queueDirtyWidget(AWidget);
-         }
-         else {
-           queueDirtyWidget(AWidget);
-         }
-      #else
-        SAT_Rect rect = AWidget->getRect();
-        invalidate(rect.x,rect.y,rect.w,rect.h);
-      #endif
+    #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
+      //queueDirtyWidget(AWidget);
+      switch(AMode) {
+        case SAT_WIDGET_REDRAW_GUI:
+          queueDirtyGuiWidget(AWidget);
+          break;
+        case SAT_WIDGET_REDRAW_TIMER:
+          //queueDirtyTimerWidget(AWidget);
+          //queueDirtyGuiWidget(AWidget);
+          break;
+        case SAT_WIDGET_REDRAW_AUDIO:
+          //queueDirtyAudioWidget(AWidget);
+          //queueDirtyGuiWidget(AWidget);
+          break;
+      }
+    #else
+      SAT_Rect rect = AWidget->getRect();
+      invalidate(rect.x,rect.y,rect.w,rect.h);
+    #endif
   }
 
   //----------
@@ -619,7 +681,7 @@ public: // window
 
       // initial painting
       // (without this, the screen is black)
-      queueDirtyWidget(MRootWidget);
+      queueDirtyGuiWidget(MRootWidget);
 
     }
   }
@@ -647,9 +709,11 @@ public: // window
       MWindowScale = calcScale(AWidth,AHeight);
       MRootWidget->on_widget_resize(AWidth,AHeight);
       MRootWidget->realignChildren();
-      // #ifdef SAT_PLUGIN_EXE
+
+      // #ifndef SAT_PLUGIN_EXE
       //   queueDirtyWidget(MRootWidget);
       // #endif
+
     }
     // basic_window resize will set MResized to true, which again, will trigger
     // a buffer resize, and repainting the root (flushing dirty queue)

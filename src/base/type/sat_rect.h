@@ -491,6 +491,8 @@ struct SAT_Rect {
   // parent.combine(child)
 
   void combine(SAT_Rect R) {
+    //if (this->isEmpty()) set(R.x,R.y,R.w,R.h);
+    if (R.isEmpty()) return;
     //printf("combine %.0f,%.0f,%.0f,%.0f R %.0f,%.0f,%.0f,%.0f -> ",x,y,w,h,R.x,R.y,R.w,R.h);
     if ( R.x1() < x1() ) setX1( R.x1() );
     if ( R.x2() > x2() ) setX2( R.x2() );

@@ -512,8 +512,8 @@ public: // editor
   #ifndef SAT_NO_GUI
     #ifdef SAT_EDITOR_EMBEDDED
 
-      virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight) {
-        return new SAT_Window(AWidth,AHeight);
+      virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) {
+        return new SAT_Window(AWidth,AHeight,AListener);
       }
 
       // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.destroy()
@@ -629,9 +629,9 @@ public: // editor listener
 
     #ifdef SAT_EDITOR_EMBEDDED
 
-    SAT_Window* on_EditorListener_createWindow(SAT_WindowListener* AListener, uint32_t AWidth, uint32_t AHeight) override {
+    SAT_Window* on_EditorListener_createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) override {
       //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
-      SAT_Window* window = createWindow(AWidth,AHeight);
+      SAT_Window* window = createWindow(AWidth,AHeight,AListener);
       window->setInitialSize(MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
       return window;
     }

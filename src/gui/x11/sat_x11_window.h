@@ -6,6 +6,7 @@
 // #define SAT_WINDOW_THREAD_KILL 666
 
 #include "sat.h"
+#include "base/system/sat_time.h"
 #include "gui/base/sat_base_window.h"
 #include "gui/base/sat_painter_owner.h"
 #include "gui/base/sat_renderer_owner.h"
@@ -76,6 +77,8 @@ private:
   bool                        MIsExposed                    = false;
   bool                        MIsCursorHidden               = false;
   sat_atomic_bool_t           MIsEventThreadActive          { false };
+
+  double                      MPrevTime                     = 0.0;
 
 
 //------------------------------
@@ -197,7 +200,11 @@ public:
     else {
       MIsEmbedded = false;
       wantQuitEvents();
-    }    
+    }
+
+    //
+
+    MPrevTime = SAT_GetTime();
 
   }
 
@@ -877,11 +884,22 @@ private:
         xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)AEvent;
         xcb_atom_t type = client_message->type;
         uint32_t data = client_message->data.data32[0];
+
         if (data == SAT_WINDOW_THREAD_KILL) {
           //SAT_PRINT("SAT_WINDOW_THREAD_KILL\n");
           ::free(AEvent);
           return false;
         }
+        else if (data == SAT_WINDOW_THREAD_TIMER) {
+          SAT_PRINT("SAT_WINDOW_THREAD_TIMER\n");
+          double time = SAT_GetTime();
+          double delta = time - MPrevTime;
+          MPrevTime = time;
+          on_window_timer( delta );
+          ::free(AEvent);
+          return true;
+        }
+
         if (type == MWMProtocolsAtom) { // why was this commented out?
           if (data == MWMDeleteWindowAtom) {
             //SAT_PRINT("MWMDeleteWindowAtom\n");
@@ -929,15 +947,30 @@ private:
             continue;
           }
 
-          //if ((event->response_type & ~0x80) == XCB_CLIENT_MESSAGE) {
-          //  xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
-          //  xcb_atom_t type = client_message->type;
-          //  uint32_t data = client_message->data.data32[0];
-          //  if (data == SAT_WINDOW_THREAD_KILL) {
-          //    SAT_PRINT("KILL\n");
-          //    return nullptr;
-          //  }
-          //}
+          /*
+          if ((event->response_type & ~0x80) == XCB_CLIENT_MESSAGE) {
+            xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
+            xcb_atom_t type = client_message->type;
+            uint32_t data = client_message->data.data32[0];
+            //if (data == SAT_WINDOW_THREAD_KILL) {
+            //  SAT_PRINT("KILL\n");
+            //  return nullptr;
+            //}
+          }
+          */
+
+          /*
+          if ((event->response_type & ~0x80) == XCB_CLIENT_MESSAGE) {
+            xcb_client_message_event_t* client_message = (xcb_client_message_event_t*)event;
+            xcb_atom_t type = client_message->type;
+            uint32_t data = client_message->data.data32[0];
+            SAT_PRINT("type %i data %i\n",type,data);
+            if (data == SAT_WINDOW_THREAD_TIMER) {
+              SAT_PRINT("TIMER\n");
+              //return nullptr;
+            }
+          }
+          */
 
           // double-check (in case we have closed the window before processing all events in queue?
           // ??? is this needed, or did i put it here for some debugging purposes?
