@@ -35,6 +35,7 @@
 #define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
 #define SAT_WIDGET_NUM_VALUES                     16
 #define SAT_WINDOW_THREAD_KILL                    666
+#define SAT_WINDOW_THREAD_TIMER                   333
 #define SAT_WINDOW_BUFFER_MIN_SIZE                256
 #define SAT_WINDOW_DIRTY_QUEUE_SIZE               1024
 #define SAT_WINDOW_TIMER_MS                       20

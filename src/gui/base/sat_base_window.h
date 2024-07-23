@@ -74,6 +74,7 @@ public:
   virtual void on_window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
   virtual void on_window_clientMessage(uint32_t AData) {}  
+  virtual void on_window_timer(double ADelta) {}
 
 };
 

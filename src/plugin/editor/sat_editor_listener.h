@@ -17,7 +17,7 @@ public:
   virtual void on_EditorListener_timer(SAT_Timer* ATimer, double ADelta) {}
 
   #ifdef SAT_EDITOR_EMBEDDED
-  virtual SAT_Window* on_EditorListener_createWindow(SAT_WindowListener* AListener, uint32_t AWidth, uint32_t AHeight) { return nullptr; }
+  virtual SAT_Window* on_EditorListener_createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) { return nullptr; }
   virtual void        on_EditorListener_deleteWindow(SAT_Window* AWindow) {}
   #endif
 
