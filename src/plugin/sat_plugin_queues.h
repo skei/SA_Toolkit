@@ -30,13 +30,18 @@
 class SAT_PluginQueues {
 
   #ifndef SAT_NO_GUI
-    typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
-    typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
-    typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
-    typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
+    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
+    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
+    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
+    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
+    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
+    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
+    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
+    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
   #endif
 
-  typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
+  //typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
+  typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
 
 //------------------------------
 private:

@@ -294,11 +294,16 @@ public:
 
   void on_paintCell(SAT_PaintContext* AContext, SAT_Rect ARect, int32_t AX, int32_t AY) override {
     //SAT_PRINT("x %i y %i\n",AX,AY);
-
     if (!MStates) return;
 
+    SAT_Assert( ARect.isNotEmpty() );
+
     SAT_Painter* painter = AContext->painter;
+    SAT_Assert(painter);
+
     double scale = getWindowScale();
+    SAT_Assert(scale > 0.0);
+
     const char* txt = "";
     int32_t index = (AY * MNumColumns) + AX;
 

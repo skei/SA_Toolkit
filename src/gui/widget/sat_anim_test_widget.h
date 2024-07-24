@@ -81,7 +81,9 @@ public:
 
   //----------
 
-  // can we call do_widget_redraw here?
+  // don't touch anything painting related here!
+  // set signals, etc..
+
   // [TIMER THREAD]
 
   void on_widget_timer(double ADelta) final {

@@ -891,11 +891,11 @@ private:
           return false;
         }
         else if (data == SAT_WINDOW_THREAD_TIMER) {
-          SAT_PRINT("SAT_WINDOW_THREAD_TIMER\n");
+          //SAT_PRINT("SAT_WINDOW_THREAD_TIMER\n");
           double time = SAT_GetTime();
           double delta = time - MPrevTime;
           MPrevTime = time;
-          on_window_timer( delta );
+          on_window_timer(delta);
           ::free(AEvent);
           return true;
         }
