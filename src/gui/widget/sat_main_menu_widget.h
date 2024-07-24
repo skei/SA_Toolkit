@@ -31,7 +31,7 @@ public:
   : SAT_ButtonWidget(ARect,true) {
     MText = AText;
     MMenu = AMenu;
-    Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
     setTextOffset(SAT_Rect(5,0,5,0));
     setTexts(AText,AText);
@@ -68,7 +68,7 @@ public:
 
   SAT_MainMenuWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
-    Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
     setFillBackground(true);
@@ -86,10 +86,11 @@ public:
 //------------------------------
 
   void on_widget_open(SAT_WidgetOwner* AOwner) override {
-
+    SAT_Assert(AOwner);
     double scale = getWindowScale();
+    SAT_Assert(scale > 0.0);
     SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
-
+    SAT_Assert(painter);
     for (uint32_t i=0; i<MMenus.size(); i++) {
       SAT_MainMenuItemWidget* item = MMenus[i];
       const char* text = item->getText();

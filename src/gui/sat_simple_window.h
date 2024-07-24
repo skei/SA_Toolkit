@@ -9,6 +9,8 @@
 #include "gui/sat_painter.h"
 #include "gui/sat_renderer.h"
 
+typedef SAT_AtomicQueue<uint32_t,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_PendingResizeEvent; // (h << 16) + w
+
 //----------------------------------------------------------------------
 //
 // implemented window
@@ -44,42 +46,42 @@ class SAT_SimpleWindow
 protected:
 //------------------------------
 
-  SAT_WindowListener*     MListener           = nullptr;
-  SAT_Timer*              MTimer              = nullptr;
-  sat_atomic_bool_t       MIsClosing          { false };
+  SAT_WindowListener*       MListener           = nullptr;
+  SAT_Timer*                MTimer              = nullptr;
+  sat_atomic_bool_t         MIsClosing          { false };
 
   // painting
 
-  SAT_Renderer*           MWindowRenderer     = nullptr;
-  SAT_Painter*            MWindowPainter      = nullptr;
-  SAT_PaintContext        MWindowPaintContext = {};
-  sat_atomic_bool_t       MIsPainting         { false };
+  SAT_Renderer*             MWindowRenderer     = nullptr;
+  SAT_Painter*              MWindowPainter      = nullptr;
+  SAT_PaintContext          MWindowPaintContext = {};
+  sat_atomic_bool_t         MIsPainting         { false };
 
   // buffer
 
   #ifdef SAT_WINDOW_BUFFERED    
 
-    bool                  MBufferAllocated    = false;
-    void*                 MRenderBuffer       = nullptr;
-    uint32_t              MBufferWidth        = 0;
-    uint32_t              MBufferHeight       = 0;
+    bool                    MBufferAllocated    = false;
+    void*                   MRenderBuffer       = nullptr;
+    uint32_t                MBufferWidth        = 0;
+    uint32_t                MBufferHeight       = 0;
 
-    // resize
-
-    //SAT_WindowResizeQueue MResizeQueue        = {};
-    //sat_atomic_bool_t     MResized            { false };
-    uint32_t              MPendingWidth       = 0;
-    uint32_t              MPendingHeight      = 0;
 
   #endif
 
+    // resize
+
+    SAT_PendingResizeEvent  MPendingResize      = {};
+    //uint32_t                MPendingWidth       = 0;
+    //uint32_t                MPendingHeight      = 0;
+
   // aspect
 
-  int32_t                 MInitialWidth       = 0;
-  int32_t                 MInitialHeight      = 0;
-  double                  MInitialScale       = 1.0;
-  bool                    MProportional       = false;
-  double                  MWindowScale        = 1.0;
+  int32_t                   MInitialWidth       = 0;
+  int32_t                   MInitialHeight      = 0;
+  double                    MInitialScale       = 1.0;
+  bool                      MProportional       = false;
+  double                    MWindowScale        = 1.0;
 
 //------------------------------
 public:
@@ -98,8 +100,9 @@ public:
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
     #ifdef SAT_WINDOW_BUFFERED    
-      MPendingWidth = AWidth;
-      MPendingHeight = AHeight;
+      //MPendingWidth = AWidth;
+      //MPendingHeight = AHeight;
+      MPendingResize.write( (AHeight << 16) + AWidth );
     #endif
   }
 
@@ -157,10 +160,12 @@ private: // buffer
 #ifdef SAT_WINDOW_BUFFERED    
 
   virtual bool createRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
+    SAT_Assert(AWidth > 0);
+    SAT_Assert(AHeight > 0);
+    SAT_Assert(AWidth < 32768)
+    SAT_Assert(AHeight < 32768)
     uint32_t w2 = SAT_NextPowerOfTwo(AWidth);
     uint32_t h2 = SAT_NextPowerOfTwo(AHeight);
-    // SAT_Assert(w2 < 10000)
-    // SAT_Assert(h2 < 10000)
     if (w2 < SAT_WINDOW_BUFFER_MIN_SIZE) w2 = SAT_WINDOW_BUFFER_MIN_SIZE;
     if (h2 < SAT_WINDOW_BUFFER_MIN_SIZE) h2 = SAT_WINDOW_BUFFER_MIN_SIZE;
     SAT_Painter* painter = getPainter();
@@ -204,11 +209,11 @@ private: // buffer
     SAT_Assert(painter);
     if (painter && MRenderBuffer) {
       SAT_PRINT("resizing %i,%i\n",w2,h2);
-      void* buffer = painter->createRenderBuffer(w2,h2);
-      SAT_Assert(buffer);
+      void* new_buffer = painter->createRenderBuffer(w2,h2);
+      SAT_Assert(new_buffer);
       void* old_buffer = MRenderBuffer;
       // potentially copy buffer here..
-      MRenderBuffer = buffer;
+      MRenderBuffer = new_buffer;
       MBufferWidth  = w2;
       MBufferHeight = h2;
       painter->deleteRenderBuffer(old_buffer);
@@ -254,12 +259,11 @@ public: // timer
 
   //----------
 
-  // (overridden by SAT_Window)
+  // (see SAT_Window.on_TimerListener_update)
 
-  // void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
-  //   //SAT_TRACE;
-  //   sendClientMessage(SAT_WINDOW_THREAD_TIMER,0);
-  // }
+  void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
+    sendClientMessage(SAT_WINDOW_THREAD_TIMER,0);
+  }
 
 //------------------------------
 public: // window
@@ -314,23 +318,20 @@ public: // window
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
     SAT_Assert(AWidth < 32768);
     SAT_Assert(AHeight < 32768);
-    //SAT_Assert(MIsPainting);
-    //SAT_Assert(MResized);
-    // if (AWidth >= 32768) AWidth = 1;
-    // if (AHeight >= 32768) AHeight = 1;
-    MWindowScale = calcScale(AWidth,AHeight);
-    #ifdef SAT_WINDOW_BUFFERED    
-      //MResized = true;
-      //MResizeQueue.write(true);
-      MPendingWidth = SAT_NextPowerOfTwo(AWidth);
-      MPendingHeight = SAT_NextPowerOfTwo(AHeight);
-      // resize buffer
-      // SAT_Assert(MWindowRenderer);
-      // MWindowRenderer->makeCurrent();
-      // resizeRenderBuffer(MPendingWidth,MPendingHeight);
-      // MWindowRenderer->resetCurrent();
-    #endif
-    //SAT_PRINT("AWidth %i AHeight %i -> MPeidngWidth %i MPendingHeight %i\n",AWidth,AHeight,MPendingWidth,MPendingHeight);
+
+    uint32_t w = SAT_NextPowerOfTwo(AWidth);
+    uint32_t h = SAT_NextPowerOfTwo(AHeight);
+    uint32_t value = (h << 16) + w;
+    if (!MPendingResize.write(value)) {
+      SAT_PRINT("couldn't write to pending resize queue\n");
+    }
+
+//    MWindowScale = calcScale(AWidth,AHeight);
+//    #ifdef SAT_WINDOW_BUFFERED    
+//      MPendingWidth = SAT_NextPowerOfTwo(AWidth);
+//      MPendingHeight = SAT_NextPowerOfTwo(AHeight);
+//    #endif
+
   }
 
   //----------
@@ -343,13 +344,12 @@ public: // window
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
 
     if (MIsClosing || MIsPainting) return;
+    MIsPainting = true;
 
     MWindowPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
 
-    MIsPainting = true;
-    
     preRender(screenwidth,screenheight);
     MWindowRenderer->beginRendering(screenwidth,screenheight);
 
@@ -359,7 +359,18 @@ public: // window
     #ifdef SAT_WINDOW_BUFFERED
 
       // --- resize buffer if needed
-      bool resized = resizeRenderBuffer(MPendingWidth,MPendingHeight);
+      //bool resized = resizeRenderBuffer(MPendingWidth,MPendingHeight);
+
+      bool resized = false;
+      bool need_resizing = false;
+      uint32_t pending_size = 0;
+      while (MPendingResize.read(&pending_size)) { need_resizing = true; }
+      if (need_resizing) {
+        uint32_t w = (pending_size & 0xffff);
+        uint32_t h = (pending_size >> 16);
+        SAT_PRINT("w %i h %i\n",w,h);
+        resized = resizeRenderBuffer(w,h);
+      }
 
       // --- paint widgets to buffer
       MWindowPainter->selectRenderBuffer(MRenderBuffer);

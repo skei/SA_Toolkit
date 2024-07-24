@@ -71,7 +71,7 @@ public:
 
   virtual void drawText(SAT_PaintContext* AContext) {
     if (MDrawText) {
-      //SAT_TRACE;
+
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
       double scale = getWindowScale();

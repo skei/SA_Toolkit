@@ -20,8 +20,8 @@ class SAT_TweenChain;
 typedef SAT_Array<SAT_TweenNode*> SAT_TweenNodeArray;
 typedef SAT_Array<SAT_TweenChain*> SAT_TweenChainArray;
 
-//typedef SAT_AtomicQueue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
-typedef SAT_Queue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
+typedef SAT_AtomicQueue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
+//typedef SAT_Queue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
 
 //----------------------------------------------------------------------
 //
