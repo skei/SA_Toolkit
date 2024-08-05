@@ -63,5 +63,9 @@ EOF
 echo
 echo "Test CLAP Plug-In:"
 ../clap-info/build/clap-info dist/build.clap | grep sat_clap_entry_init_callback
+arch_type=$(arch)
+if echo "$arch_type" | grep -iq "i386"; then
+    echo "   Warning: This may happen due to a 'arch -x86_64' build and only fails the test as it expect Arm on Apple Silicon."
+fi
 nm -g dist/build.clap/Contents/MacOS/build | grep -v U
 echo
