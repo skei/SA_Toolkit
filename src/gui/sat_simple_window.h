@@ -96,7 +96,7 @@ public:
     MWindowRenderer->makeCurrent();
     MWindowPainter = new SAT_Painter(this,this);
     MWindowPaintContext.painter = MWindowPainter;
-    MWindowPaintContext.update_rect = {0,0,AWidth,AHeight};
+    MWindowPaintContext.update_rect = {0,0,(double)AWidth,(double)AHeight};
     MWindowRenderer->resetCurrent();
     MTimer = new SAT_Timer(this);
     MInitialWidth = AWidth;

@@ -279,7 +279,7 @@ public:
   void setPos(int32_t AXpos, int32_t AYpos) final {
     MWindowXpos = AXpos;
     MWindowYpos = AYpos;
-    uint32_t values[] = { AXpos, AYpos };
+    uint32_t values[] = { (uint32_t)AXpos, (uint32_t)AYpos };
     xcb_configure_window(MConnection,MWindow,XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y,values);
     xcb_flush(MConnection);
   }
