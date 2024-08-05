@@ -4,10 +4,8 @@
 
 #include "sat.h"
 #include "gui/nanovg/sat_nanovg.h"
-#include "gui/base/sat_base_surface.h"
-#include "gui/base/sat_painter_owner.h"
-#include "gui/base/sat_paint_source.h"
-#include "gui/base/sat_paint_target.h"
+#include "gui/sat_gui_base.h"
+
 
 //#include "gui/lib/sat_x11.h"
 

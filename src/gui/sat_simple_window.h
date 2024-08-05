@@ -4,12 +4,14 @@
 
 #include "sat.h"
 #include "base/system/sat_timer.h"
-#include "gui/base/sat_paint_context.h"
-#include "gui/base/sat_window_listener.h"
+#include "gui/sat_gui_base.h"
 #include "gui/sat_painter.h"
 #include "gui/sat_renderer.h"
 
-typedef SAT_AtomicQueue<uint32_t,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_PendingResizeEvent; // (h << 16) + w
+#include "extern/cameron314/readerwriterqueue.h"
+
+//typedef SAT_AtomicQueue<uint32_t,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_PendingResizeEvent; // (h << 16) + w
+typedef moodycamel::ReaderWriterQueue<uint32_t> SAT_PendingResizeEvent;
 
 //----------------------------------------------------------------------
 //
@@ -71,7 +73,7 @@ protected:
 
     // resize
 
-    SAT_PendingResizeEvent  MPendingResize      = {};
+    SAT_PendingResizeEvent  MPendingResize;
     //uint32_t                MPendingWidth       = 0;
     //uint32_t                MPendingHeight      = 0;
 
@@ -99,10 +101,13 @@ public:
     MTimer = new SAT_Timer(this);
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
+
     #ifdef SAT_WINDOW_BUFFERED    
       //MPendingWidth = AWidth;
       //MPendingHeight = AHeight;
-      MPendingResize.write( (AHeight << 16) + AWidth );
+      //MPendingResize.write( (AHeight << 16) + AWidth );
+      SAT_PRINT("queue resize %i,%i\n",AWidth,AHeight);
+      MPendingResize.enqueue( (AHeight << 16) + AWidth );
     #endif
   }
 
@@ -171,7 +176,7 @@ private: // buffer
     SAT_Painter* painter = getPainter();
     SAT_Assert(painter);
     if (painter) {
-      SAT_PRINT("creating %i,%i\n",w2,h2);
+      //SAT_PRINT("create render buffer w2 %i h2 %i\n",w2,h2);
       MRenderBuffer = painter->createRenderBuffer(w2,h2);
       SAT_Assert(MRenderBuffer);
       MBufferWidth = w2;
@@ -186,8 +191,7 @@ private: // buffer
   virtual void deleteRenderBuffer() {
     SAT_Painter* painter = getPainter();
     if (painter && MRenderBuffer) {
-      //SAT_PRINT("\n");
-      SAT_PRINT("deleting\n");
+      //SAT_PRINT("delete render buffer\n");
       painter->deleteRenderBuffer(MRenderBuffer);
       MBufferWidth = 0;
       MBufferHeight = 0;
@@ -198,17 +202,14 @@ private: // buffer
   //----------
 
   virtual bool resizeRenderBuffer(uint32_t AWidth, uint32_t AHeight) {
-    //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
     bool resized = false;
     uint32_t w2 = SAT_NextPowerOfTwo(AWidth);
     uint32_t h2 = SAT_NextPowerOfTwo(AHeight);
     if ((w2 == MBufferWidth) && (h2 == MBufferHeight)) return false;
-    //SAT_PRINT("w2 %i h2 %i\n",w2,h2);
-    //SAT_TRACE;
     SAT_Painter* painter = getPainter();
     SAT_Assert(painter);
     if (painter && MRenderBuffer) {
-      SAT_PRINT("resizing %i,%i\n",w2,h2);
+      //SAT_PRINT("resize render bufferw2 %i h2 %i\n",w2,h2);
       void* new_buffer = painter->createRenderBuffer(w2,h2);
       SAT_Assert(new_buffer);
       void* old_buffer = MRenderBuffer;
@@ -317,11 +318,14 @@ public: // window
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
     SAT_Assert(AWidth < 32768);
     SAT_Assert(AHeight < 32768);
+    //uint32_t w = SAT_NextPowerOfTwo(AWidth);
+    //uint32_t h = SAT_NextPowerOfTwo(AHeight);
+    //uint32_t value = (h << 16) + w;
+    uint32_t value = (AHeight << 16) + AWidth;
+    //SAT_PRINT("queue resize %i,%i\n",AWidth,AHeight);
 
-    uint32_t w = SAT_NextPowerOfTwo(AWidth);
-    uint32_t h = SAT_NextPowerOfTwo(AHeight);
-    uint32_t value = (h << 16) + w;
-    if (!MPendingResize.write(value)) {
+    //if (!MPendingResize.write(value)) {
+    if (!MPendingResize.enqueue(value)) {
       SAT_PRINT("couldn't write to pending resize queue\n");
     }
 
@@ -354,21 +358,28 @@ public: // window
 
     prePaint(screenwidth,screenheight);
     MWindowPainter->beginPainting(screenwidth,screenheight);
+
+    //
     
+    bool resized_window = false;
+    bool resized_buffer = false;
+
+    uint32_t pending_size = 0;
+    //while (MPendingResize.read(&pending_size)) { resized_window = true; }
+    while (MPendingResize.try_dequeue(pending_size)) {
+      resized_window = true;
+    }
+
     #ifdef SAT_WINDOW_BUFFERED
 
       // --- resize buffer if needed
-      //bool resized = resizeRenderBuffer(MPendingWidth,MPendingHeight);
 
-      bool resized = false;
-      bool need_resizing = false;
-      uint32_t pending_size = 0;
-      while (MPendingResize.read(&pending_size)) { need_resizing = true; }
-      if (need_resizing) {
+      if (resized_window) {
         uint32_t w = (pending_size & 0xffff);
         uint32_t h = (pending_size >> 16);
-        SAT_PRINT("w %i h %i\n",w,h);
-        resized = resizeRenderBuffer(w,h);
+        //SAT_PRINT("resized window w %i h %i\n",w,h);
+        resized_buffer = resizeRenderBuffer(w,h);
+//        MWindowPaintContext.last_resized = MWindowPaintContext.counter;
       }
 
       // --- paint widgets to buffer
@@ -382,10 +393,16 @@ public: // window
       // we have to draw entirely from the root to 'catch' all layers.-
       // :-/
 
-      // if (resized) paintRoot(&MWindowPaintContext);
+      // if (resized_buffer) paintRoot(&MWindowPaintContext);
       // else paint(&MWindowPaintContext);
 
-      paintRoot(&MWindowPaintContext);
+      if (resized_window) {
+        SAT_PRINT("resized\n");
+        paintRoot(&MWindowPaintContext);
+      }
+      else {
+        paint(&MWindowPaintContext);
+      }
 
       // --- copy buffer to screen
       MWindowPainter->selectRenderBuffer(nullptr);
@@ -414,6 +431,7 @@ public: // window
     MWindowRenderer->endRendering();
     postRender();
 
+    MWindowPaintContext.counter += 1;
     MIsPainting = false;
 
   }

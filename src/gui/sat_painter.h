@@ -15,11 +15,6 @@ typedef SAT_Stack<SAT_Rect,SAT_PAINTER_CLIP_RECT_STACK_SIZE> SAT_ClipRectStack;
 //
 //----------------------------------------------------------------------
 
-//#include "gui/base/sat_base_painter.h"
-//typedef SAT_BasePainter SAT_Painter;
-
-//
-
 #ifdef SAT_PAINTER_NANOVG
   #include "gui/nanovg/sat_nanovg_painter.h"
   typedef SAT_NanoVGPainter SAT_ImplementedPainter;

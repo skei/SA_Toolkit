@@ -29,8 +29,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_renderer.h"
-#include "gui/base/sat_renderer_owner.h"
+#include "gui/sat_gui_base.h"
 #include "gui/x11/sat_glx.h"
 #include "gui/x11/sat_x11.h"
 

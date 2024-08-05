@@ -4,8 +4,7 @@
 
 #include "sat.h"
 #include "gui/nanovg/sat_nanovg.h"
-#include "gui/base/sat_base_painter.h"
-#include "gui/base/sat_painter_owner.h"
+#include "gui/sat_gui_base.h"
 #include "gui/sat_surface.h"
 
 // //TODO: these should be in SAT_Painter, not here...

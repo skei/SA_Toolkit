@@ -2,7 +2,7 @@
 #include "sat.h"
 #include "plugin/editor/sat_editor_listener.h"
 #include "plugin/editor/sat_base_editor.h"
-#include "gui/base/sat_window_listener.h"
+#include "gui/sat_gui_base.h"
 #include "gui/sat_window.h"
 
 

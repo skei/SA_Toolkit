@@ -3,8 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_surface.h"
-#include "gui/base/sat_surface_owner.h"
+#include "gui/sat_gui_base.h"
 
 //----------
 

@@ -19,7 +19,7 @@ class SAT_Widget;
 
 //----------------------------------------------------------------------
 //
-// panter
+// painter
 //
 //----------------------------------------------------------------------
 
@@ -229,52 +229,42 @@ public:
 //
 //----------------------------------------------------------------------
 
-// class SAT_SurfaceOwner {
-// public:
-//   virtual uint32_t              on_SurfaceOwner_getWidth()          = 0; //{ return 0; }
-//   virtual uint32_t              on_SurfaceOwner_getHeight()         = 0; //{ return 0; }
-//   virtual uint32_t              on_SurfaceOwner_getDepth()          = 0; //{ return 0; }
-//   // #ifdef SAT_SURFACE_NANOVG
-//   //   virtual NVGcontext*         on_SurfaceOwner_getNanoVGContext()  = 0; // { return nullptr; }
-//   // #endif
-//   #ifdef SAT_GUI_X11
-//     virtual xcb_connection_t*   on_SurfaceOwner_getXcbConnection()  = 0; //{ return nullptr; }
-//     virtual xcb_drawable_t      on_SurfaceOwner_getXcbDrawable()    = 0; //{ return XCB_NONE; }
-//     virtual xcb_visualid_t      on_SurfaceOwner_getXcbVisual()      = 0; //{ return XCB_NONE; }
-//   #endif
-// };
+class SAT_SurfaceOwner {
+public:
+  virtual uint32_t              on_SurfaceOwner_getWidth()          = 0; //{ return 0; }
+  virtual uint32_t              on_SurfaceOwner_getHeight()         = 0; //{ return 0; }
+  virtual uint32_t              on_SurfaceOwner_getDepth()          = 0; //{ return 0; }
+  // #ifdef SAT_SURFACE_NANOVG
+  //   virtual NVGcontext*         on_SurfaceOwner_getNanoVGContext()  = 0; // { return nullptr; }
+  // #endif
+  #ifdef SAT_GUI_X11
+    virtual xcb_connection_t*   on_SurfaceOwner_getXcbConnection()  = 0; //{ return nullptr; }
+    virtual xcb_drawable_t      on_SurfaceOwner_getXcbDrawable()    = 0; //{ return XCB_NONE; }
+    virtual xcb_visualid_t      on_SurfaceOwner_getXcbVisual()      = 0; //{ return XCB_NONE; }
+  #endif
+};
 
-// class SAT_BaseSurface {
-// public:
-//   SAT_BaseSurface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0) {}
-//   virtual ~SAT_BaseSurface() {}
-//   // virtual bool initialize() { return true; }
-//   // virtual void cleanup() {}
-// public:
-//   virtual uint32_t getWidth()   { return 0; }
-//   virtual uint32_t getHeight()  { return 0; }
-//   virtual uint32_t getDepth()   { return 0; }
-// public:
-//   virtual int32_t getImage()    { return 0; }
-//   virtual void    select()      {}
-//   virtual void    deselect()    {}
-// };
+class SAT_BaseSurface {
+public:
+  SAT_BaseSurface(SAT_SurfaceOwner* AOwner, uint32_t AWidth, uint32_t AHeight, uint32_t ADepth=0) {}
+  virtual ~SAT_BaseSurface() {}
+  // virtual bool initialize() { return true; }
+  // virtual void cleanup() {}
+public:
+  virtual uint32_t getWidth()   { return 0; }
+  virtual uint32_t getHeight()  { return 0; }
+  virtual uint32_t getDepth()   { return 0; }
+public:
+  virtual int32_t getImage()    { return 0; }
+  virtual void    select()      {}
+  virtual void    deselect()    {}
+};
 
 //----------------------------------------------------------------------
 //
 // widget
 //
 //----------------------------------------------------------------------
-
-class SAT_WidgetOwner {
-public:
-  virtual SAT_Painter*  on_WidgetOwner_getPainter() { return nullptr; }
-  virtual uint32_t      on_WidgetOwner_getWidth() { return 0; }
-  virtual uint32_t      on_WidgetOwner_getHeight() { return 0; }
-  virtual double        on_WidgetOwner_getScale() { return 0.0; } // 1.0
-//virtual SAT_Window*   on_WidgetOwner_getWindow() { return nullptr; }
-//virtual void          on_WidgetOwner_wantTimerEvents(bool AWant=true) {}
-};
 
 class SAT_WidgetListener {
 public:
@@ -293,11 +283,22 @@ public:
   virtual void          on_WidgetListener_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) {}
 };
 
+class SAT_WidgetOwner {
+public:
+  virtual SAT_Painter*  on_WidgetOwner_getPainter() { return nullptr; }
+  virtual uint32_t      on_WidgetOwner_getWidth() { return 0; }
+  virtual uint32_t      on_WidgetOwner_getHeight() { return 0; }
+  virtual double        on_WidgetOwner_getScale() { return 0.0; } // 1.0
+//virtual SAT_Window*   on_WidgetOwner_getWindow() { return nullptr; }
+//virtual void          on_WidgetOwner_wantTimerEvents(bool AWant=true) {}
+};
+
 class SAT_BaseWidget {
 public:
   SAT_BaseWidget() {}
   virtual ~SAT_BaseWidget() {}
 public:
+  // todo: on_Widget_
   virtual void          on_widget_open(SAT_WidgetOwner* AOwner) {}
   virtual void          on_widget_close(SAT_WidgetOwner* AOwner) {}
   virtual void          on_widget_move(int32_t AXpos, int32_t AYpos) {}
@@ -335,7 +336,7 @@ public:
 
 //----------------------------------------------------------------------
 //
-//window
+// window
 //
 //----------------------------------------------------------------------
 
@@ -382,6 +383,7 @@ public:
   virtual void          startEventThread() = 0;
   virtual void          stopEventThread() = 0;
 public:
+  // todo: on_Window_
   virtual void          on_window_show() {}
   virtual void          on_window_hide() {}
   virtual void          on_window_move(int32_t AXpos, int32_t AYpos) {}
