@@ -404,7 +404,6 @@ fi
 
 runPreSteps
 echo -n "Compile and link.. "
-# This possibly will mask any warnings
 compile=$($CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL 2>&1)
 if echo "$compile" | grep -iq "undefined symbols"; then
   echo "[FAILED]"
@@ -413,6 +412,14 @@ if echo "$compile" | grep -iq "undefined symbols"; then
 elif echo "$compile" | grep -iq "error:"; then
   echo "[FAILED]"
   $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+elif echo "$compile" | grep -iq "warning:"; then
+  echo "[DONE]"
+  echo
+  echo "Warnings:"
+  echo "============================================================================================="
+  $CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
+  echo "============================================================================================="
+  runPostSteps
 else
   echo "[DONE]"
   runPostSteps
