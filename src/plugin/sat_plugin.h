@@ -1199,7 +1199,7 @@ public: // clap extensions
     param->setIndicateMappedColor(C);
     #ifndef SAT_NO_GUI
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_AUDIO);
+      if (widget) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
     #endif
   }
 
@@ -1220,7 +1220,7 @@ public: // clap extensions
     param->setIndicateAutomationColor(C);
     #ifndef SAT_NO_GUI
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_AUDIO);
+      if (widget) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
     #endif
   }
 
@@ -1509,7 +1509,7 @@ public: // clap extensions
     //     MTrackIsBus         = ((info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)           != 0);
     //     MTrackIsMaster      = ((info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)        != 0);
     //     //SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-    //     //if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_AUDIO);
+    //     //if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
     //   }
     // }
   }

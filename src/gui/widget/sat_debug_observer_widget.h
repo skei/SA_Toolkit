@@ -116,7 +116,7 @@ public:
   // void on_widget_timer(double ADelta) override {
   //   //SAT_PRINT;
   //   if (SAT_GLOBAL.DEBUG.OBSERVER.getNumObservers() > 0) {
-  //     //do_widgetListener_redraw(this,0,SAT_WIDGET_REDRAW_TIMER);
+  //     //do_widgetListener_redraw(this,0,SAT_WIDGET_REDRAW_SELF);
   //   }
   // }
 

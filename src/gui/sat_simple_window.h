@@ -8,7 +8,7 @@
 #include "gui/sat_painter.h"
 #include "gui/sat_renderer.h"
 
-#include "extern/cameron314/readerwriterqueue.h"
+// #include "extern/cameron314/readerwriterqueue.h"
 
 //typedef SAT_AtomicQueue<uint32_t,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_PendingResizeEvent; // (h << 16) + w
 typedef moodycamel::ReaderWriterQueue<uint32_t> SAT_PendingResizeEvent;
@@ -234,7 +234,7 @@ public: // painting
   virtual void preRender(uint32_t AWidth, uint32_t AHeight) {}
   virtual void prePaint(uint32_t AWidth, uint32_t AHeight) {}
   virtual void paint(SAT_PaintContext* AContext) {}
-  virtual void paintRoot(SAT_PaintContext* AContext) {}
+  virtual void paintRoot(SAT_PaintContext* AContext, bool AResized=false) {}
   virtual void postPaint() {}
   virtual void postRender() {}
 
@@ -398,7 +398,7 @@ public: // window
 
       if (resized_window) {
         SAT_PRINT("resized\n");
-        paintRoot(&MWindowPaintContext);
+        paintRoot(&MWindowPaintContext,true);
       }
       else {
         paint(&MWindowPaintContext);

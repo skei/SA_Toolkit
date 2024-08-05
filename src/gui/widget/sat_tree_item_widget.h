@@ -100,7 +100,7 @@ public:
     //}
     MSubItems->setActive(true,true);
     MSubItems->setVisible(true,true);
-    do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
+    do_widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
     // do_widget_redraw(this);
   }
 
@@ -120,7 +120,7 @@ public:
     //}
     MSubItems->setActive(true,true);
     MSubItems->setVisible(true,true);
-    do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
+    do_widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
     // do_widget_redraw(this);
   }
 

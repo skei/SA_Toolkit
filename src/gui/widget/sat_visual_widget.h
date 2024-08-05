@@ -543,26 +543,15 @@ public: // on_widget
   void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
 
     if (MMoving) {
-      // SAT_Rect rect = getRect();
-      // double S = getWindowScale();
-      // int32_t x = AXpos - rect.x;
-      // int32_t y = AYpos - rect.y;
-      // SAT_PRINT("x %i y %i S %.3f\n",x,y,S);
-      // if (MMovableDirections & SAT_DIRECTION_HORIZ) mrect.x += deltax;
-      // if (MMovableDirections & SAT_DIRECTION_VERT)  mrect.y += deltay;
-      // // SAT_Point offset = getLayoutOffset();
-      // // mrect.x -= offset.x;
-      // // mrect.y -= offset.y;
-      // // setRect(mrect);
-      // setRectAndBase(mrect);
-      // do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
-      // //realignParent();
-
       double deltax = (AXpos - MMousePreviousX);
       double deltay = (AYpos - MMousePreviousY);
       if (MMovableDirections & SAT_DIRECTION_HORIZ) { MManualMoved.x += deltax; }
       if (MMovableDirections & SAT_DIRECTION_VERT)  { MManualMoved.y += deltay; }
-      do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
+      //do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
+      if (MParent) {
+        MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
+        MParent->do_widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
+      }
     }
     else if (MResizing) {
       double deltax = (AXpos - MMousePreviousX);
@@ -571,7 +560,10 @@ public: // on_widget
       if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualMoved.addRight(deltax);   }
       if (MResizeEdge & SAT_EDGE_TOP)     { MManualMoved.removeTop(deltay);  }
       if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualMoved.addBottom(deltay);  }
-      do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
+      if (MParent)  {
+        MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
+        MParent->do_widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
+      }
     }
     else {
       checkHover(AXpos,AYpos);

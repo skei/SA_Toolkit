@@ -25,4 +25,23 @@ typedef double            sat_param_t;
 typedef std::atomic<bool> sat_atomic_bool_t;
 
 //----------------------------------------------------------------------
+// TODO: drop-in replacement for SAT_Queue, SAT_AtomicQueue, ...
+
+//moodycamel::ConcurrentQueue<T>
+//moodycamel::ReaderWriterQueue<T>
+
+#ifdef SAT_DEBUG_MEMTRACE
+  #define HAD_DEBUG_MEMTRACE
+  #undef SAT_DEBUG_MEMTRACE
+#endif
+
+// these don't like our new/delete overloads..
+#include "extern/cameron314/concurrentqueue.h"
+#include "extern/cameron314/readerwriterqueue.h"
+
+#ifdef HAD_DEBUG_MEMTRACE
+  #define SAT_DEBUG_MEMTRACE
+#endif
+
+//----------------------------------------------------------------------
 #endif
