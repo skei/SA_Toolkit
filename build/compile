@@ -404,9 +404,19 @@ fi
 
 runPreSteps
 echo -n "Compile and link.. "
-$CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL
-echo "[DONE]"
-runPostSteps
+# This possibly will mask any warnings
+compile=$($CC $INPUT -o $OUTPUT $FLAGS $INC $PRELIB $LIB $ADDITIONAL 2>&1)
+if echo "$compile" | grep -iq "undefined symbols"; then
+  echo "[FAILED]"
+  echo "Error: Undefined symbols"
+  echo "Make sure 'build/build.cpp' includes any target."
+elif echo "$compile" | grep -iq "error:"; then
+  echo "[FAILED]"
+  echo $compile
+else
+  echo "[DONE]"
+  runPostSteps
+fi
 
 #----------------------------------------------------------------------
 #
