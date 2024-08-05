@@ -166,7 +166,7 @@ public:
     MContainer->State.active = true;
     MContainer->State.visible = true;
     MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_UP);
-    do_widget_realign(this,0);
+    do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
     //do_widget_update(this);
     //do_widget_redraw(this);
   }
@@ -182,7 +182,7 @@ public:
     MContainer->State.active = false;
     MContainer->State.visible = false;
     MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_DOWN);
-    do_widget_realign(this,0);
+    do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
   }
 
   //----------

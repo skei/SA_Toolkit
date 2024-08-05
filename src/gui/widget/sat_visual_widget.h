@@ -555,14 +555,14 @@ public: // on_widget
       // // mrect.y -= offset.y;
       // // setRect(mrect);
       // setRectAndBase(mrect);
-      // do_widget_realign(this,0);
+      // do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
       // //realignParent();
 
       double deltax = (AXpos - MMousePreviousX);
       double deltay = (AYpos - MMousePreviousY);
       if (MMovableDirections & SAT_DIRECTION_HORIZ) { MManualMoved.x += deltax; }
       if (MMovableDirections & SAT_DIRECTION_VERT)  { MManualMoved.y += deltay; }
-      do_widget_realign(this,0);
+      do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
     }
     else if (MResizing) {
       double deltax = (AXpos - MMousePreviousX);
@@ -571,7 +571,7 @@ public: // on_widget
       if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualMoved.addRight(deltax);   }
       if (MResizeEdge & SAT_EDGE_TOP)     { MManualMoved.removeTop(deltay);  }
       if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualMoved.addBottom(deltay);  }
-      do_widget_realign(this,0);
+      do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
     }
     else {
       checkHover(AXpos,AYpos);

@@ -311,8 +311,7 @@ public: // window
 
   /*
     we don't risk getting overlapping on_window_paint and on_window_resize events, do we?
-
-    should we make the renderer conrtext current during resizing?
+    should we make the renderer context current during resizing?
   */
 
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
