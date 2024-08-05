@@ -3,7 +3,7 @@
 # Architecture issues:
 # ../plugins/ports/sa_iirfilter.h:23:
 # /Applications/Xcode 14.3.1.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.3/include/emmintrin.h:14:2: error: "This header is only meant to be used on x86 and x64 architecture"
-arch_type=x86_64  # arm64 or x86_64
+arch_type=arm64  # arm64 or x86_64
 
 arch -$arch_type zsh -c "./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d"  # Debug build
 # arch -$arch_type zsh -c "./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui"  # Release build
