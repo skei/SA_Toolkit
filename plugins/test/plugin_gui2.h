@@ -86,7 +86,9 @@ private:
 
   //----------
 
+#ifndef SAT_NO_GUI
   SAT_MenuWidget* MMenu1 = nullptr;
+#endif
 
 //------------------------------
 public:
