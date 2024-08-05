@@ -230,9 +230,9 @@ public:
     SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
     for (uint32_t i=0; i<MAX_VOICES; i++) {
       uint32_t state = MProcessor->getVoiceState(i);
-      voices->setVoiceState(i,state);
+      // voices->setVoiceState(i,state);
     }
-    voices->do_widget_redraw(voices);
+    // voices->do_widget_redraw(voices);
   }  
 
 };
