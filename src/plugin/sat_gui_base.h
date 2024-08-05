@@ -1,9 +1,8 @@
-#ifndef sat_render_context_included
-#define sat_render_context_included
+#ifndef sat_gui_base_included
+#define sat_gui_base_included
 //----------------------------------------------------------------------
 
-struct SAT_RenderContext {
-};
+#include "sat.h"
 
 //----------------------------------------------------------------------
 #endif

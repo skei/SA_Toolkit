@@ -3,7 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/base/sat_base_widget.h"
+#include "gui/sat_gui_base.h"
+#include "gui/sat_painter.h"
 
 class SAT_Widget;
 typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
@@ -49,6 +50,14 @@ class SAT_Widget
 : public SAT_BaseWidget {
 
   friend class SAT_VisualWidget;
+  friend class SAT_GuiQueues;
+
+//------------------------------
+private:
+//------------------------------
+
+  uint32_t MLastRealignedFrame = 0;
+  uint32_t MLastPaintedFrame = 0;
 
 //------------------------------
 private:

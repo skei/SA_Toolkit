@@ -114,7 +114,7 @@ public:
 
     //MTextBox->appendLine("text...");
     MTextBox->do_widget_realign(MTextBox,SAT_WIDGET_REALIGN_TIMER);
-    MTextBox->do_widget_redraw(MTextBox,0,SAT_WIDGET_REALIGN_TIMER);
+//    MTextBox->do_widget_redraw(MTextBox,0,SAT_WIDGET_REALIGN_TIMER);
   }
 
   // void on_timerListener_callback(SAT_Timer* ATimer) override {

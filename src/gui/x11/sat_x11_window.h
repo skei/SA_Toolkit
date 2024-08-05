@@ -7,9 +7,7 @@
 
 #include "sat.h"
 #include "base/system/sat_time.h"
-#include "gui/base/sat_base_window.h"
-#include "gui/base/sat_painter_owner.h"
-#include "gui/base/sat_renderer_owner.h"
+#include "gui/sat_gui_base.h"
 #include "gui/x11/sat_x11.h"
 #include "gui/x11/sat_x11_utils.h"
 
