@@ -1,6 +1,8 @@
 
 #include "sat.h"
+#ifndef SAT_NO_GUI
 #include "gui/sat_window.h"
+#endif
 //#include "gui/sat_widgets.h"
 
 #define SAT_PLUGIN_EXE_NO_MAIN
@@ -10,6 +12,7 @@
 
 int main() {
 
+#ifndef SAT_NO_GUI
   SAT_Window* window = new SAT_Window(640,480);
   // SAT_RootWidget* root = new SAT_RootWidget(window,SAT_Rect(0,0,100,100));
   // window->setRootWidget(root);
@@ -30,6 +33,7 @@ int main() {
   // window->eventLoop();
   // window->hide();
   delete window;
+#endif
 
   return 0;
 }
