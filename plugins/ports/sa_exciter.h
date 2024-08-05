@@ -72,7 +72,7 @@ private:
   float tmprTWO     = 0;
 
   float c_ampDB     = 8.65617025;
-  float cDenorm     = 10^-30;
+  float cDenorm     = 10e-30;
   float clipBoost   = 0;
   float mixBack     = 0;
   float hdistr      = 0;

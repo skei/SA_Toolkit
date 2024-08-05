@@ -91,7 +91,7 @@ private:
   float gain        = 1.0;
   float seekgain    = 1.0;
   float c           = 8.65617025;
-  float dc          = 10^-30;
+  float dc          = 10e-30;
 
 //------------------------------
 public:
