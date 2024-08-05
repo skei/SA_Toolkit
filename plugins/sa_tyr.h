@@ -137,7 +137,7 @@ public:
     appendParameter(new SAT_Parameter("Gain",   "", 1,  0, 1, flags));  // 0
     appendParameter(new SAT_Parameter("Tuning", "", 0, -1, 1, flags));  // 1
     appendParameter(new SAT_Parameter("Filter", "", 1,  0, 1, flags));  // 2
-    #if !defined (SAT_GUI_NOGUI)
+    #if !defined (SAT_NO_GUI)
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
     return SAT_Plugin::init();
