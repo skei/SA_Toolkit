@@ -17,7 +17,7 @@
 #include "plugin/vst3/sat_vst3_plugin.h"
 #include "plugin/vst3/sat_vst3_utils.h"
 
-//#ifndef SAT_GUI_NOGUI
+//#ifndef SAT_NO_GUI
 //#include "plugin/sat_editor.h"
 //#endif
 

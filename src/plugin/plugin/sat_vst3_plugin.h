@@ -2151,11 +2151,11 @@ public: // IEditController
     //}
     ////MPlugin->setParamValue(id,value);
     ////MEditorValues[id] = value;
-    //#ifndef SAT_GUI_NOGUI
+    //#ifndef SAT_NO_GUI
     //if (MEditor) {
     //  MEditor->setParameterValueAndRedraw(id,value);
     //}
-    //#endif // SAT_GUI_NOGUI
+    //#endif // SAT_NO_GUI
     //SAT_Parameter* parameter = MDescriptor->getParameter(id);
     //float v = parameter->from01(value);
     //on_updateParameter(id,v);

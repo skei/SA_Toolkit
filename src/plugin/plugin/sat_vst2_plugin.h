@@ -73,9 +73,9 @@ private:
   uint32_t                        MMaxBlockSize         = 0;
   ERect                           MVstRect;//              = {0};
 
-  //#ifndef SAT_GUI_NOGUI
+  //#ifndef SAT_NO_GUI
   //  SAT_Editor*         MEditor             = nullptr;
-  //#endif // SAT_GUI_NOGUI
+  //#endif // SAT_NO_GUI
 
   #ifndef SAT_PLUGIN_VST2_NO_SHELL
     int32_t   MShellPluginLastQueried = -1;
@@ -202,7 +202,7 @@ private:
 
   //----------
 
-  #ifndef SAT_GUI_NOGUI
+  #ifndef SAT_NO_GUI
   void updateEditorInIdle() {
     flushGuiMessages();
   }
@@ -216,7 +216,7 @@ public:
     //SAT_Print("index %i parameter %f\n",index,parameter);
     MParameterValues[index] = parameter;
     queueProcessMessage(index);
-    #ifndef SAT_GUI_NOGUI
+    #ifndef SAT_NO_GUI
       if (MIsEditorOpen) queueGuiMessage(index);
     #endif
   }
@@ -556,7 +556,7 @@ public:
 
       case effEditOpen: { // 14
         //SAT_Print("effEditOpen\n");
-        #ifndef SAT_GUI_NOGUI
+        #ifndef SAT_NO_GUI
 
           #ifdef SAT_LINUX
           if (MGui && MGui->is_api_supported(MPlugin,CLAP_WINDOW_API_X11,false)) {
@@ -600,7 +600,7 @@ public:
               return 1;
             }
           }
-        #endif // SAT_GUI_NOGUI
+        #endif // SAT_NO_GUI
         break;
           }
 
@@ -611,7 +611,7 @@ public:
 
       case effEditClose: { // 15
         //SAT_Print("effEditClose\n");
-        #ifndef SAT_GUI_NOGUI
+        #ifndef SAT_NO_GUI
           if (MGui) {
             if (MIsEditorOpen) {
               MIsEditorOpen = false;
@@ -620,7 +620,7 @@ public:
               return 1;
             }
           }
-        #endif // SAT_GUI_NOGUI
+        #endif // SAT_NO_GUI
         break;
       }
 
@@ -639,7 +639,7 @@ public:
 
       case effEditIdle: { // 19
         //SAT_Print("effEditIdle\n");
-        #ifndef SAT_GUI_NOGUI
+        #ifndef SAT_NO_GUI
 //          if (MGui) {
 //            if (MIsEditorOpen) {
 //              //SAT_Assert(MEditor);
@@ -647,7 +647,7 @@ public:
 //              updateEditorInIdle();
 //            }
 //          }
-        #endif // SAT_NO_SAT_GUI_NOGUIGUI
+        #endif // SAT_NO_GUI
         break;
       }
 
