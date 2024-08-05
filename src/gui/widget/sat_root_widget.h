@@ -111,7 +111,7 @@ public: // do_widget
     if (MListener) MListener->on_WidgetListener_redraw(AWidget,AIndex,AMode);
   }
 
-  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {
+  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_GUI) override {
     if (MListener) MListener->on_WidgetListener_realign(AWidget,AMode);
   }
   

@@ -304,6 +304,7 @@ public: // set
   //----------
 
   void setTextSize(double ASize) override {
+    if (ASize < 1.0) ASize = 1.0;
     MTextSize = ASize;
     nvgFontSize(MContext,ASize);
   }

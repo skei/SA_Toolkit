@@ -229,7 +229,7 @@ public: // child to parent
   
   //----------
 
-  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {
+  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_GUI) override {
     // SAT_Widget* parent = AWidget->getParent();
     // if (parent) {
     //   parent->realignChildren();

@@ -362,8 +362,12 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_VOICE_EVENT_MODE_INTERLEAVED        2
 #define SAT_VOICE_EVENT_MODE_QUANTIZED          3
 
-#define SAT_WIDGET_REALIGN_POS                  0
-#define SAT_WIDGET_REALIGN_ORDER                1
+//#define SAT_WIDGET_REALIGN_POS                  0
+//#define SAT_WIDGET_REALIGN_ORDER                1
+
+#define SAT_WIDGET_REALIGN_GUI                  0
+#define SAT_WIDGET_REALIGN_TIMER                1
+#define SAT_WIDGET_REALIGN_AUDIO                2
 
 #define SAT_WIDGET_REDRAW_GUI                   0
 #define SAT_WIDGET_REDRAW_TIMER                 1

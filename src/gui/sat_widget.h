@@ -645,7 +645,7 @@ public:
         tween.sub(prev);
         MManualTween.add(tween);
         if (MParent) {
-          MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
+          MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_TIMER);
         }
         break;
     }
@@ -675,8 +675,6 @@ public:
   // nowhere yet.. todo: during realigning? runtime movement?
 
   void on_widget_move(int32_t AXpos, int32_t AYpos) override {
-    //do_widget_realign(MParent,SAT_WIDGET_REALIGN_POS);
-    //realignChildren();
   }
   
   //----------
@@ -685,8 +683,6 @@ public:
   //   SAT_WidgetWindow.on_window_resize
 
   void on_widget_resize(uint32_t AWidth, uint32_t AHeight) override {
-    //do_widget_realign(MParent,SAT_WIDGET_REALIGN_SIZE);
-    //realignChildren();
   }
   
   //----------
@@ -782,7 +778,7 @@ public:
     if (MParent) MParent->do_widget_redraw(AWidget,AIndex,AMode);
   }
   
-  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) override {
+  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_GUI) override {
     if (MParent) MParent->do_widget_realign(AWidget,AMode);
   }
   
