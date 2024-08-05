@@ -81,7 +81,7 @@ public:
 
   //----------
 
-  // void on_windowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) override {
+  // void on_windowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
   // }
 
   //----------
@@ -144,7 +144,7 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setValue(value);
-        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_AUDIO);
+        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
       }
     }
   }
@@ -159,7 +159,7 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setModulation(value);
-        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_AUDIO);
+        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
       }
     }
   }

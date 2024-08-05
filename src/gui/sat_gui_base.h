@@ -269,8 +269,8 @@ public:
 class SAT_WidgetListener {
 public:
   virtual void          on_WidgetListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
-  virtual void          on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) {}
-  virtual void          on_WidgetListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_GUI) {}
+  virtual void          on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) {}
+  virtual void          on_WidgetListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) {}
   virtual void          on_WidgetListener_notify(SAT_Widget* AWidget, int32_t AValue) {}
   virtual void          on_WidgetListener_mouse_capture(SAT_Widget* AWidget) {}
   virtual void          on_WidgetListener_key_capture(SAT_Widget* AWidget) {}
@@ -320,8 +320,8 @@ public:
   virtual void          on_widget_hint(SAT_Widget* AWidget, const char* AHint) {}
 public:
   virtual void          do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
-  virtual void          do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) {}
-  virtual void          do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_GUI) {}
+  virtual void          do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) {}
+  virtual void          do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) {}
   virtual void          do_widget_notify(SAT_Widget* AWidget, int32_t AValue) {}
   virtual void          do_widget_mouse_capture(SAT_Widget* AWidget) {}
   virtual void          do_widget_key_capture(SAT_Widget* AWidget) {}
@@ -344,7 +344,7 @@ class SAT_WindowListener {
 public:
   virtual void          on_WindowListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
   virtual void          on_WindowListener_timer(SAT_Timer* ATimer, double ADelta) {}
-//virtual void          on_WindowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) {}
+//virtual void          on_WindowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) {}
 //virtual void          on_WindowListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) {}
 //virtual void          on_WindowListener_notify(SAT_Widget* AWidget, int32_t AValue) {}
 //virtual void          on_WindowListener_mouse_capture(SAT_Widget* AWidget) {}

@@ -654,7 +654,7 @@ public:
         tween.sub(prev);
         MManualTween.add(tween);
         if (MParent) {
-          MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_TIMER);
+          MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
         }
         break;
     }
@@ -783,11 +783,11 @@ public:
     if (MParent) MParent->do_widget_update(AWidget,AIndex,AMode);
   }
   
-  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_GUI) override {
+  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
     if (MParent) MParent->do_widget_redraw(AWidget,AIndex,AMode);
   }
   
-  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_GUI) override {
+  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
     if (MParent) MParent->do_widget_realign(AWidget,AMode);
   }
   

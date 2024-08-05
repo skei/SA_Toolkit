@@ -101,9 +101,9 @@ public:
 public:
 //------------------------------
 
-  void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
+  void on_TimerListener_callback(double ADelta) override {
     //SAT_TRACE;
-    SAT_Window::on_timerListener_callback(ATimer,ADelta);
+    SAT_Window::on_TimerListener_callback(ADelta);
 
     #ifdef SAT_DEBG_OBSERVER
       uint32_t num = SAT_GLOBAL.DEBUG.OBSERVER.getNumObservers();
@@ -113,8 +113,8 @@ public:
     #endif
 
     //MTextBox->appendLine("text...");
-    MTextBox->do_widget_realign(MTextBox,SAT_WIDGET_REALIGN_TIMER);
-//    MTextBox->do_widget_redraw(MTextBox,0,SAT_WIDGET_REALIGN_TIMER);
+    MTextBox->do_widget_realign(MTextBox,SAT_WIDGET_REALIGN_SELF);
+//    MTextBox->do_widget_redraw(MTextBox,0,SAT_WIDGET_REDRAW_SELF);
   }
 
   // void on_timerListener_callback(SAT_Timer* ATimer) override {
