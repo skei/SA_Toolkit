@@ -1,0 +1,31 @@
+{
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "Linux",
+      "displayName": "Linux",
+      "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
+      "binaryDir": "${sourceDir}/build/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/gcc",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Standalone Executable",
+      "description": "",
+      "displayName": "Executable",
+      "configurePreset": "Linux"
+    },
+    {
+      "name": "Plugin",
+      "description": "",
+      "displayName": "Plugin",
+      "configurePreset": "Linux"
+    }
+  ]
+}
