@@ -84,7 +84,7 @@ private:
     memset(manifest_ttl,0,SAT_LV2_MANIFEST_TTL_SIZE);
     strcat(manifest_ttl,"@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .\n");
     strcat(manifest_ttl,"@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n");
-    #ifndef SAT_GUI_NOGUI
+    #ifndef SAT_NO_GUI
       //strcat(manifest_ttl,"@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .\n");
     #endif
     strcat(manifest_ttl,"\n");
@@ -103,7 +103,7 @@ private:
       strcat(manifest_ttl,temp);
       strcat(manifest_ttl,"\n");
       //clap_plugin->destroy(clap_plugin);
-      #ifndef SAT_GUI_NOGUI
+      #ifndef SAT_NO_GUI
         //sprintf(temp,"<urn:%s_ui>\n",clap_descriptor->id);                        //"urn:skei.audio/sat_debug_ui";
         //strcat(manifest_ttl,temp);
         //strcat(manifest_ttl,"  a ui:X11UI ;\n");
@@ -133,7 +133,7 @@ private:
     strcat(plugin_ttl,"@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .\n");
     strcat(plugin_ttl,"@prefix atom:   <http://lv2plug.in/ns/ext/atom#> .\n");
     strcat(plugin_ttl,"@prefix midi:   <http://lv2plug.in/ns/ext/midi#> .\n");
-    #ifndef SAT_GUI_NOGUI
+    #ifndef SAT_NO_GUI
     strcat(plugin_ttl,"@prefix ui:     <http://lv2plug.in/ns/extensions/ui#> .\n");
     #endif
     strcat(plugin_ttl,"@prefix urid:   <http://lv2plug.in/ns/ext/urid#> .\n");
@@ -156,7 +156,7 @@ private:
       strcat(plugin_ttl,"  lv2:optionalFeature lv2:hardRTCapable ;\n");
       strcat(plugin_ttl,"  lv2:requiredFeature urid:map ;\n");
 
-      #ifndef SAT_GUI_NOGUI
+      #ifndef SAT_NO_GUI
       // editor?
       #endif
 

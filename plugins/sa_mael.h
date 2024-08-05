@@ -8,7 +8,7 @@
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_voice_processor.h"
 
-#if !defined (SAT_GUI_NOGUI)
+#if !defined (SAT_NO_GUI)
   #include "plugin/sat_editor.h"
   #include "gui/sat_widgets.h"
 #endif
@@ -157,7 +157,7 @@ public:
 
     sa_mael_SetupParameters(this);
 
-    #if !defined (SAT_GUI_NOGUI)
+    #if !defined (SAT_NO_GUI)
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
 

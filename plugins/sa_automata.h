@@ -13,7 +13,7 @@
 #include "plugin/processor/sat_interleaved_processor.h"
 //#include "audio/sat_audio_utils.h"
 
-#if !defined (SAT_GUI_NOGUI)
+#if !defined (SAT_NO_GUI)
   //#include "gui/sat_widgets.h"
   #include "sa_automata/sa_automata_widgets.h"
 #endif
@@ -541,7 +541,7 @@ public:
     MProcessor = new sa_automata_processor(this);
     setProcessor(MProcessor);
 
-    #if !defined (SAT_GUI_NOGUI)
+    #if !defined (SAT_NO_GUI)
       setInitialEditorSize( 420, 560, 1.0, true );
     #endif
 
