@@ -6,8 +6,8 @@
 
 //----------
 
-struct clap_gui_resize_hints_t;
-struct clap_window_t;
+// struct clap_gui_resize_hints_t;
+// struct clap_window_t;
 class SAT_EditorListener;
 
 //----------------------------------------------------------------------
