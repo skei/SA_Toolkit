@@ -7,7 +7,9 @@
 #include "plugin/sat_entry.h"
 #include "plugin/sat_parameters.h"
 #include "plugin/sat_plugin.h"
+#ifndef SAT_NO_GUI
 #include "gui/sat_widgets.h"
+#endif
 
 #include "plugin/processor/sat_interleaved_processor.h"
 
