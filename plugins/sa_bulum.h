@@ -79,7 +79,7 @@ private:
   //bool      need_recalc         = true;
   float     samplerate          = 0.0;
 
-  sa_bulum_grain  MGrains[MAX_GRAINS] = {0};
+  sa_bulum_grain  MGrains[MAX_GRAINS] = {{0}};
   float           MBuffer[BUFFERSIZE] = {0};
 
   bool      need_precalc        = true;
