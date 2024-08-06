@@ -6,9 +6,6 @@
 #include "gui/nanovg/sat_nanovg.h"
 #include "gui/sat_gui_base.h"
 
-
-//#include "gui/lib/sat_x11.h"
-
 //----------------------------------------------------------------------
 //
 //

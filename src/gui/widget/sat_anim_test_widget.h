@@ -35,7 +35,7 @@ public:
     Options.wantHoverEvents = true;
     //Options.autoClip = true;
 
-    setBackgroundColor(SAT_Color(0.5, 0.5, 0.6, 0.05));
+    setBackgroundColor(SAT_Color(0.5, 0.5, 0.6, 0.4)); //0.05));
 
     setMovable(true);
     //setMovableOffset(SAT_Rect(0,0,0,0));

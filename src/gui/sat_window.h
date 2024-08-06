@@ -31,6 +31,25 @@ class SAT_Window
 private:
 //------------------------------
 
+  SAT_GuiQueues       MQueues               = {};
+  
+  // widgets
+
+  SAT_RootWidget*     MRootWidget           = nullptr;
+  SAT_OverlayWidget*  MOverlayWidget        = nullptr;
+
+  SAT_Widget*         MHoverWidget          = nullptr;
+  SAT_Widget*         MModalWidget          = nullptr;
+  SAT_Widget*         MMouseCaptureWidget   = nullptr;
+  SAT_Widget*         MKeyCaptureWidget     = nullptr;
+  SAT_Widget*         MHintWidget           = nullptr;
+
+  // timer
+
+  double              MTimerDelta           = 0;
+  SAT_WidgetArray     MTimerListeners       = {};
+  SAT_TweenManager    MTweenManager         = {};
+
   // mouse
 
   int32_t             MMouseCurrentCursor   = SAT_CURSOR_DEFAULT;
@@ -54,30 +73,6 @@ private:
   int32_t             MMouseCaptureXpos     = 0;
   int32_t             MMouseCaptureYpos     = 0;
   uint32_t            MMouseCaptureButton   = 0;
-
-  // widgets
-
-  SAT_RootWidget*     MRootWidget           = nullptr;
-  SAT_OverlayWidget*  MOverlayWidget        = nullptr;
-
-  SAT_Widget*         MHoverWidget          = nullptr;
-  SAT_Widget*         MModalWidget          = nullptr;
-  SAT_Widget*         MMouseCaptureWidget   = nullptr;
-  SAT_Widget*         MKeyCaptureWidget     = nullptr;
-  SAT_Widget*         MHintWidget           = nullptr;
-
-  // SAT_WidgetQueue     MDirtyGuiWidgets      = {};
-  // SAT_WidgetQueue     MDirtyTimerWidgets    = {};
-  // SAT_WidgetQueue     MDirtyAudioWidgets    = {};
-  // SAT_WidgetQueue     MPaintWidgets         = {};
-
-  SAT_GuiQueues       MQueues               = {};
-  
-  // timer
-
-  double              MTimerDelta           = 0;
-  SAT_WidgetArray     MTimerListeners       = {};
-  SAT_TweenManager    MTweenManager         = {};
 
 //------------------------------
 public:
@@ -156,7 +151,7 @@ public:
 public: // mouse
 //------------------------------
 
-  virtual void lockMouseCursor() {
+  void lockMouseCursor() {
     MMouseLocked        = true;
     MMouseLockedXclick  = MMouseCurrentXpos;
     MMouseLockedYclick  = MMouseCurrentYpos;
@@ -166,7 +161,7 @@ public: // mouse
 
   //----------
 
-  virtual void unlockMouseCursor() {
+  void unlockMouseCursor() {
     MMouseLocked = false;
   }
 
@@ -315,6 +310,8 @@ public: // timer
       SAT_Rect rect = MQueues.flushRedrawToPaint();
       if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
     #else
+      //MQueues.flushRedrawToPaint(MRootWidget);
+      //SAT_Rect rect = MRootWidget->getRect();
       SAT_Rect rect = MQueues.flushRedrawToPaint(MRootWidget);
       invalidate(rect.x,rect.y,rect.w,rect.h);
     #endif

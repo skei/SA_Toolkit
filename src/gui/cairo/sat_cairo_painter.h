@@ -12,10 +12,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/lib/sat_cairo.h"
-#include "gui/painter/sat_base_painter.h"
-#include "gui/painter/sat_painter_owner.h"
-//#include "gui/backend/cairo/sat_cairo_utils.h"
+#include "gui/cairo/sat_cairo.h"
+#include "gui/sat_gui_base.h"
 
 //----------------------------------------------------------------------
 //

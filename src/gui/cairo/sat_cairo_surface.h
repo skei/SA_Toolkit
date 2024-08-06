@@ -3,12 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/lib/sat_cairo.h"
-#include "gui/surface/sat_base_surface.h"
-#include "gui/surface/sat_surface_owner.h"
-#include "gui/painter/sat_paint_source.h"
-#include "gui/painter/sat_paint_target.h"
-#include "gui/painter/sat_painter_owner.h"
+#include "gui/cairo/sat_cairo.h"
+#include "gui/sat_gui_base.h"
 
 //----------------------------------------------------------------------
 //
