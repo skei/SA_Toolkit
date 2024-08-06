@@ -7,3 +7,5 @@ arch_type=arm64  # arm64 or x86_64
 
 arch -$arch_type zsh -c "./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d"  # Debug build
 # arch -$arch_type zsh -c "./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui"  # Release build
+
+# Last Cherry Pick (master): 273416db84587b8b922281ee844221087300b09c
