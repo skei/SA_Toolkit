@@ -482,7 +482,8 @@ private:
   
   int32_t findFreeVoice(bool AReleased=false) {
     for (uint32_t i=0; i<COUNT; i++) {
-      if ((MVoices[i].state == SAT_VOICE_OFF) /*|| (MVoices[i].state == SAT_VOICE_FINISHED)*/) {
+      // if ((MVoices[i].state == SAT_VOICE_OFF) || (MVoices[i].state == SAT_VOICE_FINISHED)) {
+      if (MVoices[i].state == SAT_VOICE_OFF) {
         return i;
       }
     }
