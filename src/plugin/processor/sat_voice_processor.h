@@ -520,7 +520,7 @@ private:
 
   void flushNoteEnds(const clap_output_events_t* out_events) {
     uint32_t count = 0;
-    SAT_Note note = {0};
+    SAT_Note note = {{{0}}};
     uint32_t blocksize = MVoiceContext.process_context->process->frames_count;
     while (MNoteEndQueue.read(&note)) {
       count += 1;
