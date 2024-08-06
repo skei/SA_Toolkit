@@ -26,10 +26,12 @@ const char* fx_type_text[NUM_FX_TYPES] = {
 //----------
 
 #include "sa_botage/sa_botage_parameters.h"
+#ifndef SAT_NO_GUI
 #include "sa_botage/sa_botage_widgets.h"
 #include "sa_botage/sa_botage_prob_page.h"
 #include "sa_botage/sa_botage_seq_page.h"
 #include "sa_botage/sa_botage_perf_page.h"
+#endif
 
 #include "sa_botage/sa_botage_processor.h"
 
@@ -154,7 +156,9 @@ public:
   void on_editorListener_timer(SAT_Timer* ATimer, double ADelta) override {
     SAT_Plugin::on_editorListener_timer(ATimer,ADelta);
 //    updateProbIndicators(&MProcessor);
+  #ifndef SAT_NO_GUI
     updateWaveformWidget(MProcessor);
+  #endif
   }  
 
 };
