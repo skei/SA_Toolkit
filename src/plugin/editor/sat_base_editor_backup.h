@@ -4,7 +4,7 @@
 
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
-#include "plugin/editor/sat_editor_listener.h"
+#include "plugin/sat_plugin_base.h"
 
 //----------
 

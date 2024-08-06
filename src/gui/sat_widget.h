@@ -653,9 +653,12 @@ public:
         MPrevTween = tween;
         tween.sub(prev);
         MManualTween.add(tween);
-        if (MParent) {
-          MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
-        }
+        // if (MParent) {
+        //   MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
+        //   MParent->do_widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
+        // }
+        do_widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
+        do_widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
         break;
     }
   }

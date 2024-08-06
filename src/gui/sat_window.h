@@ -302,7 +302,7 @@ public: // timer
 
     // timer updates
 
-    if (MListener) MListener->on_WindowListener_timer(nullptr,MTimerDelta);
+    if (MListener) MListener->on_WindowListener_timer(MTimerDelta);
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(MTimerDelta);
     }
@@ -352,7 +352,7 @@ public: // timer
     if (MIsClosing)  return;
     if (MIsPainting) return;
 
-    if (MListener) MListener->on_WindowListener_timer(nullptr,MTimerDelta);
+    if (MListener) MListener->on_WindowListener_timer(MTimerDelta);
 
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(MTimerDelta);
@@ -415,6 +415,21 @@ public: // widget listener
   void on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
     #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
       MQueues.queueRedraw(AWidget);
+      switch (AMode) {
+        case SAT_WIDGET_REDRAW_SELF: {
+          MQueues.queueRedraw(AWidget);
+          break;
+        }
+        case SAT_WIDGET_REDRAW_PARENT: {
+          SAT_Widget* parent = AWidget->getParent();
+          if (parent) MQueues.queueRedraw(parent);
+          break;
+        }
+        case SAT_WIDGET_REDRAW_ROOT: {
+          MQueues.queueRedraw(MRootWidget);
+          break;
+        }
+      }
     #else
       SAT_Rect rect = AWidget->getRect();
       invalidate(rect.x,rect.y,rect.w,rect.h);
@@ -427,22 +442,21 @@ public: // widget listener
     #ifdef SAT_WINDOW_TIMER_FLUSH_WIDGETS
 
       MQueues.queueRealign(AWidget);
+      switch (AMode) {
+        case SAT_WIDGET_REALIGN_SELF: {
+          MQueues.queueRealign(AWidget);
+          break;
+        }
+        case SAT_WIDGET_REALIGN_PARENT: {
+          SAT_Widget* parent = AWidget->getParent();
+          if (parent) MQueues.queueRealign(parent);
+          break;
+        }
+        case SAT_WIDGET_REALIGN_ROOT: {
+          break;
+        }
+      }
       //MQueues.queueRedraw(AWidget);
-
-      // switch (AMode) {
-      //   case SAT_WIDGET_REALIGN_SELF: {
-      //     MQueues.queueRealign(AWidget);
-      //     break;
-      //   }
-      //   case SAT_WIDGET_REALIGN_PARENT: {
-      //     SAT_Widget* parent = AWidget->getParent();
-      //     if (parent) MQueues.queueRealign(parent);
-      //     break;
-      //   }
-      //   case SAT_WIDGET_REALIGN_ROOT: {
-      //     break;
-      //   }
-      // }
 
     #else
       SAT_Widget* parent = AWidget->getParent();

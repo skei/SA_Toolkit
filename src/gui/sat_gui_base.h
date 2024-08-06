@@ -343,7 +343,7 @@ public:
 class SAT_WindowListener {
 public:
   virtual void          on_WindowListener_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
-  virtual void          on_WindowListener_timer(SAT_Timer* ATimer, double ADelta) {}
+  virtual void          on_WindowListener_timer(double ADelta) {}
 //virtual void          on_WindowListener_redraw(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) {}
 //virtual void          on_WindowListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_POS) {}
 //virtual void          on_WindowListener_notify(SAT_Widget* AWidget, int32_t AValue) {}

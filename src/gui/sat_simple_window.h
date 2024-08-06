@@ -11,7 +11,7 @@
 // #include "extern/cameron314/readerwriterqueue.h"
 
 //typedef SAT_AtomicQueue<uint32_t,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_PendingResizeEvent; // (h << 16) + w
-typedef moodycamel::ReaderWriterQueue<uint32_t> SAT_PendingResizeEvent;
+typedef moodycamel::ReaderWriterQueue<uint32_t> SAT_PendingResizeQueue;
 
 //----------------------------------------------------------------------
 //
@@ -73,7 +73,7 @@ protected:
 
     // resize
 
-    SAT_PendingResizeEvent  MPendingResize;
+    SAT_PendingResizeQueue  MPendingResizeQueue;
     //uint32_t                MPendingWidth       = 0;
     //uint32_t                MPendingHeight      = 0;
 
@@ -105,9 +105,9 @@ public:
     #ifdef SAT_WINDOW_BUFFERED    
       //MPendingWidth = AWidth;
       //MPendingHeight = AHeight;
-      //MPendingResize.write( (AHeight << 16) + AWidth );
+      //MPendingResizeQueue.write( (AHeight << 16) + AWidth );
       SAT_PRINT("queue resize %i,%i\n",AWidth,AHeight);
-      MPendingResize.enqueue( (AHeight << 16) + AWidth );
+      MPendingResizeQueue.enqueue( (AHeight << 16) + AWidth );
     #endif
   }
 
@@ -324,8 +324,8 @@ public: // window
     uint32_t value = (AHeight << 16) + AWidth;
     //SAT_PRINT("queue resize %i,%i\n",AWidth,AHeight);
 
-    //if (!MPendingResize.write(value)) {
-    if (!MPendingResize.enqueue(value)) {
+    //if (!MPendingResizeQueue.write(value)) {
+    if (!MPendingResizeQueue.enqueue(value)) {
       SAT_PRINT("couldn't write to pending resize queue\n");
     }
 
@@ -365,8 +365,8 @@ public: // window
     bool resized_buffer = false;
 
     uint32_t pending_size = 0;
-    //while (MPendingResize.read(&pending_size)) { resized_window = true; }
-    while (MPendingResize.try_dequeue(pending_size)) {
+    //while (MPendingResizeQueue.read(&pending_size)) { resized_window = true; }
+    while (MPendingResizeQueue.try_dequeue(pending_size)) {
       resized_window = true;
     }
 

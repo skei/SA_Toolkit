@@ -1,6 +1,7 @@
-
-// ../build/compile -i ../build/build.cpp -o build -f exe -g x11 -d
-// nc -U -l -k /tmp/sat.socket
+/*
+../build/compile -i ../build/build.cpp -o build -f exe -g x11 -d
+nc -U -l -k /tmp/sat.socket
+*/
 
 //----------------------------------------------------------------------
 

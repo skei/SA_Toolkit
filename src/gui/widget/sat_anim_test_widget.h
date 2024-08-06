@@ -35,7 +35,7 @@ public:
     Options.wantHoverEvents = true;
     //Options.autoClip = true;
 
-    setBackgroundColor(SAT_Color(0.5, 0.5, 0.6, 0.5));
+    setBackgroundColor(SAT_Color(0.5, 0.5, 0.6, 0.05));
 
     setMovable(true);
     //setMovableOffset(SAT_Rect(0,0,0,0));
@@ -138,7 +138,7 @@ public:
     painter->setDrawColor(SAT_Black);
     painter->setLineWidth(5.0 * scale);
     painter->drawCurveBezier(x1,y1,x2,y2,c1x,c1y,c2x,c2y);
-    painter->setDrawColor(SAT_Black);
+    painter->setDrawColor(SAT_White);
     painter->setLineWidth(0.5 * scale);
     painter->drawLine(x1,y1,c1x,c1y);
     painter->drawLine(c1x,c1y,c2x,c2y);

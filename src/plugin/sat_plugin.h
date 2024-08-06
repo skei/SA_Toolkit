@@ -13,7 +13,8 @@
 #include "plugin/sat_preset.h"
 #include "plugin/sat_processor.h"
 
-#include "plugin/editor/sat_editor_listener.h"
+//#include "plugin/editor/sat_editor_listener.h"
+#include "plugin/sat_plugin_base.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_plugin.h"
 
@@ -46,6 +47,8 @@ class SAT_Plugin
 //------------------------------
 private:
 //------------------------------
+
+  SAT_Window* MWindow = nullptr;
 
   bool                    MIsInitialized        = false;
   bool                    MIsActivated          = false;
@@ -509,16 +512,24 @@ public: // editor
   // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.create()
   // override this to create your own window
 
+  // SAT_DEBUG_MEMTRACE misreports the new SAT_Window below..
+  // (i think....)
+
   #ifndef SAT_NO_GUI
     #ifdef SAT_EDITOR_EMBEDDED
 
       virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) {
-        return new SAT_Window(AWidth,AHeight,AListener);
+        SAT_TRACE;
+        //return new SAT_Window(AWidth,AHeight,AListener);
+        MWindow = new SAT_Window(AWidth,AHeight,AListener);
+        return MWindow;
       }
 
       // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.destroy()
 
       virtual void deleteWindow(SAT_Window* AWindow) {
+        SAT_TRACE;
+        SAT_Assert( MWindow == AWindow );
         delete AWindow;
       }
 
@@ -619,7 +630,7 @@ public: // editor listener
 
     //----------
 
-    void on_EditorListener_timer(SAT_Timer* ATimer, double ADelta) override {
+    void on_EditorListener_timer(double ADelta) override {
       //SAT_TRACE;
       MQueues.flushParamFromHostToGui(&MParameters,MEditor);
       MQueues.flushModFromHostToGui(&MParameters,MEditor);

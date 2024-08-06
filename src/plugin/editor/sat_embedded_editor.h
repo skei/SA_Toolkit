@@ -1,8 +1,9 @@
 
 #include "sat.h"
-#include "plugin/editor/sat_editor_listener.h"
-#include "plugin/editor/sat_base_editor.h"
+//#include "plugin/editor/sat_editor_listener.h"
+//#include "plugin/editor/sat_base_editor.h"
 #include "gui/sat_gui_base.h"
+#include "plugin/sat_plugin_base.h"
 #include "gui/sat_window.h"
 
 
@@ -86,8 +87,8 @@ public:
 
   //----------
 
-  void on_WindowListener_timer(SAT_Timer* ATimer, double ADelta) override {
-    if (MListener) MListener->on_EditorListener_timer(ATimer,ADelta);
+  void on_WindowListener_timer(double ADelta) override {
+    if (MListener) MListener->on_EditorListener_timer(ADelta);
   }
 
 //------------------------------
@@ -122,10 +123,13 @@ public:
   // thread: main
 
   void setParameterValue(SAT_Parameter* AParameter) override {
-    SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
-    if (widget) {
-      sat_param_t value = AParameter->getValue();
-      widget->setValue(value);
+    if (MWindow) {
+      if (MWindow->isClosing()) return;
+      SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
+      if (widget) {
+        sat_param_t value = AParameter->getValue();
+        widget->setValue(value);
+      }
     }
   }
 
@@ -140,6 +144,7 @@ public:
 
   void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) override {
     if (MWindow) {
+    if (MWindow->isClosing()) return;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
       if (widget) {
         sat_param_t value = AParameter->getValue();
@@ -155,6 +160,7 @@ public:
 
   void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) override {
     if (MWindow) {
+      if (MWindow->isClosing()) return;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
       if (widget) {
         sat_param_t value = AParameter->getValue();

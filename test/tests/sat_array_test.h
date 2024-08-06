@@ -11,15 +11,16 @@
 //
 //----------------------------------------------------------------------
 
-#define DUMP_ARRAY /*SAT_PRINT("");*/ for (uint32_t i=0; i<array.size(); i++) { SAT_DPRINT("%s ",array[i]); } SAT_DPRINT("\n")
+#define DUMP_ARRAY                          \
+  for (uint32_t i=0; i<array.size(); i++) { \
+    SAT_DPRINT("%s ",array[i]);             \
+  }                                         \
+  SAT_DPRINT("\n")
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
 
-bool sat_array_test1() {
+//----------
+
+bool test_sat_array() {
 
   const char* t1 = "t1";
   const char* t2 = "t2";
@@ -47,7 +48,6 @@ bool sat_array_test1() {
   if (array.size() != 2) return false;
 
   return true;
-
 }
 
 //----------
@@ -60,7 +60,7 @@ bool sat_array_test1() {
 //
 //----------------------------------------------------------------------
 
-SAT_TEST("/base/type/sat_array/test1",sat_array_test1);
+SAT_TEST("/base/type/sat_array/test1",test_sat_array);
 
 //----------------------------------------------------------------------
 #endif
