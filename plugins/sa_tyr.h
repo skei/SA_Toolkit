@@ -2,10 +2,10 @@
 #define sa_tyr_included
 //----------------------------------------------------------------------
 
-#include "audio/sat_voice_manager.h"
+// #include "audio/sat_voice_manager.h"  // Missing file
 #include "plugin/sat_plugin.h"
 
-#if !defined (SAT_GUI_NOGUI)
+#if !defined (SAT_NO_GUI)
   #include "plugin/sat_editor.h"
   #include "gui/sat_widgets.h"
 #endif
