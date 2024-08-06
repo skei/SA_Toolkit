@@ -421,7 +421,7 @@ public: // window
       // if we're not buffering, we need to redraw the entire thing
 
       MWindowPainter->beginFrame(screenwidth,screenheight);
-      paintRoot(&MWindowPaintContext);
+      paintRoot(&MWindowPaintContext,resized_window);
       MWindowPainter->endFrame();
 
     #endif // buffered
