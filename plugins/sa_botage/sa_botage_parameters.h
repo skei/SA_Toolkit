@@ -37,7 +37,11 @@ public:
     v *= 100.0;
     uint32_t iv = SAT_Trunc(v);
     //sprintf(MValueText,MValueFormat,AValue);
-    sprintf(MValueText,"%i",iv);
+    #ifdef SAT_MAC
+      snprintf(MValueText,sizeof(MValueText),"%i",iv);
+    #else
+      sprintf(MValueText,"%i",iv);
+    #endif
     return MValueText;
   }
 
@@ -68,7 +72,11 @@ public:
     v *= 100.0;
     uint32_t iv = SAT_Trunc(v);
     //sprintf(MValueText,MValueFormat,AValue);
-    sprintf(MValueText,"%i",iv);
+    #ifdef SAT_MAC
+      snprintf(MValueText,sizeof(MValueText),"%i",iv);
+    #else
+      sprintf(MValueText,"%i",iv);
+    #endif
     return MValueText;
   }
 
@@ -100,7 +108,11 @@ public:
     v *= 8.0;
     //sprintf(MValueText,MValueFormat,v);
     int32_t iv = SAT_Trunc(v);
-    sprintf(MValueText,"%i",iv);
+    #ifdef SAT_MAC
+      snprintf(MValueText,sizeof(MValueText),"%i",iv);
+    #else
+      sprintf(MValueText,"%i",iv);
+    #endif
     return MValueText;
   }
 
