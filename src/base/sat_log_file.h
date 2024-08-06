@@ -87,11 +87,19 @@ public:
       if (file.direxists(MDesktopPath)) {
         SAT_CurrentTime time = {0};
         SAT_GetLocalTime(&time);
-        sprintf(MLogfileName,"%02i-%s-%04i_%02i-%02i-%02i",time.day, SAT_MONTH_NAMES[time.month - 1], time.year, time.hour, time.minutes, time.seconds);
+        #ifdef SAT_MAC
+          snprintf(MLogfileName,sizeof(MLogfileName),"%02i-%s-%04i_%02i-%02i-%02i",time.day, SAT_MONTH_NAMES[time.month - 1], time.year, time.hour, time.minutes, time.seconds);
+        #else
+          sprintf(MLogfileName,"%02i-%s-%04i_%02i-%02i-%02i",time.day, SAT_MONTH_NAMES[time.month - 1], time.year, time.hour, time.minutes, time.seconds);
+        #endif
         #ifdef SAT_LINUX
           sprintf(MFilename,"%s/%s",MDesktopPath,MLogfileName);
         #else
-          sprintf(MFilename,"%s\\%s",MDesktopPath,MLogfileName);
+          #ifdef SAT_MAC
+            snprintf(MFilename,sizeof(MFilename),"%s\\%s",MDesktopPath,MLogfileName);
+          #else
+            sprintf(MFilename,"%s\\%s",MDesktopPath,MLogfileName);
+          #endif
         #endif
         APrint->print("logfile: %s path: %s\n",MLogfileName,MFilename);
         MFile.open(MFilename,SAT_FILE_WRITE_TEXT);
