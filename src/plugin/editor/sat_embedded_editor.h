@@ -285,6 +285,16 @@ public: // clap.gui
   */
 
   bool setSize(uint32_t width, uint32_t height) override {
+
+    // when we resize the height if the plugin in reaper (linux), we can get
+    // negative heights! but as an uint, they're wrapped-around (large values).
+    // we safeguard against it by assuming every width/height above a certain size
+    // to be such a negative coord, wrongly given to us as an uint (instead of signed int),
+    // and we use 1,1 as the size instead
+
+    if (width > 8192) width = 1;
+    if (height > 8192) height = 1;
+
     MWidth = width;
     MHeight = height;
     if (MWindow /*&& MWindowIsOpen*/) {
