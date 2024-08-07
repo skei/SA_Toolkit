@@ -155,14 +155,15 @@
   // draw (and keep around) to a buffer, and copy from it to the screen,
   // instead of drawing directly to the screen (or opewngl backbuffer)
   // 'retained mode' - ish
-  //#define SAT_WINDOW_BUFFERED
+  #define SAT_WINDOW_BUFFERED
 
   // autostart the window timer
   #define SAT_WINDOW_TIMER_AUTOSTART
 
   // if this is not defined, updated widgets will not be queued
   // or flushed from the dirty widget queue.. not redrawn..
-  #define SAT_WINDOW_TIMER_FLUSH_WIDGETS
+
+  #define SAT_WINDOW_QUEUE_WIDGETS
 
   // waits for window to actually appear on the screen
   #define SAT_X11_WAIT_FOR_MAPNOTIFY

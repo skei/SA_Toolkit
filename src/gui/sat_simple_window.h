@@ -9,8 +9,6 @@
 #include "gui/sat_renderer.h"
 
 // #include "extern/cameron314/readerwriterqueue.h"
-
-//typedef SAT_AtomicQueue<uint32_t,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_PendingResizeEvent; // (h << 16) + w
 typedef moodycamel::ReaderWriterQueue<uint32_t> SAT_PendingResizeQueue;
 
 //----------------------------------------------------------------------
@@ -62,20 +60,15 @@ protected:
   // buffer
 
   #ifdef SAT_WINDOW_BUFFERED    
-
     bool                    MBufferAllocated    = false;
     void*                   MRenderBuffer       = nullptr;
     uint32_t                MBufferWidth        = 0;
     uint32_t                MBufferHeight       = 0;
-
-
   #endif
 
-    // resize
+  // resize
 
-    SAT_PendingResizeQueue  MPendingResizeQueue;
-    //uint32_t                MPendingWidth       = 0;
-    //uint32_t                MPendingHeight      = 0;
+  SAT_PendingResizeQueue    MPendingResizeQueue;
 
   // aspect
 
@@ -101,14 +94,6 @@ public:
     MTimer = new SAT_Timer(this);
     MInitialWidth = AWidth;
     MInitialHeight = AHeight;
-
-    #ifdef SAT_WINDOW_BUFFERED    
-      //MPendingWidth = AWidth;
-      //MPendingHeight = AHeight;
-      //MPendingResizeQueue.write( (AHeight << 16) + AWidth );
-      SAT_PRINT("queue resize %i,%i\n",AWidth,AHeight);
-      MPendingResizeQueue.enqueue( (AHeight << 16) + AWidth );
-    #endif
   }
 
   //----------
@@ -262,9 +247,9 @@ public: // timer
 
   // (see SAT_Window.on_TimerListener_update)
 
-  void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
-    sendClientMessage(SAT_WINDOW_THREAD_TIMER,0);
-  }
+  // void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
+  //   sendClientMessage(SAT_WINDOW_THREAD_TIMER,0);
+  // }
 
 //------------------------------
 public: // window
@@ -316,24 +301,20 @@ public: // window
   */
 
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
-    SAT_Assert(AWidth < 32768);
-    SAT_Assert(AHeight < 32768);
-    //uint32_t w = SAT_NextPowerOfTwo(AWidth);
-    //uint32_t h = SAT_NextPowerOfTwo(AHeight);
-    //uint32_t value = (h << 16) + w;
+
+    if (AWidth < 1) AWidth = 1;
+    if (AHeight < 1) AHeight = 1;
+
+    // SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+    // SAT_Assert(AWidth < 32768);
+    // SAT_Assert(AHeight < 32768);
+    
     uint32_t value = (AHeight << 16) + AWidth;
     //SAT_PRINT("queue resize %i,%i\n",AWidth,AHeight);
-
     //if (!MPendingResizeQueue.write(value)) {
     if (!MPendingResizeQueue.enqueue(value)) {
       SAT_PRINT("couldn't write to pending resize queue\n");
     }
-
-//    MWindowScale = calcScale(AWidth,AHeight);
-//    #ifdef SAT_WINDOW_BUFFERED    
-//      MPendingWidth = SAT_NextPowerOfTwo(AWidth);
-//      MPendingHeight = SAT_NextPowerOfTwo(AHeight);
-//    #endif
 
   }
 
@@ -346,7 +327,8 @@ public: // window
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
 
-    if (MIsClosing || MIsPainting) return;
+    if (MIsClosing) return;
+    if (MIsPainting) return;
     MIsPainting = true;
 
     MWindowPaintContext.update_rect = SAT_Rect(AXpos,AYpos,AWidth,AHeight);
@@ -393,9 +375,6 @@ public: // window
       // we have to draw entirely from the root to 'catch' all layers.-
       // :-/
 
-      // if (resized_buffer) paintRoot(&MWindowPaintContext);
-      // else paint(&MWindowPaintContext);
-
       if (resized_window) {
         SAT_PRINT("resized\n");
         paintRoot(&MWindowPaintContext,true);
@@ -435,58 +414,7 @@ public: // window
     MIsPainting = false;
 
   }
-
-  //----------
-
-  // void on_window_realign() override {
-  // }
-
-  //----------
-
-  // void on_window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-  // }
-
-  //----------
-
-  // void on_window_mouseRelease(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-  // }
-
-  //----------
-
-  // void on_window_mouseMove(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
-  // }
-
-  //----------
-
-  // void on_window_keyPress(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
-  // }
-
-  //----------
-
-  // void on_window_keyRelease(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
-  // }
-
-  //----------
-
-  // void on_window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-  // }
-
-  //----------
-
-  // void on_window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-  // }
-
-  //----------
-
-  // void on_window_clientMessage(uint32_t AData) override {
-  // }
-
-  //----------
-
-  // void on_window_timer() override {
-  //   SAT_TRACE;
-  // }
-
+  
 };
 
 //----------------------------------------------------------------------

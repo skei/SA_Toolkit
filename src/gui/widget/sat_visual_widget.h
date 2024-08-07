@@ -562,10 +562,12 @@ public: // on_widget
       if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualMoved.addRight(deltax);   }
       if (MResizeEdge & SAT_EDGE_TOP)     { MManualMoved.removeTop(deltay);  }
       if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualMoved.addBottom(deltay);  }
-      if (MParent)  {
-        MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
-        MParent->do_widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
-      }
+      //if (MParent)  {
+      //  MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
+      //  MParent->do_widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
+      //}
+      do_widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
+      do_widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
     }
     else {
       checkHover(AXpos,AYpos);

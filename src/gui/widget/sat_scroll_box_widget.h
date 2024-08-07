@@ -229,18 +229,29 @@ public: // child to parent
   
   //----------
 
+  // void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
+  //   SAT_PRINT("widget %s mode %i\n",AWidget->getName(),AMode);
+  //   SAT_VisualWidget::do_widget_redraw(this,0,AMode);
+  // }
+
+  //----------
+
+  /*
+    if content->child widget has been resized, it sends realign(parent)..
+    we must realign too (to update content rect & scroll bars)
+  */
+
   void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
-    // SAT_Widget* parent = AWidget->getParent();
-    // if (parent) {
-    //   parent->realignChildren();
-    //   parent->do_widget_redraw(parent);
-    //   //markWidgetDirtyFromGui(parent);
-    // }    
-    SAT_VisualWidget::do_widget_realign(this,AMode);
-
+    //SAT_PRINT("widget %s mode %i\n",AWidget->getName(),AMode);
+    if (AMode == SAT_WIDGET_REALIGN_PARENT) {
+      //SAT_VisualWidget::do_widget_realign(this,AMode);
+      SAT_VisualWidget::do_widget_realign(this,SAT_WIDGET_REALIGN_SELF); // self.. child might have changed size, but scrollbox hasn't
+    }
+    else {
+      SAT_VisualWidget::do_widget_realign(AWidget,AMode);
+    }
   }
-
-
+    
   //----------
   
   // only pass on event up, if you don't handle them..
