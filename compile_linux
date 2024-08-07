@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Prerequisutes:
+# - X11: sudo apt install libx11-dev libx11-xcb-dev libxcb-util-dev libxcb-cursor-dev libxcb-image0-dev libxcb-keysyms1-dev libxkbcommon-dev libxcb-xkb-dev
+# - GL/GLX: sudo apt install mesa-common-dev
+
+./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui -d  # Debug build
+# ./build/compile -i build/build.cpp -o dist/build.clap -f clap -g nogui  # Release build
+# ./build/compile -i build/build.cpp -o dist/build.clap -f clap -g x11 -d  # Debug build
+# ./build/compile -i build/build.cpp -o dist/build.clap -f clap -g x11  # Release build
