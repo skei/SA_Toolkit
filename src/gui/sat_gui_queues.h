@@ -72,6 +72,9 @@ public:
   // SAT_Window.paint()
   // SAT_Window.paintRoot()
 
+  // call on_widget_realign for every widget in the realign queue
+  // (unless it has already been realigned this frame)
+
   uint32_t flushRealignWidgets(uint32_t AFrame) {
     uint32_t num_queued = 0;
     uint32_t num_realigned = 0;
@@ -79,18 +82,12 @@ public:
     while (MRealignQueue.try_dequeue(widget)) {
       temp_realign[num_queued] = widget;
       num_queued += 1;
-      //SAT_Assert(num_queued < (1024*16) )
       // todo: if is_root, has_root = true
     }
     if (num_queued > 0) {
-      //SAT_PRINT("num_queued %i\n",num_queued);
-      // todo: if has_Root, realign only root
-      //for (int32_t i=(num_queued-1); i>0; i--) {
+      // todo: if has_root, realign only root
       for (uint32_t i=0; i<num_queued; i++) {
-        //SAT_PRINT("%i\n",i);
-        //SAT_PRINT("num_queued %i %i\n",num_queued,i);
         widget = temp_realign[i];
-        //SAT_PRINT("widget %s last realigned %i frame %i\n",widget->getName(), widget->MLastRealignedFrame,AFrame);
         if (widget->MLastRealignedFrame != AFrame) {
           num_realigned += 1;
           widget->on_widget_realign();
@@ -134,7 +131,8 @@ public:
   // SAT_Window.on_window_timer
 
   // if ARoot is not null, just flush the redraw queue,
-  // and enqueue the root as the only widget needing repainting
+  // and queue the root as the only widget needing repainting
+  // else move all widgets over to paint queue
 
   SAT_Rect flushRedrawToPaint(SAT_RootWidget* ARoot=nullptr) {
     uint32_t num_queued = 0;
@@ -178,6 +176,9 @@ public:
   // called from
   // SAT_Window.paint()
   // SAT_Window.paintRoot()
+
+  // if root is not null, just draw root, flush/dump paint queue
+  // else draw paint queue, one by one
 
   uint32_t flushPaintWidgets(SAT_PaintContext* AContext, SAT_RootWidget* ARoot=nullptr) {
     uint32_t num_queued = 0;

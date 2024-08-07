@@ -119,6 +119,19 @@ public:
   bool              isClosing()       { return MIsClosing; }
 
 //------------------------------
+public:
+//------------------------------
+
+  // override these to 'do your things'..
+
+  virtual void preRender(uint32_t AWidth, uint32_t AHeight) {}
+  virtual void prePaint(uint32_t AWidth, uint32_t AHeight) {}
+  virtual void paint(SAT_PaintContext* AContext) {}
+  virtual void paintRoot(SAT_PaintContext* AContext, bool AResized=false) {}
+  virtual void postPaint() {}
+  virtual void postRender() {}
+
+//------------------------------
 public: // setup
 //------------------------------
 
@@ -209,19 +222,6 @@ private: // buffer
   }
 
 #endif
-
-//------------------------------
-public: // painting
-//------------------------------
-
-  // override these to 'do your things'..
-
-  virtual void preRender(uint32_t AWidth, uint32_t AHeight) {}
-  virtual void prePaint(uint32_t AWidth, uint32_t AHeight) {}
-  virtual void paint(SAT_PaintContext* AContext) {}
-  virtual void paintRoot(SAT_PaintContext* AContext, bool AResized=false) {}
-  virtual void postPaint() {}
-  virtual void postRender() {}
 
 //------------------------------
 public: // timer
@@ -387,6 +387,7 @@ public: // window
       MWindowPainter->selectRenderBuffer(nullptr);
       MWindowRenderer->setViewport(0,0,screenwidth,screenheight);
       MWindowPainter->beginFrame(screenwidth,screenheight,1.0);
+      
       if (MRenderBuffer) {
         int32_t image = MWindowPainter->getImageFromRenderBuffer(MRenderBuffer);
           MWindowPainter->setFillImage(image, 0,0, 1,1, 1.0, 0.0);

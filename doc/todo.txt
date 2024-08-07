@@ -1,5 +1,13 @@
 
 ----------------------------------------------------------------------
+general
+----------------------------------------------------------------------
+
+* un-virtualize many of the set/get methods?
+
+* see if we call (overridden?) virtual methods in ctors/dtors
+
+----------------------------------------------------------------------
 BASE
 ----------------------------------------------------------------------
 
@@ -8,8 +16,6 @@ BASE
   move system specific global stuff ingo SAT_GLOBAL
     SAT_GLOBAL.WIN32 - dllmain module hinstance, register window class
     SAT_GLOBAL.LINUX - xinitthreads
-
-* un-virtualize many of the set/get methods?
 
 * investigate SAT_Queue
   - volatile read/write pos?

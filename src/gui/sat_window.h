@@ -394,12 +394,10 @@ public: // widget listener
   //----------
 
   void on_WidgetListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
-    //SAT_PRINT("widget %s mode %i\n",AWidget->getName(),AMode);
     #ifdef SAT_WINDOW_QUEUE_WIDGETS    
 
       switch (AMode) {
         case SAT_WIDGET_REALIGN_SELF: {
-          //SAT_PRINT("queue realign self: %s\n",AWidget->getName());
           MQueues.queueRealign(AWidget);
           //MQueues.queueRedraw(AWidget);
           break;
@@ -407,7 +405,6 @@ public: // widget listener
         case SAT_WIDGET_REALIGN_PARENT: {
           SAT_Widget* parent = AWidget->getParent();
           if (parent) {
-            //SAT_PRINT("queue realign parent: %s\n",parent->getName());
             MQueues.queueRealign(parent);
             //MQueues.queueRedraw(parent);
           }
@@ -418,14 +415,7 @@ public: // widget listener
         }
       }
 
-      //MQueues.queueRedraw(AWidget);
-
     #else
-
-      //SAT_Widget* parent = AWidget->getParent();
-      //if (parent) {
-      //  parent->realignChildren();
-      //}
 
       switch (AMode) {
         case SAT_WIDGET_REALIGN_SELF: {
@@ -555,8 +545,7 @@ public: // window
       MRootWidget->realignChildren();
       MRootWidget->ownerWindowOpened(this);
 
-      // initial painting
-      // (without this, the screen is black)
+      // initial painting.. (without this, the screen is black)
       MQueues.queueRedraw(MRootWidget);
 
     }
