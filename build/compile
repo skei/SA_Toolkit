@@ -39,7 +39,7 @@ fi
 #FLAGS+=" -static-libstdc++"
 
 INC=""
-if $MAC; then
+if $MAC || $LINUX; then
   INC+=" -I./src"
 else
   INC+=" -I../src"
@@ -365,7 +365,7 @@ runPreSteps() {
   elif $WIN32; then
     source "../build/pre/pre_win32"
   elif $LINUX; then
-    source "../build/pre/pre_linux"
+    source "./build/pre/pre_linux"
   fi
 }
 
@@ -375,7 +375,7 @@ runPostSteps() {
   elif $WIN32; then
     source "../build/post/post_win32"
   elif $LINUX; then
-    source "../build/post/post_linux"
+    source "./build/post/post_linux"
   fi
 }
 
