@@ -162,7 +162,6 @@
 
   // if this is not defined, updated widgets will not be queued
   // or flushed from the dirty widget queue.. not redrawn..
-
   #define SAT_WINDOW_QUEUE_WIDGETS
 
   // waits for window to actually appear on the screen

@@ -32,24 +32,29 @@ private:
   Display*                    MDisplay                      = nullptr;
   xcb_connection_t*           MConnection                   = nullptr;
   int                         MDefaultScreen                = 0;
+  
   // screen
   xcb_screen_t*               MScreen                       = nullptr;
   uint32_t                    MScreenWidth                  = 0;
   uint32_t                    MScreenHeight                 = 0;
   uint32_t                    MScreenDepth                  = 0;
   xcb_visualid_t              MScreenVisual                 = XCB_NONE;  
+  
   // screen GC
   xcb_gcontext_t              MScreenGC                     = XCB_NONE;
+  
   // window
   xcb_window_t                MWindow                       = XCB_NONE;
   int32_t                     MWindowXpos                   = 0;
   int32_t                     MWindowYpos                   = 0;
   uint32_t                    MWindowWidth                  = 0;
   uint32_t                    MWindowHeight                 = 0;
+  
   // mouse
   xcb_pixmap_t                MEmptyPixmap                  = XCB_NONE;
   xcb_cursor_t                MHiddenCursor                 = XCB_NONE;
   xcb_cursor_t                MWindowCursor                 = XCB_NONE;
+  
   // keyboard
   xcb_key_symbols_t*          MKeySyms                      = nullptr;
 
@@ -60,9 +65,11 @@ private:
   // wantQuitEvents()
   xcb_atom_t                  MWMProtocolsAtom              = XCB_NONE;
   xcb_atom_t                  MWMDeleteWindowAtom           = XCB_NONE;
+  
   // invalidate()
   xcb_expose_event_t*         MExposeEvent                  = (xcb_expose_event_t*)MExposeEventBuffer;
   char*                       MExposeEventBuffer[32]        = {0};
+  
   // sendClientMessage()
   xcb_client_message_event_t* MClientMessageEvent           = (xcb_client_message_event_t*)MClientMessageEventBuffer;
   char*                       MClientMessageEventBuffer[32] = {0};
@@ -77,7 +84,6 @@ private:
   sat_atomic_bool_t           MIsEventThreadActive          { false };
 
   double                      MPrevTime                     = 0.0;
-
 
 //------------------------------
 public:

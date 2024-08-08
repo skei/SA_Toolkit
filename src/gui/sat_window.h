@@ -37,7 +37,6 @@ private:
 
   SAT_RootWidget*     MRootWidget           = nullptr;
   SAT_OverlayWidget*  MOverlayWidget        = nullptr;
-
   SAT_Widget*         MHoverWidget          = nullptr;
   SAT_Widget*         MModalWidget          = nullptr;
   SAT_Widget*         MMouseCaptureWidget   = nullptr;
@@ -53,22 +52,18 @@ private:
   // mouse
 
   int32_t             MMouseCurrentCursor   = SAT_CURSOR_DEFAULT;
-
   int32_t             MMouseCurrentXpos     = 0;
   int32_t             MMouseCurrentYpos     = 0;
   int32_t             MMousePreviousXpos    = 0;
   int32_t             MMousePreviousYpos    = 0;
-  
   bool                MMouseLocked          = false;
   int32_t             MMouseLockedXclick    = 0;
   int32_t             MMouseLockedYclick    = 0;
   int32_t             MMouseLockedXpos      = 0;
   int32_t             MMouseLockedYpos      = 0;
-  
   int32_t             MMouseClickedXpos     = 0;
   int32_t             MMouseClickedYpos     = 0;
   uint32_t            MMouseClickedButton   = 0;
-  
   bool                MMouseCaptured        = false;
   int32_t             MMouseCaptureXpos     = 0;
   int32_t             MMouseCaptureYpos     = 0;
@@ -200,67 +195,46 @@ public: // painting
 
   //----------
 
-  /*
-    called from
-    SAT_SimpleWindow.on_window_paint
-  */
+  // called from
+  //   SAT_SimpleWindow.on_window_paint
 
   void paint(SAT_PaintContext* AContext) override {
-
     SAT_Painter* painter = AContext->painter;
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
-    //SAT_PRINT("screenwidth %i screenheight %i MBufferWidth %i MBufferHeight %i\n",screenwidth,screenheight,MBufferWidth,MBufferHeight);
-
     painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
     painter->setClip(0,0,screenwidth,screenheight);
-
     #ifdef SAT_WINDOW_QUEUE_WIDGETS
-
       MQueues.flushRealignWidgets(AContext->counter);
-
       #ifdef SAT_WINDOW_BUFFERED
         MQueues.flushPaintWidgets(AContext);
       #else
         MQueues.flushPaintWidgets(AContext,MRootWidget);
       #endif
     #endif
-
     painter->resetClip();
   }
 
-  /*
-    called from
-    SAT_SimpleWindow.on_window_paint
-  */
-
   //----------
+
+  // called from
+  //   SAT_SimpleWindow.on_window_paint
 
   void paintRoot(SAT_PaintContext* AContext, bool AResized=false) override {
     SAT_Painter* painter = AContext->painter;
     uint32_t screenwidth = getWidth();
     uint32_t screenheight = getHeight();
-    //SAT_PRINT("screenwidth %i screenheight %i MBufferWidth %i MBufferHeight %i\n",screenwidth,screenheight,MBufferWidth,MBufferHeight);;
     painter->setClipRect(SAT_Rect(0,0,screenwidth,screenheight));
     painter->setClip(0,0,screenwidth,screenheight);
-
     if (AResized) {
-
       MWindowScale = calcScale(screenwidth,screenheight);
       if (MRootWidget) {
         MRootWidget->on_widget_resize(screenwidth,screenheight);
         MRootWidget->realignChildren();
-        // #ifndef SAT_PLUGIN_EXE
-        //   queueDirtyWidget(MRootWidget);
-        // #endif
       }
-      //MQueues.queueResize(screenwidth,screenheight);
-
     }
-
     MQueues.flushRealignWidgets(AContext->counter);
     MQueues.flushPaintWidgets(AContext,MRootWidget);
-
     painter->resetClip();
   }
 
@@ -285,12 +259,6 @@ public: // timer
     MTimerDelta += ADelta;
     if (MIsClosing)  return;
     if (MIsPainting) return;
-
-    // resizing
-
-    // if (!MPendingResize.empty()) {
-    //   SAT_PRINT("buffer resized\n");
-    // }
 
     // timer updates
 

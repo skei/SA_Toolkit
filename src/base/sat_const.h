@@ -13,10 +13,10 @@
 
 const char  SAT_NULL_STRING[]   = "";
 const char  SAT_HEX_TABLE[]     = "0123456789ABCDEF";
-const char  SAT_CSYMBOLS[]      = "________________________________"
-                                "________________0123456789______"
-                                "_ABCDEFGHIJKLMNOPQRSTUVWXYZ_____"
-                                "_abcdefghijklmnopqrstuvwxyz_____";
+const char  SAT_VALID_SYMBOLS[] = "________________________________"
+                                  "________________0123456789______"
+                                  "_ABCDEFGHIJKLMNOPQRSTUVWXYZ_____"
+                                  "_abcdefghijklmnopqrstuvwxyz_____";
 const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec", "errorember" };
 
 //----------------------------------------------------------------------
@@ -63,13 +63,13 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_DOUBLE_DENORM                       4.9406564584124654E-324
 
 #if defined (SAT_32BIT)
-#define SAT_INT_MAX                             SAT_INT32_MAX             // 2147483647L
-#define SAT_UINT_MAX                            SAT_UINT32_MAX            // 8589934591UL
+  #define SAT_INT_MAX                           SAT_INT32_MAX             // 2147483647L
+  #define SAT_UINT_MAX                          SAT_UINT32_MAX            // 8589934591UL
 #endif
 
 #if defined (SAT_64BIT)
-#define SAT_INT_MAX                             SAT_INT64_MAX             // 9223372036854775807L
-#define SAT_UINT_MAX                            SAT_UINT64_MAX            // 18446744073709551615UL
+  #define SAT_INT_MAX                           SAT_INT64_MAX             // 9223372036854775807L
+  #define SAT_UINT_MAX                          SAT_UINT64_MAX            // 18446744073709551615UL
 #endif
 
 #define SAT_RANDMAX                             0x7fffffff
@@ -153,48 +153,48 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_DIRECTION_VERT                      (SAT_DIRECTION_UP    + SAT_DIRECTION_DOWN)
 #define SAT_DIRECTION_ALL                       (SAT_DIRECTION_HORIZ + SAT_DIRECTION_VERT)
 
-#define SAT_EASING_NONE           1
-#define SAT_EASING_LINEAR         1
-#define SAT_EASING_IN_QUAD        2
-#define SAT_EASING_OUT_QUAD       3
-#define SAT_EASING_INOUT_QUAD     4
-#define SAT_EASING_OUTIN_QUAD     5
-#define SAT_EASING_IN_CUBIC       6
-#define SAT_EASING_OUT_CUBIC      7
-#define SAT_EASING_INOUT_CUBIC    8
-#define SAT_EASING_OUTIN_CUBIC    9
-#define SAT_EASING_IN_QUART       10
-#define SAT_EASING_OUT_QUART      11
-#define SAT_EASING_INOUT_QUART    12
-#define SAT_EASING_OUTIN_QUART    13
-#define SAT_EASING_IN_QUINT       14
-#define SAT_EASING_OUT_QUINT      15
-#define SAT_EASING_INOUT_QUINT    16
-#define SAT_EASING_OUTIN_QUINT    17
-#define SAT_EASING_IN_SINE        18
-#define SAT_EASING_OUT_SINE       19
-#define SAT_EASING_INOUT_SINE     20
-#define SAT_EASING_OUTIN_SINE     21
-#define SAT_EASING_IN_EXPO        22
-#define SAT_EASING_OUT_EXPO       23
-#define SAT_EASING_INOUT_EXPO     24
-#define SAT_EASING_OUTIN_EXPO     25
-#define SAT_EASING_IN_CIRC        26
-#define SAT_EASING_OUT_CIRC       27
-#define SAT_EASING_INOUT_CIRC     28
-#define SAT_EASING_OUTIN_CIRC     29
-#define SAT_EASING_IN_ELASTIC     30
-#define SAT_EASING_OUT_ELASTIC    31
-#define SAT_EASING_INOUT_ELASTIC  32
-#define SAT_EASING_OUTIN_ELASTIC  33
-#define SAT_EASING_IN_BACK        34
-#define SAT_EASING_OUT_BACK       35
-#define SAT_EASING_INOUT_BACK     36
-#define SAT_EASING_OUTIN_BACK     37
-#define SAT_EASING_OUT_BOUNCE     38
-#define SAT_EASING_IN_BOUNCE      39
-#define SAT_EASING_INOUT_BOUNCE   40
-#define SAT_EASING_OUTIN_BOUNCE   41
+#define SAT_EASING_NONE                         1
+#define SAT_EASING_LINEAR                       1
+#define SAT_EASING_IN_QUAD                      2
+#define SAT_EASING_OUT_QUAD                     3
+#define SAT_EASING_INOUT_QUAD                   4
+#define SAT_EASING_OUTIN_QUAD                   5
+#define SAT_EASING_IN_CUBIC                     6
+#define SAT_EASING_OUT_CUBIC                    7
+#define SAT_EASING_INOUT_CUBIC                  8
+#define SAT_EASING_OUTIN_CUBIC                  9
+#define SAT_EASING_IN_QUART                     10
+#define SAT_EASING_OUT_QUART                    11
+#define SAT_EASING_INOUT_QUART                  12
+#define SAT_EASING_OUTIN_QUART                  13
+#define SAT_EASING_IN_QUINT                     14
+#define SAT_EASING_OUT_QUINT                    15
+#define SAT_EASING_INOUT_QUINT                  16
+#define SAT_EASING_OUTIN_QUINT                  17
+#define SAT_EASING_IN_SINE                      18
+#define SAT_EASING_OUT_SINE                     19
+#define SAT_EASING_INOUT_SINE                   20
+#define SAT_EASING_OUTIN_SINE                   21
+#define SAT_EASING_IN_EXPO                      22
+#define SAT_EASING_OUT_EXPO                     23
+#define SAT_EASING_INOUT_EXPO                   24
+#define SAT_EASING_OUTIN_EXPO                   25
+#define SAT_EASING_IN_CIRC                      26
+#define SAT_EASING_OUT_CIRC                     27
+#define SAT_EASING_INOUT_CIRC                   28
+#define SAT_EASING_OUTIN_CIRC                   29
+#define SAT_EASING_IN_ELASTIC                   30
+#define SAT_EASING_OUT_ELASTIC                  31
+#define SAT_EASING_INOUT_ELASTIC                32
+#define SAT_EASING_OUTIN_ELASTIC                33
+#define SAT_EASING_IN_BACK                      34
+#define SAT_EASING_OUT_BACK                     35
+#define SAT_EASING_INOUT_BACK                   36
+#define SAT_EASING_OUTIN_BACK                   37
+#define SAT_EASING_OUT_BOUNCE                   38
+#define SAT_EASING_IN_BOUNCE                    39
+#define SAT_EASING_INOUT_BOUNCE                 40
+#define SAT_EASING_OUTIN_BOUNCE                 41
 
 #define SAT_EDGE_NONE                           0
 #define SAT_EDGE_LEFT                           0x01
@@ -291,12 +291,12 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_RENDERER_TYPE_WIN32                 4
 #define SAT_RENDERER_TYPE_X11                   5
 
-#define SAT_PAINTER_TYPE_NAME_NONE               "None"
-#define SAT_PAINTER_TYPE_NAME_EGL                "EGL"
-#define SAT_PAINTER_TYPE_NAME_GLX                "GLX"
-#define SAT_PAINTER_TYPE_NAME_WGL                "WGL"
-#define SAT_PAINTER_TYPE_NAME_WIN32              "Win32"
-#define SAT_PAINTER_TYPE_NAME_X11                "X11"
+#define SAT_PAINTER_TYPE_NAME_NONE              "None"
+#define SAT_PAINTER_TYPE_NAME_EGL               "EGL"
+#define SAT_PAINTER_TYPE_NAME_GLX               "GLX"
+#define SAT_PAINTER_TYPE_NAME_WGL               "WGL"
+#define SAT_PAINTER_TYPE_NAME_WIN32             "Win32"
+#define SAT_PAINTER_TYPE_NAME_X11               "X11"
 
 #define SAT_STATE_NONE                          0
 #ifdef SAT_LINUX
@@ -306,7 +306,6 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
   #define SAT_STATE_ALT                         0x08
   #define SAT_STATE_ALTGR                       0x10
 #endif
-
 #ifdef SAT_WIN32
   #define SAT_STATE_SHIFT                       0x01
   #define SAT_STATE_CAPS                        0x02
@@ -314,7 +313,6 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
   #define SAT_STATE_ALT                         0x08
   #define SAT_STATE_ALTGR                       0x10
 #endif
-
 
 #define SAT_SYMBOL_NONE                         0
 #define SAT_SYMBOL_RECT                         1
@@ -344,12 +342,11 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_TWEEN_FINISHED                      0
 #define SAT_TWEEN_VALUE                         1
 #define SAT_TWEEN_RECT                          2
-
-// #define SAT_TWEEN_CALLBACK                   1
-// #define SAT_TWEEN_PAUSE                      2
-// #define SAT_TWEEN_BG_COLOR                   4
-// #define SAT_TWEEN_TXT_COLOR                  5
-// #define SAT_TWEEN_TRANS                      6
+// #define SAT_TWEEN_CALLBACK
+// #define SAT_TWEEN_PAUSE
+// #define SAT_TWEEN_BG_COLOR
+// #define SAT_TWEEN_TXT_COLOR
+// #define SAT_TWEEN_TRANS
 
 #define SAT_VOICE_OFF                           0
 #define SAT_VOICE_WAITING                       1
@@ -447,7 +444,7 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_WIDGET_LAYOUT_RIGHT_BOTTOM          ( SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_RIGHT   | SAT_WIDGET_LAYOUT_FILL_RIGHT)
 
 //----------------------------------------------------------------------
-// terminal
+// terminal colors
 //----------------------------------------------------------------------
 
 // https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124

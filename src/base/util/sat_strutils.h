@@ -364,7 +364,7 @@ void SAT_MakeValidSymbol(char* buffer) {
   for (uint32_t i=0; i<strlen(buffer); i++) {
     unsigned char c = buffer[i];
     if ((c<32) || (c>127)) buffer[i] = '_';
-    else buffer[i] = SAT_CSYMBOLS[c];
+    else buffer[i] = SAT_VALID_SYMBOLS[c];
   }
 }
 

@@ -29,27 +29,35 @@ struct SAT_PaintContext {
   uint32_t      counter     = 0;
 };
 
+//----------
+
 class SAT_PaintSource {
 public:
   #ifdef SAT_GUI_X11
-    virtual xcb_drawable_t    on_PaintSource_getXcbDrawable() = 0; //{ return XCB_NONE; }
+    virtual xcb_drawable_t    on_PaintSource_getXcbDrawable() = 0;
   #endif
 };
+
+//----------
 
 class SAT_PaintTarget {
 public:
   #ifdef SAT_GUI_X11
-    virtual xcb_drawable_t    on_PaintTarget_getXcbDrawable() = 0; //{ return XCB_NONE; }
+    virtual xcb_drawable_t    on_PaintTarget_getXcbDrawable() = 0;
   #endif
 };
+
+//----------
 
 class SAT_PainterOwner {
 public:
   #ifdef SAT_WINDOW_X11
-    virtual xcb_connection_t* on_PainterOwner_getXcbConnection()  = 0; //{ return nullptr; }
-    virtual xcb_visualid_t    on_PainterOwner_getXcbVisual()      = 0; //{ return XCB_NONE; }
+    virtual xcb_connection_t* on_PainterOwner_getXcbConnection()  = 0;
+    virtual xcb_visualid_t    on_PainterOwner_getXcbVisual()      = 0;
   #endif
 };
+
+//----------
 
 class SAT_BasePainter {
 public:
@@ -179,30 +187,38 @@ public:
 struct SAT_RenderContext {
 };
 
+//----------
+
 class SAT_RenderSource {
 public:
   #ifdef SAT_GUI_X11
-    virtual xcb_drawable_t  on_RenderSource_getXcbDrawable() = 0; //{ return XCB_NONE; }
+    virtual xcb_drawable_t  on_RenderSource_getXcbDrawable() = 0;
   #endif
 };
+
+//----------
 
 class SAT_RenderTarget {
 public:
   #ifdef SAT_GUI_X11
-    virtual xcb_drawable_t  on_RenderTarget_getXcbDrawable() = 0; //{ return XCB_NONE; }
+    virtual xcb_drawable_t  on_RenderTarget_getXcbDrawable() = 0;
   #endif
 };
+
+//----------
 
 class SAT_RendererOwner {
 public:
   #ifdef SAT_GUI_X11
-    virtual Display*        on_RendererOwner_getX11Display()  = 0;//{ return nullptr; }
-    virtual xcb_drawable_t  on_RendererOwner_getXcbDrawable() = 0;//{ return XCB_NONE; }
+    virtual Display*        on_RendererOwner_getX11Display()  = 0;
+    virtual xcb_drawable_t  on_RendererOwner_getXcbDrawable() = 0;
   #endif
   #ifdef SAT_GUI_WIN32
     virtual HWND            on_RendererOwner_getHWND() = 0;
   #endif
 };
+
+//----------
 
 class SAT_BaseRenderer {
 public:
@@ -231,18 +247,20 @@ public:
 
 class SAT_SurfaceOwner {
 public:
-  virtual uint32_t              on_SurfaceOwner_getWidth()          = 0; //{ return 0; }
-  virtual uint32_t              on_SurfaceOwner_getHeight()         = 0; //{ return 0; }
-  virtual uint32_t              on_SurfaceOwner_getDepth()          = 0; //{ return 0; }
+  virtual uint32_t              on_SurfaceOwner_getWidth()          = 0;
+  virtual uint32_t              on_SurfaceOwner_getHeight()         = 0;
+  virtual uint32_t              on_SurfaceOwner_getDepth()          = 0;
   // #ifdef SAT_SURFACE_NANOVG
-  //   virtual NVGcontext*         on_SurfaceOwner_getNanoVGContext()  = 0; // { return nullptr; }
+  //   virtual NVGcontext*         on_SurfaceOwner_getNanoVGContext()  = 0;
   // #endif
   #ifdef SAT_GUI_X11
-    virtual xcb_connection_t*   on_SurfaceOwner_getXcbConnection()  = 0; //{ return nullptr; }
-    virtual xcb_drawable_t      on_SurfaceOwner_getXcbDrawable()    = 0; //{ return XCB_NONE; }
-    virtual xcb_visualid_t      on_SurfaceOwner_getXcbVisual()      = 0; //{ return XCB_NONE; }
+    virtual xcb_connection_t*   on_SurfaceOwner_getXcbConnection()  = 0;
+    virtual xcb_drawable_t      on_SurfaceOwner_getXcbDrawable()    = 0;
+    virtual xcb_visualid_t      on_SurfaceOwner_getXcbVisual()      = 0;
   #endif
 };
+
+//----------
 
 class SAT_BaseSurface {
 public:
@@ -251,13 +269,13 @@ public:
   // virtual bool initialize() { return true; }
   // virtual void cleanup() {}
 public:
-  virtual uint32_t getWidth()   { return 0; }
-  virtual uint32_t getHeight()  { return 0; }
-  virtual uint32_t getDepth()   { return 0; }
+  virtual uint32_t  getWidth()   { return 0; }
+  virtual uint32_t  getHeight()  { return 0; }
+  virtual uint32_t  getDepth()   { return 0; }
 public:
-  virtual int32_t getImage()    { return 0; }
-  virtual void    select()      {}
-  virtual void    deselect()    {}
+  virtual int32_t   getImage()    { return 0; }
+  virtual void      select()      {}
+  virtual void      deselect()    {}
 };
 
 //----------------------------------------------------------------------
@@ -283,15 +301,19 @@ public:
   virtual void          on_WidgetListener_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) {}
 };
 
+//----------
+
 class SAT_WidgetOwner {
 public:
   virtual SAT_Painter*  on_WidgetOwner_getPainter() { return nullptr; }
   virtual uint32_t      on_WidgetOwner_getWidth() { return 0; }
   virtual uint32_t      on_WidgetOwner_getHeight() { return 0; }
-  virtual double        on_WidgetOwner_getScale() { return 0.0; } // 1.0
+  virtual double        on_WidgetOwner_getScale() { return 1.0; }
 //virtual SAT_Window*   on_WidgetOwner_getWindow() { return nullptr; }
 //virtual void          on_WidgetOwner_wantTimerEvents(bool AWant=true) {}
 };
+
+//----------
 
 class SAT_BaseWidget {
 public:
@@ -353,6 +375,8 @@ public:
 //virtual void          on_WindowListener_set_cursor(SAT_Widget* AWidget, int32_t ACursor) {}
 //virtual void          on_WindowListener_set_hint(SAT_Widget* AWidget, const char* AHint) {}
 };
+
+//----------
 
 class SAT_BaseWindow {
 public:

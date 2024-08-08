@@ -301,28 +301,19 @@ public: // window
   */
 
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
-
     if (AWidth < 1) AWidth = 1;
     if (AHeight < 1) AHeight = 1;
-
-    // SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
-    // SAT_Assert(AWidth < 32768);
-    // SAT_Assert(AHeight < 32768);
-    
     uint32_t value = (AHeight << 16) + AWidth;
-    //SAT_PRINT("queue resize %i,%i\n",AWidth,AHeight);
-    //if (!MPendingResizeQueue.write(value)) {
     if (!MPendingResizeQueue.enqueue(value)) {
       SAT_PRINT("couldn't write to pending resize queue\n");
     }
-
   }
 
   //----------
 
   // on_window_resize and on_window_paint will not be called concurrently, will they?
   // ..resize while we're painting...
-
+  //
   // (we don't care about the update rect..)
 
   void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
