@@ -2,6 +2,11 @@
 #define sa_ports_included
 //----------------------------------------------------------------------
 
+// signalsmith doesn't like our new/delete..
+#undef SAT_DEBUG_MEMTRACE
+
+//----------
+
 #include "sat.h"
 #include "base/sat_registry.h"
 #include "plugin/sat_entry.h"
