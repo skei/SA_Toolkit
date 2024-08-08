@@ -409,12 +409,12 @@ public: // parameters
 
   #ifndef SAT_NO_GUI
 
-  virtual void setEditorParameterValues() {
+  virtual void initEditorParameterValues() {
     if (MEditor) {
       uint32_t num = MParameters.size();
       for (uint32_t i=0; i<num; i++) {
         SAT_Parameter* param = MParameters[i];
-        MEditor->setParameterValue(param);
+        MEditor->initParameterValue(param);
       }
     }
   }
@@ -709,7 +709,7 @@ public: // processor owner
       if (MEditor) {
         SAT_Parameter* param = getParameter(AIndex);
         if (param) {
-          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
+          #ifdef SAT_WINDOW_QUEUE_WIDGETS
             uint32_t index = param->getIndex();
             sat_param_t value = param->normalize(AValue);
             MQueues.queueParamFromHostToGui(index,value);
@@ -731,7 +731,7 @@ public: // processor owner
       if (MEditor) {
         SAT_Parameter* param = getParameter(AIndex);
         if (param) {
-          #ifdef SAT_WINDOW_TIMER_REFRESH_WIDGETS
+          #ifdef SAT_WINDOW_QUEUE_WIDGETS
             uint32_t index = param->getIndex();
             sat_param_t value = param->normalize(AValue);
             MQueues.queueModFromHostToGui(index,value);
@@ -1035,7 +1035,7 @@ public: // clap extensions
         if (setupEditor(MEditor)) {
           MEditor->setupOverlay();
           bool result = setupOverlay(MEditor);
-          setEditorParameterValues();
+          initEditorParameterValues();
           return true;
         }
       }
@@ -1110,7 +1110,7 @@ public: // clap extensions
         // // should this be in _create?
         // SAT_Window* window = MEditor->getWindow();
         // if (window) setupEditor(MEditor,window);
-        // setEditorParameterValues();
+        // initEditorParameterValues();
         return true;
       }
     }

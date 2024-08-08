@@ -34,7 +34,7 @@ public:
   virtual bool setupOverlay() { return false; }
 
   // virtual bool connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) { return false; }
-  virtual void setParameterValue(SAT_Parameter* AParameter) {}
+  virtual void initParameterValue(SAT_Parameter* AParameter) {}
   virtual void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) {}
   virtual void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) {}
 

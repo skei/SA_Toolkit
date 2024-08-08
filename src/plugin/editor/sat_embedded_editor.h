@@ -118,11 +118,11 @@ public:
 
   //----------
 
-  // called from SAT_Plugin.setEditorParameterValues
+  // called from SAT_Plugin.initEditorParameterValues
   // (which is called from SAT_Plugin.gui_create)
   // thread: main
 
-  void setParameterValue(SAT_Parameter* AParameter) override {
+  void initParameterValue(SAT_Parameter* AParameter) override {
     if (MWindow) {
       if (MWindow->isClosing()) return;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
@@ -136,15 +136,15 @@ public:
   //----------
 
   // called from
-  //   SAT_Queues.flushParamFromHostToGui (todo: timer call this)
-  //   SAT_Plugin.on_processorOwner_updateParamFromHostToGui
+  //   SAT_Queues.flushParamFromHostToGui (timer)
+  //   SAT_Plugin.on_processorOwner_updateParamFromHostToGui -> queue (audio)
   // (do_widget_redraw doesn't redraw directly, ultimately sends invalidate event)
 
   // [AUDIO THREAD]
 
   void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) override {
-    if (MWindow) {
-    if (MWindow->isClosing()) return;
+    if (MWindow && MWindowIsOpen) {
+      if (MWindow->isClosing()) return;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
       if (widget) {
         sat_param_t value = AParameter->getValue();
@@ -159,7 +159,7 @@ public:
   // [AUDIO THREAD]
 
   void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) override {
-    if (MWindow) {
+    if (MWindow && MWindowIsOpen) {
       if (MWindow->isClosing()) return;
       SAT_Widget* widget = (SAT_Widget*)AParameter->getWidget();
       if (widget) {
