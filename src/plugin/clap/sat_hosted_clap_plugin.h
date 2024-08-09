@@ -160,12 +160,14 @@ public:
 
   virtual bool openEditor(SAT_HostWindow* AHostWindow) {
     MHostEditor = AHostEditor;
+
     #ifdef SAT_LINUX
       MClapGui->create(MClapPlugin,CLAP_WINDOW_API_X11,false);
     #endif
     #ifdef SAT_WIN32
       MClapGui->create(plugin,CLAP_WINDOW_API_WIN32,false);
     #endif
+    
     MClapGui->set_scale(MClapPlugin,1.0);
     uint32_t width,height;
     MClapGui->get_size(MClapPlugin,&width,&height);

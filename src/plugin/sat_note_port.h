@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "plugin/sat_plugin_base.h"
 
 class SAT_NotePort;
 typedef SAT_Array<SAT_NotePort*> SAT_NotePortArray;

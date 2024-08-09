@@ -16,31 +16,42 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/processor/sat_process_context.h"
+//#include "plugin/processor/sat_process_context.h"
+#include "plugin/sat_plugin_base.h"
 #include "plugin/sat_editor.h"
 #include "plugin/sat_note.h"
 #include "plugin/sat_parameter.h"
-#include "plugin/sat_plugin_queue_item.h"
 #include "plugin/sat_processor.h"
 
 //----------------------------------------------------------------------
 
+// 128 bit
+struct SAT_PluginQueueItem {
+  union {
+    uint32_t  param_id;
+    int32_t   note_id;
+  };
+  uint32_t    dummy;
+  union {
+    double    value;
+    SAT_Note  note;
+  };
+};
+
 //----------------------------------------------------------------------
+
+  // todo
+  // typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem>
 
 class SAT_PluginQueues {
 
   #ifndef SAT_NO_GUI
-    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
-    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
-    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
-    // typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
     typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
     typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
     typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
     typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
   #endif
 
-  //typedef SAT_Queue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
   typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
 
 //------------------------------
@@ -54,7 +65,7 @@ private:
     SAT_ParamFromGuiToHostQueue       MParamFromGuiToHost     = {};
   #endif
 
-  SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHost = {};
+  SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHost   = {};
 
 //------------------------------
 public: // host -> gui

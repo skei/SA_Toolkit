@@ -15,9 +15,8 @@
 //   }
 // };
 
-#include "plugin/processor/sat_process_context.h"
-#include "plugin/processor/sat_voice_context.h"
 #include "plugin/sat_note.h"
+#include "plugin/sat_plugin_base.h"
 
 //----------------------------------------------------------------------
 

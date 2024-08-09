@@ -73,6 +73,7 @@ public:
   //----------
 
   // cleans up everything, in the correct order..
+  // if the host just kills the process, will this be called?
 
   void cleanup() {
     if (MInitialized) {

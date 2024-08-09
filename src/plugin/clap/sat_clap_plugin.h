@@ -7,8 +7,9 @@
 
 //----------------------------------------------------------------------
 
-#define SAT_NUM_CLAP_EXTENSIONS         29 // 24 + 5 drafts
-#define SAT_NUM_COMPAT_CLAP_EXTENSIONS  9
+#define SAT_NUM_CLAP_EXTENSIONS           29  // 24 + 5 drafts
+#define SAT_NUM_CLAP_COMPAT_EXTENSIONS    9
+//#define SAT_NUM_CLAP_DRAFT_EXTENSIONS   5
 
 typedef SAT_Dictionary<const void*> SAT_ClapExtensions;
 
@@ -78,7 +79,7 @@ protected:
   };
 
   const
-  SAT_ClapExtensionInfoCompat MCompatClapExtensions[SAT_NUM_COMPAT_CLAP_EXTENSIONS] = {
+  SAT_ClapExtensionInfoCompat MCompatClapExtensions[SAT_NUM_CLAP_COMPAT_EXTENSIONS] = {
     { CLAP_EXT_AMBISONIC_COMPAT,                CLAP_EXT_AMBISONIC },
     { CLAP_EXT_AUDIO_PORTS_ACTIVATION_COMPAT,   CLAP_EXT_AUDIO_PORTS_ACTIVATION },
     { CLAP_EXT_CONFIGURABLE_AUDIO_PORTS_COMPAT, CLAP_EXT_CONFIGURABLE_AUDIO_PORTS },
@@ -107,7 +108,7 @@ public:
 
 //------------------------------
 public:
-//------------------------------SAT_ClapPlugin
+//------------------------------
 
   const clap_plugin_descriptor_t* getClapDescriptor() {
     return MClapPlugin.desc;
@@ -157,7 +158,7 @@ public: // extensions
   //----------
 
   const char* findCompatExtension(const char* ACompatId) {
-    for (uint32_t i=0; i<SAT_NUM_COMPAT_CLAP_EXTENSIONS; i++) {
+    for (uint32_t i=0; i<SAT_NUM_CLAP_COMPAT_EXTENSIONS; i++) {
       if (strcmp(ACompatId,MCompatClapExtensions[i].compat_id) == 0) {
         return MCompatClapExtensions[i].id;
       }

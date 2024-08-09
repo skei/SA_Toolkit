@@ -118,12 +118,10 @@ public:
         do_widget_start_tween(this,chain);
       }
       else {
-
         //close();
         MIsOpen = false;
-
         SAT_Rect rect = getRect();
-        double pos = -(rect.h / scale) + MHeaderSize;
+        double pos = - (rect.h / scale) + MHeaderSize;
         double starts[4]  = {0,0,0,0};
         double ends[4]    = {0,0,0,pos};
         SAT_TweenChain* chain = new SAT_TweenChain();

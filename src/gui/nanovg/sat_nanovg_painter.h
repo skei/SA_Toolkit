@@ -79,12 +79,11 @@ public:
   */
 
   // assumes opengl context already made current
+  // NVG_ANTIALIAS, NVG_STENCIL_STROKES, NVG_DEBUG
 
   SAT_NanoVGPainter(SAT_PainterOwner* AOwner, SAT_PaintTarget* ATarget)
   : SAT_BasePainter(AOwner,ATarget) {
     //ARenderer->makeCurrent();
-
-    // NVG_ANTIALIAS, NVG_STENCIL_STROKES, NVG_DEBUG
     #if defined(SAT_GUI_WAYLAND)
       MContext = nvgCreateGLES3(NVG_ANTIALIAS);
     #elif defined(SAT_GUI_WIN32)
@@ -93,21 +92,7 @@ public:
       MContext = nvgCreateGL3(NVG_ANTIALIAS);
       //MContext = nvgCreateGLES3(NVG_ANTIALIAS);
     #endif
-
     SAT_Assert(MContext);
-
-    //SAT_Print("nvgContext: %p\n",MContext); // prints (nil)
-
-    //MDefaultFont = nvgCreateFontMem(MContext,"Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size,0);
-    //MHeaderFont = nvgCreateFontMem(MContext,"Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size,0);
-    //nvgFontFaceId(MContext,MDefaultFont);
-    //nvgFontSize(MContext,MTextSize);
-
-//   setDefaultFont("Roboto-Regular",(unsigned char*)Roboto_Regular,Roboto_Regular_size);
-//   setHeaderFont("Manjari-Thin",(unsigned char*)Manjari_Thin,Manjari_Thin_size);
-//   selectFont(MDefaultFont);
-//   setTextSize(MTextSize);
-
     //ARenderer->resetCurrent();
   }
 

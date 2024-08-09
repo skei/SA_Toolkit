@@ -31,11 +31,7 @@
 
   //------------------------------
 
-  //#include "pluginterfaces/base/conststringtable.h"
-  //#include "pluginterfaces/base/ustring.h"
-  //#include "pluginterfaces/base/conststringtable.cpp"
   #include "pluginterfaces/base/coreiids.cpp"
-  //#include "pluginterfaces/base/funknown.cpp"
   #include "pluginterfaces/base/ustring.cpp"
   #include "pluginterfaces/base/ipluginbase.h"
   #include "pluginterfaces/gui/iplugview.h"

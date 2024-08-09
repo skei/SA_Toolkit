@@ -2,7 +2,9 @@
 #define mip_fft_included
 //----------------------------------------------------------------------
 
+
 /*
+  // TODO
   todo: linear -> logarithmix buffer/map
   map linear index -> logarithmic
   precalc when setting hz_min/max/scale

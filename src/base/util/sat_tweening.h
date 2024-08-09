@@ -1,5 +1,5 @@
-#ifndef sat_tween_manager_included
-#define sat_tween_manager_included
+#ifndef sat_tweening_included
+#define sat_tweening_included
 //----------------------------------------------------------------------
 
 #include "base/util/sat_easing.h"
@@ -20,8 +20,10 @@ class SAT_TweenChain;
 typedef SAT_Array<SAT_TweenNode*> SAT_TweenNodeArray;
 typedef SAT_Array<SAT_TweenChain*> SAT_TweenChainArray;
 
+//typedef moodycamel::ReaderWriterQueue<SAT_TweenChain*>  SAT_TweenChainQueue;
 typedef SAT_AtomicQueue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
 //typedef SAT_Queue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
+
 
 //----------------------------------------------------------------------
 //
@@ -151,7 +153,7 @@ public:
 //
 //----------------------------------------------------------------------
 
-class SAT_TweenManager {
+class SAT_Tweening {
   
 //------------------------------
 private:
@@ -164,12 +166,12 @@ private:
 public:
 //------------------------------
 
-  SAT_TweenManager() {
+  SAT_Tweening() {
   }
 
   //----------
 
-  ~SAT_TweenManager() {
+  ~SAT_Tweening() {
     #if !defined (SAT_NO_AUTODELETE)
       deleteChains();
     #endif
@@ -271,6 +273,7 @@ public:
     } // for
 
     // delete finished chains
+
     uint32_t i = 0;
     while (i < MChains.size()) {
       SAT_TweenChain* chain = MChains[i];

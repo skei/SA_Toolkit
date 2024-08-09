@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "base/utils/sat_interpolation.h"
-#include "base/utils/sat_math.h"
+#include "base/util/sat_interpolation.h"
+#include "base/util/sat_math.h"
 
 //----------------------------------------------------------------------
 

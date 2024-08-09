@@ -67,7 +67,7 @@ public:
 
   void appendSection(const char* ASection) {
 
-printf("appendSection: %s\n",ASection);
+SAT_PRINT("appendSection: %s\n",ASection);
 
     SAT_IniSection* section = new SAT_IniSection();
     SAT_Strlcpy(section->name,ASection,SAT_INI_SECTION_NAME_LENGTH);
@@ -104,7 +104,7 @@ printf("appendSection: %s\n",ASection);
 
   void appendKey(const char* ASection, const char* AName, const char* AValue) {
 
-printf("appendKey: section '%s' name '%s' value '%s'\n",ASection,AName,AValue);
+SAT_PRINT("appendKey: section '%s' name '%s' value '%s'\n",ASection,AName,AValue);
 
     SAT_IniSection* section = findSection(ASection);
     SAT_IniKey* key = new SAT_IniKey();
@@ -188,7 +188,7 @@ public:
     SAT_StripFileExt(filename);
     strcat(filename,".ini");
 
-    printf("loading '%s'\n",filename);
+    SAT_PRINT("loading '%s'\n",filename);
 
     return load(filename);
   }

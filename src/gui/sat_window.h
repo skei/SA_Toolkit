@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "base/util/sat_tween_manager.h"
+#include "base/util/sat_tweening.h"
 #include "gui/sat_gui_base.h"
 #include "gui/widget/sat_overlay_widget.h"
 #include "gui/widget/sat_root_widget.h"
@@ -47,7 +47,7 @@ private:
 
   double              MTimerDelta           = 0;
   SAT_WidgetArray     MTimerListeners       = {};
-  SAT_TweenManager    MTweenManager         = {};
+  SAT_Tweening        MTweening             = {}; // -> MTweening
 
   // mouse
 
@@ -266,7 +266,7 @@ public: // timer
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
       MTimerListeners[i]->on_widget_timer(MTimerDelta);
     }
-    MTweenManager.process(MTimerDelta);
+    MTweening.process(MTimerDelta);
     MTimerDelta = 0;
 
     // paint dirty widgets
@@ -478,7 +478,7 @@ public: // widget listener
   
   void on_WidgetListener_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
     AWidget->clearPrevTween();
-    MTweenManager.appendChain(ATween);
+    MTweening.appendChain(ATween);
   }
 
   //----------

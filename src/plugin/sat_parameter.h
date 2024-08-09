@@ -40,25 +40,26 @@ protected:
   // CLAP_PARAM_IS_ENUM
 
   clap_param_info_t MInfo = {
-  #ifdef SAT_WIN32
-                      0,
-    CLAP_PARAM_IS_AUTOMATABLE,
-    this,
-    "param",
-    "default",
-    0.0,
-    1.0,
-    0.0
-  #else
-    .id             = 0,
-    .flags          = CLAP_PARAM_IS_AUTOMATABLE,
-    .cookie         = this,
-    .name           = "param",
-    .module         = "default",
-    .min_value      = 0.0,
-    .max_value      = 1.0,
-    .default_value  = 0.0
-  #endif
+    // (mingw)
+    #ifdef SAT_WIN32
+      0,
+      CLAP_PARAM_IS_AUTOMATABLE,
+      this,
+      "param",
+      "default",
+      0.0,
+      1.0,
+      0.0
+    #else
+      .id             = 0,
+      .flags          = CLAP_PARAM_IS_AUTOMATABLE,
+      .cookie         = this,
+      .name           = "param",
+      .module         = "default",
+      .min_value      = 0.0,
+      .max_value      = 1.0,
+      .default_value  = 0.0
+    #endif
   };
 
   uint32_t    MIndex                              = 0;    // index into parent's list of parameters
@@ -364,7 +365,7 @@ public:
   //----------
   
   // smoothing should be done in modulationmatrix (moduationmanager?)
-  // and include internal modulation, not expressions, ..
+  // and include internal modulation, note expressions, ..
   //
   // http://www.kvraudio.com/forum/viewtopic.php?p=6515525#p6515525
 

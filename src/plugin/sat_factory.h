@@ -5,15 +5,15 @@
 #include "sat.h"
 
 // #ifdef SAT_PLUGIN_EXE
-//   #include "plugin/wrapper/exe/sat_exe_factory.h"
+//   #include "plugin/exe/sat_exe_factory.h"
 // #endif
 
 #ifdef SAT_PLUGIN_CLAP
-  #include "plugin/factory/sat_clap_factory.h"
+  #include "plugin/clap/sat_clap_factory.h"
 #endif
 
 #ifdef SAT_PLUGIN_VST3
-  #include "plugin/factory/sat_vst3_factory.h"
+  #include "plugin/vst3/sat_vst3_factory.h"
 #endif
 
 //----------------------------------------------------------------------

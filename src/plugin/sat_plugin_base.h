@@ -5,6 +5,9 @@
 #include "sat.h"
 #include "plugin/clap/sat_clap.h"
 
+#include "plugin/sat_audio_port.h"
+#include "plugin/sat_note_port.h"
+#include "plugin/sat_parameter.h"
 
 class SAT_Timer;
 class SAT_Window;
@@ -12,7 +15,7 @@ class SAT_WindowListener;
 
 //----------------------------------------------------------------------
 //
-//
+// editor
 //
 //----------------------------------------------------------------------
 
@@ -58,6 +61,73 @@ public:
   virtual bool hide() { return false; }
 };
 
+//----------------------------------------------------------------------
+//
+// processor
+//
+//----------------------------------------------------------------------
+
+struct SAT_ProcessContext {
+  const clap_process_t* process         = nullptr;
+  SAT_ParameterArray*   parameters      = nullptr;
+  double                samplerate      = 0.0;
+  uint32_t              minframescount  = 0;
+  uint32_t              maxframescount  = 0;
+  uint32_t              process_counter = 0;
+  uint32_t              sample_counter  = 0;
+  
+};
+
+//----------
+
+class SAT_ProcessorOwner {
+public:
+  virtual SAT_AudioPortArray* on_processorOwner_getAudioInputPorts()  { return nullptr; }
+  virtual SAT_AudioPortArray* on_processorOwner_getAudioOutputPorts() { return nullptr; }
+  virtual SAT_NotePortArray*  on_processorOwner_getNoteInputPorts()   { return nullptr; }
+  virtual SAT_NotePortArray*  on_processorOwner_getNoteOutputPorts()  { return nullptr; }
+  virtual SAT_ParameterArray* on_processorOwner_getParameters()       { return nullptr; }
+
+  // should be processorListener?
+  virtual void  on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void  on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void  on_processorOwner_outputEvent()  {}
+//virtual void  on_processorOwner_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+//virtual void  on_processorOwner_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
+//virtual void  on_processorOwner_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
+};
+
+//----------
+
+// class SAT_ProcessorListener {
+// public:
+//   virtual void  on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+//   virtual void  on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+//   virtual void  on_processorOwner_outputEvent()  {}
+// };
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+//
+// voice
+//
+//----------------------------------------------------------------------
+
+struct SAT_VoiceContext {
+  SAT_ProcessContext* process_context   = nullptr;  // only valid during process()
+  double              sample_rate       = 0.0;
+  uint32_t            block_length      = 0.0;
+  sat_sample_t*       voice_buffer      = nullptr;
+//sat_sample_t*       block_buffer      = nullptr;
+//uint32_t            min_frames_count  = 0;
+//uint32_t            max_frames_count  = 0;
+//SAT_Plugin*         plugin            = nullptr;
+};
 
 
 //----------------------------------------------------------------------

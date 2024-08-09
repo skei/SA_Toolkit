@@ -9,22 +9,13 @@
 #include "plugin/sat_host.h"
 #include "plugin/sat_note_port.h"
 #include "plugin/sat_parameter.h"
+#include "plugin/sat_plugin_base.h"
 #include "plugin/sat_plugin_queues.h"
 #include "plugin/sat_preset.h"
 #include "plugin/sat_processor.h"
 
-//#include "plugin/editor/sat_editor_listener.h"
-#include "plugin/sat_plugin_base.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/clap/sat_clap_plugin.h"
-
-#include "plugin/processor/sat_process_context.h"
-#include "plugin/processor/sat_processor_owner.h"
-
-// #include "plugin/processor/sat_block_processor.h"
-// #include "plugin/processor/sat_interleaved_processor.h"
-// #include "plugin/processor/sat_quantized_processor.h"
-// #include "plugin/processor/sat_voice_processor.h"
 
 #ifndef SAT_NO_GUI
 #ifdef SAT_EDITOR_EMBEDDED

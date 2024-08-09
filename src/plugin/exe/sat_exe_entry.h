@@ -20,114 +20,114 @@
 //
 //----------------------------------------------------------------------
 
-  const clap_plugin_entry_t*      MClapEntry      = nullptr;
-  const clap_plugin_factory_t*    MClapFactory    = nullptr;
-  const clap_host_t*              MClapHost       = nullptr;
-  const clap_plugin_descriptor_t* MClapDescriptor = nullptr;
-  const clap_plugin_t*            MClapPlugin     = nullptr;
-  const clap_plugin_gui_t*        MClapGui        = nullptr;
-  
-  #ifndef SAT_NO_GUI
-  SAT_HostWindow*                 MHostWindow     = nullptr;
+const clap_plugin_entry_t*      sat_exe_ClapEntry      = nullptr;
+const clap_plugin_factory_t*    sat_exe_ClapFactory    = nullptr;
+const clap_host_t*              sat_exe_ClapHost       = nullptr;
+const clap_plugin_descriptor_t* sat_exe_ClapDescriptor = nullptr;
+const clap_plugin_t*            sat_exe_ClapPlugin     = nullptr;
+const clap_plugin_gui_t*        sat_exe_ClapGui        = nullptr;
+
+// #ifndef SAT_NO_GUI
+//   SAT_HostWindow*               sat_exe_HostWindow     = nullptr;
+// #endif
+
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+bool sat_exe_initFromMemory(const clap_plugin_entry_t* AClapEntry, const char *APath) {
+  sat_exe_ClapEntry = AClapEntry;
+  sat_exe_ClapEntry->init(APath);
+  sat_exe_ClapFactory = (clap_plugin_factory_t*)sat_exe_ClapEntry->get_factory(CLAP_PLUGIN_FACTORY_ID);
+  return true;
+}
+
+//----------
+
+bool sat_exe_initFromFile(const char* APath) {
+  return false;
+}
+
+//----------
+
+void sat_exe_deinit() {
+}
+
+//----------
+
+bool sat_exe_loadPlugin(const clap_host_t* host, uint32_t index) {
+  sat_exe_ClapDescriptor = sat_exe_ClapFactory->get_plugin_descriptor(sat_exe_ClapFactory,index);
+  sat_exe_ClapPlugin = sat_exe_ClapFactory->create_plugin(sat_exe_ClapFactory,host,sat_exe_ClapDescriptor->id);
+  sat_exe_ClapPlugin->init(sat_exe_ClapPlugin);
+  sat_exe_ClapGui = (clap_plugin_gui_t*)sat_exe_ClapPlugin->get_extension(sat_exe_ClapPlugin,CLAP_EXT_GUI);
+  return true;
+}
+
+//----------
+
+void sat_exe_unloadPlugin() {
+  sat_exe_ClapPlugin->destroy(sat_exe_ClapPlugin);
+}
+
+//------------------------------
+//
+//------------------------------
+
+#ifndef SAT_NO_GUI
+
+SAT_HostWindow* sat_exe_openEditor(SAT_HostWindow* AHostWindow) {
+  //MHostWindow = AHostWindow;
+  #ifdef SAT_LINUX
+    sat_exe_ClapGui->create(sat_exe_ClapPlugin,CLAP_WINDOW_API_X11,false);
+  #endif
+  #ifdef SAT_WIN32
+    MClapGui->create(MClapPlugin,CLAP_WINDOW_API_WIN32,false);
+  #endif
+  sat_exe_ClapGui->set_scale(sat_exe_ClapPlugin,1.0);
+  uint32_t width,height;
+  sat_exe_ClapGui->get_size(sat_exe_ClapPlugin,&width,&height);
+
+  #ifdef SAT_LINUX
+    xcb_window_t x11window = AHostWindow->getXcbWindow();
+    const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
+  #endif
+  #ifdef SAT_WIN32
+    HWND win32window = AHostWindow->getWin32Window();
+    const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_WIN32, .win32 = win32window };
   #endif
 
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
+  sat_exe_ClapGui->set_parent(sat_exe_ClapPlugin,&clapwindow);
+  sat_exe_ClapGui->show(sat_exe_ClapPlugin);
+  sat_exe_ClapGui->set_size(sat_exe_ClapPlugin,width,height); // is this needed?
 
-  bool initFromMemory(const clap_plugin_entry_t* AClapEntry, const char *APath) {
-    MClapEntry = AClapEntry;
-    MClapEntry->init(APath);
-    MClapFactory = (clap_plugin_factory_t*)MClapEntry->get_factory(CLAP_PLUGIN_FACTORY_ID);
-    return true;
-  }
+  return AHostWindow;
+}
 
-  //----------
+//----------
 
-  bool initFromFile(const char* APath) {
-    return false;
-  }
+void sat_exe_closeEditor() {
+  sat_exe_ClapGui->hide(sat_exe_ClapPlugin);
+  sat_exe_ClapGui->destroy(sat_exe_ClapPlugin);
+  //SAT_PRINT("editor closed\n");
+}
 
-  //----------
+//----------
 
-  void deinit() {
-  }
+void sat_exe_getEditorSize(uint32_t* width, uint32_t* height) {
+  sat_exe_ClapGui->get_size(sat_exe_ClapPlugin,width,height);
+}
 
-  //----------
+//----------
 
-  bool loadPlugin(const clap_host_t* host, uint32_t index) {
-    MClapDescriptor = MClapFactory->get_plugin_descriptor(MClapFactory,index);
-    MClapPlugin = MClapFactory->create_plugin(MClapFactory,host,MClapDescriptor->id);
-    MClapPlugin->init(MClapPlugin);
-    MClapGui = (clap_plugin_gui_t*)MClapPlugin->get_extension(MClapPlugin,CLAP_EXT_GUI);
-    return true;
-  }
+void sat_exe_mainloop(SAT_HostWindow* AHostWindow) {
+  //AHostWindow->startTimer(1000);
+  AHostWindow->eventLoop();
+  //AHostWindow->stopTimer();
+}
 
-  //----------
-
-  void unloadPlugin() {
-    MClapPlugin->destroy(MClapPlugin);
-  }
-
-//------------------------------
-//
-//------------------------------
-
-  #ifndef SAT_NO_GUI
-
-  SAT_HostWindow* openEditor(SAT_HostWindow* AHostWindow) {
-    //MHostWindow = AHostWindow;
-    #ifdef SAT_LINUX
-      MClapGui->create(MClapPlugin,CLAP_WINDOW_API_X11,false);
-    #endif
-    #ifdef SAT_WIN32
-      MClapGui->create(MClapPlugin,CLAP_WINDOW_API_WIN32,false);
-    #endif
-    MClapGui->set_scale(MClapPlugin,1.0);
-    uint32_t width,height;
-    MClapGui->get_size(MClapPlugin,&width,&height);
-
-    #ifdef SAT_LINUX
-      xcb_window_t x11window = AHostWindow->getXcbWindow();
-      const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_X11, .x11 = x11window };
-    #endif
-    #ifdef SAT_WIN32
-      HWND win32window = AHostWindow->getWin32Window();
-      const clap_window_t clapwindow = { .api = CLAP_WINDOW_API_WIN32, .win32 = win32window };
-    #endif
-
-    MClapGui->set_parent(MClapPlugin,&clapwindow);
-    MClapGui->show(MClapPlugin);
-    MClapGui->set_size(MClapPlugin,width,height); // is this needed?
-
-    return AHostWindow;
-  }
-
-  //----------
-
-  void closeEditor() {
-    MClapGui->hide(MClapPlugin);
-    MClapGui->destroy(MClapPlugin);
-    //SAT_PRINT("editor closed\n");
-  }
-
-  //----------
-
-  void getEditorSize(uint32_t* width, uint32_t* height) {
-    MClapGui->get_size(MClapPlugin,width,height);
-  }
-
-  //----------
-
-  void mainloop(SAT_HostWindow* AHostWindow) {
-    //AHostWindow->startTimer(1000);
-    AHostWindow->eventLoop();
-    //AHostWindow->stopTimer();
-  }
-
-  #endif // gui
+#endif // gui
 
 //----------------------------------------------------------------------
 //
@@ -139,23 +139,23 @@
 
 int main(int argc, char** argv) {
   SAT_HostImplementation* host = new SAT_HostImplementation();
-  initFromMemory(&clap_entry,"");
-  loadPlugin(host->getClapHost(),0);
+  sat_exe_initFromMemory(&clap_entry,"");
+  sat_exe_loadPlugin(host->getClapHost(),0);
 
   // todo: start audio/midi
 
   #ifndef SAT_NO_GUI
-    if (MClapGui) {
+    if (sat_exe_ClapGui) {
       uint32_t width,height;
-      getEditorSize(&width,&height);
-      SAT_HostWindow* window = new SAT_HostWindow(width,height,0,MClapPlugin);
+      sat_exe_getEditorSize(&width,&height);
+      SAT_HostWindow* window = new SAT_HostWindow(width,height,0,sat_exe_ClapPlugin);
       window->setTitle("SAT_ExeEntry");
       window->show();
-      SAT_HostWindow* hostwindow = openEditor(window);
+      SAT_HostWindow* hostwindow = sat_exe_openEditor(window);
       //hostwindow->on_window_show();
-      mainloop(hostwindow);
+      sat_exe_mainloop(hostwindow);
       //hostwindow->on_window_hide();
-      closeEditor();
+      sat_exe_closeEditor();
       window->hide();
       delete window;
     }
@@ -163,8 +163,8 @@ int main(int argc, char** argv) {
 
   // todo: stop audio/midi
 
-  unloadPlugin();
-  deinit();
+  sat_exe_unloadPlugin();
+  sat_exe_deinit();
   delete host;
   return 0;
 }

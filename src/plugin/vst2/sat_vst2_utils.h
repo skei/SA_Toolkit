@@ -2,7 +2,7 @@
 #define sat_vst2_utils_included
 //----------------------------------------------------------------------
 
-#include "plugin/lib/sat_vst2.h"
+#include "plugin/vst2/sat_vst2.h"
 
 // why not id?
 

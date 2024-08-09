@@ -11,10 +11,6 @@ class SAT_ClapPlugin;
 extern void SAT_Register(SAT_Registry* ARegistry) __SAT_WEAK;
 extern SAT_ClapPlugin* SAT_CreatePlugin(uint32_t AIndex, const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) __SAT_WEAK;
 
-// typedef SAT_Array<const clap_plugin_descriptor_t*> SAT_ClapDescriptorArray;
-// typedef SAT_Array<const void*> SAT_ClapFactoryArray;
-// typedef SAT_Array<const char*> SAT_ClapFactoryIdArray;
-
 //----------------------------------------------------------------------
 //
 //

@@ -379,4 +379,20 @@ public:
 
 
 //----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
+
+/*
+  TODO:
+  wrappers for
+    moodycamel::ConcurrentQueue<T>
+    moodycamel::ReaderWriterQueue<T>
+*/
+
+//#include "extern/cameron314/concurrentqueue.h"
+//#include "extern/cameron314/readerwriterqueue.h"
+
+//----------------------------------------------------------------------
 #endif

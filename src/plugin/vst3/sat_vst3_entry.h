@@ -3,8 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/lib/sat_vst3.h"
-#include "plugin/factory/sat_vst3_factory.h"
+#include "plugin/vst3/sat_vst3.h"
+#include "plugin/vst3/sat_vst3_factory.h"
 
 //----------------------------------------------------------------------
 //
@@ -22,9 +22,9 @@ bool vst3_module_exit(void) asm ("ModuleExit");
 //
 //----------------------------------------------------------------------
 
-// host deletes it?
-// or else it leaks..
-// should we just have a global/static factory, and return a ptr to this?
+// host deletes it? or else it leaks..
+// should we have a global/static factory, and return a ptr to this?
+// will the host try to delete it?
 
 //__EXPORT
 __attribute__ ((visibility ("default")))

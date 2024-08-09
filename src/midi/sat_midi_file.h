@@ -304,32 +304,32 @@ public:
 
   void print() {
     if (MSequence) {
-      printf("name: '%s'\n",MSequence->name);
-      printf("format: %i\n",MSequence->format);
-      printf("tpq: %i\n",MSequence->tpq);
-      printf("num_tracks: %i\n",MSequence->num_tracks);
+      SAT_PRINT("name: '%s'\n",MSequence->name);
+      SAT_PRINT("format: %i\n",MSequence->format);
+      SAT_PRINT("tpq: %i\n",MSequence->tpq);
+      SAT_PRINT("num_tracks: %i\n",MSequence->num_tracks);
       if (MSequence->tracks.size() > 0) {
         for (uint32_t t=0; t<MSequence->tracks.size(); t++) {
-          printf("Track %i\n",t);
+          SAT_PRINT("Track %i\n",t);
           SAT_MidiTrack* track = MSequence->tracks[t];
           if (track) {
-            printf("  name: '%s'\n",track->name);
-            printf("  num_events: %i\n",track->num_events);
+            SAT_PRINT("  name: '%s'\n",track->name);
+            SAT_PRINT("  num_events: %i\n",track->num_events);
             if (track->events.size() > 0) {
               for (uint32_t e=0; e<track->events.size(); e++) {
                 SAT_MidiEvent* event = track->events[e];
                 print_event(e,event);
               } // for e
             } // events > 0
-            else { printf("events.size <= 0\n"); }
+            else { SAT_PRINT("events.size <= 0\n"); }
           } // track
-          else  { printf("track(%i) == null\n",t); }
+          else  { SAT_PRINT("track(%i) == null\n",t); }
         } // for t
       } // tracks > 0
-      else { printf("tracks.size <= 0\n"); }
+      else { SAT_PRINT("tracks.size <= 0\n"); }
 
     } // sequence
-    else { printf("sequence == null\n"); }
+    else { SAT_PRINT("sequence == null\n"); }
   }
 
   //----------
@@ -337,40 +337,40 @@ public:
   void print_event(uint32_t i, SAT_MidiEvent* event) {
     if (event->msg1 < 0xF0) {
       switch (event->msg1 & 0xF0) {
-        case 0x80: printf("%i : %02X %02X %02X note off [delta %i time %f]\n",               i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
-        case 0x90: printf("%i : %02X %02X %02X note on [delta %i time %f]\n",                i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
-        case 0xA0: printf("%i : %02X %02X %02X polyphonic key pressure [delta %i time %f]\n",i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
-        case 0xB0: printf("%i : %02X %02X %02X control change [delta %i time %f]\n",         i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
-        case 0xC0: printf("%i : %02X %02X -- program change [delta %i time %f]\n",           i,event->msg1,event->msg2,event->delta,event->time); break;
-        case 0xD0: printf("%i : %02X %02X -- channel pressuer [delta %i time %f]\n",         i,event->msg1,event->msg2,event->delta,event->time); break;
-        case 0xE0: printf("%i : %02X %02X %02X pitch wheel [delta %i time %f]\n",            i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
-        default:   printf("%i : unknown event [delta %i time %f]\n",i,event->delta,event->time); break;
+        case 0x80: SAT_PRINT("%i : %02X %02X %02X note off [delta %i time %f]\n",               i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
+        case 0x90: SAT_PRINT("%i : %02X %02X %02X note on [delta %i time %f]\n",                i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
+        case 0xA0: SAT_PRINT("%i : %02X %02X %02X polyphonic key pressure [delta %i time %f]\n",i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
+        case 0xB0: SAT_PRINT("%i : %02X %02X %02X control change [delta %i time %f]\n",         i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
+        case 0xC0: SAT_PRINT("%i : %02X %02X -- program change [delta %i time %f]\n",           i,event->msg1,event->msg2,event->delta,event->time); break;
+        case 0xD0: SAT_PRINT("%i : %02X %02X -- channel pressuer [delta %i time %f]\n",         i,event->msg1,event->msg2,event->delta,event->time); break;
+        case 0xE0: SAT_PRINT("%i : %02X %02X %02X pitch wheel [delta %i time %f]\n",            i,event->msg1,event->msg2,event->msg3,event->delta,event->time); break;
+        default:   SAT_PRINT("%i : unknown event [delta %i time %f]\n",i,event->delta,event->time); break;
       }
     } // < f0
     else {
       if (event->msg1 < 0xFF) {
-        //printf("%i : %02X %02X %02X [%i]\n",i,event->msg1,event->msg2,event->msg3,event->delta,event->time);
+        //SAT_PRINT("%i : %02X %02X %02X [%i]\n",i,event->msg1,event->msg2,event->msg3,event->delta,event->time);
         switch (event->msg1) {
-          case 0xF0: printf("%i : F0 -- -- [delta %i time %f] sysex (size %i)\n",i, event->delta,event->time,event->datalen); break;
-          case 0xF1: printf("%i : F1 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
-          case 0xF2: printf("%i : F2 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
-          case 0xF3: printf("%i : F3 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
-          case 0xF4: printf("%i : F4 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
-          case 0xF5: printf("%i : F5 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
-          case 0xF6: printf("%i : F6 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
-          case 0xF7: printf("%i : F7 -- -- [delta %i time %f] sysex (size %i)\n",i, event->delta,event->time,event->datalen); break;
-          case 0xF8: printf("%i : F8 -- -- [delta %i time %f] timing clock\n",   i, event->delta,event->time); break;
-          case 0xF9: printf("%i : F9 -- -- [delta %i time %f] undefined\n",      i, event->delta,event->time); break;
-          case 0xFA: printf("%i : FA -- -- [delta %i time %f] start\n",          i, event->delta,event->time); break;
-          case 0xFB: printf("%i : FB -- -- [delta %i time %f] continue\n",       i, event->delta,event->time); break;
-          case 0xFC: printf("%i : FC -- -- [delta %i time %f] stop\n",           i, event->delta,event->time); break;
-          case 0xFD: printf("%i : FD -- -- [delta %i time %f] undefined\n",      i, event->delta,event->time); break;
-          case 0xFE: printf("%i : FE -- -- [delta %i time %f] active sensing\n", i, event->delta,event->time); break;
-          default:   printf("%i : ? [delta %i time %f]\n",i,event->delta,event->time); break;
+          case 0xF0: SAT_PRINT("%i : F0 -- -- [delta %i time %f] sysex (size %i)\n",i, event->delta,event->time,event->datalen); break;
+          case 0xF1: SAT_PRINT("%i : F1 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
+          case 0xF2: SAT_PRINT("%i : F2 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
+          case 0xF3: SAT_PRINT("%i : F3 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
+          case 0xF4: SAT_PRINT("%i : F4 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
+          case 0xF5: SAT_PRINT("%i : F5 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
+          case 0xF6: SAT_PRINT("%i : F6 -- -- [delta %i time %f] ?\n",              i, event->delta,event->time); break;
+          case 0xF7: SAT_PRINT("%i : F7 -- -- [delta %i time %f] sysex (size %i)\n",i, event->delta,event->time,event->datalen); break;
+          case 0xF8: SAT_PRINT("%i : F8 -- -- [delta %i time %f] timing clock\n",   i, event->delta,event->time); break;
+          case 0xF9: SAT_PRINT("%i : F9 -- -- [delta %i time %f] undefined\n",      i, event->delta,event->time); break;
+          case 0xFA: SAT_PRINT("%i : FA -- -- [delta %i time %f] start\n",          i, event->delta,event->time); break;
+          case 0xFB: SAT_PRINT("%i : FB -- -- [delta %i time %f] continue\n",       i, event->delta,event->time); break;
+          case 0xFC: SAT_PRINT("%i : FC -- -- [delta %i time %f] stop\n",           i, event->delta,event->time); break;
+          case 0xFD: SAT_PRINT("%i : FD -- -- [delta %i time %f] undefined\n",      i, event->delta,event->time); break;
+          case 0xFE: SAT_PRINT("%i : FE -- -- [delta %i time %f] active sensing\n", i, event->delta,event->time); break;
+          default:   SAT_PRINT("%i : ? [delta %i time %f]\n",i,event->delta,event->time); break;
         } // switch
       } // < ff
       else {
-        //printf("%i : FF %02X %02X [%i]\n",i,event->msg2,event->msg3,event->delta,event->time);
+        //SAT_PRINT("%i : FF %02X %02X [%i]\n",i,event->msg2,event->msg3,event->delta,event->time);
         uint8_t v1,v2,v3,v4,v5;
         uint32_t v;
         switch(event->msg2) {
@@ -378,34 +378,34 @@ public:
             v1 = event->data[0];
             v2 = event->data[1];
             v = (v1 << 8) + v2;
-            printf("%i : FF%02X [delta %i time %f] seq number: %i (size %i)\n",i, event->msg2,event->delta,event->time,v,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] seq number: %i (size %i)\n",i, event->msg2,event->delta,event->time,v,event->datalen);
             break;
-          case 0x01: printf("%i : FF%02X [delta %i time %f] text: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x02: printf("%i : FF%02X [delta %i time %f] copyright: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x03: printf("%i : FF%02X [delta %i time %f] seq/track name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x04: printf("%i : FF%02X [delta %i time %f] instrument name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x05: printf("%i : FF%02X [delta %i time %f] lyric: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x06: printf("%i : FF%02X [delta %i time %f] marker: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x07: printf("%i : FF%02X [delta %i time %f] cue point: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x08: printf("%i : FF%02X [delta %i time %f] program name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
-          case 0x09: printf("%i : FF%02X [delta %i time %f] device name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x01: SAT_PRINT("%i : FF%02X [delta %i time %f] text: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x02: SAT_PRINT("%i : FF%02X [delta %i time %f] copyright: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x03: SAT_PRINT("%i : FF%02X [delta %i time %f] seq/track name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x04: SAT_PRINT("%i : FF%02X [delta %i time %f] instrument name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x05: SAT_PRINT("%i : FF%02X [delta %i time %f] lyric: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x06: SAT_PRINT("%i : FF%02X [delta %i time %f] marker: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x07: SAT_PRINT("%i : FF%02X [delta %i time %f] cue point: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x08: SAT_PRINT("%i : FF%02X [delta %i time %f] program name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
+          case 0x09: SAT_PRINT("%i : FF%02X [delta %i time %f] device name: '%s' (size %i)\n",i, event->msg2,event->delta,event->time,event->data,event->datalen); break;
           case 0x20:
             v1 = event->data[0];
-            printf("%i : FF%02X [delta %i time %f] midi channel: %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] midi channel: %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,event->datalen);
             break;
           case 0x21:
             v1 = event->data[0];
-            printf("%i : FF%02X [delta %i time %f] midi port: %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] midi port: %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,event->datalen);
             break;
           case 0x2f:
-            printf("%i : FF%02X [delta %i time %f] end of track (size %i)\n",i, event->msg2,event->delta,event->time,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] end of track (size %i)\n",i, event->msg2,event->delta,event->time,event->datalen);
             break;
           case 0x51:
             v1 = event->data[0];
             v2 = event->data[1];
             v3 = event->data[2];
             v = (v1 << 16) + (v2 < 8) + v3;
-            printf("%i : FF%02X [delta %i time %f] tempo: %i (size %i)\n",i, event->msg2,event->delta,event->time,v,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] tempo: %i (size %i)\n",i, event->msg2,event->delta,event->time,v,event->datalen);
             break;
           case 0x54:
             v1 = event->data[0];
@@ -413,25 +413,25 @@ public:
             v3 = event->data[2];
             v4 = event->data[3];
             v5 = event->data[4];
-            printf("%i : FF%02X [delta %i time %f] SMPTE: %i %i %i %i %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,v2,v3,v4,v5,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] SMPTE: %i %i %i %i %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,v2,v3,v4,v5,event->datalen);
             break;
           case 0x58:
             v1 = event->data[0];
             v2 = event->data[1];
             v3 = event->data[2];
             v4 = event->data[3];
-            printf("%i : FF%02X [delta %i time %f] time signature: %i %i %i %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,v2,v3,v4,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] time signature: %i %i %i %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,v2,v3,v4,event->datalen);
             break;
           case 0x59:
             v1 = event->data[0];
             v2 = event->data[1];
-            printf("%i : FF%02X [delta %i time %f] key signature: %i %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,v2,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] key signature: %i %i (size %i)\n",i, event->msg2,event->delta,event->time,v1,v2,event->datalen);
             break;
           case 0x7F:
-            printf("%i : FF%02X [delta %i time %f] seq specific (size %i)\n",i, event->msg2,event->delta,event->time,event->datalen);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] seq specific (size %i)\n",i, event->msg2,event->delta,event->time,event->datalen);
             break;
           default:
-            printf("%i : FF%02X [delta %i time %f] unknown event\n",i, event->msg2,event->delta,event->time);
+            SAT_PRINT("%i : FF%02X [delta %i time %f] unknown event\n",i, event->msg2,event->delta,event->time);
             break;
         } // switch msg2
       } // ! < ff
@@ -569,13 +569,13 @@ private:
 
   void read_header() {
     uint32_t id = read_uint(); // "MThd" (4D,54,68,64)
-    if (id != 0x4d546864) { printf("wrong file header id\n"); return; }
+    if (id != 0x4d546864) { SAT_PRINT("wrong file header id\n"); return; }
     uint32_t size = read_uint();
-    if (size != 6) { printf("wrong file header size\n"); return; }
+    if (size != 6) { SAT_PRINT("wrong file header size\n"); return; }
     uint16_t v1 = read_short();
     uint16_t v2 = read_short();
     uint16_t v3 = read_short();
-    //printf("\n  format %04x ntrks %04x division %04x\n\n",v1,v2,v3);
+    //SAT_PRINT("\n  format %04x ntrks %04x division %04x\n\n",v1,v2,v3);
     MSequence->format     = v1;
     MSequence->num_tracks = v2;
     //if (v3 & 0x8000) {}
@@ -609,7 +609,7 @@ private:
     //MSplitTracks = 0;
     for (uint32_t i=0; i<MSequence->num_tracks; i++) {
       uint32_t id = read_uint(); // "MTrk" (4D,54,72,6B)
-      if (id != 0x4d54726b) { printf("  Error: track %i wrong track header id 0x%08x (wants 0x4d54726b)\n",i,id); return; }
+      if (id != 0x4d54726b) { SAT_PRINT("  Error: track %i wrong track header id 0x%08x (wants 0x4d54726b)\n",i,id); return; }
       uint32_t size = read_uint();
       start_new_track();
       uint32_t num_events = read_track_events(size);
@@ -721,7 +721,7 @@ private:
       case 0xE0:
         index = read_byte();
         value = read_byte();
-        //printf("  0x%02x %i %i pitch wheel (delta %i)\n",event,index,value,ADeltaTime);
+        //SAT_PRINT("  0x%02x %i %i pitch wheel (delta %i)\n",event,index,value,ADeltaTime);
         midi_event = new SAT_MidiEvent(ADeltaTime,event,index,value);
         MCurrentTrack->events.push_back(midi_event);
         break;
@@ -730,7 +730,7 @@ private:
         break;
       //default:
       //  // 0x..7x (running status?)
-      //  printf("  0x%02x unknown event (delta %i)\n",event,ADeltaTime);
+      //  SAT_PRINT("  0x%02x unknown event (delta %i)\n",event,ADeltaTime);
       //  break;
     } // switch
 
@@ -869,7 +869,7 @@ private:
         break;
 
       default:
-        printf("  0x%02x unknown system event (delta %i)\n",AEvent,ADeltaTime);
+        SAT_PRINT("  0x%02x unknown system event (delta %i)\n",AEvent,ADeltaTime);
         midi_event = new SAT_MidiEvent(ADeltaTime,0,0,0);
         MCurrentTrack->events.push_back(midi_event);
         break;
@@ -1309,7 +1309,7 @@ private:
         midi_event->setData((uint8_t*)ptr,length);
         MCurrentTrack->events.push_back(midi_event);
         MBufferPtr += length;
-        printf("  0xff%02x %i <..> unknown meta event (delta %i)\n",meta,length,ADeltaTime);
+        SAT_PRINT("  0xff%02x %i <..> unknown meta event (delta %i)\n",meta,length,ADeltaTime);
         break;
 
     } // switch meta

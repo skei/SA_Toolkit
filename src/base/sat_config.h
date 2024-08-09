@@ -155,7 +155,7 @@
   // draw (and keep around) to a buffer, and copy from it to the screen,
   // instead of drawing directly to the screen (or opewngl backbuffer)
   // 'retained mode' - ish
-//  #define SAT_WINDOW_BUFFERED
+  //#define SAT_WINDOW_BUFFERED
 
   // autostart the window timer
   #define SAT_WINDOW_TIMER_AUTOSTART
@@ -283,7 +283,7 @@
   #define SAT_PLUGIN_CLAP
 #endif
 
-//#undef SAT_PLUGIN_DEFINED
+// #undef SAT_PLUGIN_DEFINED
 
 //----------------------------------------------------------------------
 //
@@ -316,7 +316,7 @@
   #endif
 #endif
 
-#undef SAT_GUI_DEFINED
+// #undef SAT_GUI_DEFINED
 
 //----------
 

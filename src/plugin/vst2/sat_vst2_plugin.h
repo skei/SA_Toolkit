@@ -11,10 +11,10 @@
 
 #include "sat.h"
 #include "base/type/sat_queue.h"
-#include "plugin/lib/sat_clap.h"
-#include "plugin/lib/sat_vst2.h"
-#include "plugin/lib/sat_vst2_utils.h"
 #include "plugin/sat_host_implementation.h"
+#include "plugin/clap/sat_clap.h"
+#include "plugin/vst2/sat_vst2.h"
+#include "plugin/vst2/sat_vst2_utils.h"
 
 //----------------------------------------------------------------------
 

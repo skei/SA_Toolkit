@@ -91,7 +91,7 @@ public:
             if (event) {
               if ((event->time >= AFrom) && (event->time < (AFrom + ALength))) {
                 if ((event->type == 0) && (event->msg1 < 0xF0)) {
-                  //printf("  midiplayer.EVENT: %f : %02x %02x %02x\n",event->time,event->msg1,event->msg2,event->msg2);
+                  //SAT_PRINT("  midiplayer.EVENT: %f : %02x %02x %02x\n",event->time,event->msg1,event->msg2,event->msg2);
                   blockevents->push_back(event);
                 }
               }

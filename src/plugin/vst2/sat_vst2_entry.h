@@ -6,12 +6,12 @@
 
 #include "sat.h"
 #include "base/system/sat_paths.h"
-#include "plugin/sat_plugin.h"
-#include "plugin/lib/sat_clap.h"
-#include "plugin/lib/sat_vst2.h"
-#include "plugin/lib/sat_vst2_utils.h"
 #include "plugin/sat_host_implementation.h"
-#include "plugin/plugin/sat_vst2_plugin.h"
+#include "plugin/sat_plugin.h"
+#include "plugin/clap/sat_clap.h"
+#include "plugin/vst2/sat_vst2.h"
+#include "plugin/vst2/sat_vst2_utils.h"
+#include "plugin/vst2/sat_vst2_plugin.h"
 
 //#include "plugin/sat_registry.h"
 //#include "plugin/clap/sat_clap_host.h"

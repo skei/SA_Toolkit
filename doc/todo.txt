@@ -66,3 +66,6 @@ PLUGIN
 * parameter smoothing
 
   gui, automation, (poly) modulation, note expressions
+
+* oversampling
+* tick-based dsp

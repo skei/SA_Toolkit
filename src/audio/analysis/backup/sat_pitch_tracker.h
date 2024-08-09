@@ -152,12 +152,12 @@ class MIP_PitchTracker {
       double si, si1;
       // must be a power of 2
       samplecount = _floor_power2(samplecount);
-      double *sam = (double *)MIP_Malloc(sizeof(double)*samplecount);
-      MIP_Memcpy(sam, samples + startsample, sizeof(double)*samplecount);
+      double *sam = (double *)malloc(sizeof(double)*samplecount);
+      memcpy(sam, samples + startsample, sizeof(double)*samplecount);
       int curSamNb = samplecount;
-      int *distances = (int *)MIP_Malloc(sizeof(int)*samplecount);
-      int *mins = (int *)MIP_Malloc(sizeof(int)*samplecount);
-      int *maxs = (int *)MIP_Malloc(sizeof(int)*samplecount);
+      int *distances = (int *)malloc(sizeof(int)*samplecount);
+      int *mins = (int *)malloc(sizeof(int)*samplecount);
+      int *maxs = (int *)malloc(sizeof(int)*samplecount);
       int nbMins, nbMaxs;
       // algorithm parameters
       int maxFLWTlevels = 6;
@@ -266,7 +266,7 @@ class MIP_PitchTracker {
         // maxs = [5, 20, 100,...]
         // compute distances
         int d;
-        MIP_Memset(distances, 0, samplecount*sizeof(int));
+        memset(distances, 0, samplecount*sizeof(int));
 
         for (i = 0 ; i < nbMins ; i++) {
           for (j = 1; j < differenceLevelsN; j++) {
@@ -364,10 +364,10 @@ class MIP_PitchTracker {
 
     cleanup:
 
-      MIP_Free(distances);
-      MIP_Free(mins);
-      MIP_Free(maxs);
-      MIP_Free(sam);
+      free(distances);
+      free(mins);
+      free(maxs);
+      free(sam);
 
       return pitchF;
     }

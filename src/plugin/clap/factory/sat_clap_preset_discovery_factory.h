@@ -8,6 +8,22 @@
 
 // todo. prefix sat_
 
+/*
+  presets..
+  txt files, extension .sa_preset
+  preset dir: ~/.skei.audio/
+
+  5 first txt lines (max 256 chars)::
+    * id (id of the plugin the preset is meant for)
+    * name (preset name)
+    * author (preset author)
+    * desc (preset description)
+    * load_key (given to plugin when loading, so it can report it back and tell the host it successfully loaded the preset)
+               (does it need to be unique? todo: look at clap docs)
+  then preset data.. (hex/base64 encoded?)
+*/
+
+#include "sat.h"
 #include "plugin/clap/sat_clap.h"
 
 //----------------------------------------------------------------------
@@ -21,6 +37,7 @@
   // For PLUGIN kind, the location must be null.
 
   // filled in by clap_preset_discovery_provider_init_callback()
+
   //TODO: SAT_GLOBAL.REGISTRY.getPresetPath
   char location_string[SAT_MAX_PATH_LENGTH] = {0};
 
@@ -102,7 +119,7 @@
 
   void clap_preset_discovery_provider_destroy_callback(const struct clap_preset_discovery_provider *provider) {
     //SAT_PRINT;
-    SAT_Breakpoint;
+//    SAT_Breakpoint;
   }
 
   //----------

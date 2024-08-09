@@ -4,7 +4,7 @@
 
 // TODO: move to str/string files/classes..
 
-#include "plugin/lib/sat_vst3.h"
+#include "plugin/vst3/sat_vst3.h"
 
 #include <string>
 #include <locale>

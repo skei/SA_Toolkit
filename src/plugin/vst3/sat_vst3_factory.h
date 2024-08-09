@@ -4,12 +4,12 @@
 
 #include "sat.h"
 #include "base/util/sat_strutils.h"
-#include "plugin/sat_plugin.h"
-#include "plugin/lib/sat_clap.h"
-#include "plugin/lib/sat_vst3.h"
-#include "plugin/lib/sat_vst3_utils.h"
 #include "plugin/sat_host_implementation.h"
-#include "plugin/plugin/sat_vst3_plugin.h"
+#include "plugin/sat_plugin.h"
+#include "plugin/clap/sat_clap.h"
+#include "plugin/vst3/sat_vst3.h"
+#include "plugin/vst3/sat_vst3_plugin.h"
+#include "plugin/vst3/sat_vst3_utils.h"
 
 //#ifndef SAT_NO_GUI
 //#include "plugin/sat_editor.h"

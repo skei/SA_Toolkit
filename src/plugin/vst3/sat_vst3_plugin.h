@@ -13,10 +13,11 @@
 
 #include "sat.h"
 #include "base/system/sat_timer.h"
-#include "plugin/lib/sat_clap.h"
-#include "plugin/lib/sat_vst3.h"
-#include "plugin/lib/sat_vst3_utils.h"
-#include "plugin/plugin/sat_clap_plugin.h"
+#include "plugin/clap/sat_clap.h"
+#include "plugin/clap/sat_clap_plugin.h"
+#include "plugin/vst3/sat_vst3.h"
+#include "plugin/vst3/sat_vst3_utils.h"
+#include "plugin/sat_plugin.h"
 
 //----------------------------------------------------------------------
 

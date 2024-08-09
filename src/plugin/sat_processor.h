@@ -8,8 +8,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "plugin/processor/sat_process_context.h"
-#include "plugin/processor/sat_processor_owner.h"
+#include "plugin/sat_plugin_base.h"
 #include "plugin/clap/sat_clap.h"
 #include "plugin/sat_audio_port.h"
 #include "plugin/sat_note_port.h"
@@ -40,7 +39,7 @@ protected:
 public:
 //------------------------------
 
-  SAT_Processor(SAT_ProcessorOwner* AOwner) {
+  SAT_Processor(SAT_ProcessorOwner* AOwner/*, SAT_ProcessorListener* AListener*/) {
     //SAT_TRACE;
     MOwner = AOwner;
     MAudioInputs = AOwner->on_processorOwner_getAudioInputPorts();
