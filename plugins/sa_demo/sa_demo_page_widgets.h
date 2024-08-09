@@ -161,6 +161,10 @@ public:
     visual1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     visual1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
+      visual1->setSizable(true);
+      visual1->setSizableEdges(SAT_EDGE_BOTTOM);
+      visual1->Options.wantHoverEvents = true;
+
     SAT_TextWidget* text1 = new SAT_TextWidget(20,"Text");
     left_panel->appendChild(text1);
     text1->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -219,10 +223,6 @@ public:
     textedit1->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     textedit1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
-    // SAT_Widget* endstack1 = new SAT_Widget(0);
-    // left_panel->appendChild(endstack1);
-    // endstack1->Layout.flags = SAT_WIDGET_LAYOUT_STACK_HORIZ;
-
     // SAT_TreeItemWidget* treeitem1 = new SAT_TreeItemWidget(20,"TreeItem",true);
     // left_panel->appendChild(treeitem1);
     // treeitem1->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -256,6 +256,12 @@ public:
     groupbox1->appendChild( new SAT_KnobWidget(SAT_Rect(50,5,40,40)));
     groupbox1->appendChild( new SAT_KnobWidget(SAT_Rect(95,5,40,40)));
 
+      SAT_GroupBoxWidget* groupbox2 = new SAT_GroupBoxWidget(70,20,true);
+      right_panel->appendChild(groupbox2);
+      groupbox2->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      groupbox2->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      groupbox2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+
     SAT_TabsWidget* tabs1 = new SAT_TabsWidget(80,20);
     right_panel->appendChild(tabs1);
     tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -263,21 +269,21 @@ public:
     tabs1->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
 
     tabs1->getHeader()->setFillCellsGradient(true);
-    SAT_VisualWidget* p1 = new SAT_VisualWidget(15);
-    SAT_VisualWidget* p2 = new SAT_VisualWidget(15);
-    SAT_VisualWidget* p3 = new SAT_VisualWidget(15);
-    //p1->setBackgroundColor(SAT_Yellow);
-    p1->appendChild( new SAT_KnobWidget(SAT_Rect( 5,5,40,40)));
-    p1->appendChild( new SAT_KnobWidget(SAT_Rect(50,5,40,40)));
-    p1->appendChild( new SAT_KnobWidget(SAT_Rect(95,5,40,40)));
-    //p2->setBackgroundColor(SAT_Orange);
-    p2->appendChild( new SAT_SliderWidget(SAT_Rect(5, 5,150,20)));
-    p2->appendChild( new SAT_SliderWidget(SAT_Rect(5,30,150,20)));
-    //p3->setBackgroundColor(SAT_Green2);
-    p3->appendChild( new SAT_ButtonWidget(SAT_Rect( 5, 5,40,20)));
-    p3->appendChild( new SAT_ButtonWidget(SAT_Rect(50, 5,40,20)));
-    p3->appendChild( new SAT_ButtonWidget(SAT_Rect( 5,30,40,20)));
-    p3->appendChild( new SAT_ButtonWidget(SAT_Rect(50,30,40,20)));
+      SAT_VisualWidget* p1 = new SAT_VisualWidget(15);
+      //p1->setBackgroundColor(SAT_Yellow);
+      p1->appendChild( new SAT_KnobWidget(SAT_Rect( 5,5,40,40)));
+      p1->appendChild( new SAT_KnobWidget(SAT_Rect(50,5,40,40)));
+      p1->appendChild( new SAT_KnobWidget(SAT_Rect(95,5,40,40)));
+      SAT_VisualWidget* p2 = new SAT_VisualWidget(15);
+      //p2->setBackgroundColor(SAT_Orange);
+      p2->appendChild( new SAT_SliderWidget(SAT_Rect(5, 5,150,20)));
+      p2->appendChild( new SAT_SliderWidget(SAT_Rect(5,30,150,20)));
+      SAT_VisualWidget* p3 = new SAT_VisualWidget(15);
+      //p3->setBackgroundColor(SAT_Green2);
+      p3->appendChild( new SAT_ButtonWidget(SAT_Rect( 5, 5,40,20)));
+      p3->appendChild( new SAT_ButtonWidget(SAT_Rect(50, 5,40,20)));
+      p3->appendChild( new SAT_ButtonWidget(SAT_Rect( 5,30,40,20)));
+      p3->appendChild( new SAT_ButtonWidget(SAT_Rect(50,30,40,20)));
     tabs1->appendPage( "Page1", p1);
     tabs1->appendPage( "Page2", p2);
     tabs1->appendPage( "Page3", p3);
@@ -534,8 +540,13 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
           //ds1->setDropShadowCorner(5);
           ds1->setFillBackground(false);
           ds1->setDrawBorder(false);
-          SAT_VisualWidget* ds2 = new SAT_VisualWidget(SAT_Rect(25,25,40,40));
-          painting_tab1->appendChild(ds2);
+
+            SAT_VisualWidget* ds2 = new SAT_VisualWidget(SAT_Rect(25,25,40,40));
+            painting_tab1->appendChild(ds2);
+
+            ds2->setSizable(true);
+            ds2->setMovable(true);
+            ds2->Options.wantHoverEvents = true;
 
           SAT_VisualWidget* ds3 = new SAT_VisualWidget(SAT_Rect(80,20,50,50));
           painting_tab1->appendChild(ds3);
@@ -545,11 +556,19 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
           ds3->setFillBackground(false);
           ds3->setDrawBorder(true);
 
+            ds3->setSizable(true);
+            ds3->setMovable(true);
+            ds3->Options.wantHoverEvents = true;
+
           SAT_VisualWidget* ds5 = new SAT_VisualWidget(SAT_Rect(20,80,50,50));
           painting_tab1->appendChild(ds5);
           ds5->setFillBackground(true);
           ds5->setFillGradient(true);
           //ds5->setDrawBorder(true);
+
+            ds5->setSizable(true);
+            ds5->setMovable(true);
+            ds5->Options.wantHoverEvents = true;
 
           SAT_VisualWidget* ds6 = new SAT_VisualWidget(SAT_Rect(80,80,50,50));
           painting_tab1->appendChild(ds6);
@@ -558,6 +577,10 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
           ds6->setDrawRoundedCorners(true);
           ds6->setRoundedCornerSize(10);
           ds6->setRoundedCorners(SAT_CORNER_UPPER_LEFT | SAT_CORNER_LOWER_RIGHT);
+
+            ds6->setSizable(true);
+            ds6->setMovable(true);
+            ds6->Options.wantHoverEvents = true;
 
         // tab 3 -parameters
 
