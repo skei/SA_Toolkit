@@ -18,6 +18,7 @@ BASE
     SAT_GLOBAL.LINUX - xinitthreads
 
 * investigate SAT_Queue
+  - (currently testing..)
   - volatile read/write pos?
   - atomic
 

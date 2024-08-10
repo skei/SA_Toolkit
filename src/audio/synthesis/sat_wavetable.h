@@ -358,9 +358,10 @@ public:
     fft(tableLen, freqRe, freqIm);
     // build a wavetable oscillator
     fillTables(freqRe,freqIm,tableLen);
+    
     // skei: free freqRe/Im ???
-    //SAT_Delete [] freqRe;
-    //SAT_Delete [] freqIm;
+    delete [] freqRe;
+    delete [] freqIm;
   }
 
 //------------------------------

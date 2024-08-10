@@ -2,11 +2,9 @@
 #define sat_rochebois_waveform_included
 //----------------------------------------------------------------------
 
-//----------------------------------------------------------------------
 // obscure antialiased saw code
 // http://www.kvraudio.com/forum/viewtopic.php?p=1710116#p1710116
-//----------------------------------------------------------------------
-
+//
 // is it the same as this?
 // http://www.musicdsp.org/showArchiveComment.php?ArchiveID=215
 

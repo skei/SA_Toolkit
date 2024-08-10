@@ -36,3 +36,29 @@ dependencies i had to install before i compiled correctly:
 
 () = not sure if needed, or automatically dragged in
      as dependency for some of the other deps..
+
+----------------------------------------------------------------------
+coding style
+----------------------------------------------------------------------
+
+todo:
+explain/describe/reason-about, problems, solutions/remedies..
+
+* header only
+  - global namespace
+  - circular dependencies
+  - no 'hidden code'
+  - single compilation/translation unit
+* lock/wait-free
+  - roundabouts, not intersections
+  - strict separation, few contact points
+  - queues, atomic bools
+* un_modern c++
+  - like c, but with some 'reasonable' c++ features
+  - readability
+  - no/fewer hidden surprises
+  - easier to reason about
+  - easier for the compiler/optimizer (?)
+* build system
+  - one single cpp file, do we need it?
+  - unnecessary complexity

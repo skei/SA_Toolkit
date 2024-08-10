@@ -12,7 +12,7 @@
 //----------
 
 #include <stdio.h>  // printf
-#include "base/types/sat_stack.h"
+#include "base/type/sat_stack.h"
 
 //----------
 

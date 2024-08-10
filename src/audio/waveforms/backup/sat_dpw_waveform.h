@@ -4,7 +4,6 @@
 
 /*
   differentiated parabolic waveform
-  differentiated polynomial waveform?
   "spectral tilt modification of the continuous-time signal before sampling"
 */
 

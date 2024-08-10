@@ -14,9 +14,10 @@
     var   % -> #
 */
 
-#include "base/types/sat_stack.h"
+#include "sat.h"
+#include "base/type/sat_stack.h"
 //#include "src/h_String.h"
-#include "base/utils/sat_vm.h"
+#include "base/util/sat_vm.h"
 
 #define SAT_VM_COMPILER_MAX_OPCODES     65536
 #define SAT_VM_COMPILER_MAX_CONDSTACK   32
