@@ -151,8 +151,8 @@ class sa_test_voices_processor
 public:
 //------------------------------
 
-  sa_test_voices_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_VoiceProcessor(AOwner) {
+  sa_test_voices_processor(SAT_ProcessorListener* AListener)
+  : SAT_VoiceProcessor(AListener) {
     SAT_TRACE;
   }
 

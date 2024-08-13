@@ -154,8 +154,8 @@ private:
 public:
 //------------------------------
 
-  sa_phaser_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_phaser_processor(SAT_ProcessorListener* AListener)
+  : SAT_InterleavedProcessor(AListener) {
   }
 
   //----------

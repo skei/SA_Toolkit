@@ -51,8 +51,8 @@ private:
 public:
 //------------------------------
 
-  sa_template_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_template_processor(SAT_ProcessorListener* AListener
+  : SAT_InterleavedProcessor(AListener) {
   }
 
   //----------

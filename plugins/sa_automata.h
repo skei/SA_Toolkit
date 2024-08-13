@@ -89,8 +89,8 @@ private:
 public:
 //------------------------------
 
-  sa_automata_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_automata_processor(SAT_ProcessorListener* AListener)
+  : SAT_InterleavedProcessor(AListener) {
   }
 
   //----------

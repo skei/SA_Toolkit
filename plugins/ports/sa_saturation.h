@@ -71,8 +71,8 @@ private:
 public:
 //------------------------------
 
-  sa_saturation_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_saturation_processor(SAT_ProcessorListener* AListener)
+  : SAT_InterleavedProcessor(AListener) {
   }
 
   //----------

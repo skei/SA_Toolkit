@@ -38,8 +38,6 @@ public:
   SAT_BaseEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {}
   virtual ~SAT_BaseEditor() {}
 public:
-  virtual bool setupOverlay() { return false; }
-//virtual bool connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) { return false; }
   virtual void initParameterValue(SAT_Parameter* AParameter) {}
   virtual void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) {}
   virtual void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) {}
@@ -63,6 +61,14 @@ public:
 
 //----------------------------------------------------------------------
 //
+// plugin
+//
+//----------------------------------------------------------------------
+
+// SAT_BasePlugin = SAT_ClapPlugin
+
+//----------------------------------------------------------------------
+//
 // processor
 //
 //----------------------------------------------------------------------
@@ -80,37 +86,20 @@ struct SAT_ProcessContext {
 
 //----------
 
-class SAT_ProcessorOwner {
+class SAT_ProcessorListener {
 public:
-  virtual SAT_AudioPortArray* on_processorOwner_getAudioInputPorts()  { return nullptr; }
-  virtual SAT_AudioPortArray* on_processorOwner_getAudioOutputPorts() { return nullptr; }
-  virtual SAT_NotePortArray*  on_processorOwner_getNoteInputPorts()   { return nullptr; }
-  virtual SAT_NotePortArray*  on_processorOwner_getNoteOutputPorts()  { return nullptr; }
-  virtual SAT_ParameterArray* on_processorOwner_getParameters()       { return nullptr; }
-
-  // should be processorListener?
-  virtual void  on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-  virtual void  on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-  virtual void  on_processorOwner_outputEvent()  {}
-//virtual void  on_processorOwner_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-//virtual void  on_processorOwner_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
-//virtual void  on_processorOwner_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
+  virtual SAT_AudioPortArray* on_processorListener_getAudioInputPorts()  { return nullptr; }
+  virtual SAT_AudioPortArray* on_processorListener_getAudioOutputPorts() { return nullptr; }
+  virtual SAT_NotePortArray*  on_processorListener_getNoteInputPorts()   { return nullptr; }
+  virtual SAT_NotePortArray*  on_processorListener_getNoteOutputPorts()  { return nullptr; }
+  virtual SAT_ParameterArray* on_processorListener_getParameters()       { return nullptr; }
+  virtual void                on_processorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void                on_processorListener_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void                on_processorListener_outputEvent()  {}
+//virtual void                on_processorListener_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+//virtual void                on_processorListener_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
+//virtual void                on_processorListener_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
 };
-
-//----------
-
-// class SAT_ProcessorListener {
-// public:
-//   virtual void  on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-//   virtual void  on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-//   virtual void  on_processorOwner_outputEvent()  {}
-// };
-
-//----------------------------------------------------------------------
-//
-//
-//
-//----------------------------------------------------------------------
 
 //----------------------------------------------------------------------
 //
@@ -129,6 +118,11 @@ struct SAT_VoiceContext {
 //SAT_Plugin*         plugin            = nullptr;
 };
 
+//----------
+
+// class SAT_VoiceListener {
+// public:
+// };
 
 //----------------------------------------------------------------------
 #endif

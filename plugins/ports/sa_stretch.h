@@ -65,8 +65,8 @@ private:
 public:
 //------------------------------
 
-  sa_stretch_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_stretch_processor(SAT_ProcessorListener* AListener)
+  : SAT_InterleavedProcessor(AListener) {
   }
 
   //----------

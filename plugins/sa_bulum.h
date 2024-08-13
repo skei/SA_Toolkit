@@ -106,8 +106,8 @@ private:
 public:
 //------------------------------
 
-  sa_bulum_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_bulum_processor(SAT_ProcessorListener* AListener)
+  : SAT_InterleavedProcessor(AListener) {
   }
 
   //----------

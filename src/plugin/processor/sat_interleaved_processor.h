@@ -20,8 +20,8 @@ private:
 public:
 //------------------------------
 
-  SAT_InterleavedProcessor(SAT_ProcessorOwner* AOwner)
-  : SAT_Processor(AOwner) {
+  SAT_InterleavedProcessor(SAT_ProcessorListener* AListener)
+  : SAT_Processor(AListener) {
     //SAT_TRACE;
   }
 

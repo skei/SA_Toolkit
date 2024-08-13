@@ -31,8 +31,8 @@ public:
 
   //SAT_DEFAULT_PROCESSOR_CONSTRUCTOR(gain_processor)
 
-  gain_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_BlockProcessor(AOwner) {
+  gain_processor(SAT_ProcessorListener* AListener)
+  : SAT_BlockProcessor(AListener) {
   }
 
   virtual ~gain_processor() {

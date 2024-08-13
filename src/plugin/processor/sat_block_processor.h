@@ -19,8 +19,8 @@ protected:
 public:
 //------------------------------
 
-  SAT_BlockProcessor(SAT_ProcessorOwner* AOwner)
-  : SAT_Processor(AOwner) {
+  SAT_BlockProcessor(SAT_ProcessorListener* AListener)
+  : SAT_Processor(AListener) {
     //SAT_TRACE;
   }
 

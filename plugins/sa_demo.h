@@ -72,8 +72,8 @@ private:
 public:
 //------------------------------
 
-  sa_demo_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_demo_processor(SAT_ProcessorListener* AListener)
+  : SAT_InterleavedProcessor(AListener) {
     //SAT_GLOBAL.DEBUG.OBSERVER.observe(SAT_OBSERVE_FLOAT,&samplerate,"samplerate");
   }
 

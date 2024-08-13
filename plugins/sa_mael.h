@@ -67,8 +67,8 @@ private:
 public:
 //------------------------------
 
-  sa_mael_voice_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_VoiceProcessor(AOwner) {
+  sa_mael_voice_processor(SAT_ProcessorListener* AListener)
+  : SAT_VoiceProcessor(AListener) {
     SAT_TRACE;
 
     SAT_Observe(SAT_OBSERVE_UINT32,&sample_pos,"sample_pos");

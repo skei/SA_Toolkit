@@ -105,10 +105,12 @@ public:
 
   // called by SAT_Plugin.gui_create
 
-  bool setupOverlay() override {
+  virtual bool setupOverlay() {
     if (MWindow) return MWindow->setupOverlay();
     return false;
   }
+
+  //----------
 
   virtual bool connect(SAT_Widget* AWidget, SAT_Parameter* AParameter, uint32_t AIndex=0) {
     AWidget->setParameter(AParameter,AIndex);
@@ -116,7 +118,9 @@ public:
     return true;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   // called from SAT_Plugin.initEditorParameterValues
   // (which is called from SAT_Plugin.gui_create)

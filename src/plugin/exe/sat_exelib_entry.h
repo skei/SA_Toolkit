@@ -1,3 +1,10 @@
+/*
+  a 'hack' to make a .so (shared object) file directly executable from the command line.
+  only tested in debug mode..
+  using this, you can create one binary file, that works as a standalone executable,
+  and at the same time, also works as a clap plugin, and a vst3 plugin..
+  (but i'm not sure if that's actually a good idea or not..)
+*/
 
 
 #if 0

@@ -61,8 +61,8 @@ class sa_tyr_voice_processor
 public:
 //------------------------------
 
-  sa_tyr_voice_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_VoiceProcessor(AOwner) {
+  sa_tyr_voice_processor(SAT_ProcessorListener* AListener)
+  : SAT_VoiceProcessor(AListener) {
     SAT_TRACE;
   }
 

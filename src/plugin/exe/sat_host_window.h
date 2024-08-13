@@ -17,7 +17,6 @@
 //----------------------------------------------------------------------
 
 class SAT_HostWindow
-//: public SAT_BasicWindow {
 : public SAT_ImplementedWindow {
 
 //------------------------------
@@ -33,7 +32,6 @@ public:
 //------------------------------
 
   SAT_HostWindow(uint32_t AWidth, uint32_t AHeight, intptr_t AParent,const clap_plugin_t* AClapPlugin)
-  //: SAT_BasicWindow(AWidth,AHeight,AParent) {
   : SAT_ImplementedWindow(AWidth,AHeight,AParent) {
     MClapPlugin = AClapPlugin;
     MClapGui = (const clap_plugin_gui_t*)MClapPlugin->get_extension(MClapPlugin,CLAP_EXT_GUI);;
@@ -44,54 +42,20 @@ public:
   virtual ~SAT_HostWindow() {
   }
 
-  // make it shut up about unimplemented virtual abstract methods..
-  // #ifdef SAT_PAINTER_NANOVG
-  //   NVGcontext* on_SurfaceOwner_getNanoVGContext()  override { return nullptr; }
-  // #endif
-
 //------------------------------
 public:
 //------------------------------
 
+  /*
+    embedded windows don't receive a window resized event,
+    so we call set_size manually..
+    we could try to get the editor from the plugin (only if we're using an embedded editor),
+    then the window from that, and finally call on_window_resize
+  */
+
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
-    //SAT_PRINT("w %i h %i\n",AWidth,AHeight);
     if (MClapGui) MClapGui->set_size(MClapPlugin,AWidth,AHeight);
   }
-
-  //----------
-
-  // void on_window_show() override {
-  //   SAT_TRACE;
-  //   SAT_BasicWindow::on_window_show();
-  // }
-
-  //----------
-
-  // void on_window_hide() override {
-  //   SAT_TRACE;
-  //   SAT_BasicWindow::on_window_show();
-  // }
-
-  //----------
-
-  /*
-  void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
-    // SAT_TRACE;
-    // uint32_t time = 0;
-    // uint32_t block = 256;
-    // MClapProcess.steady_time         = time;
-    // MClapProcess.frames_count        = block;
-    // MClapProcess.transport           = nullptr;
-    // MClapProcess.audio_inputs        = nullptr;
-    // MClapProcess.audio_outputs       = nullptr;
-    // MClapProcess.audio_inputs_count  = 0;
-    // MClapProcess.audio_outputs_count = 0;
-    // MClapProcess.in_events           = nullptr;
-    // MClapProcess.out_events          = nullptr;
-    // MClapPlugin->process(MClapPlugin,&MClapProcess);
-    // time += block;
-  }
-  */
 
 };
 

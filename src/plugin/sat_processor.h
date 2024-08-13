@@ -26,7 +26,7 @@ class SAT_Processor {
 protected:
 //------------------------------
 
-  SAT_ProcessorOwner* MOwner          = nullptr;
+  SAT_ProcessorListener* MListener          = nullptr;
   SAT_AudioPortArray* MAudioInputs    = nullptr;
   SAT_AudioPortArray* MAudioOutputs   = nullptr;
   SAT_NotePortArray*  MNoteInputs     = nullptr;
@@ -39,14 +39,14 @@ protected:
 public:
 //------------------------------
 
-  SAT_Processor(SAT_ProcessorOwner* AOwner/*, SAT_ProcessorListener* AListener*/) {
+  SAT_Processor(SAT_ProcessorListener* AListener/*, SAT_ProcessorListener* AListener*/) {
     //SAT_TRACE;
-    MOwner = AOwner;
-    MAudioInputs = AOwner->on_processorOwner_getAudioInputPorts();
-    MAudioOutputs = AOwner->on_processorOwner_getAudioOutputPorts();
-    MNoteInputs = AOwner->on_processorOwner_getNoteInputPorts();
-    MNoteOutputs = AOwner->on_processorOwner_getNoteOutputPorts();
-    MParameters = AOwner->on_processorOwner_getParameters();
+    MListener = AListener;
+    MAudioInputs = AListener->on_processorListener_getAudioInputPorts();
+    MAudioOutputs = AListener->on_processorListener_getAudioOutputPorts();
+    MNoteInputs = AListener->on_processorListener_getNoteInputPorts();
+    MNoteOutputs = AListener->on_processorListener_getNoteOutputPorts();
+    MParameters = AListener->on_processorListener_getParameters();
     //SAT_Assert(MParameters);
   }
 
@@ -60,7 +60,7 @@ public:
 public:
 //------------------------------
 
-  SAT_ProcessorOwner* getProcessorOwner() { return MOwner; }
+  SAT_ProcessorListener* getProcessorListener() { return MListener; }
   SAT_ProcessContext* getProcessContext() { return MProcessContext; }
 
   SAT_AudioPortArray* getAudioInputs()    { return MAudioInputs; }
@@ -187,8 +187,8 @@ public:
     SAT_Parameter* param = MParameters->getItem(index);
     param->setValue(value);
     #ifndef SAT_NO_GUI
-      // MOwner->on_processorOwner_queueParamFromHostToGui(index,value);
-      MOwner->on_processorOwner_updateParamFromHostToGui(index,value);
+      // MListener->on_processorListener_queueParamFromHostToGui(index,value);
+      MListener->on_processorListener_updateParamFromHostToGui(index,value);
       // param->setGuiAutomationDirty(true);
       // param->setLastAutomatedValue(value);
     #endif
@@ -205,8 +205,8 @@ public:
     SAT_Parameter* param = MParameters->getItem(index);
     param->setModulation(value);
     #ifndef SAT_NO_GUI
-      MOwner->on_processorOwner_updateModFromHostToGui(index,value);
-      // MOwner->on_processorOwner_queueModFromHostToGui(index,value);
+      MListener->on_processorListener_updateModFromHostToGui(index,value);
+      // MListener->on_processorListener_queueModFromHostToGui(index,value);
       // param->setGuiModulationDirty(true);
       // param->setLastModulatedValue(value);
     #endif
@@ -484,7 +484,7 @@ public: // gui dirty queues
       //   SAT_Parameter* param = MParameters->getItem(i);
       //   if (param->isGuiAutomationDirty()) {
       //     double value = param->getLastAutomatedValue();
-      //     MOwner->on_processorOwner_queueParamFromHostToGui(i,value);
+      //     MListener->on_processorListener_queueParamFromHostToGui(i,value);
       //   }
       // }
     }
@@ -497,7 +497,7 @@ public: // gui dirty queues
       //   SAT_Parameter* param = MParameters->getItem(i);
       //   if (param->isGuiModulationDirty()) {
       //     double value = param->getLastModulatedValue();
-      //     MOwner->on_processorOwner_queueModFromHostToGui(i,value);
+      //     MListener->on_processorListener_queueModFromHostToGui(i,value);
       //   }
       // }
     }

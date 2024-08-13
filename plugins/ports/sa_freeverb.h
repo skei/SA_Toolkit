@@ -474,8 +474,8 @@ private:
 public:
 //------------------------------
 
-  sa_freeverb_processor(SAT_ProcessorOwner* AOwner)
-  : SAT_InterleavedProcessor(AOwner) {
+  sa_freeverb_processor(SAT_ProcessorListener* AListener)
+  : SAT_InterleavedProcessor(AListener) {
   }
 
   //----------

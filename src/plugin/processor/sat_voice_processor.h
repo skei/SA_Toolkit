@@ -55,8 +55,8 @@ protected:
 public:
 //------------------------------
 
-  SAT_VoiceProcessor(SAT_ProcessorOwner* AOwner)
-  : SAT_Processor(AOwner) {
+  SAT_VoiceProcessor(SAT_ProcessorListener* AListener)
+  : SAT_Processor(AListener) {
     SAT_TRACE;
   }
 

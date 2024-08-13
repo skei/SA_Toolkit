@@ -3,12 +3,13 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "plugin/sat_plugin_base.h"
 
 //----------
 
-struct clap_gui_resize_hints_t;
-struct clap_window_t;
-class SAT_EditorListener;
+// struct clap_gui_resize_hints_t;
+// struct clap_window_t;
+// class SAT_EditorListener;
 
 //----------------------------------------------------------------------
 //
@@ -22,7 +23,7 @@ class SAT_NoEditor {
 public:
 //------------------------------
 
-  SAT_NoEditor(SAT_EditorListener* AListener) {
+  SAT_NoEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
   }
 
   //----------

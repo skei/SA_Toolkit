@@ -33,7 +33,7 @@
 class SAT_Plugin
 : public SAT_ClapPlugin
 , public SAT_EditorListener
-, public SAT_ProcessorOwner {
+, public SAT_ProcessorListener {
 
 //------------------------------
 private:
@@ -663,30 +663,29 @@ public: // processor
   //   if (AProcessor) delete AProcessor;
   // }
 
-  //----------
-
-  // void createProcessor(uint32_t AProcessor) {
-  //   SAT_Processor* processor = nullptr;
-  //   switch (AProcessor) {
-  //     case SAT_PLUGIN_BLOCK_PROCESSOR:        processor = new SAT_BlockProcessor(this); break;
-  //     case SAT_PLUGIN_INTERLEAVED_PROCESSOR:  processor = new SAT_InterleavedProcessor(this); break;
-  //     case SAT_PLUGIN_QUANTIZED_PROCESSOR:    processor = new SAT_QuantizedProcessor(this); break;
-  //     case SAT_PLUGIN_VOICE_PROCESSOR:        processor = new SAT_VoiceProcessor(this); break;
-  //   }
-  //   if (!processor) processor = new SAT_Processor(this);
-  //   SAT_Assert(processor);
-  //   MProcessor = processor;
-  // }
-
 //------------------------------
-public: // processor owner
+public: // processor listener
 //------------------------------
 
-  SAT_AudioPortArray* on_processorOwner_getAudioInputPorts()  final { return &MAudioInputPorts; }
-  SAT_AudioPortArray* on_processorOwner_getAudioOutputPorts() final { return &MAudioOutputPorts; }
-  SAT_NotePortArray*  on_processorOwner_getNoteInputPorts()   final { return &MNoteInputPorts; }
-  SAT_NotePortArray*  on_processorOwner_getNoteOutputPorts()  final { return &MNoteOutputPorts; }
-  SAT_ParameterArray* on_processorOwner_getParameters()       final { return &MParameters; }
+  SAT_AudioPortArray* on_processorListener_getAudioInputPorts() final {
+    return &MAudioInputPorts;
+  }
+
+  SAT_AudioPortArray* on_processorListener_getAudioOutputPorts() final {
+    return &MAudioOutputPorts;
+  }
+
+  SAT_NotePortArray*  on_processorListener_getNoteInputPorts() final {
+    return &MNoteInputPorts;
+  }
+
+  SAT_NotePortArray*  on_processorListener_getNoteOutputPorts() final {
+    return &MNoteOutputPorts;
+  }
+
+  SAT_ParameterArray* on_processorListener_getParameters() final {
+    return &MParameters;
+  }
 
   // a parameter has changed in process()
   // tell the editor about it
@@ -694,7 +693,7 @@ public: // processor owner
   // value is in clap-space
   // todo: convert to widget-space (normalize)
 
-  void on_processorOwner_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
+  void on_processorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
     #ifndef SAT_NO_GUI
       if (MEditor) {
@@ -716,7 +715,7 @@ public: // processor owner
   // modulation has changed i process()
   // tell the editor about it
 
-  void on_processorOwner_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
+  void on_processorListener_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
     #ifndef SAT_NO_GUI
       if (MEditor) {
@@ -1429,7 +1428,6 @@ public: // clap extensions
     //updateParameterValues();
     //updateEditorParameterValues();
     return true;
-    return false;
   }
 
   // state context

@@ -3,12 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-
-//----------
-
-struct clap_gui_resize_hints_t;
-struct clap_window_t;
-class SAT_EditorListener;
+#include "plugin/clap/sat_clap.h"
+#include "plugin/sat_plugin_base.h"
 
 //----------------------------------------------------------------------
 //
@@ -16,13 +12,16 @@ class SAT_EditorListener;
 //
 //----------------------------------------------------------------------
 
-class SAT_RemoteEditor {
+class SAT_RemoteEditor
+: public SAT_BaseEditor {
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_RemoteEditor(SAT_EditorListener* AListener) {
+  SAT_RemoteEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false)
+  : SAT_BaseEditor(AListener,AWidth,AHeight,AScale,AProportional) {
+
   }
 
   //----------
@@ -33,6 +32,20 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  void initParameterValue(SAT_Parameter* AParameter) override {
+  }
+
+  //----------
+
+  void updateParameterFromHost(SAT_Parameter* AParameter, double AValue) override {
+  }
+
+  //----------
+
+  void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) override {
+  }
+
 
 //------------------------------
 public:

@@ -20,8 +20,8 @@ private:
 public:
 //------------------------------
 
-  SAT_QuantizedProcessor(SAT_ProcessorOwner* AOwner)
-  : SAT_Processor(AOwner) {
+  SAT_QuantizedProcessor(SAT_ProcessorListener* AListener)
+  : SAT_Processor(AListener) {
     //SAT_TRACE;
   }
 
