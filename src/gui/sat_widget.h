@@ -75,7 +75,7 @@ private:
 
   SAT_Rect          MManualTween                        = {0,0,0,0};
   SAT_Rect          MPrevTween                          = {0,0,0,0};
-  SAT_Rect          MManualMoved                        = {0,0,0,0};
+  SAT_Rect          MManuallyMoved                      = {0,0,0,0};
 //SAT_Rect          MManualScrolled                     = {0,0,0,0};
 
   // both parameter index & value index?
@@ -522,9 +522,9 @@ public:
         manual.scale(scale);
         child_rect.add(manual);
 
-        child_rect.add(child->MManualMoved);
-
+        // child_rect.add(child->MManuallyMoved);
         child_rect = child->on_widget_preAlign(child_rect);
+        child_rect.add(child->MManuallyMoved);
 
         // anchor
         bool xanchored = false;

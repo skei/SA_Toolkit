@@ -478,18 +478,31 @@ public: // on_widget
 
   //----------
 
-  SAT_Rect on_widget_postAlign(SAT_Rect ARect) override {
+  SAT_Rect on_widget_preAlign(SAT_Rect ARect) override {
     double scale = getWindowScale();
-    //SAT_Assert(scale > 0.0);
-    if (scale > 0.0) {
-      SAT_Assert(MPrevScale > 0.0);
-      double ratio = scale / MPrevScale;
-      //SAT_PRINT("ratio %f\n",ratio);
-      if (ratio > 0.0) {
-        MManualMoved *= ratio;
-      }
-      MPrevScale = scale;
-    }
+    SAT_Assert(scale > 0.0);
+    MManuallyMoved *= scale;
+    return ARect;
+  }
+
+  SAT_Rect on_widget_postAlign(SAT_Rect ARect) override {
+
+    double scale = getWindowScale();
+    SAT_Assert(scale > 0.0);
+    MManuallyMoved /= scale;
+
+    // double scale = getWindowScale();
+    // //SAT_Assert(scale > 0.0);
+    // if (scale > 0.0) {
+    //   SAT_Assert(MPrevScale > 0.0);
+    //   double ratio = scale / MPrevScale;
+    //   //SAT_PRINT("ratio %f\n",ratio);
+    //   if (ratio > 0.0) {
+    //     MManuallyMoved *= ratio;
+    //   }
+    //   MPrevScale = scale;
+    // }
+
     return ARect;
   }
 
@@ -545,8 +558,8 @@ public: // on_widget
     if (MMoving) {
       double deltax = (AXpos - MMousePreviousX);
       double deltay = (AYpos - MMousePreviousY);
-      if (MMovableDirections & SAT_DIRECTION_HORIZ) { MManualMoved.x += deltax; }
-      if (MMovableDirections & SAT_DIRECTION_VERT)  { MManualMoved.y += deltay; }
+      if (MMovableDirections & SAT_DIRECTION_HORIZ) { MManuallyMoved.x += deltax; }
+      if (MMovableDirections & SAT_DIRECTION_VERT)  { MManuallyMoved.y += deltay; }
       //do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
       // if (MParent) {
       //   MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
@@ -558,10 +571,10 @@ public: // on_widget
     else if (MResizing) {
       double deltax = (AXpos - MMousePreviousX);
       double deltay = (AYpos - MMousePreviousY);
-      if (MResizeEdge & SAT_EDGE_LEFT)    { MManualMoved.removeLeft(deltax); }
-      if (MResizeEdge & SAT_EDGE_RIGHT)   { MManualMoved.addRight(deltax);   }
-      if (MResizeEdge & SAT_EDGE_TOP)     { MManualMoved.removeTop(deltay);  }
-      if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManualMoved.addBottom(deltay);  }
+      if (MResizeEdge & SAT_EDGE_LEFT)    { MManuallyMoved.removeLeft(deltax); }
+      if (MResizeEdge & SAT_EDGE_RIGHT)   { MManuallyMoved.addRight(deltax);   }
+      if (MResizeEdge & SAT_EDGE_TOP)     { MManuallyMoved.removeTop(deltay);  }
+      if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManuallyMoved.addBottom(deltay);  }
       //if (MParent)  {
       //  MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
       //  MParent->do_widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
