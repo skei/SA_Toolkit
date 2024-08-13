@@ -554,10 +554,11 @@ public: // on_widget
   */
 
   void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+    double scale = getWindowScale();
 
     if (MMoving) {
-      double deltax = (AXpos - MMousePreviousX);
-      double deltay = (AYpos - MMousePreviousY);
+      double deltax = (AXpos - MMousePreviousX) / scale;
+      double deltay = (AYpos - MMousePreviousY) / scale;
       if (MMovableDirections & SAT_DIRECTION_HORIZ) { MManuallyMoved.x += deltax; }
       if (MMovableDirections & SAT_DIRECTION_VERT)  { MManuallyMoved.y += deltay; }
       //do_widget_realign(this,SAT_WIDGET_REALIGN_GUI);
@@ -569,8 +570,8 @@ public: // on_widget
       do_widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
     }
     else if (MResizing) {
-      double deltax = (AXpos - MMousePreviousX);
-      double deltay = (AYpos - MMousePreviousY);
+      double deltax = (AXpos - MMousePreviousX) / scale;
+      double deltay = (AYpos - MMousePreviousY) / scale;
       if (MResizeEdge & SAT_EDGE_LEFT)    { MManuallyMoved.removeLeft(deltax); }
       if (MResizeEdge & SAT_EDGE_RIGHT)   { MManuallyMoved.addRight(deltax);   }
       if (MResizeEdge & SAT_EDGE_TOP)     { MManuallyMoved.removeTop(deltay);  }

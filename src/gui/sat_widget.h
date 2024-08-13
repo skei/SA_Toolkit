@@ -522,7 +522,7 @@ public:
         manual.scale(scale);
         child_rect.add(manual);
 
-        // child_rect.add(child->MManuallyMoved);
+        //child_rect.add(child->MManuallyMoved);
         child_rect = child->on_widget_preAlign(child_rect);
         child_rect.add(child->MManuallyMoved);
 
