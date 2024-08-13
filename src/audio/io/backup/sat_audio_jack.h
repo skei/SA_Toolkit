@@ -64,7 +64,7 @@ public:
         uint8_t msg3 = event.buffer[2];
 
         //TODO: insert into SAT_MidiTrack
-        SAT_Print("midi: %02x %02x %02x\n",msg1,msg2,msg3);
+        SAT_PRINT("midi: %02x %02x %02x\n",msg1,msg2,msg3);
 
         uint32_t offset = i;
         jack_midi_data_t* buffer = jack_midi_event_reserve(midi_out_port,offset,3);
@@ -80,6 +80,7 @@ public:
     jack_default_audio_sample_t *input1  = (jack_default_audio_sample_t*)jack_port_get_buffer(MAudioInputPort2,nframes);
     jack_default_audio_sample_t *output0 = (jack_default_audio_sample_t*)jack_port_get_buffer(MAudioOutputPort1,nframes);
     jack_default_audio_sample_t *output1 = (jack_default_audio_sample_t*)jack_port_get_buffer(MAudioOutputPort2,nframes);
+
     for (uint32_t i=0; i<nframes; i++) {
       *output0++ = *input0++;
       *output1++ = *input1++;

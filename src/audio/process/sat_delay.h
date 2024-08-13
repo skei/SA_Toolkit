@@ -16,9 +16,14 @@ struct SAT_NoLoopFx {
 //----------
 
 template<typename T>
-struct SAT_HardClipFx {
-  T process(T x) { return x;/*SAT_Clamp(x,-1,1);*/ }
+struct SAT_NoClipFx {
+  T process(T x) { return x; }
 };
+
+// template<typename T>
+// struct SAT_HardClipFx {
+//   T process(T x) { return x;/*SAT_Clamp(x,-1,1);*/ }
+// };
 
 //----------------------------------------------------------------------
 //
@@ -27,7 +32,7 @@ struct SAT_HardClipFx {
 //----------------------------------------------------------------------
 
 
-template <typename T, int MAX_DELAY, typename LOOPFX=SAT_NoLoopFx<T>, typename CLIPFX=SAT_HardClipFx<T>>
+template <typename T, int MAX_DELAY, typename LOOPFX=SAT_NoLoopFx<T>, typename CLIPFX=SAT_NoClipFx<T>>
 class SAT_InterpolatedDelay {
 
 //------------------------------
@@ -153,6 +158,7 @@ public:
     //if (out < -1.0f) out = -1.0f;
 
     T feedback = delayed * AFeedback;
+    
 //    feedback = MLoopFX.process(feedback);
 //    feedback = MClipFX.process(feedback);
 

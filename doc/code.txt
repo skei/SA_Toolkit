@@ -26,7 +26,7 @@ dependencies i had to install before i compiled correctly:
   libx11-xcb-dev
   (libxcb1-dev)
   libxcb-util-dev
-  xcb-keysyms1-dev
+  libxcb-keysyms1-dev
   libxkbcommon-dev
   libxcb-xkb-dev
   (libopengl-dev)
@@ -36,6 +36,10 @@ dependencies i had to install before i compiled correctly:
 
 () = not sure if needed, or automatically dragged in
      as dependency for some of the other deps..
+
+
+sudo apt-get install libx11-dev libx11-xcb-dev libxcb1-dev libxcb-util-dev libxcb-keysyms1-dev libxkbcommon-dev libxcb-xkb-dev libopengl-dev mesa-common-dev libglu1-mesa-dev freeglut3-dev
+
 
 ----------------------------------------------------------------------
 coding style

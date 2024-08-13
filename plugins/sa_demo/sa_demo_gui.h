@@ -39,6 +39,7 @@ public:
 
     file_menu = new SAT_MenuWidget(SAT_Rect(100,100));
     edit_menu = new SAT_MenuWidget(SAT_Rect(100,100));
+
     pages     = new SAT_PagesWidget(0);
 
     //------------------------------
@@ -140,7 +141,7 @@ public:
     //pages->setDrawBorder(false);
 
     pages->selectPage(0);
-    pages->realignChildren();
+    pages->realignChildren(); // needed? or automatic when changing page?
 
     
     //------------------------------

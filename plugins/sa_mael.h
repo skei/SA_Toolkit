@@ -141,6 +141,7 @@ public:
   bool init() final {
 
     registerDefaultSynthExtensions();
+    
     registerExtension(CLAP_EXT_PARAM_INDICATION);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);

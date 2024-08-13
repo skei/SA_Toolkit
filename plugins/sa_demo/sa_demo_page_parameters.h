@@ -57,7 +57,7 @@ public:
     AEditor->connect(knob7,APlugin->getParameter(SA_DEMO_PARAM_P7));
     AEditor->connect(knob8,APlugin->getParameter(SA_DEMO_PARAM_P8));
 
-    knob1->setKnobArcThickness(15);
+    knob1->setKnobArcThickness(20);
 
   }
 

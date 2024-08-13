@@ -70,7 +70,7 @@ public:
 
         //TODO: insert into SAT_MidiTrack
         //MListener->
-        SAT_Print("midi: %02x %02x %02x\n",msg1,msg2,msg3);
+        SAT_PRINT("midi: %02x %02x %02x\n",msg1,msg2,msg3);
 
         uint32_t offset = i;
         jack_midi_data_t* buffer = jack_midi_event_reserve(midi_out_port,offset,3);

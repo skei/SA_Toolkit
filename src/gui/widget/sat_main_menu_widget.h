@@ -68,6 +68,8 @@ public:
 
   SAT_MainMenuWidget(SAT_Rect ARect)
   : SAT_VisualWidget(ARect) {
+    setName("SAT_MainMenuWidget");
+    setHint("SAT_MainMenuWidget");
     Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
     Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;

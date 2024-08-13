@@ -19,10 +19,9 @@
   #include "sa_demo/sa_demo_page_blank.h"
   #include "sa_demo/sa_demo_page_widgets.h"
   #include "sa_demo/sa_demo_page_parameters.h"
-  
-  // #include "sa_demo/sa_demo_page_base.h"
-  // #include "sa_demo/sa_demo_page_plugin.h"
-  // #include "sa_demo/sa_demo_page_gui.h"
+//#include "sa_demo/sa_demo_page_base.h"
+//#include "sa_demo/sa_demo_page_plugin.h"
+//#include "sa_demo/sa_demo_page_gui.h"
 
 #endif
 
