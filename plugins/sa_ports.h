@@ -12,6 +12,7 @@
 #include "plugin/sat_entry.h"
 
 #define SAT_NO_ENTRY
+
 #include "ports/sa_compciter.h"
 #include "ports/sa_event_horizon.h"
 #include "ports/sa_exciter.h"
@@ -34,7 +35,7 @@
 
 //----------------------------------------------------------------------
 //
-//
+// entry
 //
 //----------------------------------------------------------------------
 

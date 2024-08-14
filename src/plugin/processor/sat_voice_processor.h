@@ -341,7 +341,7 @@ public:
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
           //MVoices[voice].events.write(ve);
-        //MVoices[voice].events.enqueue(ve);
+          MVoices[voice].events.enqueue(ve);
         }
       //}
     }

@@ -58,6 +58,7 @@ private:
   uint32_t                          p_flt1_type   = 0;
   sat_param_t                       p_flt1_freq   = 0.0;
   sat_param_t                       p_flt1_q      = 0.0;
+  sat_param_t                       p_flt1_gain   = 1.0;
 
   sat_param_t                       p_env1_att    = 0.0;
   sat_param_t                       p_env1_dec    = 0.0;
@@ -162,6 +163,8 @@ public:
     p_flt1_q      = params->getItem(SA_MAEL_PARAM_FLT1_Q)->getValue();
     p_flt1_q      = (p_flt1_q * p_flt1_q * p_flt1_q);
 
+    p_flt1_gain   = params->getItem(SA_MAEL_PARAM_FLT1_GAIN)->getValue();
+
     p_env1_att = params->getItem(SA_MAEL_PARAM_ENV1_ATT)->getValue();
     p_env1_dec = params->getItem(SA_MAEL_PARAM_ENV1_DEC)->getValue();
     p_env1_sus = params->getItem(SA_MAEL_PARAM_ENV1_SUS)->getValue();
@@ -239,6 +242,7 @@ public:
       case SA_MAEL_PARAM_FLT1_TYPE:   p_flt1_type   = ivalue;   break;
       case SA_MAEL_PARAM_FLT1_FREQ:   p_flt1_freq   = a3;       break;
       case SA_MAEL_PARAM_FLT1_Q:      p_flt1_q      = a3;       break;
+      case SA_MAEL_PARAM_FLT1_GAIN:   p_flt1_gain   = AValue;   break;
       case SA_MAEL_PARAM_ENV1_ATT:    p_env1_att    = a5;       MEnvelope.setAttack(a5);  break;
       case SA_MAEL_PARAM_ENV1_DEC:    p_env1_dec    = a5;       MEnvelope.setDecay(a5);   break;
       case SA_MAEL_PARAM_ENV1_SUS:    p_env1_sus    = a5;       MEnvelope.setSustain(a5); break;
@@ -268,6 +272,7 @@ public:
       case SA_MAEL_PARAM_MIX_AMOUNT:  m_mix_amount  = AValue; break;
       case SA_MAEL_PARAM_FLT1_FREQ:   m_flt1_freq   = AValue; break;
       case SA_MAEL_PARAM_FLT1_Q:      m_flt1_q      = AValue; break;
+//    case SA_MAEL_PARAM_FLT1_GAIN:   m_flt1_gain   = AValue; break;
     }
   }
 
@@ -301,6 +306,7 @@ public:
         sat_param_t mix_amount  = SAT_Clamp( (p_mix_amount + m_mix_amount),  0,  1  );
         sat_param_t flt1_freq   = SAT_Clamp( (p_flt1_freq  + m_flt1_freq),   0,  1  );
         sat_param_t flt1_q      = SAT_Clamp( (p_flt1_q     + m_flt1_q),      0,  1  );
+//      sat_param_t flt1_gain   = SAT_Clamp( (p_flt1_gain  + m_flt1_gain),   0,  1  );
 
         //MOscillator1.setMorph(osc1_shape);
         //MOscillator2.setMorph(osc2_shape);
@@ -364,6 +370,7 @@ public:
         flt1_freq *= (MSampleRate * 0.5);
         flt1_q = SAT_Clamp( (flt1_q * 40), 0.025, 40.0 );
         MFilter.updateCoefficients(flt1_freq,flt1_q,p_flt1_type,MSampleRate);
+        MFilter.setGain(p_flt1_gain);
         out = MFilter.tick(out);
 
         // env

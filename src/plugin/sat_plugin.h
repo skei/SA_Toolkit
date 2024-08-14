@@ -521,7 +521,8 @@ public: // editor
       virtual void deleteWindow(SAT_Window* AWindow) {
         SAT_TRACE;
         SAT_Assert( MWindow == AWindow );
-        delete AWindow;
+        //delete AWindow;
+        delete MWindow;
       }
 
     #endif // embedded

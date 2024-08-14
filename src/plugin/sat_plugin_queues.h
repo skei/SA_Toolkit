@@ -40,9 +40,6 @@ struct SAT_PluginQueueItem {
 
 //----------------------------------------------------------------------
 
-  // todo
-  // typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem>
-
 class SAT_PluginQueues {
 
   #ifndef SAT_NO_GUI

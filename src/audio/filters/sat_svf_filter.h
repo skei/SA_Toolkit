@@ -39,9 +39,11 @@ class SAT_SVFFilter {
 
   private:
 
-    T _ic1eq;
-    T _ic2eq;
-    T _v1, _v2, _v3;
+    T _ic1eq  = 0;
+    T _ic2eq  = 0;
+    T _v1     = 0;
+    T _v2     = 0;
+    T _v3     = 0;
 
   //----------------------------------------
   //
@@ -50,7 +52,7 @@ class SAT_SVFFilter {
   public:
 
     SAT_SVFFilter() {
-      _ic1eq = _ic2eq = _v1 = _v2 = _v3 = 0;
+      //_ic1eq = _ic2eq = _v1 = _v2 = _v3 = 0;
     }
 
   //----------------------------------------
@@ -61,14 +63,18 @@ class SAT_SVFFilter {
 
     struct Coefficients {
 
-      T _a1, _a2, _a3;
-      T _m0, _m1, _m2;
-      T _A;
-      T _ASqrt;
+      T _a1     = 0;
+      T _a2     = 0;
+      T _a3     = 0;
+      T _m0     = 0;
+      T _m1     = 0;
+      T _m2     = 0;
+      T _A      = 1;
+      T _ASqrt  = 1;
 
       Coefficients() {
-        _a1 = _a2 = _a3 = _m0 = _m1 = _m2 = 0;
-        _A = _ASqrt = 1;
+        //_a1 = _a2 = _a3 = _m0 = _m1 = _m2 = 0;
+        //_A = _ASqrt = 1;
       }
 
       void update(T cutoff, T q = 0.5, uint32_t type = SAT_SVF_LOWPASS, T sampleRate = 44100) {
@@ -111,26 +117,26 @@ class SAT_SVFFilter {
           case SAT_SVF_ALLPASS:
             computeA(g, k);
             _m0 = 1;
-            _m1 = -2*k;
+            _m1 = -2 * k;
             _m2 = 0;
             break;
           case SAT_SVF_BELL:
             computeA(g, k);
             _m0 = 1;
-            _m1 = k*(_A*_A - 1);
+            _m1 = k * (_A * _A - 1);
             _m2 = 0;
             break;
           case SAT_SVF_LOWSHELF:
             computeA(g /= _ASqrt, k);
             _m0 = 1;
-            _m1 = k*(_A-1);
-            _m2 = _A*_A - 1;
+            _m1 = k * (_A - 1);
+            _m2 = _A * _A - 1;
             break;
           case SAT_SVF_HIGHSHELF:
             computeA(g *= _ASqrt, k);
-            _m0 = _A*_A;
-            _m1 = k*(1-_A)*_A;
-            _m2 = 1-_A*_A;
+            _m0 = _A * _A;
+            _m1 = k * (1 - _A) * _A;
+            _m2 = 1 - _A * _A;
             break;
           default:
             SAT_Assert(false);
@@ -143,13 +149,13 @@ class SAT_SVFFilter {
       }
 
       T computeK(T q, bool useGain=false) {
-        return 1.f / (useGain ? (q*_A) : q);
+        return 1.0 / (useGain ? (q * _A) : q);
       }
 
       void computeA(T g, T k) {
-        _a1 = 1/(1 + g*(g + k));
-        _a2 = g*_a1;
-        _a3 = g*_a2;
+        _a1 = 1.0 / (1.0 + g * (g + k));
+        _a2 = g * _a1;
+        _a3 = g * _a2;
       }
 
     } _coef;
@@ -189,7 +195,8 @@ class SAT_SVFFilter {
     */
 
     void resetState(void) {
-      _ic1eq = _ic2eq = 0;
+      _ic1eq = 0;
+      _ic2eq = 0;
     }
 
     /*
@@ -198,11 +205,11 @@ class SAT_SVFFilter {
 
     T tick(T v0) {
       _v3 = v0 - _ic2eq;
-      _v1 = _coef._a1*_ic1eq + _coef._a2*_v3;
-      _v2 = _ic2eq + _coef._a2*_ic1eq + _coef._a3*_v3;
-      _ic1eq = 2*_v1 - _ic1eq;
-      _ic2eq = 2*_v2 - _ic2eq;
-      return _coef._m0*v0 + _coef._m1*_v1 + _coef._m2*_v2;
+      _v1 = _coef._a1 * _ic1eq + _coef._a2 * _v3;
+      _v2 = _ic2eq + _coef._a2 * _ic1eq + _coef._a3 * _v3;
+      _ic1eq = 2 * _v1 - _ic1eq;
+      _ic2eq = 2 * _v2 - _ic2eq;
+      return _coef._m0 * v0 + _coef._m1 * _v1 + _coef._m2 * _v2;
     }
 
 };

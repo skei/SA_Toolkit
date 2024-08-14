@@ -221,13 +221,23 @@ public:
     flt1_type->setDrawParamText(false);
     flt1_type->select(0);
 
-    SAT_KnobWidget* freq_knob = new SAT_KnobWidget(SAT_Rect(10,55,50,50),"Fr",0);
-    flt1_panel->appendChild(freq_knob);
-    AEditor->connect(freq_knob,getParameter(SA_MAEL_PARAM_FLT1_FREQ));
+    SAT_KnobWidget* flt_freq_knob = new SAT_KnobWidget(SAT_Rect(10,55,50,50),"Fr",0);
+    flt1_panel->appendChild(flt_freq_knob);
+    AEditor->connect(flt_freq_knob,getParameter(SA_MAEL_PARAM_FLT1_FREQ));
 
-    SAT_KnobWidget* q_knob = new SAT_KnobWidget(SAT_Rect(70,55,50,50),"Q",0);
-    flt1_panel->appendChild(q_knob);
-    AEditor->connect(q_knob,getParameter(SA_MAEL_PARAM_FLT1_Q));
+    SAT_KnobWidget* flt_q_knob = new SAT_KnobWidget(SAT_Rect(70,55,25,25),"Q",0);
+    flt1_panel->appendChild(flt_q_knob);
+    AEditor->connect(flt_q_knob,getParameter(SA_MAEL_PARAM_FLT1_Q));
+    flt_q_knob->setTextSize(6);
+    flt_q_knob->setKnobArcThickness(5);
+    flt_q_knob->setValueTextSize(6);
+
+    SAT_KnobWidget* flt_gain_knob = new SAT_KnobWidget(SAT_Rect(70,80,25,25),"G",0);
+    flt1_panel->appendChild(flt_gain_knob);
+    AEditor->connect(flt_gain_knob,getParameter(SA_MAEL_PARAM_FLT1_GAIN));
+    flt_gain_knob->setTextSize(6);
+    flt_gain_knob->setKnobArcThickness(5);
+    flt_gain_knob->setValueTextSize(6);
 
     //------------------------------
     // env1
