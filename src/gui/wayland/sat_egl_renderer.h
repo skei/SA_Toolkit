@@ -6,9 +6,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/lib/sat_egl.h"
-#include "gui/renderer/sat_base_renderer.h"
-#include "gui/renderer/sat_renderer_owner.h"
+#include "gui/wayland/sat_egl.h"
+#include "gui/sat_gui_base.h"
 
 class SAT_Renderer;
 

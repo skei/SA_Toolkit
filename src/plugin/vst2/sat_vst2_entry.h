@@ -112,8 +112,8 @@ public:
     //SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(plugin);
     SAT_Vst2Plugin* vst2plugin = new SAT_Vst2Plugin(claphost,clapplugin,audioMaster);           // deleted in vst2_dispatcher_callback/effClose
 
-    // hmmm..
-    vst2plugin->setHost(vst2_host);
+//    // hmmm..
+//    vst2plugin->setHost(vst2_host);
     
     #ifndef SAT_PLUGIN_VST2_NO_SHELL
       vst2plugin->MShellPluginCurrentId = current_id;

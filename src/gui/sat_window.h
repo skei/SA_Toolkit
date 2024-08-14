@@ -13,9 +13,6 @@
 #include "gui/sat_painter.h"
 #include "gui/sat_widget.h"
 
-//typedef SAT_AtomicQueue<SAT_Widget*,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_WidgetQueue;
-////typedef SAT_Queue<SAT_Widget*,SAT_WINDOW_DIRTY_QUEUE_SIZE> SAT_WidgetQueue;
-
 //----------------------------------------------------------------------
 //
 //

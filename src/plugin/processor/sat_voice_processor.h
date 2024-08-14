@@ -12,7 +12,9 @@
 //----------
 
 //typedef SAT_Queue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
-typedef SAT_AtomicQueue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
+//typedef SAT_AtomicQueue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
+typedef moodycamel::ReaderWriterQueue<SAT_Note> SAT_NoteQueue;
+
 
 //----------------------------------------------------------------------
 //
@@ -37,7 +39,7 @@ protected:
 
   SAT_VoiceContext              MVoiceContext           = {};
 
-  SAT_NoteQueue                 MNoteEndQueue           = {};
+  SAT_NoteQueue                 MNoteEndQueue;//           = {};
   const clap_plugin_t*          MClapPlugin             = nullptr;
   const clap_host_t*            MClapHost               = nullptr;
   const clap_host_thread_pool*  MThreadPool             = nullptr;
@@ -280,7 +282,8 @@ public:
       MVoices[voice].note.noteid  = event->note_id;
       MVoices[voice].clearVoiceQueue();
       SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_ON, event->header.time, event->key, event->velocity);
-      MVoices[voice].events.write(ve);
+      //MVoices[voice].events.write(ve);
+      MVoices[voice].events.enqueue(ve);
     }
   }
 
@@ -291,7 +294,8 @@ public:
       if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_OFF, event->header.time, event->key, event->velocity);
-          MVoices[voice].events.write(ve);
+          //MVoices[voice].events.write(ve);
+          MVoices[voice].events.enqueue(ve);
         }
       }
     }
@@ -304,7 +308,8 @@ public:
       if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_CHOKE, event->header.time, event->key, event->velocity);
-          MVoices[voice].events.write(ve);
+          //MVoices[voice].events.write(ve);
+          MVoices[voice].events.enqueue(ve);
         }
       }
     }
@@ -317,7 +322,8 @@ public:
       if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_NOTE_EXPRESSION, event->header.time, event->expression_id, event->value);
-          MVoices[voice].events.write(ve);
+          //MVoices[voice].events.write(ve);
+          MVoices[voice].events.enqueue(ve);
         }
       }
     }
@@ -334,7 +340,8 @@ public:
       //if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_VALUE, event->header.time, event->param_id, event->value);
-          MVoices[voice].events.write(ve);
+          //MVoices[voice].events.write(ve);
+        //MVoices[voice].events.enqueue(ve);
         }
       //}
     }
@@ -352,7 +359,8 @@ public:
       //if (isActive(voice)) {
         if (isTargeted(voice,event->note_id,event->port_index,event->channel,event->key)) {
           SAT_VoiceEvent ve = SAT_VoiceEvent(CLAP_EVENT_PARAM_MOD, event->header.time, event->param_id, event->amount);
-          MVoices[voice].events.write(ve);
+          //MVoices[voice].events.write(ve);
+          MVoices[voice].events.enqueue(ve);
         }
       //}
     }
@@ -495,7 +503,8 @@ private:
   //----------
 
   void queueNoteEnd(SAT_Note ANote) {
-    MNoteEndQueue.write(ANote);
+    //MNoteEndQueue.write(ANote);
+    MNoteEndQueue.enqueue(ANote);
   }
 
   //----------
@@ -507,7 +516,8 @@ private:
     uint32_t count = 0;
     SAT_Note note = {0};
     uint32_t blocksize = MVoiceContext.process_context->process->frames_count;
-    while (MNoteEndQueue.read(&note)) {
+    //while (MNoteEndQueue.read(&note)) {
+    while (MNoteEndQueue.try_dequeue(note)) {
       count += 1;
       clap_event_note_t note_event;
       note_event.header.flags     = 0;

@@ -100,7 +100,10 @@ private:
   SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS] = {};
   
   //SAT_Queue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
-  SAT_AtomicQueue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
+  //SAT_AtomicQueue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
+  typedef moodycamel::ReaderWriterQueue<uint32_t> MHostParamQueue;
+
+
   double  MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
 //------------------------------
@@ -269,7 +272,8 @@ private:
 
   void queueHostParam(uint32_t AIndex, double AValue) {
     MQueuedHostParamValues[AIndex] = AValue;
-    MHostParamQueue.write(AIndex);
+    //MHostParamQueue.write(AIndex);
+    MHostParamQueue.enqueue(AIndex);
   }
 
   //----------
@@ -277,7 +281,8 @@ private:
   void flushHostParams() {
     if (MComponentHandler) {
       uint32_t index;
-      while (MHostParamQueue.read(&index)) {
+      //while (MHostParamQueue.read(&index)) {
+      while (MHostParamQueue.try_dequeue(index)) {
         double value = MQueuedHostParamValues[index];
         //SAT_PRINT("flush! %i = %.3f\n",index,value);
         //if (MComponentHandler2) MComponentHandler2->startGroupEdit();

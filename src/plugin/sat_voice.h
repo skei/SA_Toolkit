@@ -3,18 +3,6 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-
-// template <class VOICE>
-// class SAT_Voice {
-// public:
-//   SAT_Voice() {
-//     //SAT_TRACE;
-//   }
-//   ~SAT_Voice() {
-//     //SAT_TRACE;
-//   }
-// };
-
 #include "plugin/sat_note.h"
 #include "plugin/sat_plugin_base.h"
 
@@ -34,7 +22,10 @@ struct SAT_VoiceEvent {
 };
 
 //typedef SAT_Queue<SAT_VoiceEvent,SAT_VOICE_MAX_EVENTS_PER_BLOCK> SAT_VoiceEventQueue;
-typedef SAT_AtomicQueue<SAT_VoiceEvent,SAT_VOICE_MAX_EVENTS_PER_BLOCK> SAT_VoiceEventQueue;
+//typedef SAT_AtomicQueue<SAT_VoiceEvent,SAT_VOICE_MAX_EVENTS_PER_BLOCK> SAT_VoiceEventQueue;
+typedef moodycamel::ReaderWriterQueue<SAT_VoiceEvent> SAT_VoiceEventQueue;
+
+
 
 //----------------------------------------------------------------------
 //
@@ -58,7 +49,7 @@ public:
   SAT_Note            note        = {};
   uint32_t            state       = SAT_VOICE_OFF;
   uint32_t            event_mode  = SAT_VOICE_EVENT_MODE_INTERLEAVED;
-  SAT_VoiceEventQueue events      = {};
+  SAT_VoiceEventQueue events;//      = {};
 
 //------------------------------
 public:
@@ -112,7 +103,8 @@ public:
   
   void clearVoiceQueue() {
     SAT_VoiceEvent event;
-    while (events.read(&event)) {}
+    //while (events.read(&event)) {}
+    while (events.try_dequeue(event)) {}
   }
 
   //double getVolume() {}
@@ -165,11 +157,12 @@ private:
 
   void handleBlockEvents() {
     SAT_VoiceEvent event;
-    while (events.read(&event)) handleEvent(event);
+    //while (events.read(&event)) handleEvent(event);
+    while (events.try_dequeue(event)) handleEvent(event);
     uint32_t length = context->block_length;
     state = voice.process(state,0,length);
    
-    SAT_Assert( events.read(&event) == false );
+//    SAT_Assert( events.try_dequeue(&event) == false );
     
   }
 
@@ -181,7 +174,8 @@ private:
     uint32_t remaining = context->block_length;         // !!!!! remaining = 0
     SAT_VoiceEvent event = {};
     while (remaining > 0) {
-      if (events.read(&event)) {
+      //if (events.read(&event)) {
+      if (events.try_dequeue(event)) {
         int32_t length = event.time - current_time; // samples until next event
         //SAT_Assert(length >= 0);
         //SAT_Assert((current_time + length) <= context->process_context->voice_length);
@@ -211,7 +205,8 @@ private:
     
 //    SAT_Print("remaining %i current_time %i\n",remaining,current_time);
 
-    SAT_Assert( events.read(&event) == false );
+    //SAT_Assert( events.read(&event) == false );
+    SAT_Assert( events.try_dequeue(event) == false );
     
   }
 
@@ -223,13 +218,15 @@ private:
     uint32_t remaining     = buffer_length;
     uint32_t next_event    = 0;
     SAT_VoiceEvent  event         = {};
-    if (events.read(&event)) {
+    //if (events.read(&event)) {
+    if (events.try_dequeue(event)) {
       next_event = event.time;
       do {
         // process events for next slice
         while (next_event < (current_time + SAT_AUDIO_QUANTIZED_SIZE)) {
           handleEvent(event);
-          if (events.read(&event)) next_event = event.time;
+          //if (events.read(&event)) next_event = event.time;
+          if (events.try_dequeue(event)) next_event = event.time;
           else next_event = buffer_length; // ???
         }
         // process next slice
@@ -255,7 +252,7 @@ private:
       } while (remaining > 0);
     }
     
-    SAT_Assert( events.read(&event) == false );
+//    SAT_Assert( events.try_dequeue(event) == false );
     
   }
 

@@ -26,20 +26,19 @@ class SAT_Processor {
 protected:
 //------------------------------
 
-  SAT_ProcessorListener* MListener          = nullptr;
-  SAT_AudioPortArray* MAudioInputs    = nullptr;
-  SAT_AudioPortArray* MAudioOutputs   = nullptr;
-  SAT_NotePortArray*  MNoteInputs     = nullptr;
-  SAT_NotePortArray*  MNoteOutputs    = nullptr;
-  SAT_ParameterArray* MParameters     = nullptr;
-
-  SAT_ProcessContext* MProcessContext = nullptr; // valud during process() calls
+  SAT_ProcessorListener*  MListener       = nullptr;
+  SAT_AudioPortArray*     MAudioInputs    = nullptr;
+  SAT_AudioPortArray*     MAudioOutputs   = nullptr;
+  SAT_NotePortArray*      MNoteInputs     = nullptr;
+  SAT_NotePortArray*      MNoteOutputs    = nullptr;
+  SAT_ParameterArray*     MParameters     = nullptr;
+  SAT_ProcessContext*     MProcessContext = nullptr; // valud during process() calls
 
 //------------------------------
 public:
 //------------------------------
 
-  SAT_Processor(SAT_ProcessorListener* AListener/*, SAT_ProcessorListener* AListener*/) {
+  SAT_Processor(SAT_ProcessorListener* AListener) {
     //SAT_TRACE;
     MListener = AListener;
     MAudioInputs = AListener->on_processorListener_getAudioInputPorts();
@@ -60,18 +59,16 @@ public:
 public:
 //------------------------------
 
-  SAT_ProcessorListener* getProcessorListener() { return MListener; }
-  SAT_ProcessContext* getProcessContext() { return MProcessContext; }
-
-  SAT_AudioPortArray* getAudioInputs()    { return MAudioInputs; }
-  SAT_AudioPortArray* getAudioOutputs()   { return MAudioOutputs; }
-  SAT_NotePortArray*  getNoteInputs()     { return MNoteInputs; }
-  SAT_NotePortArray*  getNoteOutputs()    { return MNoteOutputs; }
-  SAT_ParameterArray* getParameters()     { return MParameters; }
-
-  uint32_t            getNumParameters()                  { return MParameters->size(); }
-  SAT_Parameter*      getParameter(uint32_t AIndex)       { return MParameters->getItem(AIndex); }
-  sat_param_t         getParameterValue(uint32_t AIndex)  { return MParameters->getItem(AIndex)->getValue(); }
+  SAT_ProcessorListener*  getProcessorListener()              { return MListener; }
+  SAT_ProcessContext*     getProcessContext()                 { return MProcessContext; }
+  SAT_AudioPortArray*     getAudioInputs()                    { return MAudioInputs; }
+  SAT_AudioPortArray*     getAudioOutputs()                   { return MAudioOutputs; }
+  SAT_NotePortArray*      getNoteInputs()                     { return MNoteInputs; }
+  SAT_NotePortArray*      getNoteOutputs()                    { return MNoteOutputs; }
+  SAT_ParameterArray*     getParameters()                     { return MParameters; }
+  uint32_t                getNumParameters()                  { return MParameters->size(); }
+  SAT_Parameter*          getParameter(uint32_t AIndex)       { return MParameters->getItem(AIndex); }
+  sat_param_t             getParameterValue(uint32_t AIndex)  { return MParameters->getItem(AIndex)->getValue(); }
 
 //------------------------------
 public: // events

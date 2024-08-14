@@ -20,8 +20,8 @@ class SAT_TweenChain;
 typedef SAT_Array<SAT_TweenNode*> SAT_TweenNodeArray;
 typedef SAT_Array<SAT_TweenChain*> SAT_TweenChainArray;
 
-//typedef moodycamel::ReaderWriterQueue<SAT_TweenChain*>  SAT_TweenChainQueue;
-typedef SAT_AtomicQueue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
+typedef moodycamel::ReaderWriterQueue<SAT_TweenChain*>  SAT_TweenChainQueue;
+//typedef SAT_AtomicQueue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
 //typedef SAT_Queue<SAT_TweenChain*,SAT_TWEEN_CHAIN_QUEUE_SIZE> SAT_TweenChainQueue;
 
 
@@ -159,8 +159,8 @@ class SAT_Tweening {
 private:
 //------------------------------
 
-  SAT_TweenChainArray MChains   = {};
-  SAT_TweenChainQueue MPending  = {};
+  SAT_TweenChainArray MChains;//   = {};
+  SAT_TweenChainQueue MPending;//  = {};
 
 //------------------------------
 public:
@@ -189,8 +189,8 @@ public:
   //----------
   
   SAT_TweenChain* appendChain(SAT_TweenChain* AChain) {
-    //MChains.append(AChain);
-    MPending.write(AChain);
+    //MPending.write(AChain);
+    MPending.enqueue(AChain);
     return AChain;
   }
   
@@ -199,7 +199,8 @@ public:
   void deleteChains() {
     for (uint32_t i=0; i<MChains.size(); i++) delete MChains[i];
     SAT_TweenChain* chain = nullptr;
-    while (MPending.read(&chain)) { delete chain; }
+    //while (MPending.read(&chain)) { delete chain; }
+    while (MPending.try_dequeue(chain)) { delete chain; }
   }
   
   //----------
@@ -212,7 +213,8 @@ public:
     //SAT_TRACE;
 
     SAT_TweenChain* chain;
-    while (MPending.read(&chain)) {
+    //while (MPending.read(&chain)) {
+    while (MPending.try_dequeue(chain)) {
       MChains.append(chain);
     }
 

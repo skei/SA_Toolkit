@@ -46,26 +46,33 @@ struct SAT_PluginQueueItem {
 class SAT_PluginQueues {
 
   #ifndef SAT_NO_GUI
-    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
-    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
-    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
-    typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
+    //typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK>   SAT_ModFromHostToGuiQueue;
+    //typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> SAT_ParamFromHostToGuiQueue;
+    //typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToAudioQueue;
+    //typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK>   SAT_ParamFromGuiToHostQueue;
+    typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem> SAT_ModFromHostToGuiQueue;
+    typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem> SAT_ParamFromHostToGuiQueue;
+    typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem> SAT_ParamFromGuiToAudioQueue;
+    typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem> SAT_ParamFromGuiToHostQueue;
   #endif
 
-  typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
+  //typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
+  typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem> SAT_NoteEndFromAudioToHostQueue;
+  
+
 
 //------------------------------
 private:
 //------------------------------
 
   #ifndef SAT_NO_GUI
-    SAT_ParamFromHostToGuiQueue       MParamFromHostToGui     = {};
-    SAT_ModFromHostToGuiQueue         MModFromHostToGui       = {};
-    SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudio    = {};
-    SAT_ParamFromGuiToHostQueue       MParamFromGuiToHost     = {};
+    SAT_ParamFromHostToGuiQueue       MParamFromHostToGui;//     = {};
+    SAT_ModFromHostToGuiQueue         MModFromHostToGui;//       = {};
+    SAT_ParamFromGuiToAudioQueue      MParamFromGuiToAudio;//    = {};
+    SAT_ParamFromGuiToHostQueue       MParamFromGuiToHost;//     = {};
   #endif
 
-  SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHost   = {};
+  SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHost;//   = {};
 
 //------------------------------
 public: // host -> gui
@@ -82,7 +89,8 @@ public: // host -> gui
     //item.type = CLAP_EVENT_PARAM_VALUE;
     item.param_id  = AParamId;
     item.value  = AValue;
-    if (!MParamFromHostToGui.write(item)) {
+    //if (!MParamFromHostToGui.write(item)) {
+    if (!MParamFromHostToGui.enqueue(item)) {
       // SAT_PRINT("couldn't write to MParamFromHostToGui queue\n");
     }
   }
@@ -95,7 +103,8 @@ public: // host -> gui
   void flushParamFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     uint32_t count = 0;
     SAT_PluginQueueItem item;
-    while (MParamFromHostToGui.read(&item)) {
+    //while (MParamFromHostToGui.read(&item)) {
+    while (MParamFromHostToGui.try_dequeue(item)) {
       count += 1;
       SAT_Parameter* parameter = AParameters->getItem(item.param_id);
       if (AEditor) AEditor->updateParameterFromHost(parameter,item.value);
@@ -115,7 +124,8 @@ public: // host -> gui
     //item.type = CLAP_EVENT_PARAM_MOD;
     item.param_id  = AParamId;
     item.value  = AValue;
-    if (!MModFromHostToGui.write(item)) {
+    //if (!MModFromHostToGui.write(item)) {
+    if (!MModFromHostToGui.enqueue(item)) {
       // SAT_PRINT("couldn't write to MModFromHostToGui queue\n");
     }
   }
@@ -128,7 +138,8 @@ public: // host -> gui
   void flushModFromHostToGui(SAT_ParameterArray* AParameters, SAT_Editor* AEditor) {
     SAT_PluginQueueItem item;
     uint32_t count = 0;
-    while (MModFromHostToGui.read(&item)) {
+    //while (MModFromHostToGui.read(&item)) {
+    while (MModFromHostToGui.try_dequeue(item)) {
       count += 1;
       SAT_Parameter* parameter = AParameters->getItem(item.param_id);
       if (AEditor) AEditor->updateModulationFromHost(parameter,item.value);
@@ -155,7 +166,8 @@ public: // gui -> host
     //item.type = CLAP_EVENT_PARAM_VALUE;
     item.param_id  = AParamId;
     item.value  = AValue;
-    if (!MParamFromGuiToHost.write(item)) {
+    //if (!MParamFromGuiToHost.write(item)) {
+    if (!MParamFromGuiToHost.enqueue(item)) {
       // SAT_PRINT("couldn't write to MParamFromGuiToHost queue\n");
     }
   }
@@ -171,7 +183,8 @@ public: // gui -> host
     uint32_t blocksize = AContext->process->frames_count;
     const clap_output_events_t* out_events = AContext->process->out_events;
     SAT_PluginQueueItem item;
-    while (MParamFromGuiToHost.read(&item)) {
+    //while (MParamFromGuiToHost.read(&item)) {
+    while (MParamFromGuiToHost.try_dequeue(item)) {
       count += 1;
       SAT_Parameter* parameter = parameters->getItem(item.param_id);
       // gesture begin
@@ -240,7 +253,8 @@ public: // gui -> audio
     //item.type = CLAP_EVENT_PARAM_VALUE;
     item.param_id  = AParamId;
     item.value  = AValue;
-    if (!MParamFromGuiToAudio.write(item)) {
+    //if (!MParamFromGuiToAudio.write(item)) {
+    if (!MParamFromGuiToAudio.enqueue(item)) {
       // SAT_PRINT("couldn't write to MParamFromGuiToAudio queue\n");
     }
   }
@@ -253,7 +267,8 @@ public: // gui -> audio
   void flushParamFromGuiToAudio(SAT_Processor* AProcessor) {
     uint32_t count = 0;
     SAT_PluginQueueItem item;
-    while (MParamFromGuiToAudio.read(&item)) {
+    //while (MParamFromGuiToAudio.read(&item)) {
+    while (MParamFromGuiToAudio.try_dequeue(item)) {
       count += 1;
       clap_event_param_value_t event;
       event.header.size     = sizeof(clap_event_param_value_t);
@@ -291,7 +306,8 @@ public: // audio -> host
     item.note.channel = AChannel;
     item.note.key     = AKey;
     // item.note.dummy   = 0;
-    if (!MNoteEndFromAudioToHost.write(item)) {
+    //if (!MNoteEndFromAudioToHost.write(item)) {
+    if (!MNoteEndFromAudioToHost.enqueue(item)) {
       // SAT_PRINT("couldn't write to MNoteEndFromAudioToHost queue\n");
     }
   }
@@ -306,7 +322,8 @@ public: // audio -> host
     uint32_t blocksize = AContext->process->frames_count;
     uint32_t count = 0;
     SAT_PluginQueueItem item;
-    while (MNoteEndFromAudioToHost.read(&item)) {
+    //while (MNoteEndFromAudioToHost.read(&item)) {
+    while (MNoteEndFromAudioToHost.try_dequeue(item)) {
       count += 1;
       clap_event_note_t event;
       event.header.size     = sizeof(clap_event_note_t);
