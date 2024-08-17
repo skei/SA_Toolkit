@@ -148,7 +148,7 @@
   //#define SAT_VOICE_PROCESSOR_CONVERT_MIDI
 
   // process voices using thread pool (clap ext or our own)
-//  #define SAT_VOICE_PROCESSOR_THREADED
+  #define SAT_VOICE_PROCESSOR_THREADED
 
   // if events have no recipients (note_id, pck = -1), meaning they're global,
   // send them (individually) to all voices
@@ -168,7 +168,7 @@
   // or flushed from the dirty widget queue.. not redrawn..
   #define SAT_WINDOW_QUEUE_WIDGETS
 
-  // waits for window to actually appear on the screen
+  // waits for (x11) window to actually appear on the screen
   #define SAT_X11_WAIT_FOR_MAPNOTIFY
 
 //----------

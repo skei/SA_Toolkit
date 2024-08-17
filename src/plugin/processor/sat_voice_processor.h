@@ -118,7 +118,7 @@ public:
     #ifdef SAT_VOICE_PROCESSOR_THREADED    
     if (MClapHost) {
       // todo: check if our plugin supports the thread pool extension?
-      MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
+//      MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
       if (!MClapThreadPool) {
         MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
       }
@@ -180,12 +180,13 @@ public:
   void processAudio(SAT_ProcessContext* AProcessContext) {
     MVoiceContext.process_context = AProcessContext;
     MVoiceContext.block_length    = AProcessContext->process->frames_count;
+
     // set up active voices
+
     MNumActiveVoices = 0;
     uint32_t num_playing = 0;
     uint32_t num_released = 0;
     for (uint32_t i=0; i<COUNT; i++) {
-      //if isActive(i) ..
       if ((MVoices[i].state == SAT_VOICE_WAITING)
        || (MVoices[i].state == SAT_VOICE_PLAYING)
        || (MVoices[i].state == SAT_VOICE_RELEASED)) {
@@ -197,27 +198,18 @@ public:
     }
     MNumPlayingVoices = num_playing;
     MNumReleasedVoices = num_released;
+
     // process active voices
 
     if (MNumActiveVoices > 0) {
-      //SAT_PRINT("MNumActiveVoices %i\n",MNumActiveVoices);
-
-      // if (MProcessThreaded && MClapThreadPool) {
-      //   processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
-      //   //SAT_PRINT("request_exec(%i) returned %s\n", MNumActiveVoices, processed ? "true" : "false" );
-      // }
-
-      // thread-pool..
-
       bool processed = false;
-
+      // thread-pool..
       #ifdef SAT_VOICE_PROCESSOR_THREADED      
         if (MProcessThreaded) {
           if (MClapThreadPool)  processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
           else if (MThreadPool) processed = MThreadPool->request_exec(MNumActiveVoices);
         }
       #endif
-
       // ..or manually
       if (!processed) {
         for (uint32_t i=0; i<MNumActiveVoices; i++) {
@@ -225,9 +217,8 @@ public:
           processVoice(v);
         }
       }
-
       //mixActiveVoices();
-    } // num voices > 0
+    }
   }
 
   //----------

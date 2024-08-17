@@ -2,12 +2,6 @@
 #define sat_graph_widget_included
 //----------------------------------------------------------------------
 
-/*
-  todo:
-  - check all drawRect, etc  -> x1,y1,x2,y2 -> x,m,w,h
-  - wire endpoint calculations are wrong..
-*/
-
 #include "base/type/sat_list.h"
 #include "gui/widget/sat_visual_widget.h"
 #include "gui/sat_widget.h"
