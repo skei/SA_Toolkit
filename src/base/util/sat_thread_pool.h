@@ -3,8 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-//#include "base/system/sat_thread.h"
-//#include "base/system/sat_lock.h"
+#include <semaphore.h>
 
 
 #define SAT_THREAD_POOL_MAX_THREADS 32
@@ -36,8 +35,7 @@ private:
   SAT_ThreadPoolQueue     MQueue;
   std::atomic<uint32_t>   MTasksRemaining {0};
 
-//  pthread_mutex_t mutex;
-//  pthread_cond_t condition;
+  sem_t MSemaphore;
 
 //------------------------------
 public:
@@ -53,6 +51,7 @@ public:
         SAT_PRINT("Error creating thread %i\n",res);
       }
     }
+    int res = sem_init(&MSemaphore,0,0);
   }
 
   //----------
@@ -63,6 +62,7 @@ public:
       //pthread_join(MThreads[i],nullptr);
       pthread_kill(MThreads[i],0);
     }
+    sem_destroy(&MSemaphore);
   }
 
 //------------------------------
@@ -75,11 +75,8 @@ public:
   bool request_exec(uint32_t ACount) {
     MTasksRemaining = ACount;
     for (uint32_t i=0; i<ACount; i++) MQueue.enqueue(i);
-    // pthread_mutex_lock(&mutex);
-    while (MTasksRemaining > 0) {
-    // pthread_cond_wait(&condition, &mutex);
-    }
-    // pthread_mutex_unlock(&mutex);
+    // while (MTasksRemaining > 0) {}
+    int res = sem_wait(&MSemaphore);
     return true;
   }
 
@@ -90,10 +87,8 @@ public:
 
   void exec_task(uint32_t AIndex) {
     if (MListener) MListener->on_ThreadPoolListener_exec(AIndex);
-    // pthread_mutex_lock(&mutex);
-    MTasksRemaining -= 1;
-    // pthread_cond_signal(&condition);
-    // pthread_mutex_unlock(&mutex);
+    // MTasksRemaining -= 1;
+    if (!--MTasksRemaining) sem_post(&MSemaphore);
 
   };
 
