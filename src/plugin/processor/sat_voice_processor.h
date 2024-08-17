@@ -4,12 +4,15 @@
 
 #include "sat.h"
 #include "audio/sat_audio_utils.h"
+#include "base/util/sat_thread_pool.h"
 #include "plugin/sat_note.h"
 #include "plugin/sat_plugin_base.h"
 #include "plugin/sat_processor.h"
 #include "plugin/sat_voice.h"
 
 //----------
+
+#define SAT_VOICE_PROCESSOR_NUM_THREADS 12
 
 //typedef SAT_Queue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 //typedef SAT_AtomicQueue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
@@ -25,7 +28,8 @@ typedef moodycamel::ReaderWriterQueue<SAT_Note> SAT_NoteQueue;
 
 template <class VOICE, int COUNT>
 class SAT_VoiceProcessor
-: public SAT_Processor {
+: public SAT_Processor
+, public SAT_ThreadPoolListener {
 
 //------------------------------
 protected:
@@ -33,25 +37,28 @@ protected:
 
   // __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   SAT_Voice<VOICE>              MVoices[COUNT]          = {};
-
   // __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE] = {0};
-
   SAT_VoiceContext              MVoiceContext           = {};
+  SAT_NoteQueue                 MNoteEndQueue;
 
-  SAT_NoteQueue                 MNoteEndQueue;//           = {};
   const clap_plugin_t*          MClapPlugin             = nullptr;
   const clap_host_t*            MClapHost               = nullptr;
-  const clap_host_thread_pool*  MThreadPool             = nullptr;
+
   uint32_t                      MActiveVoices[COUNT]    = {};
   uint32_t                      MNumActiveVoices        = 0;
   uint32_t                      MNumPlayingVoices       = 0; // set up in processAudio (read by gui)
   uint32_t                      MNumReleasedVoices      = 0; // --"--
-  bool                          MProcessThreaded        = false;
-
-  uint32_t                      MEventMode              = SAT_VOICE_EVENT_MODE_BLOCK;
 
   double                        MSampleRate             = 0.0;
+  uint32_t                      MEventMode              = SAT_VOICE_EVENT_MODE_BLOCK;
+
+  bool                          MProcessThreaded        = false;
+
+  #ifdef SAT_VOICE_PROCESSOR_THREADED
+  const clap_host_thread_pool*  MClapThreadPool         = nullptr;
+    SAT_ThreadPool*             MThreadPool             = nullptr;
+  #endif
 
 //------------------------------
 public:
@@ -66,6 +73,9 @@ public:
 
   virtual ~SAT_VoiceProcessor() {
     SAT_TRACE;
+    #ifdef SAT_VOICE_PROCESSOR_THREADED
+      if (MThreadPool) delete MThreadPool;
+    #endif
   }
 
 //------------------------------
@@ -105,10 +115,15 @@ public:
     //MVoiceContext.plugin = plugin;
     MClapPlugin = APlugin;
     MClapHost = AHost;
+    #ifdef SAT_VOICE_PROCESSOR_THREADED    
     if (MClapHost) {
-      MThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-      //SAT_PRINT("thread-pool: %s\n", MThreadPool ? "true" : "false" );
+        // todo: check if our plugin supports the thread pool extension?
+      MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
+      if (!MClapThreadPool) {
+        MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
+      }
     }
+    #endif
   }
 
   //----------
@@ -185,15 +200,24 @@ public:
     // process active voices
 
     if (MNumActiveVoices > 0) {
-
       //SAT_PRINT("MNumActiveVoices %i\n",MNumActiveVoices);
 
+      // if (MProcessThreaded && MClapThreadPool) {
+      //   processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
+      //   //SAT_PRINT("request_exec(%i) returned %s\n", MNumActiveVoices, processed ? "true" : "false" );
+      // }
+
       // thread-pool..
+
       bool processed = false;
-      if (MProcessThreaded && MThreadPool) {
-        processed = MThreadPool->request_exec(MClapHost,MNumActiveVoices);
-        //SAT_PRINT("request_exec(%i) returned %s\n", MNumActiveVoices, processed ? "true" : "false" );
-      }
+
+      #ifdef SAT_VOICE_PROCESSOR_THREADED      
+        if (MProcessThreaded) {
+          if (MClapThreadPool)  processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
+          else if (MThreadPool) processed = MThreadPool->request_exec(MNumActiveVoices);
+        }
+      #endif
+
       // ..or manually
       if (!processed) {
         for (uint32_t i=0; i<MNumActiveVoices; i++) {
@@ -201,6 +225,7 @@ public:
           processVoice(v);
         }
       }
+
       //mixActiveVoices();
     } // num voices > 0
   }
@@ -264,6 +289,15 @@ public:
       buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
       SAT_AddMonoToStereoBuffer(AOutput,buffer,ALength);
     }
+  }
+
+  //----------
+
+  void on_ThreadPoolListener_exec(uint32_t AIndex) override {
+    //SAT_PRINT("task %i\n",AIndex);
+    //printf("task %i\n",AIndex);
+    uint32_t v = MActiveVoices[AIndex];
+    processVoice(v);
   }
 
 //------------------------------

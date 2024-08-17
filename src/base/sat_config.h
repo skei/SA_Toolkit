@@ -145,12 +145,16 @@
   //#define SAT_TESTS_EXIT_ON_FAILURE
 
   // convert midi events to note events
-  //#define SAT_VOICE_MANAGER_CONVERT_MIDI
+  //#define SAT_VOICE_PROCESSOR_CONVERT_MIDI
+
+  // process voices using thread pool (clap ext or our own)
+  #define SAT_VOICE_PROCESSOR_THREADED
 
   // if events have no recipients (note_id, pck = -1), meaning they're global,
   // send them (individually) to all voices
-  #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
-  #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
+  /* .. we always do, so not used at the moment.. (see sat_voice_processor.h) .. */
+  // #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
+  // #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
   // draw (and keep around) to a buffer, and copy from it to the screen,
   // instead of drawing directly to the screen (or opewngl backbuffer)

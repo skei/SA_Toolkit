@@ -77,7 +77,7 @@ private:
 
   static
   void* threadProc(void* data) {
-    //SAT_Print("threadProc\n");
+    //SAT_PRINT("threadProc\n");
     SAT_Thread* thr = (SAT_Thread*)data;
     if (thr) {
       if (thr->MThreadSleep >= 0) {
@@ -99,7 +99,7 @@ public:
 //------------------------------
 
   void start(void* usr, int32_t ms=-1) { // -1 = no timer
-    SAT_Print("start\n");
+    SAT_PRINT("start\n");
     MUsr = usr;
     MThreadSleep = ms;
     MThreadRunning = true;
@@ -109,7 +109,7 @@ public:
   //----------
 
   void stop(void) {
-    SAT_Print("stop\n");
+    SAT_PRINT("stop\n");
     MThreadRunning = false;
     void* ret;
     pthread_join(MThreadHandle,&ret);

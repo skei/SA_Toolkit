@@ -36,6 +36,7 @@ typedef std::atomic<bool> sat_atomic_bool_t;
 #endif
 
 // these don't like our new/delete overloads..
+#include "extern/cameron314/blockingconcurrentqueue.h"
 #include "extern/cameron314/concurrentqueue.h"
 #include "extern/cameron314/readerwriterqueue.h"
 

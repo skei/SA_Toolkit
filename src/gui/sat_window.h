@@ -359,7 +359,8 @@ public: // widget listener
   //----------
 
   void on_WidgetListener_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
-    #ifdef SAT_WINDOW_QUEUE_WIDGETS    
+
+    #ifdef SAT_WINDOW_QUEUE_WIDGETS
 
       switch (AMode) {
         case SAT_WIDGET_REALIGN_SELF: {
@@ -380,7 +381,7 @@ public: // widget listener
         }
       }
 
-    #else
+    #else // ! SAT_WINDOW_QUEUE_WIDGETS
 
       switch (AMode) {
         case SAT_WIDGET_REALIGN_SELF: {
@@ -402,7 +403,7 @@ public: // widget listener
         }
       }
 
-    #endif
+    #endif // SAT_WINDOW_QUEUE_WIDGETS
 
   }
 

@@ -18,9 +18,11 @@
 #include "sa_mael/sa_mael_parameters.h"
 #include "sa_mael/sa_mael_voice.h"
 
+//#include "base/util/sat_thread_pool.h"
+
 //----------------------------------------------------------------------
 
-#define MAX_VOICES    64
+#define MAX_VOICES    1024
 #define EDITOR_WIDTH  430
 #define EDITOR_HEIGHT (295 + 40 + 25)
 #define EDITOR_SCALE  2
@@ -61,7 +63,7 @@ class sa_mael_voice_processor
 private:
 //------------------------------
 
-    uint32_t sample_pos = 0;
+    uint32_t        sample_pos  = 0;
 
 //------------------------------
 public:
@@ -70,9 +72,7 @@ public:
   sa_mael_voice_processor(SAT_ProcessorListener* AListener)
   : SAT_VoiceProcessor(AListener) {
     SAT_TRACE;
-
     SAT_Observe(SAT_OBSERVE_UINT32,&sample_pos,"sample_pos");
-
   }
 
   //----------
@@ -245,6 +245,8 @@ public:
       uint32_t state = MProcessor->getVoiceState(i);
       voices->setVoiceState(i,state);
     }
+    voices->setNumPlayingVoices(MProcessor->getNumPlayingVoices());
+    voices->setNumReleasedVoices(MProcessor->getNumReleasedVoices());
     voices->do_widget_redraw(voices);
   }  
 

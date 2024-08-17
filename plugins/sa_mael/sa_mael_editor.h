@@ -303,7 +303,7 @@ public:
 
     //
 
-    voices = new SAT_VoicesWidget(SAT_Rect(350,105,70,10),MAX_VOICES);
+    voices = new SAT_VoicesWidget(SAT_Rect(350,105,70,30),MAX_VOICES);
     middle->appendChild(voices);
 
     return true;
