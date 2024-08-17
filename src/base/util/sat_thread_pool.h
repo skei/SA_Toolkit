@@ -2,31 +2,10 @@
 #define sat_thread_pool_included
 //----------------------------------------------------------------------
 
-/*
-  // Threadpool task queue
-  BlockingConcurrentQueue<Task> q;
-  // To create a task from any thread:
-  q.enqueue(...);
-  // On threadpool threads:
-  Task task;
-  while (true) {
-    q.wait_dequeue(task);
-    // Process task...
-  }
-*/
-
-//----------------------------------------------------------------------
-
 #include "sat.h"
-#include "base/system/sat_thread.h"
+//#include "base/system/sat_thread.h"
 //#include "base/system/sat_lock.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <iostream>
-
-#include <condition_variable>
 
 #define SAT_THREAD_POOL_MAX_THREADS 32
 
@@ -37,6 +16,10 @@ public:
   virtual void on_ThreadPoolListener_exec(uint32_t AIndex) {};
 };
 
+//----------------------------------------------------------------------
+//
+//
+//
 //----------------------------------------------------------------------
 
 class SAT_ThreadPool {
@@ -51,7 +34,10 @@ private:
   uint32_t                MNumThreads = 0;
   pthread_t               MThreads[SAT_THREAD_POOL_MAX_THREADS];
   SAT_ThreadPoolQueue     MQueue;
-  std::atomic<uint32_t>   MTasksRemaining;
+  std::atomic<uint32_t>   MTasksRemaining {0};
+
+//  pthread_mutex_t mutex;
+//  pthread_cond_t condition;
 
 //------------------------------
 public:
@@ -62,9 +48,9 @@ public:
     MListener = AListener;
     MNumThreads = ANumThreads;
     for (uint32_t i=0; i<ANumThreads; i++) {
-      int res = pthread_create(&MThreads[i],nullptr,thread_pool_func,this);
+      int res = pthread_create(&MThreads[i],nullptr,thread_pool_callback,this);
       if (res != 0) {
-        SAT_PRINT("Error creating thread #%i\n",res);
+        SAT_PRINT("Error creating thread %i\n",res);
       }
     }
   }
@@ -83,30 +69,41 @@ public:
 public:
 //------------------------------
 
-  bool request_exec(uint32_t ANum) {
-    MTasksRemaining = ANum;
-    for (uint32_t i=0; i<ANum; i++) {
-      MQueue.enqueue(i);
+  // called in process(), after we have prepared the list of active voices
+  // (audio thread)
+
+  bool request_exec(uint32_t ACount) {
+    MTasksRemaining = ACount;
+    for (uint32_t i=0; i<ACount; i++) MQueue.enqueue(i);
+    // pthread_mutex_lock(&mutex);
+    while (MTasksRemaining > 0) {
+    // pthread_cond_wait(&condition, &mutex);
     }
-    //while (MTasksRemaining > 0) { SAT_Sleep(1); }
-    while (MTasksRemaining > 0) {}
+    // pthread_mutex_unlock(&mutex);
     return true;
   }
 
   //----------
 
+  // called by threadpool for each task (in its own thread)
+  // calls listener, and decreases remaining tasks by one
+
   void exec_task(uint32_t AIndex) {
     if (MListener) MListener->on_ThreadPoolListener_exec(AIndex);
+    // pthread_mutex_lock(&mutex);
     MTasksRemaining -= 1;
+    // pthread_cond_signal(&condition);
+    // pthread_mutex_unlock(&mutex);
+
   };
 
 //------------------------------
 private:
 //------------------------------
 
-  // run on each thread..
+  // waits until there is an event in the queue, and processes it
 
-  void thread_exec_tasks() {
+  void thread_exec() {
     uint32_t index;
     while (true) {
       MQueue.wait_dequeue(index);
@@ -116,10 +113,12 @@ private:
 
   //----------
 
+  // 'trampoline' into the SAT_ThreadPool class
+
   static
-  void* thread_pool_func(void* argument) {
+  void* thread_pool_callback(void* argument) {
     SAT_ThreadPool* threadpool = (SAT_ThreadPool*)argument;
-    threadpool->thread_exec_tasks();
+    threadpool->thread_exec();
     return nullptr;
   }
 

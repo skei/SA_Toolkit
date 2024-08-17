@@ -8,6 +8,7 @@
   #include <malloc.h>
   #include <math.h>
   #include <memory.h>
+  #include <pthread.h>
   #include <stdarg.h>
   #include <stdint.h>
   #include <stdio.h>
@@ -18,6 +19,7 @@
 
   #include <array>
   #include <atomic>
+  //#include <condition_variable>
   #include <thread>
   #include <vector>
 
@@ -26,3 +28,5 @@
 
 //----------------------------------------------------------------------
 #endif
+
+

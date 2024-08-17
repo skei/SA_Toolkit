@@ -57,7 +57,7 @@ protected:
 
   #ifdef SAT_VOICE_PROCESSOR_THREADED
   const clap_host_thread_pool*  MClapThreadPool         = nullptr;
-    SAT_ThreadPool*             MThreadPool             = nullptr;
+  SAT_ThreadPool*               MThreadPool             = nullptr;
   #endif
 
 //------------------------------
@@ -117,7 +117,7 @@ public:
     MClapHost = AHost;
     #ifdef SAT_VOICE_PROCESSOR_THREADED    
     if (MClapHost) {
-        // todo: check if our plugin supports the thread pool extension?
+      // todo: check if our plugin supports the thread pool extension?
       MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
       if (!MClapThreadPool) {
         MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!

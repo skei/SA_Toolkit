@@ -148,7 +148,7 @@
   //#define SAT_VOICE_PROCESSOR_CONVERT_MIDI
 
   // process voices using thread pool (clap ext or our own)
-  #define SAT_VOICE_PROCESSOR_THREADED
+//  #define SAT_VOICE_PROCESSOR_THREADED
 
   // if events have no recipients (note_id, pck = -1), meaning they're global,
   // send them (individually) to all voices
