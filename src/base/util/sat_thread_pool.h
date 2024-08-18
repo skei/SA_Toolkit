@@ -2,11 +2,14 @@
 #define sat_thread_pool_included
 //----------------------------------------------------------------------
 
+// todo:
+// - thread priority
+
 #include "sat.h"
 #include <semaphore.h>
 
-
 #define SAT_THREAD_POOL_MAX_THREADS 32
+#define SAT_THREAD_POOL_MAX_VOICES  4096
 
 //----------------------------------------------------------------------
 
@@ -24,6 +27,7 @@ public:
 class SAT_ThreadPool {
 
   typedef moodycamel::BlockingConcurrentQueue<uint32_t> SAT_ThreadPoolQueue;
+  typedef moodycamel::LightweightSemaphore              SAT_ThreadPoolSemaphore;
 
 //------------------------------
 private:
@@ -34,8 +38,9 @@ private:
   pthread_t               MThreads[SAT_THREAD_POOL_MAX_THREADS];
   SAT_ThreadPoolQueue     MQueue;
   std::atomic<uint32_t>   MTasksRemaining {0};
-
-  sem_t MSemaphore;
+  // sem_t                MSemaphore;
+  SAT_ThreadPoolSemaphore MSemaphore;
+  uint32_t                MBulkEnqueueBuffer[SAT_THREAD_POOL_MAX_VOICES];
 
 //------------------------------
 public:
@@ -50,8 +55,15 @@ public:
       if (res != 0) {
         SAT_PRINT("Error creating thread %i\n",res);
       }
+
+      // int policy;
+      // struct sched_param param;
+      // pthread_getschedparam(/*pthread_self()*/MThreads[i], &policy, &param);
+      // param.sched_priority = sched_get_priority_max(policy);
+      // pthread_setschedparam(/*pthread_self()*/MThreads[i], policy, &param);  
+
     }
-    int res = sem_init(&MSemaphore,0,0);
+    //int res = sem_init(&MSemaphore,0,0);
   }
 
   //----------
@@ -62,7 +74,7 @@ public:
       //pthread_join(MThreads[i],nullptr);
       pthread_kill(MThreads[i],0);
     }
-    sem_destroy(&MSemaphore);
+    //sem_destroy(&MSemaphore);
   }
 
 //------------------------------
@@ -74,9 +86,14 @@ public:
 
   bool request_exec(uint32_t ACount) {
     MTasksRemaining = ACount;
-    for (uint32_t i=0; i<ACount; i++) MQueue.enqueue(i);
+
+    // for (uint32_t i=0; i<ACount; i++) MQueue.enqueue(i);
+    for (uint32_t i=0; i<ACount; i++) MBulkEnqueueBuffer[i] = i;
+    MQueue.enqueue_bulk<uint32_t*>(MBulkEnqueueBuffer,ACount);
+
     // while (MTasksRemaining > 0) {}
-    int res = sem_wait(&MSemaphore);
+    // int res = sem_wait(&MSemaphore);
+    MSemaphore.wait();
     return true;
   }
 
@@ -88,7 +105,9 @@ public:
   void exec_task(uint32_t AIndex) {
     if (MListener) MListener->on_ThreadPoolListener_exec(AIndex);
     // MTasksRemaining -= 1;
-    if (!--MTasksRemaining) sem_post(&MSemaphore);
+    // if (!--MTasksRemaining) sem_post(&MSemaphore);
+    if (!--MTasksRemaining) MSemaphore.signal();
+
 
   };
 
@@ -112,6 +131,15 @@ private:
 
   static
   void* thread_pool_callback(void* argument) {
+
+    // int policy;
+    // struct sched_param param;
+    // pthread_getschedparam(pthread_self(), &policy, &param);
+    // int max_priority = sched_get_priority_max(policy);
+    // // SAT_PRINT("max_priority: %i\n",max_priority); // prints 0
+    // param.sched_priority = max_priority; // -90
+    // pthread_setschedparam(pthread_self(), policy, &param);
+
     SAT_ThreadPool* threadpool = (SAT_ThreadPool*)argument;
     threadpool->thread_exec();
     return nullptr;

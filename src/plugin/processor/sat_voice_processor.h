@@ -115,14 +115,34 @@ public:
     //MVoiceContext.plugin = plugin;
     MClapPlugin = APlugin;
     MClapHost = AHost;
-    #ifdef SAT_VOICE_PROCESSOR_THREADED    
-    if (MClapHost) {
-      // todo: check if our plugin supports the thread pool extension?
-//      MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-      if (!MClapThreadPool) {
-        MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
-      }
-    }
+
+    SAT_Assert(APlugin);
+    SAT_Assert(AHost);
+
+    // do we want to use threaded processing?
+    #ifdef SAT_VOICE_PROCESSOR_THREADED
+      //if (MClapHost) {
+      
+        // check if our plugin supports the thread pool extension?
+        SAT_ClapPlugin* plugin = (SAT_ClapPlugin*)APlugin->plugin_data;
+        SAT_Assert(plugin);
+
+        // does the plugin support the clap thread pool extension
+//        if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
+//          SAT_PRINT("clap threadpool\n");
+//          MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
+//        }
+
+        // if not, setup our own threadpool
+        if (!MClapThreadPool) {
+          SAT_PRINT("sat threadpool\n");
+          MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
+          if (!MThreadPool) {
+            SAT_PRINT("no threadpool\n");
+          }
+        }
+
+      //}
     #endif
   }
 
@@ -358,7 +378,7 @@ public:
 
   void paramValueEvent(const clap_event_param_value_t* event) override {
     //SAT_PRINT("param\n");
-    SAT_PRINT("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
+    //SAT_PRINT("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
       //#ifdef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
       //#endif
