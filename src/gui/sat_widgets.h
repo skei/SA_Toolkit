@@ -14,6 +14,8 @@
 #include "gui/widget/sat_dual_value_widget.h"
 #include "gui/widget/sat_frequency_response_widget.h"
 #include "gui/widget/sat_graph_widget.h"
+#include "gui/widget/sat_graph2_widget.h"
+#include "gui/widget/sat_graph2_module_widget.h"
 #include "gui/widget/sat_grid_widget.h"
 #include "gui/widget/sat_group_box_widget.h"
 #include "gui/widget/sat_image_widget.h"

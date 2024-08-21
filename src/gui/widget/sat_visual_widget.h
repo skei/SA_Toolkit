@@ -519,7 +519,7 @@ public: // on_widget
   //----------
 
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    if (MSizable) {
+    if (MMovable || MSizable) {
       MMouseClickedX = AXpos;
       MMouseClickedY = AYpos;
       if (AButton == SAT_BUTTON_LEFT) {
@@ -629,12 +629,12 @@ private:
 
   bool checkCanMove(double AXpos, double AYpos) {
     if (MMovable) {
-      //double S = getWindowScale();
-      SAT_Rect mrect = getRect();
+      double S = getWindowScale();
+      SAT_Rect rect = getRect();
       SAT_Rect offset = MMovableOffset;
-      //offset.scale(S);
-      mrect.shrink(offset);
-      if (mrect.contains(AXpos,AYpos)) {
+      offset.scale(S);
+      rect.shrink(offset);
+      if (rect.contains(AXpos,AYpos)) {
         if (MMovableFlags & 1) return false;
         else return true;
       }
@@ -646,7 +646,7 @@ private:
   //----------
 
   void checkHover(double AXpos, double AYpos) {
-    if (MSizable) {
+    if (MMovable || MSizable) {
       MResizeEdge = checkCanResize(AXpos,AYpos);
       if (MResizeEdge != SAT_EDGE_NONE) {
         if (MResizeEdge & SAT_EDGE_LEFT)    { do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT);   return; }

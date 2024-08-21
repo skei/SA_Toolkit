@@ -5,11 +5,10 @@
 // todo:
 // - thread priority
 
-#include "sat.h"
-#include <semaphore.h>
+//----------------------------------------------------------------------
 
-#define SAT_THREAD_POOL_MAX_THREADS 32
-#define SAT_THREAD_POOL_MAX_VOICES  4096
+#include "sat.h"
+//#include <semaphore.h>
 
 //----------------------------------------------------------------------
 
@@ -87,9 +86,11 @@ public:
   bool request_exec(uint32_t ACount) {
     MTasksRemaining = ACount;
 
-    // for (uint32_t i=0; i<ACount; i++) MQueue.enqueue(i);
-    for (uint32_t i=0; i<ACount; i++) MBulkEnqueueBuffer[i] = i;
-    MQueue.enqueue_bulk<uint32_t*>(MBulkEnqueueBuffer,ACount);
+    // this crashed.. sometimes.. i don't think i understand the bulk stuff.. :-/
+    //for (uint32_t i=0; i<ACount; i++) MBulkEnqueueBuffer[i] = i;
+    //MQueue.enqueue_bulk<uint32_t*>(MBulkEnqueueBuffer,ACount);
+
+    for (uint32_t i=0; i<ACount; i++) MQueue.enqueue(i);
 
     // while (MTasksRemaining > 0) {}
     // int res = sem_wait(&MSemaphore);
@@ -99,7 +100,7 @@ public:
 
   //----------
 
-  // called by threadpool for each task (in its own thread)
+  // called (concurrently) by each worker thread
   // calls listener, and decreases remaining tasks by one
 
   void exec_task(uint32_t AIndex) {
@@ -115,6 +116,7 @@ public:
 private:
 //------------------------------
 
+  // called (concurrently) by each worker thread
   // waits until there is an event in the queue, and processes it
 
   void thread_exec() {

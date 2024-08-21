@@ -128,10 +128,10 @@ public:
         SAT_Assert(plugin);
 
         // does the plugin support the clap thread pool extension
-//        if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
-//          SAT_PRINT("clap threadpool\n");
-//          MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-//        }
+        if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
+          SAT_PRINT("clap threadpool\n");
+          MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
+        }
 
         // if not, setup our own threadpool
         if (!MClapThreadPool) {

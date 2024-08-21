@@ -7,7 +7,7 @@
 class SAT_Parameter;
 typedef SAT_Array<SAT_Parameter*> SAT_ParameterArray;
 
-#define SAT_PARAMETER_NUM_VALUES 16
+// #define SAT_PARAMETER_NUM_VALUES 16
 
 //----------------------------------------------------------------------
 //

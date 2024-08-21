@@ -51,6 +51,8 @@ public:
     so we call set_size manually..
     we could try to get the editor from the plugin (only if we're using an embedded editor),
     then the window from that, and finally call on_window_resize
+
+    todo: proportional scaling..
   */
 
   void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {

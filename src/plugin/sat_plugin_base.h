@@ -29,6 +29,9 @@ public:
     virtual void        on_EditorListener_deleteWindow(SAT_Window* AWindow) {}
   #endif
 
+  #ifdef SAT_EDITOR_REMOTE
+  #endif
+
 };
 
 //----------

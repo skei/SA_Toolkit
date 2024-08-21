@@ -7,16 +7,20 @@
 #include "base/util/sat_fast_math.h"
 
 //----------------------------------------------------------------------
+//
 // db
+//
 //----------------------------------------------------------------------
 
 double SAT_DbToVolume(double db) {
   return powf(10.0f,0.05f*db);
 }
 
-double SAT_VolumeToDb(double volume) {
-  return 20.0f * log10f(volume);
-}
+//----------
+
+//double dbtoa(double db) {
+//  return pow(2, db/6);
+//}
 
 //----------
 
@@ -27,9 +31,19 @@ double SAT_VolumeToDb(double volume) {
 
 //----------
 
-//double dbtoa(double db) {
-//  return pow(2, db/6);
-//}
+//converts decibel value to linear
+//  float amp_db = 20.f;        // 20 decibels
+//  signal *= KDB2Lin(amp_db);  // *= ~10.079
+//
+//#define SAT_Db2Lin(dB) ( SAT_Expf( DB2LOG*(dB) ) )
+
+//------------------------------
+//
+//------------------------------
+
+double SAT_VolumeToDb(double volume) {
+  return 20.0f * log10f(volume);
+}
 
 //----------
 
@@ -42,21 +56,15 @@ double SAT_VolumeToDb(double volume) {
 //  converts linear value to decibel
 //    float dc_signal = 1.f;
 //    float amp_half = 0.5f;
-//    dc_signal *= amp_half;                  // half the amplitude
-//    float amp_db = KLin2DB(amp_half);      // amp_db = -6dbFS
-
+//    dc_signal *= amp_half;            // half the amplitude
+//    float amp_db = KLin2DB(amp_half); // amp_db = -6dbFS
+//
 //#define SAT_Lin2DB(lin) ( LOG2DB*SAT_Logf( (lin) ) )
 
-//----------
-
-//converts decibel value to linear
-//  float amp_db = 20.f;         // 20 decibels
-//  signal *= KDB2Lin(amp_db);  // *= ~10.079
-
-//#define SAT_Db2Lin(dB) ( SAT_Expf( DB2LOG*(dB) ) )
-
 //----------------------------------------------------------------------
+//
 // denormal
+//
 //----------------------------------------------------------------------
 
 float SAT_KillDenormal(float n) {
@@ -83,8 +91,8 @@ float SAT_KillDenormal2(float val) {
 
 //----------
 
-//// http://www.kvraudio.com/forum/viewtopic.php?p=4817458#p4817458
-//// sat_const.h: SAT_DENORM = 1.4012984e-45;
+// http://www.kvraudio.com/forum/viewtopic.php?p=4817458#p4817458
+// sat_const.h: SAT_DENORM = 1.4012984e-45;
 
 //const double _denorm = 1.0e-18;//1.0e-56;
 //float SAT_KillDenormal(float v) {
@@ -102,7 +110,9 @@ float SAT_KillDenormal2(float val) {
 //end;
 
 //----------------------------------------------------------------------
+//
 // hz
+//
 //----------------------------------------------------------------------
 
 double SAT_NoteToHz(double ANote) {

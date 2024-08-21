@@ -46,7 +46,6 @@ public:
   void updateModulationFromHost(SAT_Parameter* AParameter, double AValue) override {
   }
 
-
 //------------------------------
 public:
 //------------------------------

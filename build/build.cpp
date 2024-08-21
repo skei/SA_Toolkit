@@ -1,6 +1,9 @@
+
 /*
+
 ../build/compile -i ../build/build.cpp -o build -f exe -g x11 -d
 nc -U -l -k /tmp/sat.socket
+
 */
 
 //----------------------------------------------------------------------
@@ -38,13 +41,12 @@ nc -U -l -k /tmp/sat.socket
 //----------------------------------------------------------------------
 
 
-
 //#include "../plugins/sa_automata.h"
 //#include "../plugins/sa_botage.h"
 //#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
-//#include "../plugins/sa_demo.h"
-#include "../plugins/sa_mael.h"
+#include "../plugins/sa_demo.h"
+//#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_tyr.h"
 

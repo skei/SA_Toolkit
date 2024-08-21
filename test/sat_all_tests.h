@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 
 // compile -t
-//#define SAT_INCLUDE_TESTS
+// #define SAT_INCLUDE_TESTS
 
 #include "sat.h"
 
