@@ -127,7 +127,7 @@ public:
 public:
 //------------------------------
 
-  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue) override {
+  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
     //SAT_PRINT("AValue %i\n",AValue);
     if (AValue == -1) {
       // cancel

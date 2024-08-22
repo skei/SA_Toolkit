@@ -165,14 +165,40 @@ public:
   void realignChildren(bool ARecursive=true) override {
     //SAT_GLOBAL.DEBUG.print_callstack();
     SAT_VisualWidget::realignChildren(ARecursive);
-    SAT_Rect content = MContent->getContentRect();
-
+    SAT_Rect rect = getRect();
+    SAT_Rect content_rect = MContent->getContentRect();
     float rect_w = MContent->getRect().w;
     float rect_h = MContent->getRect().h;
 
+// !!!!!!!!!!
+
+    // check if any widgets have negative positions
+    // this needs to be better thought through...
+
+    double diffx = rect.x - content_rect.x;
+    if (diffx > 0) {
+      MContent->scrollChildren(diffx,0);
+      // float pos = MHorizontalScrollBar->getThumbPos();
+      // pos += rect.w / diffx;
+      // MHorizontalScrollBar->setThumbPos(pos,false);
+
+    }
+
+    double diffy = rect.y - content_rect.y;
+    if (diffy > 0) {
+      MContent->scrollChildren(0,diffy);
+      // float pos = MVerticalScrollBar->getThumbPos();
+      // pos += rect.h / diffy;
+      // MVerticalScrollBar->setThumbPos(pos,false);
+    }
+
+// !!!!!!!!!!
+
+    // update scroll bars
+
     if (showVerticalScrollBar) {
       if (rect_h > 0) {
-        float thumb_ratio = rect_h / content.h;         // size of thumb (0..1)
+        float thumb_ratio = rect_h / content_rect.h;         // size of thumb (0..1)
         float thumb_size = SAT_Clamp(thumb_ratio,0,1);
         MVerticalScrollBar->setThumbSize(thumb_size,false);
         float visible = MVerticalScrollBar->getThumbSize();
@@ -187,7 +213,7 @@ public:
 
     if (showHorizontalScrollBar) {
       if (rect_w > 0) {
-        float thumb_ratio = rect_w / content.w;         // size of thumb (0..1)
+        float thumb_ratio = rect_w / content_rect.w;         // size of thumb (0..1)
         float thumb_size = SAT_Clamp(thumb_ratio,0,1);
         MHorizontalScrollBar->setThumbSize(thumb_size,false);
         float visible = MHorizontalScrollBar->getThumbSize();
@@ -201,6 +227,20 @@ public:
     }
 
   }
+
+//------------------------------
+public: // child to parent
+//------------------------------
+
+  // SAT_Rect on_widget_preAlign(SAT_Rect ARect) {
+  //   return ARect;
+  // }
+
+  //----------
+
+  // SAT_Rect on_widget_postAlign(SAT_Rect ARect) {
+  //   return ARect;
+  // }
 
 //------------------------------
 public: // child to parent

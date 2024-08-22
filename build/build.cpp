@@ -9,7 +9,7 @@ nc -U -l -k /tmp/sat.socket
 //----------------------------------------------------------------------
 
 #ifdef SAT_PLUGIN_EXE
-  #define SAT_DEBUG_MEMTRACE
+//  #define SAT_DEBUG_MEMTRACE
 #else
   #define SAT_PRINT_SOCKET
 #endif

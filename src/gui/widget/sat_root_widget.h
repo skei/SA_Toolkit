@@ -115,8 +115,8 @@ public: // do_widget
     if (MListener) MListener->on_WidgetListener_realign(AWidget,AMode);
   }
   
-  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue) override {
-    if (MListener) MListener->on_WidgetListener_notify(AWidget,AValue);
+  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
+    if (MListener) MListener->on_WidgetListener_notify(AWidget,AValue,APtr);
   }
   
   void do_widget_mouse_capture(SAT_Widget* AWidget) override {

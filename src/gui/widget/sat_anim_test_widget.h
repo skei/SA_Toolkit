@@ -22,6 +22,23 @@ private:
   SAT_Point MCoords[4]  = {};
   SAT_Point MSpeeds[4]  = {};
 
+  double    MSplineWidth = 5.0;
+  SAT_Color MSplineColor  = SAT_Black;
+
+  SAT_Color MCircleColor  = SAT_LightGrey;
+  double    MCircleSize = 10.0;
+  double    MCircleLineWidth = 2.0;
+
+  SAT_Color MCircle2Color  = SAT_LighterGrey;
+  double    MCircle2Size = 4.0;
+  double    MCircle2LineWidth = 1.0;
+
+  double    MLineWidth    = 1.0;
+  SAT_Color MLineColor    = SAT_LightGrey;
+
+  double    MLine2Width   = 0.5;
+  SAT_Color MLine2Color   = SAT_DarkGrey;
+
 //------------------------------
 public:
 //------------------------------
@@ -126,6 +143,9 @@ public:
   void drawSpline(SAT_PaintContext* AContext) {
     SAT_Painter* painter = AContext->painter;
     SAT_Rect rect = getRect();
+
+    painter->pushOverlappingClip(rect);
+
     double scale = getWindowScale();
     double x1  = rect.x + (rect.w * MCoords[0].x);
     double y1  = rect.y + (rect.h * MCoords[0].y);
@@ -135,15 +155,39 @@ public:
     double c1y = rect.y + (rect.h * MCoords[2].y);
     double c2x = rect.x + (rect.w * MCoords[3].x);
     double c2y = rect.y + (rect.h * MCoords[3].y);
-    painter->setDrawColor(SAT_Black);
-    painter->setLineWidth(5.0 * scale);
-    painter->drawCurveBezier(x1,y1,x2,y2,c1x,c1y,c2x,c2y);
-    painter->setDrawColor(SAT_White);
-    painter->setLineWidth(0.5 * scale);
+
+    // lines
+
+    painter->setDrawColor(MLineColor);
+    painter->setLineWidth(MLineWidth * scale);
     painter->drawLine(x1,y1,c1x,c1y);
-    painter->drawLine(c1x,c1y,c2x,c2y);
     painter->drawLine(c2x,c2y,x2,y2);
+
+    painter->setDrawColor(MLine2Color);
+    painter->setLineWidth(MLine2Width * scale);
+    painter->drawLine(c1x,c1y,c2x,c2y);
+
     //painter->drawLine(x1,y1,x2,y2,c1x,c1y,c2x,c2y);
+
+    // circles
+
+    painter->setDrawColor(MCircleColor);
+    painter->setLineWidth(MCircleLineWidth * scale);
+    painter->drawCircle(x1,y1,MCircleSize);
+    painter->drawCircle(x2,y2,MCircleSize);
+
+    painter->setDrawColor(MCircle2Color);
+    painter->setLineWidth(MCircle2LineWidth * scale);
+    painter->drawCircle(c1x,c1y,MCircle2Size);
+    painter->drawCircle(c2x,c2y,MCircle2Size);
+
+    // bezier
+
+    painter->setDrawColor(MSplineColor);
+    painter->setLineWidth(MSplineWidth * scale);
+    painter->drawCurveBezier(x1,y1,x2,y2,c1x,c1y,c2x,c2y);
+
+    painter->popClip();
 
   }
 

@@ -46,6 +46,9 @@ public:
     //if (MDrawXYPad) {
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
+
+      painter->pushOverlappingClip(rect);
+
       double scale = getWindowScale();
       double x = rect.x;
       double y = rect.y;
@@ -63,6 +66,12 @@ public:
       painter->setLineWidth(MLineWidth * scale);
       painter->drawLine(x,rect.y,x,rect.y2());
       painter->drawLine(rect.x,y,rect.x2(),y);
+
+      double circle = 6.0 * scale;
+      painter->drawCircle(x,y,circle);
+
+      painter->popClip();
+
     //}
   }
 

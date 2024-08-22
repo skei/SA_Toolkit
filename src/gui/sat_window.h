@@ -409,7 +409,7 @@ public: // widget listener
 
   //----------
 
-  void on_WidgetListener_notify(SAT_Widget* AWidget, int32_t AValue) override {
+  void on_WidgetListener_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
   }
   
   //----------

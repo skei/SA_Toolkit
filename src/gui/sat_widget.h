@@ -794,8 +794,8 @@ public:
     if (MParent) MParent->do_widget_realign(AWidget,AMode);
   }
   
-  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue) override {
-    if (MParent) MParent->do_widget_notify(AWidget,AValue);
+  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
+    if (MParent) MParent->do_widget_notify(AWidget,AValue,APtr);
   }
   
   void do_widget_mouse_capture(SAT_Widget* AWidget) override {
