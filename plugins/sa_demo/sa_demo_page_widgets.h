@@ -540,13 +540,15 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
           //ds1->setDropShadowCorner(5);
           ds1->setFillBackground(false);
           ds1->setDrawBorder(false);
+          ds1->setSizable(true);
+          ds1->setMovable(true);
+          ds1->Options.wantHoverEvents = true;
 
-            SAT_VisualWidget* ds2 = new SAT_VisualWidget(SAT_Rect(25,25,40,40));
-            painting_tab1->appendChild(ds2);
-
-            ds2->setSizable(true);
-            ds2->setMovable(true);
-            ds2->Options.wantHoverEvents = true;
+          SAT_VisualWidget* ds2 = new SAT_VisualWidget(SAT_Rect(25,25,40,40));
+          painting_tab1->appendChild(ds2);
+          ds2->setSizable(true);
+          ds2->setMovable(true);
+          ds2->Options.wantHoverEvents = true;
 
           SAT_VisualWidget* ds3 = new SAT_VisualWidget(SAT_Rect(80,20,50,50));
           painting_tab1->appendChild(ds3);
@@ -556,9 +558,9 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
           ds3->setFillBackground(false);
           ds3->setDrawBorder(true);
 
-            ds3->setSizable(true);
-            ds3->setMovable(true);
-            ds3->Options.wantHoverEvents = true;
+          ds3->setSizable(true);
+          ds3->setMovable(true);
+          ds3->Options.wantHoverEvents = true;
 
           SAT_VisualWidget* ds5 = new SAT_VisualWidget(SAT_Rect(20,80,50,50));
           painting_tab1->appendChild(ds5);
@@ -566,9 +568,9 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
           ds5->setFillGradient(true);
           //ds5->setDrawBorder(true);
 
-            ds5->setSizable(true);
-            ds5->setMovable(true);
-            ds5->Options.wantHoverEvents = true;
+          ds5->setSizable(true);
+          ds5->setMovable(true);
+          ds5->Options.wantHoverEvents = true;
 
           SAT_VisualWidget* ds6 = new SAT_VisualWidget(SAT_Rect(80,80,50,50));
           painting_tab1->appendChild(ds6);
@@ -578,9 +580,9 @@ imagestrip2->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_LEFT;
           ds6->setRoundedCornerSize(10);
           ds6->setRoundedCorners(SAT_CORNER_UPPER_LEFT | SAT_CORNER_LOWER_RIGHT);
 
-            ds6->setSizable(true);
-            ds6->setMovable(true);
-            ds6->Options.wantHoverEvents = true;
+          ds6->setSizable(true);
+          ds6->setMovable(true);
+          ds6->Options.wantHoverEvents = true;
 
         // tab 3 -parameters
 

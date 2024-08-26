@@ -151,6 +151,8 @@ public:
   // virtual uint32_t  getSizableEdges()       { return MSizableEdges; }
   // virtual uint32_t  getSizableFlags()       { return MSizableFlags; }
 
+  virtual bool      isMoving()            { return MMoving; }
+  virtual bool      isResizing()          { return MResizing; }
 
 //------------------------------
 public:

@@ -15,17 +15,21 @@
 
 class SAT_NodeWidget;
 
-#define SAT_NODE_PIN_ENABLED    0x01
-#define SAT_NODE_PIN_INPUT      0x02
-#define SAT_NODE_PIN_SIGNAL     0x04
-#define SAT_NODE_PIN_HOVERING   0x08
-#define SAT_NODE_PIN_DRAGGING   0x10
+#define SAT_NODE_PIN_ENABLED            0x01
+#define SAT_NODE_PIN_INPUT              0x02
+#define SAT_NODE_PIN_SIGNAL             0x04
+#define SAT_NODE_PIN_HOVERING           0x08
+#define SAT_NODE_PIN_CONNECTING         0x10
 
-#define SAT_NODE_PIN_MOUSE_MOVE   0
-#define SAT_NODE_PIN_SRC_INACTIVE 1
-#define SAT_NODE_PIN_SRC_ACTIVE   2
-#define SAT_NODE_PIN_DST_INACTIVE 3
-#define SAT_NODE_PIN_DST_ACTIVE   4
+#define SAT_NODE_NOTIFY_MOUSE_MOVE      0
+#define SAT_NODE_NOTIFY_BEGIN_DRAG      1
+#define SAT_NODE_NOTIFY_END_DRAG        2
+#define SAT_NODE_NOTIFY_CONNECT         3
+#define SAT_NODE_NOTIFY_BEGIN_HOVER     4
+#define SAT_NODE_NOTIFY_END_HOVER       5
+#define SAT_NODE_NOTIFY_BEGIN_CONNECT   6
+#define SAT_NODE_NOTIFY_END_CONNECT     7
+#define SAT_NODE_NOTIFY_UPDATE_MOUSE_CONNECT 8
 
 class SAT_NodePin {
 public:
@@ -56,10 +60,22 @@ private:
   bool                MVertical           = false;
   SAT_NodePinArray    MInputPins          = {};
   SAT_NodePinArray    MOutputPins         = {};
-  SAT_NodePin*        MPrevHoverPin       = nullptr;
-  bool                MIsConnecting       = false;
-  SAT_NodePin*        MPrevConnectDstPin  = nullptr;
+
   SAT_Point           MMousePos           = {0,0};
+
+  bool                MIsHovering         = false;
+  SAT_NodePin*        MHoverPin           = nullptr;
+  SAT_NodePin*        MPrevHoverPin       = nullptr;
+
+  bool                MIsConnecting       = false;
+
+  SAT_Color           MConnectColor       = SAT_BrightRed;
+
+  SAT_Color           MSignalColor        = SAT_LighterGrey;
+  SAT_Color           MSignalHoverColor   = SAT_DarkerGrey;
+  
+  SAT_Color           MDataColor          = SAT_DarkerGrey;
+  SAT_Color           MDataHoverColor     = SAT_LighterGrey;
 
 //------------------------------
 public:
@@ -117,7 +133,6 @@ public:
     MTitleWidget->setBackgroundColor(SAT_DarkerGrey);
     MTitleWidget->setDrawText(true);
     MTitleWidget->setDrawParamText(false);
-//    MTitleWidget->setText(AName);
     MTitleWidget->setTextAlignment(SAT_TEXT_ALIGN_LEFT);
     MTitleWidget->setTextColor(SAT_White);
     MTitleWidget->setTextOffset(SAT_Rect(3,0,0,0));
@@ -157,6 +172,14 @@ public:
 public:
 //------------------------------
 
+  SAT_Widget* appendChild(SAT_Widget* AWidget) override {
+    return MContentWidget->appendChild(AWidget);
+  }
+
+//------------------------------
+public: // pins
+//------------------------------
+
   void appendPin(const char* AName, bool ASignal, bool AInput) {
     SAT_NodePin* pin = new SAT_NodePin();
     pin->owner = this;
@@ -181,13 +204,18 @@ public:
     for (uint32_t i=0; i<MOutputPins.size(); i++) { delete MOutputPins[i]; }
   }
 
-//------------------------------
-public:
-//------------------------------
+  //----------
+
+  SAT_NodePin* getPin(uint32_t AIndex, bool AInput) {
+    if (AInput) return MInputPins[AIndex];
+    else return MOutputPins[AIndex];
+  }
+
+  //----------
 
   SAT_Rect getPinRect(uint32_t AIndex, bool AInput=true) {
     SAT_Rect rect = getRect();
-    SAT_Rect pin_rect;
+    SAT_Rect pin_rect = {0,0,0,0};
     double scale = getWindowScale();
     double pw = (MPinWidth  + MPinHDist) * scale;
     double ph = (MPinHeight + MPinVDist) * scale;
@@ -203,7 +231,7 @@ public:
         pin_rect.y = rect.y + (AIndex * ph);
       }      
     }
-    else {
+    else { // horizontal
       if (AInput) {
         pin_rect.x = rect.x + (AIndex * pw);
         pin_rect.y = rect.y;
@@ -245,106 +273,56 @@ public:
     return nullptr;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
-   void resetHoverFlags() {
+  void resetConnectingFlags() {
+    for (uint32_t i=0; i<MInputPins.size(); i++) {
+      MInputPins[i]->flags &= ~SAT_NODE_PIN_CONNECTING;
+    }
+    for (uint32_t i=0; i<MOutputPins.size(); i++) {
+      MOutputPins[i]->flags &= ~SAT_NODE_PIN_CONNECTING;
+    }
+  }
+
+   //----------
+
+  void resetHoverFlags() {
     for (uint32_t i=0; i<MInputPins.size(); i++) {
       MInputPins[i]->flags &= ~SAT_NODE_PIN_HOVERING;
     }
     for (uint32_t i=0; i<MOutputPins.size(); i++) {
       MOutputPins[i]->flags &= ~SAT_NODE_PIN_HOVERING;
     }
-   }
+  }
 
   //----------
 
-   void resetDraggingFlags() {
-    for (uint32_t i=0; i<MInputPins.size(); i++) {
-      MInputPins[i]->flags &= ~SAT_NODE_PIN_DRAGGING;
-    }
-    for (uint32_t i=0; i<MOutputPins.size(); i++) {
-      MOutputPins[i]->flags &= ~SAT_NODE_PIN_DRAGGING;
-    }
-   }
-
-   //----------
-
-  SAT_NodePin* updatePinHover(int32_t AXpos, int32_t AYpos) {
+  void updateMouseHover(int32_t AXpos, int32_t AYpos) {
     resetHoverFlags();
     SAT_NodePin* pin = findPin(AXpos,AYpos);
-    if (pin) pin->flags |= SAT_NODE_PIN_HOVERING;
-    if (pin != MPrevHoverPin) {
-      if (pin) {
-        const char* hint = pin->name;
-        do_widget_set_hint(this,hint);
-        do_widget_redraw(this);
-        //do_widget_set_cursor(SAT_CURSOR_FINGER);
+    if (pin) {
+      pin->flags |= SAT_NODE_PIN_HOVERING;
+      if (pin != MPrevHoverPin) {
+        if (pin) {
+//          do_widget_notify(this,SAT_NODE_NOTIFY_BEGIN_HOVER,pin);
+          const char* hint = pin->name;
+          do_widget_set_hint(this,hint);
+          do_widget_redraw(this);
+          //do_widget_set_cursor(SAT_CURSOR_FINGER);
+        }
       }
-      else {
+    }
+    else {
+      if (MPrevHoverPin) {
+//        do_widget_notify(this,SAT_NODE_NOTIFY_END_HOVER,MPrevHoverPin);
         do_widget_set_hint(this," "); // "" is ignored?
+        do_widget_redraw(this);
         //do_widget_set_cursor(SAT_CURSOR_DEFAULT);
-        //do_widget_redraw(this);
-      }
+     }
     }
     MPrevHoverPin = pin;
-    return pin;
-  }
-
-  //----------
-
-  SAT_NodePin* updatePinDragging(int32_t AXpos, int32_t AYpos) {
-
-    //SAT_Widget* parent = getParent();
-    SAT_ScrollBoxWidget* parent = (SAT_ScrollBoxWidget*)getParent();
-    SAT_VisualWidget* content = parent->getContentWidget();
-    uint32_t num = content->getNumChildren();
-
-    SAT_NodeWidget* node = nullptr;
-    SAT_NodePin* pin = nullptr;
-
-    for (uint32_t i=0; i<num; i++) {
-      node = (SAT_NodeWidget*)content->getChild(i);
-      pin = node->findPin(AXpos,AYpos);
-      if (pin) break;
-    }
-    
-    //SAT_PRINT("pin %p\n",pin);
-
-    if (pin != MPrevConnectDstPin) {
-      if (pin) {
-        //SAT_PRINT("%s\n",pin->name);
-        do_widget_notify(this,SAT_NODE_PIN_DST_ACTIVE,pin);
-        MPrevConnectDstPin = pin;
-      }
-      else {
-        //SAT_PRINT("NULL\n");
-        do_widget_notify(this,SAT_NODE_PIN_DST_INACTIVE/*,MPrevConnectDstPin*/);
-        MPrevConnectDstPin = nullptr;
-      }
-    }
-
-    return pin;
-
-  }
-
-  //----------
-
-  // bool canDrag(int32_t AXpos, int32_t AYpos) {
-  //   SAT_NodePin* pin = findPin(AXpos,AYpos);
-  //   if (pin) return true;
-  //   return false;
-  // }
-
-  // bool canDrop(int32_t AXpos, int32_t AYpos) {
-  //   SAT_TRACE("%i,%i\n",AXpos,AYpos);
-  // }
-
-//------------------------------
-public:
-//------------------------------
-
-  SAT_Widget* appendChild(SAT_Widget* AWidget) override {
-    return MContentWidget->appendChild(AWidget);
   }
 
 //------------------------------
@@ -362,9 +340,13 @@ public:
       SAT_NodePin* pin = MInputPins[i];
       SAT_Rect r = getPinRect(i,true);
       if (pin->flags & SAT_NODE_PIN_SIGNAL) {
-        painter->setFillColor(SAT_LighterGrey);
+        painter->setFillColor(MSignalColor);
         painter->fillRect(r.x,r.y,r.w,r.h);
-        if (pin->flags & SAT_NODE_PIN_HOVERING) {
+        if (pin->flags & SAT_NODE_PIN_CONNECTING) {
+          painter->setDrawColor(MConnectColor);
+          painter->drawRect(r.x,r.y,r.w,r.h);
+        }
+        else if (pin->flags & SAT_NODE_PIN_HOVERING) {
           painter->setDrawColor(SAT_DarkerGrey);
           painter->drawRect(r.x,r.y,r.w,r.h);
         }
@@ -372,7 +354,11 @@ public:
       else {
         painter->setFillColor(SAT_DarkerGrey);
         painter->fillRect(r.x,r.y,r.w,r.h);
-        if (pin->flags & SAT_NODE_PIN_HOVERING) {
+        if (pin->flags & SAT_NODE_PIN_CONNECTING) {
+          painter->setDrawColor(MConnectColor);
+          painter->drawRect(r.x,r.y,r.w,r.h);
+        }
+        else if (pin->flags & SAT_NODE_PIN_HOVERING) {
           painter->setDrawColor(SAT_LighterGrey);
           painter->drawRect(r.x,r.y,r.w,r.h);
         }
@@ -384,18 +370,26 @@ public:
       SAT_NodePin* pin = MOutputPins[i];
       SAT_Rect r = getPinRect(i,false);
       if (pin->flags & SAT_NODE_PIN_SIGNAL) {
-        painter->setFillColor(SAT_LighterGrey);
+        painter->setFillColor(MSignalColor);
         painter->fillRect(r.x,r.y,r.w,r.h);
-        if (pin->flags & SAT_NODE_PIN_HOVERING) {
-          painter->setDrawColor(SAT_DarkerGrey);
+        if (pin->flags & SAT_NODE_PIN_CONNECTING) {
+          painter->setDrawColor(MConnectColor);
+          painter->drawRect(r.x,r.y,r.w,r.h);
+        }
+        else if (pin->flags & SAT_NODE_PIN_HOVERING) {
+          painter->setDrawColor(MSignalHoverColor);
           painter->drawRect(r.x,r.y,r.w,r.h);
         }
       }
       else {
-        painter->setFillColor(SAT_DarkerGrey);
+        painter->setFillColor(MDataColor);
         painter->fillRect(r.x,r.y,r.w,r.h);
-        if (pin->flags & SAT_NODE_PIN_HOVERING) {
-          painter->setDrawColor(SAT_LighterGrey);
+        if (pin->flags & SAT_NODE_PIN_CONNECTING) {
+          painter->setDrawColor(MConnectColor);
+          painter->drawRect(r.x,r.y,r.w,r.h);
+        }
+        else if (pin->flags & SAT_NODE_PIN_HOVERING) {
+          painter->setDrawColor(MDataHoverColor);
           painter->drawRect(r.x,r.y,r.w,r.h);
         }
       }
@@ -410,10 +404,11 @@ public:
   void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     SAT_VisualWidget::on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
     if ((AButton == SAT_BUTTON_LEFT) && (MIsConnecting == false)) {
-      MIsConnecting = true;
-      SAT_NodePin* pin = updatePinDragging(AXpos,AYpos);
-      do_widget_notify(this,SAT_NODE_PIN_SRC_ACTIVE,pin);
-      // do_widget_redraw(this);
+      SAT_NodePin* pin = findPin(AXpos,AYpos);
+      if (pin) {
+        MIsConnecting = true;
+        do_widget_notify(this,SAT_NODE_NOTIFY_BEGIN_DRAG,pin);
+      }
     }
   }
 
@@ -423,13 +418,8 @@ public:
     SAT_VisualWidget::on_widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
     if ((AButton == SAT_BUTTON_LEFT) && (MIsConnecting == true)) {
       MIsConnecting = false;
-
-      do_widget_notify(this,SAT_NODE_PIN_SRC_INACTIVE/*,pin*/);
-      do_widget_notify(this,SAT_NODE_PIN_DST_INACTIVE/*,MPrevConnectDstPin*/);
-      MPrevConnectDstPin = nullptr;
-
-      updatePinHover(AXpos,AYpos);
-      // do_widget_redraw(this);
+      do_widget_notify(this,SAT_NODE_NOTIFY_END_DRAG,nullptr);
+      do_widget_notify(this,SAT_NODE_NOTIFY_CONNECT,nullptr);
 
     }
   }
@@ -440,36 +430,31 @@ public:
     SAT_VisualWidget::on_widget_mouse_move(AXpos,AYpos,AState,ATime);
     MMousePos.x = AXpos;
     MMousePos.y = AYpos;
-    do_widget_notify(this,SAT_NODE_PIN_MOUSE_MOVE,&MMousePos);
+    do_widget_notify(this,SAT_NODE_NOTIFY_MOUSE_MOVE,&MMousePos);
     if (MIsConnecting) {
-      updatePinDragging(AXpos,AYpos);
+      // updateMouseConnect(AXpos,AYpos);
+      do_widget_notify(this,SAT_NODE_NOTIFY_UPDATE_MOUSE_CONNECT,&MMousePos);
     }
     else {
-      updatePinHover(AXpos,AYpos);
+      if (!isMoving() && !isResizing()) {
+        updateMouseHover(AXpos,AYpos);
+      }
     }
   }
-
-  //----------
-
-  // void on_widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-  //   SAT_VisualWidget::on_widget_enter(AFrom,AXpos,AYpos,ATime);
-  //   if (MIsConnecting) {
-  //     //updatePinDragging(AXpos,AYpos);
-  //   }
-  //   //else {
-  //   //  updatePinHover(AXpos,AYpos);
-  //   //}
-  // }
 
   //----------
 
   void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-    SAT_VisualWidget::on_widget_enter(ATo,AXpos,AYpos,ATime);
-    resetHoverFlags();
-    do_widget_redraw(this);
-    //do_widget_set_hint(this," ");
+    SAT_VisualWidget::on_widget_leave(ATo,AXpos,AYpos,ATime);
+    if (MPrevHoverPin) {
+      //SAT_PRINT("no pin (leave)\n");
+//      do_widget_notify(this,SAT_NODE_NOTIFY_END_HOVER,MPrevHoverPin);
+      MPrevHoverPin = nullptr;
+      resetHoverFlags();
+      do_widget_redraw(this);
+      //do_widget_set_hint(this," ");
+    }
   }
-
 
   //----------
 
