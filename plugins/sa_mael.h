@@ -63,7 +63,7 @@ class sa_mael_voice_processor
 private:
 //------------------------------
 
-    uint32_t        sample_pos  = 0;
+    uint32_t sample_pos  = 0;
 
 //------------------------------
 public:
@@ -141,7 +141,7 @@ public:
   bool init() final {
 
     registerDefaultSynthExtensions();
-    
+
     registerExtension(CLAP_EXT_PARAM_INDICATION);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
@@ -154,10 +154,8 @@ public:
     setProcessor(MProcessor);
     MProcessor->init(getClapPlugin(),getClapHost());
     MProcessor->setProcessThreaded(true);
-    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
-
+    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
     sa_mael_SetupParameters(this);
-
     #if !defined (SAT_NO_GUI)
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
@@ -239,6 +237,8 @@ public:
 
   //----------
 
+  #ifdef SAT_EDITOR_EMBEDDED
+  
   void on_EditorListener_timer(double ADelta) override {
     SAT_Plugin::on_EditorListener_timer(ADelta);
     for (uint32_t i=0; i<MAX_VOICES; i++) {
@@ -249,8 +249,9 @@ public:
     voices->setNumReleasedVoices(MProcessor->getNumReleasedVoices());
     voices->do_widget_redraw(voices);
   }  
-
 };
+
+#endif
 
 #undef MAX_VOICES
 #undef EDITOR_WIDTH
