@@ -18,13 +18,11 @@
 #include "sa_mael/sa_mael_parameters.h"
 #include "sa_mael/sa_mael_voice.h"
 
-//#include "base/util/sat_thread_pool.h"
-
 //----------------------------------------------------------------------
 
 #define MAX_VOICES    1024
 #define EDITOR_WIDTH  430
-#define EDITOR_HEIGHT (295 + 40 + 25)
+#define EDITOR_HEIGHT 360
 #define EDITOR_SCALE  2
 
 //----------------------------------------------------------------------
@@ -60,19 +58,12 @@ class sa_mael_voice_processor
 : public SAT_VoiceProcessor<sa_mael_voice,MAX_VOICES> {
 
 //------------------------------
-private:
-//------------------------------
-
-    uint32_t sample_pos  = 0;
-
-//------------------------------
 public:
 //------------------------------
 
   sa_mael_voice_processor(SAT_ProcessorListener* AListener)
   : SAT_VoiceProcessor(AListener) {
     SAT_TRACE;
-    SAT_Observe(SAT_OBSERVE_UINT32,&sample_pos,"sample_pos");
   }
 
   //----------
@@ -86,16 +77,7 @@ public:
 //------------------------------
 
   void process(SAT_ProcessContext* AContext) override {
-
-    // SAT_ClearStereoBuffer(output,length);
-    // processEvents(process->in_events,process->out_events);
-    // processAudio(AContext);
-    // mixActiveVoices(output,length);
-
-    sample_pos = AContext->sample_counter;
-
     SAT_VoiceProcessor::process(AContext);
-
     const clap_process_t* process = AContext->process;
     float** output = process->audio_outputs[0].data32;
     uint32_t length = process->frames_count;
@@ -124,6 +106,12 @@ private:
 public:
 //------------------------------
 
+  // todo, macro:
+  // SAT_VOICE_PROCESSOR_DEFAULT_CONSTRUCTOR(sa_mael_plugin)
+  // don't do anything here..
+
+  //----------
+
   sa_mael_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {
   }
@@ -131,11 +119,10 @@ public:
   //----------
 
   virtual ~sa_mael_plugin() {
-    //if (MProcessor) delete MProcessor;
   }
 
 //------------------------------
-public:
+public: // clap
 //------------------------------
 
   bool init() final {
@@ -143,7 +130,7 @@ public:
     registerDefaultSynthExtensions();
 
     registerExtension(CLAP_EXT_PARAM_INDICATION);
-    registerExtension(CLAP_EXT_PRESET_LOAD);
+  //registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_TRACK_INFO);
 
@@ -152,10 +139,14 @@ public:
 
     MProcessor = new sa_mael_voice_processor(this);
     setProcessor(MProcessor);
+
     MProcessor->init(getClapPlugin(),getClapHost());
+
     MProcessor->setProcessThreaded(true);
     MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
+
     sa_mael_SetupParameters(this);
+
     #if !defined (SAT_NO_GUI)
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
@@ -171,7 +162,7 @@ public:
   }
 
 //------------------------------
-public:
+public: // voice info
 //------------------------------
 
   bool voice_info_get(clap_voice_info_t *info) override {
@@ -182,13 +173,17 @@ public:
     return true;
   }
 
-  //----------
+//------------------------------
+public: // thread pool
+//------------------------------
 
   void thread_pool_exec(uint32_t task_index) override {
     MProcessor->threadPoolExec(task_index);
   }
 
-  //----------
+//------------------------------
+public: // remote controls
+//------------------------------
 
   uint32_t remote_controls_count() final {
     return 1;
@@ -217,41 +212,50 @@ public:
     return false;
   }  
   
-  //----------
+//------------------------------
+public: // preset load
+//------------------------------
 
-  bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
-    if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
-      loadPresetFromFile(location,load_key);
-      SAT_Host* host = getHost();
-      if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
-      return true;
-    }
-    return false;
-  }
+  // bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
+  //   if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
+  //     loadPresetFromFile(location,load_key);
+  //     SAT_Host* host = getHost();
+  //     if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
-  //----------
+//------------------------------
+public: // gui
+//------------------------------
 
   #ifndef SAT_NO_GUI
     #include "sa_mael/sa_mael_editor.h"
   #endif
 
-  //----------
+//------------------------------
+public: // timer
+//------------------------------
 
   #ifdef SAT_EDITOR_EMBEDDED
   
-  void on_EditorListener_timer(double ADelta) override {
-    SAT_Plugin::on_EditorListener_timer(ADelta);
-    for (uint32_t i=0; i<MAX_VOICES; i++) {
-      uint32_t state = MProcessor->getVoiceState(i);
-      voices->setVoiceState(i,state);
+    void on_EditorListener_timer(double ADelta) override {
+      SAT_Plugin::on_EditorListener_timer(ADelta);
+      for (uint32_t i=0; i<MAX_VOICES; i++) {
+        uint32_t state = MProcessor->getVoiceState(i);
+        voices->setVoiceState(i,state);
+      }
+      voices->setNumPlayingVoices(MProcessor->getNumPlayingVoices());
+      voices->setNumReleasedVoices(MProcessor->getNumReleasedVoices());
+      voices->do_widget_redraw(voices);
     }
-    voices->setNumPlayingVoices(MProcessor->getNumPlayingVoices());
-    voices->setNumReleasedVoices(MProcessor->getNumReleasedVoices());
-    voices->do_widget_redraw(voices);
-  }  
+
+  #endif
+
 };
 
-#endif
+//----------------------------------------------------------------------
 
 #undef MAX_VOICES
 #undef EDITOR_WIDTH
@@ -268,8 +272,6 @@ public:
   #include "plugin/sat_entry.h"
   SAT_PLUGIN_ENTRY(sa_mael_descriptor,sa_mael_plugin)
 #endif
-
-#undef MAX_VOICES
 
 //----------------------------------------------------------------------
 #endif

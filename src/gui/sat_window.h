@@ -131,12 +131,16 @@ public:
 //------------------------------
 
   bool setupOverlay() override {
+    SAT_TRACE;
     SAT_RootWidget* root = getRootWidget();
     if (root) {
       MOverlayWidget = new SAT_OverlayWidget();
       root->appendChild(MOverlayWidget);
+      SAT_TRACE;
+      return  true;
     }
-    return true;
+    SAT_TRACE;
+    return false;
   }
 
 //------------------------------

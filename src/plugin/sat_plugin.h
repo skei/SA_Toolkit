@@ -510,16 +510,15 @@ public: // editor
     #ifdef SAT_EDITOR_EMBEDDED
 
       virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) {
-        SAT_TRACE;
         //return new SAT_Window(AWidth,AHeight,AListener);
         MWindow = new SAT_Window(AWidth,AHeight,AListener);
+        SAT_Assert(MWindow);
         return MWindow;
       }
 
       // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.destroy()
 
       virtual void deleteWindow(SAT_Window* AWindow) {
-        SAT_TRACE;
         SAT_Assert( MWindow == AWindow );
         //delete AWindow;
         delete MWindow;
@@ -536,7 +535,9 @@ public: // editor
     // override this to create your own editor
 
     virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
-      return new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
+      SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
+      SAT_Assert(editor);
+      return editor;
     }
 
     //----------
@@ -553,12 +554,11 @@ public: // editor
     // called when the editor (and its window, if embedded) has been created..
 
     virtual bool setupEditor(SAT_Editor* AEditor) {
-      // //SAT_TRACE;
-      // SAT_Window* window = AEditor->getWindow();
-      // // root
-      // SAT_RootWidget* root = new SAT_RootWidget( window, SAT_Rect() );
-      // window->setRootWidget(root);
-      // // default editor
+      //SAT_TRACE;
+      SAT_Window* window = AEditor->getWindow();
+      SAT_RootWidget* root = new SAT_RootWidget(window);
+      window->setRootWidget(root);
+      // default editor
       // for (uint32_t i=0; i<getNumParameters(); i++) {
       //   double x = 10;
       //   double y = (10 + (i * 35));
@@ -577,7 +577,7 @@ public: // editor
     // after setupEditor()
 
     virtual bool setupOverlay(SAT_Editor* AEditor) {
-      SAT_TRACE;
+      //SAT_TRACE;
       return false;
     }
 
@@ -1021,6 +1021,7 @@ public: // clap extensions
   bool gui_create(const char *api, bool is_floating) override {
     //SAT_PRINT("api %s floating %i\n",api,is_floating);
     // MIsEditorClosing = false;
+    //SAT_TRACE;
     if (MEditor) {
       if (MEditor->create(api,is_floating)) {
         if (setupEditor(MEditor)) {

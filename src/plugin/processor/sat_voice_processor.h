@@ -12,19 +12,21 @@
 
 //----------
 
+// TODO:
+// find number of cpu cores..
+// (/base/system/sat_cpu.h)
+
 #define SAT_VOICE_PROCESSOR_NUM_THREADS 12
 
 //typedef SAT_Queue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 //typedef SAT_AtomicQueue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 typedef moodycamel::ReaderWriterQueue<SAT_Note> SAT_NoteQueue;
 
-
 //----------------------------------------------------------------------
 //
 //
 //
 //----------------------------------------------------------------------
-
 
 template <class VOICE, int COUNT>
 class SAT_VoiceProcessor
@@ -37,8 +39,10 @@ protected:
 
   // __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   SAT_Voice<VOICE>              MVoices[COUNT]          = {};
+
   // __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
   float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE] = {0};
+  
   SAT_VoiceContext              MVoiceContext           = {};
   SAT_NoteQueue                 MNoteEndQueue;
 
@@ -124,17 +128,20 @@ public:
       //if (MClapHost) {
       
         // check if our plugin supports the thread pool extension?
+
         SAT_ClapPlugin* plugin = (SAT_ClapPlugin*)APlugin->plugin_data;
         SAT_Assert(plugin);
 
         // does the plugin support the clap thread pool extension
         // todo: if plugin->MSupportedExtensions.hasItem(CLAP_EXT_THREAD_POOL)
+
         if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
           SAT_PRINT("clap threadpool\n");
           MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
         }
 
         // if not, setup our own threadpool
+
         if (!MClapThreadPool) {
           SAT_PRINT("sat threadpool\n");
           MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
@@ -152,8 +159,8 @@ public:
   void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) {
     MVoiceContext.process_context   = nullptr; //
     MVoiceContext.sample_rate       = sample_rate;
-//    MVoiceContext.min_frames_count  = min_frames_count;
-//    MVoiceContext.max_frames_count  = max_frames_count;
+    // MVoiceContext.min_frames_count  = min_frames_count;
+    // MVoiceContext.max_frames_count  = max_frames_count;
     MVoiceContext.voice_buffer      = MVoiceBuffer;
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].init(i,&MVoiceContext);
@@ -166,11 +173,13 @@ public:
 //------------------------------
 
   bool isTargeted(uint32_t index, int32_t noteid, int32_t port, int32_t channel, int32_t key) {
-    //SAT_Print("index %i noteid %i port %i channel %i key %i = %i,%i,%i,%i",index,noteid,port,channel,key, MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key);
     if ((noteid  != -1) && (MVoices[index].note.noteid  != noteid))   return false;
     if ((port    != -1) && (MVoices[index].note.port    != port))     return false;
     if ((channel != -1) && (MVoices[index].note.channel != channel))  return false;
     if ((key     != -1) && (MVoices[index].note.key     != key))      return false;
+    //SAT_Print( "index %i noteid %i port %i channel %i key %i == %i,%i,%i,%i",
+    //  index, noteid, port, channel, key,
+    //  MVoices[index].note.noteid, MVoices[index].note.port, MVoices[index].note.channel, MVoices[index].note.key );
     return true;
   }
 
@@ -260,6 +269,7 @@ public:
   /*
     similar to block processor..
     events and timing will be handled individually for each voice
+    (note events split into individual voice queues, before processing)
   */
 
   void process(SAT_ProcessContext* AContext) override {
@@ -289,16 +299,22 @@ public:
   
   //----------
 
-  // assumes audio outp 0 = stereo floats
+  // assumes floats, voices = mono, and output = stereo
 
   void mixActiveVoices(float** AOutput, uint32_t ALength) {
+
     //float** output = MVoiceContext.process_context->process->audio_outputs[0].data32;// voice_buffer;
     //uint32_t blocksize = MVoiceContext.process_context->process->frames_count;// voice_length;
+
     for (uint32_t i=0; i<MNumActiveVoices; i++) {
       uint32_t voice = MActiveVoices[i];
+
+      // calc voice buffer offset
       float* buffer = MVoiceBuffer;
       uint32_t index = MVoices[voice].index;
       buffer += (index * SAT_PLUGIN_MAX_BLOCK_SIZE);
+
+      // and copy it to the output buffer
       SAT_AddMonoToStereoBuffer(AOutput,buffer,ALength);
     }
   }
@@ -319,7 +335,7 @@ public:
   void noteOnEvent(const clap_event_note_t* event) override {
     //SAT_PRINT("note on\n");
     //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
-    int32_t voice = findFreeVoice(true/*SAT_VOICE_PROCESSOR_STEAL_VOICES*/);
+    int32_t voice = findFreeVoice(true); // SAT_VOICE_PROCESSOR_STEAL_VOICES
     if (voice >= 0) {
       MVoices[voice].state        = SAT_VOICE_WAITING;
       MVoices[voice].note.port    = event->port_index;
@@ -332,6 +348,8 @@ public:
       MVoices[voice].events.enqueue(ve);
     }
   }
+
+  //----------
 
   void noteOffEvent(const clap_event_note_t* event) override {
     //SAT_PRINT("note off\n");
@@ -347,6 +365,8 @@ public:
     }
   }
 
+  //----------
+
   void noteChokeEvent(const clap_event_note_t* event) override {
     //SAT_PRINT("note choke\n");
     //SAT_Print("note_id %i pck %i,%i,%i\n",event->note_id,event->port_index,event->channel,event->key);
@@ -361,6 +381,8 @@ public:
     }
   }
 
+  //----------
+
   void noteExpressionEvent(const clap_event_note_expression_t* event) override {
     //SAT_PRINT("note expression\n");
     //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
@@ -374,6 +396,8 @@ public:
       }
     }
   }
+
+  //----------
 
   // parameters need to be sent to all voices, not just the currently active ones..
 
@@ -392,6 +416,8 @@ public:
       //}
     }
   }
+
+  //----------
 
   // modulations need to be sent to all voices, not just the currently active ones..
   // or?
@@ -412,9 +438,13 @@ public:
     }
   }
 
+  //----------
+
   void transportEvent(const clap_event_transport_t* event) override {
     //SAT_PRINT("note on\n");
   }
+
+  //----------
 
   void midiEvent(const clap_event_midi_t* event) override {
     //SAT_PRINT("midi\n");
@@ -461,9 +491,13 @@ public:
     // #endif
   }
 
+  //----------
+
   void midiSysexEvent(const clap_event_midi_sysex_t* event) override {
     //SAT_PRINT("sysex\n");
   }
+
+  //----------
 
   void midi2Event(const clap_event_midi2_t* event) override {
     //SAT_PRINT("midi2\n");

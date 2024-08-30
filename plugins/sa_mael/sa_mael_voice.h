@@ -2,8 +2,6 @@
 #define sa_mael_voice_included
 //----------------------------------------------------------------------
 
-//#define VOICE_SCALE   0.1
-
 #include "base/util/sat_interpolation.h"
 #include "audio/filters/sat_svf_filter.h"
 #include "audio/synthesis/sat_morph_oscillator.h"
@@ -280,8 +278,17 @@ public:
 
   uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
     sat_sample_t* buffer = MContext->voice_buffer;
+
+    // caluclate offset of our voice
+    // (voices calculate into their own separate parts of a bigger buffer)
+
     buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     buffer += AOffset;
+
+    // process only playing and released voices
+    // other states doesn't make sound..
+    // (so there's a memset(0) at the else part of this if)
+
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
       for (uint32_t i=0; i<ALength; i++) {
 
@@ -377,10 +384,11 @@ public:
 
         sat_sample_t env = MEnvelope.process();
         out *= env;
-        *buffer++ = out;// * VOICE_SCALE;
+        *buffer++ = out;
 
         // tuning
         // shouldn't these be _before_ osc1/2 calculation?
+        // (or maybe we want 'ground zero' tuning for the first sample?)
 
         // osc1_oct = SAT_Trunc(osc1_oct);
         // osc1_semi = SAT_Trunc(osc1_semi);
@@ -403,14 +411,12 @@ public:
         //MPhaseAdd2 = 1.0 / SAT_HzToSamples(hz2,MSampleRate);
         //MPhase2 += MPhaseAdd2;
 
-      }
-    }
+      } // for samples
+    } // playing/released
     else {
       memset(buffer,0,ALength * sizeof(sat_sample_t));
     }
-    if (MEnvelope.getStage() == SAT_ENVELOPE_FINISHED) {
-      return SAT_VOICE_FINISHED;
-    }
+    if (MEnvelope.getStage() == SAT_ENVELOPE_FINISHED) return SAT_VOICE_FINISHED;
     else return AState;
   }
 
@@ -422,12 +428,7 @@ public:
 
   //----------
 
-
 };
-
-//----------------------------------------------------------------------
-
-#undef VOICE_SCALE
 
 //----------------------------------------------------------------------
 #endif

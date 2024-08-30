@@ -2,6 +2,10 @@
 #define sa_tyr_included
 //----------------------------------------------------------------------
 
+// TODO: redo from scratch..
+
+#if 0
+
 #include "sat.h"
 #include "audio/sat_audio_math.h"
 #include "plugin/sat_parameters.h"
@@ -248,3 +252,5 @@ public:
 
 //----------------------------------------------------------------------
 #endif
+
+#endif // 0

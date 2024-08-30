@@ -357,8 +357,10 @@ public: // audio
 public:
 //------------------------------
 
-  // note: stereo only
+  // process slice of audio..
+  // consider this like a 'reference implementation', or even 'prototype' ..
   // advice: override this with your own..
+  // note: stereo only
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
     //MProcessContext = AContext;
@@ -382,6 +384,8 @@ public:
         }
       }
       // outputs only
+      // we set inputs to 0.0
+      // don't touch process->audio_inputs
       else {
         float* output0 = process->audio_outputs[0].data32[0] + AOffset;
         float* output1 = process->audio_outputs[0].data32[1] + AOffset;
@@ -396,6 +400,8 @@ public:
     }
     else {
       // inputs only
+      // we ignore/drop result after processing
+      // don't touch process->audio_outputs
       if (have_audio_inputs) {
         float* input0 = process->audio_inputs[0].data32[0] + AOffset;
         float* input1 = process->audio_inputs[0].data32[1] + AOffset;
@@ -406,6 +412,8 @@ public:
         }
       }
       // no audio ports (note effect?)
+      // give nullptr's, hope plugin is prepared for it..
+      // don't touch process->audio_inputs/putputs
       else {
         for (uint32_t i=0; i<ALength; i++) {
           processStereoSample(nullptr,nullptr);
@@ -424,13 +432,15 @@ public:
   }
 
 //------------------------------
-public:
+public: // process()
 //------------------------------
+
+  // default: do nothing
+  // (no audio/event passthrough)
+  // other, 'specialized' processors override this..
 
   virtual void process(SAT_ProcessContext* AContext) {
     MProcessContext = AContext;
-    // default: do nothing
-    // (no audio/event pssthrough)
     MProcessContext = nullptr;
   }
 
@@ -443,6 +453,11 @@ public: // gui dirty queues
     to avoid sending the same events multiple times (modulation)..
     we go through all parameters, 4 times per block (automation and modulation, in and out)
     or sub-block for interleaved/quantized..
+
+    todo: rethink, reconsider..
+    these aren't called from anywhere, i think?
+    // commented out.. from all the processor's process() function..
+    // todo: see if we still would benefit from something similar..
 
   */
 
