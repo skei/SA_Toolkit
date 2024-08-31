@@ -138,7 +138,7 @@ public:
       float scroll = can_scroll * delta;
       MContent->scrollChildren(0,scroll);
       //if (draw) MContent->parentRedraw();
-      if (draw) MContent->do_widget_redraw(MContent);
+      if (draw) MContent->do_Widget_redraw(MContent);
     }
     else if (ASender == MHorizontalScrollBar) {
       float delta = prev - pos;
@@ -147,7 +147,7 @@ public:
       float scroll = can_scroll * delta;
       MContent->scrollChildren(scroll,0);
       //if (draw) MContent->parentRedraw();
-      if (draw) MContent->do_widget_redraw(MContent);
+      if (draw) MContent->do_Widget_redraw(MContent);
     }
   }
 
@@ -232,13 +232,13 @@ public:
 public: // child to parent
 //------------------------------
 
-  // SAT_Rect on_widget_preAlign(SAT_Rect ARect) {
+  // SAT_Rect on_Widget_preAlign(SAT_Rect ARect) {
   //   return ARect;
   // }
 
   //----------
 
-  // SAT_Rect on_widget_postAlign(SAT_Rect ARect) {
+  // SAT_Rect on_Widget_postAlign(SAT_Rect ARect) {
   //   return ARect;
   // }
 
@@ -246,7 +246,7 @@ public: // child to parent
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void do_Widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     if (AWidget == MVerticalScrollBar) {
       //SAT_Print("vscroll\n");
       float visible = MVerticalScrollBar->getThumbSize();
@@ -263,15 +263,15 @@ public: // child to parent
     }
     else {
       //SAT_Print("%s\n",AWidget->getName());
-      SAT_VisualWidget::do_widget_update(AWidget,AIndex,AMode);
+      SAT_VisualWidget::do_Widget_update(AWidget,AIndex,AMode);
     }
   }
   
   //----------
 
-  // void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
+  // void do_Widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
   //   SAT_PRINT("widget %s mode %i\n",AWidget->getName(),AMode);
-  //   SAT_VisualWidget::do_widget_redraw(this,0,AMode);
+  //   SAT_VisualWidget::do_Widget_redraw(this,0,AMode);
   // }
 
   //----------
@@ -281,14 +281,14 @@ public: // child to parent
     we must realign too (to update content rect & scroll bars)
   */
 
-  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
+  void do_Widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
     //SAT_PRINT("widget %s mode %i\n",AWidget->getName(),AMode);
     if (AMode == SAT_WIDGET_REALIGN_PARENT) {
-      //SAT_VisualWidget::do_widget_realign(this,AMode);
-      SAT_VisualWidget::do_widget_realign(this,SAT_WIDGET_REALIGN_SELF); // self.. child might have changed size, but scrollbox hasn't
+      //SAT_VisualWidget::do_Widget_realign(this,AMode);
+      SAT_VisualWidget::do_Widget_realign(this,SAT_WIDGET_REALIGN_SELF); // self.. child might have changed size, but scrollbox hasn't
     }
     else {
-      SAT_VisualWidget::do_widget_realign(AWidget,AMode);
+      SAT_VisualWidget::do_Widget_realign(AWidget,AMode);
     }
   }
     

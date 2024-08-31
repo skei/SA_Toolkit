@@ -106,7 +106,7 @@ public: // host -> gui
       SAT_Parameter* parameter = AParameters->getItem(item.param_id);
       if (AEditor) AEditor->updateParameterFromHost(parameter,item.value);
     }
-    SAT_GLOBAL.ANALYTICS.set_ParamFromHostToGui(count);
+    SAT_GLOBAL.ANALYTICS.report_ParamFromHostToGui_count(count);
   }
 
   //----------
@@ -141,7 +141,7 @@ public: // host -> gui
       SAT_Parameter* parameter = AParameters->getItem(item.param_id);
       if (AEditor) AEditor->updateModulationFromHost(parameter,item.value);
     }
-    SAT_GLOBAL.ANALYTICS.set_ModFromHostToGui(count);
+    SAT_GLOBAL.ANALYTICS.report_ModFromHostToGui_count(count);
   }
 
   #endif // no gui
@@ -156,7 +156,7 @@ public: // gui -> host
   //   SAT_Plugin.on_EditorListener_update
   //   (from SAT_EmbeddedEditor.on_windowListener_update)
   //        (SAT_WidgetWindow.on_widgetListener_update)
-  //        (SAT_RootWidget.do_widget_update)
+  //        (SAT_RootWidget.do_Widget_update)
 
   void queueParamFromGuiToHost(uint32_t AParamId, sat_param_t AValue) {
     SAT_PluginQueueItem item;
@@ -228,7 +228,7 @@ public: // gui -> host
         out_events->try_push(out_events,header);
       }
     } // while
-    SAT_GLOBAL.ANALYTICS.set_ParamFromGuiToHost(count);
+    SAT_GLOBAL.ANALYTICS.report_ParamFromGuiToHost_count(count);
   }
 
   #endif // no gui
@@ -243,7 +243,7 @@ public: // gui -> audio
   //   SAT_Plugin.on_EditorListener_update
   //   (from SAT_EmbeddedEditor.on_windowListener_update)
   //        (SAT_WidgetWindow.on_widgetListener_update)
-  //        (SAT_RootWindow.do_widget_update)
+  //        (SAT_RootWindow.do_Widget_update)
 
   void queueParamFromGuiToAudio(uint32_t AParamId, sat_param_t AValue) {
     SAT_PluginQueueItem item;
@@ -282,7 +282,7 @@ public: // gui -> audio
       event.value           = item.value;
       AProcessor->processParamValueEvent(&event);
     }
-    SAT_GLOBAL.ANALYTICS.set_ParamFromGuiToAudio(count);
+    SAT_GLOBAL.ANALYTICS.report_ParamFromGuiToAudio_count(count);
   }
 
   #endif // no gui
@@ -336,7 +336,7 @@ public: // audio -> host
       const clap_event_header_t* header = (const clap_event_header_t*)&event;
       out_events->try_push(out_events,header);
     }
-    //SAT_GLOBAL.ANALYTICS.set_NoteEndFromAudioToHost(count);
+    SAT_GLOBAL.ANALYTICS.report_NoteEndFromAudioToHost_count(count);
 
   }
 

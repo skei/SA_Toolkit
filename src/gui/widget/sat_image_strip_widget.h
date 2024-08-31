@@ -162,7 +162,7 @@ public:
 public: // parent to child
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     //fillBackground(AContext);
     //paintChildWidgets(AContext);
     drawTile(AContext);
@@ -171,21 +171,21 @@ public: // parent to child
 
   //----------
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_open(SAT_WidgetOwner* AOwner) override {
     //MImageValid = false;
     //invalidateImage();
-    SAT_DragValueWidget::on_widget_open(AOwner);
+    SAT_DragValueWidget::on_Widget_open(AOwner);
   }
 
   //----------
 
-  void on_widget_close(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_close(SAT_WidgetOwner* AOwner) override {
     if (MImageValid) {
       SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
       painter->deleteImage(MImage);
       MImageValid = false;
     }
-    SAT_DragValueWidget::on_widget_close(AOwner);
+    SAT_DragValueWidget::on_Widget_close(AOwner);
   }
 
 };
@@ -309,7 +309,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_paint(MIP_Painter* APainter, MIP_FRect ARect, uint32_t AMode) override {
+  void on_Widget_paint(MIP_Painter* APainter, MIP_FRect ARect, uint32_t AMode) override {
     fillBackground(APainter,ARect,AMode);
     drawTile(APainter);
     drawBorder(APainter,ARect,AMode);

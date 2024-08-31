@@ -190,15 +190,15 @@ public:
 public: // on_widget
 //------------------------------
 
-  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
-  //   do_widget_want_timer(this);
+  // void on_Widget_open(SAT_WidgetOwner* AOwner) override {
+  //   do_Widget_want_timer(this);
   // }
 
-  // void on_widget_close(SAT_WidgetOwner* AOwner) override {
-  //   do_widget_want_timer(this,false);
+  // void on_Widget_close(SAT_WidgetOwner* AOwner) override {
+  //   do_Widget_want_timer(this,false);
   // }
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     //SAT_TRACE;
     fillBackground(AContext);
     drawSliderBar(AContext);
@@ -211,7 +211,7 @@ public: // on_widget
     drawBorder(AContext);
   }
 
-  // void on_widget_timer(double ADelta) {
+  // void on_Widget_timer(double ADelta) {
   //   SAT_PRINT("delta %f\n",ADelta);
   // }
 

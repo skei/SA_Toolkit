@@ -321,39 +321,39 @@ public:
   virtual ~SAT_BaseWidget() {}
 public:
   // todo: on_Widget_
-  virtual void          on_widget_open(SAT_WidgetOwner* AOwner) {}
-  virtual void          on_widget_close(SAT_WidgetOwner* AOwner) {}
-  virtual void          on_widget_move(int32_t AXpos, int32_t AYpos) {}
-  virtual void          on_widget_resize(uint32_t AWidth, uint32_t AHeight) {}
-  virtual SAT_Rect      on_widget_preAlign(SAT_Rect ARect) { return ARect; }
-  virtual SAT_Rect      on_widget_postAlign(SAT_Rect ARect) { return ARect; }
-  virtual void          on_widget_realign() {}
-  virtual void          on_widget_paint(SAT_PaintContext* AContext) {}
-  virtual void          on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_widget_mouse_dblclick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_widget_key_release(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void          on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void          on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {}
-  virtual void          on_widget_timer(double ADelta) {}
-  virtual void          on_widget_hint(SAT_Widget* AWidget, const char* AHint) {}
+  virtual void          on_Widget_open(SAT_WidgetOwner* AOwner) {}
+  virtual void          on_Widget_close(SAT_WidgetOwner* AOwner) {}
+  virtual void          on_Widget_move(int32_t AXpos, int32_t AYpos) {}
+  virtual void          on_Widget_resize(uint32_t AWidth, uint32_t AHeight) {}
+  virtual SAT_Rect      on_Widget_preAlign(SAT_Rect ARect) { return ARect; }
+  virtual SAT_Rect      on_Widget_postAlign(SAT_Rect ARect) { return ARect; }
+  virtual void          on_Widget_realign() {}
+  virtual void          on_Widget_paint(SAT_PaintContext* AContext) {}
+  virtual void          on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Widget_mouse_dblclick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Widget_key_release(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void          on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void          on_Widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {}
+  virtual void          on_Widget_timer(double ADelta) {}
+  virtual void          on_Widget_hint(SAT_Widget* AWidget, const char* AHint) {}
 public:
-  virtual void          do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
-  virtual void          do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) {}
-  virtual void          do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) {}
-  virtual void          do_widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) {}
-  virtual void          do_widget_mouse_capture(SAT_Widget* AWidget) {}
-  virtual void          do_widget_key_capture(SAT_Widget* AWidget) {}
-  virtual void          do_widget_modal(SAT_Widget* AWidget) {}
-  virtual void          do_widget_set_cursor(SAT_Widget* AWidget, int32_t ACursor) {}
-  virtual void          do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) {}
-  virtual void          do_widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
-  virtual void          do_widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
-  virtual void          do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
-  virtual void          do_widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) {}
+  virtual void          do_Widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) {}
+  virtual void          do_Widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) {}
+  virtual void          do_Widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) {}
+  virtual void          do_Widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) {}
+  virtual void          do_Widget_mouse_capture(SAT_Widget* AWidget) {}
+  virtual void          do_Widget_key_capture(SAT_Widget* AWidget) {}
+  virtual void          do_Widget_modal(SAT_Widget* AWidget) {}
+  virtual void          do_Widget_set_cursor(SAT_Widget* AWidget, int32_t ACursor) {}
+  virtual void          do_Widget_set_hint(SAT_Widget* AWidget, const char* AHint) {}
+  virtual void          do_Widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
+  virtual void          do_Widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
+  virtual void          do_Widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
+  virtual void          do_Widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) {}
 };
 
 //----------------------------------------------------------------------
@@ -408,21 +408,21 @@ public:
   virtual void          stopEventThread() = 0;
 public:
   // todo: on_Window_
-  virtual void          on_window_show() {}
-  virtual void          on_window_hide() {}
-  virtual void          on_window_move(int32_t AXpos, int32_t AYpos) {}
-  virtual void          on_window_resize(uint32_t AWidth, uint32_t AHeight) {}
-  virtual void          on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) {}
-//virtual void          on_window_realign() {}
-  virtual void          on_window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_window_mouseRelease(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_window_mouseMove(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_window_keyPress(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_window_keyRelease(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
-  virtual void          on_window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void          on_window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
-  virtual void          on_window_clientMessage(uint32_t AData) {}  
-  virtual void          on_window_timer(double ADelta) {}
+  virtual void          on_Window_show() {}
+  virtual void          on_Window_hide() {}
+  virtual void          on_Window_move(int32_t AXpos, int32_t AYpos) {}
+  virtual void          on_Window_resize(uint32_t AWidth, uint32_t AHeight) {}
+  virtual void          on_Window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) {}
+//virtual void          on_Window_realign() {}
+  virtual void          on_Window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Window_mouseRelease(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Window_mouseMove(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Window_keyPress(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Window_keyRelease(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {}
+  virtual void          on_Window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void          on_Window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime) {}
+  virtual void          on_Window_clientMessage(uint32_t AData) {}  
+  virtual void          on_Window_timer(double ADelta) {}
 };
 
 //----------------------------------------------------------------------

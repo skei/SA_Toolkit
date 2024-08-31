@@ -105,7 +105,7 @@ public:
 public: // on_widget
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     //SAT_TRACE;
     fillBackground(AContext);
     drawText(AContext);

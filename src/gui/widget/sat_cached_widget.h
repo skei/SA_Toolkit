@@ -41,29 +41,29 @@ public:
 public:
 //------------------------------
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_open(SAT_WidgetOwner* AOwner) override {
     SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
     MRenderBuffer = painter->createRenderBuffer(256,256);
-    SAT_VisualWidget::on_widget_open(AOwner);
+    SAT_VisualWidget::on_Widget_open(AOwner);
   }
 
   //----------
 
-  void on_widget_close(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_close(SAT_WidgetOwner* AOwner) override {
     SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
     painter->deleteRenderBuffer(MRenderBuffer);
-    SAT_VisualWidget::on_widget_close(AOwner);
+    SAT_VisualWidget::on_Widget_close(AOwner);
   }
 
   //----------
 
-  void on_widget_resize(uint32_t AWidth, uint32_t AHeight) override {
+  void on_Widget_resize(uint32_t AWidth, uint32_t AHeight) override {
     // resize/recreate render buffer
   }
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     // a. update cached buffer
     // b. copy buffer to window/screen
   }

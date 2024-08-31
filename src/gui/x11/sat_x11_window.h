@@ -263,7 +263,7 @@ public:
     #ifdef SAT_X11_WAIT_FOR_MAPNOTIFY
       waitForMapNotify();
       MIsMapped = true;
-      on_window_show();
+      on_Window_show();
     #endif
     if (MIsEmbedded) startEventThread();
   }
@@ -272,7 +272,7 @@ public:
 
   void hide() final {
     //SAT_TRACE;
-    on_window_hide(); // check if not called multiple times!
+    on_Window_hide(); // check if not called multiple times!
     if (MIsEmbedded) stopEventThread();
     xcb_unmap_window(MConnection,MWindow);
     xcb_flush(MConnection);
@@ -731,14 +731,14 @@ private:
       case XCB_MAP_NOTIFY: {
         //SAT_PRINT("XCB_MAP_NOTIFY\n");
         MIsMapped = true;
-        on_window_show();
+        on_Window_show();
         break;
       }
 
       case XCB_UNMAP_NOTIFY: {
         //SAT_PRINT("XCB_UNMAP_NOTIFY\n");
         MIsMapped = false;
-        on_window_hide();
+        on_Window_hide();
         break;
       }
 
@@ -763,13 +763,13 @@ private:
         //SAT_PRINT("XCB_CONFIGURE_NOTIFY x %i y %i w %i h %i (MWindowWidth/Height %i,%i)\n",x,y,w,h,MWindowWidth,MWindowHeight);
 
         if ((x != MWindowXpos) || (y != MWindowYpos)) {
-          on_window_move(x,y);
+          on_Window_move(x,y);
           MWindowXpos = x;
           MWindowYpos = y;
         }
 
         if ((w != MWindowWidth) || (h != MWindowHeight)) {
-          on_window_resize(w,h);
+          on_Window_resize(w,h);
           MWindowWidth  = w;
           MWindowHeight = h;
         }
@@ -792,7 +792,7 @@ private:
           //  RECT.combine( SAT_Rect( ex2->x, ex2->y, ex2->width, ex2->height ) );
           //}
         //MIsPainting = true;
-        on_window_paint(x,y,w,h);
+        on_Window_paint(x,y,w,h);
         xcb_flush(MConnection);
         //MIsPainting = false;
         MIsExposed = true;
@@ -811,7 +811,7 @@ private:
         //SAT_PRINT("k %i s %i ts %i ks %i\n",k,s,ts,ks);
 
         s = remapState(s);
-        on_window_keyPress(ks,0/*c*/,s,ts);
+        on_Window_keyPress(ks,0/*c*/,s,ts);
        break;
       }
 
@@ -824,8 +824,8 @@ private:
         //char c = 0;
         uint32_t ks = remapKey(k,s);//,&c);
         s = remapState(s);
-        //on_window_keyRelease(k,ks,s,ts);
-        on_window_keyRelease(ks,0/*c*/,s,ts);
+        //on_Window_keyRelease(k,ks,s,ts);
+        on_Window_keyRelease(ks,0/*c*/,s,ts);
         break;
       }
 
@@ -839,7 +839,7 @@ private:
         uint32_t ts = button_press->time;
         b = remapButton(b,s);
         s = remapState(s);
-        on_window_mouseClick(x,y,b,s,ts);
+        on_Window_mouseClick(x,y,b,s,ts);
         break;
       }
 
@@ -853,7 +853,7 @@ private:
         uint32_t ts = button_release->time;
         b = remapButton(b,s);
         s = remapState(s);
-        on_window_mouseRelease(x,y,b,s,ts);
+        on_Window_mouseRelease(x,y,b,s,ts);
         break;
       }
 
@@ -866,7 +866,7 @@ private:
         int32_t   y = motion_notify->event_y;
         uint32_t ts = motion_notify->time;
         s = remapState(s);
-        on_window_mouseMove(x,y,s,ts);
+        on_Window_mouseMove(x,y,s,ts);
         break;
       }
 
@@ -878,7 +878,7 @@ private:
         int32_t   x = enter_notify->event_x;
         int32_t   y = enter_notify->event_y;
         uint32_t ts = enter_notify->time;
-        on_window_mouseEnter(x,y,ts);
+        on_Window_mouseEnter(x,y,ts);
         break;
       }
 
@@ -890,7 +890,7 @@ private:
         int32_t   x = leave_notify->event_x;
         int32_t   y = leave_notify->event_y;
         uint32_t ts = leave_notify->time;
-        on_window_mouseLeave(x,y,ts);
+        on_Window_mouseLeave(x,y,ts);
         break;
       }
 
@@ -909,7 +909,7 @@ private:
           double time = SAT_GetTime();
           double delta = time - MPrevTime;
           MPrevTime = time;
-          on_window_timer(delta);
+          on_Window_timer(delta);
           ::free(AEvent);
           return true;
         }
@@ -921,7 +921,7 @@ private:
             return false;
           }
         }
-        on_window_clientMessage(data);
+        on_Window_clientMessage(data);
         break;
       } // client message
 

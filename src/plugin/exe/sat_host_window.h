@@ -50,12 +50,12 @@ public:
     embedded windows don't receive a window resized event,
     so we call set_size manually..
     we could try to get the editor from the plugin (only if we're using an embedded editor),
-    then the window from that, and finally call on_window_resize
+    then the window from that, and finally call on_Window_resize
 
     todo: proportional scaling..
   */
 
-  void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
+  void on_Window_resize(uint32_t AWidth, uint32_t AHeight) override {
     if (MClapGui) MClapGui->set_size(MClapPlugin,AWidth,AHeight);
   }
 

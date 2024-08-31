@@ -95,7 +95,7 @@ public:
       MHeader->selectCell(AIndex,0);
       MPages->selectPage(AIndex);
       // MPages->realignChildren();
-      // do_widget_redraw(MPages);
+      // do_Widget_redraw(MPages);
     }
   }
 
@@ -103,15 +103,15 @@ public:
 public: // child to parent
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void do_Widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     if (AWidget == MHeader) {
       int32_t sel = MHeader->getClickedColumn();
       //SAT_PRINT("sel %i\n",sel);
       MPages->selectPage(sel);
       MPages->realignChildren();
-      do_widget_redraw(MPages);
+      do_Widget_redraw(MPages);
     }
-    SAT_Widget::do_widget_update(AWidget,AIndex,AMode);
+    SAT_Widget::do_Widget_update(AWidget,AIndex,AMode);
   }
 
 };

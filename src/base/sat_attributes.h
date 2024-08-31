@@ -24,6 +24,9 @@
 // attributes
 //------------------------------
 
+// ouch, ugly..
+// __ is forbidden..
+
 #define __SAT_ALIAS(name)         __attribute__ ((alias (name)))
 #define __SAT_ALIGNED(x)          __attribute__ ((aligned (x)))
 #define __SAT_ALIGNEDMAX          __attribute__ ((aligned))

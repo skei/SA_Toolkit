@@ -323,12 +323,12 @@ public: // owner window
 //------------------------------
 
   // called from
-  //   SAT_WidgetWindow.on_window_show()
+  //   SAT_WidgetWindow.on_Window_show()
   // (after show, scale, size, realign)
 
   virtual void ownerWindowOpened(SAT_WidgetOwner* AOwner) {
     MOwner = AOwner;
-    on_widget_open(AOwner);
+    on_Widget_open(AOwner);
     for (uint32_t i=0; i<MChildren.size(); i++) {
       SAT_Widget* widget = MChildren[i];
       widget->ownerWindowOpened(AOwner);
@@ -338,7 +338,7 @@ public: // owner window
   //----------
 
   // called from
-  //   SAT_WidgetWindow.on_window_hide()
+  //   SAT_WidgetWindow.on_Window_hide()
   // (before hiding window)
 
   virtual void ownerWindowClose(SAT_WidgetOwner* AOwner) {
@@ -346,7 +346,7 @@ public: // owner window
       SAT_Widget* widget = MChildren[i];
       widget->ownerWindowClose(AOwner);
     }
-    on_widget_close(AOwner);
+    on_Widget_close(AOwner);
   }
 
   //----------
@@ -456,7 +456,7 @@ public:
           SAT_Rect widgetrect = widget->getRect();
           widgetrect.overlap(mrect);
           if (widgetrect.isNotEmpty()) {
-            widget->on_widget_paint(AContext);
+            widget->on_Widget_paint(AContext);
           }
         }
       }
@@ -523,7 +523,7 @@ public:
         child_rect.add(manual);
 
         //child_rect.add(child->MManuallyMoved);
-        child_rect = child->on_widget_preAlign(child_rect);
+        child_rect = child->on_Widget_preAlign(child_rect);
         child_rect.add(child->MManuallyMoved);
 
         // anchor
@@ -613,7 +613,7 @@ public:
         outer_border.scale(scale);
         child_rect.shrink(outer_border);
 
-        child_rect = child->on_widget_postAlign(child_rect);
+        child_rect = child->on_Widget_postAlign(child_rect);
         
         child->setRect(child_rect);
 
@@ -654,11 +654,11 @@ public:
         tween.sub(prev);
         MManualTween.add(tween);
         //if (MParent) {
-        //  MParent->do_widget_realign(MParent,SAT_WIDGET_REALIGN_SELF);
-        //  MParent->do_widget_redraw(MParent,0,SAT_WIDGET_REDRAW_SELF);
+        //  MParent->do_Widget_realign(MParent,SAT_WIDGET_REALIGN_SELF);
+        //  MParent->do_Widget_redraw(MParent,0,SAT_WIDGET_REDRAW_SELF);
         //}
-        do_widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
-        do_widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
+        do_Widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
+        do_Widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
         break;
     }
   }
@@ -670,7 +670,7 @@ public:
   // called from:
   //   SAT_Widget.ownerWindowOpened
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_open(SAT_WidgetOwner* AOwner) override {
   }
 
   //----------
@@ -678,7 +678,7 @@ public:
   // called from:
   //   SAT_Widget.ownerWindowClose
 
-  void on_widget_close(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_close(SAT_WidgetOwner* AOwner) override {
   }
 
   //----------
@@ -686,24 +686,24 @@ public:
   // called from:
   // nowhere yet.. todo: during realigning? runtime movement?
 
-  void on_widget_move(int32_t AXpos, int32_t AYpos) override {
+  void on_Widget_move(int32_t AXpos, int32_t AYpos) override {
   }
   
   //----------
 
   // called from:
-  //   SAT_WidgetWindow.on_window_resize
+  //   SAT_WidgetWindow.on_Window_resize
 
-  void on_widget_resize(uint32_t AWidth, uint32_t AHeight) override {
+  void on_Widget_resize(uint32_t AWidth, uint32_t AHeight) override {
   }
   
   //----------
 
   // called from:
   //   SAT_Widget.paintChildren
-  //   SAT_WidgetWindow.on_window_paint  
+  //   SAT_WidgetWindow.on_Window_paint  
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     if (State.visible) {
       paintChildren(AContext);
     }
@@ -715,118 +715,118 @@ public:
   //   SAT_Widget.realignChildren
   //   todo: before showing window
 
-  void on_widget_realign() override {
+  void on_Widget_realign() override {
     realignChildren();
   }
   
   //----------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
   }
   
   //----------
 
-  void on_widget_mouse_dblclick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_dblclick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
   }
   
   //----------
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
   }
   
   //----------
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
   }
   
   //----------
 
-  void on_widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
   }
   
   //----------
 
-  void on_widget_key_release(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_key_release(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
   }
   
   //----------
 
-  void on_widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  void on_Widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     //if (isActive() && isVisible()) {
-      if (Options.autoCursor) do_widget_set_cursor(this,MCursor);
-      if (Options.autoHint) do_widget_set_hint(this,MHint);
+      if (Options.autoCursor) do_Widget_set_cursor(this,MCursor);
+      if (Options.autoHint) do_Widget_set_hint(this,MHint);
     //}
   }
   
   //----------
 
-  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  void on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     //if (isActive() && isVisible()) {
-      if (Options.autoCursor) do_widget_set_cursor(this,SAT_CURSOR_DEFAULT);
-      if (Options.autoHint) do_widget_set_hint(this,"");
+      if (Options.autoCursor) do_Widget_set_cursor(this,SAT_CURSOR_DEFAULT);
+      if (Options.autoHint) do_Widget_set_hint(this,"");
     //}
   }
 
   //----------
 
-  void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) override {
+  void on_Widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) override {
     handleTweening(AId,AType,ACount,AData);
   }
 
   //----------
 
-  void on_widget_timer(double ADelta) override {
+  void on_Widget_timer(double ADelta) override {
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
-    if (MParent) MParent->do_widget_update(AWidget,AIndex,AMode);
+  void do_Widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+    if (MParent) MParent->do_Widget_update(AWidget,AIndex,AMode);
   }
   
-  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
-    if (MParent) MParent->do_widget_redraw(AWidget,AIndex,AMode);
+  void do_Widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
+    if (MParent) MParent->do_Widget_redraw(AWidget,AIndex,AMode);
   }
   
-  void do_widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
-    if (MParent) MParent->do_widget_realign(AWidget,AMode);
+  void do_Widget_realign(SAT_Widget* AWidget, uint32_t AMode=SAT_WIDGET_REALIGN_SELF) override {
+    if (MParent) MParent->do_Widget_realign(AWidget,AMode);
   }
   
-  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
-    if (MParent) MParent->do_widget_notify(AWidget,AValue,APtr);
+  void do_Widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
+    if (MParent) MParent->do_Widget_notify(AWidget,AValue,APtr);
   }
   
-  void do_widget_mouse_capture(SAT_Widget* AWidget) override {
-    if (MParent) MParent->do_widget_mouse_capture(AWidget);
+  void do_Widget_mouse_capture(SAT_Widget* AWidget) override {
+    if (MParent) MParent->do_Widget_mouse_capture(AWidget);
   }
   
-  void do_widget_key_capture(SAT_Widget* AWidget) override {
-    if (MParent) MParent->do_widget_key_capture(AWidget);
+  void do_Widget_key_capture(SAT_Widget* AWidget) override {
+    if (MParent) MParent->do_Widget_key_capture(AWidget);
   }
   
-  void do_widget_modal(SAT_Widget* AWidget) override {
-    if (MParent) MParent->do_widget_modal(AWidget);
+  void do_Widget_modal(SAT_Widget* AWidget) override {
+    if (MParent) MParent->do_Widget_modal(AWidget);
   }
 
-  void do_widget_set_cursor(SAT_Widget* AWidget, int32_t ACursor) override {
-    if (MParent) MParent->do_widget_set_cursor(AWidget,ACursor);
+  void do_Widget_set_cursor(SAT_Widget* AWidget, int32_t ACursor) override {
+    if (MParent) MParent->do_Widget_set_cursor(AWidget,ACursor);
   }
   
-  void do_widget_set_hint(SAT_Widget* AWidget, const char* AHint) override {
-    if (MParent) MParent->do_widget_set_hint(AWidget,AHint);
+  void do_Widget_set_hint(SAT_Widget* AWidget, const char* AHint) override {
+    if (MParent) MParent->do_Widget_set_hint(AWidget,AHint);
   }
 
-  void do_widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) override {
-    if (MParent) MParent->do_widget_want_timer(AWidget,AWantTimer);
+  void do_Widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) override {
+    if (MParent) MParent->do_Widget_want_timer(AWidget,AWantTimer);
   }
 
-  void do_widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
-    if (MParent) MParent->do_widget_start_tween(AWidget,ATween);
+  void do_Widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) override {
+    if (MParent) MParent->do_Widget_start_tween(AWidget,ATween);
   }
 
-  void do_widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
+  void do_Widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) override {
     SAT_Rect base_rect = getBaseRect();
     double scale = getWindowScale();
     base_rect.w += (ADeltaX / scale);
@@ -850,13 +850,13 @@ public:
     setBaseRect(base_rect);
     SAT_Widget* parent = AWidget->getParent();
     if (parent) {
-      parent->on_widget_realign();
-      parent->do_widget_redraw(parent);
+      parent->on_Widget_realign();
+      parent->do_Widget_redraw(parent);
     }
   }
 
-  void do_widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
-    if (MParent) MParent->do_widget_set_overlay(AWidget,AColor);
+  void do_Widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
+    if (MParent) MParent->do_Widget_set_overlay(AWidget,AColor);
   }
   
 };

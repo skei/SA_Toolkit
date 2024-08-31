@@ -103,10 +103,10 @@ public:
     int32_t closest = findClosestIndex(AXpos,AYpos,true);
     if (closest != MClosestIndex) {
       MClosestIndex = closest;
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
     }
-    if (MClosestIndex != -1) do_widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
-    else do_widget_set_cursor(this,SAT_CURSOR_DEFAULT);
+    if (MClosestIndex != -1) do_Widget_set_cursor(this,SAT_CURSOR_ARROW_LEFT_RIGHT);
+    else do_Widget_set_cursor(this,SAT_CURSOR_DEFAULT);
   }
   
   void drawDualSliderBar(SAT_PaintContext* AContext) {
@@ -224,7 +224,7 @@ public:
   //----------
 
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     //SAT_PRINT("MClosestValue: %i\n",MClosestValue);
     fillBackground(AContext);
     drawDualSliderBar(AContext);
@@ -239,7 +239,7 @@ public:
   
   //----------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       if (MClosestIndex >= 0) {
         MDraggingIndex = MClosestIndex;
@@ -250,7 +250,7 @@ public:
   
   //----------
   
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       endDrag();
       MDraggingIndex = -1;
@@ -260,45 +260,45 @@ public:
   
   //----------
   
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     if (isDragging()) {
       double value = calcDragValue(AXpos,AYpos,AState);
       setValue(value,MDraggingIndex);
-      do_widget_update(this,MDraggingIndex);
-      do_widget_redraw(this);
+      do_Widget_update(this,MDraggingIndex);
+      do_Widget_redraw(this);
     }
     else {
       checkClosest(AXpos,AYpos);
       //int32_t closest = findClosestIndex(AXpos,AYpos,true);
       //if (closest != MClosestIndex) {
       //  MClosestIndex = closest;
-      //  do_widget_redraw(this);
+      //  do_Widget_redraw(this);
       //}
     }
-    //SAT_SliderWidget::on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+    //SAT_SliderWidget::on_Widget_mouse_move(AXpos,AYpos,AState,ATime);
   }
 
   //----------
 
-  void on_widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-    SAT_SliderWidget::on_widget_enter(AFrom,AXpos,AYpos,ATime);
+  void on_Widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+    SAT_SliderWidget::on_Widget_enter(AFrom,AXpos,AYpos,ATime);
     checkClosest(AXpos,AYpos);
     //int32_t closest = findClosestIndex(AXpos,AYpos,true);
     ////SAT_PRINT("closest: %i\n",closest);
     //if (closest != MClosestIndex) {
     //  MClosestIndex = closest;
-    //  do_widget_redraw(this);
+    //  do_Widget_redraw(this);
     //}
   }
   
   //----------
   
-  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-    SAT_SliderWidget::on_widget_leave(ATo,AXpos,AYpos,ATime);
+  void on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+    SAT_SliderWidget::on_Widget_leave(ATo,AXpos,AYpos,ATime);
     //SAT_PRINT("closest: -1\n");
     if (MClosestIndex != -1) {
       MClosestIndex = -1;
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
     }
   }
   

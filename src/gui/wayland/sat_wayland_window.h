@@ -150,7 +150,7 @@ public:
     MRenderer->disableVSync();
 //    MPainter = new SAT_Painter(this);
 
-//    on_window_open();
+//    on_Window_open();
 
   }
 
@@ -211,13 +211,13 @@ public: // SAT_BaseWindow
     SAT_PRINT;
     //invalidate(0,0,getWidth(),getHeight());
     //wl_display_frame_callback();
-    on_window_open();
+    on_Window_open();
   }
 
   //----------
 
   void close() override {
-    on_window_close();
+    on_Window_close();
   }
 
   //----------
@@ -309,7 +309,7 @@ public: // SAT_BaseWindow
   void invalidate(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     //wl_surface_damage(MSurface,AXpos,AYpos,AWidth,AHeight);
     //wl_surface_commit(MSurface);
-    //on_window_paint(AXpos,AYpos,AWidth,AHeight);
+    //on_Window_paint(AXpos,AYpos,AWidth,AHeight);
   }
 
   //----------
@@ -330,7 +330,7 @@ private: // render frame
     //SAT_Print("ATime %i w %i h %i\n",ATime,w,h);
 
 //    MRenderer->beginRendering(0,0,w,h);
-    on_window_paint(0,0,w,h);
+    on_Window_paint(0,0,w,h);
     //MRenderer->disableVSync();
 //    MRenderer->endRendering();
 
@@ -513,14 +513,14 @@ private: // xdg_toplevel
     //setSize(width,height);
     //MWidth = width;
     //MHeight = height;
-    //on_window_open();
+    //on_Window_open();
     //renderFrame(0);
 
   }
 
   void sat_xdg_toplevel_close(struct xdg_toplevel *xdg_toplevel) {
     SAT_PRINT;
-    //on_window_close();
+    //on_Window_close();
   }
 
   void sat_xdg_toplevel_configure_bounds(struct xdg_toplevel *xdg_toplevel, int32_t width, int32_t height) {

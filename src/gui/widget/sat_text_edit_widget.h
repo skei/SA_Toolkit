@@ -74,9 +74,9 @@ private:
     MEditing = true;
     MCaretPos = strlen(MText);
     //do_widgetListener_update(this);
-    do_widget_key_capture(this);
-    do_widget_modal(this);
-    do_widget_redraw(this);
+    do_Widget_key_capture(this);
+    do_Widget_modal(this);
+    do_Widget_redraw(this);
   }
 
   //----------
@@ -85,18 +85,18 @@ private:
     SAT_TRACE;
     MEditing = false;
     //do_widgetListener_update(this);
-    do_widget_key_capture(nullptr);
-    do_widget_modal(nullptr);
-    do_widget_redraw(this);
+    do_Widget_key_capture(nullptr);
+    do_Widget_modal(nullptr);
+    do_Widget_redraw(this);
   }
 
 //------------------------------
 public:
 //------------------------------
 
-  //void on_widget_paint(SAT_Painter* APainter, SAT_DRect ARect, uint32_t AMode) override {
-  void on_widget_paint(SAT_PaintContext* AContext) override {
-//    SAT_Widget::on_widget_paint(AContext);
+  //void on_Widget_paint(SAT_Painter* APainter, SAT_DRect ARect, uint32_t AMode) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
+//    SAT_Widget::on_Widget_paint(AContext);
     SAT_Painter* painter = AContext->painter;
     SAT_Rect mrect = getRect();
     SAT_Rect r;
@@ -187,8 +187,8 @@ public:
 
   //----------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
-    //SAT_Widget::on_widget_mouseClick(AXpos,AYpos,AButton,AState);
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimestamp) override {
+    //SAT_Widget::on_Widget_mouseClick(AXpos,AYpos,AButton,AState);
     switch(AButton) {
       case SAT_BUTTON_LEFT:
         if (getRect().contains(AXpos,AYpos)) {
@@ -208,7 +208,7 @@ public:
 
   // AKey = key code, not ascii..
 
-  void on_widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {
+  void on_Widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) {
     SAT_PRINT("AKey %i AChar %i AState %i\n",AKey,AChar,AState);
     
     //SAT_DRect mrect = getRect();
@@ -225,42 +225,42 @@ public:
         break;
       case SAT_KEY_HOME:
         MCaretPos = 0;
-        do_widget_update(this);
-        do_widget_redraw(this);
+        do_Widget_update(this);
+        do_Widget_redraw(this);
         break;
       case SAT_KEY_END:
         len = strlen(MText);
         MCaretPos = len;
-        do_widget_update(this);
-        do_widget_redraw(this);
+        do_Widget_update(this);
+        do_Widget_redraw(this);
         break;
       case SAT_KEY_LEFT:
         MCaretPos -= 1;
         if (MCaretPos < 0) MCaretPos = 0;
-        do_widget_update(this);
-        do_widget_redraw(this);
+        do_Widget_update(this);
+        do_Widget_redraw(this);
         break;
       case SAT_KEY_RIGHT:
         len = strlen(MText);
         MCaretPos += 1;
         if (MCaretPos > len) MCaretPos = len;
-        do_widget_update(this);
-        do_widget_redraw(this);
+        do_Widget_update(this);
+        do_Widget_redraw(this);
         break;
       case SAT_KEY_DELETE:
         len = strlen(MText);
         if ((uint32_t)MCaretPos < strlen(MText)) {
           SAT_DeleteChar(MText,MCaretPos);
-          do_widget_update(this);
-          do_widget_redraw(this);
+          do_Widget_update(this);
+          do_Widget_redraw(this);
         }
         break;
       case SAT_KEY_BACKSPACE:
         if (MCaretPos > 0) {
           MCaretPos -= 1;
           SAT_DeleteChar(MText,MCaretPos);
-          do_widget_update(this);
-          do_widget_redraw(this);
+          do_Widget_update(this);
+          do_Widget_redraw(this);
         }
         break;
       default:
@@ -277,8 +277,8 @@ public:
           
           SAT_InsertChar(MText,MCaretPos,c);
           MCaretPos += 1;
-          do_widget_update(this);
-          do_widget_redraw(this);
+          do_Widget_update(this);
+          do_Widget_redraw(this);
         }
         break;
     } // switch

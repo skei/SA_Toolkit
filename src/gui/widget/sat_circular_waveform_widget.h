@@ -399,7 +399,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     fillBackground(AContext);
     drawAreas(AContext);
     drawMarkers(AContext);

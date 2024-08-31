@@ -177,24 +177,24 @@ public:
 
 public:
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
+  void do_Widget_update(SAT_Widget* AWidget, uint32_t AIndex, uint32_t AMode) override {
     double value = 0.0;
     SAT_Parameter* param = (SAT_Parameter*)AWidget->getParameter();
     if (AWidget == WGridWidth) {
       double value = WGridWidth->getValue();
       if (param) value = param->denormalize(value);
       WGrid->setNumColumns(value);
-      WGrid->do_widget_update(WGrid,0,0);
-      WGrid->do_widget_redraw(WGrid,0,0);
+      WGrid->do_Widget_update(WGrid,0,0);
+      WGrid->do_Widget_redraw(WGrid,0,0);
     }
     else if (AWidget == WGridHeight) {
       double value = WGridHeight->getValue();
       if (param) value = param->denormalize(value);
       WGrid->setNumRows(value);
-      WGrid->do_widget_update(WGrid,0,0);
-      WGrid->do_widget_redraw(WGrid,0,0);
+      WGrid->do_Widget_update(WGrid,0,0);
+      WGrid->do_Widget_redraw(WGrid,0,0);
     }
-    SAT_RootWidget::do_widget_update(AWidget,AIndex,AMode);
+    SAT_RootWidget::do_Widget_update(AWidget,AIndex,AMode);
   }
 
 };

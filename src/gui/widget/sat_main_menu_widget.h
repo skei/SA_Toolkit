@@ -87,7 +87,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_open(SAT_WidgetOwner* AOwner) override {
     SAT_Assert(AOwner);
     double scale = getWindowScale();
     SAT_Assert(scale > 0.0);
@@ -235,11 +235,11 @@ public:
     just before realignChildWidgets
   */
 
-  // -> on_widget_open()
+  // -> on_Widget_open()
   #if 0
 
   //void prepare(SAT_WidgetOwner* AOwner) override {
-  void on_widget_prepare() override {
+  void on_Widget_prepare() override {
     //SAT_WidgetOwner* AOwner = getOwner();
     SAT_Window* window = (SAT_Window*)getOwner();
     SAT_Widget* root = window->getRootWidget();

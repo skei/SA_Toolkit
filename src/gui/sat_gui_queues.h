@@ -51,7 +51,7 @@ public:
   //   SAT_Window.paint()
   //   SAT_Window.paintRoot()
   //
-  // call on_widget_realign for every widget in the realign queue
+  // call on_Widget_realign for every widget in the realign queue
   // (unless it has already been realigned this frame)
 
   uint32_t flushRealignWidgets(uint32_t AFrame) {
@@ -69,11 +69,13 @@ public:
         widget = MTempRealign[i];
         if (widget->MLastRealignedFrame != AFrame) {
           num_realigned += 1;
-          widget->on_widget_realign();
+          widget->on_Widget_realign();
           widget->MLastRealignedFrame = AFrame;
         }
       }
     }
+    SAT_GLOBAL.ANALYTICS.report_RealignQueue_num_queued(num_queued);
+    SAT_GLOBAL.ANALYTICS.report_RealignQueue_num_realigned(num_realigned);
     return num_realigned;
   }
 
@@ -96,7 +98,7 @@ public:
 //------------------------------
 
   // called from
-  //   SAT_Window.on_window_show()
+  //   SAT_Window.on_Window_show()
   //   SAT_Window.on_WidgetListener_redraw()
 
   bool queueRedraw(SAT_Widget* AWidget) {
@@ -106,7 +108,7 @@ public:
   //----------
 
   // called from
-  //   SAT_Window.on_window_timer
+  //   SAT_Window.on_Window_timer
   //
   // if ARoot is not null, just flush the redraw queue,
   // and queue the root as the only widget needing repainting
@@ -168,7 +170,7 @@ public:
       while (MPaintQueue.try_dequeue(widget)) {
         num_queued += 1;
       }
-      ARoot->on_widget_paint(AContext);
+      ARoot->on_Widget_paint(AContext);
       return num_queued; // ???
     }
     else {
@@ -186,12 +188,14 @@ public:
             if (widget->MLastPaintedFrame != AContext->counter) {
               widget->MLastPaintedFrame = AContext->counter;
               num_painted += 1;
-              widget->on_widget_paint(AContext);
+              widget->on_Widget_paint(AContext);
             }
           }
         }
       }
     }
+    SAT_GLOBAL.ANALYTICS.report_PaintQueue_num_queued(num_queued);
+    SAT_GLOBAL.ANALYTICS.report_PaintQueue_num_realigned(num_painted);
     return num_painted;
   }
 

@@ -259,8 +259,8 @@ public:
 
 //    SAT_PRINT("%i\n",MStates[index]);
 
-    do_widget_update(this);
-//    do_widget_redraw(this);
+    do_Widget_update(this);
+//    do_Widget_redraw(this);
   }
 
 //------------------------------

@@ -75,8 +75,8 @@ public:
 public:
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
-    //SAT_PanelWidget::on_widget_paint(AContext);
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
+    //SAT_PanelWidget::on_Widget_paint(AContext);
     drawDropShadow(AContext);
     fillBackground(AContext);
     

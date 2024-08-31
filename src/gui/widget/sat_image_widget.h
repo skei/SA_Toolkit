@@ -106,7 +106,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_close(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_close(SAT_WidgetOwner* AOwner) override {
     if (MInitialized) {
       //SAT_Window* window = AOwner->on_widgetOwner_getWindow();
       //SAT_Painter* painter = window->getPainter();
@@ -118,7 +118,7 @@ public:
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawImage(AContext);

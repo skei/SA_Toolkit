@@ -87,9 +87,9 @@ public:
       setBaseRect(baserect);
 
       parent->realignChildren();
-      parent->do_widget_redraw(parent);
+      parent->do_Widget_redraw(parent);
     }
-    do_widget_modal(this);
+    do_Widget_modal(this);
   }
 
   //----------
@@ -101,9 +101,9 @@ public:
     SAT_Widget* parent = getParent();
     if (parent) {
       parent->realignChildren();
-      parent->do_widget_redraw(parent);
+      parent->do_Widget_redraw(parent);
     }
-    do_widget_modal(nullptr);
+    do_Widget_modal(nullptr);
     // deleteChildren();
   }
 
@@ -127,7 +127,7 @@ public:
 public:
 //------------------------------
 
-  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
+  void do_Widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr=nullptr) override {
     //SAT_PRINT("AValue %i\n",AValue);
     if (AValue == -1) {
       // cancel
@@ -139,14 +139,14 @@ public:
 
     if (MListener) MListener->on_menuListener_select(AValue);
 
-    // do_widget_modal(this,false);
+    // do_Widget_modal(this,false);
     // SAT_Widget* parent = getParent();
     // if (parent) {
     //   parent->realignChildren();
-    //   parent->do_widget_redraw(parent);
+    //   parent->do_Widget_redraw(parent);
     // }
     // closeMenu();
-    //SAT_VisualWidget::do_widget_notify(this,MSelected);
+    //SAT_VisualWidget::do_Widget_notify(this,MSelected);
   }
 
 };

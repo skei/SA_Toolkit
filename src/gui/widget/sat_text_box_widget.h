@@ -111,14 +111,14 @@ public:
 public:
 //------------------------------
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_open(SAT_WidgetOwner* AOwner) override {
     //SAT_TRACE;
     MPainter = AOwner->on_WidgetOwner_getPainter();
   }
     
   //----------
 
-  SAT_Rect on_widget_preAlign(SAT_Rect ARect) override {
+  SAT_Rect on_Widget_preAlign(SAT_Rect ARect) override {
     if (MPainter) {
       double scale = getWindowScale();
       //SAT_PRINT("MPainter %p scale %f\n",MPainter,scale);
@@ -129,7 +129,7 @@ public:
 
   //----------
 
-  // SAT_Rect on_widget_postAlign(SAT_Rect ARect) override {
+  // SAT_Rect on_Widget_postAlign(SAT_Rect ARect) override {
   //   return ARect;
   // }
 
@@ -155,7 +155,7 @@ public:
     so we go throgh them all here, and readjust their widths..
   */
 
-  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  // void on_Widget_open(SAT_WidgetOwner* AOwner) override {
   //   //SAT_PRINT;
   //   //SAT_ScrollBoxWidget::prepare(AOwner);
   //   SAT_Window* window = (SAT_Window*)AOwner;
@@ -253,7 +253,7 @@ public:
     //    textwidget->setBackgroundColor(SAT_LightGreen);
     //textwidget->setBackgroundColor(0.55);
     //    MContent->realignChildren();
-    //    if (ARedraw) do_widget_redraw(MContent); // only if visible?
+    //    if (ARedraw) do_Widget_redraw(MContent); // only if visible?
   }
 
   //----------
@@ -270,8 +270,8 @@ public:
   
   //----------
   
-//  void on_widget_paint(SAT_PaintContext* AContext) override {
-//    SAT_ScrollBoxWidget::on_widget_paint(AContext);
+//  void on_Widget_paint(SAT_PaintContext* AContext) override {
+//    SAT_ScrollBoxWidget::on_Widget_paint(AContext);
 //  }
 
 

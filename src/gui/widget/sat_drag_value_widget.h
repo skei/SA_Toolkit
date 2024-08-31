@@ -241,8 +241,8 @@ public:
         value = quantizeValue(MDragValue);
       }
       // setValue(value);
-      // do_widget_update(this);
-      // do_widget_redraw(this);
+      // do_Widget_update(this);
+      // do_Widget_redraw(this);
     } // diff
     return value;
   }
@@ -253,7 +253,7 @@ public:
     MIsDragging = true;
     MPrevX = AXpos;
     MPrevY = AYpos;
-    do_widget_set_cursor(this,SAT_CURSOR_LOCK);
+    do_Widget_set_cursor(this,SAT_CURSOR_LOCK);
     MDragValue = calcValue(AIndex); // starting value
   }
 
@@ -261,7 +261,7 @@ public:
 
   virtual void endDrag() {
     MIsDragging = false;
-    do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+    do_Widget_set_cursor(this,SAT_CURSOR_UNLOCK);
   }
 
 
@@ -269,14 +269,14 @@ public:
 public: // on_widget
 //------------------------------
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  void on_Widget_open(SAT_WidgetOwner* AOwner) override {
     MDragValue = calcValue();
-    SAT_ValueWidget::on_widget_open(AOwner);
+    SAT_ValueWidget::on_Widget_open(AOwner);
   }
 
   //----------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == MDragButton) {
       startDrag(AXpos,AYpos,0);
     }
@@ -284,7 +284,7 @@ public: // on_widget
 
   //----------
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == MDragButton) {
       endDrag();
     }
@@ -292,16 +292,16 @@ public: // on_widget
 
   //----------
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     double value = calcDragValue(AXpos,AYpos,AState);
     setValue(value,0);
-    do_widget_update(this);
-    do_widget_redraw(this);
+    do_Widget_update(this);
+    do_Widget_redraw(this);
   }
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     fillBackground(AContext);
     drawText(AContext);
     drawValueText(AContext);

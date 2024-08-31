@@ -62,7 +62,7 @@ public:
     //setSizableBorder(SAT_Rect(5,5,5,5));
     //setSizableEdges(SAT_EDGE_ALL);
   
-    //do_widget_want_timer(this,true);
+    //do_Widget_want_timer(this,true);
 
     MCoords[0] = { 0.0, 0.0 };
     MCoords[1] = { 0.0, 1.0 };
@@ -86,14 +86,14 @@ public:
 public:
 //------------------------------
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) final {
-    do_widget_want_timer(this,true);
+  void on_Widget_open(SAT_WidgetOwner* AOwner) final {
+    do_Widget_want_timer(this,true);
   }
 
   //----------
 
-  void on_widget_close(SAT_WidgetOwner* AOwner) final {
-    do_widget_want_timer(this,false);
+  void on_Widget_close(SAT_WidgetOwner* AOwner) final {
+    do_Widget_want_timer(this,false);
   }
 
   //----------
@@ -103,15 +103,15 @@ public:
 
   // [TIMER THREAD]
 
-  void on_widget_timer(double ADelta) final {
+  void on_Widget_timer(double ADelta) final {
     //SAT_PRINT("delta %f\n",ADelta);
     updateCoords(ADelta);
-    do_widget_redraw(this,0,SAT_WIDGET_REDRAW_SELF);
+    do_Widget_redraw(this,0,SAT_WIDGET_REDRAW_SELF);
   }
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) final {
+  void on_Widget_paint(SAT_PaintContext* AContext) final {
     //SAT_TRACE;
     //drawDropShadow(AContext);
     fillBackground(AContext);

@@ -104,7 +104,7 @@ public:
 public: // on_widget
 //------------------------------
 
-  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
+  // void on_Widget_open(SAT_WidgetOwner* AOwner) override {
   //   SAT_Rect rect = getRect();
   //   SAT_Painter* painter = AOwner->on_widgetOwner_getPainter();
   //   double scale = getWindowScale();
@@ -115,10 +115,10 @@ public: // on_widget
   //   double width = bounds[2] - bounds[0];
   //   //setWidth(width);
   //   setRectAndBase(rect);
-  //   SAT_VisualWidget::on_widget_open(AOwner);
+  //   SAT_VisualWidget::on_Widget_open(AOwner);
   // };
 
-  // SAT_Rect on_widget_preAlign(SAT_Rect ARect) override {
+  // SAT_Rect on_Widget_preAlign(SAT_Rect ARect) override {
   //   SAT_WidgetOwner* owner = getOwner();
   //   SAT_Painter* painter = owner->on_widgetOwner_getPainter();
   //   double scale = getWindowScale();
@@ -129,7 +129,7 @@ public: // on_widget
   //   return ARect;
   // }
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     //SAT_TRACE;
     fillBackground(AContext);
     drawText(AContext);

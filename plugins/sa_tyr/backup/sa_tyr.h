@@ -101,6 +101,8 @@ public:
 public: // plugin
 //------------------------------
 
+  // this is wrong...
+
   bool init() final {
     bool result = SAT_Plugin::init();
     if (result) {

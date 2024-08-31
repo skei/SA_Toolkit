@@ -306,20 +306,20 @@ public:
       pin->flags |= SAT_NODE_PIN_HOVERING;
       if (pin != MPrevHoverPin) {
         if (pin) {
-//          do_widget_notify(this,SAT_NODE_NOTIFY_BEGIN_HOVER,pin);
+//          do_Widget_notify(this,SAT_NODE_NOTIFY_BEGIN_HOVER,pin);
           const char* hint = pin->name;
-          do_widget_set_hint(this,hint);
-          do_widget_redraw(this);
-          //do_widget_set_cursor(SAT_CURSOR_FINGER);
+          do_Widget_set_hint(this,hint);
+          do_Widget_redraw(this);
+          //do_Widget_set_cursor(SAT_CURSOR_FINGER);
         }
       }
     }
     else {
       if (MPrevHoverPin) {
-//        do_widget_notify(this,SAT_NODE_NOTIFY_END_HOVER,MPrevHoverPin);
-        do_widget_set_hint(this," "); // "" is ignored?
-        do_widget_redraw(this);
-        //do_widget_set_cursor(SAT_CURSOR_DEFAULT);
+//        do_Widget_notify(this,SAT_NODE_NOTIFY_END_HOVER,MPrevHoverPin);
+        do_Widget_set_hint(this," "); // "" is ignored?
+        do_Widget_redraw(this);
+        //do_Widget_set_cursor(SAT_CURSOR_DEFAULT);
      }
     }
     MPrevHoverPin = pin;
@@ -401,39 +401,39 @@ public:
 public:
 //------------------------------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    SAT_VisualWidget::on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    SAT_VisualWidget::on_Widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
     if ((AButton == SAT_BUTTON_LEFT) && (MIsConnecting == false)) {
       SAT_NodePin* pin = findPin(AXpos,AYpos);
       if (pin) {
         MIsConnecting = true;
-        do_widget_notify(this,SAT_NODE_NOTIFY_BEGIN_DRAG,pin);
+        do_Widget_notify(this,SAT_NODE_NOTIFY_BEGIN_DRAG,pin);
       }
     }
   }
 
   //----------
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
-    SAT_VisualWidget::on_widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    SAT_VisualWidget::on_Widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
     if ((AButton == SAT_BUTTON_LEFT) && (MIsConnecting == true)) {
       MIsConnecting = false;
-      do_widget_notify(this,SAT_NODE_NOTIFY_END_DRAG,nullptr);
-      do_widget_notify(this,SAT_NODE_NOTIFY_CONNECT,nullptr);
+      do_Widget_notify(this,SAT_NODE_NOTIFY_END_DRAG,nullptr);
+      do_Widget_notify(this,SAT_NODE_NOTIFY_CONNECT,nullptr);
 
     }
   }
 
   //----------
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
-    SAT_VisualWidget::on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+    SAT_VisualWidget::on_Widget_mouse_move(AXpos,AYpos,AState,ATime);
     MMousePos.x = AXpos;
     MMousePos.y = AYpos;
-    do_widget_notify(this,SAT_NODE_NOTIFY_MOUSE_MOVE,&MMousePos);
+    do_Widget_notify(this,SAT_NODE_NOTIFY_MOUSE_MOVE,&MMousePos);
     if (MIsConnecting) {
       // updateMouseConnect(AXpos,AYpos);
-      do_widget_notify(this,SAT_NODE_NOTIFY_UPDATE_MOUSE_CONNECT,&MMousePos);
+      do_Widget_notify(this,SAT_NODE_NOTIFY_UPDATE_MOUSE_CONNECT,&MMousePos);
     }
     else {
       if (!isMoving() && !isResizing()) {
@@ -444,21 +444,21 @@ public:
 
   //----------
 
-  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-    SAT_VisualWidget::on_widget_leave(ATo,AXpos,AYpos,ATime);
+  void on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+    SAT_VisualWidget::on_Widget_leave(ATo,AXpos,AYpos,ATime);
     if (MPrevHoverPin) {
       //SAT_PRINT("no pin (leave)\n");
-//      do_widget_notify(this,SAT_NODE_NOTIFY_END_HOVER,MPrevHoverPin);
+//      do_Widget_notify(this,SAT_NODE_NOTIFY_END_HOVER,MPrevHoverPin);
       MPrevHoverPin = nullptr;
       resetHoverFlags();
-      do_widget_redraw(this);
-      //do_widget_set_hint(this," ");
+      do_Widget_redraw(this);
+      //do_Widget_set_hint(this," ");
     }
   }
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     paintChildren(AContext);

@@ -112,7 +112,7 @@ public:
     MThumbPos = APos;
     MThumbPos = SAT_Clamp(MThumbPos,0.0f,1.0f);
     //recalcThumbRect();
-    if (ARedraw) do_widget_redraw(this);
+    if (ARedraw) do_Widget_redraw(this);
   }
 
   //----------
@@ -127,7 +127,7 @@ public:
     }
     MThumbSize = SAT_Clamp(MThumbSize,0.0f,1.0f);
     //recalcThumbRect();
-    if (ARedraw) do_widget_redraw(this);
+    if (ARedraw) do_Widget_redraw(this);
   }
 
   //----------
@@ -224,11 +224,11 @@ private:
 public: // parent to child
 //------------------------------
 
-//  void on_widget_move(double AXpos, double AYpos)  override {}
-//  void on_widget_resize(double AWidth, double AHeight) override {}
-//  void on_widget_align(bool ARecursive=true) override {}
+//  void on_Widget_move(double AXpos, double AYpos)  override {}
+//  void on_Widget_resize(double AWidth, double AHeight) override {}
+//  void on_Widget_align(bool ARecursive=true) override {}
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     SAT_Painter* painter = AContext->painter;
@@ -242,12 +242,12 @@ public: // parent to child
     drawBorder(AContext);
   }
 
-//  void on_widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {}
-//  void on_widget_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {}
+//  void on_Widget_key_press(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {}
+//  void on_Widget_key_release(uint8_t AChar, uint32_t AKeySym, uint32_t AState, uint32_t ATime) override {}
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     //SAT_Rect mrect = MRect;
-    //SAT_Widget::on_widget_mouseClick(AXpos,AYpos,AButton,AState);
+    //SAT_Widget::on_Widget_mouseClick(AXpos,AYpos,AButton,AState);
     if (AButton == SAT_BUTTON_LEFT) {
       if (MThumbRect.contains(AXpos,AYpos)) {
         MClickedX = AXpos;
@@ -263,15 +263,15 @@ public: // parent to child
             MPrevThumbPos = MThumbPos;
             MThumbPos -= MPageSize;
             //recalcThumbRect();
-            do_widget_update(this);
-            do_widget_redraw(this);
+            do_Widget_update(this);
+            do_Widget_redraw(this);
           }
           else if (AYpos > MThumbRect.y2()) {
             MPrevThumbPos = MThumbPos;
             MThumbPos += MPageSize;
             //recalcThumbRect();
-            do_widget_update(this);
-            do_widget_redraw(this);
+            do_Widget_update(this);
+            do_Widget_redraw(this);
           }
         }
         else {
@@ -279,33 +279,33 @@ public: // parent to child
             MPrevThumbPos = MThumbPos;
             MThumbPos -= MPageSize;
             //recalcThumbRect();
-            do_widget_update(this);
-            do_widget_redraw(this);
+            do_Widget_update(this);
+            do_Widget_redraw(this);
           }
           else if (AXpos > MThumbRect.x2()) {
             MPrevThumbPos = MThumbPos;
             MThumbPos += MPageSize;
             //recalcThumbRect();
-            do_widget_update(this);
-            do_widget_redraw(this);
+            do_Widget_update(this);
+            do_Widget_redraw(this);
           }
         } // !vertical
       } // !contains
     } // left button
   }
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     //SAT_Widget::on_mouseRelease(AXpos,AYpos,AButton,AState);
     if (AButton == SAT_BUTTON_LEFT) {
       if (MIsDragging) {
         MIsDragging = false;
         //MIsInteractive = false;
-        do_widget_redraw(this);
+        do_Widget_redraw(this);
       }
     }
   }
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     SAT_Rect mrect = getRect();
     //SAT_Widget::on_mouseMove(AXpos,AYpos,AState);
     if (MIsDragging) {
@@ -329,17 +329,17 @@ public: // parent to child
         MThumbPos = MClickedPos + v;
         MThumbPos = SAT_Clamp(MThumbPos,0.0f,1.0f);
         //recalcThumbRect();
-        do_widget_update(this);
-        do_widget_redraw(this);
+        do_Widget_update(this);
+        do_Widget_redraw(this);
       }
     }
   }
 
-//  void on_widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {}
-//  void on_widget_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {}
-//  //void on_widget_connect(SAT_Parameter* AParameter) override {}
+//  void on_Widget_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {}
+//  void on_Widget_leave(SAT_Widget* ATo, double AXpos, double AYpos, uint32_t ATime) override {}
+//  //void on_Widget_connect(SAT_Parameter* AParameter) override {}
 
-//  virtual void on_widget_modal(bool AModal) {}
+//  virtual void on_Widget_modal(bool AModal) {}
 
 
 //------------------------------

@@ -170,13 +170,13 @@ public: // mouse
       else hover = MRootWidget->findWidget(AXpos,AYpos);
       if (hover) {
         if (hover != MHoverWidget) {
-          if (MHoverWidget) MHoverWidget->on_widget_leave(hover,AXpos,AYpos,ATime);
-          hover->on_widget_enter(MHoverWidget,AXpos,AYpos,ATime);
+          if (MHoverWidget) MHoverWidget->on_Widget_leave(hover,AXpos,AYpos,ATime);
+          hover->on_Widget_enter(MHoverWidget,AXpos,AYpos,ATime);
           MHoverWidget = hover;
         }
       }
       else {
-        if (MHoverWidget) MHoverWidget->on_widget_leave(nullptr,AXpos,AYpos,ATime);
+        if (MHoverWidget) MHoverWidget->on_Widget_leave(nullptr,AXpos,AYpos,ATime);
         MHoverWidget = nullptr;
       }
     }
@@ -186,10 +186,14 @@ public: // mouse
 public: // painting
 //------------------------------
 
+  // will be called just before renderer.beginRendering()
+
   void preRender(uint32_t AWidth, uint32_t AHeight) override {
   }
 
   //----------
+
+  // will be called just before painter.beginPainting()
 
   void prePaint(uint32_t AWidth, uint32_t AHeight) override {
   }
@@ -197,7 +201,7 @@ public: // painting
   //----------
 
   // called from
-  //   SAT_SimpleWindow.on_window_paint
+  //   SAT_SimpleWindow.on_Window_paint
 
   void paint(SAT_PaintContext* AContext) override {
     SAT_Painter* painter = AContext->painter;
@@ -219,7 +223,7 @@ public: // painting
   //----------
 
   // called from
-  //   SAT_SimpleWindow.on_window_paint
+  //   SAT_SimpleWindow.on_Window_paint
 
   void paintRoot(SAT_PaintContext* AContext, bool AResized=false) override {
     SAT_Painter* painter = AContext->painter;
@@ -230,7 +234,7 @@ public: // painting
     if (AResized) {
       MWindowScale = calcScale(screenwidth,screenheight);
       if (MRootWidget) {
-        MRootWidget->on_widget_resize(screenwidth,screenheight);
+        MRootWidget->on_Widget_resize(screenwidth,screenheight);
         MRootWidget->realignChildren();
       }
     }
@@ -241,10 +245,14 @@ public: // painting
 
   //----------
 
+  // will be called just after painter.endPainting()
+
   void postPaint() override {
   }
 
   //----------
+
+  // will be called just after renderer.endRendering()
 
   void postRender() override {
   }
@@ -254,7 +262,7 @@ public: // timer
 //------------------------------
 
   // if called from on_TimerListener_update() : timer thread
-  // if called from on_window_timer() : gui (x11 event thread) thread
+  // if called from on_Window_timer() : gui (x11 event thread) thread
 
   void handleTimer(double ADelta) {
     MTimerDelta += ADelta;
@@ -265,7 +273,7 @@ public: // timer
 
     if (MListener) MListener->on_WindowListener_timer(MTimerDelta);
     for (uint32_t i=0; i<MTimerListeners.size(); i++) {
-      MTimerListeners[i]->on_widget_timer(MTimerDelta);
+      MTimerListeners[i]->on_Widget_timer(MTimerDelta);
     }
     MTweening.process(MTimerDelta);
     MTimerDelta = 0;
@@ -290,7 +298,7 @@ public: // timer
 
   /*
     called via
-    SAT_SimpleWindow.on_TimerListener_update -> userMessage -> event/gui thread -> on_window_timer
+    SAT_SimpleWindow.on_TimerListener_update -> userMessage -> event/gui thread -> on_Window_timer
   */
 
   // [TIMER THREAD]
@@ -304,7 +312,7 @@ public: // timer
 
   // [MAIN/GUI THREAD]
 
-  // void on_window_timer(double ADelta) override {
+  // void on_Window_timer(double ADelta) override {
   //   handleTimer(ADelta);
   // }
 
@@ -390,14 +398,14 @@ public: // widget listener
       switch (AMode) {
         case SAT_WIDGET_REALIGN_SELF: {
           AWidget->realignChildren();
-          AWidget->do_widget_redraw(AWidget);
+          AWidget->do_Widget_redraw(AWidget);
           break;
         }
         case SAT_WIDGET_REALIGN_PARENT: {
           SAT_Widget* parent = AWidget->getParent();
           if (parent) {
             parent->realignChildren();
-            parent->do_widget_redraw(parent);
+            parent->do_Widget_redraw(parent);
 
           }
           break;
@@ -463,7 +471,7 @@ public: // widget listener
 
   void on_WidgetListener_set_hint(SAT_Widget* AWidget, const char* AHint) override {
     if (AHint[0]) {
-      if (MHintWidget) MHintWidget->on_widget_hint(AWidget,AHint);
+      if (MHintWidget) MHintWidget->on_Widget_hint(AWidget,AHint);
     }
   }
 
@@ -495,7 +503,7 @@ public: // widget listener
     if (overlay) {
       overlay->setColor(AColor);
       SAT_RootWidget* root = getRootWidget();
-      root->do_widget_redraw(root,0,SAT_WIDGET_REDRAW_SELF);
+      root->do_Widget_redraw(root,0,SAT_WIDGET_REDRAW_SELF);
     }
   }
 
@@ -505,8 +513,8 @@ public: // window
 
   // [EVENT THREAD]
 
-  void on_window_show() override {
-    SAT_SimpleWindow::on_window_show();
+  void on_Window_show() override {
+    SAT_SimpleWindow::on_Window_show();
     if (MRootWidget) {
       uint32_t w = getWidth();
       uint32_t h = getHeight();
@@ -523,19 +531,19 @@ public: // window
 
   //----------
 
-  void on_window_hide() override {
+  void on_Window_hide() override {
     if (MRootWidget) MRootWidget->ownerWindowClose(this);
-    SAT_SimpleWindow::on_window_hide();
+    SAT_SimpleWindow::on_Window_hide();
   }
 
   //----------
 
-  // void on_window_move(int32_t AXpos, int32_t AYpos) override {
+  // void on_Window_move(int32_t AXpos, int32_t AYpos) override {
   // }
 
   //----------
 
-//  void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
+//  void on_Window_resize(uint32_t AWidth, uint32_t AHeight) override {
 //
 //    // if (AWidth >= 32768) AWidth = 0;
 //    // if (AHeight >= 32768) AHeight = 0;
@@ -543,7 +551,7 @@ public: // window
 //    SAT_Assert(AHeight < 32768);
 //    if (MRootWidget) {
 //      MWindowScale = calcScale(AWidth,AHeight);
-//      MRootWidget->on_widget_resize(AWidth,AHeight);
+//      MRootWidget->on_Widget_resize(AWidth,AHeight);
 //      MRootWidget->realignChildren();
 //      // #ifndef SAT_PLUGIN_EXE
 //      //   queueDirtyWidget(MRootWidget);
@@ -551,29 +559,29 @@ public: // window
 //    }
 //
 //    //MQueues.queueResize(AWidth,AHeight);
-//    SAT_SimpleWindow::on_window_resize(AWidth,AHeight);
+//    SAT_SimpleWindow::on_Window_resize(AWidth,AHeight);
 //  }
 
   //----------
 
-  // void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
-  //   SAT_SimpleWindow::on_window_paint(AXpos,AYpos,AWidth,AHeight);
+  // void on_Window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
+  //   SAT_SimpleWindow::on_Window_paint(AXpos,AYpos,AWidth,AHeight);
   // }
 
   //----------
 
-  // void on_window_realign() override {
+  // void on_Window_realign() override {
   // }
 
   //----------
 
-  void on_window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Window_mouseClick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MMouseClickedXpos   = AXpos;
     MMouseClickedYpos   = AYpos;
     MMouseClickedButton = AButton;
     // if widget is already captured, send further clicks to the same widget..
     if (MMouseCaptured) {
-      MMouseCaptureWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+      MMouseCaptureWidget->on_Widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
     }
     // else, capture the widget we are hovering above
     else {
@@ -583,16 +591,16 @@ public: // window
         MMouseCaptureXpos = AXpos;
         MMouseCaptureYpos = AYpos;
         MMouseCaptureButton = AButton;
-        MMouseCaptureWidget->on_widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+        MMouseCaptureWidget->on_Widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
       }
     }
   }
 
   //----------
 
-  void on_window_mouseRelease(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Window_mouseRelease(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (MMouseCaptured) {
-      MMouseCaptureWidget->on_widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
+      MMouseCaptureWidget->on_Widget_mouse_release(AXpos,AYpos,AButton,AState,ATime);
       // end capture if we release the same button as the one we started the dragging with
       if (AButton == MMouseCaptureButton) {
         MMouseCaptured = false;
@@ -603,7 +611,7 @@ public: // window
 
   //----------
 
-  void on_window_mouseMove(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_Window_mouseMove(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     MMouseCurrentXpos = AXpos;
     MMouseCurrentYpos = AYpos;
     int32_t deltax = AXpos - MMousePreviousXpos;
@@ -613,7 +621,7 @@ public: // window
       if ((AXpos != MMouseLockedXclick) || (AYpos != MMouseLockedYclick)) {
         MMouseLockedXpos += deltax;
         MMouseLockedYpos += deltay;
-        if (MMouseCaptured) MMouseCaptureWidget->on_widget_mouse_move(MMouseLockedXpos,MMouseLockedYpos,AState,ATime);
+        if (MMouseCaptured) MMouseCaptureWidget->on_Widget_mouse_move(MMouseLockedXpos,MMouseLockedYpos,AState,ATime);
         // set it back to locked position
         setMouseCursorPos(MMouseLockedXclick,MMouseLockedYclick);
       }
@@ -621,12 +629,12 @@ public: // window
     else {
       // send mouse move events only to captured widget
       if (MMouseCaptured) {
-        MMouseCaptureWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+        MMouseCaptureWidget->on_Widget_mouse_move(AXpos,AYpos,AState,ATime);
       }
       else {
         updateHover(AXpos,AYpos,ATime);
         if (MHoverWidget && MHoverWidget->Options.wantHoverEvents) {
-          MHoverWidget->on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+          MHoverWidget->on_Widget_mouse_move(AXpos,AYpos,AState,ATime);
         }
       }
     }
@@ -636,36 +644,36 @@ public: // window
 
   //----------
 
-  void on_window_keyPress(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
+  void on_Window_keyPress(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
     if (MKeyCaptureWidget) {
-      MKeyCaptureWidget->on_widget_key_press(AKey,AChar,AState,ATime);
+      MKeyCaptureWidget->on_Widget_key_press(AKey,AChar,AState,ATime);
     }
   }
 
   //----------
 
-  void on_window_keyRelease(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
+  void on_Window_keyRelease(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
     if (MKeyCaptureWidget) {
-      MKeyCaptureWidget->on_widget_key_release(AKey,AChar,AState,ATime);
+      MKeyCaptureWidget->on_Widget_key_release(AKey,AChar,AState,ATime);
     }
   }
 
   //----------
 
-  void on_window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  void on_Window_mouseEnter(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     updateHover(AXpos,AYpos,ATime);
   }
 
   //----------
 
-  void on_window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-    if (MHoverWidget) MHoverWidget->on_widget_leave(nullptr,AXpos,AYpos,ATime);
+  void on_Window_mouseLeave(int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+    if (MHoverWidget) MHoverWidget->on_Widget_leave(nullptr,AXpos,AYpos,ATime);
     MHoverWidget = nullptr;
   }
 
   //----------
 
-  void on_window_clientMessage(uint32_t AData) override {
+  void on_Window_clientMessage(uint32_t AData) override {
   }
 
 

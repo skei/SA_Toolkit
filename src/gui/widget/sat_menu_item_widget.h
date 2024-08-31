@@ -49,44 +49,44 @@ public:
 public:
 //------------------------------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     //SAT_TRACE;
     int32_t index = getIndex();
     SAT_Rect rect = getRect();
     if (!rect.contains(AXpos,AYpos)) {
-      do_widget_notify(this,-1);
+      do_Widget_notify(this,-1);
       return;
     }
     switch (AButton) {
       case SAT_BUTTON_LEFT:
-        do_widget_notify(this,index);
+        do_Widget_notify(this,index);
         break;;
       case SAT_BUTTON_RIGHT:
-        do_widget_notify(this,-1);
+        do_Widget_notify(this,-1);
         break;
     }
   }
 
   //----------
 
-  void on_widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_key_press(uint32_t AKey, uint32_t AChar, uint32_t AState, uint32_t ATime) override {
     //SAT_TRACE;
     // if ESC
-    do_widget_notify(this,-1);
+    do_Widget_notify(this,-1);
   }
 
-  void on_widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
+  void on_Widget_enter(SAT_Widget* AFrom, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
     //SAT_TRACE;
     setBackgroundColor(MHoverBackgroundColor);
     setTextColor(MHoverTextColor);
-    do_widget_redraw(this);
+    do_Widget_redraw(this);
   }
 
-  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
+  void on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) {
     //SAT_TRACE;
     setBackgroundColor(MUnHoverBackgroundColor);
     setTextColor(MUnHoverTextColor);
-    do_widget_redraw(this);
+    do_Widget_redraw(this);
   }
 
 

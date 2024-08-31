@@ -299,7 +299,7 @@ public:
 
       } // range
 
-      waveform->do_widget_redraw(waveform,0,0);
+      waveform->do_Widget_redraw(waveform,0,0);
 
     } // buflen
 
@@ -314,7 +314,7 @@ public:
     trigger_prob_knob->setMarkerValue(processor->rnd_main_prob);
     //if (!trigger_prob_knob->drawMarker()) {
       trigger_prob_knob->setDrawMarker(true);
-      trigger_prob_knob->do_widget_redraw(trigger_prob_knob,0,0);
+      trigger_prob_knob->do_Widget_redraw(trigger_prob_knob,0,0);
     //}
 
     uint32_t current_page = tabs_widget->getActivePage();
@@ -326,60 +326,60 @@ public:
         // MMainSlicesWidget->setIndicatorValue(processor->rnd_main_slices);
         trigger_slices_buttons->setDrawIndicator(true);
         trigger_slices_buttons->setIndicatorValue(processor->rnd_main_slices - 1);
-        trigger_slices_buttons->do_widget_redraw(trigger_slices_buttons,0,0);
+        trigger_slices_buttons->do_Widget_redraw(trigger_slices_buttons,0,0);
 
         // MMainLoopsWidget->setIndicatorValue(processor->rnd_main_subdiv);
         trigger_loops_buttons->setDrawIndicator(true);
         trigger_loops_buttons->setIndicatorValue(processor->rnd_main_subdiv - 1);
-        trigger_loops_buttons->do_widget_redraw(trigger_loops_buttons,0,0);
+        trigger_loops_buttons->do_Widget_redraw(trigger_loops_buttons,0,0);
 
         prob_page_widget->range_length_prob->setMarkerValue(processor->rnd_range_size);
         prob_page_widget->range_length_prob->setDrawMarker(true);
-        prob_page_widget->range_length_prob->do_widget_redraw(prob_page_widget->range_length_prob,0,0);
+        prob_page_widget->range_length_prob->do_Widget_redraw(prob_page_widget->range_length_prob,0,0);
 
         prob_page_widget->range_speed_prob->setMarkerValue(processor->rnd_range_speed);
         prob_page_widget->range_speed_prob->setDrawMarker(true);
-        prob_page_widget->range_speed_prob->do_widget_redraw(prob_page_widget->range_speed_prob,0,0);
+        prob_page_widget->range_speed_prob->do_Widget_redraw(prob_page_widget->range_speed_prob,0,0);
 
         prob_page_widget->range_offset_prob->setMarkerValue(processor->rnd_range_offset);
         prob_page_widget->range_offset_prob->setDrawMarker(true);
-        prob_page_widget->range_offset_prob->do_widget_redraw(prob_page_widget->range_offset_prob,0,0);
+        prob_page_widget->range_offset_prob->do_Widget_redraw(prob_page_widget->range_offset_prob,0,0);
 
         prob_page_widget->range_reverse_prob->setMarkerValue(processor->rnd_range_reverse);
         prob_page_widget->range_reverse_prob->setDrawMarker(true);
-        prob_page_widget->range_reverse_prob->do_widget_redraw(prob_page_widget->range_reverse_prob,0,0);
+        prob_page_widget->range_reverse_prob->do_Widget_redraw(prob_page_widget->range_reverse_prob,0,0);
 
         prob_page_widget->range_fx_prob->setMarkerValue(processor->rnd_range_fx);
         prob_page_widget->range_fx_prob->setDrawMarker(true);
-        prob_page_widget->range_fx_prob->do_widget_redraw(prob_page_widget->range_fx_prob,0,0);
+        prob_page_widget->range_fx_prob->do_Widget_redraw(prob_page_widget->range_fx_prob,0,0);
 
         if (processor->rnd_range_size_on) {
           prob_page_widget->range_length_minmax->setDrawIndicator(true);
           prob_page_widget->range_length_minmax->setIndicatorValue(processor->rnd_range_size_value);
         }
         else prob_page_widget->range_length_minmax->setDrawIndicator(false);
-        prob_page_widget->range_length_minmax->do_widget_redraw(prob_page_widget->range_length_minmax,0,0);
+        prob_page_widget->range_length_minmax->do_Widget_redraw(prob_page_widget->range_length_minmax,0,0);
 
         if (processor->rnd_range_speed_on) {
           prob_page_widget->range_speed_minmax->setDrawIndicator(true);
           prob_page_widget->range_speed_minmax->setIndicatorValue(processor->rnd_range_speed_value);
         }
         else prob_page_widget->range_speed_minmax->setDrawIndicator(false);
-        prob_page_widget->range_speed_minmax->do_widget_redraw(prob_page_widget->range_speed_minmax,0,0);
+        prob_page_widget->range_speed_minmax->do_Widget_redraw(prob_page_widget->range_speed_minmax,0,0);
 
         if (processor->rnd_range_offset_on) {
           prob_page_widget->range_offset_minmax->setDrawIndicator(true);
           prob_page_widget->range_offset_minmax->setIndicatorValue(processor->rnd_range_offset_value);
         }
         else prob_page_widget->range_offset_minmax->setDrawIndicator(false);
-        prob_page_widget->range_offset_minmax->do_widget_redraw(prob_page_widget->range_offset_minmax,0,0);
+        prob_page_widget->range_offset_minmax->do_Widget_redraw(prob_page_widget->range_offset_minmax,0,0);
 
         if (processor->rnd_range_fx_on) {
           prob_page_widget->range_fx_minmax->setDrawIndicator(true);
           prob_page_widget->range_fx_minmax->setIndicatorValue(processor->rnd_range_fx_value);
         }
         else prob_page_widget->range_fx_minmax->setDrawIndicator(false);
-        prob_page_widget->range_fx_minmax->do_widget_redraw(prob_page_widget->range_fx_minmax,0,0);
+        prob_page_widget->range_fx_minmax->do_Widget_redraw(prob_page_widget->range_fx_minmax,0,0);
 
         // //------------------------------
 
@@ -415,81 +415,81 @@ public:
 
           prob_page_widget->loop_length_prob->setMarkerValue(processor->rnd_loop_size);
           prob_page_widget->loop_length_prob->setDrawMarker(true);
-          prob_page_widget->loop_length_prob->do_widget_redraw(prob_page_widget->loop_length_prob,0,0);
+          prob_page_widget->loop_length_prob->do_Widget_redraw(prob_page_widget->loop_length_prob,0,0);
 
           prob_page_widget->loop_speed_prob->setMarkerValue(processor->rnd_loop_speed);
           prob_page_widget->loop_speed_prob->setDrawMarker(true);
-          prob_page_widget->loop_speed_prob->do_widget_redraw(prob_page_widget->loop_speed_prob,0,0);
+          prob_page_widget->loop_speed_prob->do_Widget_redraw(prob_page_widget->loop_speed_prob,0,0);
 
           prob_page_widget->loop_offset_prob->setMarkerValue(processor->rnd_loop_offset);
           prob_page_widget->loop_offset_prob->setDrawMarker(true);
-          prob_page_widget->loop_offset_prob->do_widget_redraw(prob_page_widget->loop_offset_prob,0,0);
+          prob_page_widget->loop_offset_prob->do_Widget_redraw(prob_page_widget->loop_offset_prob,0,0);
 
           prob_page_widget->loop_reverse_prob->setMarkerValue(processor->rnd_loop_reverse);
           prob_page_widget->loop_reverse_prob->setDrawMarker(true);
-          prob_page_widget->loop_reverse_prob->do_widget_redraw(prob_page_widget->loop_reverse_prob,0,0);
+          prob_page_widget->loop_reverse_prob->do_Widget_redraw(prob_page_widget->loop_reverse_prob,0,0);
 
           prob_page_widget->loop_fx_prob->setMarkerValue(processor->rnd_loop_fx);
           prob_page_widget->loop_fx_prob->setDrawMarker(true);
-          prob_page_widget->loop_fx_prob->do_widget_redraw(prob_page_widget->loop_fx_prob,0,0);
+          prob_page_widget->loop_fx_prob->do_Widget_redraw(prob_page_widget->loop_fx_prob,0,0);
 
           if (processor->rnd_loop_size_on) {
             prob_page_widget->loop_length_minmax->setDrawIndicator(true);
             prob_page_widget->loop_length_minmax->setIndicatorValue(processor->rnd_loop_size_value);
           }
           else prob_page_widget->loop_length_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_length_minmax->do_widget_redraw(prob_page_widget->loop_length_minmax,0,0);
+          prob_page_widget->loop_length_minmax->do_Widget_redraw(prob_page_widget->loop_length_minmax,0,0);
 
           if (processor->rnd_loop_speed_on) {
             prob_page_widget->loop_speed_minmax->setDrawIndicator(true);
             prob_page_widget->loop_speed_minmax->setIndicatorValue(processor->rnd_loop_speed_value);
           }
           else prob_page_widget->loop_speed_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_speed_minmax->do_widget_redraw(prob_page_widget->loop_speed_minmax,0,0);
+          prob_page_widget->loop_speed_minmax->do_Widget_redraw(prob_page_widget->loop_speed_minmax,0,0);
 
           if (processor->rnd_loop_offset_on) {
             prob_page_widget->loop_offset_minmax->setDrawIndicator(true);
             prob_page_widget->loop_offset_minmax->setIndicatorValue(processor->rnd_loop_offset_value);
           }
           else prob_page_widget->loop_offset_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_offset_minmax->do_widget_redraw(prob_page_widget->loop_offset_minmax,0,0);
+          prob_page_widget->loop_offset_minmax->do_Widget_redraw(prob_page_widget->loop_offset_minmax,0,0);
 
           if (processor->rnd_loop_fx_on) {
             prob_page_widget->loop_fx_minmax->setDrawIndicator(true);
             prob_page_widget->loop_fx_minmax->setIndicatorValue(processor->rnd_loop_fx_value);
           }
           else prob_page_widget->loop_fx_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_fx_minmax->do_widget_redraw(prob_page_widget->loop_fx_minmax,0,0);
+          prob_page_widget->loop_fx_minmax->do_Widget_redraw(prob_page_widget->loop_fx_minmax,0,0);
 
         }
         else {
 
           prob_page_widget->loop_length_prob->setDrawMarker(false);
-          prob_page_widget->loop_length_prob->do_widget_redraw(prob_page_widget->loop_length_prob,0,0);
+          prob_page_widget->loop_length_prob->do_Widget_redraw(prob_page_widget->loop_length_prob,0,0);
 
           prob_page_widget->loop_speed_prob->setDrawMarker(false);
-          prob_page_widget->loop_speed_prob->do_widget_redraw(prob_page_widget->loop_speed_prob,0,0);
+          prob_page_widget->loop_speed_prob->do_Widget_redraw(prob_page_widget->loop_speed_prob,0,0);
 
           prob_page_widget->loop_offset_prob->setDrawMarker(false);
-          prob_page_widget->loop_offset_prob->do_widget_redraw(prob_page_widget->loop_offset_prob,0,0);
+          prob_page_widget->loop_offset_prob->do_Widget_redraw(prob_page_widget->loop_offset_prob,0,0);
 
           prob_page_widget->loop_reverse_prob->setDrawMarker(false);
-          prob_page_widget->loop_reverse_prob->do_widget_redraw(prob_page_widget->loop_reverse_prob,0,0);
+          prob_page_widget->loop_reverse_prob->do_Widget_redraw(prob_page_widget->loop_reverse_prob,0,0);
 
           prob_page_widget->loop_fx_prob->setDrawMarker(false);
-          prob_page_widget->loop_fx_prob->do_widget_redraw(prob_page_widget->loop_fx_prob,0,0);
+          prob_page_widget->loop_fx_prob->do_Widget_redraw(prob_page_widget->loop_fx_prob,0,0);
 
           prob_page_widget->loop_length_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_length_minmax->do_widget_redraw(prob_page_widget->loop_length_minmax,0,0);
+          prob_page_widget->loop_length_minmax->do_Widget_redraw(prob_page_widget->loop_length_minmax,0,0);
 
           prob_page_widget->loop_speed_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_speed_minmax->do_widget_redraw(prob_page_widget->loop_speed_minmax,0,0);
+          prob_page_widget->loop_speed_minmax->do_Widget_redraw(prob_page_widget->loop_speed_minmax,0,0);
 
           prob_page_widget->loop_offset_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_offset_minmax->do_widget_redraw(prob_page_widget->loop_offset_minmax,0,0);
+          prob_page_widget->loop_offset_minmax->do_Widget_redraw(prob_page_widget->loop_offset_minmax,0,0);
 
           prob_page_widget->loop_fx_minmax->setDrawIndicator(false);
-          prob_page_widget->loop_fx_minmax->do_widget_redraw(prob_page_widget->loop_fx_minmax,0,0);
+          prob_page_widget->loop_fx_minmax->do_Widget_redraw(prob_page_widget->loop_fx_minmax,0,0);
 
         }
 
@@ -497,64 +497,64 @@ public:
       else { // ! range
 
         trigger_slices_buttons->setDrawIndicator(false);
-        trigger_slices_buttons->do_widget_redraw(trigger_slices_buttons,0,0);
+        trigger_slices_buttons->do_Widget_redraw(trigger_slices_buttons,0,0);
 
         trigger_loops_buttons->setDrawIndicator(false);
-        trigger_loops_buttons->do_widget_redraw(trigger_loops_buttons,0,0);
+        trigger_loops_buttons->do_Widget_redraw(trigger_loops_buttons,0,0);
 
         prob_page_widget->range_length_prob->setDrawMarker(false);
-        prob_page_widget->range_length_prob->do_widget_redraw(prob_page_widget->range_length_prob,0,0);
+        prob_page_widget->range_length_prob->do_Widget_redraw(prob_page_widget->range_length_prob,0,0);
 
         prob_page_widget->range_speed_prob->setDrawMarker(false);
-        prob_page_widget->range_speed_prob->do_widget_redraw(prob_page_widget->range_speed_prob,0,0);
+        prob_page_widget->range_speed_prob->do_Widget_redraw(prob_page_widget->range_speed_prob,0,0);
 
         prob_page_widget->range_offset_prob->setDrawMarker(false);
-        prob_page_widget->range_offset_prob->do_widget_redraw(prob_page_widget->range_offset_prob,0,0);
+        prob_page_widget->range_offset_prob->do_Widget_redraw(prob_page_widget->range_offset_prob,0,0);
 
         prob_page_widget->range_reverse_prob->setDrawMarker(false);
-        prob_page_widget->range_reverse_prob->do_widget_redraw(prob_page_widget->range_reverse_prob,0,0);
+        prob_page_widget->range_reverse_prob->do_Widget_redraw(prob_page_widget->range_reverse_prob,0,0);
 
         prob_page_widget->range_fx_prob->setDrawMarker(false);
-        prob_page_widget->range_fx_prob->do_widget_redraw(prob_page_widget->range_fx_prob,0,0);
+        prob_page_widget->range_fx_prob->do_Widget_redraw(prob_page_widget->range_fx_prob,0,0);
 
         prob_page_widget->range_length_minmax->setDrawIndicator(false);
-        prob_page_widget->range_length_minmax->do_widget_redraw(prob_page_widget->range_length_minmax,0,0);
+        prob_page_widget->range_length_minmax->do_Widget_redraw(prob_page_widget->range_length_minmax,0,0);
 
         prob_page_widget->range_speed_minmax->setDrawIndicator(false);
-        prob_page_widget->range_speed_minmax->do_widget_redraw(prob_page_widget->range_speed_minmax,0,0);
+        prob_page_widget->range_speed_minmax->do_Widget_redraw(prob_page_widget->range_speed_minmax,0,0);
 
         prob_page_widget->range_offset_minmax->setDrawIndicator(false);
-        prob_page_widget->range_offset_minmax->do_widget_redraw(prob_page_widget->range_offset_minmax,0,0);
+        prob_page_widget->range_offset_minmax->do_Widget_redraw(prob_page_widget->range_offset_minmax,0,0);
 
         prob_page_widget->range_fx_minmax->setDrawIndicator(false);
-        prob_page_widget->range_fx_minmax->do_widget_redraw(prob_page_widget->range_fx_minmax,0,0);
+        prob_page_widget->range_fx_minmax->do_Widget_redraw(prob_page_widget->range_fx_minmax,0,0);
 
         prob_page_widget->loop_length_prob->setDrawMarker(false);
-        prob_page_widget->loop_length_prob->do_widget_redraw(prob_page_widget->loop_length_prob,0,0);
+        prob_page_widget->loop_length_prob->do_Widget_redraw(prob_page_widget->loop_length_prob,0,0);
 
         prob_page_widget->loop_speed_prob->setDrawMarker(false);
-        prob_page_widget->loop_speed_prob->do_widget_redraw(prob_page_widget->loop_speed_prob,0,0);
+        prob_page_widget->loop_speed_prob->do_Widget_redraw(prob_page_widget->loop_speed_prob,0,0);
 
         prob_page_widget->loop_offset_prob->setDrawMarker(false);
-        prob_page_widget->loop_offset_prob->do_widget_redraw(prob_page_widget->loop_offset_prob,0,0);
+        prob_page_widget->loop_offset_prob->do_Widget_redraw(prob_page_widget->loop_offset_prob,0,0);
 
         prob_page_widget->loop_reverse_prob->setDrawMarker(false);
-        prob_page_widget->loop_reverse_prob->do_widget_redraw(prob_page_widget->loop_reverse_prob,0,0);
+        prob_page_widget->loop_reverse_prob->do_Widget_redraw(prob_page_widget->loop_reverse_prob,0,0);
 
         prob_page_widget->loop_fx_prob->setDrawMarker(false);
-        prob_page_widget->loop_fx_prob->do_widget_redraw(prob_page_widget->loop_fx_prob,0,0);
+        prob_page_widget->loop_fx_prob->do_Widget_redraw(prob_page_widget->loop_fx_prob,0,0);
 
         prob_page_widget->loop_length_minmax->setDrawIndicator(false);
-        prob_page_widget->loop_length_minmax->do_widget_redraw(prob_page_widget->loop_length_minmax,0,0);
+        prob_page_widget->loop_length_minmax->do_Widget_redraw(prob_page_widget->loop_length_minmax,0,0);
 
         prob_page_widget->loop_speed_minmax->setDrawIndicator(false);
-        prob_page_widget->loop_speed_minmax->do_widget_redraw(prob_page_widget->loop_speed_minmax,0,0);
+        prob_page_widget->loop_speed_minmax->do_Widget_redraw(prob_page_widget->loop_speed_minmax,0,0);
 
         prob_page_widget->loop_offset_minmax->setDrawIndicator(false);
-        prob_page_widget->loop_offset_minmax->do_widget_redraw(prob_page_widget->loop_offset_minmax,0,0);
+        prob_page_widget->loop_offset_minmax->do_Widget_redraw(prob_page_widget->loop_offset_minmax,0,0);
 
         prob_page_widget->loop_fx_minmax->setDrawIndicator(false);
-        prob_page_widget->loop_fx_minmax->do_widget_redraw(prob_page_widget->loop_fx_minmax,0,0);
+        prob_page_widget->loop_fx_minmax->do_Widget_redraw(prob_page_widget->loop_fx_minmax,0,0);
 
         // MFXProbKnob[0]->setIndicatorValue(-1);
         // MFXProbKnob[1]->setIndicatorValue(-1);

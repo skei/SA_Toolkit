@@ -80,7 +80,7 @@ public:
   
   //----------
 
-  //void on_widget_timer(uint32_t AId, double ADelta) override {
+  //void on_Widget_timer(uint32_t AId, double ADelta) override {
   //  SAT_PRINT;
   //}
 
@@ -124,7 +124,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawVoices(AContext);

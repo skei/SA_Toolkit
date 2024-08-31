@@ -227,7 +227,7 @@ public:
   //     uint32_t state = MProcessor->getVoiceState(i);
   //     voices->setVoiceState(i,state);
   //   }
-  //   voices->do_widget_redraw(voices);
+  //   voices->do_Widget_redraw(voices);
   // }  
 
 };

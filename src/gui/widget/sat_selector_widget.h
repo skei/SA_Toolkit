@@ -84,11 +84,11 @@ public:
     //SAT_PRINT("AValue %i\n",AIndex);
     if (AIndex >= 0) {
       select(AIndex);
-      do_widget_update(this);
-      //do_widget_redraw(this);
+      do_Widget_update(this);
+      //do_Widget_redraw(this);
     }
     if (MMenu) MMenu->closeMenu();
-    do_widget_set_overlay(this,SAT_Color(0,0,0,0));
+    do_Widget_set_overlay(this,SAT_Color(0,0,0,0));
 
   }
 
@@ -106,14 +106,14 @@ public:
 public:
 //------------------------------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
 
     if (MMenu) {
       switch (AButton) {
         case SAT_BUTTON_LEFT:
           if (MMenu) {
             MMenu->openMenu(AXpos,AYpos);
-            do_widget_set_overlay(this,SAT_Color(0,0,0,0.3));
+            do_Widget_set_overlay(this,SAT_Color(0,0,0,0.3));
           }
           break;
         case SAT_BUTTON_RIGHT:
@@ -126,14 +126,14 @@ public:
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) {
+  void on_Widget_paint(SAT_PaintContext* AContext) {
     if (MMenu) {
       if (MSelected >= 0) {
         const char* text = MMenu->getItemText(MSelected);
         setText(text);
       }
     }
-    SAT_TextWidget::on_widget_paint(AContext);
+    SAT_TextWidget::on_Widget_paint(AContext);
   }
 
 };

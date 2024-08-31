@@ -138,34 +138,34 @@ public:
 public:
 //------------------------------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MPrevX = AXpos;
       MPrevY = AYpos;
       MDragState = MHoverState;
-      do_widget_redraw(this);
-      do_widget_set_cursor(this,SAT_CURSOR_LOCK);
-      do_widget_set_cursor(this,SAT_CURSOR_HIDE);
+      do_Widget_redraw(this);
+      do_Widget_set_cursor(this,SAT_CURSOR_LOCK);
+      do_Widget_set_cursor(this,SAT_CURSOR_HIDE);
     }
   }
   
   //----------
   
-  //void on_widget_mouse_dblclick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  //void on_Widget_mouse_dblclick(double AXpos, double AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
   //}
   
   //----------
   
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MDragState = 0;
-    do_widget_redraw(this);
-    do_widget_set_cursor(this,SAT_CURSOR_UNLOCK);
-    do_widget_set_cursor(this,SAT_CURSOR_SHOW);
+    do_Widget_redraw(this);
+    do_Widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+    do_Widget_set_cursor(this,SAT_CURSOR_SHOW);
   }
 
   //----------
   
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     
     double xdiff = AXpos - MPrevX;
     MPrevX = AXpos;
@@ -180,7 +180,7 @@ public:
       case 0: {
         int32_t prev_state = MHoverState;
         update_hover(AXpos,AYpos);
-        if (MHoverState != prev_state) do_widget_redraw(this);
+        if (MHoverState != prev_state) do_Widget_redraw(this);
         break;
       }
       case 1: {
@@ -213,7 +213,7 @@ public:
         v = SAT_Clamp(v,0,1);
         setValue(v);
         //SAT_Print("v %.3f thumb %.3f\n",v,MThumbSize);
-        do_widget_redraw(this);
+        do_Widget_redraw(this);
         //double v = (AXpos - mrect.x) / (mrect.w * (1.0 - MThumbSize));
         //setValue(v);
         //redraw();
@@ -224,21 +224,21 @@ public:
   
   //----------
   
-  //void on_widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {
+  //void on_Widget_mouse_enter(SAT_Widget* AFrom, double AXpos, double AYpos, uint32_t ATime) override {
   //}
 
   //----------
   
-  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  void on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
     if (MHoverState != 0) {
       MHoverState = 0;
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
     }
   }
   
   //----------
   
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawThumb(AContext);

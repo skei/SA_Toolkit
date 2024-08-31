@@ -93,10 +93,6 @@
 #define SAT_EDITOR_EMBEDDED
 //#define SAT_EDITOR_REMOTE
 
-  // include unit testing
-
-//#define SAT_INCLUDE_TESTS
-
   // include (debug) 'analytics'
 
 //#define SAT_INCLUDE_ANALYTICS
@@ -104,6 +100,10 @@
   // include logging
 
 #define SAT_INCLUDE_LOG
+
+  // include unit testing
+
+//#define SAT_INCLUDE_TESTS
 
   // print thread in when logging
 
@@ -207,6 +207,7 @@
 
   // if this is not defined, updated widgets will not be queued
   // or flushed from the dirty widget queue.. not redrawn..
+  // (do we still need this?)
 
 #define SAT_WINDOW_QUEUE_WIDGETS
 

@@ -243,7 +243,7 @@ public:
               );
             // }
           }
-          target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
+          target->on_Widget_tween(node->MId,node->MType,node->MNumValues,data);
 
           MChains[i]->MCurrentTime += ADelta;
           if (MChains[i]->MCurrentTime >= node->MDuration) {
@@ -258,13 +258,13 @@ public:
                 node->MDuration
               );
             }
-            target->on_widget_tween(node->MId,node->MType,node->MNumValues,data);
+            target->on_Widget_tween(node->MId,node->MType,node->MNumValues,data);
 
             MChains[i]->MCurrentTime = 0.0; //-= node->MDuration;
             MChains[i]->MCurrentNode += 1;
             if (MChains[i]->MCurrentNode >= MChains[i]->MNodes.size()) {
               MChains[i]->MActive = false;
-              target->on_widget_tween(node->MId,SAT_TWEEN_FINISHED,0,nullptr); // send end tween msg..
+              target->on_Widget_tween(node->MId,SAT_TWEEN_FINISHED,0,nullptr); // send end tween msg..
               // //TODO: if looping
               // MChains[i]->MCurrentNode = 0;
               // MChains[i]->MCurrentTime = 0.0;

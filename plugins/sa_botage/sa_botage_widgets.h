@@ -27,8 +27,8 @@ public:
     logo->setLogoColor(SAT_White);
   }
   
-  void on_widget_paint(SAT_PaintContext* AContext) override {
-    SAT_VisualWidget::on_widget_paint(AContext);
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
+    SAT_VisualWidget::on_Widget_paint(AContext);
     SAT_Painter* painter= AContext->painter;
     SAT_Rect mrect = getRect();
     double S = getWindowScale();
@@ -297,14 +297,14 @@ public:
 public:
 //------------------------------
 
-  // void on_widget_open(SAT_WidgetOwner* AOwner) final {
+  // void on_Widget_open(SAT_WidgetOwner* AOwner) final {
   //   SAT_Window* window = AOwner->on_widgetOwner_getWindow();
   //   window->registerTimerWidget(this);
   // }
     
   //----------
 
-  // void on_widget_timer(SAT_Timer* ATimer, double AElapsed) final {
+  // void on_Widget_timer(SAT_Timer* ATimer, double AElapsed) final {
   //   // SAT_Print("elapsed: %.3f\n",AElapsed);
   // }
 

@@ -688,15 +688,13 @@ public: // processor listener
     return &MParameters;
   }
 
+  //----------
+
   // a parameter has changed in process()
   // tell the editor about it
 
   // value is in clap-space
-  // todo: convert to widget-space (normalize)
-
-  // todo: before automatically writing to the queue, compare MProcessContext.process_counter
-  // and MParameter.lastProcessedFrame.. if they are equal, skip writing the param
-  // to the queue
+  // todo: convert to widget-space (normalize) (? should we?)
 
   void on_processorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
@@ -705,6 +703,9 @@ public: // processor listener
         SAT_Parameter* param = getParameter(AIndex);
         if (param) {
           #ifdef SAT_WINDOW_QUEUE_WIDGETS
+
+            // if parameter has already been added for redrawing this frame,
+            // we can skip it..
 
             if (MProcessContext.process_counter != param->getLastAutomatedFrame()) {
               uint32_t index = param->getIndex();
@@ -739,7 +740,6 @@ public: // processor listener
               MQueues.queueModFromHostToGui(index,value);
               param->setLastModulatedFrame(MProcessContext.process_counter);
             }
-
 
           #else
             MEditor->updateModulationFromHost(param, AValue);
@@ -1217,7 +1217,7 @@ public: // clap extensions
     param->setIndicateMappedColor(C);
     #ifndef SAT_NO_GUI
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
+      if (widget) widget->do_Widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
     #endif
   }
 
@@ -1238,7 +1238,7 @@ public: // clap extensions
     param->setIndicateAutomationColor(C);
     #ifndef SAT_NO_GUI
       SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-      if (widget) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
+      if (widget) widget->do_Widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
     #endif
   }
 
@@ -1526,7 +1526,7 @@ public: // clap extensions
     //     MTrackIsBus         = ((info.flags & CLAP_TRACK_INFO_IS_FOR_BUS)           != 0);
     //     MTrackIsMaster      = ((info.flags & CLAP_TRACK_INFO_IS_FOR_MASTER)        != 0);
     //     //SAT_Widget* widget = (SAT_Widget*)param->getWidget();
-    //     //if (widget && MEditor && MEditor->isOpen()) widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
+    //     //if (widget && MEditor && MEditor->isOpen()) widget->do_Widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
     //   }
     // }
   }

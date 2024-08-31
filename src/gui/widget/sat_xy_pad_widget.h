@@ -79,7 +79,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawXYPad(AContext);
@@ -90,7 +90,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MDragging = true;
     SAT_Rect rect = getRect();
     double x = (AXpos - rect.x) / rect.w;
@@ -99,20 +99,20 @@ public:
     y = SAT_Clamp(y,0,1);
     setValue(x,0);
     setValue(y,1);
-    do_widget_update(this,0);
-    do_widget_update(this,1);
-    do_widget_redraw(this);
+    do_Widget_update(this,0);
+    do_Widget_update(this,1);
+    do_Widget_redraw(this);
   }
 
   //----------
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     MDragging = false;
   }
 
   //----------
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     if (MDragging) {
       SAT_Rect rect = getRect();
       double x = (AXpos - rect.x) / rect.w;
@@ -121,9 +121,9 @@ public:
       y = SAT_Clamp(y,0,1);
       setValue(x,0);
       setValue(y,1);
-      do_widget_update(this,0);
-      do_widget_update(this,1);
-      do_widget_redraw(this);
+      do_Widget_update(this,0);
+      do_Widget_update(this,1);
+      do_Widget_redraw(this);
     }
   }
 

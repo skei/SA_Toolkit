@@ -102,7 +102,7 @@ public:
 public:
 //------------------------------
 
-  void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  void do_Widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
     if ((AWidget == MHeader) && MIsClosable) {
       double scale = getWindowScale();
       double value = MHeader->getValue();
@@ -115,7 +115,7 @@ public:
         SAT_TweenChain* chain = new SAT_TweenChain();
         SAT_TweenNode* node1 = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
         chain->appendNode(node1);
-        do_widget_start_tween(this,chain);
+        do_Widget_start_tween(this,chain);
       }
       else {
         //close();
@@ -127,19 +127,19 @@ public:
         SAT_TweenChain* chain = new SAT_TweenChain();
         SAT_TweenNode* node1 = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
         chain->appendNode(node1);
-        do_widget_start_tween(this,chain);
+        do_Widget_start_tween(this,chain);
       }
-      SAT_VisualWidget::do_widget_update(this,AIndex,AMode);
+      SAT_VisualWidget::do_Widget_update(this,AIndex,AMode);
     }
     else {
-      SAT_VisualWidget::do_widget_update(AWidget,AIndex,AMode);
+      SAT_VisualWidget::do_Widget_update(AWidget,AIndex,AMode);
     }
   }
 
   //----------
 
-  void on_widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
-    SAT_VisualWidget::on_widget_tween(AId,AType,ACount,AData);
+  void on_Widget_tween(uint32_t AId, uint32_t AType, uint32_t ACount, double* AData) {
+    SAT_VisualWidget::on_Widget_tween(AId,AType,ACount,AData);
     if (AId == 255) {
       if (AType == SAT_TWEEN_FINISHED) {
         //close();
@@ -164,9 +164,9 @@ public:
     MContainer->State.active = true;
     MContainer->State.visible = true;
     MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_UP);
-    do_widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
-    //do_widget_update(this);
-    //do_widget_redraw(this);
+    do_Widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
+    //do_Widget_update(this);
+    //do_Widget_redraw(this);
   }
 
   //----------
@@ -180,7 +180,7 @@ public:
     MContainer->State.active = false;
     MContainer->State.visible = false;
     MSymbol->setSymbol(SAT_SYMBOL_FILLED_TRI_DOWN);
-    do_widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
+    do_Widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
   }
 
   //----------

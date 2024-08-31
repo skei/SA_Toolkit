@@ -255,7 +255,7 @@ public: // timer
 public: // window
 //------------------------------
 
-  void on_window_show() override {
+  void on_Window_show() override {
     #ifdef SAT_WINDOW_BUFFERED    
       if (!MBufferAllocated) {
         SAT_Renderer* renderer = getRenderer();
@@ -277,7 +277,7 @@ public: // window
 
   //----------
 
-  void on_window_hide() override {
+  void on_Window_hide() override {
     MIsClosing = true;
     #ifdef SAT_WINDOW_TIMER_AUTOSTART
       stopTimer();
@@ -296,11 +296,11 @@ public: // window
   //----------
 
   /*
-    we don't risk getting overlapping on_window_paint and on_window_resize events, do we?
+    we don't risk getting overlapping on_Window_paint and on_Window_resize events, do we?
     should we make the renderer context current during resizing?
   */
 
-  void on_window_resize(uint32_t AWidth, uint32_t AHeight) override {
+  void on_Window_resize(uint32_t AWidth, uint32_t AHeight) override {
     if (AWidth < 1) AWidth = 1;
     if (AHeight < 1) AHeight = 1;
     uint32_t value = (AHeight << 16) + AWidth;
@@ -311,12 +311,12 @@ public: // window
 
   //----------
 
-  // on_window_resize and on_window_paint will not be called concurrently, will they?
+  // on_Window_resize and on_Window_paint will not be called concurrently, will they?
   // ..resize while we're painting...
   //
   // (we don't care about the update rect..)
 
-  void on_window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
+  void on_Window_paint(int32_t AXpos, int32_t AYpos, uint32_t AWidth, uint32_t AHeight) override {
 
     if (MIsClosing) return;
     if (MIsPainting) return;
@@ -339,9 +339,13 @@ public: // window
 
     uint32_t pending_size = 0;
     //while (MPendingResizeQueue.read(&pending_size)) { resized_window = true; }
+    uint32_t count = 0;
     while (MPendingResizeQueue.try_dequeue(pending_size)) {
+      count += 1;
       resized_window = true;
     }
+    SAT_GLOBAL.ANALYTICS.report_PendingResizeQueue_count(count);
+
 
     #ifdef SAT_WINDOW_BUFFERED
 

@@ -144,7 +144,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawValueGraph(AContext);
@@ -152,13 +152,13 @@ public:
     drawBorder(AContext);
   }
 
-//  void on_widget_mouseClick(float AXpos, float AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp=0) override {
+//  void on_Widget_mouseClick(float AXpos, float AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp=0) override {
 //  }
 
-//  void on_widget_mouseRelease(float AXpos, float AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp=0) override {
+//  void on_Widget_mouseRelease(float AXpos, float AYpos, uint32_t AButton, uint32_t AState, uint32_t ATimeStamp=0) override {
 //  }
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime=0) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime=0) override {
       //SWidget::on_mouseMove(AXpos,AYpos,AState);
 
       //float w = (float)(AXpos - mrect.x) / (float)mrect.w; // 0..1
@@ -168,24 +168,24 @@ public:
       if (index != MSelected) {
         MSelected = index;
         //STrace("MSelected: %i\n",MSelected);
-        do_widget_redraw(this);
+        do_Widget_redraw(this);
       }
   }
 
-//  void on_widget_enter(float AXpos, float AYpos, SAT_Widget* AFrom, uint32_t ATimeStamp=0) override {
+//  void on_Widget_enter(float AXpos, float AYpos, SAT_Widget* AFrom, uint32_t ATimeStamp=0) override {
 //    //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,MCursor);
 //    //if (flags.autoHint) do_widgetListener_setHint(this,MHint);
 //  }
 
-  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+  void on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
 //    //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
 //    //if (flags.autoHint) do_widgetListener_setHint(this,"");
       //SWidget::on_leave(AWidget);
       if (MSelected>=0) {
         MSelected = -1;
-        do_widget_redraw(this);
+        do_Widget_redraw(this);
       }
-      SAT_Widget::on_widget_leave(ATo,AXpos,AYpos,ATime);
+      SAT_Widget::on_Widget_leave(ATo,AXpos,AYpos,ATime);
   }
 
 };

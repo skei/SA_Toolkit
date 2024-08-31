@@ -142,7 +142,7 @@ public:
   // called from
   //   SAT_Queues.flushParamFromHostToGui (timer)
   //   SAT_Plugin.on_processorOwner_updateParamFromHostToGui -> queue (audio)
-  // (do_widget_redraw doesn't redraw directly, ultimately sends invalidate event)
+  // (do_Widget_redraw doesn't redraw directly, ultimately sends invalidate event)
 
   // [AUDIO THREAD]
 
@@ -153,7 +153,7 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setValue(value);
-        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
+        widget->do_Widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
       }
     }
   }
@@ -169,7 +169,7 @@ public:
       if (widget) {
         sat_param_t value = AParameter->getValue();
         widget->setModulation(value);
-        widget->do_widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
+        widget->do_Widget_redraw(widget,0,SAT_WIDGET_REDRAW_SELF);
       }
     }
   }
@@ -293,7 +293,7 @@ public: // clap.gui
     MHeight = height;
     if (MWindow /*&& MWindowIsOpen*/) {
       MWindow->setSize(width,height);           // actually resizes the window (will it re-send resize event) (sets MWindowWidth/Height)
-      MWindow->on_window_resize(width,height);  // tell the rest of the system about the new size (calc scale, root.on_widget_resize, realign)
+      MWindow->on_Window_resize(width,height);  // tell the rest of the system about the new size (calc scale, root.on_Widget_resize, realign)
     }
     return true;
   }
@@ -335,7 +335,7 @@ public: // clap.gui
 
   bool show() override {
     if (MWindow) {
-      MWindow->on_window_show();
+      MWindow->on_Window_show();
       MWindow->show();
     }
     MWindowIsOpen = true;
@@ -346,7 +346,7 @@ public: // clap.gui
 
   bool hide() override {
     if (MWindow) {
-      MWindow->on_window_hide();
+      MWindow->on_Window_hide();
       MWindow->hide();
     }
     MWindowIsOpen = false;

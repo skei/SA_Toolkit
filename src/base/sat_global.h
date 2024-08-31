@@ -115,7 +115,6 @@ public:
 //
 //----------------------------------------------------------------------
 
-
 SAT_Global SAT_GLOBAL = {};
 
 #include "base/sat_global_macros.h"

@@ -237,8 +237,8 @@ public: // ticks
     MGrid->copyCellsFrom(MStatesBackup);
     //memcpy(MStates,MStatesBackup,(sizeof(uint8_t)*(256*256)));
 //    if (isEditorOpen()) {
-      //w_grid->do_widget_update(w_grid,0,0);
-      MGrid->do_widget_redraw(MGrid,0,0);
+      //w_grid->do_Widget_update(w_grid,0,0);
+      MGrid->do_Widget_redraw(MGrid,0,0);
 //    }
   }
 
@@ -247,8 +247,8 @@ public: // ticks
   void handleTick() {
     updateCells();
 //    if (isEditorOpen()) {
-      //w_grid->do_widget_update(w_grid,0,0);
-      MGrid->do_widget_redraw(MGrid,0,0);
+      //w_grid->do_Widget_update(w_grid,0,0);
+      MGrid->do_Widget_redraw(MGrid,0,0);
 //    }
   }
 

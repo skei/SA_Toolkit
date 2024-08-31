@@ -1,5 +1,5 @@
-#ifndef sat_button_widget_included
-#define sat_button_widget_included
+#ifndef sat_button_Widget_included
+#define sat_button_Widget_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
@@ -73,7 +73,7 @@ public: // on_widget
 //------------------------------
 
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       if (MMomentary) {
         setValue(1.0);
@@ -94,30 +94,30 @@ public: // on_widget
       chain->appendNode(node1);
       SAT_TweenNode* node2 = new SAT_TweenNode(this,255,2.0,SAT_TWEEN_RECT,4,ends,starts,SAT_EASING_IN_EXPO);
       chain->appendNode(node2);
-      do_widget_start_tween(this,chain);
+      do_Widget_start_tween(this,chain);
 */
 //==========
 
-      do_widget_update(this);
-      do_widget_redraw(this);
+      do_Widget_update(this);
+      do_Widget_redraw(this);
     }
   }
 
   //----------
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
     if (AButton == SAT_BUTTON_LEFT) {
       if (MMomentary) {
         setValue(0.0);
-        do_widget_update(this);
-        do_widget_redraw(this);
+        do_Widget_update(this);
+        do_Widget_redraw(this);
       }
     }
   }
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     //SAT_TRACE;
     double value = getValue();
     if (value < 0.5) {
@@ -140,7 +140,7 @@ public: // on_widget
     drawBorder(AContext);
 
     // why not just:
-    // SAT_TextWidget::on_widget_paint(AContext);
+    // SAT_TextWidget::on_Widget_paint(AContext);
 
   }
 

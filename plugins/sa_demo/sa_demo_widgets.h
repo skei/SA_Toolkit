@@ -33,9 +33,9 @@ public:
 public:
 //------------------------------
 
-  // void do_widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
+  // void do_Widget_update(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_UPDATE_VALUE) override {
   //   SAT_TRACE;
-  //   SAT_RootWidget::do_widget_update(AWidget,AIndex,AMode);
+  //   SAT_RootWidget::do_Widget_update(AWidget,AIndex,AMode);
   // }
 
 };
@@ -85,7 +85,7 @@ public:
     if (MPages) {
       MPages->selectPage(AY);
       MPages->realignChildren();
-      MPages->do_widget_redraw(MPages);
+      MPages->do_Widget_redraw(MPages);
 
     }
   }
@@ -135,7 +135,7 @@ public:
     //setSizableBorder(SAT_Rect(5,5,5,5));
     //setSizableEdges(SAT_EDGE_ALL);
   
-    //do_widget_want_timer(this,true);
+    //do_Widget_want_timer(this,true);
 
     MCoords[0] = { 0.0, 0.0 };
     MCoords[1] = { 0.0, 1.0 };
@@ -159,26 +159,26 @@ public:
 public:
 //------------------------------
 
-  void on_widget_open(SAT_WidgetOwner* AOwner) final {
-    do_widget_want_timer(this,true);
+  void on_Widget_open(SAT_WidgetOwner* AOwner) final {
+    do_Widget_want_timer(this,true);
   }
 
   //----------
 
-  void on_widget_close(SAT_WidgetOwner* AOwner) final {
-    do_widget_want_timer(this,false);
+  void on_Widget_close(SAT_WidgetOwner* AOwner) final {
+    do_Widget_want_timer(this,false);
   }
 
   //----------
 
-  void on_widget_timer(double ADelta) final {
+  void on_Widget_timer(double ADelta) final {
     updateCoords(ADelta);
-    do_widget_redraw(this);
+    do_Widget_redraw(this);
   }
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) final {
+  void on_Widget_paint(SAT_PaintContext* AContext) final {
     //drawDropShadow(AContext);
     fillBackground(AContext);
     //paintChildren(AContext);

@@ -48,9 +48,9 @@ public:
 public:
 //------------------------------
 
-  void on_widget_hint(SAT_Widget* AWidget, const char* AHint) override {
+  void on_Widget_hint(SAT_Widget* AWidget, const char* AHint) override {
     setText(AHint);
-    do_widget_redraw(this);
+    do_Widget_redraw(this);
   }
 
   

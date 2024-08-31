@@ -78,7 +78,7 @@ public:
 //------------------------------
 
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     SAT_Rect mrect = getRect();
     SAT_Painter* painter = AContext->painter;
 
@@ -118,7 +118,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = true;
       SAT_Rect mrect = getRect();
@@ -128,7 +128,7 @@ public:
       MSliderValues[i] = SAT_Clamp(v,0,1);
       MHoverSlider = i;
       
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
 
 //      if (Options.autoHideCursor) {
 //        do_widgetListener_set_cursor(this,SAT_CURSOR_LOCK);
@@ -140,10 +140,10 @@ public:
 
   //----------
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime=0) override {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = false;
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
       MHoverSlider = -1;
       
 //      if (Options.autoHideCursor) {
@@ -156,7 +156,7 @@ public:
 
   //----------
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime=0) override {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime=0) override {
     SAT_Rect mrect = getRect();
     //SWidget::on_mouseMove(AXpos,AYpos,AState);
     float w = (float)(AXpos - mrect.x) / (float)mrect.w; // 0..1
@@ -165,23 +165,23 @@ public:
       float v = (mrect.y2() - AYpos) / mrect.h;
       MSliderValues[index] = SAT_Clamp(v,0,1);
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
     }
     else {
       if (index != MHoverSlider) MHoverSlider = index;
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
     }
   }
 
   //----------
 
-  void on_widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
-    SAT_VisualWidget::on_widget_leave(ATo,AXpos,AYpos,ATime);
+  void on_Widget_leave(SAT_Widget* ATo, int32_t AXpos, int32_t AYpos, uint32_t ATime) override {
+    SAT_VisualWidget::on_Widget_leave(ATo,AXpos,AYpos,ATime);
     //SAT_DRect mrect = getRect();
     //SWidget::on_leave(AWidget);
     if (MHoverSlider >= 0) {
       MHoverSlider = -1;
-      do_widget_redraw(this);
+      do_Widget_redraw(this);
     }
     //if (flags.autoCursor) do_widgetListener_setMouseCursor(this,SAT_CURSOR_DEFAULT);
     //if (flags.autoHint) do_widgetListener_setHint(this,"");

@@ -181,15 +181,15 @@ public: // wires
 public: // mouse
 //------------------------------
 
-  // void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
-  //   SAT_ScrollBoxWidget::on_widget_mouse_move(AXpos,AYpos,AState,ATime);
+  // void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
+  //   SAT_ScrollBoxWidget::on_Widget_mouse_move(AXpos,AYpos,AState,ATime);
   // }
 
 //------------------------------
 public: // paint
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     paintChildren(AContext);
@@ -216,7 +216,7 @@ public: // paint
 public: // notify
 //------------------------------
 
-  void do_widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr/*=nullptr*/) override {
+  void do_Widget_notify(SAT_Widget* AWidget, int32_t AValue, void* APtr/*=nullptr*/) override {
     switch (AValue) {
 
       case SAT_NODE_NOTIFY_MOUSE_MOVE: {
@@ -305,8 +305,8 @@ public: // redraw
   // a module has been moved (or resized)..
   // because of the wires (on top), we want to redraw the entire node editor..
   
-  void do_widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
-    SAT_ScrollBoxWidget::do_widget_redraw(this,0,SAT_WIDGET_REDRAW_SELF);
+  void do_Widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
+    SAT_ScrollBoxWidget::do_Widget_redraw(this,0,SAT_WIDGET_REDRAW_SELF);
   }
 
 //------------------------------
@@ -345,7 +345,7 @@ private: // update mouse connect
       if (pin != MPrevConnectPin) {
         pin->flags |= SAT_NODE_PIN_CONNECTING;
         SAT_NodeWidget* owner = pin->owner;
-        owner->do_widget_redraw(owner);
+        owner->do_Widget_redraw(owner);
         MConnectNode = owner;
         MPrevConnectPin = pin;
         MConnectPin = pin;
@@ -357,8 +357,8 @@ private: // update mouse connect
         MConnectNode = nullptr;
         MConnectPin = nullptr;
         //SAT_NodeWidget* owner = MPrevConnectPin->owner;
-        //owner->do_widget_notify(owner,SAT_NODE_NOTIFY_END_CONNECT,MPrevConnectPin);
-        //owner->do_widget_redraw(owner);
+        //owner->do_Widget_notify(owner,SAT_NODE_NOTIFY_END_CONNECT,MPrevConnectPin);
+        //owner->do_Widget_redraw(owner);
         MPrevConnectPin = nullptr;
       } // prev
     }

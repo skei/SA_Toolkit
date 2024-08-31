@@ -30,7 +30,7 @@ public:
 
   //----------
 
-  void on_widget_paint(SAT_PaintContext* AContext) final {
+  void on_Widget_paint(SAT_PaintContext* AContext) final {
     SAT_Rect mrect = getRect();
     SAT_Painter* painter = AContext->painter;
     float w = mrect.w / SA_TYR_NUM_VOICES;

@@ -872,10 +872,10 @@ private:
         //SAT_PRINT("WM_SIZE %s w %i h %i (type %i)\n",MWindowType,w,h,wParam);
         //if ( (w != MRect.w) || (h != MRect.h) ) {
         //if ( (w != MWindowWidth) || (h != MWindowHeight) ) {
-          //SAT_PRINT("-> on_window_resize\n");
+          //SAT_PRINT("-> on_Window_resize\n");
           MWindowWidth  = w;
           MWindowHeight = h;
-          on_window_resize(w,h);
+          on_Window_resize(w,h);
           //invalidateRegion(0,0,w,h);
           //if (MFlags & s3_wf_autoalign) on_widgetAlign(this);
           //#ifndef S3_NO_WINDOW_BACKBUFFER
@@ -893,7 +893,7 @@ private:
         int32_t h = MWinPaintStruct.rcPaint.bottom - MWinPaintStruct.rcPaint.top;// + 1;
         //SAT_PRINT("WM_PAINT %s x %i y %i w %i h %i\n",MWindowType,x,y,w,h);
 //        if (MFillBackground) fillColor(x,y,w,h,MBackgroundColor);
-        on_window_paint(x,y,w,h);
+        on_Window_paint(x,y,w,h);
         endPaint();
         break;
       }
@@ -902,7 +902,7 @@ private:
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
         //if (MListener) MListener->on_mouseMove(this,x,y,remapKey(wParam));
-        on_window_mouseMove(x,y,remapMouseState(wParam),0);
+        on_Window_mouseMove(x,y,remapMouseState(wParam),0);
         MMouseXpos = x;
         MMouseYpos = y;
         break;
@@ -925,7 +925,7 @@ private:
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
         //if (MListener) MListener->on_mouseDown(this,x,y,b,remapKey(wParam));
-        on_window_mouseClick(x,y,b,remapMouseState(wParam),0);
+        on_Window_mouseClick(x,y,b,remapMouseState(wParam),0);
         //        if (MFlags & s3_wf_capture) grabCursor();
         break;
       }
@@ -944,7 +944,7 @@ private:
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
         //if (MListener) MListener->on_mouseUp(this,x,y,b,remapKey(wParam));
-        on_window_mouseRelease(x,y,b,remapMouseState(wParam),0);
+        on_Window_mouseRelease(x,y,b,remapMouseState(wParam),0);
         //        if (MFlags&s3_wf_capture) releaseCursor();
         break;
       }
@@ -991,8 +991,8 @@ private:
         d = GET_WHEEL_DELTA_WPARAM(wParam);
         //if (d>0) { if (MListener) MListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelUp,  smb_none); }
         //if (d<0) { if (MListener) MListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelDown,smb_none); }
-        if (d > 0) { on_window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_UP,   SAT_STATE_NONE, 0); }
-        if (d < 0) { on_window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_DOWN, SAT_STATE_NONE, 0); }
+        if (d > 0) { on_Window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_UP,   SAT_STATE_NONE, 0); }
+        if (d < 0) { on_Window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_DOWN, SAT_STATE_NONE, 0); }
         break;
       }
 
@@ -1002,7 +1002,7 @@ private:
         uint32_t ke = wParam;
         uint32_t ch = 0;
         uint32_t st = lParam;
-        on_window_keyPress(ke,ch,st,0);
+        on_Window_keyPress(ke,ch,st,0);
         break;
       }
 
@@ -1012,7 +1012,7 @@ private:
         uint32_t ke = wParam;
         uint32_t ch = 0;
         uint32_t st = lParam;
-        on_window_keyRelease(ke,ch,st,0);
+        on_Window_keyRelease(ke,ch,st,0);
         break;
       }
 

@@ -48,7 +48,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     if (MColor.a > 0.001) {
       //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;

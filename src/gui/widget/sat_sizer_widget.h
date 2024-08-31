@@ -114,7 +114,7 @@ public:
 public:
 //------------------------------
 
-  void on_widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) final {
+  void on_Widget_mouse_click(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) final {
     if (AButton == SAT_BUTTON_LEFT) {
       MIsDragging = true;
       prevx = AXpos;
@@ -124,13 +124,13 @@ public:
 
   //----------
 
-  void on_widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) final {
+  void on_Widget_mouse_release(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) final {
     if (AButton == SAT_BUTTON_LEFT) MIsDragging = false;
   }
 
   //----------
 
-  void on_widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) final {
+  void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) final {
     if (MIsDragging) {
       int32_t deltax = AXpos - prevx;
       int32_t deltay = AYpos - prevy;
@@ -155,7 +155,7 @@ public:
 
       if (MTarget) {
         //SAT_PRINT("deltax %i deltay %i\n",deltax,deltay);
-        MTarget->do_widget_resize(this,deltax,deltay);
+        MTarget->do_Widget_resize(this,deltax,deltay);
       }
       prevx = AXpos;
       prevy = AYpos;

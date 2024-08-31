@@ -106,21 +106,21 @@ public:
 public:
 //------------------------------
 
-  // void on_widget_open(SAT_WidgetOwner* AOwner) override {
-  //   SAT_VisualWidget::on_widget_open(AOwner);
+  // void on_Widget_open(SAT_WidgetOwner* AOwner) override {
+  //   SAT_VisualWidget::on_Widget_open(AOwner);
   //   SAT_Window* window = (SAT_Window*)AOwner;
   //   //window->registerTimerWidget(this);      // TODO: -> SAT_WidgetOwner
-  //   //do_widget_want_timer(this,true);
+  //   //do_Widget_want_timer(this,true);
   // }
   
-  // void on_widget_timer(double ADelta) override {
+  // void on_Widget_timer(double ADelta) override {
   //   //SAT_PRINT;
   //   if (SAT_GLOBAL.DEBUG.OBSERVER.getNumObservers() > 0) {
   //     //do_widgetListener_redraw(this,0,SAT_WIDGET_REDRAW_SELF);
   //   }
   // }
 
-  void on_widget_paint(SAT_PaintContext* AContext) override {
+  void on_Widget_paint(SAT_PaintContext* AContext) override {
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawObservers(AContext);
