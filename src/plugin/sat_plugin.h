@@ -690,9 +690,13 @@ public: // processor listener
 
   // a parameter has changed in process()
   // tell the editor about it
-  //
+
   // value is in clap-space
   // todo: convert to widget-space (normalize)
+
+  // todo: before automatically writing to the queue, compare MProcessContext.process_counter
+  // and MParameter.lastProcessedFrame.. if they are equal, skip writing the param
+  // to the queue
 
   void on_processorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
@@ -701,9 +705,14 @@ public: // processor listener
         SAT_Parameter* param = getParameter(AIndex);
         if (param) {
           #ifdef SAT_WINDOW_QUEUE_WIDGETS
-            uint32_t index = param->getIndex();
-            sat_param_t value = param->normalize(AValue);
-            MQueues.queueParamFromHostToGui(index,value);
+
+            if (MProcessContext.process_counter != param->getLastAutomatedFrame()) {
+              uint32_t index = param->getIndex();
+              sat_param_t value = param->normalize(AValue);
+              MQueues.queueParamFromHostToGui(index,value);
+              param->setLastAutomatedFrame(MProcessContext.process_counter);
+            }
+
           #else
             MEditor->updateParameterFromHost(param, AValue);
           #endif
@@ -723,9 +732,15 @@ public: // processor listener
         SAT_Parameter* param = getParameter(AIndex);
         if (param) {
           #ifdef SAT_WINDOW_QUEUE_WIDGETS
-            uint32_t index = param->getIndex();
-            sat_param_t value = param->normalize(AValue);
-            MQueues.queueModFromHostToGui(index,value);
+
+            if (MProcessContext.process_counter != param->getLastModulatedFrame()) {
+              uint32_t index = param->getIndex();
+              sat_param_t value = param->normalize(AValue);
+              MQueues.queueModFromHostToGui(index,value);
+              param->setLastModulatedFrame(MProcessContext.process_counter);
+            }
+
+
           #else
             MEditor->updateModulationFromHost(param, AValue);
           #endif

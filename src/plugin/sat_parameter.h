@@ -80,6 +80,14 @@ protected:
 //sat_param_t MLastAutomatedValue                 = 0.0;
 //sat_param_t MLastModulatedValue                 = 0.0;
 
+  // double  MLastAutomatedValue = 0.0;
+  // double  MLastModulatedValue = 0.0;
+  // bool    MIsGuiAutomationDirty = false;
+  // bool    MIsGuiModulationDirty = false;
+
+  uint32_t   MLastAutomatedFrame                  = 0; // set to another value, to 'force' first processing?
+  uint32_t   MLastModulatedFrame                  = 0;
+
 //------------------------------
 public:
 //------------------------------
@@ -304,10 +312,21 @@ public:
     return (MInfo.flags & CLAP_PARAM_IS_ENUM);
   }
 
-  //virtual double getLastAutomatedValue() { return MLastAutomatedValue; }
-  //virtual double getLastModulatedValue() { return MLastModulatedValue; }
-  //virtual bool isGuiAutomationDirty() { return MGuiAutomationDirty; }
-  //virtual bool isGuiModulationDirty() { return MGuiModulationDirty; }
+  uint32_t getLastAutomatedFrame() {
+    return MLastAutomatedFrame;
+  }
+
+  uint32_t getLastModulatedFrame() {
+    return MLastModulatedFrame;
+  }
+
+  void setLastAutomatedFrame(uint32_t AFrame) {
+    MLastAutomatedFrame = AFrame;
+  }
+
+  void setLastModulatedFrame(uint32_t AFrame) {
+    MLastModulatedFrame = AFrame;
+  }
 
 //------------------------------
 public:
