@@ -29,7 +29,7 @@ private:
   double    MCircleSize = 10.0;
   double    MCircleLineWidth = 2.0;
 
-  SAT_Color MCircle2Color  = SAT_LighterGrey;
+  SAT_Color MCircle2Color  = SAT_LightYellow;
   double    MCircle2Size = 4.0;
   double    MCircle2LineWidth = 1.0;
 
@@ -173,13 +173,13 @@ public:
 
     painter->setDrawColor(MCircleColor);
     painter->setLineWidth(MCircleLineWidth * scale);
-    painter->drawCircle(x1,y1,MCircleSize);
-    painter->drawCircle(x2,y2,MCircleSize);
+    painter->drawCircle(x1,y1,MCircleSize * scale);
+    painter->drawCircle(x2,y2,MCircleSize * scale);
 
     painter->setDrawColor(MCircle2Color);
     painter->setLineWidth(MCircle2LineWidth * scale);
-    painter->drawCircle(c1x,c1y,MCircle2Size);
-    painter->drawCircle(c2x,c2y,MCircle2Size);
+    painter->drawCircle(c1x,c1y,MCircle2Size * scale);
+    painter->drawCircle(c2x,c2y,MCircle2Size * scale);
 
     // bezier
 

@@ -91,17 +91,17 @@ struct SAT_ProcessContext {
 
 class SAT_ProcessorListener {
 public:
-  virtual SAT_AudioPortArray* on_processorListener_getAudioInputPorts()  { return nullptr; }
-  virtual SAT_AudioPortArray* on_processorListener_getAudioOutputPorts() { return nullptr; }
-  virtual SAT_NotePortArray*  on_processorListener_getNoteInputPorts()   { return nullptr; }
-  virtual SAT_NotePortArray*  on_processorListener_getNoteOutputPorts()  { return nullptr; }
-  virtual SAT_ParameterArray* on_processorListener_getParameters()       { return nullptr; }
-  virtual void                on_processorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-  virtual void                on_processorListener_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-  virtual void                on_processorListener_outputEvent()  {}
-//virtual void                on_processorListener_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
-//virtual void                on_processorListener_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
-//virtual void                on_processorListener_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
+  virtual SAT_AudioPortArray* on_ProcessorListener_getAudioInputPorts()  { return nullptr; }
+  virtual SAT_AudioPortArray* on_ProcessorListener_getAudioOutputPorts() { return nullptr; }
+  virtual SAT_NotePortArray*  on_ProcessorListener_getNoteInputPorts()   { return nullptr; }
+  virtual SAT_NotePortArray*  on_ProcessorListener_getNoteOutputPorts()  { return nullptr; }
+  virtual SAT_ParameterArray* on_ProcessorListener_getParameters()       { return nullptr; }
+  virtual void                on_ProcessorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void                on_ProcessorListener_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+  virtual void                on_ProcessorListener_outputEvent()  {}
+//virtual void                on_ProcessorListener_queueParamFromHostToGui(uint32_t AIndex, sat_param_t AValue)  {}
+//virtual void                on_ProcessorListener_queueModFromHostToGui(uint32_t AIndex, sat_param_t AValue)    {}
+//virtual void                on_ProcessorListener_queueNoteEndFromAudioToHost(SAT_Note ANote) {}
 };
 
 //----------------------------------------------------------------------

@@ -78,7 +78,7 @@ public: // host -> gui
   #ifndef SAT_NO_GUI
 
   // called from [audio]
-  //   SAT_Plugin.on_processorListener_updateParamFromHostToGui
+  //   SAT_Plugin.on_ProcessorListener_updateParamFromHostToGui
   //   (from SAT_Processor.processParamValueEvent)
 
   void queueParamFromHostToGui(uint32_t AParamId, sat_param_t AValue) {
@@ -112,7 +112,7 @@ public: // host -> gui
   //----------
 
   // called from [audio]
-  //   SAT_Plugin.on_processorListener_updateModFromHostToGui
+  //   SAT_Plugin.on_ProcessorListener_updateModFromHostToGui
   //   (from SAT_Processor.processParamModEvent)
 
   void queueModFromHostToGui(uint32_t AParamId, sat_param_t AValue) {

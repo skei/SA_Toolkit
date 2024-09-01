@@ -2,7 +2,6 @@
 #define sa_compciter_included
 //----------------------------------------------------------------------
 
-
 // based on the 'compciter' jesusonic effect by 'loser'
 
 /*

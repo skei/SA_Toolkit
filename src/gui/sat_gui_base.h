@@ -298,7 +298,7 @@ public:
   virtual void          on_WidgetListener_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
   virtual void          on_WidgetListener_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
   virtual void          on_WidgetListener_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
-  virtual void          on_WidgetListener_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) {}
+  virtual void          on_WidgetListener_set_overlayColor(SAT_Widget* AWidget, SAT_Color AColor) {}
 };
 
 //----------
@@ -320,7 +320,6 @@ public:
   SAT_BaseWidget() {}
   virtual ~SAT_BaseWidget() {}
 public:
-  // todo: on_Widget_
   virtual void          on_Widget_open(SAT_WidgetOwner* AOwner) {}
   virtual void          on_Widget_close(SAT_WidgetOwner* AOwner) {}
   virtual void          on_Widget_move(int32_t AXpos, int32_t AYpos) {}
@@ -353,7 +352,7 @@ public:
   virtual void          do_Widget_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
   virtual void          do_Widget_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
   virtual void          do_Widget_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
-  virtual void          do_Widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) {}
+  virtual void          do_Widget_set_overlay_color(SAT_Widget* AWidget, SAT_Color AColor) {}
 };
 
 //----------------------------------------------------------------------
@@ -407,7 +406,6 @@ public:
   virtual void          startEventThread() = 0;
   virtual void          stopEventThread() = 0;
 public:
-  // todo: on_Window_
   virtual void          on_Window_show() {}
   virtual void          on_Window_hide() {}
   virtual void          on_Window_move(int32_t AXpos, int32_t AYpos) {}

@@ -41,11 +41,11 @@ public:
   SAT_Processor(SAT_ProcessorListener* AListener) {
     //SAT_TRACE;
     MListener = AListener;
-    MAudioInputs = AListener->on_processorListener_getAudioInputPorts();
-    MAudioOutputs = AListener->on_processorListener_getAudioOutputPorts();
-    MNoteInputs = AListener->on_processorListener_getNoteInputPorts();
-    MNoteOutputs = AListener->on_processorListener_getNoteOutputPorts();
-    MParameters = AListener->on_processorListener_getParameters();
+    MAudioInputs = AListener->on_ProcessorListener_getAudioInputPorts();
+    MAudioOutputs = AListener->on_ProcessorListener_getAudioOutputPorts();
+    MNoteInputs = AListener->on_ProcessorListener_getNoteInputPorts();
+    MNoteOutputs = AListener->on_ProcessorListener_getNoteOutputPorts();
+    MParameters = AListener->on_ProcessorListener_getParameters();
     //SAT_Assert(MParameters);
   }
 
@@ -184,8 +184,7 @@ public:
     SAT_Parameter* param = MParameters->getItem(index);
     param->setValue(value);
     #ifndef SAT_NO_GUI
-      // MListener->on_processorListener_queueParamFromHostToGui(index,value);
-      MListener->on_processorListener_updateParamFromHostToGui(index,value);
+      MListener->on_ProcessorListener_updateParamFromHostToGui(index,value);
       // param->setGuiAutomationDirty(true);
       // param->setLastAutomatedValue(value);
     #endif
@@ -202,8 +201,7 @@ public:
     SAT_Parameter* param = MParameters->getItem(index);
     param->setModulation(value);
     #ifndef SAT_NO_GUI
-      MListener->on_processorListener_updateModFromHostToGui(index,value);
-      // MListener->on_processorListener_queueModFromHostToGui(index,value);
+      MListener->on_ProcessorListener_updateModFromHostToGui(index,value);
       // param->setGuiModulationDirty(true);
       // param->setLastModulatedValue(value);
     #endif
@@ -358,9 +356,8 @@ public:
 //------------------------------
 
   // process slice of audio..
-  // consider this like a 'reference implementation', or even 'prototype' ..
-  // advice: override this with your own..
   // note: stereo only
+  // advice: override this..
 
   virtual void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) {
     //MProcessContext = AContext;
@@ -456,8 +453,9 @@ public: // gui dirty queues
 
     todo: rethink, reconsider..
     these aren't called from anywhere, i think?
-    // commented out.. from all the processor's process() function..
-    // todo: see if we still would benefit from something similar..
+
+    - they're commented out.. from all the processor's process() function..
+    - todo: see if we still would benefit from something similar..
 
   */
 
@@ -496,7 +494,7 @@ public: // gui dirty queues
       //   SAT_Parameter* param = MParameters->getItem(i);
       //   if (param->isGuiAutomationDirty()) {
       //     double value = param->getLastAutomatedValue();
-      //     MListener->on_processorListener_queueParamFromHostToGui(i,value);
+      //     MListener->on_ProcessorListener_queueParamFromHostToGui(i,value);
       //   }
       // }
     }
@@ -509,7 +507,7 @@ public: // gui dirty queues
       //   SAT_Parameter* param = MParameters->getItem(i);
       //   if (param->isGuiModulationDirty()) {
       //     double value = param->getLastModulatedValue();
-      //     MListener->on_processorListener_queueModFromHostToGui(i,value);
+      //     MListener->on_ProcessorListener_queueModFromHostToGui(i,value);
       //   }
       // }
     }

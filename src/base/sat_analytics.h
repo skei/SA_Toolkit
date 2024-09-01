@@ -12,6 +12,10 @@
 //#include "sat.h"
 #include "base/sat_print.h"
 
+// #ifndef SAT_DEBUG
+//   #undef SAT_INCLUDE_ANALYTICS
+// #endif
+
 //----------------------------------------------------------------------
 
 class SAT_Analytics {

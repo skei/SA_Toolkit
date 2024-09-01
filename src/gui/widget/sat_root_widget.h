@@ -151,8 +151,8 @@ public: // do_widget
     if (MListener) MListener->on_WidgetListener_resize(AWidget,ADeltaX,ADeltaY);
   }
 
-  void do_Widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
-    if (MListener) MListener->on_WidgetListener_set_overlay(AWidget,AColor);
+  void do_Widget_set_overlay_color(SAT_Widget* AWidget, SAT_Color AColor) override {
+    if (MListener) MListener->on_WidgetListener_set_overlayColor(AWidget,AColor);
   }
 
 

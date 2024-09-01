@@ -727,6 +727,7 @@ public:
   //----------
 
   void on_Widget_mouse_dblclick(int32_t AXpos, int32_t AYpos, uint32_t AButton, uint32_t AState, uint32_t ATime) override {
+    //SAT_TRACE;
   }
   
   //----------
@@ -855,8 +856,8 @@ public:
     }
   }
 
-  void do_Widget_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
-    if (MParent) MParent->do_Widget_set_overlay(AWidget,AColor);
+  void do_Widget_set_overlay_color(SAT_Widget* AWidget, SAT_Color AColor) override {
+    if (MParent) MParent->do_Widget_set_overlay_color(AWidget,AColor);
   }
   
 };

@@ -37,6 +37,7 @@
 #define SAT_VOICE_MAX_EVENTS_PER_BLOCK            1024
 #define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
 #define SAT_WIDGET_NUM_VALUES                     16
+#define SAT_WINDOW_DBL_CLICK_MS                   200
 #define SAT_WINDOW_THREAD_KILL                    666
 #define SAT_WINDOW_THREAD_TIMER                   333
 #define SAT_WINDOW_BUFFER_MIN_SIZE                256
@@ -200,6 +201,11 @@
   // still a few things to do, and no performance testing have been done..
 
 //#define SAT_WINDOW_BUFFERED
+
+  // if this is defined, double click events will be sent to the widgets
+  // (in addition to the regular single click events)
+
+#define SAT_WINDOW_SUPPORT_DBL_CLICK
 
   // autostart the window timer
 

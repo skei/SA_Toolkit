@@ -80,7 +80,6 @@ public:
 
   SAT_Plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_ClapPlugin(ADescriptor,AHost) {
-    // MHost = new SAT_Host(AHost); // -> .init()
   }
 
   //----------
@@ -96,7 +95,6 @@ public:
       deleteNoteOutputPorts();
       deleteParameters();
     #endif
-    //if (MHost) delete MHost; // -> .destroy()
   }
 
 //------------------------------
@@ -153,7 +151,9 @@ public: // extensions
   void registerDefaultSynthExtensions() {
     registerDefaultExtensions();
     registerExtension(CLAP_EXT_NOTE_PORTS);
-    registerExtension(CLAP_EXT_THREAD_POOL);
+    #ifdef SAT_VOICE_PROCESSOR_THREADED
+      registerExtension(CLAP_EXT_THREAD_POOL);
+    #endif
     registerExtension(CLAP_EXT_VOICE_INFO);
   }
 
@@ -500,11 +500,8 @@ public: // editor
 
   //----------
 
-  // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.create()
+  // called by on_EditorListener_createWindow (by SAT_EmbeddedEditor.create)
   // override this to create your own window
-
-  // SAT_DEBUG_MEMTRACE misreports the new SAT_Window below..
-  // (i think....)
 
   #ifndef SAT_NO_GUI
     #ifdef SAT_EDITOR_EMBEDDED
@@ -516,7 +513,7 @@ public: // editor
         return MWindow;
       }
 
-      // called by on_EditorListener_createWindow by SAT_EmbeddedEditor.destroy()
+      // called by on_EditorListener_createWindow (by SAT_EmbeddedEditor.destroy)
 
       virtual void deleteWindow(SAT_Window* AWindow) {
         SAT_Assert( MWindow == AWindow );
@@ -668,23 +665,23 @@ public: // processor
 public: // processor listener
 //------------------------------
 
-  SAT_AudioPortArray* on_processorListener_getAudioInputPorts() final {
+  SAT_AudioPortArray* on_ProcessorListener_getAudioInputPorts() final {
     return &MAudioInputPorts;
   }
 
-  SAT_AudioPortArray* on_processorListener_getAudioOutputPorts() final {
+  SAT_AudioPortArray* on_ProcessorListener_getAudioOutputPorts() final {
     return &MAudioOutputPorts;
   }
 
-  SAT_NotePortArray*  on_processorListener_getNoteInputPorts() final {
+  SAT_NotePortArray*  on_ProcessorListener_getNoteInputPorts() final {
     return &MNoteInputPorts;
   }
 
-  SAT_NotePortArray*  on_processorListener_getNoteOutputPorts() final {
+  SAT_NotePortArray*  on_ProcessorListener_getNoteOutputPorts() final {
     return &MNoteOutputPorts;
   }
 
-  SAT_ParameterArray* on_processorListener_getParameters() final {
+  SAT_ParameterArray* on_ProcessorListener_getParameters() final {
     return &MParameters;
   }
 
@@ -696,7 +693,7 @@ public: // processor listener
   // value is in clap-space
   // todo: convert to widget-space (normalize) (? should we?)
 
-  void on_processorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
+  void on_ProcessorListener_updateParamFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
     #ifndef SAT_NO_GUI
       if (MEditor) {
@@ -726,7 +723,7 @@ public: // processor listener
   // modulation has changed i process()
   // tell the editor about it
 
-  void on_processorListener_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
+  void on_ProcessorListener_updateModFromHostToGui(uint32_t AIndex, sat_param_t AValue) final {
     //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
     #ifndef SAT_NO_GUI
       if (MEditor) {

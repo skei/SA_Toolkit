@@ -32,39 +32,43 @@ private:
   
   // widgets
 
-  SAT_RootWidget*     MRootWidget           = nullptr;
-  SAT_OverlayWidget*  MOverlayWidget        = nullptr;
-  SAT_Widget*         MHoverWidget          = nullptr;
-  SAT_Widget*         MModalWidget          = nullptr;
-  SAT_Widget*         MMouseCaptureWidget   = nullptr;
-  SAT_Widget*         MKeyCaptureWidget     = nullptr;
-  SAT_Widget*         MHintWidget           = nullptr;
+  SAT_RootWidget*     MRootWidget             = nullptr;
+  SAT_OverlayWidget*  MOverlayWidget          = nullptr;
+  SAT_Widget*         MHoverWidget            = nullptr;
+  SAT_Widget*         MModalWidget            = nullptr;
+  SAT_Widget*         MMouseCaptureWidget     = nullptr;
+  SAT_Widget*         MKeyCaptureWidget       = nullptr;
+  SAT_Widget*         MHintWidget             = nullptr;
 
   // timer
 
-  double              MTimerDelta           = 0;
-  SAT_WidgetArray     MTimerListeners       = {};
-  SAT_Tweening        MTweening             = {}; // -> MTweening
+  double              MTimerDelta             = 0;
+  SAT_WidgetArray     MTimerListeners         = {};
+  SAT_Tweening        MTweening               = {}; // -> MTweening
 
   // mouse
 
-  int32_t             MMouseCurrentCursor   = SAT_CURSOR_DEFAULT;
-  int32_t             MMouseCurrentXpos     = 0;
-  int32_t             MMouseCurrentYpos     = 0;
-  int32_t             MMousePreviousXpos    = 0;
-  int32_t             MMousePreviousYpos    = 0;
-  bool                MMouseLocked          = false;
-  int32_t             MMouseLockedXclick    = 0;
-  int32_t             MMouseLockedYclick    = 0;
-  int32_t             MMouseLockedXpos      = 0;
-  int32_t             MMouseLockedYpos      = 0;
-  int32_t             MMouseClickedXpos     = 0;
-  int32_t             MMouseClickedYpos     = 0;
-  uint32_t            MMouseClickedButton   = 0;
-  bool                MMouseCaptured        = false;
-  int32_t             MMouseCaptureXpos     = 0;
-  int32_t             MMouseCaptureYpos     = 0;
-  uint32_t            MMouseCaptureButton   = 0;
+  int32_t             MMouseCurrentCursor     = SAT_CURSOR_DEFAULT;
+  int32_t             MMouseCurrentXpos       = 0;
+  int32_t             MMouseCurrentYpos       = 0;
+  int32_t             MMousePreviousXpos      = 0;
+  int32_t             MMousePreviousYpos      = 0;
+  bool                MMouseLocked            = false;
+  int32_t             MMouseLockedXclick      = 0;
+  int32_t             MMouseLockedYclick      = 0;
+  int32_t             MMouseLockedXpos        = 0;
+  int32_t             MMouseLockedYpos        = 0;
+  int32_t             MMouseClickedXpos       = 0;
+  int32_t             MMouseClickedYpos       = 0;
+  uint32_t            MMouseClickedButton     = 0;
+
+  uint32_t            MMouseClickedTimePrev   = 0;
+  SAT_Widget*         MMouseClickedWidgetPrev = nullptr;  
+
+  bool                MMouseCaptured          = false;
+  int32_t             MMouseCaptureXpos       = 0;
+  int32_t             MMouseCaptureYpos       = 0;
+  uint32_t            MMouseCaptureButton     = 0;
 
 //------------------------------
 public:
@@ -498,7 +502,7 @@ public: // widget listener
 
   //----------
 
-  void on_WidgetListener_set_overlay(SAT_Widget* AWidget, SAT_Color AColor) override {
+  void on_WidgetListener_set_overlayColor(SAT_Widget* AWidget, SAT_Color AColor) override {
     SAT_OverlayWidget* overlay = getOverlayWidget();
     if (overlay) {
       overlay->setColor(AColor);
@@ -586,14 +590,31 @@ public: // window
     // else, capture the widget we are hovering above
     else {
       if (MHoverWidget) {
-        MMouseCaptured = true;
+        MMouseCaptured      = true;
         MMouseCaptureWidget = MHoverWidget;
-        MMouseCaptureXpos = AXpos;
-        MMouseCaptureYpos = AYpos;
+        MMouseCaptureXpos   = AXpos;
+        MMouseCaptureYpos   = AYpos;
         MMouseCaptureButton = AButton;
         MMouseCaptureWidget->on_Widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
+
+        #ifdef SAT_WINDOW_SUPPORT_DBL_CLICK
+        if (MMouseClickedTimePrev != 0) {
+          if (MMouseClickedWidgetPrev == MHoverWidget) {
+            uint32_t time_diff = ATime - MMouseClickedTimePrev;
+            //SAT_PRINT("time_diff %i\n",time_diff);
+            if (time_diff < SAT_WINDOW_DBL_CLICK_MS) {
+              MHoverWidget->on_Widget_mouse_dblclick(AXpos,AYpos,AButton,AState,ATime);
+            }
+          }
+        }
+        MMouseClickedWidgetPrev = MHoverWidget;
+        #endif
+
+
+
       }
     }
+    MMouseClickedTimePrev = ATime;
   }
 
   //----------

@@ -88,7 +88,7 @@ public:
       //do_Widget_redraw(this);
     }
     if (MMenu) MMenu->closeMenu();
-    do_Widget_set_overlay(this,SAT_Color(0,0,0,0));
+    do_Widget_set_overlay_color(this,SAT_Color(0,0,0,0));
 
   }
 
@@ -113,7 +113,7 @@ public:
         case SAT_BUTTON_LEFT:
           if (MMenu) {
             MMenu->openMenu(AXpos,AYpos);
-            do_Widget_set_overlay(this,SAT_Color(0,0,0,0.3));
+            do_Widget_set_overlay_color(this,SAT_Color(0,0,0,0.3));
           }
           break;
         case SAT_BUTTON_RIGHT:
