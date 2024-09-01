@@ -227,9 +227,9 @@ public:
     appendParameter( new SAT_Parameter( "Dry",   "", 0,   -12,  0     ));
     MProcessor = new sa_compciter_processor(this);
     setProcessor(MProcessor);
-    #ifndef SAT_NO_GUI
-      setInitialEditorSize(510,340,1.0,true);
-    #endif
+    // #ifndef SAT_NO_GUI
+    //   setInitialEditorSize(510,340,1.0,true);
+    // #endif
     return SAT_Plugin::init();
   }
 
@@ -243,6 +243,8 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  /*
 
   #ifndef SAT_NO_GUI
   
@@ -260,7 +262,7 @@ public:
       header->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
       header->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
   
-      SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(40,"  ...");
+      SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(20,"  ...");
       root->appendChild(footer);
       footer->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
       footer->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
@@ -337,6 +339,8 @@ public:
     }
   
   #endif // nogui
+
+  */
 
 };
 

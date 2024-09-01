@@ -24,6 +24,10 @@
 #endif
 #endif
 
+#define SAT_DEFAULT_EDITOR_WIDTH        300
+#define SAT_DEFAULT_EDITOR_SCALE        2.0
+#define SAT_DEFAULT_EDITOR_WIDGET_SIZE  20
+
 //----------------------------------------------------------------------
 //
 //
@@ -62,10 +66,12 @@ private:
   SAT_PluginQueues        MQueues               = {};
 
   SAT_Editor*             MEditor               = nullptr;
-  uint32_t                MInitialEditorWidth   = 400;
-  uint32_t                MInitialEditorHeight  = 300;
+  uint32_t                MInitialEditorWidth   = 100;
+  uint32_t                MInitialEditorHeight  = 100;
   double                  MInitialEditorScale   = 1.0;
   bool                    MProportionalEditor   = false;
+
+  bool MHasInitialSize = false;
   
 //double                  MEditorAspectRatio    = 1.0;
 //sat_atomic_bool_t       MIsEditorClosing      { false };
@@ -489,10 +495,11 @@ public: // editor
 
   void setInitialEditorSize(uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
     //SAT_PRINT("AWidth %i AHeight %i AScale %.3f\n",AWidth,AHeight,AScale);
-    MInitialEditorWidth = AWidth;
-    MInitialEditorHeight = AHeight;
-    MInitialEditorScale = AScale;
-    MProportionalEditor = AProportional;
+    MHasInitialSize       = true;
+    MInitialEditorWidth   = AWidth;
+    MInitialEditorHeight  = AHeight;
+    MInitialEditorScale   = AScale;
+    MProportionalEditor   = AProportional;
     // if ((AWidth > 0) && (AHeight > 0)) {
     //   MEditorAspectRatio = AWidth / AHeight;
     // }
@@ -507,11 +514,13 @@ public: // editor
     #ifdef SAT_EDITOR_EMBEDDED
 
       virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) {
-        //return new SAT_Window(AWidth,AHeight,AListener);
+        SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
         MWindow = new SAT_Window(AWidth,AHeight,AListener);
         SAT_Assert(MWindow);
         return MWindow;
       }
+
+      //----------
 
       // called by on_EditorListener_createWindow (by SAT_EmbeddedEditor.destroy)
 
@@ -532,10 +541,28 @@ public: // editor
     // override this to create your own editor
 
     virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
+      SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
       SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
       SAT_Assert(editor);
       return editor;
     }
+
+    //----------
+
+    #ifdef SAT_PLUGIN_DEFAULT_EDITOR
+
+      virtual SAT_Editor* createDefaultEditor(SAT_EditorListener* AListener) {
+        SAT_TRACE;
+        uint32_t num = getNumParameters();
+        MInitialEditorWidth   = SAT_DEFAULT_EDITOR_WIDTH + (2 * 10);
+        MInitialEditorHeight  = 40 + 20 + (num * SAT_DEFAULT_EDITOR_WIDGET_SIZE) + ((num-1) * 5) + (2 * 10);
+        MInitialEditorScale   = SAT_DEFAULT_EDITOR_SCALE;
+        MProportionalEditor   = true;
+        SAT_PRINT("width %i height %i\n",MInitialEditorWidth,MInitialEditorHeight);
+        return createEditor(AListener,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
+      }
+
+    #endif
 
     //----------
 
@@ -551,22 +578,56 @@ public: // editor
     // called when the editor (and its window, if embedded) has been created..
 
     virtual bool setupEditor(SAT_Editor* AEditor) {
-      //SAT_TRACE;
+      SAT_TRACE;
       SAT_Window* window = AEditor->getWindow();
       SAT_RootWidget* root = new SAT_RootWidget(window);
       window->setRootWidget(root);
-      // default editor
-      // for (uint32_t i=0; i<getNumParameters(); i++) {
-      //   double x = 10;
-      //   double y = (10 + (i * 35));
-      //   double w = 300;
-      //   double h = 30;
-      //   SAT_DragValueWidget* widget = new SAT_DragValueWidget(SAT_Rect(x,y,w,h));
-      //   root->appendChild(widget);
-      //   AEditor->connect(widget,getParameter(i));
-      // }
+      #ifdef SAT_PLUGIN_DEFAULT_EDITOR
+        setupDefaultEditor(AEditor,root);
+      #endif
       return true;
     }
+
+    //----------
+
+    #ifdef SAT_PLUGIN_DEFAULT_EDITOR
+
+    virtual bool setupDefaultEditor(SAT_Editor* AEditor, SAT_RootWidget* ARoot) {
+      SAT_TRACE;
+      ARoot->setFillBackground(false);
+      ARoot->setDrawBorder(false);
+
+      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"compciter");
+      ARoot->appendChild(header);
+      header->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      header->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      header->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+  
+      SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(20,"  ...");
+      ARoot->appendChild(footer);
+      footer->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_BOTTOM_LEFT;
+      footer->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+      footer->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_BOTTOM;
+
+      SAT_VisualWidget* center = new SAT_VisualWidget(0);
+      ARoot->appendChild(center);
+      center->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+      center->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+      center->Layout.innerBorder = {10,10,10,10};
+      center->Layout.spacing = {5,5};
+
+      for (uint32_t i=0; i<getNumParameters(); i++) {
+        SAT_SliderWidget* slider = new SAT_SliderWidget(20);
+        center->appendChild(slider);
+        slider->Layout.flags  = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+        slider->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+        slider->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+        AEditor->connect(slider,getParameter(i));
+      }
+      return false;
+    }
+
+    #endif
 
     //----------
 
@@ -632,7 +693,18 @@ public: // editor listener
     SAT_Window* on_EditorListener_createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) override {
       //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
       SAT_Window* window = createWindow(AWidth,AHeight,AListener);
-      window->setInitialSize(MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
+      //SAT_PRINT("MHasInitialSize %i\n",MHasInitialSize);
+      //if (MHasInitialSize) {
+      SAT_PRINT("MInitialEditorWidth %i\n",MInitialEditorWidth);
+        window->setInitialSize(MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
+      //}
+      //else {
+      //  uint32_t width    = AWidth;
+      //  uint32_t height   = AHeight;
+      //  double scale      = 1.0;//SAT_DEFAULT_EDITOR_SCALE;
+      //  bool proportional = true;
+      //  window->setInitialSize(width,height,scale,proportional);
+      //}
       return window;
     }
 
@@ -755,7 +827,14 @@ public: // clap plugin
     MHost = new SAT_Host(getClapHost());
     setDefaultParameterValues();
     #ifndef SAT_NO_GUI
-      MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
+      if (MHasInitialSize) {
+        MEditor = createEditor(this,MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
+      }
+      else {
+        #ifdef SAT_PLUGIN_DEFAULT_EDITOR
+          MEditor = createDefaultEditor(this);
+        #endif
+      }
       SAT_Assert(MEditor);
     #endif
     MIsInitialized = true;    

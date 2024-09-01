@@ -136,7 +136,7 @@
 
   // set up a default editor if you don't provide one yourself
 
-//#define SAT_PLUGIN_DEFAULT_EDITOR
+#define SAT_PLUGIN_DEFAULT_EDITOR
 
   // don't include a main() function for SAT_PLUGIN_EXE
 
@@ -349,6 +349,7 @@
 
 #ifdef SAT_NO_GUI
   #define SAT_GUI_DEFINED
+
 #else
   #ifdef SAT_GUI_WAYLAND
     #define SAT_GUI_DEFINED
@@ -380,8 +381,9 @@
   #define SAT_NO_SURFACE
   #define SAT_NO_RENDERER
   #define SAT_NO_PAINTER
-  #undef SAT_EDITOR_EMBEDDED
-  #undef SAT_EDITOR_REMOTE
+  #undef  SAT_EDITOR_EMBEDDED
+  #undef  SAT_EDITOR_REMOTE
+  #undef  SAT_PLUGIN_DEFAULT_EDITOR
   
 #else
 
