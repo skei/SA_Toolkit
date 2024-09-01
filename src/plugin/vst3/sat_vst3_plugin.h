@@ -34,8 +34,10 @@ struct SAT_Vst3NoteId {
 //
 //----------------------------------------------------------------------
 
-//class SAT_Vst3Plugin
-//: public SAT_Plugin {
+/*
+  todo: check for embedded_editor, etc..
+  do we actually need ITimerHandler for linux?
+*/
 
 class SAT_Vst3Plugin
 : public IComponent
