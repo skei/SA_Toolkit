@@ -38,6 +38,10 @@ public:
     setTextAlignment(SAT_TEXT_ALIGN_CENTER);
     setDragDirection(SAT_DIRECTION_RIGHT);
     Options.wantHoverEvents = true;
+
+    setValueTextOffset(SAT_Rect(5,0,5,0));
+
+
   }
 
   //----------
@@ -215,6 +219,11 @@ public:
     SAT_Painter* painter = AContext->painter;
     SAT_Rect rect = getRect();
     double scale = getWindowScale();
+
+    SAT_Rect offset = getValueTextOffset();
+    offset.scale(scale);
+    rect.shrink(offset);
+
     painter->setTextColor(SAT_Black);
     painter->drawTextBox(rect,txt0,SAT_TEXT_ALIGN_LEFT);
     painter->drawTextBox(rect,txt1,SAT_TEXT_ALIGN_RIGHT);

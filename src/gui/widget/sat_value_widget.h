@@ -39,6 +39,10 @@ public:
     setHint("SAT_ValueWidget");
     setTextAlignment(SAT_TEXT_ALIGN_LEFT);
     setValue(AValue);
+
+    setTextOffset(SAT_Rect(5,0,0,0));
+    setValueTextOffset(SAT_Rect(0,0,5,0));
+
   }
 
   //----------
@@ -56,6 +60,8 @@ public:
   virtual void setValueTextAlignment(uint32_t AAlignment) { MValueTextAlignment = AAlignment; }
   virtual void setValueTextOffset(SAT_Rect AOffset)       { MValueTextOffset = AOffset; }
   virtual void setValueTextFormat(const char* AFormat)    { MValueTextFormat = AFormat; }
+
+  virtual SAT_Rect getValueTextOffset() { return MValueTextOffset; }
 
 //------------------------------
 public:

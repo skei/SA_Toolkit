@@ -47,8 +47,16 @@ public:
     setDrawBorder(true);
     setBorderWidth(0.5);
     setBorderColor(0.3);
-    setTextOffset(SAT_Rect(5,0,0,0));
-    setValueTextOffset(SAT_Rect(0,0,5,0));
+    // setTextOffset(SAT_Rect(5,0,0,0));
+    // setValueTextOffset(SAT_Rect(0,0,5,0));
+
+    if (ARect.h >= (ARect.w * 2.0)) {
+      setValueTextOffset(SAT_Rect(0,5,0,5));
+    }
+    else {
+      setValueTextOffset(SAT_Rect(5,0,5,0));
+    }
+
   }
 
   //----------

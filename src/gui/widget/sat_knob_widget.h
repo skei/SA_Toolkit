@@ -47,6 +47,8 @@ public:
     setTextAlignment(SAT_TEXT_ALIGN_BOTTOM);
     setValueTextSize(10);
     setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
+    setValueTextOffset(SAT_Rect(0,0,0,0));
+
   }
 
   //----------

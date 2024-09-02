@@ -596,22 +596,18 @@ public: // window
         MMouseCaptureYpos   = AYpos;
         MMouseCaptureButton = AButton;
         MMouseCaptureWidget->on_Widget_mouse_click(AXpos,AYpos,AButton,AState,ATime);
-
         #ifdef SAT_WINDOW_SUPPORT_DBL_CLICK
-        if (MMouseClickedTimePrev != 0) {
-          if (MMouseClickedWidgetPrev == MHoverWidget) {
-            uint32_t time_diff = ATime - MMouseClickedTimePrev;
-            //SAT_PRINT("time_diff %i\n",time_diff);
-            if (time_diff < SAT_WINDOW_DBL_CLICK_MS) {
-              MHoverWidget->on_Widget_mouse_dblclick(AXpos,AYpos,AButton,AState,ATime);
+          if (MMouseClickedTimePrev != 0) {
+            if (MMouseClickedWidgetPrev == MHoverWidget) {
+              uint32_t time_diff = ATime - MMouseClickedTimePrev;
+              //SAT_PRINT("time_diff %i\n",time_diff);
+              if (time_diff < SAT_WINDOW_DBL_CLICK_MS) {
+                MHoverWidget->on_Widget_mouse_dblclick(AXpos,AYpos,AButton,AState,ATime);
+              }
             }
           }
-        }
-        MMouseClickedWidgetPrev = MHoverWidget;
+          MMouseClickedWidgetPrev = MHoverWidget;
         #endif
-
-
-
       }
     }
     MMouseClickedTimePrev = ATime;
