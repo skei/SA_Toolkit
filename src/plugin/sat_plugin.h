@@ -514,7 +514,7 @@ public: // editor
     #ifdef SAT_EDITOR_EMBEDDED
 
       virtual SAT_Window* createWindow(uint32_t AWidth, uint32_t AHeight, SAT_WindowListener* AListener) {
-        SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+        //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
         MWindow = new SAT_Window(AWidth,AHeight,AListener);
         SAT_Assert(MWindow);
         return MWindow;
@@ -541,7 +541,7 @@ public: // editor
     // override this to create your own editor
 
     virtual SAT_Editor* createEditor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) {
-      SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
+      //SAT_PRINT("AWidth %i AHeight %i\n",AWidth,AHeight);
       SAT_Editor* editor = new SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional);
       SAT_Assert(editor);
       return editor;
@@ -597,7 +597,11 @@ public: // editor
       ARoot->setFillBackground(false);
       ARoot->setDrawBorder(false);
 
-      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"compciter");
+      const char* name = getClapDescriptor()->name;
+      if ((name[0]=='s') && (name[1]=='a') && (name[2]=='_')) name += 3;
+      if ((name[0]=='S') && (name[1]=='A') && (name[2]=='_')) name += 3;
+
+      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,name);
       ARoot->appendChild(header);
       header->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
       header->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
@@ -695,7 +699,7 @@ public: // editor listener
       SAT_Window* window = createWindow(AWidth,AHeight,AListener);
       //SAT_PRINT("MHasInitialSize %i\n",MHasInitialSize);
       //if (MHasInitialSize) {
-      SAT_PRINT("MInitialEditorWidth %i\n",MInitialEditorWidth);
+        //SAT_PRINT("MInitialEditorWidth %i\n",MInitialEditorWidth);
         window->setInitialSize(MInitialEditorWidth,MInitialEditorHeight,MInitialEditorScale,MProportionalEditor);
       //}
       //else {
