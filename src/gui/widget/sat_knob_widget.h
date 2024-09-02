@@ -43,8 +43,11 @@ public:
     setFillBackground(false);
     //setBackgroundColor(0.45);
     setDrawBorder(false);
+
     setTextSize(10);
     setTextAlignment(SAT_TEXT_ALIGN_BOTTOM);
+    setTextOffset(SAT_Rect(0,0,0,0));
+
     setValueTextSize(10);
     setValueTextAlignment(SAT_TEXT_ALIGN_CENTER);
     setValueTextOffset(SAT_Rect(0,0,0,0));
