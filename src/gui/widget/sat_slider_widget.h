@@ -47,6 +47,8 @@ public:
     setDrawBorder(true);
     setBorderWidth(0.5);
     setBorderColor(0.3);
+    setTextOffset(SAT_Rect(5,0,0,0));
+    setValueTextOffset(SAT_Rect(0,0,5,0));
   }
 
   //----------

@@ -94,6 +94,12 @@ public:
       SAT_Painter* painter = AContext->painter;
       SAT_Rect rect = getRect();
       double scale = getWindowScale();
+
+      SAT_Rect offset = MValueTextOffset;
+      offset.scale(scale);
+      rect.shrink(offset);
+
+
       painter->setTextColor(MValueTextColor);
       painter->setTextSize(MValueTextSize*scale);
       //painter->drawText(rect.x,rect.y,MText);
@@ -111,6 +117,7 @@ public: // on_widget
       SAT_Parameter* param = (SAT_Parameter*)getParameter(0);
       if (param) {
         double value = param->getDefaultValue();
+        value = param->normalize(value);
         setValue(value);
         do_Widget_update(this);
         do_Widget_redraw(this);
