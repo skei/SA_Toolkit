@@ -103,8 +103,8 @@ private:
   
   //SAT_Queue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
   //SAT_AtomicQueue<uint32_t,SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK> MHostParamQueue = {}; // gui -> host
-  typedef moodycamel::ReaderWriterQueue<uint32_t> MHostParamQueue;
-
+  
+  moodycamel::ReaderWriterQueue<uint32_t> MHostParamQueue;
 
   double  MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
 
