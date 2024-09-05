@@ -169,11 +169,11 @@ public:
         double mw = 0.0;
         double my = 0.0;
         double mh = 0.0;
-
         painter->setFillColor(MModulationColor);
-
         switch (MDrawDirection) {
           case SAT_DIRECTION_LEFT:
+            break;
+          case SAT_DIRECTION_RIGHT:
             if (m > v) {
               mx = x + (v * w);
               mw = w * (m - v);
@@ -183,8 +183,6 @@ public:
               mw = w * (v - m);
             }    
             painter->fillRect(mx,y,mw,h);
-            break;
-          case SAT_DIRECTION_RIGHT:
             break;
           case SAT_DIRECTION_UP:
             break;
