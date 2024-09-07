@@ -6,6 +6,7 @@
 #include "gui/sat_gui_base.h"
 #include "gui/sat_painter.h"
 
+class SAT_MenuWidget;
 class SAT_Widget;
 typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 
@@ -92,6 +93,8 @@ private:
   int32_t           MCursor                             = SAT_CURSOR_DEFAULT;
   const char*       MHint                               = "";
 
+  SAT_MenuWidget*   MContextMenu                        = nullptr;
+
 //------------------------------
 public:
 //------------------------------
@@ -127,6 +130,7 @@ public:
 
   virtual SAT_Rect          getBaseRect()                 { return MBaseRect; }
   virtual SAT_Rect          getContentRect()              { return MContentRect; }
+  virtual SAT_MenuWidget*   getContextMenu()              { return MContextMenu; }
   virtual int32_t           getCursor()                   { return MCursor; }
   virtual const char*       getHint()                     { return MHint; }
   virtual uint32_t          getIndex()                    { return MIndex; }
@@ -175,7 +179,7 @@ public:
 //------------------------------
 
   virtual void setBaseRect(SAT_Rect ARect)                      { MBaseRect = ARect; }
-
+  virtual void setContextMenu(SAT_MenuWidget* AMenu)            { MContextMenu = AMenu; }
   virtual void setHint(const char* AHint)                       { MHint = AHint; }
   virtual void setIndex(uint32_t AIndex)                        { MIndex = AIndex; }
   virtual void setModulation(double AValue)                     { MModulation = AValue; }
@@ -193,8 +197,6 @@ public:
   virtual void setValue(double AValue, uint32_t AIndex)         { MValues[AIndex] = AValue; }
   virtual void setValue(double AValue)                          { setValue(AValue,MValueIndex); }
   virtual void setValueIndex(uint32_t AIndex)                   { MValueIndex = AIndex; }
-
-
 
   virtual void setMinPos(double AXpos, double AYpos) {
     Layout.minSize.x = AXpos;

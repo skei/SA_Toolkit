@@ -36,6 +36,7 @@
 #define SAT_TWEEN_CHAIN_QUEUE_SIZE                32
 #define SAT_VOICE_MAX_EVENTS_PER_BLOCK            1024
 #define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
+#define SAT_VOICE_PROCESSOR_NUM_THREADS           12
 #define SAT_WIDGET_NUM_VALUES                     16
 #define SAT_WINDOW_DBL_CLICK_MS                   200
 #define SAT_WINDOW_THREAD_KILL                    666
@@ -187,6 +188,7 @@
   // (try to) process voices using thread pool (clap ext or our own)
 
 #define SAT_VOICE_PROCESSOR_THREADED
+#define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
 
   // if events have no recipients (note_id, pck = -1), meaning they're global,
   // send them (individually) to all voices
@@ -290,7 +292,6 @@
 #undef SAT_PLUGIN_DEFINED
 
   #ifdef SAT_PLUGIN_CLAP
-    #define SAT_PLUGIN
     #define SAT_PLUGIN_DEFINED
     #define SAT_PLUGIN
   #endif
@@ -332,9 +333,10 @@
 
 
 #ifdef SAT_PLUGIN_DEFINED
-  #define SAT_PLUGIN
+  //#define SAT_PLUGIN
 #else
   #define SAT_PLUGIN_CLAP
+  #define SAT_PLUGIN
 #endif
 
 // #undef SAT_PLUGIN_DEFINED

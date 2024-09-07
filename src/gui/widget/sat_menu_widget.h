@@ -11,9 +11,11 @@
 //
 //----------------------------------------------------------------------
 
+class SAT_MenuWidget;
+
 class SAT_MenuListener {
 public:
-  virtual void on_menuListener_select(int32_t AIndex) {};
+  virtual void on_menuListener_select(SAT_MenuWidget* AMenu, int32_t AIndex) {};
 };
 
 //----------------------------------------------------------------------
@@ -137,7 +139,7 @@ public:
       MSelected = AValue;
     }
 
-    if (MListener) MListener->on_menuListener_select(AValue);
+    if (MListener) MListener->on_menuListener_select(this,AValue);
 
     // do_Widget_modal(this,false);
     // SAT_Widget* parent = getParent();

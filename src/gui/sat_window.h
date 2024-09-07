@@ -5,6 +5,7 @@
 #include "sat.h"
 #include "base/util/sat_tweening.h"
 #include "gui/sat_gui_base.h"
+#include "gui/widget/sat_menu_widget.h"
 #include "gui/widget/sat_overlay_widget.h"
 #include "gui/widget/sat_root_widget.h"
 #include "gui/sat_gui_queues.h"
@@ -590,6 +591,21 @@ public: // window
     // else, capture the widget we are hovering above
     else {
       if (MHoverWidget) {
+
+// context menu
+// menu listener have to close menu!
+// for testing,  we 'have a close-menu listener set up in the root widget
+// and use that as listener..
+
+        if (AButton == SAT_BUTTON_RIGHT) {
+          SAT_MenuWidget* context_menu = MHoverWidget->getContextMenu();
+          if (context_menu && !MModalWidget) {
+            context_menu->openMenu(AXpos,AYpos);
+          }
+        }
+
+//---
+
         MMouseCaptured      = true;
         MMouseCaptureWidget = MHoverWidget;
         MMouseCaptureXpos   = AXpos;

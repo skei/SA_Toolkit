@@ -182,20 +182,22 @@ public:
 
   //----------
 
+  // setupEditor/Overlay
+
   #ifndef SAT_NO_GUI
     #include "sa_demo/sa_demo_gui.h"
   #endif
 
   //----------
 
-  void on_EditorListener_timer(double ADelta) override {
-    SAT_Plugin::on_EditorListener_timer(ADelta);
-    // for (uint32_t i=0; i<MAX_VOICES; i++) {
-    //   uint32_t state = MProcessor->getVoiceState(i);
-    //   voices->setVoiceState(i,state);
-    // }
-    // voices->do_Widget_redraw(voices);
-  }  
+  // void on_EditorListener_timer(double ADelta) override {
+  //   SAT_Plugin::on_EditorListener_timer(ADelta);
+  //   // for (uint32_t i=0; i<MAX_VOICES; i++) {
+  //   //   uint32_t state = MProcessor->getVoiceState(i);
+  //   //   voices->setVoiceState(i,state);
+  //   // }
+  //   // voices->do_Widget_redraw(voices);
+  // }  
 
 };
 

@@ -6,6 +6,7 @@
 
 //----------------------------------------------------------------------
 
+
 #ifdef SAT_PLUGIN_EXE
   // #define SAT_DEBUG_MEMTRACE
 #else
@@ -15,6 +16,7 @@
 //#define SAT_DEBUG_WINDOW
 //#define SAT_DEBUG_OBSERVER
 //#define SAT_WINDOW_BUFFERED
+
 
 //----------------------------------------------------------------------
 //
@@ -41,9 +43,9 @@
 
 //#include "../plugins/sa_automata.h"
 //#include "../plugins/sa_botage.h"
-#include "../plugins/sa_bulum.h"
+//#include "../plugins/sa_bulum.h"
 //#include "../plugins/sa_cred.h"
-//#include "../plugins/sa_demo.h"
+#include "../plugins/sa_demo.h"
 //#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_ports.h"
 //#include "../plugins/sa_tyr.h"

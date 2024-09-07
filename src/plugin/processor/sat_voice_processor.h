@@ -16,7 +16,8 @@
 // find number of cpu cores..
 // (/base/system/sat_cpu.h)
 
-#define SAT_VOICE_PROCESSOR_NUM_THREADS 12
+//#define SAT_VOICE_PROCESSOR_NUM_THREADS 12
+//#define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
 
 //typedef SAT_Queue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 //typedef SAT_AtomicQueue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
@@ -60,8 +61,11 @@ protected:
   bool                          MProcessThreaded        = false;
 
   #ifdef SAT_VOICE_PROCESSOR_THREADED
-  const clap_host_thread_pool*  MClapThreadPool         = nullptr;
-  SAT_ThreadPool*               MThreadPool             = nullptr;
+    #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+      const clap_host_thread_pool* MClapThreadPool = nullptr;
+    #else
+      SAT_ThreadPool* MThreadPool = nullptr;
+    #endif
   #endif
 
 //------------------------------
@@ -78,7 +82,9 @@ public:
   virtual ~SAT_VoiceProcessor() {
     SAT_TRACE;
     #ifdef SAT_VOICE_PROCESSOR_THREADED
-      if (MThreadPool) delete MThreadPool;
+      #ifndef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+        if (MThreadPool) delete MThreadPool;
+      #endif
     #endif
   }
 
@@ -135,20 +141,27 @@ public:
         // does the plugin support the clap thread pool extension
         // todo: if plugin->MSupportedExtensions.hasItem(CLAP_EXT_THREAD_POOL)
 
-        if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
-          SAT_PRINT("clap threadpool\n");
-          MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-        }
+        #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
 
-        // if not, setup our own threadpool
+          if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
+            SAT_PRINT("clap threadpool\n");
+            MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
+          }
 
-        if (!MClapThreadPool) {
+        #else
+
+//        if (!MClapThreadPool) {
           SAT_PRINT("sat threadpool\n");
           MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
           if (!MThreadPool) {
             SAT_PRINT("no threadpool\n");
           }
-        }
+//        }
+
+        #endif
+
+        // if not, setup our own threadpool
+
 
       //}
     #endif
@@ -233,13 +246,21 @@ public:
 
     if (MNumActiveVoices > 0) {
       bool processed = false;
-      // thread-pool..
+
       #ifdef SAT_VOICE_PROCESSOR_THREADED      
+
         if (MProcessThreaded) {
-          if (MClapThreadPool)  processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
-          else if (MThreadPool) processed = MThreadPool->request_exec(MNumActiveVoices);
+
+          #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+            if (MClapThreadPool)  processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
+          #else
+            /*else*/ if (MThreadPool) processed = MThreadPool->request_exec(MNumActiveVoices);
+          #endif
+
         }
+
       #endif
+
       // ..or manually
       if (!processed) {
         for (uint32_t i=0; i<MNumActiveVoices; i++) {

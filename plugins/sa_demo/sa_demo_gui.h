@@ -8,7 +8,6 @@ private:
   SAT_MenuWidget*           file_menu = nullptr;
   SAT_MenuWidget*           edit_menu = nullptr;
   SAT_PagesWidget*          pages     = nullptr;
-
   SAT_AnimTestWidget*       animated  = nullptr;
 
   #define button_grid_count 3
@@ -19,15 +18,35 @@ private:
   };
 
 //------------------------------
+private:
+//------------------------------
+
+  // temp menu listener (for context menus)
+
+  class sa_demo_menu_listener
+  : public SAT_MenuListener {
+  public:
+    void on_menuListener_select(SAT_MenuWidget* AMenu, int32_t AIndex) override {
+      if (AMenu) AMenu->closeMenu();
+    }
+  };
+
+  //----------
+
+  sa_demo_menu_listener MMenuListener;
+
+//------------------------------
 public:
 //------------------------------
+
+  //----------
 
   bool setupEditor(SAT_Editor* AEditor) final {
     SAT_Window* window = AEditor->getWindow();
 
     // root
 
-    sa_demo_root_widget* root = new sa_demo_root_widget( window/*, SAT_Rect()*/ );
+    sa_demo_root_widget* root = new sa_demo_root_widget(window);
     window->setRootWidget(root);
     root->setFillBackground(false);
     root->setDrawBorder(false);
@@ -37,10 +56,30 @@ public:
 
     // menus
 
-    file_menu = new SAT_MenuWidget(SAT_Rect(100,100));
-    edit_menu = new SAT_MenuWidget(SAT_Rect(100,100));
-
+    file_menu = new SAT_MenuWidget(SAT_Rect(100,100),&MMenuListener);
+    edit_menu = new SAT_MenuWidget(SAT_Rect(100,100),&MMenuListener);
     pages     = new SAT_PagesWidget(0);
+
+    file_menu->appendItem( "New" );
+    file_menu->appendItem( "Open" );
+    file_menu->appendItem( "Close" );
+    file_menu->appendItem( "Save" );
+    file_menu->appendItem( "..and more.." );
+
+    edit_menu->appendItem( "Cut" );
+    edit_menu->appendItem( "Copy" );
+    edit_menu->appendItem( "Paste" );
+    edit_menu->appendItem( "fourth" );
+    edit_menu->appendItem( "and a fifth one.." );
+
+
+    // void on_menuListener_select(SAT_MenuWidget* AMenu, int32_t AIndex) override {
+    //   if (AIndex >= 0) {
+    //     //select(AIndex);
+    //     do_Widget_update(this);
+    //   }
+    //   if (MMenu) MMenu->closeMenu();
+    // }
 
     //------------------------------
     //
@@ -50,6 +89,8 @@ public:
 
     SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"demo");
     root->appendChild(header);
+
+    header->setContextMenu(edit_menu);
 
     // main menu
 
@@ -67,6 +108,8 @@ public:
     SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(25,"  ...");
     root->appendChild(footer);
     window->setHintWidget(footer);
+
+    footer->setContextMenu(file_menu);
 
     // center
 
@@ -92,6 +135,7 @@ public:
     //left_panel->setBackgroundColor(0.5);
     left_panel->setDrawBorder(false);
     left_panel->Layout.innerBorder = {10,10,10,10};
+    left_panel->Layout.spacing = {0,20};
 
     // sizer
 
@@ -112,6 +156,8 @@ public:
     // left_panel
     //------------------------------
 
+    // buttons
+    
     sa_demo_button_grid_widget* button_grid = new sa_demo_button_grid_widget(button_grid_count*20,1,button_grid_count,button_grid_texts,pages);
     left_panel->appendChild(button_grid);
     button_grid->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
@@ -124,6 +170,18 @@ public:
     //button_grid->setRoundedCornerSize(5);
     button_grid->selectCell(0,0);
     button_grid->setCanDeselectAll(false);
+
+    // 9patch
+
+    // SAT_9PatchImageWidget* patch9 = new SAT_9PatchImageWidget(100,(void*)SA_png,SA_png_size);
+    // left_panel->appendChild(patch9);
+    // patch9->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    // patch9->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+    // patch9->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    // patch9->setEdgeOffset(SAT_Rect(30,30,30,30));
+    // patch9->setfillCenter(true);
+    // patch9->setStretchCenter(true);
+    // patch9->setStretchEdges(true);
 
     //------------------------------
     // main_panel
@@ -176,7 +234,7 @@ public:
     SAT_Widget* overlay = window->getOverlayWidget();
     SAT_Assert(overlay);
 
-    sa_demo_page_widgets* widgets_page = (sa_demo_page_widgets*)pages->getChild(1);
+    sa_demo_page_widgets* widgets_page = (sa_demo_page_widgets*)pages->getChild(1); // 1 ?????
     SAT_Assert(widgets_page);
     
     overlay->appendChild(widgets_page->MMenu1);

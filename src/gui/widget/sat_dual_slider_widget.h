@@ -175,13 +175,13 @@ public:
       // check 'which' -1
       if (closest_index == -1) {
         if (pos < getVal(0)) {
-          SAT_PRINT("left\n");
+          //SAT_PRINT("left\n");
         }
         if ((pos > getVal(0)) && (pos < getVal(1))) {
-          SAT_PRINT("center\n");
+          //SAT_PRINT("center\n");
         }
         if (pos > getVal(1)) {
-          SAT_PRINT("right\n");
+          //SAT_PRINT("right\n");
         }
       }
 

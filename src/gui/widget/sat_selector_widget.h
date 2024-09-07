@@ -23,7 +23,7 @@ private:
   const char*     MInitialText                        = "";
   int32_t         MSelected                           = -1;
   SAT_MenuWidget* MMenu                               = nullptr;
-  //char            MSelectedText[SAT_MAX_NAME_LENGTH]  = {0};
+  //char          MSelectedText[SAT_MAX_NAME_LENGTH]  = {0};
 
 //------------------------------
 public:
@@ -80,7 +80,7 @@ public:
 
   //----------
 
-  void on_menuListener_select(int32_t AIndex) override {
+  void on_menuListener_select(SAT_MenuWidget* AMenu, int32_t AIndex) override {
     //SAT_PRINT("AValue %i\n",AIndex);
     if (AIndex >= 0) {
       select(AIndex);
@@ -89,7 +89,6 @@ public:
     }
     if (MMenu) MMenu->closeMenu();
     do_Widget_set_overlay_color(this,SAT_Color(0,0,0,0));
-
   }
 
   //----------

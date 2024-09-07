@@ -155,8 +155,6 @@ public: // do_widget
     if (MListener) MListener->on_WidgetListener_set_overlayColor(AWidget,AColor);
   }
 
-
-
 };
 
 //----------------------------------------------------------------------

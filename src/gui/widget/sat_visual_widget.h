@@ -7,6 +7,7 @@
 #include "gui/sat_widget.h"
 #include "plugin/sat_parameter.h"
 
+
 //----------
 
 class SAT_VisualWidget
@@ -473,6 +474,8 @@ public: // on_widget
   //   SAT_PRINT("MSurface: %p\n",MSurface);
   // }
 
+  //----------
+
   // void on_Widget_close(SAT_WidgetOwner* AOwner) override {
   //   SAT_PRINT("MSurface: %p\n",MSurface);
   //   if (MSurface) delete MSurface;
@@ -486,6 +489,8 @@ public: // on_widget
     MManuallyMoved *= scale;
     return ARect;
   }
+
+  //----------
 
   SAT_Rect on_Widget_postAlign(SAT_Rect ARect) override {
 
@@ -557,12 +562,15 @@ public: // on_widget
 
   void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     double scale = getWindowScale();
+    SAT_Rect rect = getRect();
 
     if (MMoving) {
       double deltax = (AXpos - MMousePreviousX) / scale;
       double deltay = (AYpos - MMousePreviousY) / scale;
+
       if (MMovableDirections & SAT_DIRECTION_HORIZ) { MManuallyMoved.x += deltax; }
       if (MMovableDirections & SAT_DIRECTION_VERT)  { MManuallyMoved.y += deltay; }
+
       //do_Widget_realign(this,SAT_WIDGET_REALIGN_GUI);
       // if (MParent) {
       //   MParent->do_Widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
@@ -571,13 +579,27 @@ public: // on_widget
       do_Widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
       do_Widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
     }
+
     else if (MResizing) {
       double deltax = (AXpos - MMousePreviousX) / scale;
       double deltay = (AYpos - MMousePreviousY) / scale;
-      if (MResizeEdge & SAT_EDGE_LEFT)    { MManuallyMoved.removeLeft(deltax); }
-      if (MResizeEdge & SAT_EDGE_RIGHT)   { MManuallyMoved.addRight(deltax);   }
-      if (MResizeEdge & SAT_EDGE_TOP)     { MManuallyMoved.removeTop(deltay);  }
-      if (MResizeEdge & SAT_EDGE_BOTTOM)  { MManuallyMoved.addBottom(deltay);  }
+
+      // double new_w = rect.w + deltax;
+      // if (new_w > Layout.maxSize.w)
+
+      if (MResizeEdge & SAT_EDGE_LEFT) {
+        MManuallyMoved.removeLeft(deltax);
+      }
+      if (MResizeEdge & SAT_EDGE_RIGHT) {
+        MManuallyMoved.addRight(deltax);
+      }
+      if (MResizeEdge & SAT_EDGE_TOP) {
+        MManuallyMoved.removeTop(deltay);
+      }
+      if (MResizeEdge & SAT_EDGE_BOTTOM) {
+        MManuallyMoved.addBottom(deltay);
+      }
+
       //if (MParent)  {
       //  MParent->do_Widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
       //  MParent->do_Widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
@@ -585,9 +607,11 @@ public: // on_widget
       do_Widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
       do_Widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
     }
+
     else {
       checkHover(AXpos,AYpos);
     }
+
     MMousePreviousX = AXpos;
     MMousePreviousY = AYpos;
   }
