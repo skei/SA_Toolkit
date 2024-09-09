@@ -31,6 +31,13 @@
 #endif
 
 //----------------------------------------------------------------------
+
+#define SAT_DEFAULT_EDITOR_CONSTRUCTOR(editor)                                                                          \
+  editor(SAT_EditorListener* AListener, uint32_t AWidth, uint32_t AHeight, double AScale=1.0, bool AProportional=false) \
+  : SAT_Editor(AListener,AWidth,AHeight,AScale,AProportional) {                                                         \
+  }
+
+//----------------------------------------------------------------------
 //
 //
 //

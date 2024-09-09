@@ -29,6 +29,13 @@
 #define SAT_DEFAULT_EDITOR_WIDGET_SIZE  20
 
 //----------------------------------------------------------------------
+
+#define SAT_DEFAULT_PLUGIN_CONSTRUCTOR(plugin)                                  \
+  plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
+  : SAT_Plugin(ADescriptor,AHost) {                                             \
+  }
+
+//----------------------------------------------------------------------
 //
 //
 //

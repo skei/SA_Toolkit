@@ -142,14 +142,16 @@ private:
 public:
 //------------------------------
 
-  sa_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
-  : SAT_Plugin(ADescriptor,AHost) {
-  }
+  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_demo_plugin)
+
+  // sa_demo_plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
+  // : SAT_Plugin(ADescriptor,AHost) {
+  // }
 
   //----------
 
-  virtual ~sa_demo_plugin() {
-  }
+  // virtual ~sa_demo_plugin() {
+  // }
 
 //------------------------------
 public:

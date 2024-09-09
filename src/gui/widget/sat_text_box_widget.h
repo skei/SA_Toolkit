@@ -31,7 +31,8 @@ public:
     setHint("SAT_TextBoxWidget");
     //MContent->layout.innerBorder = 0;
     MContent->setDrawBorder(true);
-    getContentWidget()->Layout.spacing = {0,3};
+    getContentWidget()->Layout.innerBorder = {5,5,5,5};
+    //getContentWidget()->Layout.spacing = {0,3};
 
   }
 
@@ -86,7 +87,7 @@ public:
 
   //----------
 
-  void calcLineWidths(SAT_Painter* APainter, double AScale=1.0) {
+  void calcLineSizes(SAT_Painter* APainter, double AScale=1.0) {
     uint32_t num_children = MContent->getNumChildren();
     for (uint32_t i=0; i<num_children; i++) {
       SAT_TextWidget* textwidget = (SAT_TextWidget*)MContent->getChild(i);
@@ -98,9 +99,9 @@ public:
       //SAT_PRINT("bounds %.2f, %.2f, %.2f, %.2f\n",bounds[0],bounds[1],bounds[2],bounds[3]);
       double width = bounds[2] - bounds[0];
       rect.x = 0;
-      rect.y = 0;
+      rect.y = 0; //MTextSize + bounds[1];
       rect.w = width;
-      rect.h = MTextSize;
+      rect.h = MTextSize * AScale;// + bounds[3];
       //SAT_PRINT("%s = %f (%.2f, %.2f, %.2f, %.2f)\n",text,width,rect.x,rect.y,rect.w,rect.h);
       textwidget->setRectAndBase(rect);
       //textwidget->setWidth(width);
@@ -122,7 +123,7 @@ public:
     if (MPainter) {
       double scale = getWindowScale();
       //SAT_PRINT("MPainter %p scale %f\n",MPainter,scale);
-      calcLineWidths(MPainter,scale);
+      calcLineSizes(MPainter,scale);
     }
     return ARect;
   }
