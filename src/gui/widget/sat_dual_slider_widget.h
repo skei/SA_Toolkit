@@ -133,7 +133,7 @@ public:
       SAT_Rect mrect = getRect();
       if (!mrect.contains(AXpos,AYpos)) return -1;
 
-      double range = getRange(AHorizontal);;
+      double range = getRange(AHorizontal);
 
       // double pos;
       // if (AHorizontal) {
@@ -180,7 +180,7 @@ public:
         if ((pos > getVal(0)) && (pos < getVal(1))) {
           //SAT_PRINT("center\n");
         }
-        if (pos > getVal(1)) {
+        if (pos >= getVal(1)) {
           //SAT_PRINT("right\n");
         }
       }

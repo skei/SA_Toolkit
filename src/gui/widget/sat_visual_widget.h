@@ -563,41 +563,39 @@ public: // on_widget
   void on_Widget_mouse_move(int32_t AXpos, int32_t AYpos, uint32_t AState, uint32_t ATime) override {
     double scale = getWindowScale();
     SAT_Rect rect = getRect();
+    SAT_Rect parentrect = getParent()->getRect();
 
     if (MMoving) {
-      double deltax = (AXpos - MMousePreviousX) / scale;
-      double deltay = (AYpos - MMousePreviousY) / scale;
+      double deltax = (AXpos - MMousePreviousX);// / scale;
+      double deltay = (AYpos - MMousePreviousY);// / scale;
 
-      if (MMovableDirections & SAT_DIRECTION_HORIZ) { MManuallyMoved.x += deltax; }
-      if (MMovableDirections & SAT_DIRECTION_VERT)  { MManuallyMoved.y += deltay; }
+      if (MMovableDirections & SAT_DIRECTION_HORIZ) {
+        //if (((rect.x + deltax) >= 0) && ((rect.x2() + deltax) <= parentrect.w))
+        MManuallyMoved.x += (deltax / scale);
+      }
+      if (MMovableDirections & SAT_DIRECTION_VERT)  {
+        MManuallyMoved.y += (deltay / scale);
+      }
 
-      //do_Widget_realign(this,SAT_WIDGET_REALIGN_GUI);
-      // if (MParent) {
-      //   MParent->do_Widget_realign(MParent,SAT_WIDGET_REALIGN_PARENT);
-      //   MParent->do_Widget_redraw(MParent,0,SAT_WIDGET_REDRAW_PARENT);
-      // }
       do_Widget_realign(this,SAT_WIDGET_REALIGN_PARENT);
       do_Widget_redraw(this,0,SAT_WIDGET_REDRAW_PARENT);
     }
 
     else if (MResizing) {
-      double deltax = (AXpos - MMousePreviousX) / scale;
-      double deltay = (AYpos - MMousePreviousY) / scale;
-
-      // double new_w = rect.w + deltax;
-      // if (new_w > Layout.maxSize.w)
+      double deltax = (AXpos - MMousePreviousX);// / scale;
+      double deltay = (AYpos - MMousePreviousY);// / scale;
 
       if (MResizeEdge & SAT_EDGE_LEFT) {
-        MManuallyMoved.removeLeft(deltax);
+        MManuallyMoved.removeLeft(deltax / scale);
       }
       if (MResizeEdge & SAT_EDGE_RIGHT) {
-        MManuallyMoved.addRight(deltax);
+        MManuallyMoved.addRight(deltax / scale);
       }
       if (MResizeEdge & SAT_EDGE_TOP) {
-        MManuallyMoved.removeTop(deltay);
+        MManuallyMoved.removeTop(deltay / scale);
       }
       if (MResizeEdge & SAT_EDGE_BOTTOM) {
-        MManuallyMoved.addBottom(deltay);
+        MManuallyMoved.addBottom(deltay / scale);
       }
 
       //if (MParent)  {

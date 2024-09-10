@@ -25,7 +25,7 @@
 //----------------------------------------------------------------------
 
 
-//#include "../plugins/test/exe.h"
+#include "../plugins/test/exe.h"
 //#include "../plugins/test/gain.h"
 //#include "../plugins/test/voices.h"
 
@@ -48,7 +48,7 @@
 //#include "../plugins/sa_demo.h"
 //#include "../plugins/sa_mael.h"
 //#include "../plugins/sa_ports.h"
-#include "../plugins/sa_tyr.h"
+//#include "../plugins/sa_tyr.h"
 
 
 //----------------------------------------------------------------------

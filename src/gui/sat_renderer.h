@@ -16,6 +16,11 @@
   typedef SAT_GlxRenderer SAT_ImplementedRenderer;
 #endif
 
+#ifdef SAT_RENDERER_WGL
+  #include "gui/win32/sat_wgl_renderer.h"
+  typedef SAT_WglRenderer SAT_ImplementedRenderer;
+#endif
+
 //----------------------------------------------------------------------
 //
 //

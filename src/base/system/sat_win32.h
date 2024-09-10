@@ -74,6 +74,8 @@ HINSTANCE SAT_GLOBAL_WIN32_INSTANCE = 0;
 
 #ifdef SAT_PLUGIN
 
+  #warning "plugin"
+
   __SAT_EXTERNC
   BOOL APIENTRY
   DllMain(HINSTANCE hModule, DWORD reason, LPVOID lpReserved) {

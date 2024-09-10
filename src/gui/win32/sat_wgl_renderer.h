@@ -48,10 +48,9 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/lib/sat_wgl.h"
-#include "gui/lib/sat_win32.h"
-#include "gui/renderer/sat_base_renderer.h"
-#include "gui/renderer/sat_renderer_owner.h"
+#include "gui/win32/sat_wgl.h"
+#include "gui/win32/sat_win32.h"
+#include "gui/sat_gui_base.h"
 
 //----------------------------------------------------------------------
 
@@ -153,7 +152,7 @@ public:
   : SAT_BaseRenderer(AOwner,ATarget) {
     SAT_TRACE;
 
-    HWND hwnd = AOwner->on_rendererOwner_getHWND();
+    HWND hwnd = AOwner->on_RendererOwner_getHWND();
 
     // pixel format
 

@@ -2,6 +2,8 @@
 #define sat_win32_window_included
 //----------------------------------------------------------------------
 
+#define SAT_GUI_WIN32
+
 /*
   - the HINSTANCE is saved when DllMain is called..
     after global variable initialization, but before main()
@@ -27,15 +29,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/lib/sat_win32.h"
-#include "gui/window/sat_base_window.h"
-#include "gui/painter/sat_paint_source.h"
-#include "gui/painter/sat_paint_target.h"
-#include "gui/painter/sat_painter_owner.h"
-#include "gui/surface/sat_surface_owner.h"
-#include "gui/renderer/sat_render_source.h"
-#include "gui/renderer/sat_render_target.h"
-#include "gui/renderer/sat_renderer_owner.h"
+#include "gui/win32/sat_win32.h"
+#include "gui/sat_gui_base.h"
 
 //----------------------------------------------------------------------
 
@@ -158,7 +153,7 @@ public:
     MMouseYpos  = -1;
     memset(MUserCursors,0,sizeof(MUserCursors));
     MCurrentCursor = -1;
-    setMouseCursor(SAT_CURSOR_DEFAULT);
+    setMouseCursorShape(SAT_CURSOR_DEFAULT);
     if (AParent == 0) createStandaloneWindow(AWidth,AHeight);
     else createEmbeddedWindow(AWidth,AHeight,AParent);
     SetWindowLongPtr(MWinHandle,GWLP_USERDATA,(LONG_PTR)this);
@@ -200,56 +195,38 @@ public:
 public:
 //------------------------------
 
-  // painter owner
 
-  #ifdef SAT_PAINTER_NANOVG
-  #endif
 
-  #ifdef SAT_PAINTER_WIN32
-  #endif
 
-  // paint target
 
-  #ifdef SAT_PAINTER_NANOVG
-  #endif
 
-  #ifdef SAT_PAINTER_WIN32
-  #endif
 
-  // renderer owner
 
-  #ifdef SAT_RENDERER_WGL
-    HWND on_rendererOwner_getHWND() override { return MWinHandle; }
-  #endif
 
-  #ifdef SAT_RENDERER_WIN32
-  #endif
 
-  // render target
 
-  #ifdef SAT_RENDERER_WGL
-  #endif
 
-  #ifdef SAT_RENDERER_WIN32
-  #endif
 
-  // surface owner
 
-  uint32_t on_surfaceOwner_getWidth()   override { return MWindowWidth; }
-  uint32_t on_surfaceOwner_getHeight()  override { return MWindowHeight; }
-  uint32_t on_surfaceOwner_getDepth()   override { return MScreenDepth; }
-  
-  #ifdef SAT_SURFACE_NANOVG
-  // xcb_connection_t* on_surfaceOwner_getXcbConnection()  override { return MConnection; }
-  // xcb_drawable_t    on_surfaceOwner_getXcbDrawable()    override { return MWindow; }
-  // xcb_visualid_t    on_surfaceOwner_getXcbVisual()      override { return MScreenVisual; }
-  #endif
 
-  #ifdef SAT_SURFACE_WIN32
-  // xcb_connection_t* on_surfaceOwner_getXcbConnection()  override { return MConnection; }
-  // xcb_drawable_t    on_surfaceOwner_getXcbDrawable()    override { return MWindow; }
-  // xcb_visualid_t    on_surfaceOwner_getXcbVisual()      override { return MScreenVisual; }
-  #endif
+
+//------------------------------
+public:
+//------------------------------
+
+//  xcb_connection_t* on_PainterOwner_getXcbConnection()  final { return MConnection; }
+//  xcb_visualid_t    on_PainterOwner_getXcbVisual()      final { return MScreenVisual; }
+//  xcb_drawable_t    on_PaintTarget_getXcbDrawable()     final { return MWindow; }
+
+//  Display*          on_RendererOwner_getX11Display()    final { return MDisplay; }
+//  xcb_drawable_t    on_RendererOwner_getXcbDrawable()   final { return MWindow; }
+//  xcb_drawable_t    on_RenderTarget_getXcbDrawable()    final { return MWindow; }
+
+  HWND      on_RendererOwner_getHWND()  final { return MWinHandle; }
+
+  uint32_t  on_SurfaceOwner_getWidth()  final { return MWindowWidth; }
+  uint32_t  on_SurfaceOwner_getHeight() final { return MWindowHeight; }
+  uint32_t  on_SurfaceOwner_getDepth()  final { return MScreenDepth; }
 
 //------------------------------
 public: // SAT_BaseWindow
@@ -298,7 +275,7 @@ public: // SAT_BaseWindow
   // Moves the cursor to the specified screen coordinates
   // will fire a WM_MOUSEMOVE event..
 
-  void setMousePos(int32_t AXpos, int32_t AYpos) override{
+  void setMouseCursorPos(int32_t AXpos, int32_t AYpos) override{
     POINT pos;
     pos.x = AXpos;
     pos.y = AYpos;
@@ -310,7 +287,7 @@ public: // SAT_BaseWindow
 
   //----------
 
-  void setMouseCursor(int32_t ACursor) override {
+  void setMouseCursorShape(int32_t ACursor) override {
     if (ACursor != MCurrentCursor) {
       MCurrentCursor = ACursor;
       if (ACursor>=128) MWinCursor = MUserCursors[ACursor-128];
@@ -321,25 +298,25 @@ public: // SAT_BaseWindow
 
   //----------
 
-  void hideMouse() override {
+  void hideMouseCursor() override {
     ShowCursor(false);
   }
 
   //----------
 
-  void showMouse() override {
+  void showMouseCursor() override {
     ShowCursor(true);
   }
 
   //----------
 
-  void grabMouse() override {
+  void grabMouseCursor() override {
     SetCapture(MWinHandle);
   }
 
   //----------
 
-  void releaseMouse() override {
+  void releaseMouseCursor() override {
     ReleaseCapture();
   }
 
@@ -476,14 +453,15 @@ public: // SAT_BaseWindow
   //  }
   //}
 
-  uint32_t eventLoop() override {
+  //uint32_t eventLoop() override {
+  void eventLoop() override {
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
     //while (GetMessage(&msg, MWinHandle,0,0)) {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
     }
-    return 0;
+    //return 0;
   }
 
   //----------

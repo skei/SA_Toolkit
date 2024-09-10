@@ -24,12 +24,12 @@
 #endif
 
 #ifdef SAT_SURFACE_WIN32
-  #include "gui/surface/sat_win32_surface.h"
+  #include "gui/win32/sat_win32_surface.h"
   typedef SAT_Win32Surface SAT_ImplementedSurface;
 #endif
 
 #ifdef SAT_SURFACE_X11
-  #include "gui/surface/sat_x11_surface.h"
+  #include "gui/x11/sat_x11_surface.h"
   typedef SAT_X11Surface SAT_ImplementedSurface;
 #endif
 
