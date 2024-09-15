@@ -24,15 +24,19 @@
 #endif
 #endif
 
+// TODO: -> sat:config.h.. SAT_PLUGIN_DEFAULT...
 #define SAT_DEFAULT_EDITOR_WIDTH        300
 #define SAT_DEFAULT_EDITOR_SCALE        2.0
 #define SAT_DEFAULT_EDITOR_WIDGET_SIZE  20
 
 //----------------------------------------------------------------------
 
-#define SAT_DEFAULT_PLUGIN_CONSTRUCTOR(plugin)                                  \
+#define SAT_PLUGIN_DEFAULT_CONSTRUCTOR(plugin)                                  \
   plugin(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost) \
   : SAT_Plugin(ADescriptor,AHost) {                                             \
+  }                                                                             \
+  virtual ~plugin() {                                                           \
+    SAT_TRACE;                                                                  \
   }
 
 //----------------------------------------------------------------------
@@ -533,6 +537,7 @@ public: // editor
 
       virtual void deleteWindow(SAT_Window* AWindow) {
         SAT_Assert( MWindow == AWindow );
+        SAT_TRACE;
         //delete AWindow;
         delete MWindow;
       }

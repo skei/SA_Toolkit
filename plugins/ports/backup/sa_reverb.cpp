@@ -422,7 +422,7 @@ private:
 public:
 //------------------------------
 
-  SAT_DEFAULT_PLUGIN_CONSTRUCTOR(sa_reverb_plugin)
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_reverb_plugin)
 
   //----------
 

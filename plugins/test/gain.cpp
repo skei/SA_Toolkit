@@ -61,7 +61,7 @@ private:
 
 public:
 
-  //SAT_DEFAULT_PLUGIN_CONSTRUCTOR(gain)
+  //SAT_PLUGIN_DEFAULT_CONSTRUCTOR(gain)
 
   gain(const clap_plugin_descriptor_t* ADescriptor, const clap_host_t* AHost)
   : SAT_Plugin(ADescriptor,AHost) {

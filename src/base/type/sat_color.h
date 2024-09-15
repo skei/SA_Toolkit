@@ -163,7 +163,7 @@ public:
 #define SAT_DarkOrange     SAT_Color( 0.25, 0.12, 0.00 )
 #define SAT_Orange         SAT_Color( 0.50, 0.25, 0.00 )
 #define SAT_LightOrange    SAT_Color( 0.75, 0.37, 0.00 )
-#define SAT_Brightorange   SAT_Color( 1.00, 0.50, 0.00 )
+#define SAT_BrightOrange   SAT_Color( 1.00, 0.50, 0.00 )
 
 #define SAT_DarkYellow     SAT_Color( 0.25, 0.25, 0.00 )
 #define SAT_Yellow         SAT_Color( 0.50, 0.50, 0.00 )

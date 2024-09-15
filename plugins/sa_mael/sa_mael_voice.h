@@ -4,31 +4,39 @@
 
 #include "base/util/sat_interpolation.h"
 #include "audio/filters/sat_svf_filter.h"
-#include "audio/synthesis/sat_morph_oscillator.h"
 #include "audio/modulation/sat_exp_envelope.h"
+#include "audio/process/sat_delay.h"
+#include "audio/synthesis/sat_morph_oscillator.h"
+
+#define SA_MAEL_MAX_DELAY (1024 * 1024)
+typedef SAT_InterpolatedDelay<sat_sample_t,SA_MAEL_MAX_DELAY> sa_mael_delay;
 
 //----------------------------------------------------------------------
 
 class sa_mael_voice {
+ 
 
 //------------------------------
 private:
 //------------------------------
 
-  SAT_VoiceContext*                 MContext      = nullptr;
-  uint32_t                          MIndex        = 0;
-  sat_sample_t                      MSampleRate   = 0.0;
+  SAT_VoiceContext*                   MContext      = nullptr;
+  uint32_t                            MIndex        = 0;
+  sat_sample_t                        MSampleRate   = 0.0;
 
-  sat_param_t                       MKey          = 0.0;    // aka note
-  sat_param_t                       MVelocity     = 1.0;
-  sat_sample_t                      MPhase1       = 0.0;
-  sat_sample_t                      MPhaseAdd1    = 0.0;
-  sat_sample_t                      MPhase2       = 0.0;
-  sat_sample_t                      MPhaseAdd2    = 0.0;
-  SAT_MorphOscillator<sat_sample_t> MOscillator1  = {};
-  SAT_MorphOscillator<sat_sample_t> MOscillator2  = {};
-  SAT_SVFFilter<sat_sample_t>       MFilter       = {};
-  SAT_ExpEnvelope<sat_sample_t>     MEnvelope     = {};
+  sat_param_t                         MKey          = 0.0;    // aka note
+  sat_param_t                         MVelocity     = 1.0;
+  sat_sample_t                        MPhase1       = 0.0;
+  sat_sample_t                        MPhaseAdd1    = 0.0;
+  sat_sample_t                        MPhase2       = 0.0;
+  sat_sample_t                        MPhaseAdd2    = 0.0;
+  SAT_MorphOscillator<sat_sample_t>   MOscillator1  = {};
+  SAT_MorphOscillator<sat_sample_t>   MOscillator2  = {};
+  SAT_SVFFilter<sat_sample_t>         MFilter       = {};
+  SAT_ExpEnvelope<sat_sample_t>       MEnvelope     = {};
+
+  sa_mael_delay   MDelay1 = {};
+  sa_mael_delay   MDelay2 = {};
   
   // param
 
