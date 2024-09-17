@@ -23,11 +23,17 @@ private:
   SAT_Rect        MPluginNameOffset                   = SAT_Rect(35,7,0,0);
   uint32_t        MPluginNameAlignment                = SAT_TEXT_ALIGN_LEFT;
 
+  char            MPluginInfo[SAT_MAX_STRING_LENGTH]  = {0};
+  SAT_Color       MPluginInfoColor                    = SAT_LightGrey;
+  double          MPluginInfoSize                     = 5.0;
+  SAT_Rect        MPluginInfoOffset                   = SAT_Rect(0,31,3,0);
+  uint32_t        MPluginInfoAlignment                = SAT_TEXT_ALIGN_RIGHT;
+
 //------------------------------
 public:
 //------------------------------
 
-  SAT_PluginHeaderWidget(SAT_Rect ARect, const char* AName/*, const char* AFormat*/)
+  SAT_PluginHeaderWidget(SAT_Rect ARect, const char* AName, const char* AInfo="")
   : SAT_VisualWidget(ARect) {
     setName("SAT_PluginHeaderWidget");
     setHint("SAT_PluginHeaderWidget");
@@ -41,6 +47,7 @@ public:
     MLogoSize = ARect.h - (10*2);
 
     strcpy(MPluginName,AName);
+    strcpy(MPluginInfo,AInfo);
 
     MLogo = new SAT_LogoWidget(SAT_Rect(10,10,MLogoSize,MLogoSize));
     appendChild(MLogo);
@@ -99,9 +106,21 @@ public:
     nrect.shrink(nofs);
     painter->drawTextBox(nrect,MPluginName,MPluginNameAlignment);
     
+    // plugin name
+    
+    painter->selectFont(default_font);
+    painter->setTextColor(MPluginInfoColor);
+    painter->setTextSize( MPluginInfoSize * S );
+    
+    SAT_Rect iofs = MPluginInfoOffset;
+    iofs.scale(S);
+    SAT_Rect irect = mrect;
+    irect.shrink(iofs);
+    painter->drawTextBox(irect,MPluginInfo,MPluginInfoAlignment);
+    
     //
 
-    painter->selectFont(default_font);
+    //painter->selectFont(default_font);
     paintChildren(AContext);
     drawBorder(AContext);
 
