@@ -68,6 +68,10 @@ public:
     MVoiceStates[AIndex] = AState;
   }
 
+  virtual uint32_t getVoiceState(uint32_t AIndex) {
+    return MVoiceStates[AIndex];
+  }
+
 //------------------------------
 public:
 //------------------------------
