@@ -169,7 +169,9 @@ public: // extensions
     registerDefaultExtensions();
     registerExtension(CLAP_EXT_NOTE_PORTS);
     #ifdef SAT_VOICE_PROCESSOR_THREADED
-      registerExtension(CLAP_EXT_THREAD_POOL);
+      #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+        registerExtension(CLAP_EXT_THREAD_POOL);
+      #endif
     #endif
     registerExtension(CLAP_EXT_VOICE_INFO);
   }
@@ -834,9 +836,13 @@ public: // processor listener
     #endif
   }
 
+
 //----------------------------------------------------------------------
+
 public: // clap plugin
+
 //----------------------------------------------------------------------
+
 
   bool init() override {
     //SAT_TRACE;
