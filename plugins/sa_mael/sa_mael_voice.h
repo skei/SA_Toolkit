@@ -8,13 +8,13 @@
 #include "audio/process/sat_delay.h"
 #include "audio/synthesis/sat_morph_oscillator.h"
 
-#define SA_MAEL_MAX_DELAY (1024 * 1024)
-typedef SAT_InterpolatedDelay<sat_sample_t,SA_MAEL_MAX_DELAY> sa_mael_delay;
+// #define SA_MAEL_MAX_DELAY (1024 * 4)
+// typedef SAT_InterpolatedDelay<sat_sample_t,SA_MAEL_MAX_DELAY> sa_mael_delay;
 
 //----------------------------------------------------------------------
 
 class sa_mael_voice {
- 
+
 
 //------------------------------
 private:
@@ -35,8 +35,8 @@ private:
   SAT_SVFFilter<sat_sample_t>         MFilter       = {};
   SAT_ExpEnvelope<sat_sample_t>       MEnvelope     = {};
 
-  sa_mael_delay   MDelay1 = {};
-  sa_mael_delay   MDelay2 = {};
+  // sa_mael_delay   MDelay1 = {};
+  // sa_mael_delay   MDelay2 = {};
   
   // param
 

@@ -53,7 +53,7 @@ private:
   SAT_ThreadPoolQueue     MQueue;
   std::atomic<uint32_t>   MTasksRemaining {0};
   SAT_ThreadPoolSemaphore MSemaphore;
-  uint32_t                MBulkEnqueueBuffer[SAT_THREAD_POOL_MAX_VOICES];
+//uint32_t                MBulkEnqueueBuffer[SAT_THREAD_POOL_MAX_VOICES];
 
 //------------------------------
 public:

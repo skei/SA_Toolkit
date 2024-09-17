@@ -74,7 +74,6 @@ public:
 
   SAT_VoiceProcessor(SAT_ProcessorListener* AListener)
   : SAT_Processor(AListener) {
-    SAT_TRACE;
   }
 
   //----------
@@ -405,7 +404,6 @@ public:
   //----------
 
   void noteExpressionEvent(const clap_event_note_expression_t* event) override {
-    //SAT_PRINT("note expression\n");
     //SAT_Print("note_id %i pck %i,%i,%i expr %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->expression_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
       if (isActive(voice)) {
@@ -423,7 +421,6 @@ public:
   // parameters need to be sent to all voices, not just the currently active ones..
 
   void paramValueEvent(const clap_event_param_value_t* event) override {
-    //SAT_PRINT("param\n");
     //SAT_PRINT("note_id %i pck %i,%i,%i param %i val %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->value);
     for (int32_t voice=0; voice<COUNT; voice++) {
       //#ifdef SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
@@ -444,7 +441,6 @@ public:
   // or?
 
   void paramModEvent(const clap_event_param_mod_t* event) override {
-    //SAT_PRINT("mod\n");
     //SAT_PRINT("note_id %i pck %i,%i,%i param %i amt %.3f\n",event->note_id,event->port_index,event->channel,event->key,event->param_id,event->amount);
     for (int32_t voice=0; voice<COUNT; voice++) {
       //#ifdef SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
@@ -462,7 +458,7 @@ public:
   //----------
 
   void transportEvent(const clap_event_transport_t* event) override {
-    //SAT_PRINT("note on\n");
+    //SAT_PRINT("transport\n");
   }
 
   //----------

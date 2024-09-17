@@ -34,7 +34,7 @@
 const clap_plugin_descriptor_t sa_mael_descriptor = {
   .clap_version = CLAP_VERSION,
   .id           = SAT_VENDOR "/sa_mael/v0",
-  .name         = "sa_mael (threaded clap)",
+  .name         = "sa_mael",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
@@ -126,29 +126,27 @@ public: // clap
 //------------------------------
 
   bool init() final {
-
     registerDefaultSynthExtensions();
-
     registerExtension(CLAP_EXT_PARAM_INDICATION);
-  //registerExtension(CLAP_EXT_PRESET_LOAD);
+    //registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_TRACK_INFO);
 
     appendClapNoteInputPort("In");
     appendStereoAudioOutputPort("Out");
 
+    SAT_TRACE;
     MProcessor = new sa_mael_voice_processor(this);
+    SAT_TRACE;
+    
     setProcessor(MProcessor);
-
     MProcessor->init(getClapPlugin(),getClapHost());
-
+    
     #ifdef SAT_VOICE_PROCESSOR_THREADED
       MProcessor->setProcessThreaded(true);
     #else
       MProcessor->setProcessThreaded(false);
     #endif
-
-
     MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
 
     sa_mael_SetupParameters(this);
