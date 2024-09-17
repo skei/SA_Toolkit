@@ -198,9 +198,13 @@
 // #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
   // draw (and keep around) to a buffer, and copy from it to the screen,
-  // instead of drawing directly to the screen (or opewngl backbuffer)
+  // instead of drawing directly to the screen (or opengl backbuffer)
   // 'retained mode' - ish
-  // still a few things to do, and no performance testing have been done..
+  // todo:
+  // - check clipping
+  // - redundant redrawing
+  // - test performance
+  // (see SAT_Window.on_WidgetListener_redraw)
 
 #define SAT_WINDOW_BUFFERED
 

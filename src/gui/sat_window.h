@@ -352,8 +352,8 @@ public: // widget listener
       switch (AMode) {
         case SAT_WIDGET_REDRAW_SELF: {
           //MQueues.queueRedraw(AWidget);
-          SAT_Widget* widget = AWidget->findOpaqueParent();
-          if (widget) MQueues.queueRedraw(widget);
+          SAT_Widget* parent = AWidget->findOpaqueParent();
+          if (parent) MQueues.queueRedraw(parent);
           else MQueues.queueRedraw(AWidget);
           break;
         }
@@ -361,8 +361,8 @@ public: // widget listener
           SAT_Widget* parent = AWidget->getParent();
           //if (parent) MQueues.queueRedraw(parent);
           if (parent) {
-            SAT_Widget* widget = parent->findOpaqueParent();
-            if (widget) MQueues.queueRedraw(widget);
+            SAT_Widget* opaque_parent = parent->findOpaqueParent();
+            if (opaque_parent) MQueues.queueRedraw(opaque_parent);
             else MQueues.queueRedraw(parent);
           }
           break;
