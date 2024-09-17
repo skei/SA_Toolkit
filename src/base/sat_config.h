@@ -202,7 +202,7 @@
   // 'retained mode' - ish
   // still a few things to do, and no performance testing have been done..
 
-//#define SAT_WINDOW_BUFFERED
+#define SAT_WINDOW_BUFFERED
 
   // if this is defined, double click events will be sent to the widgets
   // (in addition to the regular single click events)
