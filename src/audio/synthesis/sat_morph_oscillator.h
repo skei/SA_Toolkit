@@ -160,7 +160,6 @@ public:
 
   T process() {
     SAT_Assert( MSampleRate > 0.0 );
-    ph += phadd;
     ph = SAT_Fract(ph);
     T t1 = ph + 0.5;
     t1 = SAT_Fract(t1);
@@ -176,6 +175,7 @@ public:
     T tri  = squ * (1.0 - MSquTri) + (z1 * 4.0)        * MSquTri;
     T sine = tri * (1.0 - MTriSin) + sin(ph * SAT_PI2) * MTriSin;
     T out  = tri * (1.0 - MTriSin) + sine              * MTriSin;
+    ph += phadd;
     return out;
   }
 
@@ -183,8 +183,6 @@ public:
 
   T process_mod(T mod, T ofs=0.0) {
     SAT_Assert( MSampleRate > 0.0 );
-    //ph += phadd;
-    ph += (phadd + (phadd*ofs));
     ph = SAT_Fract(ph);
     //ph *= scale;
     T phm = SAT_Fract(ph+mod);
@@ -201,6 +199,8 @@ public:
     T tri  = squ * (1.0 - MSquTri) + (z1 * 4.0)       * MSquTri;
     T sine = tri * (1.0 - MTriSin) + sin(phm*SAT_PI2) * MTriSin;
     T out  = tri * (1.0 - MTriSin) + sine             * MTriSin;
+    //ph += phadd;
+    ph += (phadd + (phadd*ofs));
     return out;
   }
 
