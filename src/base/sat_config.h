@@ -187,8 +187,8 @@
 
   // (try to) process voices using thread pool (clap ext or our own)
 
-#define SAT_VOICE_PROCESSOR_THREADED
-#define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+//#define SAT_VOICE_PROCESSOR_THREADED
+//#define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
 
   // if events have no recipients (note_id, pck = -1), meaning they're global,
   // send them (individually) to all voices
@@ -197,7 +197,7 @@
 // #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
 // #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
-  // draw (and keep around) to a buffer, and copy from it to the screen,
+  // draw to (and keep around) a buffer, and copy from it to the screen,
   // instead of drawing directly to the screen (or opengl backbuffer)
   // 'retained mode' - ish
   // todo:
@@ -206,7 +206,7 @@
   // - test performance
   // (see SAT_Window.on_WidgetListener_redraw)
 
-#define SAT_WINDOW_BUFFERED
+//#define SAT_WINDOW_BUFFERED
 
   // if this is defined, double click events will be sent to the widgets
   // (in addition to the regular single click events)

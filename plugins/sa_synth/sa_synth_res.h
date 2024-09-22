@@ -27,7 +27,7 @@ struct sa_synth_delay_clip_fx {
 
 //----------
 
-typedef SAT_InterpolatedDelay<sat_sample_t,SA_SYNTH_MAX_DELAY,sa_synth_delay_loop_fx,sa_synth_delay_clip_fx> sa_synth_delay;
+typedef SAT_InterpolatedDelay<sat_sample_t,SA_SYNTH_MAX_DELAY,sa_synth_delay_loop_fx/*,sa_synth_delay_clip_fx*/> sa_synth_delay;
 
 //----------------------------------------------------------------------
 //
@@ -43,8 +43,9 @@ private:
 
   double          MSampleRate   = 0.0;
   double          MDelayLength  = 0.0;
-  double          MFeedBack     = 0.0;
-  sa_synth_delay  MDelay        = {};
+  sa_synth_delay  MDelay1       = {};
+  sa_synth_delay  MDelay2       = {};
+//double          MFeedBack     = 0.0;
 
   // parameters
 
@@ -53,21 +54,36 @@ private:
   sat_param_t   par_feedback    = 0.0;
   sat_param_t   par_damping     = 0.0;
 
+  sat_sample_t  d1_z1           = 0.0;
+  sat_sample_t  d2_z1           = 0.0;
+
 //------------------------------
 public:
 //------------------------------
 
   void setSampleRate(double ASampleRate) {
     MSampleRate = ASampleRate;
-    MDelay.clear();
+    MDelay1.clear();
+    MDelay2.clear();
+  }
+
+  //----------
+
+  void setFrequency(double hz) {
+    SAT_Assert(hz >= 2.0);
+    MDelayLength = (MSampleRate / hz) * 0.5;
+    SAT_Assert(MDelayLength < SA_SYNTH_MAX_DELAY);
   }
 
   //----------
 
   void noteOn(uint32_t AIndex, double AValue) {
     double hz = SAT_NoteToHz(AIndex);
-    MDelayLength = MSampleRate / hz;
-    MFeedBack = AValue; // test
+    setFrequency(hz);
+    MDelay1.clear();
+    MDelay2.clear();
+    MDelay1.start();
+    MDelay2.start();
   }
 
   //----------
@@ -82,9 +98,12 @@ public:
 
   //----------
 
-  sat_sample_t process(sat_sample_t AInput) {
-    sat_sample_t out = 0.0;
-    out = MDelay.process(AInput,MDelayLength,MFeedBack);
+  sat_sample_t process(sat_sample_t AInput, double AFeedBack, double AOffset=0.0) {
+    sat_sample_t d1 = MDelay1.process(AInput + d1_z1,MDelayLength,AFeedBack,AOffset);
+    sat_sample_t d2 = MDelay2.process(AInput + d2_z1,MDelayLength,AFeedBack,(1.0 - AOffset));
+    sat_sample_t out = (d1 + d2);
+    d1_z1 = d1;
+    d2_z1 = d2;
     return out;
   }
 

@@ -30,16 +30,18 @@ private:
   sat_sample_t        MSampleRate   = 0.0;
   sa_synth_osc        MOsc1         = {};
   sa_synth_osc        MOsc2         = {};
+  sa_synth_res        MRes1         = {};
+  sa_synth_res        MRes2         = {};
   sa_synth_flt        MFlt1         = {};
   sa_synth_env        MEnv1         = {};
 
   uint32_t            MKey          = 0;
   double              MVelocity     = 0.0;
 
-  sat_sample_t MOsc1_Z1 = 0.0;
-  sat_sample_t MOsc2_Z1 = 0.0;
-  sat_sample_t Mres1_Z1 = 0.0;
-  sat_sample_t Mres2_Z1 = 0.0;
+  sat_sample_t        MOsc1_z1      = 0.0;
+  sat_sample_t        MOsc2_z1      = 0.0;
+  sat_sample_t        MRes1_z1      = 0.0;
+  sat_sample_t        MRes2_z1      = 0.0;
 
 
 
@@ -53,6 +55,8 @@ public:
     MSampleRate = AContext->sample_rate;
     MOsc1.setSampleRate(MSampleRate);
     MOsc2.setSampleRate(MSampleRate);
+    MRes1.setSampleRate(MSampleRate);
+    MRes2.setSampleRate(MSampleRate);
     MFlt1.setSampleRate(MSampleRate);
     MEnv1.setSampleRate(MSampleRate);
   }
@@ -71,6 +75,8 @@ public:
     SAT_ParameterArray* params = MContext->process_context->parameters;
     init_osc1(AIndex,AValue);
     init_osc2(AIndex,AValue);
+    init_res1(AIndex,AValue);
+    init_res2(AIndex,AValue);
     init_flt1(AIndex,AValue);
     init_env1(AIndex,AValue);
     return SAT_VOICE_PLAYING;
@@ -82,6 +88,8 @@ public:
     //return SAT_VOICE_FINISHED;
     MOsc1.noteOff(AIndex,AValue);
     MOsc2.noteOff(AIndex,AValue);
+    MRes1.noteOff(AIndex,AValue);
+    MRes2.noteOff(AIndex,AValue);
     MFlt1.noteOff(AIndex,AValue);
     MEnv1.noteOff(AIndex,AValue);
     return SAT_VOICE_RELEASED;
@@ -97,6 +105,8 @@ public:
   void noteExpression(uint32_t AIndex, sat_param_t AValue) {
     MOsc1.noteExpression(AIndex,AValue);
     MOsc2.noteExpression(AIndex,AValue);
+    MRes1.noteExpression(AIndex,AValue);
+    MRes2.noteExpression(AIndex,AValue);
     MFlt1.noteExpression(AIndex,AValue);
     MEnv1.noteExpression(AIndex,AValue);
   }
@@ -122,13 +132,19 @@ public:
         sat_sample_t out = 0.0;
         sat_sample_t osc1 = process_osc1();
         sat_sample_t osc2 = process_osc2();
-        MOsc1_Z1 = osc1;
-        MOsc2_Z1 = osc2;
+        sat_sample_t res1 = process_res1();
+        sat_sample_t res2 = process_res2();
+        MOsc1_z1 = osc1;
+        MOsc2_z1 = osc2;
+        MRes1_z1 = res1;
+        MRes2_z1 = res2;
         SAT_ParameterArray* params = MContext->process_context->parameters;
         SAT_Assert(params);
         sat_param_t o1_mix = params->getItem(SA_SYNTH_PARAM_MIX_O1)->getValue();
         sat_param_t o2_mix = params->getItem(SA_SYNTH_PARAM_MIX_O2)->getValue();
-        out = (osc1 * o1_mix) + (osc2 * o2_mix);
+        sat_param_t r1_mix = params->getItem(SA_SYNTH_PARAM_MIX_R1)->getValue();
+        sat_param_t r2_mix = params->getItem(SA_SYNTH_PARAM_MIX_R2)->getValue();
+        out = (osc1 * o1_mix) + (osc2 * o2_mix) + (res1 * r1_mix) + (res2 * r2_mix);
         out = process_flt1(out);
         out *= process_env1();
         *buffer++ = out;
@@ -223,6 +239,16 @@ private:
 
   //----------
 
+  void init_res1(uint32_t AIndex, double AValue) {
+  }
+
+  //----------
+
+  void init_res2(uint32_t AIndex, double AValue) {
+  }
+
+  //----------
+
   void init_flt1(uint32_t AIndex, double AValue) {
     SAT_ParameterArray* params = MContext->process_context->parameters;
     SAT_Assert(params);
@@ -264,13 +290,12 @@ private:
     MOsc1.setSquTri(o1_tri);
     MOsc1.setTriSin(o1_sin);
 
-    uint32_t    o1_type = params->getItem(SA_SYNTH_PARAM_OSC1_TYPE)->getValue();
     sat_param_t o1_amt  = params->getItem(SA_SYNTH_PARAM_OSC1_IN_AMOUNT)->getValue();
     sat_param_t o1_in1  = params->getItem(SA_SYNTH_PARAM_OSC1_IN_O1)->getValue();
     sat_param_t o1_in2  = params->getItem(SA_SYNTH_PARAM_OSC1_IN_O2)->getValue();
-    // sat_param_t o1_in3  = params->getItem(SA_SYNTH_PARAM_OSC1_IN_R1)->getValue();
-    // sat_param_t o1_in4  = params->getItem(SA_SYNTH_PARAM_OSC1_IN_R2)->getValue();
-    sat_sample_t o1_in  = (o1_in1 * MOsc1_Z1) + (o1_in2 * MOsc2_Z1);
+    sat_param_t o1_in3  = params->getItem(SA_SYNTH_PARAM_OSC1_IN_R1)->getValue();
+    sat_param_t o1_in4  = params->getItem(SA_SYNTH_PARAM_OSC1_IN_R2)->getValue();
+    sat_sample_t o1_in  = (o1_in1 * MOsc1_z1) + (o1_in2 * MOsc2_z1) + (o1_in3 * MRes1_z1) + (o1_in4 * MRes2_z1);
 
     sat_param_t o1_oct = params->getItem(SA_SYNTH_PARAM_OSC1_OCT)->getValue();
     sat_param_t o1_semi = params->getItem(SA_SYNTH_PARAM_OSC1_SEMI)->getValue();
@@ -279,6 +304,7 @@ private:
     // o1_tuning += expr_tuning;
 
     sat_param_t mod = 0.0;
+    uint32_t o1_type = params->getItem(SA_SYNTH_PARAM_OSC1_TYPE)->getValue();
     switch (o1_type) {
       case SA_SYNTH_OSC_PHASE_MOD: {
         mod = ((o1_in * 4.0) * o1_amt);
@@ -289,9 +315,7 @@ private:
 
     sat_param_t hz1 = SAT_NoteToHz(MKey + o1_tuning);
     MOsc1.setFrequency(hz1);
-
     sat_sample_t osc1 = MOsc1.process_mod(0.0,mod);
-    //sat_sample_t osc1 = MOsc1.process(0.0);
 
     switch (o1_type) {
       case SA_SYNTH_OSC_RING_MOD: {
@@ -315,30 +339,30 @@ private:
   sat_sample_t process_osc2() {
     SAT_ParameterArray* params = MContext->process_context->parameters;
     SAT_Assert(params);
-    sat_param_t o2_squ = params->getItem(SA_SYNTH_PARAM_OSC2_SQU)->getValue();
-    sat_param_t o2_tri = params->getItem(SA_SYNTH_PARAM_OSC2_TRI)->getValue();
-    sat_param_t o2_sin = params->getItem(SA_SYNTH_PARAM_OSC2_SIN)->getValue();
-    sat_param_t o2_width = params->getItem(SA_SYNTH_PARAM_OSC2_WIDTH)->getValue();
+    sat_param_t o2_squ    = params->getItem(SA_SYNTH_PARAM_OSC2_SQU)->getValue();
+    sat_param_t o2_tri    = params->getItem(SA_SYNTH_PARAM_OSC2_TRI)->getValue();
+    sat_param_t o2_sin    = params->getItem(SA_SYNTH_PARAM_OSC2_SIN)->getValue();
+    sat_param_t o2_width  = params->getItem(SA_SYNTH_PARAM_OSC2_WIDTH)->getValue();
     MOsc2.setPulseWidth(o2_width);
     MOsc2.setSawSqu(o2_squ);
     MOsc2.setSquTri(o2_tri);
     MOsc2.setTriSin(o2_sin);
 
-    uint32_t o2_type = params->getItem(SA_SYNTH_PARAM_OSC2_TYPE)->getValue();
-    sat_param_t o2_amt  = params->getItem(SA_SYNTH_PARAM_OSC2_IN_AMOUNT)->getValue();
-    sat_param_t o2_in1  = params->getItem(SA_SYNTH_PARAM_OSC2_IN_O1)->getValue();
-    sat_param_t o2_in2  = params->getItem(SA_SYNTH_PARAM_OSC2_IN_O2)->getValue();
-    // sat_param_t o2_in3  = params->getItem(SA_SYNTH_PARAM_OSC2_IN_R1)->getValue();
-    // sat_param_t o2_in4  = params->getItem(SA_SYNTH_PARAM_OSC2_IN_R2)->getValue();
-    sat_sample_t o2_in  = (o2_in1 * MOsc1_Z1) + (o2_in2 * MOsc2_Z1);
+    sat_param_t o2_amt    = params->getItem(SA_SYNTH_PARAM_OSC2_IN_AMOUNT)->getValue();
+    sat_param_t o2_in1    = params->getItem(SA_SYNTH_PARAM_OSC2_IN_O1)->getValue();
+    sat_param_t o2_in2    = params->getItem(SA_SYNTH_PARAM_OSC2_IN_O2)->getValue();
+    sat_param_t o2_in3    = params->getItem(SA_SYNTH_PARAM_OSC2_IN_R1)->getValue();
+    sat_param_t o2_in4    = params->getItem(SA_SYNTH_PARAM_OSC2_IN_R2)->getValue();
+    sat_sample_t o2_in    = (o2_in1 * MOsc1_z1) + (o2_in2 * MOsc2_z1) + (o2_in3 * MRes1_z1) + (o2_in4 * MRes2_z1);
 
-    sat_param_t o2_oct = params->getItem(SA_SYNTH_PARAM_OSC2_OCT)->getValue();
-    sat_param_t o2_semi = params->getItem(SA_SYNTH_PARAM_OSC2_SEMI)->getValue();
-    sat_param_t o2_cent = params->getItem(SA_SYNTH_PARAM_OSC2_CENT)->getValue();
+    sat_param_t o2_oct    = params->getItem(SA_SYNTH_PARAM_OSC2_OCT)->getValue();
+    sat_param_t o2_semi   = params->getItem(SA_SYNTH_PARAM_OSC2_SEMI)->getValue();
+    sat_param_t o2_cent   = params->getItem(SA_SYNTH_PARAM_OSC2_CENT)->getValue();
     sat_param_t o2_tuning = (o2_oct * 12.0) + o2_semi + o2_cent;
     // o2_tuning += e_tuning;
 
     sat_param_t mod = 0.0;
+    uint32_t o2_type = params->getItem(SA_SYNTH_PARAM_OSC2_TYPE)->getValue();
     switch (o2_type) {
       case SA_SYNTH_OSC_PHASE_MOD: {
         mod = ((o2_in * 4.0) * o2_amt);
@@ -349,9 +373,7 @@ private:
 
     sat_param_t hz2 = SAT_NoteToHz(MKey + o2_tuning);
     MOsc2.setFrequency(hz2);
-
     sat_sample_t osc2 = MOsc2.process_mod(0.0,mod);
-    //sat_sample_t osc2 = MOsc2.process(0.0);
 
     switch (o2_type) {
       case SA_SYNTH_OSC_RING_MOD: {
@@ -368,6 +390,102 @@ private:
 
     osc2 = SAT_Clamp(osc2,-1,1);
     return osc2;
+  }
+
+  //----------
+
+  sat_sample_t process_res1() {
+
+    SAT_ParameterArray* params = MContext->process_context->parameters;
+    SAT_Assert(params);
+
+    sat_param_t r1_imp    = params->getItem(SA_SYNTH_PARAM_RES1_IMPULSE)->getValue();
+    sat_param_t r1_shp    = params->getItem(SA_SYNTH_PARAM_RES1_SHAPE)->getValue();
+    sat_param_t r1_fb     = params->getItem(SA_SYNTH_PARAM_RES1_FEEDBACK)->getValue();
+    sat_param_t r1_damp   = params->getItem(SA_SYNTH_PARAM_RES1_DAMPING)->getValue();
+    // MRes1.setImpulse(r1_imp);
+    // MRes1.setShape(r1_shp);
+    // MRes1.setFeedback(r1_fb);
+    // MRes1.setDamping(r1_damp);
+
+    sat_param_t r1_amt    = params->getItem(SA_SYNTH_PARAM_RES1_IN_AMOUNT)->getValue();
+    sat_param_t r1_in1    = params->getItem(SA_SYNTH_PARAM_RES1_IN_O1)->getValue();
+    sat_param_t r1_in2    = params->getItem(SA_SYNTH_PARAM_RES1_IN_O2)->getValue();
+    sat_param_t r1_in3    = params->getItem(SA_SYNTH_PARAM_RES1_IN_R1)->getValue();
+    sat_param_t r1_in4    = params->getItem(SA_SYNTH_PARAM_RES1_IN_R2)->getValue();
+    sat_sample_t r1_in    = (r1_in1 * MOsc1_z1) + (r1_in2 * MOsc2_z1) + (r1_in3 * MRes1_z1) + (r1_in4 * MRes2_z1);
+
+    sat_param_t r1_oct    = params->getItem(SA_SYNTH_PARAM_RES1_OCT)->getValue();
+    sat_param_t r1_semi   = params->getItem(SA_SYNTH_PARAM_RES1_SEMI)->getValue();
+    sat_param_t r1_cent   = params->getItem(SA_SYNTH_PARAM_RES1_CENT)->getValue();
+    sat_param_t r1_tuning = (r1_oct * 12.0) + r1_semi + r1_cent;
+    // r1_tuning += e_tuning;
+
+    double offset = 0.0;
+
+    // sat_param_t mod = 0.0;
+    // uint32_t r1_type = params->getItem(SA_SYNTH_PARAM_RES1_TYPE)->getValue();
+    // switch (r1_type) {
+    // }
+
+    sat_param_t hz1 = SAT_NoteToHz(MKey + r1_tuning);
+    MRes1.setFrequency(hz1);
+    sat_sample_t res1 = MRes1.process(r1_in,r1_fb,offset);
+
+    // switch (r1_type) {
+    // }
+
+    res1 = SAT_Clamp(res1,-1,1);
+    return res1;
+
+  }
+
+  //----------
+
+  sat_sample_t process_res2() {
+
+    SAT_ParameterArray* params = MContext->process_context->parameters;
+    SAT_Assert(params);
+
+    sat_param_t r2_imp    = params->getItem(SA_SYNTH_PARAM_RES2_IMPULSE)->getValue();
+    sat_param_t r2_shp    = params->getItem(SA_SYNTH_PARAM_RES2_SHAPE)->getValue();
+    sat_param_t r2_fb     = params->getItem(SA_SYNTH_PARAM_RES2_FEEDBACK)->getValue();
+    sat_param_t r2_damp   = params->getItem(SA_SYNTH_PARAM_RES2_DAMPING)->getValue();
+    // MRes2.setImpulse(r2_imp);
+    // MRes2.setShape(r2_shp);
+    // MRes2.setFeedback(r2_fb);
+    // MRes2.setDamping(r2_damp);
+
+    sat_param_t  r2_amt   = params->getItem(SA_SYNTH_PARAM_RES2_IN_AMOUNT)->getValue();
+    sat_param_t  r2_in1   = params->getItem(SA_SYNTH_PARAM_RES2_IN_O1)->getValue();
+    sat_param_t  r2_in2   = params->getItem(SA_SYNTH_PARAM_RES2_IN_O2)->getValue();
+    sat_param_t  r2_in3   = params->getItem(SA_SYNTH_PARAM_RES2_IN_R1)->getValue();
+    sat_param_t  r2_in4   = params->getItem(SA_SYNTH_PARAM_RES2_IN_R2)->getValue();
+    sat_sample_t r2_in    = (r2_in1 * MOsc1_z1) + (r2_in2 * MOsc2_z1) + (r2_in3 * MRes1_z1) + (r2_in4 * MRes2_z1);
+
+    sat_param_t r2_oct    = params->getItem(SA_SYNTH_PARAM_RES2_OCT)->getValue();
+    sat_param_t r2_semi   = params->getItem(SA_SYNTH_PARAM_RES2_SEMI)->getValue();
+    sat_param_t r2_cent   = params->getItem(SA_SYNTH_PARAM_RES2_CENT)->getValue();
+    sat_param_t r2_tuning = (r2_oct * 12.0) + r2_semi + r2_cent;
+    // r2_tuning += e_tuning;
+
+    double offset = 0.0;
+
+    // sat_param_t mod = 0.0;
+    // uint32_t r2_type = params->getItem(SA_SYNTH_PARAM_RES2_TYPE)->getValue();
+    // switch (r2_type) {
+    // }
+
+    sat_param_t hz2 = SAT_NoteToHz(MKey + r2_tuning);
+    MRes2.setFrequency(hz2);
+    sat_sample_t res2 = MRes2.process(r2_in,r2_fb,offset);
+
+    // switch (r2_type) {
+    // }
+
+    res2 = SAT_Clamp(res2,-1,1);
+    return res2;
+
   }
 
   //----------

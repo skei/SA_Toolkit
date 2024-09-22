@@ -35,7 +35,14 @@ public:
       //------------------------------
 
       // sprintf(MInfoText,"%s %s %s",getPluginVersion(),getPluginFormat(),getOS());
-      sprintf(MInfoText,"v0.0.1 CLAP Linux");
+
+      #ifdef SAT_LINUX
+        sprintf(MInfoText,"v0.0.1 CLAP Linux");
+      #endif
+
+      #ifdef SAT_WIN32
+        sprintf(MInfoText,"v0.0.1 CLAP Win32");
+      #endif
 
       SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"synth",MInfoText);
       root->appendChild(header);

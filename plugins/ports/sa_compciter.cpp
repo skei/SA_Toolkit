@@ -227,9 +227,9 @@ public:
     appendParameter( new SAT_Parameter( "Dry",   "", 0,   -12,  0     ));
     MProcessor = new sa_compciter_processor(this);
     setProcessor(MProcessor);
-    // #ifndef SAT_NO_GUI
-    //   setInitialEditorSize(510,340,1.0,true);
-    // #endif
+    #ifndef SAT_NO_GUI
+      setInitialEditorSize(510,340,1.0,true);
+    #endif
     return SAT_Plugin::init();
   }
 
@@ -244,7 +244,7 @@ public:
 public:
 //------------------------------
 
-  /*
+//  /*
 
   #ifndef SAT_NO_GUI
   
@@ -340,7 +340,7 @@ public:
   
   #endif // nogui
 
-  */
+//  */
 
 };
 

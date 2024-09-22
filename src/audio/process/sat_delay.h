@@ -13,18 +13,6 @@ struct SAT_NoLoopFx {
   T process(T x) { return x; }
 };
 
-//----------
-
-template<typename T>
-struct SAT_NoClipFx {
-  T process(T x) { return x; }
-};
-
-// template<typename T>
-// struct SAT_HardClipFx {
-//   T process(T x) { return x;/*SAT_Clamp(x,-1,1);*/ }
-// };
-
 //----------------------------------------------------------------------
 //
 // interpolated delay
@@ -32,7 +20,7 @@ struct SAT_NoClipFx {
 //----------------------------------------------------------------------
 
 
-template <typename T, int MAX_DELAY, typename LOOPFX=SAT_NoLoopFx<T>, typename CLIPFX=SAT_NoClipFx<T>>
+template <typename T, int MAX_DELAY, typename LOOPFX=SAT_NoLoopFx<T>>
 class SAT_InterpolatedDelay {
 
 //------------------------------
@@ -40,14 +28,12 @@ private:
 //------------------------------
 
   T               MBuffer[MAX_DELAY]  = {0};
-  int             MCounter            = 0;
-  T               MDelayPos           = 0.0f;
-  bool            MWrapped            = false;
+  int             MWritePos           = 0;
   LOOPFX          MLoopFX             = {};
-  CLIPFX          MClipFX             = {};
   T               MPhase              = 0.0;
-
-  //SAT_DcFilter  MDC;
+  T               MPhaseCounter       = 0.0f;
+  bool            MPhaseWrapped       = false;
+//SAT_DcFilter    MDcFilter           = {};
 
 //------------------------------
 public:
@@ -72,14 +58,8 @@ public:
 
   //----------
 
-  LOOPFX* getClipFX() {
-    return &MLoopFX;
-  }
-
-  //----------
-
   bool hasWrapped() {
-    return MWrapped;
+    return MPhaseWrapped;
   }
 
   //----------
@@ -88,45 +68,48 @@ public:
     return MPhase;
   }
 
-  //----------
+//------------------------------
+public:
+//------------------------------
 
   void reset() {
-    MCounter = 0;
-    MWrapped = false;
+    MWritePos = 0;
+    MPhaseWrapped = false;
   }
 
   //----------
 
   void clear() {
-    MCounter = 0;
+    MWritePos = 0;
     memset(MBuffer,0,MAX_DELAY*sizeof(T));
   }
 
   //----------
 
   void start() {
-    MWrapped = false;
-    /*MPhase*/MDelayPos = 0.0f;
+    MPhaseWrapped = false;
+    MPhaseCounter = 0.0f;
   }
 
   //----------
 
-  //void restart() {
-  //  MCounter = 0;
-  //  MWrapped = false;
-  //  ///*MPhase*/MDelayPos = 0.0f;
-  //}
+  // input = value to write into buffer (at writepos)
+  // delay = delay length in samples (read from earlier in buffer)
+  // feedback = how much to feed back back to the buffer
+  // offset = tap position (offset) 0..1
 
-  //----------
-
-  T process(T AInput, T ADelay, T AFeedback) {
+  T process(T AInput, T ADelay, T AFeedback, T ATapOffset=0.0) {
 
     SAT_Assert( ADelay > 0 );
     SAT_Assert( ADelay < MAX_DELAY );
 
+    T offset = (ATapOffset * ADelay);
+
     // calculate delay offset
-    T back = (T)MCounter - ADelay;
-    if (back < 0.0) back += MAX_DELAY;            // + back;
+    T back = (T)MWritePos - ADelay + offset;
+    if (back < 0.0) back += MAX_DELAY;
+    if (back >= MAX_DELAY) back -= MAX_DELAY;
+
     int index0 = (int)back;
     int index_1 = index0-1;
     int index1 = index0+1;
@@ -149,7 +132,7 @@ public:
 
     //output = MDC.process(output);
     //output = SAT_KillDenormal(output);
-
+    //
     //T flt = fb;
     //T out = filtered_feedback;// + (AInput * AMix);
     //out = atan(out); // KClamp((AInput + flt), -1, 1);
@@ -159,34 +142,34 @@ public:
 
     T feedback = delayed * AFeedback;
     
-//    feedback = MLoopFX.process(feedback);
-//    feedback = MClipFX.process(feedback);
+    feedback = MLoopFX.process(feedback);
+    //feedback = MClipFX.process(feedback);
 
     //-----
 
-    SAT_Assert( MCounter >= 0 );
-    SAT_Assert( MCounter < MAX_DELAY );
+    SAT_Assert( MWritePos >= 0 );
+    SAT_Assert( MWritePos < MAX_DELAY );
 
     // if only part of next sample 'fits' inside delay length...
-    //if ((MDelayPos + 1.0) >= ADelay) {
-    //  T diff = ADelay - MDelayPos;
+    //if ((MPhaseCounter + 1.0) >= ADelay) {
+    //  T diff = ADelay - MPhaseCounter;
     //  out *= diff;
     //}
 
-    MBuffer[MCounter] = AInput + feedback;
+    MBuffer[MWritePos] = AInput + feedback;
 
-    MCounter++;
-    if (MCounter >= MAX_DELAY) {
-      MCounter -= MAX_DELAY;// 0;
+    MWritePos++;
+    if (MWritePos >= MAX_DELAY) {
+      MWritePos -= MAX_DELAY;// 0;
     }
 
-    MDelayPos += 1.0f;
-    if (MDelayPos >= ADelay) {
-      MWrapped = true;
-      while (MDelayPos >= ADelay) MDelayPos -= ADelay;
+    MPhaseCounter += 1.0f;
+    if (MPhaseCounter >= ADelay) {
+      MPhaseWrapped = true;
+      while (MPhaseCounter >= ADelay) MPhaseCounter -= ADelay;
     }
 
-    MPhase = MDelayPos / ADelay;
+    MPhase = MPhaseCounter / ADelay;
 
     return delayed;
   }
@@ -205,7 +188,7 @@ public:
 //  private:
 //
 //    float       MBuffer[MAX_DELAY];
-//    int32       MCounter;
+//    int32       MWritePos;
 //    FBLOOPFX    MFBLoopFX;
 //
 //  public:
@@ -222,24 +205,24 @@ public:
 //    }
 //
 //    void restart(void) {
-//      MCounter = 0;
+//      MWritePos = 0;
 //    }
 //
 //    void clear(void) {
-//      MCounter = 0;
+//      MWritePos = 0;
 //      KMemset(MBuffer,0,MAX_DELAY*sizeof(float));
 //    }
 //
 //    float process(float AInput, float AFeedback, int32 ADelay) {
-//      int32 back = MCounter - ADelay;
+//      int32 back = MWritePos - ADelay;
 //      if (back < 0) back = MAX_DELAY + back;
 //      int index = (int)back;
 //      float output = MBuffer[index];
 //      float fb = AInput + output * AFeedback;
 //      fb = MFBLoopFX.process(fb);
-//      MBuffer[MCounter] = fb;
-//      MCounter++;
-//      if (MCounter >= MAX_DELAY) MCounter = 0;
+//      MBuffer[MWritePos] = fb;
+//      MWritePos++;
+//      if (MWritePos >= MAX_DELAY) MWritePos = 0;
 //      return output;
 //    }
 //
