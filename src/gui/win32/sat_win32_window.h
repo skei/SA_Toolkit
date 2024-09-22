@@ -2,7 +2,7 @@
 #define sat_win32_window_included
 //----------------------------------------------------------------------
 
-#define SAT_GUI_WIN32
+//#define SAT_GUI_WIN32
 
 /*
   - the HINSTANCE is saved when DllMain is called..
@@ -1031,6 +1031,46 @@ private:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
 //----------------------------------------------------------------------
 //
 // event proc
@@ -1142,6 +1182,38 @@ SAT_Win32WindowClass SAT_GLOBAL_WIN32_WINDOW_CLASS = {};
 char* SAT_Win32ClassName() {
   return SAT_GLOBAL_WIN32_WINDOW_CLASS.getWindowClass();
 }
+
+#endif // 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //----------------------------------------------------------------------
 #endif

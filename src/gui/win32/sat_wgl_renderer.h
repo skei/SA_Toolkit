@@ -48,9 +48,9 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "gui/sat_gui_base.h"
 #include "gui/win32/sat_wgl.h"
 #include "gui/win32/sat_win32.h"
-#include "gui/sat_gui_base.h"
 
 //----------------------------------------------------------------------
 

@@ -83,7 +83,7 @@ SAT_HostWindow* sat_exe_openEditor(SAT_HostWindow* AHostWindow) {
     sat_exe_ClapGui->create(sat_exe_ClapPlugin,CLAP_WINDOW_API_X11,false);
   #endif
   #ifdef SAT_WIN32
-    MClapGui->create(MClapPlugin,CLAP_WINDOW_API_WIN32,false);
+    sat_exe_ClapGui->create(sat_exe_ClapPlugin,CLAP_WINDOW_API_WIN32,false);
   #endif
   sat_exe_ClapGui->set_scale(sat_exe_ClapPlugin,1.0);
   uint32_t width,height;

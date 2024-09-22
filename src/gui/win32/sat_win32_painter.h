@@ -3,12 +3,11 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "gui/painter/sat_base_painter.h"
-#include "gui/painter/sat_painter_owner.h"
-#include "gui/painter/sat_paint_target.h"
-#include "gui/lib/sat_win32.h"
-#include "gui/sat_bitmap.h"
-#include "gui/sat_surface.h"
+#include "gui/win32/sat_win32.h"
+#include "gui/sat_gui_base.h"
+
+//#include "gui/sat_surface.h"
+//#include "gui/sat_bitmap.h"
 
 //----------------------------------------------------------------------
 //
@@ -78,6 +77,7 @@ public:
 //------------------------------
 
   double getTextBounds(const char* AText, double* ABounds) override {
+    return 0.0;
   }
   
   void setDrawColor(SAT_Color AColor) override {
@@ -322,9 +322,9 @@ public:
   void getTextMetrics(float* ascender, float* descender, float* lineh) override {
   }
   
-  int getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) override {
-    return 0;
-  }
+//  int getTextBreakLines(const char* string, const char* end, float breakRowWidth, /*NVGtextRow*/void* rows, int maxRows) override {
+//    return 0;
+//  }
 
 //------------------------------
 public:
@@ -395,13 +395,13 @@ public:
   
   //----------
 
-  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) override {
-  }
+//  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface) override {
+//  }
   
   //----------
 
-  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) override {
-  }
+//  void drawSurface(double AXpos, double AYpos, SAT_Surface* ASurface, SAT_Rect ASrc) override {
+//  }
 
 };
 
