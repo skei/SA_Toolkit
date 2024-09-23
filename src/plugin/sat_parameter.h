@@ -42,14 +42,14 @@ protected:
   clap_param_info_t MInfo = {
     // (mingw)
     #ifdef SAT_WIN32
-      0,
-      CLAP_PARAM_IS_AUTOMATABLE,
-      this,
-      "param",
-      "default",
-      0.0,
-      1.0,
-      0.0
+                        0,
+                        CLAP_PARAM_IS_AUTOMATABLE,
+                        this,
+                        "param",
+                        "default",
+                        0.0,
+                        1.0,
+                        0.0
     #else
       .id             = 0,
       .flags          = CLAP_PARAM_IS_AUTOMATABLE,

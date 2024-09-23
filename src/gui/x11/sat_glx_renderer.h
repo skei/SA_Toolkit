@@ -134,6 +134,7 @@ public:
     if (strstr(glXExtensions, "GLX_MESA_swap_control") != nullptr) {
       glXSwapIntervalMESA = (glXSwapIntervalMESA_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalMESA");
     }
+    
     disableVSync();
 
     // makes context current..

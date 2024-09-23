@@ -187,8 +187,8 @@
 
   // (try to) process voices using thread pool (clap ext or our own)
 
-//#define SAT_VOICE_PROCESSOR_THREADED
-//#define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+#define SAT_VOICE_PROCESSOR_THREADED
+#define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
 
   // if events have no recipients (note_id, pck = -1), meaning they're global,
   // send them (individually) to all voices
@@ -269,6 +269,9 @@
 // debug
 //
 //----------------------------------------------------------------------
+
+// ouch..
+// todo: win32 versions of things like callstack, crash handler..
 
 #ifdef SAT_WIN32
   #undef SAT_DEBUG

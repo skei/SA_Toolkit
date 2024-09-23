@@ -1027,49 +1027,7 @@ private:
 
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
+// #if 0
 
 //----------------------------------------------------------------------
 //
@@ -1083,12 +1041,10 @@ LRESULT CALLBACK sat_win32_eventproc(HWND hWnd, UINT message, WPARAM wParam, LPA
   return window->eventHandler(hWnd, message, wParam, lParam);
 }
 
-
-
-
-
 //----------------------------------------------------------------------
+//
 // window class
+//
 //----------------------------------------------------------------------
 
 // TODO: move all of this to SAT_GLOBAL.WIN32 ?
@@ -1183,57 +1139,10 @@ char* SAT_Win32ClassName() {
   return SAT_GLOBAL_WIN32_WINDOW_CLASS.getWindowClass();
 }
 
-#endif // 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//#endif // 0
 
 //----------------------------------------------------------------------
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -22,10 +22,10 @@ private:
 
   clap_note_port_info_t  MInfo = {
   #ifdef SAT_WIN32
-    0,
-    CLAP_NOTE_DIALECT_CLAP,
-    CLAP_NOTE_DIALECT_CLAP,
-    ""
+                          0,
+                          CLAP_NOTE_DIALECT_CLAP,
+                          CLAP_NOTE_DIALECT_CLAP,
+                          ""
   #else
     .id                 = 0,
     .supported_dialects = CLAP_NOTE_DIALECT_CLAP,

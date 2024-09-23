@@ -74,7 +74,7 @@ HINSTANCE SAT_GLOBAL_WIN32_INSTANCE = 0;
 
 #ifdef SAT_PLUGIN
 
-  #warning "plugin"
+  //#warning "plugin"
 
   __SAT_EXTERNC
   BOOL APIENTRY

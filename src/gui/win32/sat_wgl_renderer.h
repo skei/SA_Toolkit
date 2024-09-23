@@ -293,8 +293,8 @@ public:
 
     disableVSync();
 
-    wglMakeCurrent(MDC,MGLRC);
-    MIsCurrent = true;
+    //wglMakeCurrent(MDC,MGLRC);
+    //MIsCurrent = true;
 
   }
 

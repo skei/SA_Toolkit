@@ -2549,7 +2549,7 @@ public: // SAT_TimerListener
     // and what thread should we call flush from?
     // let's try this, and see how it goes..
   
-    void on_timerListener_callback(SAT_Timer* ATimer, double ADelta) override {
+    void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
       SAT_PRINT("\n***\n");
       flushHostParams();
     }
