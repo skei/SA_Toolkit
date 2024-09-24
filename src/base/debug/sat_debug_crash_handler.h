@@ -14,16 +14,6 @@
 
 #include "sat.h"
 
-// #if defined(SAT_WIN32)
-//   #undef SAT_DEBUG_CRASH_HANDLER
-// #endif
-
-// #if !defined (SAT_LINUX)
-//   #error only linux supported..
-// #endif
-
-  //----------
-
 #include "sat.h"
 #include "base/debug/sat_debug_callstack.h"
 

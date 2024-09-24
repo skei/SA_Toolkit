@@ -173,12 +173,12 @@ public: // call stack
       }
     }
 
-  #else
+  #else // SAT_DEBUG_CALLSTACK
 
     void print(int skip = 1) {
     }
 
-  #endif
+  #endif // SAT_DEBUG_CALLSTACK
 
 };
 
