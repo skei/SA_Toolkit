@@ -124,6 +124,8 @@ PIXELFORMATDESCRIPTOR SAT_WglSurfacePFD = {
 
 class SAT_Renderer;
 
+typedef BOOL (APIENTRY* PFNWGLSWAPINTERVALFARPROC)(int);
+
 //----------------------------------------------------------------------
 //
 //
@@ -143,6 +145,9 @@ private:
 
   HDC               MDC               = nullptr;
   HGLRC             MGLRC             = nullptr;
+
+  PFNWGLGETEXTENSIONSSTRINGEXTPROC  wgl_GetExtensionsStringEXT  = nullptr;
+  PFNWGLSWAPINTERVALFARPROC         wgl_SwapIntervalEXT         = nullptr;
   
 //------------------------------
 public:
@@ -189,30 +194,38 @@ public:
 
     // extension string
 
-    //    const char* get_extensions();
-    //    PFNWGLGETEXTENSIONSSTRINGEXTPROC wgl_GetExtensionsStringEXT;
-    //    wgl_GetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");
-    //    if (!wgl_GetExtensionsStringEXT) {
-    //      SAT_PRINT("error! wglGetExtensionsStringEXT not found\n");
-    //      exit(1);
-    //    }
-    //    else {
-    //      SAT_PRINT("wglGetExtensionsStringEXT found\n");
-    //      const char* extensions = wgl_GetExtensionsStringEXT();
-    //      if (strstr(extensions, "WGL_ARB_create_context")) {
-    //        //ext->create_context_attribs = 1;
-    //      }
-    //      if (strstr(extensions, "WGL_EXT_swap_control")) {
-    //        //ext->swap_control = 1;
-    //        if (strstr(extensions, "WGL_EXT_swap_control_tear")) {
-    //          //ext->swap_control_tear = 1;
-    //        }
-    //      }
-    //      if (strstr(extensions, "NV")) {
-    //        //ext->appears_to_be_nvidia = 1;
-    //      }
-    //    }
-    //    //SAT_Assert( wgl_GetExtensionsStringEXT );
+//    PFNWGLGETEXTENSIONSSTRINGEXTPROC wgl_GetExtensionsStringEXT;
+    wgl_GetExtensionsStringEXT = (PFNWGLGETEXTENSIONSSTRINGEXTPROC)wglGetProcAddress("wglGetExtensionsStringEXT");
+    const char* extensions = nullptr;
+    if (!wgl_GetExtensionsStringEXT) {
+      SAT_PRINT("error! wglGetExtensionsStringEXT not found\n");
+      exit(1);
+    }
+    else {
+      SAT_PRINT("wglGetExtensionsStringEXT found\n");
+      extensions = wgl_GetExtensionsStringEXT();
+      if (strstr(extensions, "WGL_ARB_create_context")) {
+        SAT_PRINT("WGL_ARB_create_context\n");
+        //ext->create_context_attribs = 1;
+      }
+      if (strstr(extensions, "WGL_EXT_swap_control")) {
+        SAT_PRINT("WGL_EXT_swap_control\n");
+        //ext->swap_control = 1;
+        if (strstr(extensions, "WGL_EXT_swap_control_tear")) {
+          SAT_PRINT("WGL_EXT_swap_control_tear\n");
+          //ext->swap_control_tear = 1;
+        }
+      }
+      if (strstr(extensions, "NV")) {
+        SAT_PRINT("appears_to_be_nvidia\n");
+        //ext->appears_to_be_nvidia = 1;
+      }
+    }
+
+    if (strstr(extensions,"WGL_EXT_swap_control")) {
+      wgl_SwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
+      SAT_PRINT("wglSwapIntervalEXT: %p\n",wgl_SwapIntervalEXT);
+    }
 
     // load opengl functions
 
@@ -293,7 +306,7 @@ public:
 
     disableVSync();
 
-    //wglMakeCurrent(MDC,MGLRC);
+    //wglMakeCurrent(MDC,NULL);
     //MIsCurrent = true;
 
   }
@@ -318,6 +331,8 @@ public:
   // void cleanup() {
   // }
 
+  //----------
+
   /*
     The wglMakeCurrent function makes a specified OpenGL rendering context the
     calling thread's current rendering context. All subsequent OpenGL calls
@@ -340,6 +355,8 @@ public:
     return true;
   }
 
+  //----------
+
   /*
     you have to make it UN-current in one thread
     before you can make it current in another..
@@ -354,15 +371,21 @@ public:
     return true;
   }
   
+  //----------
+
   // bool isCurrent() override {
   //   return true;
   // }
+
+  //----------
 
   bool beginRendering() override {
     makeCurrent();
     return true;
   }
   
+  //----------
+
   // w/h = viewport size (not update rect)
 
   bool beginRendering(int32_t AWidth, int32_t AHeight) override {
@@ -371,16 +394,22 @@ public:
     return true;
   }
   
+  //----------
+
   bool endRendering() override {
     swapBuffers();
     resetCurrent();
     return true;
   }
   
+  //----------
+
   bool setViewport(int32_t AXpos, int32_t AYpos, int32_t AWidth, int32_t AHeight) override {
     glViewport(AXpos,AYpos,AWidth,AHeight);
     return true;
   }
+
+  //----------
 
   /*
     The SwapBuffers function exchanges the front and back buffers if the
@@ -394,16 +423,46 @@ public:
     return true;
   }
 
+  //----------
+
+
+    // typedef BOOL (APIENTRY* PFNWGLSWAPINTERVALFARPROC)(int);
+    // PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+    // void setVSync(int interval=1){
+    //   const char *extensions = glGetString( GL_EXTENSIONS );
+    //   if (strstr(extensions,"WGL_EXT_swap_control") == 0) return; // Error: WGL_EXT_swap_control extension not supported on your computer
+    //   else {
+    //     wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
+    //     if (wglSwapIntervalEXT) wglSwapIntervalEXT(interval);
+    //   }
+    // }
+
+
+
+  //----------
+
   // TODO:
   //   - bool argument -> setVSync(bool AState)
   //   - add the other variants..
   
   bool enableVSync() override {
-    return true;
+    if (wgl_SwapIntervalEXT) {
+      SAT_PRINT("enabling vsync\n");
+      wgl_SwapIntervalEXT(1);
+      return true;
+    }
+    return false;
   }
   
+  //----------
+
   bool disableVSync() override {
-    return true;
+    if (wgl_SwapIntervalEXT) {
+      SAT_PRINT("disabling vsync\n");
+      wgl_SwapIntervalEXT(0);
+      return true;
+    }
+    return false;
   }
 
 //------------------------------
@@ -471,6 +530,8 @@ public: // utils
     }                             \
   }
 
+  //----------
+
   //#define SAT_OPENGL_ERROR_CHECK { SAT_PRINT("gl error: %i\n",glGetError()); }
 
   void SAT_PrintGLError(GLint err) {
@@ -486,9 +547,6 @@ public: // utils
       default:                                SAT_DPRINT("OpenGL Error: Unknown error %i\n",err); break;
     }
   }
-
-
-
 
 };
 

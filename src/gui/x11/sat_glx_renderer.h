@@ -112,7 +112,6 @@ private:
 public:
 //------------------------------
 
-
   SAT_GlxRenderer(SAT_RendererOwner* AOwner, SAT_RenderTarget* ATarget)
   : SAT_BaseRenderer(AOwner,ATarget) {
     //SAT_TRACE;
@@ -127,6 +126,7 @@ public:
     MDrawable = glXCreateWindow(MDisplay,MFBConfig,drawable,nullptr);
     SAT_Assert(MDrawable);
     //makeCurrent();
+
     const char* glXExtensions = glXQueryExtensionsString(MDisplay,DefaultScreen(MDisplay));
     if (strstr(glXExtensions,"GLX_EXT_swap_control") != nullptr) {
       glXSwapIntervalEXT = (glXSwapIntervalEXT_t)glXGetProcAddress((GLubyte *)"glXSwapIntervalEXT");
