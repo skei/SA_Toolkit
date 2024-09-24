@@ -103,6 +103,7 @@ public:
     double time = SAT_GetTime();//MS();
     double delta = time - MPrevTime;
     if (MTimerListener) MTimerListener->on_TimerListener_update(this,delta);
+    MPrevTime = time;
   }
 
 //------------------------------

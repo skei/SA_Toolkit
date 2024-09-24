@@ -309,6 +309,7 @@ public: // timer
   // [TIMER THREAD]
 
   void on_TimerListener_update(SAT_Timer* ATimer, double ADelta) override {
+    //SAT_PRINT("delta %.3f\n",ADelta);
     //sendClientMessage(SAT_WINDOW_THREAD_TIMER,0);
     handleTimer(ADelta);
   }
