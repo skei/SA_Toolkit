@@ -8,7 +8,7 @@
 
 
 #ifdef SAT_PLUGIN_EXE
-  #define SAT_DEBUG_MEMTRACE
+  //#define SAT_DEBUG_MEMTRACE
 #else
   #define SAT_PRINT_SOCKET
 #endif
@@ -44,10 +44,10 @@
 //#include "../plugins/sa_botage.cpp"
 //#include "../plugins/sa_bulum.cpp"
 //#include "../plugins/sa_cred.cpp"
-//#include "../plugins/sa_demo.cpp"
+#include "../plugins/sa_demo.cpp"
 //#include "../plugins/sa_mael.cpp"
 //#include "../plugins/sa_ports.cpp"
-#include "../plugins/sa_synth.cpp"
+//#include "../plugins/sa_synth.cpp"
 //#include "../plugins/sa_tyr.cpp"
 
 

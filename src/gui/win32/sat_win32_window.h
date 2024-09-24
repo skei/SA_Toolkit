@@ -234,6 +234,7 @@ public: // SAT_BaseWindow
 
   void show() override {
     ShowWindow(MWinHandle,SW_SHOW);
+//    on_Window_show();
     #ifdef SAT_WIN32_IDLE_TIMER
       SetTimer(MWinHandle,s3_ts_idle,S3_WIN32_IDLE_MS,S3_NULL);
     #endif
@@ -245,6 +246,7 @@ public: // SAT_BaseWindow
     #ifdef SAT_WIN32_IDLE_TIMER
       KillTimer(MWinHandle,s3_ts_idle);
     #endif
+//    on_Window_hide();
     ShowWindow(MWinHandle,SW_HIDE);
   }
 
@@ -518,6 +520,10 @@ private:
       0
     );
     SetFocus(MWinHandle);
+
+    MWindowWidth = AWidth;
+    MWindowHeight = AHeight;
+    
   }
 
   //----------
