@@ -195,25 +195,6 @@ public:
 public:
 //------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//------------------------------
-public:
-//------------------------------
-
 //  xcb_connection_t* on_PainterOwner_getXcbConnection()  final { return MConnection; }
 //  xcb_visualid_t    on_PainterOwner_getXcbVisual()      final { return MScreenVisual; }
 //  xcb_drawable_t    on_PaintTarget_getXcbDrawable()     final { return MWindow; }
@@ -234,7 +215,7 @@ public: // SAT_BaseWindow
 
   void show() override {
     ShowWindow(MWinHandle,SW_SHOW);
-//    on_Window_show();
+    on_Window_show();
     #ifdef SAT_WIN32_IDLE_TIMER
       SetTimer(MWinHandle,s3_ts_idle,S3_WIN32_IDLE_MS,S3_NULL);
     #endif
@@ -246,7 +227,7 @@ public: // SAT_BaseWindow
     #ifdef SAT_WIN32_IDLE_TIMER
       KillTimer(MWinHandle,s3_ts_idle);
     #endif
-//    on_Window_hide();
+    on_Window_hide();
     ShowWindow(MWinHandle,SW_HIDE);
   }
 
@@ -885,8 +866,9 @@ private:
       case WM_MOUSEMOVE: {
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
+        double t = SAT_GetTimeMS();
         //if (MListener) MListener->on_mouseMove(this,x,y,remapKey(wParam));
-        on_Window_mouseMove(x,y,remapMouseState(wParam),0);
+        on_Window_mouseMove(x,y,remapMouseState(wParam),t);
         MMouseXpos = x;
         MMouseYpos = y;
         break;
@@ -908,8 +890,9 @@ private:
         }
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
+        double t = SAT_GetTimeMS();
         //if (MListener) MListener->on_mouseDown(this,x,y,b,remapKey(wParam));
-        on_Window_mouseClick(x,y,b,remapMouseState(wParam),0);
+        on_Window_mouseClick(x,y,b,remapMouseState(wParam),t);
         //        if (MFlags & s3_wf_capture) grabCursor();
         break;
       }
@@ -927,8 +910,9 @@ private:
         }
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
+        double t = SAT_GetTimeMS();
         //if (MListener) MListener->on_mouseUp(this,x,y,b,remapKey(wParam));
-        on_Window_mouseRelease(x,y,b,remapMouseState(wParam),0);
+        on_Window_mouseRelease(x,y,b,remapMouseState(wParam),t);
         //        if (MFlags&s3_wf_capture) releaseCursor();
         break;
       }
@@ -973,10 +957,11 @@ private:
 
       case WM_MOUSEWHEEL: {
         d = GET_WHEEL_DELTA_WPARAM(wParam);
+        double t = SAT_GetTimeMS();
         //if (d>0) { if (MListener) MListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelUp,  smb_none); }
         //if (d<0) { if (MListener) MListener->on_mouseDown(this,MMouseXpos,MMouseYpos,smb_wheelDown,smb_none); }
-        if (d > 0) { on_Window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_UP,   SAT_STATE_NONE, 0); }
-        if (d < 0) { on_Window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_DOWN, SAT_STATE_NONE, 0); }
+        if (d > 0) { on_Window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_UP,   SAT_STATE_NONE, t); }
+        if (d < 0) { on_Window_mouseClick(MMouseXpos,MMouseYpos,SAT_BUTTON_SCROLL_DOWN, SAT_STATE_NONE, t); }
         break;
       }
 
@@ -986,7 +971,8 @@ private:
         uint32_t ke = wParam;
         uint32_t ch = 0;
         uint32_t st = lParam;
-        on_Window_keyPress(ke,ch,st,0);
+        double t = SAT_GetTimeMS();
+        on_Window_keyPress(ke,ch,st,t);
         break;
       }
 
@@ -996,7 +982,8 @@ private:
         uint32_t ke = wParam;
         uint32_t ch = 0;
         uint32_t st = lParam;
-        on_Window_keyRelease(ke,ch,st,0);
+        double t = SAT_GetTimeMS();
+        on_Window_keyRelease(ke,ch,st,t);
         break;
       }
 

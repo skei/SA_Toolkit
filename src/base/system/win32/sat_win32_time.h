@@ -18,12 +18,6 @@
 //
 //----------------------------------------------------------------------
 
-double SAT_GetTimeMS(void) {
-  return 0.0;
-}
-
-//----------
-
 double SAT_GetTime(void) {
   SYSTEMTIME st;
   GetSystemTime(&st);
@@ -33,6 +27,13 @@ double SAT_GetTime(void) {
               + ((double)st.wMilliseconds * 0.001);
   //printf("time %f\n",time);
   return time;
+}
+
+//----------
+
+double SAT_GetTimeMS(void) {
+  double time = SAT_GetTime();
+  return time * 1000.0;
 }
 
 //----------
