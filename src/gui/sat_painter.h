@@ -149,6 +149,48 @@ public: // text
     drawText(p.x,p.y,AText);
   }  
 
+  //----------
+
+  virtual void drawImage(SAT_Rect ADst, int AImage, SAT_Rect ASrc) {
+
+    // get image size
+    int iw,ih;
+    imageSize(AImage,&iw,&ih);
+    double image_width = (double)iw;
+    double image_height = (double)ih;
+
+    double x  = ADst.x - ASrc.x;
+    double y  = ADst.y - ASrc.y;
+    double xs = ADst.w / ASrc.w;  // draw_width / image_width
+    double ys = ADst.h / ASrc.h;
+
+    float ox = ADst.x - (ASrc.x * xs);
+    float oy = ADst.y - (ASrc.y * ys);
+    float ex = image_width * xs;
+    float ey = image_height * ys;
+
+    setFillImage(AImage,ox,oy,xs,ys,1,0);
+    fillRect(ADst.x,ADst.y,ADst.w,ADst.h);
+
+    // image
+    // painter->setFillImage(MImage,mrect.x,mrect.y,S,S,MAlpha,MAngle);
+    // painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
+
+    // image strip
+    // float xscale = rect.w / MTileWidth;
+    // float yscale = rect.h / MTileHeight;
+    // float ox = rect.x - (tilerect.x * xscale);
+    // float oy = rect.y - (tilerect.y * yscale);
+    // float ex = MImageWidth * xscale;
+    // float ey = MImageHeight * yscale;
+    // painter->setFillImage(MImage,ox,oy,scale,scale,1.0,0.0);
+    // painter->fillRect(rect.x,rect.y,rect.w,rect.h);      
+
+
+
+  }
+
+
 };
 
 //----------------------------------------------------------------------

@@ -173,15 +173,15 @@ public:
 
     // 9patch
 
-    // SAT_9PatchImageWidget* patch9 = new SAT_9PatchImageWidget(100,(void*)SA_png,SA_png_size);
-    // left_panel->appendChild(patch9);
-    // patch9->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
-    // patch9->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
-    // patch9->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
-    // patch9->setEdgeOffset(SAT_Rect(30,30,30,30));
-    // patch9->setfillCenter(true);
-    // patch9->setStretchCenter(true);
-    // patch9->setStretchEdges(true);
+    SAT_9PatchImageWidget* patch9 = new SAT_9PatchImageWidget(100,(void*)SA_png,SA_png_size);
+    left_panel->appendChild(patch9);
+    patch9->Layout.flags |= SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    patch9->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_HORIZ;
+    patch9->Layout.flags |= SAT_WIDGET_LAYOUT_FILL_TOP;
+    patch9->setEdgeOffset(SAT_Rect(30,30,30,30));
+    patch9->setfillCenter(true);
+    patch9->setStretchCenter(true);
+    patch9->setStretchEdges(true);
 
     //------------------------------
     // main_panel
