@@ -44,10 +44,10 @@
 //#include "../plugins/sa_botage.cpp"
 //#include "../plugins/sa_bulum.cpp"
 //#include "../plugins/sa_cred.cpp"
-#include "../plugins/sa_demo.cpp"
+//#include "../plugins/sa_demo.cpp"
 //#include "../plugins/sa_mael.cpp"
 //#include "../plugins/sa_ports.cpp"
-//#include "../plugins/sa_synth.cpp"
+#include "../plugins/sa_synth.cpp"
 //#include "../plugins/sa_tyr.cpp"
 
 

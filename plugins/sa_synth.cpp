@@ -23,7 +23,7 @@
 #define MAX_VOICES    256
 
 #define EDITOR_WIDTH  730
-#define EDITOR_HEIGHT 330 + 85
+#define EDITOR_HEIGHT 430
 #define EDITOR_SCALE  2.0
 
 //----------------------------------------------------------------------
@@ -128,27 +128,21 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_TRACK_INFO);
-
     appendClapNoteInputPort("In");
     appendStereoAudioOutputPort("Out");
-
     MProcessor = new sa_synth_voice_processor(this);
     setProcessor(MProcessor);
     MProcessor->init(getClapPlugin(),getClapHost());
-
     #ifdef SAT_VOICE_PROCESSOR_THREADED
       MProcessor->setProcessThreaded(true);
     #else
       //MProcessor.setProcessThreaded(false);
     #endif
-    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
-    
+    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
     sa_synth_setup_parameters(this);
-
     #ifndef SAT_NO_GUI
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
-
     return SAT_Plugin::init();    
   }
 

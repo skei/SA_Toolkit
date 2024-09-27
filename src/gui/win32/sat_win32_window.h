@@ -679,6 +679,7 @@ private: // event handler
   */
 
   int32_t remapKeyCode(WPARAM wParam, LPARAM lParam) {
+    SAT_PRINT("wParam %x lParam %x\n",wParam,lParam);
     switch(wParam) {
      case VK_BACK: return SAT_KEY_BACKSPACE;
     }
@@ -705,9 +706,12 @@ private:
     //  return DefWindowProc(hWnd,message,wParam,lParam);
     //}
 
-    LRESULT result = 0;
-    SAT_Rect rc;
-    int32_t x,y,b,w,h,d;//,k;
+    LRESULT   result = 0;
+    SAT_Rect  rc;
+    int32_t   x,y,b,w,h,d;
+    uint32_t  k,c,s;
+    double    t;
+
     switch (message) {
 
       case WM_DESTROY: {
@@ -811,10 +815,10 @@ private:
 
       case WM_SIZING: {
         RECT* R = (RECT*)lParam;
-        int32_t x = R->left;
-        int32_t y = R->top;
-        int32_t w = R->right - R->left;
-        int32_t h = R->bottom - R->top;
+        x = R->left;
+        y = R->top;
+        w = R->right - R->left;
+        h = R->bottom - R->top;
         SAT_PRINT("WM_SIZING x %i y %i w %i h %i\n",x,y,w,h);
         break;
       }
@@ -852,10 +856,10 @@ private:
 
       case WM_PAINT: {
         beginPaint();
-        int32_t x = MWinPaintStruct.rcPaint.left;
-        int32_t y = MWinPaintStruct.rcPaint.top;
-        int32_t w = MWinPaintStruct.rcPaint.right  - MWinPaintStruct.rcPaint.left;// + 1;
-        int32_t h = MWinPaintStruct.rcPaint.bottom - MWinPaintStruct.rcPaint.top;// + 1;
+        x = MWinPaintStruct.rcPaint.left;
+        y = MWinPaintStruct.rcPaint.top;
+        w = MWinPaintStruct.rcPaint.right  - MWinPaintStruct.rcPaint.left;// + 1;
+        h = MWinPaintStruct.rcPaint.bottom - MWinPaintStruct.rcPaint.top;// + 1;
         //SAT_PRINT("WM_PAINT %s x %i y %i w %i h %i\n",MWindowType,x,y,w,h);
 //        if (MFillBackground) fillColor(x,y,w,h,MBackgroundColor);
         on_Window_paint(x,y,w,h);
@@ -866,7 +870,7 @@ private:
       case WM_MOUSEMOVE: {
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
-        double t = SAT_GetTimeMS();
+        t = SAT_GetTimeMS();
         //if (MListener) MListener->on_mouseMove(this,x,y,remapKey(wParam));
         on_Window_mouseMove(x,y,remapMouseState(wParam),t);
         MMouseXpos = x;
@@ -890,7 +894,7 @@ private:
         }
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
-        double t = SAT_GetTimeMS();
+        t = SAT_GetTimeMS();
         //if (MListener) MListener->on_mouseDown(this,x,y,b,remapKey(wParam));
         on_Window_mouseClick(x,y,b,remapMouseState(wParam),t);
         //        if (MFlags & s3_wf_capture) grabCursor();
@@ -910,7 +914,7 @@ private:
         }
         x = short(LOWORD(lParam));
         y = short(HIWORD(lParam));
-        double t = SAT_GetTimeMS();
+        t = SAT_GetTimeMS();
         //if (MListener) MListener->on_mouseUp(this,x,y,b,remapKey(wParam));
         on_Window_mouseRelease(x,y,b,remapMouseState(wParam),t);
         //        if (MFlags&s3_wf_capture) releaseCursor();
@@ -968,22 +972,22 @@ private:
       case WM_KEYDOWN: {
         //if (MListener) MListener->on_keyDown(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-        uint32_t ke = wParam;
-        uint32_t ch = 0;
-        uint32_t st = lParam;
-        double t = SAT_GetTimeMS();
-        on_Window_keyPress(ke,ch,st,t);
+        k = remapKeyCode(wParam,lParam);
+        c = 0;
+        s = lParam;
+        t = SAT_GetTimeMS();
+        on_Window_keyPress(k,c,s,t);
         break;
       }
 
       case WM_KEYUP: {
         //if (MListener) MListener->on_keyUp(this,wParam,lParam);
         //k = remapKeyCode(wParam,lParam);
-        uint32_t ke = wParam;
-        uint32_t ch = 0;
-        uint32_t st = lParam;
-        double t = SAT_GetTimeMS();
-        on_Window_keyRelease(ke,ch,st,t);
+        k = remapKeyCode(wParam,lParam);
+        c = 0;
+        s = lParam;
+        t = SAT_GetTimeMS();
+        on_Window_keyRelease(k,c,s,t);
         break;
       }
 
@@ -1010,17 +1014,27 @@ private:
         break;
       }
 
+      // todo: mouse enter/leave..
+
       default: {
         result = DefWindowProc(hWnd,message,wParam,lParam);
         break;
       }
+
     }
     return result;
   }
 
 };
 
-// #if 0
+
+
+
+
+
+
+
+
 
 //----------------------------------------------------------------------
 //
@@ -1033,6 +1047,15 @@ LRESULT CALLBACK sat_win32_eventproc(HWND hWnd, UINT message, WPARAM wParam, LPA
 	if (!window) return DefWindowProc(hWnd,message,wParam,lParam);
   return window->eventHandler(hWnd, message, wParam, lParam);
 }
+
+
+
+
+
+
+
+
+
 
 //----------------------------------------------------------------------
 //
@@ -1118,6 +1141,15 @@ public:
 
 };
 
+
+
+
+
+
+
+
+
+
 //----------------------------------------------------------------------
 //
 //
@@ -1132,8 +1164,6 @@ char* SAT_Win32ClassName() {
   return SAT_GLOBAL_WIN32_WINDOW_CLASS.getWindowClass();
 }
 
-//#endif // 0
-
 //----------------------------------------------------------------------
 #endif
 
@@ -1146,10 +1176,11 @@ char* SAT_Win32ClassName() {
 
 
 
-
-
-
-
+//----------------------------------------------------------------------
+//
+//
+//
+//----------------------------------------------------------------------
 
 #if 0
 

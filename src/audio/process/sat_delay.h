@@ -98,15 +98,15 @@ public:
   // feedback = how much to feed back back to the buffer
   // offset = tap position (offset) 0..1
 
-  T process(T AInput, T ADelay, T AFeedback, T ATapOffset=0.0) {
+  T process(T AInput, T ADelay, T AFeedback/*, T ATapOffset=0.0*/) {
 
     SAT_Assert( ADelay > 0 );
     SAT_Assert( ADelay < MAX_DELAY );
 
-    T offset = (ATapOffset * ADelay);
+    //T offset = (ATapOffset * ADelay);
 
     // calculate delay offset
-    T back = (T)MWritePos - ADelay + offset;
+    T back = (T)MWritePos - ADelay;// + offset;
     if (back < 0.0) back += MAX_DELAY;
     if (back >= MAX_DELAY) back -= MAX_DELAY;
 
@@ -124,28 +124,15 @@ public:
     T y1  = MBuffer[index1];
     T y2  = MBuffer[index2];
     T x   = (T)back - (T)index0;
+    
     T c0  = y0;
     T c1  = 0.5f * (y1 - y_1);
     T c2  = y_1 - 2.5f * y0 + 2.0f * y1 - 0.5f * y2;
     T c3  = 0.5f * (y2 - y_1) + 1.5f * (y0 - y1);
     T delayed = ((c3 * x + c2) * x + c1) * x + c0;
 
-    //output = MDC.process(output);
-    //output = SAT_KillDenormal(output);
-    //
-    //T flt = fb;
-    //T out = filtered_feedback;// + (AInput * AMix);
-    //out = atan(out); // KClamp((AInput + flt), -1, 1);
-    // hard-clip
-    //if (out >  1.0f) out =  1.0f;
-    //if (out < -1.0f) out = -1.0f;
-
     T feedback = delayed * AFeedback;
-    
     feedback = MLoopFX.process(feedback);
-    //feedback = MClipFX.process(feedback);
-
-    //-----
 
     SAT_Assert( MWritePos >= 0 );
     SAT_Assert( MWritePos < MAX_DELAY );
@@ -173,6 +160,38 @@ public:
 
     return delayed;
   }
+
+  //----------
+
+  // T tap(T ADelay, T ATapOffset) {
+  //   SAT_Assert( ADelay > 0 );
+  //   SAT_Assert( ADelay < MAX_DELAY );
+  //   T offset = (ATapOffset * ADelay);
+  //   // calculate delay offset
+  //   T back = (T)(MWritePos-1) - ADelay + offset;
+  //   if (back < 0.0) back += MAX_DELAY;
+  //   if (back >= MAX_DELAY) back -= MAX_DELAY;
+  //   int index0 = (int)back;
+  //   int index_1 = index0-1;
+  //   int index1 = index0+1;
+  //   int index2 = index0+2;
+  //   if (index_1 < 0) index_1 += MAX_DELAY;        // index_1 = MAX_DELAY - 1;
+  //   if (index1 >= MAX_DELAY) index1 -= MAX_DELAY; // index1 = 0;
+  //   if (index2 >= MAX_DELAY) index2 -= MAX_DELAY; // index2 = 0;
+  //   // interpolate
+  //   T y_1 = MBuffer[index_1];
+  //   T y0  = MBuffer[index0];
+  //   T y1  = MBuffer[index1];
+  //   T y2  = MBuffer[index2];
+  //   T x   = (T)back - (T)index0;
+  //   T c0  = y0;
+  //   T c1  = 0.5f * (y1 - y_1);
+  //   T c2  = y_1 - 2.5f * y0 + 2.0f * y1 - 0.5f * y2;
+  //   T c3  = 0.5f * (y2 - y_1) + 1.5f * (y0 - y1);
+  //   T delayed = ((c3 * x + c2) * x + c1) * x + c0;
+  //   return delayed;
+  // }
+
 
 };
 

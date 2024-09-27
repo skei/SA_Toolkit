@@ -14,7 +14,6 @@
 //
 //----------------------------------------------------------------------
 
-//#define SA_SYNTH_MAX_DELAY (1024 * 1024)
 #define SA_SYNTH_MAX_DELAY (1024 * 4)
 
 struct sa_synth_delay_loop_fx {
@@ -22,12 +21,12 @@ struct sa_synth_delay_loop_fx {
 };
 
 struct sa_synth_delay_clip_fx {
-  sat_sample_t process(sat_sample_t x) { return x; }
+  sat_sample_t process(sat_sample_t x) { return SAT_Clamp(x,-1.0,1.0); }
 };
 
 //----------
 
-typedef SAT_InterpolatedDelay<sat_sample_t,SA_SYNTH_MAX_DELAY,sa_synth_delay_loop_fx/*,sa_synth_delay_clip_fx*/> sa_synth_delay;
+typedef SAT_InterpolatedDelay<sat_sample_t,SA_SYNTH_MAX_DELAY,sa_synth_delay_loop_fx> sa_synth_delay;
 
 //----------------------------------------------------------------------
 //
@@ -43,19 +42,12 @@ private:
 
   double          MSampleRate   = 0.0;
   double          MDelayLength  = 0.0;
-  sa_synth_delay  MDelay1       = {};
-  sa_synth_delay  MDelay2       = {};
-//double          MFeedBack     = 0.0;
-
-  // parameters
+  sa_synth_delay  MDelay        = {};
 
   sat_param_t   par_impulse     = 0.0;
   sat_param_t   par_shape       = 0.0;
   sat_param_t   par_feedback    = 0.0;
   sat_param_t   par_damping     = 0.0;
-
-  sat_sample_t  d1_z1           = 0.0;
-  sat_sample_t  d2_z1           = 0.0;
 
 //------------------------------
 public:
@@ -63,16 +55,38 @@ public:
 
   void setSampleRate(double ASampleRate) {
     MSampleRate = ASampleRate;
-    MDelay1.clear();
-    MDelay2.clear();
+    MDelay.clear();
   }
 
   //----------
 
   void setFrequency(double hz) {
     SAT_Assert(hz >= 2.0);
-    MDelayLength = (MSampleRate / hz) * 0.5;
-    SAT_Assert(MDelayLength < SA_SYNTH_MAX_DELAY);
+    MDelayLength = (MSampleRate / hz);
+    //SAT_Assert(MDelayLength < SA_SYNTH_MAX_DELAY);
+    if (MDelayLength > SA_SYNTH_MAX_DELAY) MDelayLength = SA_SYNTH_MAX_DELAY;
+  }
+
+  //----------
+
+  // bool res.hasWrapped()
+  // T res.getPhase()
+   
+
+  void setImpulse(double AImpulse) {
+    par_impulse = AImpulse;
+  }
+
+  void setShape(double AShape) {
+    par_shape = AShape;
+  }
+  
+  void setFeedback(double AFeedback) {
+    par_feedback = pow(AFeedback,(1.0/16.0));
+  }
+  
+  void setDamping(double ADamping) {
+    par_damping = ADamping;
   }
 
   //----------
@@ -80,10 +94,8 @@ public:
   void noteOn(uint32_t AIndex, double AValue) {
     double hz = SAT_NoteToHz(AIndex);
     setFrequency(hz);
-    MDelay1.clear();
-    MDelay2.clear();
-    MDelay1.start();
-    MDelay2.start();
+    MDelay.clear();
+    MDelay.start();
   }
 
   //----------
@@ -98,13 +110,20 @@ public:
 
   //----------
 
-  sat_sample_t process(sat_sample_t AInput, double AFeedBack, double AOffset=0.0) {
-    sat_sample_t d1 = MDelay1.process(AInput + d1_z1,MDelayLength,AFeedBack,AOffset);
-    sat_sample_t d2 = MDelay2.process(AInput + d2_z1,MDelayLength,AFeedBack,(1.0 - AOffset));
-    sat_sample_t out = (d1 + d2);
-    d1_z1 = d1;
-    d2_z1 = d2;
-    return out;
+  sat_sample_t process(sat_sample_t AInput/*, double AOffset=0.0*/) {
+    sat_sample_t in = AInput;
+    if (MDelay.hasWrapped()) {
+      sat_sample_t v = MDelay.process(0.0,MDelayLength,par_feedback/*,AOffset*/);
+      return  v;
+      // MDelay.process(0.0,MDelayLength,par_feedback);
+      // sat_sample_t v1 = MDelay.tap(MDelayLength,par_impulse);
+      // sat_sample_t v2 = MDelay.tap(MDelayLength,1.0 - par_impulse);
+      // return v1 - v2;
+    }
+    else {
+      MDelay.process(AInput,MDelayLength,par_feedback/*,AOffset*/);
+      return AInput;
+    }
   }
 
 };

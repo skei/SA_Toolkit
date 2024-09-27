@@ -1,6 +1,13 @@
 #ifndef sat_synth_parameters_included
 #define sat_synth_parameters_included
 //----------------------------------------------------------------------
+/*
+
+  TODO:
+  - mod input filter?
+  - mod input src: post fx
+*/
+//----------------------------------------------------------------------
 
 #include "sat.h"
 #include "plugin/sat_plugin_base.h"
@@ -16,15 +23,19 @@ enum sa_synth_osc_type_e {
   SA_SYNTH_OSC_NONE = 0,
   SA_SYNTH_OSC_RING_MOD,
   SA_SYNTH_OSC_AMPL_MOD,
-  SA_SYNTH_OSC_PHASE_MOD
+  SA_SYNTH_OSC_PHASE_MOD,
+  SA_SYNTH_OSC_FREQ_MOD,
+  SA_SYNTH_OSC_MAX
 };
 
-#define sa_synth_osc_type_count 4
+#define sa_synth_osc_type_count 6
 const char* osc_type_text[sa_synth_osc_type_count] = {
   "none",
   "RingMod",
   "AmplMod",
-  "PhaseMod"
+  "PhaseMod",
+  "FreqMod",
+  "Max"
 };
 
 // enum sa_synth_res_type_e {
@@ -79,6 +90,8 @@ enum sa_synth_parameter_e {
   SA_SYNTH_PARAM_OSC1_IN_O2,
   SA_SYNTH_PARAM_OSC1_IN_R1,
   SA_SYNTH_PARAM_OSC1_IN_R2,
+  SA_SYNTH_PARAM_OSC1_IN_A,
+  SA_SYNTH_PARAM_OSC1_IN_N,
 
   SA_SYNTH_PARAM_OSC2_SQU,
   SA_SYNTH_PARAM_OSC2_TRI,
@@ -93,6 +106,8 @@ enum sa_synth_parameter_e {
   SA_SYNTH_PARAM_OSC2_IN_O2,
   SA_SYNTH_PARAM_OSC2_IN_R1,
   SA_SYNTH_PARAM_OSC2_IN_R2,
+  SA_SYNTH_PARAM_OSC2_IN_A,
+  SA_SYNTH_PARAM_OSC2_IN_N,
 
   SA_SYNTH_PARAM_RES1_IMPULSE,
   SA_SYNTH_PARAM_RES1_SHAPE,
@@ -107,6 +122,8 @@ enum sa_synth_parameter_e {
   SA_SYNTH_PARAM_RES1_IN_O2,
   SA_SYNTH_PARAM_RES1_IN_R1,
   SA_SYNTH_PARAM_RES1_IN_R2,
+  SA_SYNTH_PARAM_RES1_IN_A,
+  SA_SYNTH_PARAM_RES1_IN_N,
 
   SA_SYNTH_PARAM_RES2_IMPULSE,
   SA_SYNTH_PARAM_RES2_SHAPE,
@@ -121,6 +138,8 @@ enum sa_synth_parameter_e {
   SA_SYNTH_PARAM_RES2_IN_O2,
   SA_SYNTH_PARAM_RES2_IN_R1,
   SA_SYNTH_PARAM_RES2_IN_R2,
+  SA_SYNTH_PARAM_RES2_IN_A,
+  SA_SYNTH_PARAM_RES2_IN_N,
 
   SA_SYNTH_PARAM_MIX_O1,
   SA_SYNTH_PARAM_MIX_O2,
@@ -168,11 +187,13 @@ clap_param_info_t sa_synth_parameters[SA_SYNTH_PARAM_COUNT] = {
   { SA_SYNTH_PARAM_OSC1_SEMI,       AMN|S,  nullptr,  "Semi",     "Osc1",   -12,  12,   0   },
   { SA_SYNTH_PARAM_OSC1_CENT,       AMN,    nullptr,  "Cent",     "Osc1",    -1.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC1_TYPE,       AMN|SE, nullptr,  "Type",     "Osc1",     0,   sa_synth_osc_type_count - 1, 0 },
-  { SA_SYNTH_PARAM_OSC1_IN_AMOUNT,  AMN,    nullptr,  "Am",       "Osc1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_OSC1_IN_AMOUNT,  AMN,    nullptr,  "Amt",      "Osc1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC1_IN_O1,      AMN,    nullptr,  "O1",       "Osc1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC1_IN_O2,      AMN,    nullptr,  "O2",       "Osc1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC1_IN_R1,      AMN,    nullptr,  "R1",       "Osc1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC1_IN_R2,      AMN,    nullptr,  "R2",       "Osc1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_OSC1_IN_A,       AMN,    nullptr,  "A",        "Osc1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_OSC1_IN_N,       AMN,    nullptr,  "N",        "Osc1",     0.0, 1.0, 0.0 },
   
   { SA_SYNTH_PARAM_OSC2_SQU,        AMN,    nullptr,  "Squ",      "Osc2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC2_TRI,        AMN,    nullptr,  "Tri",      "Osc2",     0.0, 1.0, 0.0 },
@@ -182,39 +203,45 @@ clap_param_info_t sa_synth_parameters[SA_SYNTH_PARAM_COUNT] = {
   { SA_SYNTH_PARAM_OSC2_SEMI,       AMN|S,  nullptr,  "Semi",     "Osc2",   -12,  12,   0   },
   { SA_SYNTH_PARAM_OSC2_CENT,       AMN,    nullptr,  "Cent",     "Osc2",    -1.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC2_TYPE,       AMN|SE, nullptr,  "Type",     "Osc2",     0,   sa_synth_osc_type_count - 1, 0 },
-  { SA_SYNTH_PARAM_OSC2_IN_AMOUNT,  AMN,    nullptr,  "Am",       "Osc2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_OSC2_IN_AMOUNT,  AMN,    nullptr,  "Amt",      "Osc2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC2_IN_O1,      AMN,    nullptr,  "O1",       "Osc2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC2_IN_O2,      AMN,    nullptr,  "O2",       "Osc2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC2_IN_R1,      AMN,    nullptr,  "R1",       "Osc2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_OSC2_IN_R2,      AMN,    nullptr,  "R2",       "Osc2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_OSC2_IN_A,       AMN,    nullptr,  "A",        "Osc2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_OSC2_IN_N,       AMN,    nullptr,  "N",        "Osc2",     0.0, 1.0, 0.0 },
 
   { SA_SYNTH_PARAM_RES1_IMPULSE,    AMN,    nullptr,  "Impulse",  "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_SHAPE,      AMN,    nullptr,  "Shape",    "Res1",     0.0, 1.0, 0.0 },
-  { SA_SYNTH_PARAM_RES1_FEEDBACK,   AMN,    nullptr,  "Feedback", "Res1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES1_FEEDBACK,   AMN,    nullptr,  "Feedback", "Res1",     0.0, 1.0, 0.9 },
   { SA_SYNTH_PARAM_RES1_DAMPING,    AMN,    nullptr,  "Damping",  "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_OCT,        AMN|S,  nullptr,  "Oct",      "Res1",    -4,   4,   0   },
   { SA_SYNTH_PARAM_RES1_SEMI,       AMN|S,  nullptr,  "Semi",     "Res1",   -12,  12,   0   },
   { SA_SYNTH_PARAM_RES1_CENT,       AMN,    nullptr,  "Cent",     "Res1",    -1.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_TYPE,       AMN|SE, nullptr,  "Type",     "Res1",     0.0, sa_synth_res_type_count - 1, 0 },
-  { SA_SYNTH_PARAM_RES1_IN_AMOUNT,  AMN,    nullptr,  "Am",       "Res1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES1_IN_AMOUNT,  AMN,    nullptr,  "Amt",      "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_IN_O1,      AMN,    nullptr,  "O1",       "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_IN_O2,      AMN,    nullptr,  "O2",       "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_IN_R1,      AMN,    nullptr,  "R1",       "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_IN_R2,      AMN,    nullptr,  "R2",       "Res1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES1_IN_A,       AMN,    nullptr,  "A",        "Res1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES1_IN_N,       AMN,    nullptr,  "N",        "Res1",     0.0, 1.0, 0.0 },
   
   { SA_SYNTH_PARAM_RES2_IMPULSE,    AMN,    nullptr,  "Impulse",  "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_SHAPE,      AMN,    nullptr,  "Shape",    "Res2",     0.0, 1.0, 0.0 },
-  { SA_SYNTH_PARAM_RES2_FEEDBACK,   AMN,    nullptr,  "Feedback", "Res2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES2_FEEDBACK,   AMN,    nullptr,  "Feedback", "Res2",     0.0, 1.0, 0.9 },
   { SA_SYNTH_PARAM_RES2_DAMPING,    AMN,    nullptr,  "Damping",  "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_OCT,        AMN|S,  nullptr,  "Oct",      "Res2",    -4,   4,   0   },
   { SA_SYNTH_PARAM_RES2_SEMI,       AMN|S,  nullptr,  "Semi",     "Res2",   -12,  12,   0   },
   { SA_SYNTH_PARAM_RES2_CENT,       AMN,    nullptr,  "Cent",     "Res2",    -1.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_TYPE,       AMN|SE, nullptr,  "Type",     "Res2",     0, sa_synth_res_type_count - 1, 0 },
-  { SA_SYNTH_PARAM_RES2_IN_AMOUNT,  AMN,    nullptr,  "Am",       "Res2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES2_IN_AMOUNT,  AMN,    nullptr,  "Amt",      "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_IN_O1,      AMN,    nullptr,  "O1",       "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_IN_O2,      AMN,    nullptr,  "O2",       "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_IN_R1,      AMN,    nullptr,  "R1",       "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_IN_R2,      AMN,    nullptr,  "R2",       "Res2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES2_IN_A,       AMN,    nullptr,  "A",        "Res2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES2_IN_N,       AMN,    nullptr,  "N",        "Res2",     0.0, 1.0, 0.0 },
 
   { SA_SYNTH_PARAM_MIX_O1,          AMN,    nullptr,  "O1",       "Mix",      0.0, 1.0, 1.0 },
   { SA_SYNTH_PARAM_MIX_O2,          AMN,    nullptr,  "O2",       "Mix",      0.0, 1.0, 0.0 },
@@ -251,6 +278,8 @@ clap_param_info_t sa_synth_parameters[SA_SYNTH_PARAM_COUNT] = {
 
 bool sa_synth_setup_parameters(SAT_Plugin* APlugin) {
 
+  SAT_PRINT("%i parameters\n",SA_SYNTH_PARAM_COUNT);
+
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_GLOBAL_GAIN] ));
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC1_SQU] ));
@@ -266,6 +295,8 @@ bool sa_synth_setup_parameters(SAT_Plugin* APlugin) {
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC1_IN_O2] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC1_IN_R1] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC1_IN_R2] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC1_IN_A] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC1_IN_N] ));
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC2_SQU] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC2_TRI] ));
@@ -280,6 +311,8 @@ bool sa_synth_setup_parameters(SAT_Plugin* APlugin) {
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC2_IN_O2] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC2_IN_R1] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC2_IN_R2] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC2_IN_A] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_OSC2_IN_N] ));
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES1_IMPULSE] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES1_SHAPE] ));
@@ -294,6 +327,8 @@ bool sa_synth_setup_parameters(SAT_Plugin* APlugin) {
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES1_IN_O2] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES1_IN_R1] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES1_IN_R2] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES1_IN_A] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES1_IN_N] ));
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES2_IMPULSE] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES2_SHAPE] ));
@@ -308,6 +343,8 @@ bool sa_synth_setup_parameters(SAT_Plugin* APlugin) {
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES2_IN_O2] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES2_IN_R1] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES2_IN_R2] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES2_IN_A] ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_RES2_IN_N] ));
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_MIX_O1] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_MIX_O2] ));

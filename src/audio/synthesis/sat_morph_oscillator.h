@@ -159,22 +159,38 @@ public:
 //------------------------------
 
   T process() {
+
     SAT_Assert( MSampleRate > 0.0 );
     ph = SAT_Fract(ph);
+
+    // saw
+
     T t1 = ph + 0.5;
     t1 = SAT_Fract(t1);
     T saw1 = 2.0f * t1 - 1.0;
     saw1 -= SAT_PolyBlep<T>(t1,phadd);
+
+    // squ
+
     T t2 = t1 + MPulseWidth;
     t2 = SAT_Fract(t2);
     T saw2 = 2.0 * t2 - 1.0;
     saw2 -= SAT_PolyBlep<T>(t2,phadd);
-    T squ = saw1 - (saw2*MSawSqu);
+    T squ = saw1 - (saw2 * MSawSqu);
+
+    // tri
+
     z1 = (phadd * squ) + ((1.0 - phadd) * z1);
-    //TODO: SAT_InterpolateLinear
-    T tri  = squ * (1.0 - MSquTri) + (z1 * 4.0)        * MSquTri;
+    T tri  = squ * (1.0 - MSquTri) + (z1 * 4.0) * MSquTri;
+
+    // sin
+
     T sine = tri * (1.0 - MTriSin) + sin(ph * SAT_PI2) * MTriSin;
-    T out  = tri * (1.0 - MTriSin) + sine              * MTriSin;
+
+    // out
+
+    T out  = tri * (1.0 - MTriSin) + sine * MTriSin;
+
     ph += phadd;
     return out;
   }
@@ -182,23 +198,30 @@ public:
   //----------
 
   T process_mod(T mod, T ofs=0.0) {
+
     SAT_Assert( MSampleRate > 0.0 );
     ph = SAT_Fract(ph);
     //ph *= scale;
     T phm = SAT_Fract(ph+mod);
+
     T t1 = phm + 0.5;
     t1 = SAT_Fract(t1);
     T saw1 = 2.0f * t1 - 1.0;
     saw1 -= SAT_PolyBlep<T>(t1,phadd);
+
     T t2 = t1 + MPulseWidth;
     t2 = SAT_Fract(t2);
     T saw2 = 2.0 * t2 - 1.0;
     saw2 -= SAT_PolyBlep<T>(t2,phadd);
     T squ = saw1 - (saw2*MSawSqu);
+
     z1 = (phadd * squ) + ((1.0 - phadd) * z1);
-    T tri  = squ * (1.0 - MSquTri) + (z1 * 4.0)       * MSquTri;
+    T tri  = squ * (1.0 - MSquTri) + (z1 * 4.0) * MSquTri;
+
     T sine = tri * (1.0 - MTriSin) + sin(phm*SAT_PI2) * MTriSin;
-    T out  = tri * (1.0 - MTriSin) + sine             * MTriSin;
+
+    T out  = tri * (1.0 - MTriSin) + sine * MTriSin;
+
     //ph += phadd;
     ph += (phadd + (phadd*ofs));
     return out;
