@@ -54,7 +54,7 @@ class SAT_Plugin
 private:
 //------------------------------
 
-  SAT_Window* MWindow = nullptr;
+  SAT_Window*             MWindow               = nullptr;
 
   bool                    MIsInitialized        = false;
   bool                    MIsActivated          = false;
@@ -82,10 +82,12 @@ private:
   double                  MInitialEditorScale   = 1.0;
   bool                    MProportionalEditor   = false;
 
-  bool MHasInitialSize = false;
+  bool                    MHasInitialSize       = false;
   
 //double                  MEditorAspectRatio    = 1.0;
 //sat_atomic_bool_t       MIsEditorClosing      { false };
+
+  const char*             MPluginFormat         = "CLAP";
 
 //------------------------------
 protected:
@@ -120,6 +122,18 @@ public:
 
   SAT_Host* getHost() {
     return MHost;
+  }
+
+  //----------
+
+  const char* getPluginFormat() {
+    return MPluginFormat;
+  }
+
+  //----------
+
+  void setPluginFormat(const char* AFormat) {
+    MPluginFormat = AFormat;
   }
 
 //------------------------------
@@ -390,6 +404,7 @@ public: // parameters
   //----------
 
   virtual void setDefaultParameterValues() {
+    //SAT_TRACE;
     if (MProcessor) {
       uint32_t num = MParameters.size();
       for (uint32_t i=0; i<num; i++) {

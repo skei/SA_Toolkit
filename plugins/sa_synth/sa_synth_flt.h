@@ -29,10 +29,10 @@ private:
   sa_synth_svf  MFilter     = {};
   double        MSampleRate = 0.0;
 
-  sat_param_t   par_type  = 0.0;
-  sat_param_t   par_freq  = 0.0;  // 16..nyquist
-  sat_param_t   par_q     = 0.0;  // 0.025..40 (default 0.5)
-  sat_param_t   par_gain  = 0.0;  // db
+  sat_param_t   par_type    = 0.0;
+  sat_param_t   par_freq    = 0.0;  // 16..nyquist
+  sat_param_t   par_q       = 0.0;  // 0.025..40 (default 0.5)
+  sat_param_t   par_gain    = 0.0;  // db
 
 //------------------------------
 public:

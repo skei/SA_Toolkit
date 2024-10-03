@@ -31,6 +31,7 @@ const clap_plugin_t* sat_clap_plugin_factory_create_plugin_callback(const struct
     if (index >= 0) {
       const clap_plugin_descriptor_t* descriptor = SAT_GLOBAL.REGISTRY.getDescriptor(index);
       SAT_ClapPlugin* plugin = SAT_CreatePlugin(index,descriptor,host);
+      //plugin->setFormat("CLAP");
       return  plugin->getClapPlugin();
     }
   }

@@ -263,6 +263,13 @@ public:
     return normalize(MValue);
   }
 
+  // globally modulated..
+
+  virtual sat_param_t getModulatedValue() {
+    sat_param_t v = MValue + MModulation;
+    return SAT_Clamp(v,MInfo.min_value,MInfo.max_value);
+  }
+
   virtual sat_param_t getModulation() {
     return MModulation;
   }

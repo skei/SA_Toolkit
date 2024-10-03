@@ -190,7 +190,7 @@ public: // IPluginFactory
     SAT_ClapPlugin* plugin = SAT_CreatePlugin(index,descriptor,vst3_host->getClapHost());
     const clap_plugin_t* clapplugin = plugin->getClapPlugin();
     SAT_Plugin* satplugin = (SAT_Plugin*)clapplugin->plugin_data;
-    //satplugin->setPluginFormat("VST3");
+    satplugin->setPluginFormat("VST3");
     plugin->init();
 
     SAT_Vst3Plugin* vst3plugin = new SAT_Vst3Plugin(plugin);

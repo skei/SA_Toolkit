@@ -115,7 +115,7 @@ private:
 //------------------------------
 
   void handleEvent(SAT_VoiceEvent event) {
-    //SAT_Print("voice index %i\n",index);
+    //SAT_PRINT("voice index %i\n",index);
     switch(event.type) {
       case CLAP_EVENT_NOTE_ON: {
         state = voice.noteOn(event.index,event.value);
@@ -158,7 +158,9 @@ private:
   void handleBlockEvents() {
     SAT_VoiceEvent event;
     //while (events.read(&event)) handleEvent(event);
-    while (events.try_dequeue(event)) handleEvent(event);
+    while (events.try_dequeue(event)) {
+      handleEvent(event);
+    }
     uint32_t length = context->block_length;
     state = voice.process(state,0,length);
    
@@ -173,6 +175,7 @@ private:
     uint32_t current_time = 0;
     uint32_t remaining = context->block_length;         // !!!!! remaining = 0
     SAT_VoiceEvent event = {};
+
     while (remaining > 0) {
       //if (events.read(&event)) {
       if (events.try_dequeue(event)) {
@@ -180,9 +183,7 @@ private:
         //SAT_Assert(length >= 0);
         //SAT_Assert((current_time + length) <= context->process_context->voice_length);
         if (length < 0) {
-          
           SAT_PRINT("events not sorted! voice %i current_time %i, event.time %i type %i event_count %i\n",index,current_time,event.time,event.type,event_count);
-
         }
         //else if (length == 0) {
         //}

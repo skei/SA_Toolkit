@@ -128,4 +128,45 @@ double SAT_HzToSamples(double AHertz, double ASampleRate) {
 }
 
 //----------------------------------------------------------------------
+//
+// chebyshev
+//
+//----------------------------------------------------------------------
+
+/*
+  // https://www.kvraudio.com/forum/viewtopic.php?t=70372
+
+  "I understand that Chebyshev Polynomials can be used for waveshaping
+  distortion, and that, given a sinusoidal input, each successive
+  polynomial will output the nth harmonic, where n is the order of the
+  polynomial. This would mean that one could design a distortion plugin
+  that gives complete control over the amplitude of each harmonic.
+  Has anyone tried implementing something like this? and if so,
+  how does it sound?"
+
+  "I've an unreleased synth quite similar to TERA that uses chebyshev polynoms for additive synthesis.
+  since they have a recursive definition, why not use it to be efficient. using lookup tables is not necessary here.
+  and no oversampling is required in my case since I just feed it with a simple sinusoid.
+  as I know the frequency when there's a noteON I just dynamically reduce the order so that there's no harmonic after Fs/2."
+*/
+
+double chebyshev(double x, double A[], int order) {
+  // To = 1
+  // T1 = x
+  // Tn = 2.x.Tn-1 - Tn-2
+  // out = sum(Ai*Ti(x)) , i C {1,..,order} 
+  double Tn_2 = 1.0; 
+  double Tn_1 = x;
+  double Tn;
+  double out = A[0] * Tn_1;
+  for (int n=2; n<=order; n++) {
+    Tn	 =	2.0 * x * Tn_1 - Tn_2;
+    out	 +=	A[n - 1] * Tn;		
+    Tn_2 =	Tn_1;
+    Tn_1 =  Tn;
+  }
+  return out;
+}
+
+//----------------------------------------------------------------------
 #endif

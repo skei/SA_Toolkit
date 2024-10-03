@@ -72,6 +72,11 @@ public:
 public:
 //------------------------------
 
+  void setSampleRate(double ASampleRate) {
+    //MLoopFX.filter.setSampleRate(ASampleRate);
+  }
+
+
   void reset() {
     MWritePos = 0;
     MPhaseWrapped = false;

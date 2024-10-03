@@ -4,27 +4,19 @@
 
 #include "sat.h"
 #include "plugin/sat_plugin.h"
-
-// #ifdef SAT_VOICE_PROCESSOR_THREADED
-//   #undef SAT_VOICE_PROCESSOR_THREADED
-// #endif
-
 #include "plugin/processor/sat_voice_processor.h"
 
 #ifndef SAT_NO_GUI
   #include "plugin/sat_editor.h"
 #endif
 
+#define SA_SYNTH_MAX_VOICES    256
+#define SA_SYNTH_EDITOR_WIDTH  730
+#define SA_SYNTH_EDITOR_HEIGHT 430
+#define SA_SYNTH_EDITOR_SCALE  2.0
+
 #include "sa_synth/sa_synth_parameters.h"
 #include "sa_synth/sa_synth_voice.h"
-
-//----------
-
-#define MAX_VOICES    256
-
-#define EDITOR_WIDTH  730
-#define EDITOR_HEIGHT 430
-#define EDITOR_SCALE  2.0
 
 //----------------------------------------------------------------------
 //
@@ -40,7 +32,7 @@ const clap_plugin_descriptor_t sa_synth_descriptor = {
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
-  .version      = SAT_VERSION,
+  .version      = "0.0.1",
   .description  = "",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
 };
@@ -52,7 +44,7 @@ const clap_plugin_descriptor_t sa_synth_descriptor = {
 //----------------------------------------------------------------------
 
 class sa_synth_voice_processor
-: public SAT_VoiceProcessor<sa_synth_voice,MAX_VOICES> {
+: public SAT_VoiceProcessor<sa_synth_voice,SA_SYNTH_MAX_VOICES> {
 
 //------------------------------
 public:
@@ -136,12 +128,12 @@ public:
     #ifdef SAT_VOICE_PROCESSOR_THREADED
       MProcessor->setProcessThreaded(true);
     #else
-      //MProcessor.setProcessThreaded(false);
+      MProcessor.setProcessThreaded(false);
     #endif
-    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
+    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_BLOCK);
     sa_synth_setup_parameters(this);
     #ifndef SAT_NO_GUI
-      setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
+      setInitialEditorSize(SA_SYNTH_EDITOR_WIDTH,SA_SYNTH_EDITOR_HEIGHT,SA_SYNTH_EDITOR_SCALE,true);
     #endif
     return SAT_Plugin::init();    
   }
@@ -159,8 +151,8 @@ public: // voice info
 
   bool voice_info_get(clap_voice_info_t *info) override {
     //SAT_TRACE;
-    info->voice_count     = MAX_VOICES;
-    info->voice_capacity  = MAX_VOICES;
+    info->voice_count     = SA_SYNTH_MAX_VOICES;
+    info->voice_capacity  = SA_SYNTH_MAX_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
     return true;
   }
@@ -270,7 +262,7 @@ public: // timer
     void on_EditorListener_timer(double ADelta) override {
       SAT_Plugin::on_EditorListener_timer(ADelta);
       bool changed = false;
-      for (uint32_t i=0; i<MAX_VOICES; i++) {
+      for (uint32_t i=0; i<SA_SYNTH_MAX_VOICES; i++) {
         uint32_t state = MProcessor->getVoiceState(i);
         if (state != voices_widget->getVoiceState(i)) {
           //SAT_TRACE;
@@ -307,10 +299,10 @@ public: // timer
 //
 //----------------------------------------------------------------------
 
-#undef MAX_VOICES
-#undef EDITOR_WIDTH
-#undef EDITOR_HEIGHT
-#undef EDITOR_SCALE
+#undef SA_SYNTH_MAX_VOICES
+#undef SA_SYNTH_EDITOR_WIDTH
+#undef SA_SYNTH_EDITOR_HEIGHT
+#undef SA_SYNTH_EDITOR_SCALE
 
 //----------------------------------------------------------------------
 #endif

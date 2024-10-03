@@ -10,11 +10,10 @@ private:
 //------------------------------
 
   SAT_MenuWidget* osc1_type_menu = nullptr;
-  SAT_MenuWidget* res1_type_menu = nullptr;
   SAT_MenuWidget* osc2_type_menu = nullptr;
+  SAT_MenuWidget* res1_type_menu = nullptr;
   SAT_MenuWidget* res2_type_menu = nullptr;
   SAT_MenuWidget* flt1_type_menu = nullptr;
-
   char MInfoText[SAT_MAX_STRING_LENGTH] = {0};
 
 //------------------------------
@@ -34,17 +33,7 @@ public:
       // main
       //------------------------------
 
-      #ifdef SAT_LINUX
-        sprintf(MInfoText,"v0.0.1 CLAP Linux");
-      #endif
-
-      #ifdef SAT_WIN32
-        sprintf(MInfoText,"v0.0.1 CLAP Win32");
-      #endif
-
-      // #ifdef SAT_MAC
-      //   sprintf(MInfoText,"v0.0.1 CLAP Mac");
-      // #endif
+      sprintf(MInfoText,"v%s : %s : %s", sa_synth_descriptor.version, getPluginFormat(), SAT_GLOBAL.getOSName() );
 
       SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"synth",MInfoText);
       root->appendChild(header);
@@ -68,16 +57,16 @@ public:
         osc1_type_menu->appendItem( osc_type_text[i] );
       }
 
-      res1_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,20*sa_synth_res_type_count+2+2));
-      res1_type_menu->Layout.innerBorder = SAT_Rect(2,2,2,2);
-      for (uint32_t i=0; i<sa_synth_res_type_count; i++) {
-        res1_type_menu->appendItem( res_type_text[i] );
-      }
-
       osc2_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,20*sa_synth_osc_type_count+2+2));
       osc2_type_menu->Layout.innerBorder = SAT_Rect(2,2,2,2);
       for (uint32_t i=0; i<sa_synth_osc_type_count; i++) {
         osc2_type_menu->appendItem( osc_type_text[i] );
+      }
+
+      res1_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,20*sa_synth_res_type_count+2+2));
+      res1_type_menu->Layout.innerBorder = SAT_Rect(2,2,2,2);
+      for (uint32_t i=0; i<sa_synth_res_type_count; i++) {
+        res1_type_menu->appendItem( res_type_text[i] );
       }
 
       res2_type_menu = new SAT_MenuWidget(SAT_Rect(0,0,110,20*sa_synth_res_type_count+2+2));
@@ -239,28 +228,23 @@ public:
         osc1_width->setDrawBipolar(true);
         osc1_width->setTextSize(5);
 
-        SAT_DragValueWidget* osc1_oct = new SAT_DragValueWidget(SAT_Rect(210,35,60,12),"Oct",0);
+        SAT_DragValueWidget* osc1_oct = new SAT_DragValueWidget(SAT_Rect(210+70,35,60,12),"Oct",0);
         AEditor->connect(osc1_oct,getParameter(SA_SYNTH_PARAM_OSC1_OCT));
         osc1_panel->appendChild(osc1_oct);
         osc1_oct->setTextSize(7);
         osc1_oct->setValueTextSize(8);
 
-        SAT_DragValueWidget* osc1_semi = new SAT_DragValueWidget(SAT_Rect(210,50,60,12),"Semi",0);
+        SAT_DragValueWidget* osc1_semi = new SAT_DragValueWidget(SAT_Rect(210+70,50,60,12),"Semi",0);
         AEditor->connect(osc1_semi,getParameter(SA_SYNTH_PARAM_OSC1_SEMI));
         osc1_panel->appendChild(osc1_semi);
         osc1_semi->setTextSize(7);
         osc1_semi->setValueTextSize(8);
 
-        SAT_DragValueWidget* osc1_cent = new SAT_DragValueWidget(SAT_Rect(210,65,60,12),"Cent",0);
+        SAT_DragValueWidget* osc1_cent = new SAT_DragValueWidget(SAT_Rect(210+70,65,60,12),"Cent",0);
         AEditor->connect(osc1_cent,getParameter(SA_SYNTH_PARAM_OSC1_CENT));
         osc1_panel->appendChild(osc1_cent);
         osc1_cent->setTextSize(7);
         osc1_cent->setValueTextSize(8);
-
-        SAT_VisualWidget* osc1_visual = new SAT_VisualWidget(SAT_Rect(280,35,60,42));
-        osc1_panel->appendChild(osc1_visual);
-        osc1_visual->setDrawBorder(true);
-        osc1_visual->setBorderColor(SAT_DarkGrey);
 
       //------------------------------
       // osc.2
@@ -428,11 +412,6 @@ public:
         osc2_cent->setTextSize(7);
         osc2_cent->setValueTextSize(8);
 
-        SAT_VisualWidget* osc2_visual = new SAT_VisualWidget(SAT_Rect(280,35,60,42));
-        osc2_panel->appendChild(osc2_visual);
-        osc2_visual->setDrawBorder(true);
-        osc2_visual->setBorderColor(SAT_DarkGrey);
-
       //------------------------------
       // res.1
       //------------------------------
@@ -559,49 +538,43 @@ public:
           res1_inputn->setDrawValueText(false);
           //res1_inputn->setDrawBipolar(true);
 
-        SAT_KnobWidget* res1_impulse = new SAT_KnobWidget(SAT_Rect(5,35,45,45),"Im",0);
-        AEditor->connect(res1_impulse,getParameter(SA_SYNTH_PARAM_RES1_IMPULSE));
-        res1_panel->appendChild(res1_impulse);
-        res1_impulse->setTextSize(5);
+        SAT_KnobWidget* res1_impulse_freq = new SAT_KnobWidget(SAT_Rect(5,35,45,45),"Im",0);
+        AEditor->connect(res1_impulse_freq,getParameter(SA_SYNTH_PARAM_RES1_IMPULSE_FREQ));
+        res1_panel->appendChild(res1_impulse_freq);
+        res1_impulse_freq->setTextSize(5);
 
-        SAT_KnobWidget* res1_shape = new SAT_KnobWidget(SAT_Rect(55,35,45,45),"Sh",0.5);
-        AEditor->connect(res1_shape,getParameter(SA_SYNTH_PARAM_RES1_SHAPE));
-        res1_panel->appendChild(res1_shape);
-        res1_shape->setTextSize(5);
-
-        SAT_KnobWidget* res1_fb = new SAT_KnobWidget(SAT_Rect(105,35,45,45),"Fb",0);
+        SAT_KnobWidget* res1_fb = new SAT_KnobWidget(SAT_Rect(115,35,45,45),"Fb",0);
         AEditor->connect(res1_fb,getParameter(SA_SYNTH_PARAM_RES1_FEEDBACK));
         res1_panel->appendChild(res1_fb);
         res1_fb->setTextSize(5);
 
-        SAT_KnobWidget* res1_damp = new SAT_KnobWidget(SAT_Rect(155,35,45,45),"Da",0);
-        AEditor->connect(res1_damp,getParameter(SA_SYNTH_PARAM_RES1_DAMPING));
+        SAT_KnobWidget* res1_damp = new SAT_KnobWidget(SAT_Rect(165,35,45,45),"Da",0);
+        AEditor->connect(res1_damp,getParameter(SA_SYNTH_PARAM_RES1_DAMPING_FREQ));
         res1_panel->appendChild(res1_damp);
         res1_damp->setTextSize(5);
 
-        SAT_DragValueWidget* res1_oct = new SAT_DragValueWidget(SAT_Rect(210,35,60,12),"Oct",0);
+        SAT_KnobWidget* res1_gain = new SAT_KnobWidget(SAT_Rect(215,35,45,45),"G",0);
+        AEditor->connect(res1_gain,getParameter(SA_SYNTH_PARAM_RES1_GAIN));
+        res1_panel->appendChild(res1_gain);
+        res1_gain->setTextSize(5);
+
+        SAT_DragValueWidget* res1_oct = new SAT_DragValueWidget(SAT_Rect(280,35,60,12),"Oct",0);
         AEditor->connect(res1_oct,getParameter(SA_SYNTH_PARAM_RES1_OCT));
         res1_panel->appendChild(res1_oct);
         res1_oct->setTextSize(7);
         res1_oct->setValueTextSize(8);
 
-        SAT_DragValueWidget* res1_semi = new SAT_DragValueWidget(SAT_Rect(210,50,60,12),"Semi",0);
+        SAT_DragValueWidget* res1_semi = new SAT_DragValueWidget(SAT_Rect(280,50,60,12),"Semi",0);
         AEditor->connect(res1_semi,getParameter(SA_SYNTH_PARAM_RES1_SEMI));
         res1_panel->appendChild(res1_semi);
         res1_semi->setTextSize(7);
         res1_semi->setValueTextSize(8);
 
-        SAT_DragValueWidget* res1_cent = new SAT_DragValueWidget(SAT_Rect(210,65,60,12),"Cent",0);
+        SAT_DragValueWidget* res1_cent = new SAT_DragValueWidget(SAT_Rect(280,65,60,12),"Cent",0);
         AEditor->connect(res1_cent,getParameter(SA_SYNTH_PARAM_RES1_CENT));
         res1_panel->appendChild(res1_cent);
         res1_cent->setTextSize(7);
         res1_cent->setValueTextSize(8);
-
-        SAT_VisualWidget* res1_visual = new SAT_VisualWidget(SAT_Rect(280,35,60,42));
-        res1_panel->appendChild(res1_visual);
-        res1_visual->setDrawBorder(true);
-        res1_visual->setBorderColor(SAT_DarkGrey);
-
 
       //------------------------------
       // res.2
@@ -729,48 +702,43 @@ public:
           res2_inputn->setDrawValueText(false);
           //res2_inputn->setDrawBipolar(true);
 
-        SAT_KnobWidget* res2_impulse = new SAT_KnobWidget(SAT_Rect(5,35,45,45),"Im",0);
-        AEditor->connect(res2_impulse,getParameter(SA_SYNTH_PARAM_RES2_IMPULSE));
-        res2_panel->appendChild(res2_impulse);
-        res2_impulse->setTextSize(5);
+        SAT_KnobWidget* res2_impulse_freq = new SAT_KnobWidget(SAT_Rect(5,35,45,45),"Im",0);
+        AEditor->connect(res2_impulse_freq,getParameter(SA_SYNTH_PARAM_RES2_IMPULSE_FREQ));
+        res2_panel->appendChild(res2_impulse_freq);
+        res2_impulse_freq->setTextSize(5);
 
-        SAT_KnobWidget* res2_shape = new SAT_KnobWidget(SAT_Rect(55,35,45,45),"Sh",0.5);
-        AEditor->connect(res2_shape,getParameter(SA_SYNTH_PARAM_RES2_SHAPE));
-        res2_panel->appendChild(res2_shape);
-        res2_shape->setTextSize(5);
-
-        SAT_KnobWidget* res2_fb = new SAT_KnobWidget(SAT_Rect(105,35,45,45),"Fb",0);
+        SAT_KnobWidget* res2_fb = new SAT_KnobWidget(SAT_Rect(115,35,45,45),"Fb",0);
         AEditor->connect(res2_fb,getParameter(SA_SYNTH_PARAM_RES2_FEEDBACK));
         res2_panel->appendChild(res2_fb);
         res2_fb->setTextSize(5);
 
-        SAT_KnobWidget* res2_damp = new SAT_KnobWidget(SAT_Rect(155,35,45,45),"Da",0);
-        AEditor->connect(res2_damp,getParameter(SA_SYNTH_PARAM_RES2_DAMPING));
+        SAT_KnobWidget* res2_damp = new SAT_KnobWidget(SAT_Rect(165,35,45,45),"Da",0);
+        AEditor->connect(res2_damp,getParameter(SA_SYNTH_PARAM_RES2_DAMPING_FREQ));
         res2_panel->appendChild(res2_damp);
         res2_damp->setTextSize(5);
-        
-        SAT_DragValueWidget* res2_oct = new SAT_DragValueWidget(SAT_Rect(210,35,60,12),"Oct",0);
+
+        SAT_KnobWidget* res2_gain = new SAT_KnobWidget(SAT_Rect(215,35,45,45),"G",0);
+        AEditor->connect(res2_gain,getParameter(SA_SYNTH_PARAM_RES2_GAIN));
+        res2_panel->appendChild(res2_gain);
+        res2_gain->setTextSize(5);
+
+        SAT_DragValueWidget* res2_oct = new SAT_DragValueWidget(SAT_Rect(280,35,60,12),"Oct",0);
         AEditor->connect(res2_oct,getParameter(SA_SYNTH_PARAM_RES2_OCT));
         res2_panel->appendChild(res2_oct);
         res2_oct->setTextSize(7);
         res2_oct->setValueTextSize(8);
 
-        SAT_DragValueWidget* res2_semi = new SAT_DragValueWidget(SAT_Rect(210,50,60,12),"Semi",0);
+        SAT_DragValueWidget* res2_semi = new SAT_DragValueWidget(SAT_Rect(280,50,60,12),"Semi",0);
         AEditor->connect(res2_semi,getParameter(SA_SYNTH_PARAM_RES2_SEMI));
         res2_panel->appendChild(res2_semi);
         res2_semi->setTextSize(7);
         res2_semi->setValueTextSize(8);
 
-        SAT_DragValueWidget* res2_cent = new SAT_DragValueWidget(SAT_Rect(210,65,60,12),"Cent",0);
+        SAT_DragValueWidget* res2_cent = new SAT_DragValueWidget(SAT_Rect(280,65,60,12),"Cent",0);
         AEditor->connect(res2_cent,getParameter(SA_SYNTH_PARAM_RES2_CENT));
         res2_panel->appendChild(res2_cent);
         res2_cent->setTextSize(7);
         res2_cent->setValueTextSize(8);
-
-        SAT_VisualWidget* res2_visual = new SAT_VisualWidget(SAT_Rect(280,35,60,42));
-        res2_panel->appendChild(res2_visual);
-        res2_visual->setDrawBorder(true);
-        res2_visual->setBorderColor(SAT_DarkGrey);
 
       //------------------------------
       // mix
@@ -977,7 +945,7 @@ public:
       // voices
       //------------------------------
 
-      voices_widget = new SAT_VoicesWidget(SAT_Rect(290,285,200,20),MAX_VOICES);
+      voices_widget = new SAT_VoicesWidget(SAT_Rect(290,285,200,20),SA_SYNTH_MAX_VOICES);
       main_panel->appendChild(voices_widget);
 
 
@@ -996,11 +964,9 @@ public:
     if (window) {
       SAT_Widget* overlay = window->getOverlayWidget();
       if (overlay) {
-        // root->appendChild(osc1_type_menu);
-        // root->appendChild(osc2_type_menu);
         overlay->appendChild(osc1_type_menu);
-        overlay->appendChild(res1_type_menu);
         overlay->appendChild(osc2_type_menu);
+        overlay->appendChild(res1_type_menu);
         overlay->appendChild(res2_type_menu);
         overlay->appendChild(flt1_type_menu);
         return true;

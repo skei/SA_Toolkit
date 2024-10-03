@@ -25,7 +25,7 @@ private:
 
   char            MPluginInfo[SAT_MAX_STRING_LENGTH]  = {0};
   SAT_Color       MPluginInfoColor                    = SAT_LightGrey;
-  double          MPluginInfoSize                     = 5.0;
+  double          MPluginInfoSize                     = 6.0;
   SAT_Rect        MPluginInfoOffset                   = SAT_Rect(0,31,3,0);
   uint32_t        MPluginInfoAlignment                = SAT_TEXT_ALIGN_RIGHT;
 

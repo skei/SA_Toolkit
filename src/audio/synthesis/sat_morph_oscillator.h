@@ -60,8 +60,7 @@ public:
   //----------
 
   void setFrequency(T hz) {
-    //KTrace("hz %.2f\n",hz);
-    SAT_Assert( hz >= 1.0 );
+    SAT_Assert( hz >= 20.0 );
     SAT_Assert( hz < (MSampleRate * 0.5) );
     //phadd = hz / srate;
     phadd = hz * MIrate;

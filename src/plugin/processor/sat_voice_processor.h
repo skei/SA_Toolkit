@@ -169,6 +169,7 @@ public:
   //----------
 
   void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) {
+
     MVoiceContext.process_context   = nullptr; //
     MVoiceContext.sample_rate       = sample_rate;
     // MVoiceContext.min_frames_count  = min_frames_count;
@@ -177,7 +178,9 @@ public:
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].init(i,&MVoiceContext);
     }
+
     // send (initial) parameters to all voices
+
   }
 
 //------------------------------

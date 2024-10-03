@@ -177,6 +177,7 @@ public:
   //----------
 
   void processParamValueEvent(const clap_event_param_value_t* event) {
+    //SAT_TRACE;
     SAT_Assert(event);
     uint32_t index = event->param_id;
     double value = event->value;

@@ -21,8 +21,8 @@ class SAT_Global {
 private:
 //------------------------------
 
-  bool          MInitialized                      = false;
-  char          MPluginPath[SAT_MAX_PATH_LENGTH]  = {0};
+  bool    MInitialized                        = false;
+  char    MPluginPath[SAT_MAX_PATH_LENGTH]    = {0};
 
 //------------------------------
 public:
@@ -87,9 +87,7 @@ public:
     }
   }
 
-//------------------------------
-public:
-//------------------------------
+  //----------
 
   // void clapInit(const char *APath) {
   //   setPluginPath(APath);
@@ -100,10 +98,26 @@ public:
   // void clapDeInit() {
   // }
 
+//------------------------------
+public:
+//------------------------------
+
+  const char* getOSName() {
+    #ifdef SAT_LINUX
+      return "Linux";
+    #endif
+    #ifdef SAT_MAC
+      return "Mac";
+    #endif
+    #ifdef SAT_WIN32
+      return "Windows";
+    #endif
+  }
+
   //----------
 
   void setPluginPath(const char* APath) {
-    SAT_Strlcpy(MPluginPath,APath,SAT_MAX_PATH_LENGTH-1);
+    SAT_Strlcpy(MPluginPath,APath,SAT_MAX_PATH_LENGTH);
     MPluginPath[SAT_MAX_PATH_LENGTH-1] = 0;
   }
 
