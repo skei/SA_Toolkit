@@ -57,6 +57,8 @@ private:
 
   double          MSampleRate       = 0.0;
   double          MDelayLength      = 0.0;
+
+  uint32_t        MType             = 0;
   
   sa_synth_delay  MDelay            = {};
   sat_param_t     par_impulse_freq  = 0.0;
@@ -68,6 +70,7 @@ private:
   sat_sample_t    imp_current       = 0.0;
 
   sa_synth_delay_loop_fx  MImpFx    = {};
+
 
 //------------------------------
 public:
@@ -107,6 +110,10 @@ public:
 
   void setGain(double AGain) {
     par_gain = AGain;
+  }
+
+  void setType(uint32_t AType) {
+    MType = AType;
   }
 
   //----------
@@ -158,9 +165,8 @@ public:
     MDelay.getLoopFX()->factor = par_damping_freq;
     MDelay.getLoopFX()->gain = (par_gain * 0.5) + 1.0;
 
-    if (MDelay.hasWrapped()) {
-      sat_sample_t v = MDelay.process(0.0,MDelayLength,par_feedback/*,AOffset*/);
-      return  v;
+    if ((MType == 0) && MDelay.hasWrapped()) {
+      return MDelay.process(0.0,MDelayLength,par_feedback/*,AOffset*/);
     }
     else {
       MDelay.process(in,MDelayLength,par_feedback/*,AOffset*/);
@@ -168,8 +174,8 @@ public:
       MImpFx.factor = par_damping_freq;
       MImpFx.gain = (par_gain * 0.5) + 1.0;
       return MImpFx.process(in);
-
     }
+
   }
 
 };

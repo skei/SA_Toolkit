@@ -151,7 +151,12 @@ public:
 
 //        if (!MClapThreadPool) {
           SAT_PRINT("sat threadpool\n");
-          MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
+
+          //MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
+          
+          uint32_t numprocs = SAT_GetNumProcessors();
+          MThreadPool = new SAT_ThreadPool(this,numprocs);    // !!!
+
           if (!MThreadPool) {
             SAT_PRINT("no threadpool\n");
           }

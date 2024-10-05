@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
+#include "base/system/sat_cpu.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_voice_processor.h"
 
@@ -13,7 +14,7 @@
 #define SA_SYNTH_MAX_VOICES    256
 #define SA_SYNTH_EDITOR_WIDTH  730
 #define SA_SYNTH_EDITOR_HEIGHT 430
-#define SA_SYNTH_EDITOR_SCALE  2.0
+#define SA_SYNTH_EDITOR_SCALE  1.5
 
 #include "sa_synth/sa_synth_parameters.h"
 #include "sa_synth/sa_synth_voice.h"

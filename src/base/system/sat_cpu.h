@@ -2,6 +2,88 @@
 #define sat_linux_cpu_included
 //----------------------------------------------------------------------
 
+#include "sat.h"
+#include <sys/sysinfo.h>
+
+//----------------------------------------------------------------------
+//
+// linux
+//
+//----------------------------------------------------------------------
+
+int32_t SAT_GetNumProcessors() {
+  return get_nprocs();    // available processors
+  //return get_nprocs_conf() // configured processors
+}
+
+//----------
+
+/*
+int main() {
+  long nprocs = -1;
+  long nprocs_max = -1;
+  #ifdef _WIN32
+    #ifndef _SC_NPROCESSORS_ONLN
+      SYSTEM_INFO info;
+      GetSystemInfo(&info);
+      #define sysconf(a) info.dwNumberOfProcessors
+      #define _SC_NPROCESSORS_ONLN
+    #endif
+  #endif
+  #ifdef _SC_NPROCESSORS_ONLN
+    nprocs = sysconf(_SC_NPROCESSORS_ONLN);
+    if (nprocs < 1) {
+      fprintf(stderr, "Could not determine number of CPUs online:\n%s\n", strerror (errno));
+      exit (EXIT_FAILURE);
+    }
+    nprocs_max = sysconf(_SC_NPROCESSORS_CONF);
+    if (nprocs_max < 1) {
+      fprintf(stderr, "Could not determine number of CPUs configured:\n%s\n", strerror (errno));
+      exit (EXIT_FAILURE);
+    }
+    printf ("%ld of %ld processors online\n",nprocs, nprocs_max);
+    exit (EXIT_SUCCESS);
+  #else
+    fprintf(stderr, "Could not determine number of CPUs");
+    exit (EXIT_FAILURE);
+  #endif
+}
+*/
+
+//----------
+
+// int sysinfo (struct sysinfo *__info) __THROW;
+
+// __kernel_long_t uptime;		  // Seconds since boot
+// __kernel_ulong_t loads[3];	  // 1, 5, and 15 minute load averages
+// __kernel_ulong_t totalram;	  // Total usable main memory size
+// __kernel_ulong_t freeram;	  // Available memory size
+// __kernel_ulong_t sharedram;	// Amount of shared memory
+// __kernel_ulong_t bufferram;	// Memory used by buffers
+// __kernel_ulong_t totalswap;	// Total swap space size
+// __kernel_ulong_t freeswap;	  // swap space still available
+// __u16 procs;		   	          // Number of current processes
+// __u16 pad;		   	            // Explicit padding for m68k
+// __kernel_ulong_t totalhigh;	// Total high memory size
+// __kernel_ulong_t freehigh;	  // Available high memory size
+// __u32 mem_unit;			        // Memory unit size in bytes
+
+//----------
+
+uint32_t SAT_GetUptime() {
+  struct sysinfo info;
+  if (sysinfo(&info)) return info.uptime;
+  return 0;
+}
+
+//----------------------------------------------------------------------
+#endif
+
+
+
+
+
+
 #if 0
 
 // https://www.kvraudio.com/forum/viewtopic.php?p=8886124#p8886124
@@ -314,5 +396,3 @@ class MIP_CpuInfo {
 
 #endif // 0
 
-//----------------------------------------------------------------------
-#endif

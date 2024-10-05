@@ -40,10 +40,10 @@ const char* osc_type_text[sa_synth_osc_type_count] = {
 
 #define sa_synth_res_type_count 4
 const char* res_type_text[sa_synth_res_type_count] = {
-  "none",
-  "type 2",
-  "type 3",
-  "and 4"
+  "cycle",
+  "continuous",
+  "---",
+  "---"
 };
 
 #define sa_synth_flt_type_count 10
@@ -205,7 +205,7 @@ clap_param_info_t sa_synth_parameters[SA_SYNTH_PARAM_COUNT] = {
   { SA_SYNTH_PARAM_OSC2_IN_N,         A,      nullptr,  "N",        "Osc2",     0.0, 1.0, 0.0 },
 
   { SA_SYNTH_PARAM_RES1_IMPULSE_FREQ, AMN,    nullptr,  "Impulse",  "Res1",     0.0, 1.0, 1.0 },
-  { SA_SYNTH_PARAM_RES1_FEEDBACK,     AMN,    nullptr,  "Feedback", "Res1",     0.0, 1.0, 0.9 },
+  { SA_SYNTH_PARAM_RES1_FEEDBACK,     AMN,    nullptr,  "Feedback", "Res1",     0.0, 1.0, 1.0 },
   { SA_SYNTH_PARAM_RES1_DAMPING_FREQ, AMN,    nullptr,  "Damping",  "Res1",     0.0, 1.0, 1.0 },
   { SA_SYNTH_PARAM_RES1_GAIN,         AMN,    nullptr,  "Gain",     "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_OCT,          AMN|S,  nullptr,  "Oct",      "Res1",    -4,   4,   0   },
@@ -218,10 +218,10 @@ clap_param_info_t sa_synth_parameters[SA_SYNTH_PARAM_COUNT] = {
   { SA_SYNTH_PARAM_RES1_IN_R1,        A,      nullptr,  "R1",       "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_IN_R2,        A,      nullptr,  "R2",       "Res1",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES1_IN_A,         A,      nullptr,  "A",        "Res1",     0.0, 1.0, 0.0 },
-  { SA_SYNTH_PARAM_RES1_IN_N,         A,      nullptr,  "N",        "Res1",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES1_IN_N,         A,      nullptr,  "N",        "Res1",     0.0, 1.0, 1.0 },
   
   { SA_SYNTH_PARAM_RES2_IMPULSE_FREQ, AMN,    nullptr,  "Impulse",  "Res2",     0.0, 1.0, 1.0 },
-  { SA_SYNTH_PARAM_RES2_FEEDBACK,     AMN,    nullptr,  "Feedback", "Res2",     0.0, 1.0, 0.9 },
+  { SA_SYNTH_PARAM_RES2_FEEDBACK,     AMN,    nullptr,  "Feedback", "Res2",     0.0, 1.0, 1.0 },
   { SA_SYNTH_PARAM_RES2_DAMPING_FREQ, AMN,    nullptr,  "Damping",  "Res2",     0.0, 1.0, 1.0 },
   { SA_SYNTH_PARAM_RES2_GAIN,         AMN,    nullptr,  "Gain",     "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_OCT,          AMN|S,  nullptr,  "Oct",      "Res2",    -4,   4,   0   },
@@ -234,7 +234,7 @@ clap_param_info_t sa_synth_parameters[SA_SYNTH_PARAM_COUNT] = {
   { SA_SYNTH_PARAM_RES2_IN_R1,        A,      nullptr,  "R1",       "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_IN_R2,        A,      nullptr,  "R2",       "Res2",     0.0, 1.0, 0.0 },
   { SA_SYNTH_PARAM_RES2_IN_A,         A,      nullptr,  "A",        "Res2",     0.0, 1.0, 0.0 },
-  { SA_SYNTH_PARAM_RES2_IN_N,         A,      nullptr,  "N",        "Res2",     0.0, 1.0, 0.0 },
+  { SA_SYNTH_PARAM_RES2_IN_N,         A,      nullptr,  "N",        "Res2",     0.0, 1.0, 1.0 },
 
   { SA_SYNTH_PARAM_MIX_O1,            AMN,    nullptr,  "O1",       "Mix",      0.0, 1.0, 1.0 },
   { SA_SYNTH_PARAM_MIX_O2,            AMN,    nullptr,  "O2",       "Mix",      0.0, 1.0, 0.0 },

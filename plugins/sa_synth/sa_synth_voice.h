@@ -416,12 +416,12 @@ private:
     uint32_t o1_type = getParameterValue(SA_SYNTH_PARAM_OSC1_TYPE);
     switch (o1_type) {
       case SA_SYNTH_OSC_PHASE_MOD: {
-        mod = ((o1_in * 4.0) * o1_amt);
+        mod = ((o1_in * 2.5) * o1_amt);
         o1_tuning += mod;
         break;
       }
       case SA_SYNTH_OSC_FREQ_MOD: {
-        ofs = ((o1_in * 12.0) * o1_amt);
+        ofs = ((o1_in * 20.0) * o1_amt);
         break;
       }
     }
@@ -501,11 +501,11 @@ private:
     uint32_t o2_type = getParameterValue(SA_SYNTH_PARAM_OSC2_TYPE);
     switch (o2_type) {
       case SA_SYNTH_OSC_PHASE_MOD: {
-        mod = ((o2_in * 4.0) * o2_amt);
+        mod = ((o2_in * 2.5) * o2_amt);
         break;
       }
       case SA_SYNTH_OSC_FREQ_MOD: {
-        ofs = ((o2_in * 12.0) * o2_amt);
+        ofs = ((o2_in * 20.0) * o2_amt);
         break;
       }
     }
@@ -571,6 +571,9 @@ private:
     sat_sample_t r1_in    = (r1_in1 * MOsc1_out) + (r1_in2 * MOsc2_out) + (r1_in3 * MRes1_out) + (r1_in4 * MRes2_out) + (r1_ina * audio) + (r1_inn * rnd);
     r1_in *= r1_amt;
 
+    sat_param_t r1_type   = getModulatedValue(SA_SYNTH_PARAM_RES1_TYPE);
+    MRes1.setType(r1_type);
+
     // tuning
     sat_param_t r1_oct    = getModulatedValue(SA_SYNTH_PARAM_RES1_OCT);
     sat_param_t r1_semi   = getModulatedValue(SA_SYNTH_PARAM_RES1_SEMI);
@@ -587,10 +590,13 @@ private:
     // switch (r1_type) {
     // }
 
+
+
     // process
     sat_param_t hz1 = SAT_NoteToHz(MKey + r1_tuning);
     if (hz1 < 20.0) hz1 = 20.0;
     MRes1.setFrequency(hz1);
+
     sat_sample_t res1 = MRes1.process(r1_in/*,offset*/);
 
     // post modulation
@@ -632,6 +638,9 @@ private:
     sat_param_t  r2_inn   = getParameterValue(SA_SYNTH_PARAM_RES2_IN_N);
     sat_sample_t r2_in    = (r2_in1 * MOsc1_out) + (r2_in2 * MOsc2_out) + (r2_in3 * MRes1_out) + (r2_in4 * MRes2_out) + (r2_ina * audio) + (r2_inn * rnd);
     r2_in *= r2_amt;
+
+    sat_param_t r2_type   = getModulatedValue(SA_SYNTH_PARAM_RES2_TYPE);
+    MRes2.setType(r2_type);
 
     // tuning
     sat_param_t r2_oct    = getModulatedValue(SA_SYNTH_PARAM_RES2_OCT);
