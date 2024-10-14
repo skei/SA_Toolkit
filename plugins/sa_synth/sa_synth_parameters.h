@@ -272,6 +272,7 @@ clap_param_info_t sa_synth_parameters[SA_SYNTH_PARAM_COUNT] = {
 bool sa_synth_setup_parameters(SAT_Plugin* APlugin) {
 
   SAT_PRINT("%i parameters\n",SA_SYNTH_PARAM_COUNT);
+  uint32_t n = 0;
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_GLOBAL_GAIN] ));
 
@@ -353,6 +354,8 @@ bool sa_synth_setup_parameters(SAT_Plugin* APlugin) {
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_ENV1_DEC] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_ENV1_SUS] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_synth_parameters[SA_SYNTH_PARAM_ENV1_REL] ));
+
+  SAT_Assert( APlugin->getNumParameters() == SA_SYNTH_PARAM_COUNT );
 
   return true;
 }

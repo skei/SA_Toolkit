@@ -98,6 +98,8 @@ public:
 //uint32_t  getEventMode()                  { return MEventMode; }
   bool      isProcessingThreaded()          { return MProcessThreaded; }
 
+  SAT_VoiceContext* getVoiceContext()       { return &MVoiceContext; }
+
 //------------------------------
 public:
 //------------------------------
@@ -174,18 +176,15 @@ public:
   //----------
 
   void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) {
-
     MVoiceContext.process_context   = nullptr; //
     MVoiceContext.sample_rate       = sample_rate;
-    // MVoiceContext.min_frames_count  = min_frames_count;
-    // MVoiceContext.max_frames_count  = max_frames_count;
+    MVoiceContext.min_frames_count  = min_frames_count;
+    MVoiceContext.max_frames_count  = max_frames_count;
     MVoiceContext.voice_buffer      = MVoiceBuffer;
     for (uint32_t i=0; i<COUNT; i++) {
       MVoices[i].init(i,&MVoiceContext);
     }
-
-    // send (initial) parameters to all voices
-
+    // send (initial) parameters to all voices?
   }
 
 //------------------------------
@@ -253,21 +252,16 @@ public:
 
     if (MNumActiveVoices > 0) {
       bool processed = false;
-
+      // threaded..
       #ifdef SAT_VOICE_PROCESSOR_THREADED      
-
         if (MProcessThreaded) {
-
           #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
-            if (MClapThreadPool)  processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
+            if (MClapThreadPool) processed = MClapThreadPool->request_exec(MClapHost,MNumActiveVoices);
           #else
-            /*else*/ if (MThreadPool) processed = MThreadPool->request_exec(MNumActiveVoices);
+            if (MThreadPool) processed = MThreadPool->request_exec(MNumActiveVoices);
           #endif
-
         }
-
       #endif
-
       // ..or manually
       if (!processed) {
         for (uint32_t i=0; i<MNumActiveVoices; i++) {
@@ -275,7 +269,6 @@ public:
           processVoice(v);
         }
       }
-      //mixActiveVoices();
     }
   }
 

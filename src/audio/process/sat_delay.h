@@ -139,15 +139,10 @@ public:
     T feedback = delayed * AFeedback;
     feedback = MLoopFX.process(feedback);
 
+    // clip?
+
     SAT_Assert( MWritePos >= 0 );
     SAT_Assert( MWritePos < MAX_DELAY );
-
-    // if only part of next sample 'fits' inside delay length...
-    //if ((MPhaseCounter + 1.0) >= ADelay) {
-    //  T diff = ADelay - MPhaseCounter;
-    //  out *= diff;
-    //}
-
     MBuffer[MWritePos] = AInput + feedback;
 
     MWritePos++;

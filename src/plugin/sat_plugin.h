@@ -120,6 +120,12 @@ public:
 public:
 //------------------------------
 
+  uint32_t getMaxBufferSize() {
+    return MMaxFramesCount;
+  }
+
+  //----------
+
   SAT_Host* getHost() {
     return MHost;
   }
@@ -184,6 +190,7 @@ public: // extensions
     registerExtension(CLAP_EXT_NOTE_PORTS);
     #ifdef SAT_VOICE_PROCESSOR_THREADED
       #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+        // && voice_processor.is_threaded
         registerExtension(CLAP_EXT_THREAD_POOL);
       #endif
     #endif

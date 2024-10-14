@@ -4,6 +4,7 @@
 
 // note:
 // inserted directly into sa_synth.cpp
+// (dirty, but we are too lazy to set up a proper class and all that).. :-/
 
 //------------------------------
 private:
@@ -945,8 +946,8 @@ public:
       // voices
       //------------------------------
 
-      voices_widget = new SAT_VoicesWidget(SAT_Rect(290,285,200,20),SA_SYNTH_MAX_VOICES);
-      main_panel->appendChild(voices_widget);
+      MVoicesWidget = new SAT_VoicesWidget(SAT_Rect(290,285,200,20),SA_SYNTH_MAX_VOICES);
+      main_panel->appendChild(MVoicesWidget);
 
 
 

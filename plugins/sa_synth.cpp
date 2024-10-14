@@ -3,7 +3,8 @@
 //----------------------------------------------------------------------
 
 #include "sat.h"
-#include "base/system/sat_cpu.h"
+//#include "base/system/sat_cpu.h"
+//#include "audio/process/sat_resampler.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_voice_processor.h"
 
@@ -51,9 +52,15 @@ class sa_synth_voice_processor
 public:
 //------------------------------
 
-  sa_synth_voice_processor(SAT_ProcessorListener* AListener)
+  sa_synth_voice_processor(SAT_ProcessorListener* AListener, uint32_t AOversample, uint32_t ABufferSize)
   : SAT_VoiceProcessor(AListener) {
-    SAT_TRACE;
+    // test / experimental
+    // move to voice_processor ?
+    SAT_VoiceContext* context = getVoiceContext();
+    context->oversample = AOversample;
+    context->buffersize = ABufferSize;
+    SAT_PRINT("oversample %i\n",AOversample);
+    SAT_PRINT("buffersize %i\n",ABufferSize);
   }
 
   //----------
@@ -65,6 +72,13 @@ public:
 //------------------------------
 public:
 //------------------------------
+
+  // void activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) {
+  //   //setOversample(2);
+  //   SAT_VoiceProcessor::activate(sample_rate,min_frames_count,max_frames_count);
+  // }
+
+  //----------
 
   void process(SAT_ProcessContext* AContext) override {
     SAT_VoiceProcessor::process(AContext);
@@ -91,7 +105,8 @@ class sa_synth_plugin
 private:
 //------------------------------
 
-  sa_synth_voice_processor* MProcessor = nullptr;
+  sa_synth_voice_processor* MProcessor    = nullptr;
+  SAT_VoicesWidget*         MVoicesWidget = nullptr;
 
   uint64_t    MTrackFlags                 = 0;
   char        MTrackName[CLAP_NAME_SIZE]  = {0};
@@ -101,8 +116,6 @@ private:
   bool        MTrackIsReturnTrack         = false;
   bool        MTrackIsBus                 = false;
   bool        MTrackIsMaster              = false;
-
-  SAT_VoicesWidget* voices_widget = nullptr;
 
 //------------------------------
 public:
@@ -123,15 +136,11 @@ public:
     registerExtension(CLAP_EXT_TRACK_INFO);
     appendClapNoteInputPort("In");
     appendStereoAudioOutputPort("Out");
-    MProcessor = new sa_synth_voice_processor(this);
+    MProcessor = new sa_synth_voice_processor(this,2,4096);
     setProcessor(MProcessor);
     MProcessor->init(getClapPlugin(),getClapHost());
-    #ifdef SAT_VOICE_PROCESSOR_THREADED
-      MProcessor->setProcessThreaded(true);
-    #else
-      MProcessor.setProcessThreaded(false);
-    #endif
-    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_BLOCK);
+    MProcessor->setProcessThreaded(true);
+    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
     sa_synth_setup_parameters(this);
     #ifndef SAT_NO_GUI
       setInitialEditorSize(SA_SYNTH_EDITOR_WIDTH,SA_SYNTH_EDITOR_HEIGHT,SA_SYNTH_EDITOR_SCALE,true);
@@ -204,10 +213,16 @@ public: // preset load
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) final {
     if (location_kind == CLAP_PRESET_DISCOVERY_LOCATION_FILE) {
-      loadPresetFromFile(location,load_key);
+      bool loaded = loadPresetFromFile(location,load_key);
+      const clap_host_t* claphost = getClapHost();
+      SAT_Assert(claphost);
       SAT_Host* host = getHost();
-      if (host && host->ext.preset_load) host->ext.preset_load->loaded(getClapHost(),location_kind,location,load_key);
-      return true;
+      SAT_Assert(host);
+      if (host->ext.preset_load) {
+        if (loaded) host->ext.preset_load->loaded(claphost,location_kind,location,load_key);
+        else host->ext.preset_load->on_error(claphost,location_kind,location,load_key,0,"error loading preset");
+      }
+      return loaded;
     }
     return false;
   }
@@ -265,17 +280,17 @@ public: // timer
       bool changed = false;
       for (uint32_t i=0; i<SA_SYNTH_MAX_VOICES; i++) {
         uint32_t state = MProcessor->getVoiceState(i);
-        if (state != voices_widget->getVoiceState(i)) {
+        if (state != MVoicesWidget->getVoiceState(i)) {
           //SAT_TRACE;
           changed = true;
-          voices_widget->setVoiceState(i,state);
+          MVoicesWidget->setVoiceState(i,state);
         }
       }
-      voices_widget->setNumPlayingVoices(MProcessor->getNumPlayingVoices());
-      voices_widget->setNumReleasedVoices(MProcessor->getNumReleasedVoices());
+      MVoicesWidget->setNumPlayingVoices(MProcessor->getNumPlayingVoices());
+      MVoicesWidget->setNumReleasedVoices(MProcessor->getNumReleasedVoices());
       if (changed) {
         //SAT_TRACE;
-        voices_widget->do_Widget_redraw(voices_widget);
+        MVoicesWidget->do_Widget_redraw(MVoicesWidget);
       }
     }
 

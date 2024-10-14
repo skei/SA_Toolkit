@@ -26,13 +26,16 @@ class SAT_Processor {
 protected:
 //------------------------------
 
-  SAT_ProcessorListener*  MListener       = nullptr;
-  SAT_AudioPortArray*     MAudioInputs    = nullptr;
-  SAT_AudioPortArray*     MAudioOutputs   = nullptr;
-  SAT_NotePortArray*      MNoteInputs     = nullptr;
-  SAT_NotePortArray*      MNoteOutputs    = nullptr;
-  SAT_ParameterArray*     MParameters     = nullptr;
-  SAT_ProcessContext*     MProcessContext = nullptr; // valud during process() calls
+  SAT_ProcessorListener*  MListener           = nullptr;
+  SAT_AudioPortArray*     MAudioInputs        = nullptr;
+  SAT_AudioPortArray*     MAudioOutputs       = nullptr;
+  SAT_NotePortArray*      MNoteInputs         = nullptr;
+  SAT_NotePortArray*      MNoteOutputs        = nullptr;
+  SAT_ParameterArray*     MParameters         = nullptr;
+  SAT_ProcessContext*     MProcessContext     = nullptr; // valud during process() calls
+
+  uint32_t                MMaxBufferSize      = 0;
+  uint32_t                MOverSample         = 1;
 
 //------------------------------
 public:
@@ -69,6 +72,14 @@ public:
   uint32_t                getNumParameters()                  { return MParameters->size(); }
   SAT_Parameter*          getParameter(uint32_t AIndex)       { return MParameters->getItem(AIndex); }
   sat_param_t             getParameterValue(uint32_t AIndex)  { return MParameters->getItem(AIndex)->getValue(); }
+
+  void setMaxBufferSize(uint32_t ASize) {
+    MMaxBufferSize = ASize;
+  }
+
+  void setOversample(uint32_t AFactor) {
+    MOverSample = AFactor;
+  }
 
 //------------------------------
 public: // events

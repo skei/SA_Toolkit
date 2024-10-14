@@ -24,15 +24,23 @@ struct sa_synth_delay_loop_fx {
   sat_sample_t current = 0.0;
   sat_sample_t gain = 0.0;
 
+  //----------
+
   sat_sample_t process(sat_sample_t x) {
+
+    // gain
+    x *= 1.0 + gain;
+
+    // clip
+    x = SAT_Clamp(x,-1,1);
+    // x = (x * 1.5) - ((x * x * x) * 0.5);
+    //x = (x / (1.0 + 0.28 * (x * x)));
+
+    // filter
     current += ((x - current) * factor);
+
     return current;
-    // double v = current;
-    // v *= gain;
-    // v = SAT_Clamp(v,-1,1);
-    // v = (v * 1.5) - ((v * v * v) * 0.5);
-    // v = (v / (1.0 + 0.28 * (v * v)));
-    // return v;
+
   }
 
 };
@@ -55,21 +63,20 @@ class sa_synth_res {
 private:
 //------------------------------
 
-  double          MSampleRate       = 0.0;
-  double          MDelayLength      = 0.0;
+  double                  MSampleRate       = 0.0;
+  double                  MDelayLength      = 0.0;
+  sa_synth_delay_loop_fx  MImpulseFilter    = {};
+  sa_synth_delay          MDelay            = {};
+  uint32_t                MType             = 0;
 
-  uint32_t        MType             = 0;
-  
-  sa_synth_delay  MDelay            = {};
-  sat_param_t     par_impulse_freq  = 0.0;
-  sat_param_t     par_feedback      = 0.0;
-  sat_param_t     par_damping_freq  = 0.0;
-  sat_param_t     par_gain          = 0.0;
+  sat_param_t             par_impulse_freq  = 0.0;
+  sat_param_t             par_feedback      = 0.0;
+  sat_param_t             par_damping_freq  = 0.0;
+  sat_param_t             par_gain          = 0.0;
 
-  sat_sample_t    imp_factor        = 0.0;
-  sat_sample_t    imp_current       = 0.0;
+  sat_sample_t            imp_factor        = 0.0;
+  sat_sample_t            imp_current       = 0.0;
 
-  sa_synth_delay_loop_fx  MImpFx    = {};
 
 
 //------------------------------
@@ -109,7 +116,7 @@ public:
   }
 
   void setGain(double AGain) {
-    par_gain = AGain;
+    par_gain = (AGain * AGain * AGain * AGain * AGain);
   }
 
   void setType(uint32_t AType) {
@@ -162,19 +169,19 @@ public:
     imp_current += ((AInput - imp_current) * factor);
     sat_sample_t in = imp_current;
 
-    MDelay.getLoopFX()->factor = par_damping_freq;
-    MDelay.getLoopFX()->gain = (par_gain * 0.5) + 1.0;
+    MImpulseFilter.factor = par_impulse_freq;
+    MImpulseFilter.gain = 1.0;//par_gain;
+    in = MImpulseFilter.process(in);
 
-    if ((MType == 0) && MDelay.hasWrapped()) {
-      return MDelay.process(0.0,MDelayLength,par_feedback/*,AOffset*/);
+    MDelay.getLoopFX()->factor = par_damping_freq;
+    MDelay.getLoopFX()->gain = par_gain;//(par_gain * 0.5) + 1.0;
+
+    if (MDelay.hasWrapped()) {
+      if (MType == 0) in = 0.0;
     }
-    else {
-      MDelay.process(in,MDelayLength,par_feedback/*,AOffset*/);
-      //return in * factor;
-      MImpFx.factor = par_damping_freq;
-      MImpFx.gain = (par_gain * 0.5) + 1.0;
-      return MImpFx.process(in);
-    }
+
+    return MDelay.process(in,MDelayLength,par_feedback/*,AOffset*/);
+
 
   }
 

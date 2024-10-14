@@ -2,7 +2,7 @@
 #define sat_math_included
 //----------------------------------------------------------------------
 
-// TODO: templatize..
+// TODO: templatize?
 
 //
 
@@ -10,6 +10,30 @@
 #include <stdlib.h> // abs
 
 #include "sat.h"
+
+//----------------------------------------------------------------------
+
+bool    SAT_AlmostEqual(double f1, double f2, double tol);
+double  SAT_Average(const unsigned int n, const double* ar);
+double  SAT_CalcRMS(const unsigned int n, const double* ar);
+double  SAT_Clamp(const double input, const double limit);
+double  SAT_Clamp(const double input, const double minval, const double maxval );
+double  SAT_Clip(double x, double l, double h);
+double  SAT_Curve(double x, double t);
+double  SAT_CurveSigned(double x, double t);
+double  SAT_Fract(const double value);
+double  SAT_Fract(const double value, double* intpart);
+double  SAT_Max(const double a, const double b);
+double  SAT_Min(const double a, const double b);
+double  SAT_Modulo(double x, double y);
+double  SAT_Quantize(double AValue, int32_t ASteps);
+double  SAT_Round(const double v);
+double  SAT_Sigmoid(double x);
+double  SAT_Sign(const double v, const double def=0.0);
+double  SAT_Sinc(double x);
+double  SAT_Sqr(double x);
+double  SAT_Trunc(const double v);
+double  SAT_Wrap(double v, double lo, double hi);
 
 //----------------------------------------------------------------------
 
@@ -105,7 +129,6 @@ double SAT_Curve(double x, double t) {
   double a = ( 1.0f - 1.0f/t );
   return x / (x+a * (x-1) );
 }
-
 
 //----------
 
@@ -291,15 +314,15 @@ template <typename T> int sgn(T val) {
   SAT_Sign(-1.5) = -1
 */
 
-double SAT_Sign(const double v, const double def=0.0f) {
+double SAT_Sign(const double v, const double def/*=0.0*/) {
   //union {
   //  int32_t i;
   //  float f;
   //} u;
   //u.f = v;
   //return (1 | (u.i >> 31));
-  if (v < 0.0f) return -1.0f;
-  else if (v > 0.0f) return 1.0f;
+  if (v < 0.0) return -1.0;
+  else if (v > 0.0) return 1.0;
   else return def;
 }
 
@@ -456,6 +479,14 @@ double SAT_Wrap(double v, double lo, double hi) {
 //  return 440 * pow(2.0,(ANote-69)*SAT_INV12F);
 //  //return 440 * KPowF2(2.0,(ANote-69)*SAT_INV12F);  // too much error for notetohz
 //}
+
+//----------------------------------------------------------------------
+
+double SAT_CurveSigned(double x, double t) {
+  double s = SAT_Sign(x);
+  double v = SAT_Curve( abs(x), t );
+  return v * s;
+}
 
 //----------------------------------------------------------------------
 #endif
