@@ -787,7 +787,7 @@ public:
       // flt
       //------------------------------
 
-      SAT_VisualWidget* flt1_panel = new SAT_VisualWidget(SAT_Rect(225,180+20,155,75));
+      SAT_VisualWidget* flt1_panel = new SAT_VisualWidget(SAT_Rect(225,200,205,75));
       main_panel->appendChild(flt1_panel);
       flt1_panel->setFillBackground(false);
       flt1_panel->setDrawBorder(true);
@@ -839,7 +839,7 @@ public:
       // env
       //------------------------------
 
-      SAT_VisualWidget* env1_panel = new SAT_VisualWidget(SAT_Rect(390,180+20,205,75));
+      SAT_VisualWidget* env1_panel = new SAT_VisualWidget(SAT_Rect(390+50,180+20,205,75));
       main_panel->appendChild(env1_panel);
       env1_panel->setFillBackground(false);
       env1_panel->setDrawBorder(true);

@@ -12,6 +12,8 @@
   #include "plugin/sat_editor.h"
 #endif
 
+//----------
+
 #define SA_SYNTH_MAX_VOICES    256
 #define SA_SYNTH_EDITOR_WIDTH  730
 #define SA_SYNTH_EDITOR_HEIGHT 430
@@ -20,6 +22,9 @@
 #include "sa_synth/sa_synth_parameters.h"
 #include "sa_synth/sa_synth_voice.h"
 
+#ifndef SAT_NO_GUI
+  #include "sa_synth/sa_synth_widgets.h"
+#endif
 //----------------------------------------------------------------------
 //
 // descriptor

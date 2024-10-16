@@ -30,31 +30,107 @@ private:
   sat_sample_t        MSampleRate   = 0.0;
   uint32_t            MOverSample   = 1;
   uint32_t            MBufferSize   = 1;
+  uint32_t            MNoteKey      = 0;
+  double              MNoteVelocity = 0.0;
 
   sa_synth_osc        MOsc1         = {};
   sa_synth_osc        MOsc2         = {};
   sa_synth_res        MRes1         = {};
   sa_synth_res        MRes2         = {};
-
   sa_synth_flt        MFlt1         = {};
   sa_synth_env        MEnv1         = {};
 
-  uint32_t            MKey          = 0;
-  double              MVelocity     = 0.0;
-
-  sat_sample_t        MOsc1_out     = 0.0;
-  sat_sample_t        MOsc2_out     = 0.0;
-  sat_sample_t        MRes1_out     = 0.0;
-  sat_sample_t        MRes2_out     = 0.0;
-
-  // sat_param_t         MVoiceParam[SA_SYNTH_PARAM_COUNT] = {};
-  
+//sat_param_t         MVoiceParam[SA_SYNTH_PARAM_COUNT] = {};
   sat_param_t         MVoiceMod[SA_SYNTH_PARAM_COUNT]   = {};
   sat_param_t         MVoiceExpr[16]                    = {}; // clap has 7 expressions defined..
+
+  sat_sample_t        osc1_out      = 0.0;
+  sat_sample_t        osc2_out      = 0.0;
+  sat_sample_t        res1_out      = 0.0;
+  sat_sample_t        res2_out      = 0.0;
 
 //------------------------------
 private:
 //------------------------------
+
+  sat_param_t   o1_squ        = 0.0;
+  sat_param_t   o1_tri        = 0.0;
+  sat_param_t   o1_sin        = 0.0;
+  sat_param_t   o1_width      = 0.0;
+  sat_param_t   o1_amt        = 0.0;
+  sat_param_t   o1_in1        = 0.0;
+  sat_param_t   o1_in2        = 0.0;
+  sat_param_t   o1_in3        = 0.0;
+  sat_param_t   o1_in4        = 0.0;
+  sat_param_t   o1_ina        = 0.0;
+  sat_param_t   o1_inn        = 0.0;
+  sat_param_t   o1_oct        = 0.0;
+  sat_param_t   o1_semi       = 0.0;
+  sat_param_t   o1_cent       = 0.0;
+  uint32_t      o1_type       = 0;
+
+  sat_param_t   o2_squ        = 0.0;
+  sat_param_t   o2_tri        = 0.0;
+  sat_param_t   o2_sin        = 0.0;
+  sat_param_t   o2_width      = 0.0;
+  sat_param_t   o2_amt        = 0.0;
+  sat_param_t   o2_in1        = 0.0;
+  sat_param_t   o2_in2        = 0.0;
+  sat_param_t   o2_in3        = 0.0;
+  sat_param_t   o2_in4        = 0.0;
+  sat_param_t   o2_ina        = 0.0;
+  sat_param_t   o2_inn        = 0.0;
+  sat_param_t   o2_oct        = 0.0;
+  sat_param_t   o2_semi       = 0.0;
+  sat_param_t   o2_cent       = 0.0;
+  uint32_t      o2_type       = 0;
+
+  sat_param_t   r1_imp_freq   = 0.0;
+  sat_param_t   r1_fb         = 0.0;
+  sat_param_t   r1_damp_freq  = 0.0;
+  sat_param_t   r1_gain       = 0.0;
+  sat_param_t   r1_amt        = 0.0;
+  sat_param_t   r1_in1        = 0.0;
+  sat_param_t   r1_in2        = 0.0;
+  sat_param_t   r1_in3        = 0.0;
+  sat_param_t   r1_in4        = 0.0;
+  sat_param_t   r1_ina        = 0.0;
+  sat_param_t   r1_inn        = 0.0;
+  sat_param_t   r1_type       = 0.0;
+  sat_param_t   r1_oct        = 0.0;
+  sat_param_t   r1_semi       = 0.0;
+  sat_param_t   r1_cent       = 0.0;
+
+  sat_param_t   r2_imp_freq   = 0.0;
+  sat_param_t   r2_fb         = 0.0;
+  sat_param_t   r2_damp_freq  = 0.0;
+  sat_param_t   r2_gain       = 0.0;
+  sat_param_t   r2_amt        = 0.0;
+  sat_param_t   r2_in1        = 0.0;
+  sat_param_t   r2_in2        = 0.0;
+  sat_param_t   r2_in3        = 0.0;
+  sat_param_t   r2_in4        = 0.0;
+  sat_param_t   r2_ina        = 0.0;
+  sat_param_t   r2_inn        = 0.0;
+  sat_param_t   r2_type       = 0.0;
+  sat_param_t   r2_oct        = 0.0;
+  sat_param_t   r2_semi       = 0.0;
+  sat_param_t   r2_cent       = 0.0;
+
+  sat_param_t   flt_type      = 0.0;
+  sat_param_t   flt_freq      = 0.0;
+  sat_param_t   flt_q         = 0.0;
+  sat_param_t   flt_gain      = 0.0;
+
+  sat_param_t   env_a         = 0.0;
+  sat_param_t   env_d         = 0.0;
+  sat_param_t   env_s         = 0.0;
+  sat_param_t   env_r         = 0.0;
+
+  sat_param_t   o1_mix        = 0.0;
+  sat_param_t   o2_mix        = 0.0;
+  sat_param_t   r1_mix        = 0.0;
+  sat_param_t   r2_mix        = 0.0;
 
 //------------------------------
 private:
@@ -77,20 +153,6 @@ private:
     //return getParameterValue(AIndex);
   }
 
-  //----------
-
-  void update_tuning() {
-    // prepare for next sample
-    // sat_param_t tuning1 = (osc1_oct * 12.0) + osc1_semi + osc1_cent;
-    // tuning1 += e_tuning;
-    // sat_param_t hz1 = SAT_NoteToHz(MKey + tuning1);
-    // MOscillator1.setFrequency(hz1);
-    // sat_param_t tuning2 = (osc2_oct * 12.0) + osc2_semi + osc2_cent;
-    // tuning2 += (e_tuning + fm2);
-    // sat_param_t hz2 = SAT_NoteToHz(MKey + tuning2);
-    // MOscillator2.setFrequency(hz2);
-  }
-
 //------------------------------
 public:
 //------------------------------
@@ -100,8 +162,7 @@ public:
     MContext = AContext;
     MOverSample = AContext->oversample;
     MBufferSize = AContext->buffersize;
-    // SAT_PRINT("oversample %i buffersize %i\n",MOverSample,MBufferSize);
-    MSampleRate = AContext->sample_rate;// * MOverSample;
+    MSampleRate = AContext->sample_rate; // * MOverSample;
     MOsc1.setSampleRate(MSampleRate);
     MOsc2.setSampleRate(MSampleRate);
     MRes1.setSampleRate(MSampleRate);
@@ -119,8 +180,8 @@ public:
   //----------
 
   uint32_t noteOn(uint32_t AIndex, double AValue) {
-    MKey = AIndex;
-    MVelocity = AValue;
+    MNoteKey = AIndex;
+    MNoteVelocity = AValue;
     MOsc1.noteOn(AIndex,AValue);
     MOsc2.noteOn(AIndex,AValue);
     MRes1.noteOn(AIndex,AValue);
@@ -153,16 +214,15 @@ public:
 
   //----------
 
-  // CLAP_NOTE_EXPRESSION_VOLUME      // with 0 < x <= 4, plain = 20 * log(x)
-  // CLAP_NOTE_EXPRESSION_PAN         // pan, 0 left, 0.5 center, 1 right
-  // CLAP_NOTE_EXPRESSION_TUNING      // Relative tuning in semitones, from -120 to +120
+  // CLAP_NOTE_EXPRESSION_VOLUME      // 0 < x <= 4, plain = 20 * log(x)
+  // CLAP_NOTE_EXPRESSION_PAN         // 0 left, 0.5 center, 1 right
+  // CLAP_NOTE_EXPRESSION_TUNING      // semitones, from -120 to +120
   // CLAP_NOTE_EXPRESSION_VIBRATO     // 0..1
   // CLAP_NOTE_EXPRESSION_EXPRESSION
   // CLAP_NOTE_EXPRESSION_BRIGHTNESS
   // CLAP_NOTE_EXPRESSION_PRESSURE
 
   void noteExpression(uint32_t AIndex, sat_param_t AValue) {
-    //SAT_PRINT("AIndex %i AValue %.3f\n",AIndex,AValue);
     MVoiceExpr[AIndex] = AValue;
     MOsc1.noteExpression(AIndex,AValue);
     MOsc2.noteExpression(AIndex,AValue);
@@ -175,7 +235,6 @@ public:
   //----------
 
   void parameter(uint32_t AIndex, sat_param_t AValue) {
-    //SAT_PRINT("%i = %.3f\n",AIndex,AValue);
     //MVoiceParam[AIndex] = AValue;
   }
 
@@ -187,46 +246,24 @@ public:
 
   //----------
 
-  // per audioblock slice, inbetween events..
-
   uint32_t process(uint32_t AState, uint32_t AOffset, uint32_t ALength) {
     sat_sample_t* buffer = MContext->voice_buffer;
-    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     // buffer += (MIndex * MBufferSize);
+    buffer += (MIndex * SAT_PLUGIN_MAX_BLOCK_SIZE);
     buffer += AOffset;
     if ((AState == SAT_VOICE_PLAYING) || (AState == SAT_VOICE_RELEASED)) {
-      SAT_ParameterArray* params = MContext->process_context->parameters;
-      SAT_Assert(params);
-      sat_param_t o1_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_O1);
-      sat_param_t o2_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_O2);
-      sat_param_t r1_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_R1);
-      sat_param_t r2_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_R2);
       prepare_process();
       for (uint32_t i=0; i<ALength; i++) {
-        // --- per sample ---
         sat_sample_t out = 0.0;
-        // process
-        MOsc1_out = process_osc1();
-        MOsc2_out = process_osc2();
-        MRes1_out = process_res1();
-        MRes2_out = process_res2();
-        // mix
-        out = (MOsc1_out * o1_mix) + (MOsc2_out * o2_mix) + (MRes1_out * r1_mix) + (MRes2_out * r2_mix);
-        out *= MVelocity;
-        // flt.. env.. out
+        osc1_out = process_osc1();
+        osc2_out = process_osc2();
+        res1_out = process_res1();
+        res2_out = process_res2();
+        out = (osc1_out * o1_mix) + (osc2_out * o2_mix) + (res1_out * r1_mix) + (res2_out * r2_mix);
+        out *= MNoteVelocity;
         out = process_flt1(out);
         out *= process_env1();
         *buffer++ = out;
-        // prepare for next sample
-        // sat_param_t tuning1 = (osc1_oct * 12.0) + osc1_semi + osc1_cent;
-        // tuning1 += e_tuning;
-        // sat_param_t hz1 = SAT_NoteToHz(MKey + tuning1);
-        // MOscillator1.setFrequency(hz1);
-        // sat_param_t tuning2 = (osc2_oct * 12.0) + osc2_semi + osc2_cent;
-        // tuning2 += (e_tuning + fm2);
-        // sat_param_t hz2 = SAT_NoteToHz(MKey + tuning2);
-        // MOscillator2.setFrequency(hz2);
-        // --- per sample ---
       }
     }
     else {
@@ -241,84 +278,6 @@ public:
   uint32_t processSlice(uint32_t AState, uint32_t AOffset) {
     return process(AState,AOffset,SAT_AUDIO_QUANTIZED_SIZE);
   }
-
-//------------------------------
-private:
-//------------------------------
-
-  sat_param_t o1_squ        = 0.0;
-  sat_param_t o1_tri        = 0.0;
-  sat_param_t o1_sin        = 0.0;
-  sat_param_t o1_width      = 0.0;
-  sat_param_t o1_amt        = 0.0;
-  sat_param_t o1_in1        = 0.0;
-  sat_param_t o1_in2        = 0.0;
-  sat_param_t o1_in3        = 0.0;
-  sat_param_t o1_in4        = 0.0;
-  sat_param_t o1_ina        = 0.0;
-  sat_param_t o1_inn        = 0.0;
-  sat_param_t o1_oct        = 0.0;
-  sat_param_t o1_semi       = 0.0;
-  sat_param_t o1_cent       = 0.0;
-  uint32_t    o1_type       = 0;
-
-  sat_param_t o2_squ        = 0.0;
-  sat_param_t o2_tri        = 0.0;
-  sat_param_t o2_sin        = 0.0;
-  sat_param_t o2_width      = 0.0;
-  sat_param_t o2_amt        = 0.0;
-  sat_param_t o2_in1        = 0.0;
-  sat_param_t o2_in2        = 0.0;
-  sat_param_t o2_in3        = 0.0;
-  sat_param_t o2_in4        = 0.0;
-  sat_param_t o2_ina        = 0.0;
-  sat_param_t o2_inn        = 0.0;
-  sat_param_t o2_oct        = 0.0;
-  sat_param_t o2_semi       = 0.0;
-  sat_param_t o2_cent       = 0.0;
-  uint32_t    o2_type       = 0;
-
-  sat_param_t r1_imp_freq   = 0.0;
-  sat_param_t r1_fb         = 0.0;
-  sat_param_t r1_damp_freq  = 0.0;
-  sat_param_t r1_gain       = 0.0;
-  sat_param_t r1_amt        = 0.0;
-  sat_param_t r1_in1        = 0.0;
-  sat_param_t r1_in2        = 0.0;
-  sat_param_t r1_in3        = 0.0;
-  sat_param_t r1_in4        = 0.0;
-  sat_param_t r1_ina        = 0.0;
-  sat_param_t r1_inn        = 0.0;
-  sat_param_t r1_type       = 0.0;
-  sat_param_t r1_oct        = 0.0;
-  sat_param_t r1_semi       = 0.0;
-  sat_param_t r1_cent       = 0.0;
-
-  sat_param_t r2_imp_freq   = 0.0;
-  sat_param_t r2_fb         = 0.0;
-  sat_param_t r2_damp_freq  = 0.0;
-  sat_param_t r2_gain       = 0.0;
-  sat_param_t r2_amt        = 0.0;
-  sat_param_t r2_in1        = 0.0;
-  sat_param_t r2_in2        = 0.0;
-  sat_param_t r2_in3        = 0.0;
-  sat_param_t r2_in4        = 0.0;
-  sat_param_t r2_ina        = 0.0;
-  sat_param_t r2_inn        = 0.0;
-  sat_param_t r2_type       = 0.0;
-  sat_param_t r2_oct        = 0.0;
-  sat_param_t r2_semi       = 0.0;
-  sat_param_t r2_cent       = 0.0;
-
-  sat_param_t flt_type      = 0.0;
-  sat_param_t flt_freq      = 0.0;
-  sat_param_t flt_q         = 0.0;
-  sat_param_t flt_gain      = 0.0;
-
-  sat_param_t env_a         = 0.0;
-  sat_param_t env_d         = 0.0;
-  sat_param_t env_s         = 0.0;
-  sat_param_t env_r         = 0.0;
 
 //------------------------------
 private:
@@ -400,8 +359,6 @@ private:
     env_s         = getParameterValue(SA_SYNTH_PARAM_ENV1_SUS);
     env_r         = getParameterValue(SA_SYNTH_PARAM_ENV1_REL);
 
-    //
-
     MOsc1.setPulseWidth(o1_width);
     MOsc1.setSawSqu(o1_squ);
     MOsc1.setSquTri(o1_tri);
@@ -426,32 +383,32 @@ private:
 
     flt_freq = (flt_freq * flt_freq * flt_freq);
     flt_q = (flt_q * flt_q * flt_q);
-
     MFlt1.set(flt_type,flt_freq,flt_q,flt_gain);
     MFlt1.update_coeffs();
 
     MEnv1.setADSR(env_a,env_d,env_s,env_r);
 
+    o1_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_O1);
+    o2_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_O2);
+    r1_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_R1);
+    r2_mix = getModulatedValue(SA_SYNTH_PARAM_MIX_R2);
+
   }
 
   //----------
 
-  /*
-    parameters won't change during the audio slice,
-    so we don't need to read and set it for every sample
-  */
-
   sat_sample_t process_osc1() {
-    sat_sample_t audio  = 0.0;
-    sat_sample_t rnd    = SAT_RandomRange(-1.0,1.0);
-    sat_sample_t o1_in = (o1_in1 * MOsc1_out) + (o1_in2 * MOsc2_out) + (o1_in3 * MRes1_out) + (o1_in4 * MRes2_out) + (o1_ina * audio) + (o1_inn * rnd);
+    sat_sample_t audio = 0.0;
+    sat_sample_t rnd = SAT_RandomRange(-1.0,1.0);
+    sat_sample_t o1_in = (o1_in1 * osc1_out) + (o1_in2 * osc2_out) + (o1_in3 * res1_out) + (o1_in4 * res2_out) + (o1_ina * audio) + (o1_inn * rnd);
     o1_in *= o1_amt;
     sat_param_t o1_tuning = (o1_oct * 12.0) + o1_semi + o1_cent;
     o1_tuning += MVoiceExpr[CLAP_NOTE_EXPRESSION_TUNING];
+    sat_param_t hz1 = SAT_NoteToHz(MNoteKey + o1_tuning);
+    if (hz1 < 20.0) hz1 = 20.0;
+    MOsc1.setFrequency(hz1);
     sat_sample_t mod = 0.0;
     sat_sample_t ofs = 0.0;
-    // pre modulation (phase)
-    // uint32_t o1_type = getParameterValue(SA_SYNTH_PARAM_OSC1_TYPE);
     switch (o1_type) {
       case SA_SYNTH_OSC_PHASE_MOD: {
         mod = ((o1_in * 2.5) * o1_amt);
@@ -463,20 +420,13 @@ private:
         break;
       }
     }
-    // process
-    sat_param_t hz1 = SAT_NoteToHz(MKey + o1_tuning);
-    if (hz1 < 20.0) hz1 = 20.0;
-    MOsc1.setFrequency(hz1);
     sat_sample_t osc1 = MOsc1.process_mod(audio,mod,ofs);
-    // post modulation (wave)
     switch (o1_type) {
       case SA_SYNTH_OSC_RING_MOD: {
-        //osc1 *= (o1_in * o1_amt);
         osc1 = SAT_Interpolate_Linear(o1_amt,osc1,(osc1 * o1_in));
         break;
       }
       case SA_SYNTH_OSC_AMPL_MOD: {
-        //osc1 *= (abs(o1_in) * o1_amt);
         osc1 = SAT_Interpolate_Linear(o1_amt,osc1,(osc1 * abs(o1_in)));
         break;
       }
@@ -487,8 +437,6 @@ private:
         break;
       }
     }
-    //osc1 = SAT_CurveSigned(osc1,o1_ina);
-    // out
     osc1 = SAT_Clamp(osc1,-1,1);
     return osc1;
   }
@@ -497,15 +445,16 @@ private:
 
   sat_sample_t process_osc2() {
     sat_sample_t audio  = 0.0;
-    sat_sample_t rnd    = SAT_RandomRange(-1.0,1.0);
-    sat_sample_t o2_in    = (o2_in1 * MOsc1_out) + (o2_in2 * MOsc2_out) + (o2_in3 * MRes1_out) + (o2_in4 * MRes2_out) + (o2_ina * audio) + (o2_inn * rnd);
+    sat_sample_t rnd = SAT_RandomRange(-1.0,1.0);
+    sat_sample_t o2_in = (o2_in1 * osc1_out) + (o2_in2 * osc2_out) + (o2_in3 * res1_out) + (o2_in4 * res2_out) + (o2_ina * audio) + (o2_inn * rnd);
     o2_in *= o2_amt;
     sat_param_t o2_tuning = (o2_oct * 12.0) + o2_semi + o2_cent;
-    o2_tuning += MVoiceExpr[CLAP_NOTE_EXPRESSION_TUNING];;
+    o2_tuning += MVoiceExpr[CLAP_NOTE_EXPRESSION_TUNING];
+    sat_param_t hz2 = SAT_NoteToHz(MNoteKey + o2_tuning);
+    if (hz2 < 20.0) hz2 = 20.0;
+    MOsc2.setFrequency(hz2);
     sat_sample_t mod = 0.0;
     sat_sample_t ofs = 0.0;
-    // pre modulation (phase)
-    // uint32_t o2_type = getParameterValue(SA_SYNTH_PARAM_OSC2_TYPE);
     switch (o2_type) {
       case SA_SYNTH_OSC_PHASE_MOD: {
         mod = ((o2_in * 2.5) * o2_amt);
@@ -516,20 +465,13 @@ private:
         break;
       }
     }
-    // process
-    sat_param_t hz2 = SAT_NoteToHz(MKey + o2_tuning);
-    if (hz2 < 20.0) hz2 = 20.0;
-    MOsc2.setFrequency(hz2);
     sat_sample_t osc2 = MOsc2.process_mod(audio,mod,ofs);
-    // post modulation (wave)
     switch (o2_type) {
       case SA_SYNTH_OSC_RING_MOD: {
-        //osc2 *= (o2_in * o2_amt);
         osc2 = SAT_Interpolate_Linear(o2_amt,osc2,(osc2 * o2_in));
         break;
       }
       case SA_SYNTH_OSC_AMPL_MOD: {
-        //osc2 *= (abs(o2_in) * o2_amt);
         osc2 = SAT_Interpolate_Linear(o2_amt,osc2,(osc2 * abs(o2_in)));
         break;
       }
@@ -540,8 +482,6 @@ private:
         break;
       }
     }
-    //osc2 = SAT_CurveSigned(osc2,o2_ina);
-    // out
     osc2 = SAT_Clamp(osc2,-1,1);
     return osc2;
   }
@@ -549,28 +489,16 @@ private:
   //----------
 
   sat_sample_t process_res1() {
-    sat_sample_t audio  = 0.0;
-    sat_sample_t rnd    = SAT_RandomRange(-1.0,1.0);
-    sat_sample_t r1_in    = (r1_in1 * MOsc1_out) + (r1_in2 * MOsc2_out) + (r1_in3 * MRes1_out) + (r1_in4 * MRes2_out) + (r1_ina * audio) + (r1_inn * rnd);
-    //r1_in = SAT_Curve(r1_in,r1_ina);
+    sat_sample_t audio = 0.0;
+    sat_sample_t rnd = SAT_RandomRange(-1.0,1.0);
+    sat_sample_t r1_in = (r1_in1 * osc1_out) + (r1_in2 * osc2_out) + (r1_in3 * res1_out) + (r1_in4 * res2_out) + (r1_ina * audio) + (r1_inn * rnd);
     r1_in *= r1_amt;
     sat_param_t r1_tuning = (r1_oct * 12.0) + r1_semi + r1_cent;
     r1_tuning += MVoiceExpr[CLAP_NOTE_EXPRESSION_TUNING];;
-    //double offset = 0.0;
-    // pre modulation
-    // sat_param_t mod = 0.0;
-    // uint32_t r1_type = getParameterValue(SA_SYNTH_PARAM_RES1_TYPE);
-    // switch (r1_type) {
-    // }
-    // process
-    sat_param_t hz1 = SAT_NoteToHz(MKey + r1_tuning);
+    sat_param_t hz1 = SAT_NoteToHz(MNoteKey + r1_tuning);
     if (hz1 < 20.0) hz1 = 20.0;
     MRes1.setFrequency(hz1);
-    sat_sample_t res1 = MRes1.process(r1_in/*,offset*/);
-    // post modulation
-    // switch (r1_type) {
-    // }
-    // out
+    sat_sample_t res1 = MRes1.process(r1_in);
     res1 = SAT_Clamp(res1,-1,1);
     return res1;
   }
@@ -578,28 +506,16 @@ private:
   //----------
 
   sat_sample_t process_res2() {
-    sat_sample_t audio  = 0.0;
-    sat_sample_t rnd    = SAT_RandomRange(-1.0,1.0);
-    sat_sample_t r2_in    = (r2_in1 * MOsc1_out) + (r2_in2 * MOsc2_out) + (r2_in3 * MRes1_out) + (r2_in4 * MRes2_out) + (r2_ina * audio) + (r2_inn * rnd);
-    //r2_in = SAT_Curve(r2_in,r2_ina);
+    sat_sample_t audio = 0.0;
+    sat_sample_t rnd = SAT_RandomRange(-1.0,1.0);
+    sat_sample_t r2_in = (r2_in1 * osc1_out) + (r2_in2 * osc2_out) + (r2_in3 * res1_out) + (r2_in4 * res2_out) + (r2_ina * audio) + (r2_inn * rnd);
     r2_in *= r2_amt;
     sat_param_t r2_tuning = (r2_oct * 12.0) + r2_semi + r2_cent;
     r2_tuning += MVoiceExpr[CLAP_NOTE_EXPRESSION_TUNING];;
-    //double offset = 0.0;
-    // pre modulation
-    // sat_param_t mod = 0.0;
-    // uint32_t r2_type = getParameterValue(SA_SYNTH_PARAM_RES2_TYPE);
-    // switch (r2_type) {
-    // }
-    // process
-    sat_param_t hz2 = SAT_NoteToHz(MKey + r2_tuning);
+    sat_param_t hz2 = SAT_NoteToHz(MNoteKey + r2_tuning);
     if (hz2 < 20.0) hz2 = 20.0;
     MRes2.setFrequency(hz2);
-    sat_sample_t res2 = MRes2.process(r2_in/*,offset*/);
-    // post modulation
-    // switch (r2_type) {
-    // }
-    // out
+    sat_sample_t res2 = MRes2.process(r2_in);
     res2 = SAT_Clamp(res2,-1,1);
     return res2;
   }

@@ -12,13 +12,6 @@
 
 //----------
 
-// TODO:
-// find number of cpu cores..
-// (/base/system/sat_cpu.h)
-
-//#define SAT_VOICE_PROCESSOR_NUM_THREADS 12
-//#define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
-
 //typedef SAT_Queue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 //typedef SAT_AtomicQueue<SAT_Note,SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK> SAT_NoteQueue;
 typedef moodycamel::ReaderWriterQueue<SAT_Note> SAT_NoteQueue;
@@ -63,9 +56,8 @@ protected:
   #ifdef SAT_VOICE_PROCESSOR_THREADED
     #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
       const clap_host_thread_pool* MClapThreadPool = nullptr;
-    #else
-      SAT_ThreadPool* MThreadPool = nullptr;
     #endif
+    SAT_ThreadPool* MThreadPool = nullptr;
   #endif
 
 //------------------------------
@@ -126,50 +118,28 @@ public:
     //MVoiceContext.plugin = plugin;
     MClapPlugin = APlugin;
     MClapHost = AHost;
-
     SAT_Assert(APlugin);
     SAT_Assert(AHost);
-
-    // do we want to use threaded processing?
     #ifdef SAT_VOICE_PROCESSOR_THREADED
-      //if (MClapHost) {
-      
-        // check if our plugin supports the thread pool extension?
-
-        SAT_ClapPlugin* plugin = (SAT_ClapPlugin*)APlugin->plugin_data;
-        SAT_Assert(plugin);
-
-        // does the plugin support the clap thread pool extension
+      SAT_ClapPlugin* plugin = (SAT_ClapPlugin*)APlugin->plugin_data;
+      SAT_Assert(plugin);
+      #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
         // todo: if plugin->MSupportedExtensions.hasItem(CLAP_EXT_THREAD_POOL)
-
-        #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
-
-          if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
-            SAT_PRINT("clap threadpool\n");
-            MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
-          }
-
-        #else
-
-//        if (!MClapThreadPool) {
-          SAT_PRINT("sat threadpool\n");
-
-          //MThreadPool = new SAT_ThreadPool(this,SAT_VOICE_PROCESSOR_NUM_THREADS);    // !!!
-          
-          uint32_t numprocs = SAT_GetNumProcessors();
-          MThreadPool = new SAT_ThreadPool(this,numprocs);    // !!!
-
-          if (!MThreadPool) {
-            SAT_PRINT("no threadpool\n");
-          }
-//        }
-
-        #endif
-
-        // if not, setup our own threadpool
-
-
-      //}
+        if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
+          SAT_PRINT("use clap threadpool\n");
+          MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
+        }
+      #endif
+      //#else
+      if (!MClapThreadPool) {
+        SAT_PRINT("use sat_threadpool\n");
+        uint32_t numprocs = SAT_GetNumProcessors();
+        MThreadPool = new SAT_ThreadPool(this,numprocs); // SAT_VOICE_PROCESSOR_NUM_THREADS
+        if (!MThreadPool) {
+          SAT_PRINT("no threadpool\n");
+        }
+      }
+      //#endif
     #endif
   }
 

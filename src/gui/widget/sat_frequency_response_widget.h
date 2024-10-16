@@ -2,14 +2,12 @@
 #define sat_frequency_response_widget_included
 //----------------------------------------------------------------------
 
-#if 0
-
 // a mess..
 // in progress..
 
 #include "sat.h"
 #include "plugin/sat_parameter.h"
-#include "gui/widgets/sat_panel_widget.h"
+#include "gui/widget/sat_visual_widget.h"
 
 #define FFT_SIZE  128
 
@@ -19,22 +17,21 @@
 //
 //----------------------------------------------------------------------
 
-class SAT_FRTestFilter {
-private:
-  float value   = 0.0;
-  float factor  = 0.3;
-public:
-  void reset() {
-    value = 0.0;
-  }
-  float process(float AInput) {
-    value += (AInput - value) * factor;
-    return value;
-    //return AInput - value;
-    //return (value + AInput) * 0.5;
-  }
-};
-
+// class SAT_FRTestFilter {
+// private:
+//   float value   = 0.0;
+//   float factor  = 0.3;
+// public:
+//   void reset() {
+//     value = 0.0;
+//   }
+//   float process(float AInput) {
+//     value += (AInput - value) * factor;
+//     return value;
+//     //return AInput - value;
+//     //return (value + AInput) * 0.5;
+//   }
+// };
 
 //----------------------------------------------------------------------
 //
@@ -44,7 +41,7 @@ public:
 
 template <class PROC>
 class SAT_FrequencyResponseWidget
-: public SAT_PanelWidget {
+: public SAT_VisualWidget {
 
 //------------------------------
 private:
@@ -54,7 +51,7 @@ private:
   bool      MIsBipolar              = false;
   SAT_Color MLineColor              = SAT_White;
   SAT_Color MFillColor              = SAT_Grey;
-  PROC      MProcessor              = {};
+  PROC      MProc                   = {};
 
   float     MBuffer[FFT_SIZE]       = {0};
   float     MRBuffer[FFT_SIZE]      = {0};
@@ -65,12 +62,10 @@ public:
 //------------------------------
 
   SAT_FrequencyResponseWidget(SAT_Rect ARect)
-  : SAT_PanelWidget(ARect) {
+  : SAT_VisualWidget(ARect) {
     setName("SAT_FrequencyResponseWidget");
     setHint("SAT_FrequencyResponseWidget");
-
     //do_fft();
-
   }
   
   //----------
@@ -156,11 +151,11 @@ public:
 //------------------------------
 
   void do_fft() {
-    MProcessor.reset();
+    MProc.reset();
     for (uint32_t i=0; i<FFT_SIZE; i++) {
       float v = 0.0;
       if (i == 0) v = 1.0;
-      MRBuffer[i] = MProcessor.process(v);
+      MRBuffer[i] = MProc.process(v);
       MIBuffer[i] = 0.0;
     }
     fft(FFT_SIZE,MRBuffer,MIBuffer);
@@ -224,15 +219,13 @@ public:
     drawDropShadow(AContext);
     fillBackground(AContext);
     drawFrequencyResponse(AContext);
-    paintChildWidgets(AContext);
+    paintChildren(AContext);
     drawBorder(AContext);
   }
 
 };
 
 #undef FFT_SIZE
-
-#endif // 0
 
 //----------------------------------------------------------------------
 #endif

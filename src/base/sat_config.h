@@ -14,36 +14,37 @@
 //
 //----------------------------------------------------------------------
 
-#define SAT_AUDIO_QUANTIZED_SIZE                  32
-#define SAT_MAX_NAME_LENGTH                       64
-#define SAT_MAX_STRING_LENGTH                     256
-#define SAT_MAX_PATH_LENGTH                       512
-#define SAT_MODMATRIX_MAX_SRC_COUNT               32
-#define SAT_MODMATRIX_MAX_DST_COUNT               32
-#define SAT_MODMATRIX_MAX_MOD_COUNT               32
-#define SAT_PAINTER_CLIP_RECT_STACK_SIZE          256
-#define SAT_PARAMETER_NUM_VALUES                  16
-#define SAT_PLUGIN_MAX_BLOCK_SIZE                 4096
-#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK     1024
-#define SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK       1024
-#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK       32
-#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK        1024
-#define SAT_RENDERER_MAJOR_VERSION                3
-#define SAT_RENDERER_MINOR_VERSION                2
-#define SAT_THREAD_POOL_MAX_THREADS               32
-#define SAT_THREAD_POOL_MAX_VOICES                4096
-#define SAT_TWEEN_MAX_VALUES                      4
-#define SAT_TWEEN_CHAIN_QUEUE_SIZE                32
-#define SAT_VOICE_MAX_EVENTS_PER_BLOCK            1024
-#define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
+#define SAT_AUDIO_QUANTIZED_SIZE                    32
+#define SAT_MAX_NAME_LENGTH                         64
+#define SAT_MAX_STRING_LENGTH                       256
+#define SAT_MAX_PATH_LENGTH                         512
+#define SAT_MODMATRIX_MAX_SRC_COUNT                 32
+#define SAT_MODMATRIX_MAX_DST_COUNT                 32
+#define SAT_MODMATRIX_MAX_MOD_COUNT                 32
+#define SAT_PAINTER_CLIP_RECT_STACK_SIZE            256
+#define SAT_PARAMETER_NUM_VALUES                    16
+#define SAT_PLUGIN_MAX_BLOCK_SIZE                   4096
+#define SAT_RENDERER_MAJOR_VERSION                  3
+#define SAT_RENDERER_MINOR_VERSION                  2
+#define SAT_THREAD_POOL_MAX_THREADS                 256
+#define SAT_TWEEN_MAX_VALUES                        4
+#define SAT_WIDGET_NUM_VALUES                       16
+#define SAT_WINDOW_DBL_CLICK_MS                     200
+#define SAT_WINDOW_THREAD_KILL                      666
+#define SAT_WINDOW_THREAD_TIMER                     333
+#define SAT_WINDOW_BUFFER_MIN_SIZE                  256
+#define SAT_WINDOW_TIMER_MS                         20
+
+//#define SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK     1024
+//#define SAT_PLUGIN_MAX_MOD_EVENTS_PER_BLOCK       1024
+//#define SAT_PLUGIN_MAX_GUI_EVENTS_PER_BLOCK       32
+//#define SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK        1024
+//#define SAT_THREAD_POOL_MAX_VOICES                4096
+//#define SAT_TWEEN_CHAIN_QUEUE_SIZE                32
+//#define SAT_VOICE_MAX_EVENTS_PER_BLOCK            1024
+//#define SAT_VOICE_PROCESSOR_MAX_EVENTS_PER_BLOCK  1024
 //#define SAT_VOICE_PROCESSOR_NUM_THREADS           12
-#define SAT_WIDGET_NUM_VALUES                     16
-#define SAT_WINDOW_DBL_CLICK_MS                   200
-#define SAT_WINDOW_THREAD_KILL                    666
-#define SAT_WINDOW_THREAD_TIMER                   333
-#define SAT_WINDOW_BUFFER_MIN_SIZE                256
-#define SAT_WINDOW_DIRTY_QUEUE_SIZE               1024
-#define SAT_WINDOW_TIMER_MS                       20
+//#define SAT_WINDOW_DIRTY_QUEUE_SIZE               1024
 
 //----------------------------------------------------------------------
 //
