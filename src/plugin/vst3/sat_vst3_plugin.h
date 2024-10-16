@@ -5,10 +5,15 @@
 // clap-as-vst3
 // this is a mess.. work in progress..
 
-#define SAT_PLUGIN_MAX_EVENT_SIZE     256
-#define SAT_PLUGIN_MAX_PARAMETERS     256
-#define SAT_PLUGIN_VST3_MAX_NOTE_IDS  32
-#define SAT_PLUGIN_VST3_TIMER_MS      20
+//#define SAT_PLUGIN_MAX_EVENT_SIZE     256
+//#define SAT_PLUGIN_MAX_PARAMETERS     256
+
+#define SAT_VST3_MAX_PARAM_EVENTS_PER_BLOCK 1024
+#define SAT_VST3_MAX_EVENT_SIZE             256
+#define SAT_VST3_MAX_PARAMETERS             256
+#define SAT_PLUGIN_VST3_MAX_NOTE_IDS        32
+#define SAT_PLUGIN_VST3_TIMER_MS            20
+
 //----------------------------------------------------------------------
 
 #include "sat.h"
@@ -96,7 +101,7 @@ private:
   clap_audio_buffer_t             MAudioInputs        = {};
   clap_audio_buffer_t             MAudioOutputs       = {};
   uint32_t                        MNumEvents          = 0;
-  char                            MEvents[SAT_PLUGIN_MAX_PARAM_EVENTS_PER_BLOCK * SAT_PLUGIN_MAX_EVENT_SIZE]  = {0};
+  char                            MEvents[SAT_VST3_MAX_PARAM_EVENTS_PER_BLOCK * SAT_VST3_MAX_EVENT_SIZE]  = {0};
   
   uint32_t                        MLastNoteId         = 0;
   SAT_Vst3NoteId                  MNoteIds[SAT_PLUGIN_VST3_MAX_NOTE_IDS] = {};
@@ -106,7 +111,7 @@ private:
   
   moodycamel::ReaderWriterQueue<uint32_t> MHostParamQueue;
 
-  double  MQueuedHostParamValues[SAT_PLUGIN_MAX_PARAMETERS] = {0};
+  double  MQueuedHostParamValues[SAT_VST3_MAX_PARAMETERS] = {0};
 
 //------------------------------
 public:
@@ -140,7 +145,7 @@ private: // in_events
 
   const clap_event_header_t* vst3_input_events_get(uint32_t index) {
     SAT_PRINT("index %i\n",index);
-    uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * index;
+    uint32_t pos = SAT_VST3_MAX_EVENT_SIZE * index;
     return (const clap_event_header_t*)&MEvents[pos];
   }
 
@@ -318,7 +323,7 @@ private:
                 double value = 0;
                 paramQueue->getPoint(j,offset,value);
                 value = info.min_value + ((info.max_value - info.min_value) * value);
-                uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
+                uint32_t pos = SAT_VST3_MAX_EVENT_SIZE * MNumEvents++;
                 clap_event_param_value_t* param_value_event = (clap_event_param_value_t*)&MEvents[pos];
                 memset(param_value_event,0,sizeof(clap_event_param_value_t));
                 param_value_event->header.size     = sizeof(clap_event_param_value_t);
@@ -353,7 +358,7 @@ private:
         switch (event.type) {
 
           case Event::kNoteOnEvent: {
-            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_VST3_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_t* note_event = (clap_event_note_t*)&MEvents[pos];
             memset(note_event,0,sizeof(clap_event_note_t));
             note_event->header.size     = sizeof(clap_event_note_t);
@@ -378,7 +383,7 @@ private:
           }
 
           case Event::kNoteOffEvent: {
-            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_VST3_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_t* note_event = (clap_event_note_t*)&MEvents[pos];
             memset(note_event,0,sizeof(clap_event_note_t));
             note_event->header.size     = sizeof(clap_event_note_t);
@@ -404,7 +409,7 @@ private:
           }
 
           case Event::kPolyPressureEvent: {
-            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_VST3_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_expression_t* note_expression_event = (clap_event_note_expression_t*)&MEvents[pos];
             memset(note_expression_event,0,sizeof(clap_event_note_expression_t));
             note_expression_event->header.size     = sizeof(clap_event_note_expression_t);
@@ -422,7 +427,7 @@ private:
           }
 
           case Event::kNoteExpressionValueEvent: {
-            uint32_t pos = SAT_PLUGIN_MAX_EVENT_SIZE * MNumEvents++;
+            uint32_t pos = SAT_VST3_MAX_EVENT_SIZE * MNumEvents++;
             clap_event_note_expression_t* note_expression_event = (clap_event_note_expression_t*)&MEvents[pos];
             memset(note_expression_event,0,sizeof(clap_event_note_expression_t));
             //uint32_t chan = (event.noteExpressionValue.noteId >> 8);
@@ -511,7 +516,7 @@ private:
   */
 
   void sortEvents() {
-    qsort(MEvents,MNumEvents,SAT_PLUGIN_MAX_EVENT_SIZE, compare_events);
+    qsort(MEvents,MNumEvents,SAT_VST3_MAX_EVENT_SIZE, compare_events);
   }
 
 //------------------------------
