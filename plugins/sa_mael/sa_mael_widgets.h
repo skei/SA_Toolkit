@@ -1,5 +1,5 @@
-#ifndef sa_synth_widgets_included
-#define sa_synth_widgets_included
+#ifndef sa_mael_widgets_included
+#define sa_mael_widgets_included
 //----------------------------------------------------------------------
 
 #include "sat.h"

@@ -1,10 +1,8 @@
-#ifndef sa_synth_included
-#define sa_synth_included
+#ifndef sa_mael_included
+#define sa_mael_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
-//#include "base/system/sat_cpu.h"
-//#include "audio/process/sat_resampler.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_voice_processor.h"
 
@@ -14,32 +12,39 @@
 
 //----------
 
-#define SA_SYNTH_MAX_VOICES    256
-#define SA_SYNTH_EDITOR_WIDTH  730
-#define SA_SYNTH_EDITOR_HEIGHT 430
-#define SA_SYNTH_EDITOR_SCALE  1.5
+#define SA_MAEL_MAX_VOICES    256
+#define SA_MAEL_EDITOR_WIDTH  730
+#define SA_MAEL_EDITOR_HEIGHT 430
+#define SA_MAEL_EDITOR_SCALE  1.5
 
-#include "sa_synth/sa_synth_parameters.h"
-#include "sa_synth/sa_synth_voice.h"
+#include "sa_mael/sa_mael_parameters.h"
+#include "sa_mael/sa_mael_voice.h"
 
 #ifndef SAT_NO_GUI
-  #include "sa_synth/sa_synth_widgets.h"
+  #include "sa_mael/sa_mael_widgets.h"
 #endif
+
+//----------
+
+//#include "base/system/sat_cpu.h"
+#include "audio/process/sat_resampler.h"
+#include "audio/process/sat_magic_kernel_sharp.h"
+
 //----------------------------------------------------------------------
 //
 // descriptor
 //
 //----------------------------------------------------------------------
 
-const clap_plugin_descriptor_t sa_synth_descriptor = {
+const clap_plugin_descriptor_t sa_mael_descriptor = {
   .clap_version = CLAP_VERSION,
-  .id           = SAT_VENDOR "/sa_synth/v0",
-  .name         = "sa_synth",
+  .id           = SAT_VENDOR "/sa_mael/v0",
+  .name         = "sa_mael",
   .vendor       = SAT_VENDOR,
   .url          = SAT_URL,
   .manual_url   = "",
   .support_url  = "",
-  .version      = "0.0.1",
+  .version      = "0.0.2",
   .description  = "",
   .features     = (const char*[]){ CLAP_PLUGIN_FEATURE_INSTRUMENT, nullptr }
 };
@@ -50,14 +55,14 @@ const clap_plugin_descriptor_t sa_synth_descriptor = {
 //
 //----------------------------------------------------------------------
 
-class sa_synth_voice_processor
-: public SAT_VoiceProcessor<sa_synth_voice,SA_SYNTH_MAX_VOICES> {
+class sa_mael_voice_processor
+: public SAT_VoiceProcessor<sa_mael_voice,SA_MAEL_MAX_VOICES> {
 
 //------------------------------
 public:
 //------------------------------
 
-  sa_synth_voice_processor(SAT_ProcessorListener* AListener, uint32_t AOversample, uint32_t ABufferSize)
+  sa_mael_voice_processor(SAT_ProcessorListener* AListener, uint32_t AOversample, uint32_t ABufferSize)
   : SAT_VoiceProcessor(AListener) {
     // test / experimental
     // move to voice_processor ?
@@ -70,7 +75,7 @@ public:
 
   //----------
 
-  virtual ~sa_synth_voice_processor() {
+  virtual ~sa_mael_voice_processor() {
     SAT_TRACE;
   }
 
@@ -86,11 +91,15 @@ public:
   //----------
 
   void process(SAT_ProcessContext* AContext) override {
+
+    //MVoiceContext.input0 = AContext->process->audio_inputs[0].data32[0];
+
     SAT_VoiceProcessor::process(AContext);
+
     const clap_process_t* process = AContext->process;
     float** output = process->audio_outputs[0].data32;
     uint32_t length = process->frames_count;
-    sat_param_t gain = AContext->parameters->getItem(SA_SYNTH_PARAM_GLOBAL_GAIN)->getValue();
+    sat_param_t gain = AContext->parameters->getItem(SA_MAEL_PARAM_GLOBAL_GAIN)->getValue();
     gain = (gain * gain * gain);
     SAT_ScaleStereoBuffer(output,gain,length);
   }
@@ -103,14 +112,14 @@ public:
 //
 //----------------------------------------------------------------------
 
-class sa_synth_plugin
+class sa_mael_plugin
 : public SAT_Plugin {
 
 //------------------------------
 private:
 //------------------------------
 
-  sa_synth_voice_processor* MProcessor    = nullptr;
+  sa_mael_voice_processor* MProcessor    = nullptr;
   SAT_VoicesWidget*         MVoicesWidget = nullptr;
 
   uint64_t    MTrackFlags                 = 0;
@@ -126,7 +135,7 @@ private:
 public:
 //------------------------------
 
-  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_synth_plugin);
+  SAT_PLUGIN_DEFAULT_CONSTRUCTOR(sa_mael_plugin);
 
 //------------------------------
 public:
@@ -139,16 +148,17 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_TRACK_INFO);
-    appendClapNoteInputPort("In");
+    appendClapNoteInputPort("Notes");
+    appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
-    MProcessor = new sa_synth_voice_processor(this,2,4096);
+    MProcessor = new sa_mael_voice_processor(this,2,4096);
     setProcessor(MProcessor);
     MProcessor->init(getClapPlugin(),getClapHost());
     MProcessor->setProcessThreaded(true);
     MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
-    sa_synth_setup_parameters(this);
+    sa_mael_setup_parameters(this);
     #ifndef SAT_NO_GUI
-      setInitialEditorSize(SA_SYNTH_EDITOR_WIDTH,SA_SYNTH_EDITOR_HEIGHT,SA_SYNTH_EDITOR_SCALE,true);
+      setInitialEditorSize(SA_MAEL_EDITOR_WIDTH,SA_MAEL_EDITOR_HEIGHT,SA_MAEL_EDITOR_SCALE,true);
     #endif
     return SAT_Plugin::init();    
   }
@@ -166,8 +176,8 @@ public: // voice info
 
   bool voice_info_get(clap_voice_info_t *info) override {
     //SAT_TRACE;
-    info->voice_count     = SA_SYNTH_MAX_VOICES;
-    info->voice_capacity  = SA_SYNTH_MAX_VOICES;
+    info->voice_count     = SA_MAEL_MAX_VOICES;
+    info->voice_capacity  = SA_MAEL_MAX_VOICES;
     info->flags           = CLAP_VOICE_INFO_SUPPORTS_OVERLAPPING_NOTES;
     return true;
   }
@@ -197,14 +207,14 @@ public: // remote controls
         page->page_id = 0;
         strcpy(page->page_name,"OSC");
         //for (uint32_t i=0; i<8; i++) page->param_ids[i] = i;
-        page->param_ids[0] = SA_SYNTH_PARAM_OSC1_SQU;
-        page->param_ids[1] = SA_SYNTH_PARAM_OSC1_TRI;
-        page->param_ids[2] = SA_SYNTH_PARAM_OSC1_SIN;
-        page->param_ids[3] = SA_SYNTH_PARAM_OSC1_WIDTH;
-        page->param_ids[4] = SA_SYNTH_PARAM_OSC2_SQU;
-        page->param_ids[5] = SA_SYNTH_PARAM_OSC2_TRI;
-        page->param_ids[6] = SA_SYNTH_PARAM_OSC2_SIN;
-        page->param_ids[7] = SA_SYNTH_PARAM_OSC2_WIDTH;
+        page->param_ids[0] = SA_MAEL_PARAM_OSC1_SQU;
+        page->param_ids[1] = SA_MAEL_PARAM_OSC1_TRI;
+        page->param_ids[2] = SA_MAEL_PARAM_OSC1_SIN;
+        page->param_ids[3] = SA_MAEL_PARAM_OSC1_WIDTH;
+        page->param_ids[4] = SA_MAEL_PARAM_OSC2_SQU;
+        page->param_ids[5] = SA_MAEL_PARAM_OSC2_TRI;
+        page->param_ids[6] = SA_MAEL_PARAM_OSC2_SIN;
+        page->param_ids[7] = SA_MAEL_PARAM_OSC2_WIDTH;
         page->is_for_preset = false;
         return true;
       }
@@ -271,7 +281,7 @@ public: // gui
 //------------------------------
 
   #ifndef SAT_NO_GUI
-    #include "sa_synth/sa_synth_gui.h"
+    #include "sa_mael/sa_mael_gui.h"
   #endif
 
 //------------------------------
@@ -283,7 +293,7 @@ public: // timer
     void on_EditorListener_timer(double ADelta) override {
       SAT_Plugin::on_EditorListener_timer(ADelta);
       bool changed = false;
-      for (uint32_t i=0; i<SA_SYNTH_MAX_VOICES; i++) {
+      for (uint32_t i=0; i<SA_MAEL_MAX_VOICES; i++) {
         uint32_t state = MProcessor->getVoiceState(i);
         if (state != MVoicesWidget->getVoiceState(i)) {
           //SAT_TRACE;
@@ -311,7 +321,7 @@ public: // timer
 
 #ifndef SAT_NO_ENTRY
   #include "plugin/sat_entry.h"
-  SAT_PLUGIN_ENTRY(sa_synth_descriptor,sa_synth_plugin)
+  SAT_PLUGIN_ENTRY(sa_mael_descriptor,sa_mael_plugin)
 #endif
 
 //----------------------------------------------------------------------
@@ -320,10 +330,10 @@ public: // timer
 //
 //----------------------------------------------------------------------
 
-#undef SA_SYNTH_MAX_VOICES
-#undef SA_SYNTH_EDITOR_WIDTH
-#undef SA_SYNTH_EDITOR_HEIGHT
-#undef SA_SYNTH_EDITOR_SCALE
+#undef SA_MAEL_MAX_VOICES
+#undef SA_MAEL_EDITOR_WIDTH
+#undef SA_MAEL_EDITOR_HEIGHT
+#undef SA_MAEL_EDITOR_SCALE
 
 //----------------------------------------------------------------------
 #endif

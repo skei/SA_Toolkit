@@ -1,5 +1,5 @@
-#ifndef sa_synth_env_included
-#define sa_synth_env_included
+#ifndef sa_mael_env_included
+#define sa_mael_env_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
@@ -7,7 +7,7 @@
 #include "audio/modulation/sat_exp_envelope.h"
 
 
-typedef SAT_ExpEnvelope<sat_sample_t> sa_synth_exp_env;
+typedef SAT_ExpEnvelope<sat_sample_t> sa_mael_exp_env;
 
 //----------------------------------------------------------------------
 //
@@ -15,13 +15,13 @@ typedef SAT_ExpEnvelope<sat_sample_t> sa_synth_exp_env;
 //
 //----------------------------------------------------------------------
 
-class sa_synth_env {
+class sa_mael_env {
 
 //------------------------------
 private:
 //------------------------------
 
-  sa_synth_exp_env  MEnvelope   = {};
+  sa_mael_exp_env  MEnvelope   = {};
   double            MSampleRate = 0.0;
 
   sat_param_t       par_a       = 0.0;

@@ -46,11 +46,7 @@
 //#include "../plugins/sa_cred.cpp"
 //#include "../plugins/sa_demo.cpp"
 //#include "../plugins/sa_ports.cpp"
-#include "../plugins/sa_synth.cpp"
-
-// [deprecated]
-//#include "../plugins/sa_mael.cpp"
-//#include "../plugins/sa_tyr.cpp"
+#include "../plugins/sa_mael.cpp"
 
 //----------------------------------------------------------------------
 //

@@ -1,12 +1,12 @@
-#ifndef sa_synth_osc_included
-#define sa_synth_osc_included
+#ifndef sa_mael_osc_included
+#define sa_mael_osc_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/synthesis/sat_morph_oscillator.h"
 
-typedef SAT_MorphOscillator<sat_sample_t> sa_synth_morphosc;
+typedef SAT_MorphOscillator<sat_sample_t> sa_mael_morphosc;
 
 //----------------------------------------------------------------------
 //
@@ -14,13 +14,13 @@ typedef SAT_MorphOscillator<sat_sample_t> sa_synth_morphosc;
 //
 //----------------------------------------------------------------------
 
-class sa_synth_osc {
+class sa_mael_osc {
 
 //------------------------------
 private:
 //------------------------------
 
-  sa_synth_morphosc MOscillator = {};
+  sa_mael_morphosc MOscillator = {};
   double            MSampleRate = 0.0;
   double            strike      = 0.0;
   double            lift        = 0.0;
@@ -56,6 +56,7 @@ public:
     //double hz = SAT_NoteToHz(AIndex);
     //MOscillator.setFrequency(hz);
     strike = AValue;
+    reset();
   }
 
   //----------
@@ -88,7 +89,7 @@ public:
 
   //----------
 
-  sat_sample_t process_mod(sat_sample_t AInput, sat_sample_t AMod, sat_sample_t AOfs=0.0) {
+  sat_sample_t process_mod(/*sat_sample_t AInput,*/ sat_sample_t AMod, sat_sample_t AOfs=0.0) {
     return MOscillator.process_mod(AMod,AOfs);
   }
 

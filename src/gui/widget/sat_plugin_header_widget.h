@@ -106,7 +106,7 @@ public:
     nrect.shrink(nofs);
     painter->drawTextBox(nrect,MPluginName,MPluginNameAlignment);
     
-    // plugin name
+    // plugin info
     
     painter->selectFont(default_font);
     painter->setTextColor(MPluginInfoColor);

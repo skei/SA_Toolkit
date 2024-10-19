@@ -1,12 +1,12 @@
-#ifndef sa_synth_flt_included
-#define sa_synth_flt_included
+#ifndef sa_mael_flt_included
+#define sa_mael_flt_included
 //----------------------------------------------------------------------
 
 #include "sat.h"
 #include "audio/sat_audio_math.h"
 #include "audio/filters/sat_svf_filter.h"
 
-typedef SAT_SVFFilter<sat_sample_t> sa_synth_svf;
+typedef SAT_SVFFilter<sat_sample_t> sa_mael_svf;
 
   /*
     gain:   Gain in dB to boost or cut the cutoff point of the Low shelf filter
@@ -20,13 +20,13 @@ typedef SAT_SVFFilter<sat_sample_t> sa_synth_svf;
 //
 //----------------------------------------------------------------------
 
-class sa_synth_flt {
+class sa_mael_flt {
 
 //------------------------------
 private:
 //------------------------------
 
-  sa_synth_svf  MFilter     = {};
+  sa_mael_svf  MFilter     = {};
   double        MSampleRate = 0.0;
 
   sat_param_t   par_type    = 0.0;

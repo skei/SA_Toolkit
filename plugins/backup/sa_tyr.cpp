@@ -185,7 +185,7 @@ public:
   //     case 0: {
   //       strcpy(page->section_name,"Section");
   //       page->page_id = 0;
-  //       strcpy(page->page_name,"SA_Synth parameters");
+  //       strcpy(page->page_name,"sa_tyr parameters");
   //       page->param_ids[0] = SA_MAEL_PARAM_OSC1_SQU;
   //       page->param_ids[1] = SA_MAEL_PARAM_OSC1_TRI;
   //       page->param_ids[2] = SA_MAEL_PARAM_OSC1_SIN;

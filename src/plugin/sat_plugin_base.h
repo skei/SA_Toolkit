@@ -120,6 +120,8 @@ struct SAT_VoiceContext {
 
   uint32_t            oversample        = 0;
   uint32_t            buffersize        = 0;
+
+  //sat_sample_t*       input0            = nullptr;
 };
 
 //----------
