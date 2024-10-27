@@ -213,7 +213,7 @@ clap_param_info_t sa_mael_parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_OSC2_IN_N,         A,      nullptr,  "N",        "Osc2",     0.0, 1.0, 0.0 },
 
   { SA_MAEL_PARAM_RES1_IMPULSE,      AMN,    nullptr,  "Impulse",  "Res1",     0.0, 1.0, 1.0 },
-  { SA_MAEL_PARAM_RES1_REPEAT,       AMN,    nullptr,  "Repeat",   "Res1",     0.0, 1.0, 0.0 },
+  { SA_MAEL_PARAM_RES1_REPEAT,       AMN,    nullptr,  "Repeat",   "Res1",     0.0, 1.0, 1.0 },
   { SA_MAEL_PARAM_RES1_FEEDBACK,     AMN,    nullptr,  "Feedback", "Res1",     0.0, 1.0, 1.0 },
   { SA_MAEL_PARAM_RES1_DAMPING,      AMN,    nullptr,  "Damping",  "Res1",     0.0, 1.0, 1.0 },
   { SA_MAEL_PARAM_RES1_GAIN,         AMN,    nullptr,  "Gain",     "Res1",     0.0, 1.0, 0.0 },
@@ -231,7 +231,7 @@ clap_param_info_t sa_mael_parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_RES1_IN_N,         A,      nullptr,  "N",        "Res1",     0.0, 1.0, 1.0 },
   
   { SA_MAEL_PARAM_RES2_IMPULSE,      AMN,    nullptr,  "Impulse",  "Res2",     0.0, 1.0, 1.0 },
-  { SA_MAEL_PARAM_RES2_REPEAT,       AMN,    nullptr,  "Repeat",   "Res2",     0.0, 1.0, 0.0 },
+  { SA_MAEL_PARAM_RES2_REPEAT,       AMN,    nullptr,  "Repeat",   "Res2",     0.0, 1.0, 1.0 },
   { SA_MAEL_PARAM_RES2_FEEDBACK,     AMN,    nullptr,  "Feedback", "Res2",     0.0, 1.0, 1.0 },
   { SA_MAEL_PARAM_RES2_DAMPING,      AMN,    nullptr,  "Damping",  "Res2",     0.0, 1.0, 1.0 },
   { SA_MAEL_PARAM_RES2_GAIN,         AMN,    nullptr,  "Gain",     "Res2",     0.0, 1.0, 0.0 },
@@ -254,8 +254,8 @@ clap_param_info_t sa_mael_parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_MIX_R2,            AMN,    nullptr,  "R2",       "Mix",      0.0, 1.0, 0.0 },
   
   { SA_MAEL_PARAM_FLT1_TYPE,         A|SE,   nullptr,  "Type",     "Flt1",     0, sa_mael_flt_type_count - 1, 1 },
-  { SA_MAEL_PARAM_FLT1_FREQ,         AMN,    nullptr,  "Freq",     "Flt1",     0.0, 1.0, 0.73 },
-  { SA_MAEL_PARAM_FLT1_Q,            AMN,    nullptr,  "Q",        "Flt1",     0.0, 1.0, 0.27 },
+  { SA_MAEL_PARAM_FLT1_FREQ,         AMN,    nullptr,  "Freq",     "Flt1",     0.0, 1.0, 0.77 },
+  { SA_MAEL_PARAM_FLT1_Q,            AMN,    nullptr,  "Q",        "Flt1",     0.0, 1.0, 0.23 },
   { SA_MAEL_PARAM_FLT1_GAIN,         AMN,    nullptr,  "Gain",     "Flt1",     0.0, 1.0, 0.5 },
 
   { SA_MAEL_PARAM_ENV1_ATT,          A,      nullptr,  "Attack",   "Env1",     0.0, 1.0, 0.1 },
