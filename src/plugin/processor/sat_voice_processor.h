@@ -4,11 +4,16 @@
 
 #include "sat.h"
 #include "audio/sat_audio_utils.h"
-#include "base/util/sat_thread_pool.h"
+#include "base/system/sat_cpu.h"
 #include "plugin/sat_note.h"
 #include "plugin/sat_plugin_base.h"
 #include "plugin/sat_processor.h"
 #include "plugin/sat_voice.h"
+
+#ifdef SAT_VOICE_PROCESSOR_THREADED
+  #include "base/util/sat_thread_pool.h"
+#endif
+
 
 //----------
 
@@ -25,7 +30,11 @@ typedef moodycamel::ReaderWriterQueue<SAT_Note> SAT_NoteQueue;
 template <class VOICE, int COUNT>
 class SAT_VoiceProcessor
 : public SAT_Processor
+#ifdef SAT_VOICE_PROCESSOR_THREADED
 , public SAT_ThreadPoolListener {
+  #else
+{
+  #endif
 
 //------------------------------
 protected:
@@ -312,12 +321,16 @@ public:
 
   //----------
 
+  #ifdef SAT_VOICE_PROCESSOR_THREADED
+  
   void on_ThreadPoolListener_exec(uint32_t AIndex) override {
     //SAT_PRINT("task %i\n",AIndex);
     //printf("task %i\n",AIndex);
     uint32_t v = MActiveVoices[AIndex];
     processVoice(v);
   }
+
+  #endif
 
 //------------------------------
 public:
