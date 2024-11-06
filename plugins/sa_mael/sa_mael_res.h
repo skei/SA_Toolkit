@@ -65,9 +65,10 @@ private:
 
   double                  MSampleRate     = 0.0;
   double                  MDelayLength    = 0.0;
-  sa_mael_delay_loop_fx  MImpulseFilter  = {};
-  sa_mael_delay          MDelay          = {};
+  sa_mael_delay_loop_fx   MImpulseFilter  = {};
+  sa_mael_delay           MDelay          = {};
   uint32_t                MType           = 0;
+  double                  MDrm            = 0;
 
   uint32_t  MIndex = 0;
   double    MValue = 0.0;
@@ -137,6 +138,10 @@ public:
     MType = AType;
   }
 
+  void setDrm(double ADrm) {
+    MDrm = ADrm;
+  }
+
   //----------
 
   void noteOn(uint32_t AIndex, double AValue) {
@@ -177,6 +182,8 @@ public:
     MDelay.getLoopFX()->factor = par_damping;
     MDelay.getLoopFX()->gain = par_gain;
 
+    MDelay.setDrm(MDrm);
+
     // else {
     //   is_repeating = false;
     // }
@@ -202,7 +209,7 @@ public:
 
     sat_sample_t result = MDelay.process(in,MDelayLength,par_feedback/*,AOffset*/);
 
-    if ((par_repeat > 0.0) && (par_repeat < MSampleRate)) {
+    if (/*(par_repeat > 0.0) &&*/ (par_repeat < MSampleRate)) {
       is_repeating = true;
       if (is_repeating) {
         repeat_count -= 1;

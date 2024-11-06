@@ -104,6 +104,7 @@ private:
   sat_param_t   r1_fb         = 0.0;
   sat_param_t   r1_damp       = 0.0;
   sat_param_t   r1_gain       = 0.0;
+  sat_param_t   r1_drm        = 0.0;
   sat_param_t   r1_amt        = 0.0;
   sat_param_t   r1_sm         = 0.0;
   sat_param_t   r1_in1        = 0.0;
@@ -122,6 +123,7 @@ private:
   sat_param_t   r2_fb         = 0.0;
   sat_param_t   r2_damp       = 0.0;
   sat_param_t   r2_gain       = 0.0;
+  sat_param_t   r2_drm        = 0.0;
   sat_param_t   r2_amt        = 0.0;
   sat_param_t   r2_sm         = 0.0;
   sat_param_t   r2_in1        = 0.0;
@@ -348,6 +350,7 @@ private:
     r1_fb         = getModulatedValue(SA_MAEL_PARAM_RES1_FEEDBACK);
     r1_damp       = getModulatedValue(SA_MAEL_PARAM_RES1_DAMPING);
     r1_gain       = getModulatedValue(SA_MAEL_PARAM_RES1_GAIN);
+    r1_drm        = getModulatedValue(SA_MAEL_PARAM_RES1_DRM);
     r1_amt        = getModulatedValue(SA_MAEL_PARAM_RES1_IN_AMOUNT);
     r1_sm         = getModulatedValue(SA_MAEL_PARAM_RES1_IN_SMOOTH);
     r1_in1        = getParameterValue(SA_MAEL_PARAM_RES1_IN_O1);
@@ -366,6 +369,7 @@ private:
     r2_fb         = getModulatedValue(SA_MAEL_PARAM_RES2_FEEDBACK);
     r2_damp       = getModulatedValue(SA_MAEL_PARAM_RES2_DAMPING);
     r2_gain       = getModulatedValue(SA_MAEL_PARAM_RES2_GAIN);
+    r2_drm        = getModulatedValue(SA_MAEL_PARAM_RES2_DRM);
     r2_amt        = getModulatedValue(SA_MAEL_PARAM_RES2_IN_AMOUNT);
     r2_sm         = getModulatedValue(SA_MAEL_PARAM_RES2_IN_SMOOTH);
     r2_in1        = getParameterValue(SA_MAEL_PARAM_RES2_IN_O1);
@@ -405,6 +409,16 @@ private:
     r1_imp        = 1.0 - r1_imp;
     r2_imp        = 1.0 - r2_imp;
 
+    r1_drm = (r1_drm * 2.0) - 1.0;        // 0..1 -> -1..1
+    //r1_drm = SAT_Curve(r1_drm,0.95);
+    r1_drm = SAT_CurveSigned(r1_drm,0.95);
+    r1_drm = (r1_drm * 0.5) + 0.5;        // -1..1 -> 0..1
+
+    r2_drm = (r2_drm * 2.0) - 1.0;        // 0..1 -> -1..1
+    //r2_drm = SAT_Curve(r2_drm,0.95);
+    r2_drm = SAT_CurveSigned(r2_drm,0.95);
+    r2_drm = (r2_drm * 0.5) + 0.5;        // -1..1 -> 0..1
+
     o1_in_factor  = o1_sm * o1_sm * o1_sm;
     o2_in_factor  = o2_sm * o2_sm * o2_sm;
     r1_in_factor  = r1_sm * r1_sm * r1_sm;
@@ -426,6 +440,7 @@ private:
     MRes1.setDamping(r1_damp);
     MRes1.setGain(r1_gain);
     MRes1.setType(r1_type);
+    MRes1.setDrm(r1_drm);
 
     MRes2.setImpulse(r2_imp);
     MRes2.setRepeat(r2_rep);
@@ -433,6 +448,7 @@ private:
     MRes2.setDamping(r2_damp);
     MRes2.setGain(r2_gain);
     MRes2.setType(r2_type);
+    MRes2.setDrm(r2_drm);
 
     MFlt1.set(flt_type,flt_freq,flt_q,flt_gain);
     MFlt1.update_coeffs();

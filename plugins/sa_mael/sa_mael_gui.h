@@ -241,19 +241,19 @@ public:
         osc1_width->setDrawBipolar(true);
         osc1_width->setTextSize(5);
 
-        SAT_DragValueWidget* osc1_oct = new SAT_DragValueWidget(SAT_Rect(210+70,35,60,12),"Oct",0);
+        SAT_DragValueWidget* osc1_oct = new SAT_DragValueWidget(SAT_Rect(210,35,60,12),"Oct",0);
         AEditor->connect(osc1_oct,getParameter(SA_MAEL_PARAM_OSC1_OCT));
         osc1_panel->appendChild(osc1_oct);
         osc1_oct->setTextSize(7);
         osc1_oct->setValueTextSize(8);
 
-        SAT_DragValueWidget* osc1_semi = new SAT_DragValueWidget(SAT_Rect(210+70,50,60,12),"Semi",0);
+        SAT_DragValueWidget* osc1_semi = new SAT_DragValueWidget(SAT_Rect(210,50,60,12),"Semi",0);
         AEditor->connect(osc1_semi,getParameter(SA_MAEL_PARAM_OSC1_SEMI));
         osc1_panel->appendChild(osc1_semi);
         osc1_semi->setTextSize(7);
         osc1_semi->setValueTextSize(8);
 
-        SAT_DragValueWidget* osc1_cent = new SAT_DragValueWidget(SAT_Rect(210+70,65,60,12),"Cent",0);
+        SAT_DragValueWidget* osc1_cent = new SAT_DragValueWidget(SAT_Rect(210,65,60,12),"Cent",0);
         AEditor->connect(osc1_cent,getParameter(SA_MAEL_PARAM_OSC1_CENT));
         osc1_panel->appendChild(osc1_cent);
         osc1_cent->setTextSize(7);
@@ -459,6 +459,22 @@ public:
         res1_text->setTextAlignment(SAT_TEXT_ALIGN_TOP | SAT_TEXT_ALIGN_LEFT);
         res1_text->setTextOffset(SAT_Rect(5,5,0,0));
 
+//
+
+          SAT_KnobWidget* res1_drm = new SAT_KnobWidget(SAT_Rect(59,3,26,26),"Drm",0.0);
+          AEditor->connect(res1_drm,getParameter(SA_MAEL_PARAM_RES1_DRM));
+          res1_text->appendChild(res1_drm);
+          res1_drm->setKnobArcBackgroundColor(SAT_Grey);
+          res1_drm->setKnobArcColor(SAT_White);
+          res1_drm->setKnobArcThickness(4);
+          res1_drm->setDrawText(true);
+          res1_drm->setTextSize(5);
+          res1_drm->setTextColor(SAT_LightGrey);
+          res1_drm->setTextAlignment(SAT_TEXT_ALIGN_CENTER);
+          res1_drm->setDrawValueText(false);
+
+//
+
           SAT_KnobWidget* res1_in_amt = new SAT_KnobWidget(SAT_Rect(88,3,26,26),"Amt",0.0);
           AEditor->connect(res1_in_amt,getParameter(SA_MAEL_PARAM_RES1_IN_AMOUNT));
           res1_text->appendChild(res1_in_amt);
@@ -639,6 +655,22 @@ public:
         res2_text->setTextColor(SAT_LighterGrey);
         res2_text->setTextAlignment(SAT_TEXT_ALIGN_TOP | SAT_TEXT_ALIGN_LEFT);
         res2_text->setTextOffset(SAT_Rect(5,5,0,0));
+
+//
+
+          SAT_KnobWidget* res2_drm = new SAT_KnobWidget(SAT_Rect(59,3,26,26),"Drm",0.0);
+          AEditor->connect(res2_drm,getParameter(SA_MAEL_PARAM_RES2_DRM));
+          res2_text->appendChild(res2_drm);
+          res2_drm->setKnobArcBackgroundColor(SAT_Grey);
+          res2_drm->setKnobArcColor(SAT_White);
+          res2_drm->setKnobArcThickness(4);
+          res2_drm->setDrawText(true);
+          res2_drm->setTextSize(5);
+          res2_drm->setTextColor(SAT_LightGrey);
+          res2_drm->setTextAlignment(SAT_TEXT_ALIGN_CENTER);
+          res2_drm->setDrawValueText(false);
+
+//
 
           SAT_KnobWidget* res2_in_amt = new SAT_KnobWidget(SAT_Rect(88,3,26,26),"Amt",0.0);
           AEditor->connect(res2_in_amt,getParameter(SA_MAEL_PARAM_RES2_IN_AMOUNT));

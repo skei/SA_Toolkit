@@ -113,6 +113,7 @@ enum sa_mael_parameter_e {
   SA_MAEL_PARAM_RES1_SEMI,
   SA_MAEL_PARAM_RES1_CENT,
   SA_MAEL_PARAM_RES1_TYPE,
+  SA_MAEL_PARAM_RES1_DRM,
   SA_MAEL_PARAM_RES1_IN_AMOUNT,
   SA_MAEL_PARAM_RES1_IN_SMOOTH,
   SA_MAEL_PARAM_RES1_IN_O1,
@@ -131,6 +132,7 @@ enum sa_mael_parameter_e {
   SA_MAEL_PARAM_RES2_SEMI,
   SA_MAEL_PARAM_RES2_CENT,
   SA_MAEL_PARAM_RES2_TYPE,
+  SA_MAEL_PARAM_RES2_DRM,
   SA_MAEL_PARAM_RES2_IN_AMOUNT,
   SA_MAEL_PARAM_RES2_IN_SMOOTH,
   SA_MAEL_PARAM_RES2_IN_O1,
@@ -221,6 +223,7 @@ clap_param_info_t sa_mael_parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_RES1_SEMI,         AMN|S,  nullptr,  "Semi",     "Res1",   -12,  12,   0   },
   { SA_MAEL_PARAM_RES1_CENT,         AMN,    nullptr,  "Cent",     "Res1",    -1.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES1_TYPE,         A|SE,   nullptr,  "Type",     "Res1",     0.0, sa_mael_res_type_count - 1, 0 },
+  { SA_MAEL_PARAM_RES1_DRM,          AMN,    nullptr,  "Drm",      "Res1",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES1_IN_AMOUNT,    AMN,    nullptr,  "Amt",      "Res1",     0.0, 1.0, 0.5 },
   { SA_MAEL_PARAM_RES1_IN_SMOOTH,    AMN,    nullptr,  "Sm",       "Res1",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES1_IN_O1,        A,      nullptr,  "O1",       "Res1",     0.0, 1.0, 0.0 },
@@ -239,8 +242,9 @@ clap_param_info_t sa_mael_parameters[SA_MAEL_PARAM_COUNT] = {
   { SA_MAEL_PARAM_RES2_SEMI,         AMN|S,  nullptr,  "Semi",     "Res2",   -12,  12,   0   },
   { SA_MAEL_PARAM_RES2_CENT,         AMN,    nullptr,  "Cent",     "Res2",    -1.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES2_TYPE,         A|SE,   nullptr,  "Type",     "Res2",     0, sa_mael_res_type_count - 1, 0 },
+  { SA_MAEL_PARAM_RES2_DRM,          AMN,    nullptr,  "Drm",      "Res2",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES2_IN_AMOUNT,    AMN,    nullptr,  "Amt",      "Res2",     0.0, 1.0, 0.5 },
-  { SA_MAEL_PARAM_RES2_IN_SMOOTH,    AMN,    nullptr,  "Sm",       "Res2",      0.0, 1.0, 0.0 },
+  { SA_MAEL_PARAM_RES2_IN_SMOOTH,    AMN,    nullptr,  "Sm",       "Res2",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES2_IN_O1,        A,      nullptr,  "O1",       "Res2",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES2_IN_O2,        A,      nullptr,  "O2",       "Res2",     0.0, 1.0, 0.0 },
   { SA_MAEL_PARAM_RES2_IN_R1,        A,      nullptr,  "R1",       "Res2",     0.0, 1.0, 0.0 },
@@ -331,6 +335,7 @@ bool sa_mael_setup_parameters(SAT_Plugin* APlugin) {
   APlugin->appendParameter( new SAT_IntParameter( &sa_mael_parameters[SA_MAEL_PARAM_RES1_SEMI] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES1_CENT] ));
   APlugin->appendParameter( new SAT_TextParameter(&sa_mael_parameters[SA_MAEL_PARAM_RES1_TYPE], res_type_text ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES1_DRM] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES1_IN_AMOUNT] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES1_IN_SMOOTH] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES1_IN_O1] ));
@@ -349,6 +354,7 @@ bool sa_mael_setup_parameters(SAT_Plugin* APlugin) {
   APlugin->appendParameter( new SAT_IntParameter( &sa_mael_parameters[SA_MAEL_PARAM_RES2_SEMI] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES2_CENT] ));
   APlugin->appendParameter( new SAT_TextParameter(&sa_mael_parameters[SA_MAEL_PARAM_RES2_TYPE], res_type_text ));
+  APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES2_DRM] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES2_IN_AMOUNT] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES2_IN_SMOOTH] ));
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_RES2_IN_O1] ));

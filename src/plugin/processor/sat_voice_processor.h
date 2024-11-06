@@ -63,9 +63,9 @@ protected:
   bool                          MProcessThreaded        = false;
 
   #ifdef SAT_VOICE_PROCESSOR_THREADED
-    #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
+    //#ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
       const clap_host_thread_pool* MClapThreadPool = nullptr;
-    #endif
+    //#endif
     SAT_ThreadPool* MThreadPool = nullptr;
   #endif
 
@@ -132,6 +132,7 @@ public:
     #ifdef SAT_VOICE_PROCESSOR_THREADED
       SAT_ClapPlugin* plugin = (SAT_ClapPlugin*)APlugin->plugin_data;
       SAT_Assert(plugin);
+
       #ifdef SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
         // todo: if plugin->MSupportedExtensions.hasItem(CLAP_EXT_THREAD_POOL)
         if (plugin->findExtension(CLAP_EXT_THREAD_POOL)) {
@@ -139,6 +140,7 @@ public:
           MClapThreadPool = (const clap_host_thread_pool*)MClapHost->get_extension(MClapHost,CLAP_EXT_THREAD_POOL);
         }
       #endif
+
       //#else
       if (!MClapThreadPool) {
         SAT_PRINT("use sat_threadpool\n");
@@ -148,7 +150,9 @@ public:
           SAT_PRINT("no threadpool\n");
         }
       }
+
       //#endif
+
     #endif
   }
 

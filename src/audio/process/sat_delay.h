@@ -31,9 +31,11 @@ private:
   int             MWritePos           = 0;
   LOOPFX          MLoopFX             = {};
   T               MPhase              = 0.0;
-  T               MPhaseCounter       = 0.0f;
+  T               MPhaseCounter       = 0.0;
   bool            MPhaseWrapped       = false;
 //SAT_DcFilter    MDcFilter           = {};
+
+  T               MDrm                = 0.0;
 
 //------------------------------
 public:
@@ -66,6 +68,10 @@ public:
 
   T getPhase() {
     return MPhase;
+  }
+
+  void setDrm(T ADrm) {
+    MDrm = ADrm;
   }
 
 //------------------------------
@@ -136,8 +142,9 @@ public:
     T c3  = 0.5f * (y2 - y_1) + 1.5f * (y0 - y1);
     T delayed = ((c3 * x + c2) * x + c1) * x + c0;
 
-    T feedback = delayed * AFeedback;
-    feedback = MLoopFX.process(feedback);
+    T feedback = delayed;
+    if (SAT_Random() < MDrm) feedback *= -1.0;
+    feedback = MLoopFX.process(feedback * AFeedback);
 
     // clip?
 
