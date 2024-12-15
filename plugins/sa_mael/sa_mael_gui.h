@@ -36,7 +36,7 @@ public:
 
       sprintf(MInfoText,"v%s : %s : %s", sa_mael_descriptor.version, getPluginFormat(), SAT_GLOBAL.getOSName() );
 
-      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"synth",MInfoText);
+      SAT_PluginHeaderWidget* header = new SAT_PluginHeaderWidget(40,"mael",MInfoText);
       root->appendChild(header);
 
       SAT_PluginFooterWidget* footer = new SAT_PluginFooterWidget(20,"");

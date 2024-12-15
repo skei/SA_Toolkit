@@ -285,7 +285,7 @@ public:
         res1_out = process_res1(*audio_in);
         res2_out = process_res2(*audio_in);
         out = (osc1_out * mix_o1) + (osc2_out * mix_o2) + (res1_out * mix_r1) + (res2_out * mix_r2);
-        out *= MNoteVelocity;
+//        out *= MNoteVelocity;
         out = process_flt1(out);
         out *= process_env1();
         *buffer++ = out;

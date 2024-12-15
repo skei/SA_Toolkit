@@ -119,9 +119,6 @@ class sa_mael_plugin
 private:
 //------------------------------
 
-  sa_mael_voice_processor* MProcessor    = nullptr;
-  SAT_VoicesWidget*         MVoicesWidget = nullptr;
-
   uint64_t    MTrackFlags                 = 0;
   char        MTrackName[CLAP_NAME_SIZE]  = {0};
   SAT_Color   MTrackColor                 = SAT_Black;
@@ -130,6 +127,12 @@ private:
   bool        MTrackIsReturnTrack         = false;
   bool        MTrackIsBus                 = false;
   bool        MTrackIsMaster              = false;
+
+  sa_mael_voice_processor*  MProcessor    = nullptr;
+
+  #ifndef SAT_NO_GUI
+    SAT_VoicesWidget*       MVoicesWidget = nullptr;
+  #endif
 
 //------------------------------
 public:
