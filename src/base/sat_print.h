@@ -118,13 +118,13 @@ public:
     strcat(MPrefixBuffer,":");
 
     char line_str[16] = {0};
-    sprintf(line_str, SAT_TERM_FG_YELLOW "%i", ALine);
+    sprintf(line_str, SAT_TERM_FG_RED "%i", ALine);
     strcat(MPrefixBuffer,line_str);
     strcat(MPrefixBuffer,SAT_TERM_RESET );
 
     strcat(MPrefixBuffer,":");
 
-    strcat(MPrefixBuffer,SAT_TERM_FG_RED );
+    strcat(MPrefixBuffer,SAT_TERM_FG_YELLOW );
     strcat(MPrefixBuffer,AFunc);
     strcat(MPrefixBuffer,SAT_TERM_RESET );
 
@@ -132,7 +132,7 @@ public:
 
     #ifdef SAT_PRINT_TIME
       double time = timeElapsed();
-      sprintf(buffer, SAT_TERM_FG_CYAN "%.6f" SAT_TERM_RESET ":",time);
+      sprintf(buffer, SAT_TERM_FG_MAGENTA "%.6f" SAT_TERM_RESET ":",time);
       strcat(MPrefixBuffer,buffer);
     #endif
 
@@ -143,7 +143,7 @@ public:
       #ifdef SAT_WIN32
         uint32_t thread_id = GetCurrentThreadId();
       #endif
-      sprintf(buffer, SAT_TERM_FG_MAGENTA "%08x" SAT_TERM_RESET,thread_id);
+      sprintf(buffer, SAT_TERM_FG_CYAN "%08x" SAT_TERM_RESET,thread_id);
       strcat(MPrefixBuffer,buffer);
     #endif
 
