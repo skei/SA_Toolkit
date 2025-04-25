@@ -15,7 +15,9 @@
 #define SA_MAEL_MAX_VOICES    256
 #define SA_MAEL_EDITOR_WIDTH  730
 #define SA_MAEL_EDITOR_HEIGHT 430
-#define SA_MAEL_EDITOR_SCALE  1.5
+#define SA_MAEL_EDITOR_SCALE  2
+
+//----------
 
 #include "sa_mael/sa_mael_parameters.h"
 #include "sa_mael/sa_mael_voice.h"
@@ -23,12 +25,6 @@
 #ifndef SAT_NO_GUI
   #include "sa_mael/sa_mael_widgets.h"
 #endif
-
-//----------
-
-//#include "base/system/sat_cpu.h"
-#include "audio/process/sat_resampler.h"
-#include "audio/process/sat_magic_kernel_sharp.h"
 
 //----------------------------------------------------------------------
 //
@@ -90,7 +86,7 @@ public:
 
   //----------
 
-  void process(SAT_ProcessContext* AContext) override {
+  void process(SAT_ProcessContext* AContext) override { // final?
 
     //MVoiceContext.input0 = AContext->process->audio_inputs[0].data32[0];
 
@@ -119,6 +115,12 @@ class sa_mael_plugin
 private:
 //------------------------------
 
+  sa_mael_voice_processor*  MProcessor    = nullptr;
+
+  #ifndef SAT_NO_GUI
+    SAT_VoicesWidget*       MVoicesWidget = nullptr;
+  #endif
+
   uint64_t    MTrackFlags                 = 0;
   char        MTrackName[CLAP_NAME_SIZE]  = {0};
   SAT_Color   MTrackColor                 = SAT_Black;
@@ -127,12 +129,6 @@ private:
   bool        MTrackIsReturnTrack         = false;
   bool        MTrackIsBus                 = false;
   bool        MTrackIsMaster              = false;
-
-  sa_mael_voice_processor*  MProcessor    = nullptr;
-
-  #ifndef SAT_NO_GUI
-    SAT_VoicesWidget*       MVoicesWidget = nullptr;
-  #endif
 
 //------------------------------
 public:
@@ -154,7 +150,7 @@ public:
     appendClapNoteInputPort("Notes");
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
-    MProcessor = new sa_mael_voice_processor(this,2,4096);
+    MProcessor = new sa_mael_voice_processor(this,1,4096);
     setProcessor(MProcessor);
     MProcessor->init(getClapPlugin(),getClapHost());
     MProcessor->setProcessThreaded(true);
