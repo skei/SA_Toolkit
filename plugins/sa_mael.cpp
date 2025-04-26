@@ -147,6 +147,7 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_TRACK_INFO);
+    // registerExtension(CLAP_EXT_MINI_CURVE_DISPLAY);
     appendClapNoteInputPort("Notes");
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
@@ -167,6 +168,20 @@ public:
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
     MProcessor->activate(sample_rate,min_frames_count,max_frames_count);
     return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+  }
+
+  //----------
+
+  bool start_processing() override {
+    // SAT_Host* host = getHost();
+    // const clap_host_t* claphost = getClapHost();
+    // SAT_PRINT("host: %p host->ext.mini_curve_display: %p claphost: %p\n",host,host->ext.mini_curve_display,claphost);
+    // host->ext.mini_curve_display->set_dynamic(claphost,true);
+    // clap_mini_curve_display_curve_hints_t curve_hints = {};
+    // host->ext.mini_curve_display->get_hints(claphost,CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_UNSPECIFIED,&curve_hints);
+    // SAT_PRINT("curve hints: xmin: %.2f xmax: %.2f ymin: %.2f ymax: %.2f\n",curve_hints.x_min,curve_hints.x_max,curve_hints.y_min,curve_hints.y_max);
+    // host->ext.mini_curve_display->changed(claphost,CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
+    return SAT_Plugin::start_processing();
   }
 
 //------------------------------
@@ -274,6 +289,46 @@ public: // track info
       }
     }
   }
+
+//------------------------------
+public: // mini-curve-display
+//------------------------------
+
+  // uint16_t my_curve_data[16] = {0};
+
+  //----------
+
+  // uint32_t mini_curve_display_get_curve_count() override {
+  //   return 1;
+  // }
+
+  //----------
+
+  // uint32_t mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) override {
+  //   SAT_PRINT("curves_size: %i curves: %p\n",curves_size,curves);
+  //   for (uint32_t i=0; i<16; i++) {
+  //     my_curve_data[i] = (i + 1) & 0xffff;
+  //   }
+  //   curves[0].curve_kind    = CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_UNSPECIFIED;
+  //   curves[0].values_count  = 16;
+  //   curves[0].values        = my_curve_data;
+  //   return 1;
+  // }
+
+  //----------
+
+  // void mini_curve_display_set_observed(bool is_observed) override {
+  //   SAT_PRINT("is_observed: %i\n",is_observed);
+  // }
+
+  //----------
+
+  // bool mini_curve_display_get_axis_name(uint32_t curve_index, char *x_name, char *y_name, uint32_t name_capacity) override {
+  //   SAT_PRINT("curve_index: %i name_capacity: %i\n",curve_index,name_capacity);
+  //   strcpy(x_name,"X");
+  //   strcpy(y_name,"Y");
+  //   return true;
+  // }
 
 //------------------------------
 public: // gui
