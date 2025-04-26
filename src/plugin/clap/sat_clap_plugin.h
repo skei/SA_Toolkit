@@ -7,7 +7,7 @@
 
 //----------------------------------------------------------------------
 
-#define SAT_NUM_CLAP_EXTENSIONS           29  // 24 + 5 drafts
+#define SAT_NUM_CLAP_EXTENSIONS           31  // 24 + 7 drafts (-undo)
 #define SAT_NUM_CLAP_COMPAT_EXTENSIONS    9
 //#define SAT_NUM_CLAP_DRAFT_EXTENSIONS   5
 
@@ -72,10 +72,13 @@ protected:
     { CLAP_EXT_VOICE_INFO,                      &MExtVoiceInfo },
     // draft
     { CLAP_EXT_EXTENSIBLE_AUDIO_PORTS,          &MExtExtensibleAudioPorts },
+    { CLAP_EXT_GAIN_ADJUSTMENT_METERING,        &MExtGainAdjustmentMetering },
+    { CLAP_EXT_MINI_CURVE_DISPLAY,              &MExtMiniCurveDisplay },
+    { CLAP_EXT_PROJECT_LOCATION,                &MExtProjectLocation },
     { CLAP_EXT_RESOURCE_DIRECTORY,              &MExtResourceDirectory },
     { CLAP_EXT_TRIGGERS,                        &MExtTriggers },
-    { CLAP_EXT_TUNING,                          &MExtTuning },
-    { CLAP_EXT_UNDO,                            &MExtUndo }
+    { CLAP_EXT_TUNING,                          &MExtTuning }//,
+  //{ CLAP_EXT_UNDO,                            &MExtUndo }
   };
 
   const
@@ -246,6 +249,12 @@ protected:
 
   virtual bool                extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) { return false; }
   virtual bool                extensible_audio_ports_remove_port(bool is_input, uint32_t index) { return false; }
+  virtual double              gain_adjustment_metering_get() { return 0.0; }
+  virtual uint32_t            mini_curve_display_get_curve_count() { return 0; }
+  virtual uint32_t            mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) { return 0; }
+  virtual void                mini_curve_display_set_observed(bool is_observed) {}
+  virtual bool                mini_curve_display_get_axis_name(uint32_t curve_index, char *x_name, char *y_name, uint32_t name_capacity) { return false; }
+  virtual void                project_location_set(const clap_project_location_element_t *path, uint32_t num_elements) {}
   virtual void                resource_directory_set_directory(const char *path, bool is_shared) {}
   virtual void                resource_directory_collect(bool all) {}
   virtual uint32_t            resource_directory_get_files_count() { return 0; }
@@ -253,10 +262,10 @@ protected:
   virtual uint32_t            triggers_count() { return 0; }
   virtual bool                triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) { return false; }
   virtual void                tuning_changed() {}
-  virtual void                undo_get_delta_properties(clap_undo_delta_properties_t *properties) {}
-  virtual bool                undo_can_use_delta_format_version(clap_id format_version) { return false; }
-  virtual bool                undo_apply_delta(clap_id format_version, const void* delta, size_t delta_size) { return false; }
-  virtual void                undo_set_context_info(uint64_t flags, const char* undo_name, const char* redo_name) {}
+  // virtual void                undo_get_delta_properties(clap_undo_delta_properties_t *properties) {}
+  // virtual bool                undo_can_use_delta_format_version(clap_id format_version) { return false; }
+  // virtual bool                undo_apply_delta(clap_id format_version, const void* delta, size_t delta_size) { return false; }
+  // virtual void                undo_set_context_info(uint64_t flags, const char* undo_name, const char* redo_name) {}
 
 //------------------------------
 private: // plugin
@@ -1065,6 +1074,81 @@ protected:
   };
 
 //------------------------------
+private: // draft: gain-adjustment-metering
+//------------------------------
+
+  static
+  double gain_adjustment_metering_callback(const clap_plugin_t *plugin) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->gain_adjustment_metering_get();
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_gain_adjustment_metering_t MExtGainAdjustmentMetering {
+    .get  = gain_adjustment_metering_callback
+  };
+
+//------------------------------
+private: // draft: mini-curve-display
+//------------------------------
+
+  static
+  uint32_t mini_curve_display_get_curve_count_callback(const clap_plugin_t *plugin) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->mini_curve_display_get_curve_count();
+  }
+
+  static
+  uint32_t mini_curve_display_render_callback(const clap_plugin_t *plugin, clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->mini_curve_display_render(curves,curves_size);
+  }
+
+  static
+  void mini_curve_display_set_observed_callback(const clap_plugin_t *plugin, bool is_observed) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    plug->mini_curve_display_set_observed(is_observed);
+  }
+
+  static
+  bool mini_curve_display_get_axis_name_callback(const clap_plugin_t *plugin, uint32_t curve_index, char *x_name, char *y_name, uint32_t name_capacity) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    return plug->mini_curve_display_get_axis_name(curve_index,x_name,y_name,name_capacity);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_mini_curve_display_t MExtMiniCurveDisplay {
+    .get_curve_count  = mini_curve_display_get_curve_count_callback,
+    .render           = mini_curve_display_render_callback,
+    .set_observed     = mini_curve_display_set_observed_callback,
+    .get_axis_name    = mini_curve_display_get_axis_name_callback
+  };
+
+//------------------------------
+private: // draft: project-location
+//------------------------------
+
+  static
+  void project_location_set_callback(const clap_plugin_t *plugin, const clap_project_location_element_t *path, uint32_t num_elements) {
+    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+    plug->project_location_set(path,num_elements);
+  }
+
+//--------------------
+protected:
+//--------------------
+
+const clap_plugin_project_location_t MExtProjectLocation {
+  .set = project_location_set_callback
+};
+
+//------------------------------
 private: // draft: resource-directory
 //------------------------------
 
@@ -1150,41 +1234,40 @@ protected:
 private: // draft: undo
 //------------------------------
 
-  static
-  void undo_get_delta_properties_callback(const clap_plugin_t *plugin, clap_undo_delta_properties_t *properties) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    plug->undo_get_delta_properties(properties);
-  }
+  // static
+  // void undo_get_delta_properties_callback(const clap_plugin_t *plugin, clap_undo_delta_properties_t *properties) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   plug->undo_get_delta_properties(properties);
+  // }
 
-  static
-  bool undo_can_use_delta_format_version_callback(const clap_plugin_t *plugin, clap_id format_version) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->undo_can_use_delta_format_version(format_version);
-  }
+  // static
+  // bool undo_can_use_delta_format_version_callback(const clap_plugin_t *plugin, clap_id format_version) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   return plug->undo_can_use_delta_format_version(format_version);
+  // }
 
-  static
-  bool undo_apply_delta_callback(const clap_plugin_t *plugin, clap_id format_version, const void* delta, size_t delta_size) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    return plug->undo_apply_delta(format_version,delta,delta_size);
-  }
+  // static
+  // bool undo_apply_delta_callback(const clap_plugin_t *plugin, clap_id format_version, const void* delta, size_t delta_size) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   return plug->undo_apply_delta(format_version,delta,delta_size);
+  // }
 
-  static
-  void undo_set_context_info_callback(const clap_plugin_t *plugin, uint64_t flags, const char* undo_name, const char* redo_name) {
-    SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-    plug->undo_set_context_info(flags,undo_name,redo_name);
-  }
+  // static
+  // void undo_set_context_info_callback(const clap_plugin_t *plugin, uint64_t flags, const char* undo_name, const char* redo_name) {
+  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  //   plug->undo_set_context_info(flags,undo_name,redo_name);
+  // }
 
 //--------------------
 protected:
 //--------------------
 
-  const clap_plugin_undo_t MExtUndo {
-    .get_delta_properties         = undo_get_delta_properties_callback,
-    .can_use_delta_format_version = undo_can_use_delta_format_version_callback,
-    .apply_delta                  = undo_apply_delta_callback,
-    .set_context_info             = undo_set_context_info_callback
-  };
-
+  // const clap_plugin_undo_t MExtUndo {
+  //   .get_delta_properties         = undo_get_delta_properties_callback,
+  //   .can_use_delta_format_version = undo_can_use_delta_format_version_callback,
+  //   .apply_delta                  = undo_apply_delta_callback,
+  //   .set_context_info             = undo_set_context_info_callback
+  // };
 
 };
 

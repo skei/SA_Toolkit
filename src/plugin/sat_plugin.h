@@ -1679,6 +1679,43 @@ public: // draft extensions
     return false;
   }
 
+  // gain-adjustment-metering
+  //------------------------------
+
+  double gain_adjustment_metering_get() override {
+    return 0.0;
+  }
+
+  // mini-curve-display
+  //------------------------------
+
+  uint32_t mini_curve_display_get_curve_count() override {
+    return 0;
+  }
+
+  //----------
+
+  uint32_t mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) override {
+    return 0;
+  }
+
+  //----------
+
+  void mini_curve_display_set_observed(bool is_observed) override {
+  }
+
+  //----------
+
+  bool mini_curve_display_get_axis_name(uint32_t curve_index, char *x_name, char *y_name, uint32_t name_capacity) override {
+    return false;
+  }
+
+  // project-location
+  //------------------------------
+
+  void project_location_set(const clap_project_location_element_t *path, uint32_t num_elements) override {
+  }
+
   // resource directory
   //------------------------------
 
@@ -1726,25 +1763,25 @@ public: // draft extensions
   // undo
   //------------------------------
 
-  void undo_get_delta_properties(clap_undo_delta_properties_t *properties) override {
-  }
+  // void undo_get_delta_properties(clap_undo_delta_properties_t *properties) override {
+  // }
 
-  //----------
+  // //----------
 
-  bool undo_can_use_delta_format_version(clap_id format_version) override {
-    return false;
-  }
+  // bool undo_can_use_delta_format_version(clap_id format_version) override {
+  //   return false;
+  // }
 
-  //----------
+  // //----------
 
-  bool undo_apply_delta(clap_id format_version, const void* delta, size_t delta_size) override {
-    return false;
-  }
+  // bool undo_apply_delta(clap_id format_version, const void* delta, size_t delta_size) override {
+  //   return false;
+  // }
 
-  //----------
+  // //----------
 
-  void undo_set_context_info(uint64_t flags, const char* undo_name, const char* redo_name) override {
-  }
+  // void undo_set_context_info(uint64_t flags, const char* undo_name, const char* redo_name) override {
+  // }
 
 };
 

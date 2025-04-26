@@ -39,7 +39,7 @@ struct SAT_ClapHostExtensions {
   const clap_host_transport_control_t*        transport_control       = nullptr;
   const clap_host_triggers_t*                 triggers                = nullptr;
   const clap_host_tuning_t*                   tuning                  = nullptr;
-  const clap_host_undo_t*                     undo                    = nullptr;
+  //const clap_host_undo_t*                     undo                    = nullptr;
 };
 
 //----------------------------------------------------------------------
@@ -167,7 +167,7 @@ private:
     ext.transport_control   = (clap_host_transport_control_t*)MHost->get_extension(MHost,CLAP_EXT_TRANSPORT_CONTROL);
     ext.triggers            = (clap_host_triggers_t*)MHost->get_extension(MHost,CLAP_EXT_TRIGGERS);
     ext.tuning              = (clap_host_tuning_t*)MHost->get_extension(MHost,CLAP_EXT_TUNING);
-    ext.undo                = (clap_host_undo_t*)MHost->get_extension(MHost,CLAP_EXT_UNDO);
+    //ext.undo                = (clap_host_undo_t*)MHost->get_extension(MHost,CLAP_EXT_UNDO);
 
     /*
     if (ext.ambisonic)          { SAT_PRINT("host supports '%s'\n",CLAP_EXT_AMBISONIC); }
