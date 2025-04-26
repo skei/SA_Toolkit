@@ -44,7 +44,7 @@ protected:
   SAT_Voice<VOICE>              MVoices[COUNT]          = {};
 
   // __SAT_ALIGNED(SAT_ALIGNMENT_CACHE)
-  float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE] = {0};
+  float MVoiceBuffer[COUNT * SAT_PLUGIN_MAX_BLOCK_SIZE] = {0}; // oversample_factor, sample_rate ...
   
   SAT_VoiceContext              MVoiceContext           = {};
   SAT_NoteQueue                 MNoteEndQueue;

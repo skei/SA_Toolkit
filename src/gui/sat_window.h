@@ -29,7 +29,7 @@ class SAT_Window
 private:
 //------------------------------
 
-  SAT_GuiQueues       MQueues               = {};
+  SAT_GuiQueues       MQueues                 = {};
   
   // widgets
 

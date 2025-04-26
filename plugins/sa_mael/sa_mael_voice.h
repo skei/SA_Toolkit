@@ -35,12 +35,12 @@ private:
   uint32_t            MNoteKey      = 0;
   double              MNoteVelocity = 0.0;
 
-  sa_mael_osc        MOsc1         = {};
-  sa_mael_osc        MOsc2         = {};
-  sa_mael_res        MRes1         = {};
-  sa_mael_res        MRes2         = {};
-  sa_mael_flt        MFlt1         = {};
-  sa_mael_env        MEnv1         = {};
+  sa_mael_osc         MOsc1         = {};
+  sa_mael_osc         MOsc2         = {};
+  sa_mael_res         MRes1         = {};
+  sa_mael_res         MRes2         = {};
+  sa_mael_flt         MFlt1         = {};
+  sa_mael_env         MEnv1         = {};
 
 //sat_param_t         MVoiceParam[SA_MAEL_PARAM_COUNT] = {};
   sat_param_t         MVoiceMod[SA_MAEL_PARAM_COUNT] = {};
