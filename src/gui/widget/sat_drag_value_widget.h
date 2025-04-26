@@ -137,12 +137,14 @@ protected:
 
   //double calcModulation(double value) {
   double calcModulation(uint32_t AIndex=0) {
-    double modulation = 0.0;//getValue();
+    //double modulation = getValue();
+    double modulation = 0.0;
     SAT_Parameter* param = (SAT_Parameter*)getParameter(AIndex);
     if (param) {
-      modulation = param->getValue() + param->getModulation();
-      modulation = param->normalize(modulation);
-      modulation = SAT_Clamp(modulation,0,1);
+      //modulation = param->getValue() + param->getModulation();
+      //modulation = param->normalize(modulation);
+      //modulation = SAT_Clamp(modulation,0,1);
+      modulation = param->getNormalizedModulatedValue();
     }
     return modulation;
   }

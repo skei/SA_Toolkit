@@ -270,6 +270,12 @@ public:
     return SAT_Clamp(v,MInfo.min_value,MInfo.max_value);
   }
 
+  virtual sat_param_t getNormalizedModulatedValue() {
+    sat_param_t v = MValue + MModulation;
+    v = SAT_Clamp(v,MInfo.min_value,MInfo.max_value);
+    return normalize(v);
+  }
+
   virtual sat_param_t getModulation() {
     return MModulation;
   }
