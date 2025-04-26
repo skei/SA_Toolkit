@@ -14,7 +14,7 @@
 #include "extern/clap/ext/draft/transport-control.h"
 #include "extern/clap/ext/draft/triggers.h"
 #include "extern/clap/ext/draft/tuning.h"
-//#include "extern/clap/ext/draft/undo.h"                       // !!!
+#include "extern/clap/ext/draft/undo.h"
 
 //----------------------------------------------------------------------
 #endif

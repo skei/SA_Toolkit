@@ -7,7 +7,7 @@
 
 //----------------------------------------------------------------------
 
-#define SAT_NUM_CLAP_EXTENSIONS           31  // 24 + 7 drafts (-undo)
+#define SAT_NUM_CLAP_EXTENSIONS           33 // 24 + 9 drafts
 #define SAT_NUM_CLAP_COMPAT_EXTENSIONS    9
 //#define SAT_NUM_CLAP_DRAFT_EXTENSIONS   5
 
@@ -77,8 +77,9 @@ protected:
     { CLAP_EXT_PROJECT_LOCATION,                &MExtProjectLocation },
     { CLAP_EXT_RESOURCE_DIRECTORY,              &MExtResourceDirectory },
     { CLAP_EXT_TRIGGERS,                        &MExtTriggers },
-    { CLAP_EXT_TUNING,                          &MExtTuning }//,
-  //{ CLAP_EXT_UNDO,                            &MExtUndo }
+    { CLAP_EXT_TUNING,                          &MExtTuning },
+    { CLAP_EXT_UNDO_CONTEXT,                    &MExtUndoContext },
+    { CLAP_EXT_UNDO_DELTA,                      &MExtUndoDelta }
   };
 
   const
@@ -262,10 +263,16 @@ protected:
   virtual uint32_t            triggers_count() { return 0; }
   virtual bool                triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) { return false; }
   virtual void                tuning_changed() {}
-  // virtual void                undo_get_delta_properties(clap_undo_delta_properties_t *properties) {}
-  // virtual bool                undo_can_use_delta_format_version(clap_id format_version) { return false; }
-  // virtual bool                undo_apply_delta(clap_id format_version, const void* delta, size_t delta_size) { return false; }
-  // virtual void                undo_set_context_info(uint64_t flags, const char* undo_name, const char* redo_name) {}
+  
+  virtual void                undo_delta_get_delta_properties(clap_undo_delta_properties_t *properties) {}
+  virtual bool                undo_delta_can_use_delta_format_version(clap_id format_version) { return false; }
+  virtual bool                undo_delta_undo(clap_id format_version, const void *delta, size_t delta_size) { return false; }
+  virtual bool                undo_delta_redo(clap_id format_version, const void *delta, size_t delta_size) { return false; }
+
+  virtual void                undo_context_set_can_undo(bool can_undo) {}
+  virtual void                undo_context_set_can_redo(bool can_redo) {}
+  virtual void                undo_context_set_undo_name(const char *name) {}
+  virtual void                undo_context_set_redo_name(const char *name) {}
 
 //------------------------------
 private: // plugin
@@ -1231,43 +1238,82 @@ protected:
   };
 
 //------------------------------
-private: // draft: undo
+private: // draft: undo-context
 //------------------------------
 
-  // static
-  // void undo_get_delta_properties_callback(const clap_plugin_t *plugin, clap_undo_delta_properties_t *properties) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   plug->undo_get_delta_properties(properties);
-  // }
+static
+void undo_context_set_can_undo_callback(const clap_plugin_t *plugin, bool can_undo) {
+  SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  plug->undo_context_set_can_undo(can_undo);
+}
 
-  // static
-  // bool undo_can_use_delta_format_version_callback(const clap_plugin_t *plugin, clap_id format_version) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   return plug->undo_can_use_delta_format_version(format_version);
-  // }
+static
+void undo_context_set_can_redo_callback(const clap_plugin_t *plugin, bool can_redo) {
+  SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  plug->undo_context_set_can_redo(can_redo);
+}
 
-  // static
-  // bool undo_apply_delta_callback(const clap_plugin_t *plugin, clap_id format_version, const void* delta, size_t delta_size) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   return plug->undo_apply_delta(format_version,delta,delta_size);
-  // }
+static
+void undo_context_set_undo_name_callback(const clap_plugin_t *plugin, const char *name) {
+  SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  plug->undo_context_set_undo_name(name);
+}
 
-  // static
-  // void undo_set_context_info_callback(const clap_plugin_t *plugin, uint64_t flags, const char* undo_name, const char* redo_name) {
-  //   SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
-  //   plug->undo_set_context_info(flags,undo_name,redo_name);
-  // }
+static
+void undo_context_set_redo_name_callback(const clap_plugin_t *plugin, const char *name) {
+  SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+  plug->undo_context_set_redo_name(name);
+}
 
 //--------------------
 protected:
 //--------------------
 
-  // const clap_plugin_undo_t MExtUndo {
-  //   .get_delta_properties         = undo_get_delta_properties_callback,
-  //   .can_use_delta_format_version = undo_can_use_delta_format_version_callback,
-  //   .apply_delta                  = undo_apply_delta_callback,
-  //   .set_context_info             = undo_set_context_info_callback
-  // };
+  const clap_plugin_undo_context_t MExtUndoContext {
+    .set_can_undo   = undo_context_set_can_undo_callback,
+    .set_can_redo   = undo_context_set_can_redo_callback,
+    .set_undo_name  = undo_context_set_undo_name_callback,
+    .set_redo_name  = undo_context_set_redo_name_callback
+  };
+
+//------------------------------
+private: // draft: undo-delta
+//------------------------------
+
+   static
+   void undo_delta_get_delta_properties_callback(const clap_plugin_t *plugin, clap_undo_delta_properties_t *properties) {
+     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+     plug->undo_delta_get_delta_properties(properties);
+   }
+
+   static
+   bool undo_delta_can_use_delta_format_version_callback(const clap_plugin_t *plugin, clap_id format_version) {
+     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+     return plug->undo_delta_can_use_delta_format_version(format_version);
+   }
+
+   static
+   bool undo_delta_undo_callback(const clap_plugin_t *plugin, clap_id format_version, const void *delta, size_t delta_size) {
+     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+     return plug->undo_delta_undo(format_version,delta,delta_size);
+   }
+
+   static
+   bool undo_delta_redo_callback(const clap_plugin_t *plugin, clap_id format_version, const void *delta, size_t delta_size) {
+     SAT_ClapPlugin* plug = (SAT_ClapPlugin*)plugin->plugin_data;
+     return plug->undo_delta_redo(format_version,delta,delta_size);
+   }
+
+//--------------------
+protected:
+//--------------------
+
+  const clap_plugin_undo_delta_t MExtUndoDelta {
+    .get_delta_properties         = undo_delta_get_delta_properties_callback,
+    .can_use_delta_format_version = undo_delta_can_use_delta_format_version_callback,
+    .undo                         = undo_delta_undo_callback,
+    .redo                         = undo_delta_redo_callback
+  };
 
 };
 
