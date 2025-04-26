@@ -263,16 +263,15 @@ protected:
   virtual uint32_t            triggers_count() { return 0; }
   virtual bool                triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) { return false; }
   virtual void                tuning_changed() {}
-  
+  virtual void                undo_context_set_can_undo(bool can_undo) {}
+  virtual void                undo_context_set_can_redo(bool can_redo) {}
+  virtual void                undo_context_set_undo_name(const char *name) {}
+  virtual void                undo_context_set_redo_name(const char *name) {}
   virtual void                undo_delta_get_delta_properties(clap_undo_delta_properties_t *properties) {}
   virtual bool                undo_delta_can_use_delta_format_version(clap_id format_version) { return false; }
   virtual bool                undo_delta_undo(clap_id format_version, const void *delta, size_t delta_size) { return false; }
   virtual bool                undo_delta_redo(clap_id format_version, const void *delta, size_t delta_size) { return false; }
 
-  virtual void                undo_context_set_can_undo(bool can_undo) {}
-  virtual void                undo_context_set_can_redo(bool can_redo) {}
-  virtual void                undo_context_set_undo_name(const char *name) {}
-  virtual void                undo_context_set_redo_name(const char *name) {}
 
 //------------------------------
 private: // plugin

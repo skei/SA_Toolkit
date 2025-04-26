@@ -1760,28 +1760,38 @@ public: // draft extensions
   void tuning_changed() override {
   }
 
-  // undo
+  // undo-context
   //------------------------------
 
-  // void undo_get_delta_properties(clap_undo_delta_properties_t *properties) override {
-  // }
+  void undo_context_set_can_undo(bool can_undo) override {
+  }
 
-  // //----------
+  void undo_context_set_can_redo(bool can_redo) override {
+  }
 
-  // bool undo_can_use_delta_format_version(clap_id format_version) override {
-  //   return false;
-  // }
+  void undo_context_set_undo_name(const char *name) override {
+  }
 
-  // //----------
+  void undo_context_set_redo_name(const char *name) override {
+  }
 
-  // bool undo_apply_delta(clap_id format_version, const void* delta, size_t delta_size) override {
-  //   return false;
-  // }
+  // undo-delta
+  //------------------------------
 
-  // //----------
+  void undo_delta_get_delta_properties(clap_undo_delta_properties_t *properties) override {
+  }
 
-  // void undo_set_context_info(uint64_t flags, const char* undo_name, const char* redo_name) override {
-  // }
+  bool undo_delta_can_use_delta_format_version(clap_id format_version) override {
+    return false;
+  }
+
+  bool undo_delta_undo(clap_id format_version, const void *delta, size_t delta_size) override {
+    return false;
+  }
+
+  bool undo_delta_redo(clap_id format_version, const void *delta, size_t delta_size) override {
+    return false;
+  }
 
 };
 
