@@ -197,6 +197,45 @@ public: // extensions
     registerExtension(CLAP_EXT_VOICE_INFO);
   }
 
+  //----------
+
+  // must be called _after_ init() so that MHost has been initialized
+  
+  void printSupportedHostExtensions() {
+    SAT_PRINT("host extensions:\n");
+    if (MHost->ext.ambisonic)           { SAT_PRINT("  CLAP_EXT_AMBISONIC\n"); }
+    if (MHost->ext.audio_ports)         { SAT_PRINT("  CLAP_EXT_AUDIO_PORTS\n"); } 
+    if (MHost->ext.audio_ports_config)  { SAT_PRINT("  CLAP_EXT_AUDIO_PORTS_CONFIG\n"); }
+    if (MHost->ext.context_menu)        { SAT_PRINT("  CLAP_EXT_CONTEXT_MENU\n"); }
+    if (MHost->ext.event_registry)      { SAT_PRINT("  CLAP_EXT_EVENT_REGISTRY\n"); }
+    if (MHost->ext.gui)                 { SAT_PRINT("  CLAP_EXT_GUI\n"); }
+    if (MHost->ext.latency)             { SAT_PRINT("  CLAP_EXT_LATENCY\n"); }
+    if (MHost->ext.log)                 { SAT_PRINT("  CLAP_EXT_LOG\n"); }
+    if (MHost->ext.note_name)           { SAT_PRINT("  CLAP_EXT_NOTE_NAME\n"); }
+    if (MHost->ext.note_ports)          { SAT_PRINT("  CLAP_EXT_NOTE_PORTS\n"); }
+    if (MHost->ext.params)              { SAT_PRINT("  CLAP_EXT_PARAMS\n"); }
+    if (MHost->ext.posix_fd_support)    { SAT_PRINT("  CLAP_EXT_POSIX_FD_SUPPORT\n"); }
+    if (MHost->ext.preset_load)         { SAT_PRINT("  CLAP_EXT_PRESET_LOAD\n"); }
+    if (MHost->ext.remote_controls)     { SAT_PRINT("  CLAP_EXT_REMOTE_CONTROLS\n"); }
+    if (MHost->ext.state)               { SAT_PRINT("  CLAP_EXT_STATE\n"); }
+    if (MHost->ext.surround)            { SAT_PRINT("  CLAP_EXT_SURROUND\n"); }
+    if (MHost->ext.tail)                { SAT_PRINT("  CLAP_EXT_TAIL\n"); }
+    if (MHost->ext.thread_check)        { SAT_PRINT("  CLAP_EXT_THREAD_CHECK\n"); }
+    if (MHost->ext.thread_pool)         { SAT_PRINT("  CLAP_EXT_THREAD_POOL\n"); }
+    if (MHost->ext.timer_support)       { SAT_PRINT("  CLAP_EXT_TIMER_SUPPORT\n"); }
+    if (MHost->ext.track_info)          { SAT_PRINT("  CLAP_EXT_TRACK_INFO\n"); }
+    if (MHost->ext.voice_info)          { SAT_PRINT("  CLAP_EXT_VOICE_INFO\n"); }
+
+    if (MHost->ext.mini_curve_display)  { SAT_PRINT("  CLAP_EXT_MINI_CURVE_DISPLAY (draft)\n"); }
+    if (MHost->ext.resource_directory)  { SAT_PRINT("  CLAP_EXT_RESOURCE_DIRECTORY (draft)\n"); }
+    if (MHost->ext.scratch_memory)      { SAT_PRINT("  CLAP_EXT_SCRATCH_MEMORY (draft)\n"); }
+    if (MHost->ext.transport_control)   { SAT_PRINT("  CLAP_EXT_TRANSPORT_CONTROL (draft)\n"); }
+    if (MHost->ext.triggers)            { SAT_PRINT("  CLAP_EXT_TRIGGERS (draft)\n"); }
+    if (MHost->ext.tuning)              { SAT_PRINT("  CLAP_EXT_TUNING (draft)\n"); }
+    if (MHost->ext.undo)                { SAT_PRINT("  CLAP_EXT_UNDO (draft)\n"); }
+  }
+
+
 //------------------------------
 public: // audio input ports
 //------------------------------
