@@ -87,11 +87,8 @@ public:
   //----------
 
   void process(SAT_ProcessContext* AContext) override { // final?
-
     //MVoiceContext.input0 = AContext->process->audio_inputs[0].data32[0];
-
     SAT_VoiceProcessor::process(AContext);
-
     const clap_process_t* process = AContext->process;
     float** output = process->audio_outputs[0].data32;
     uint32_t length = process->frames_count;
@@ -147,7 +144,7 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_TRACK_INFO);
-    // registerExtension(CLAP_EXT_MINI_CURVE_DISPLAY);
+    registerExtension(CLAP_EXT_MINI_CURVE_DISPLAY);
     appendClapNoteInputPort("Notes");
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
@@ -173,14 +170,13 @@ public:
   //----------
 
   bool start_processing() override {
-    // SAT_Host* host = getHost();
-    // const clap_host_t* claphost = getClapHost();
-    // SAT_PRINT("host: %p host->ext.mini_curve_display: %p claphost: %p\n",host,host->ext.mini_curve_display,claphost);
-    // host->ext.mini_curve_display->set_dynamic(claphost,true);
-    // clap_mini_curve_display_curve_hints_t curve_hints = {};
-    // host->ext.mini_curve_display->get_hints(claphost,CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_UNSPECIFIED,&curve_hints);
-    // SAT_PRINT("curve hints: xmin: %.2f xmax: %.2f ymin: %.2f ymax: %.2f\n",curve_hints.x_min,curve_hints.x_max,curve_hints.y_min,curve_hints.y_max);
-    // host->ext.mini_curve_display->changed(claphost,CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
+    //SAT_TRACE;
+    bool result;
+    SAT_Host* host = getHost();
+    if (host->ext.mini_curve_display) {
+      host->ext.mini_curve_display->set_dynamic(getClapHost(),true);
+      //host->ext.mini_curve_display->changed(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED); // test..
+    }
     return SAT_Plugin::start_processing();
   }
 
@@ -294,26 +290,18 @@ public: // track info
 public: // mini-curve-display
 //------------------------------
 
-  // uint16_t my_curve_data[16] = {0};
+  uint32_t mini_curve_display_get_curve_count() override {
+    return 1;
+  }
 
   //----------
 
-  // uint32_t mini_curve_display_get_curve_count() override {
-  //   return 1;
-  // }
-
-  //----------
-
-  // uint32_t mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) override {
-  //   SAT_PRINT("curves_size: %i curves: %p\n",curves_size,curves);
-  //   for (uint32_t i=0; i<16; i++) {
-  //     my_curve_data[i] = (i + 1) & 0xffff;
-  //   }
-  //   curves[0].curve_kind    = CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_UNSPECIFIED;
-  //   curves[0].values_count  = 16;
-  //   curves[0].values        = my_curve_data;
-  //   return 1;
-  // }
+  uint32_t mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) override {
+    for (uint32_t i=0; i<curves[0].values_count; i++) {
+      curves[0].values[i] = SAT_RandomRangeInt(1,0xffff);
+    }
+    return 1;
+  }
 
   //----------
 
