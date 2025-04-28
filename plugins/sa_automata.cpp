@@ -139,7 +139,10 @@ public:
 
   //----------
 
-  // bool on_plugin_transport(const clap_event_transport_t* event) final {
+  // context = null..
+
+  // void transportEvent(const clap_event_transport_t* event) final {
+  //   SAT_TRACE;
   //   SAT_ProcessContext* context = getProcessContext();
   //   SAT_Assert(context);
   //   double samplerate = context->samplerate;
@@ -159,7 +162,6 @@ public:
   //     handleStopPlaying();
   //   }
   //   calcTickSize();
-  //   return true;
   // }
 
   //----------
@@ -181,7 +183,34 @@ public:
 
   void processAudio(SAT_ProcessContext* AContext, uint32_t AOffset, uint32_t ALength) override {
     MProcessContext = AContext;
+    MSampleRate = AContext->samplerate;
     const clap_process_t* process = AContext->process;
+
+    SAT_Assert(AContext);
+    double samplerate = AContext->samplerate;
+    SAT_Assert(samplerate > 0);
+
+    uint64_t samplecount = AContext->sample_counter;
+    const clap_event_transport_t* transport = process->transport;
+
+    if (transport->flags & CLAP_TRANSPORT_HAS_TEMPO) {
+      MTempo = transport->tempo;
+      //MTempoInc = event->tempo_inc;
+    }
+    bool playing = transport->flags & CLAP_TRANSPORT_IS_PLAYING;
+    if (!MIsPlaying && playing) {
+      SAT_PRINT("Start\n");
+      MIsPlaying = true;
+      handleStartPlaying();
+    }
+    else if (MIsPlaying && !playing) {
+      SAT_PRINT("Stop\n");
+      MIsPlaying = false;
+      handleStopPlaying();
+    }
+
+    calcTickSize();
+
     //if (need_recalc) recalc(samplerate);
     for (uint32_t i=0; i<ALength; i++) {
       if ((p_timing_num > 0) && (p_timing_denom > 0)) {
@@ -217,7 +246,7 @@ public: // ticks
     double seconds_per_beat = 60.0 / MTempo;
     double samples_per_beat = MSampleRate * seconds_per_beat;
     MTickSize = samples_per_beat;
-    //SAT_Print("MTickSize %.3f\n",MTickSize);
+    //SAT_PRINT("MTempo: %.2f MSampleRate:%.1f MTickSize %.3f\n",MTempo,MSampleRate,MTickSize);
   }
 
   //----------
@@ -245,6 +274,7 @@ public: // ticks
   //----------
 
   void handleTick() {
+    //SAT_TRACE;
     updateCells();
 //    if (isEditorOpen()) {
       //w_grid->do_Widget_update(w_grid,0,0);
