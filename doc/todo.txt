@@ -17,16 +17,12 @@ BASE
     SAT_GLOBAL.WIN32 - dllmain module hinstance, register window class
     SAT_GLOBAL.LINUX - xinitthreads
 
-* investigate SAT_Queue
-  - (currently testing..)
-  - volatile read/write pos?
-  - atomic
-
 ----------------------------------------------------------------------
 GUI
 ----------------------------------------------------------------------
 
 * double clicking
+  (re-evaluate)
 
 * editor state
 
