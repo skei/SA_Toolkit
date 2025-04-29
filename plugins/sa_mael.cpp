@@ -2,7 +2,7 @@
 #define sa_mael_included
 //----------------------------------------------------------------------
 
-#include "sat.h"
+//#include "sat.h"
 #include "plugin/sat_plugin.h"
 #include "plugin/processor/sat_voice_processor.h"
 
@@ -145,7 +145,6 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_TRACK_INFO);
-    registerExtension(CLAP_EXT_MINI_CURVE_DISPLAY);
     appendClapNoteInputPort("Notes");
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
@@ -159,23 +158,18 @@ public:
       setInitialEditorSize(SA_MAEL_EDITOR_WIDTH,SA_MAEL_EDITOR_HEIGHT,SA_MAEL_EDITOR_SCALE,true);
     #endif
 
-    bool result = SAT_Plugin::init();
-
-    SAT_Host* host = getHost();
-    SAT_Assert(host);
-
-    // must be called _after_ init()
-    printSupportedHostExtensions();
-
-    // let host know we want a dynamically (always) updated curve
-    if (result) {
-      if (host->ext.mini_curve_display) {
-        host->ext.mini_curve_display->set_dynamic(getClapHost(),true);
-        //host->ext.mini_curve_display->changed(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
-      }
-    }
-
-    return result;
+    return SAT_Plugin::init();
+    
+    // bool result = SAT_Plugin::init();
+    // printSupportedHostExtensions();
+    // SAT_Host* host = getHost();
+    // if (result) {
+    //   if (host->ext.mini_curve_display) {
+    //     host->ext.mini_curve_display->set_dynamic(getClapHost(),true);
+    //     //host->ext.mini_curve_display->changed(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
+    //   }
+    // }
+    // return result;
   }
 
   //----------
@@ -295,50 +289,50 @@ public: // track info
 public: // mini-curve-display
 //------------------------------
 
-  uint32_t mini_curve_display_get_curve_count() override {
-    SAT_PRINT("return 1\n");
-    return 1;
-  }
+  // uint32_t mini_curve_display_get_curve_count() override {
+  //   SAT_PRINT("return 1\n");
+  //   return 1;
+  // }
 
   //----------
 
-  uint32_t mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) override {
-    SAT_PRINT("curves_size: %i\n",curves_size);
-    //if (curves_size == 1) {
-    for (uint32_t curve=0; curve<curves_size; curve++) {
+  // uint32_t mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) override {
+  //   SAT_PRINT("curves_size: %i\n",curves_size);
+  //   //if (curves_size == 1) {
+  //   for (uint32_t curve=0; curve<curves_size; curve++) {
 
-      SAT_Host* host = getHost();
-      clap_mini_curve_display_curve_hints_t hints = {0};
+  //     SAT_Host* host = getHost();
+  //     clap_mini_curve_display_curve_hints_t hints = {0};
 
-      bool result = host->ext.mini_curve_display->get_hints(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_GAIN_RESPONSE,&hints);
-      if (result) {
-        // never printed, because bitwig/linux get_hints() returns false
-        SAT_PRINT("curve: %i : min %.2f,%.2f max %.2f,%.2f\n",curve,hints.x_min,hints.y_min,hints.x_max,hints.y_max);
-      }
+  //     bool result = host->ext.mini_curve_display->get_hints(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_GAIN_RESPONSE,&hints);
+  //     if (result) {
+  //       // never printed, because bitwig/linux get_hints() returns false
+  //       SAT_PRINT("curve: %i : min %.2f,%.2f max %.2f,%.2f\n",curve,hints.x_min,hints.y_min,hints.x_max,hints.y_max);
+  //     }
 
-      uint32_t count = curves[curve].values_count;
-      for (uint32_t i=0; i<count; i++) {
-        curves[curve].curve_kind = CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_TIME_SERIES;
-        curves[curve].values[i] = SAT_RandomRangeInt(1,0xfffe);
-      }
-    }
-    return curves_size;
-  }
-
-  //----------
-
-  void mini_curve_display_set_observed(bool is_observed) override {
-    SAT_PRINT("is_observed: %s\n",is_observed ? "true" : "false");
-  }
+  //     uint32_t count = curves[curve].values_count;
+  //     for (uint32_t i=0; i<count; i++) {
+  //       curves[curve].curve_kind = CLAP_MINI_CURVE_DISPLAY_CURVE_KIND_TIME_SERIES;
+  //       curves[curve].values[i] = SAT_RandomRangeInt(1,0xfffe);
+  //     }
+  //   }
+  //   return curves_size;
+  // }
 
   //----------
 
-  bool mini_curve_display_get_axis_name(uint32_t curve_index, char *x_name, char *y_name, uint32_t name_capacity) override {
-    SAT_PRINT("curve_index: %i name_capacity: %i\n",curve_index,name_capacity);
-    strcpy(x_name,"X");
-    strcpy(y_name,"Y");
-    return true;
-  }
+  // void mini_curve_display_set_observed(bool is_observed) override {
+  //   SAT_PRINT("is_observed: %s\n",is_observed ? "true" : "false");
+  // }
+
+  //----------
+
+  // bool mini_curve_display_get_axis_name(uint32_t curve_index, char *x_name, char *y_name, uint32_t name_capacity) override {
+  //   SAT_PRINT("curve_index: %i name_capacity: %i\n",curve_index,name_capacity);
+  //   strcpy(x_name,"X");
+  //   strcpy(y_name,"Y");
+  //   return true;
+  // }
 
 //------------------------------
 public: // gui

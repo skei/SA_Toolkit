@@ -54,7 +54,9 @@ class SAT_Plugin
 private:
 //------------------------------
 
+  // #ifndef SAT_NO_GUI
   SAT_Window*             MWindow               = nullptr;
+  // #endif
 
   bool                    MIsInitialized        = false;
   bool                    MIsActivated          = false;
@@ -76,11 +78,13 @@ private:
   SAT_ProcessContext      MProcessContext       = {};
   SAT_PluginQueues        MQueues               = {};
 
+  // #ifndef SAT_NO_GUI
   SAT_Editor*             MEditor               = nullptr;
   uint32_t                MInitialEditorWidth   = 100;
   uint32_t                MInitialEditorHeight  = 100;
   double                  MInitialEditorScale   = 1.0;
   bool                    MProportionalEditor   = false;
+  // #endif 
 
   bool                    MHasInitialSize       = false;
   
@@ -199,8 +203,6 @@ public: // extensions
 
   //----------
 
-  // must be called _after_ init() so that MHost has been initialized
-  
   void printSupportedHostExtensions() {
     SAT_PRINT("host extensions:\n");
     if (MHost->ext.ambisonic)           { SAT_PRINT("  CLAP_EXT_AMBISONIC\n"); }
@@ -234,6 +236,7 @@ public: // extensions
     if (MHost->ext.tuning)              { SAT_PRINT("  CLAP_EXT_TUNING (draft)\n"); }
     if (MHost->ext.undo)                { SAT_PRINT("  CLAP_EXT_UNDO (draft)\n"); }
   }
+
 
 
 //------------------------------
@@ -1028,13 +1031,13 @@ public: // clap plugin
   const void* get_extension(const char *id) override {
     
     if (MSupportedExtensions.hasItem(id)) {
-      //SAT_PRINT("supported extension '%s'\n",id);
+      SAT_PRINT("host asks for '%s'\n",id);
       return MSupportedExtensions.getItem(id);
     }
     const char* compat_id = findCompatExtension(id);
     if (compat_id) {
       if (MSupportedExtensions.hasItem(compat_id)) {
-        //SAT_PRINT("unsupported '%s', compatible '%s'\n",id, compat_id);
+        SAT_PRINT("host asks for '%s', return '%s'\n",id, compat_id);
         return MSupportedExtensions.getItem(compat_id);
       }
       else {
@@ -1042,7 +1045,7 @@ public: // clap plugin
         return nullptr;
       }
     }
-    //SAT_PRINT("unsupported '%s'\n",id);
+    SAT_PRINT("host asks for '%s', unsupported\n",id);
     return nullptr;
   }
 
