@@ -34,9 +34,9 @@ private:
   SAT_Widget*       MTempRealign[4096] = {}; // 4k widgets = 32k
   SAT_Widget*       MTempRedraw[4096]  = {};
 
-//------------------------------
-public:
-//------------------------------
+//----------------------------------------------------------------------
+public: // realign
+//----------------------------------------------------------------------
 
   // called from
   //   SAT_Window.on_WidgetListener_realign()
@@ -81,18 +81,20 @@ public:
 
   //----------
 
-  uint32_t emptyRealignQueue() {
-    uint32_t num_realigned = 0;
-    SAT_Widget* widget;
-    while (MRealignQueue.try_dequeue(widget)) {
-      num_realigned += 1;
-    }
-    return num_realigned;
-  }
+  // not currently called from anywhere?
 
-//------------------------------
-public:
-//------------------------------
+  // uint32_t emptyRealignQueue() {
+  //   uint32_t num_realigned = 0;
+  //   SAT_Widget* widget;
+  //   while (MRealignQueue.try_dequeue(widget)) {
+  //     num_realigned += 1;
+  //   }
+  //   return num_realigned;
+  // }
+
+//----------------------------------------------------------------------
+public: // redraw
+//----------------------------------------------------------------------
 
   // called from
   //   SAT_Window.on_Window_show()
@@ -130,7 +132,9 @@ public:
         MPaintQueue.enqueue(widget);
         rect.combine(widget->getRect());
       }
+      // SAT_GLOBAL.ANALYTICS.report_RedrawQueue_num_queued(num_queued);
     }
+
 
     return rect;
 
@@ -138,17 +142,21 @@ public:
 
   //----------
 
-  uint32_t emptyRedrawQueue() {
-    uint32_t num_redrawn = 0;
-    SAT_Widget* widget;
-    while (MRedrawQueue.try_dequeue(widget)) {
-      num_redrawn += 1;
-    }
-    return num_redrawn;
-  }
+  // not currently called from anywhere?
+
+  // uint32_t emptyRedrawQueue() {
+  //   uint32_t num_redrawn = 0;
+  //   SAT_Widget* widget;
+  //   while (MRedrawQueue.try_dequeue(widget)) {
+  //     num_redrawn += 1;
+  //   }
+  //   return num_redrawn;
+  // }
 
 
-  //----------
+//----------------------------------------------------------------------
+public: // paint
+//----------------------------------------------------------------------
 
   // called from
   //   SAT_Window.paint()
@@ -198,14 +206,16 @@ public:
 
 //----------
 
-  uint32_t emptyPaintQueue() {
-    uint32_t num_painted = 0;
-    SAT_Widget* widget;
-    while (MPaintQueue.try_dequeue(widget)) {
-      num_painted += 1;
-    }
-    return num_painted;
-  }
+  // not currently called from anywhere?
+
+  // uint32_t emptyPaintQueue() {
+  //   uint32_t num_painted = 0;
+  //   SAT_Widget* widget;
+  //   while (MPaintQueue.try_dequeue(widget)) {
+  //     num_painted += 1;
+  //   }
+  //   return num_painted;
+  // }
 
 };
 

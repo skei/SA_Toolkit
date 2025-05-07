@@ -347,6 +347,7 @@ public: // widget listener
   //----------
 
   void on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
+
     #ifdef SAT_WINDOW_QUEUE_WIDGETS
 
       MQueues.queueRedraw(AWidget);
@@ -375,7 +376,7 @@ public: // widget listener
         }
       }
 
-    #else
+    #else // ! SAT_WINDOW_QUEUE_WIDGETS
 
       SAT_Rect rect = AWidget->getRect();
       invalidate(rect.x,rect.y,rect.w,rect.h);

@@ -69,11 +69,16 @@ private:
     SAT_ParamFromGuiToHostQueue       MParamFromGuiToHost;//     = {};
   #endif
 
-  SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHost;//   = {};
+  // SAT_NoteEndFromAudioToHostQueue   MNoteEndFromAudioToHost;//   = {};
 
-//------------------------------
+//----------------------------------------------------------------------
 public: // host -> gui
-//------------------------------
+//----------------------------------------------------------------------
+
+  // when parameter is updated (via process()),
+  // we need to tell the gui about it
+
+  //----------
 
   #ifndef SAT_NO_GUI
 
@@ -108,6 +113,13 @@ public: // host -> gui
     }
     SAT_GLOBAL.ANALYTICS.report_ParamFromHostToGui_count(count);
   }
+
+  //------------------------------
+  //
+  //------------------------------
+
+  // when parameter is modulated (via process()),
+  // we need to tell the gui about it
 
   //----------
 
@@ -146,9 +158,14 @@ public: // host -> gui
 
   #endif // no gui
 
-//------------------------------
+//----------------------------------------------------------------------
 public: // gui -> host
-//------------------------------
+//----------------------------------------------------------------------
+
+  // when a widget on the gui is tweaked, and the widget is connected to a parameter
+  // we need to tell the host about it
+
+  //----------
 
   #ifndef SAT_NO_GUI
 
@@ -233,9 +250,14 @@ public: // gui -> host
 
   #endif // no gui
 
-//------------------------------
+//----------------------------------------------------------------------
 public: // gui -> audio
-//------------------------------
+//----------------------------------------------------------------------
+
+  // when a widget on the gui is tweaked, and the widget is connected to a parameter
+  // we need to tell the processor (audio thread) about it
+
+  //----------
 
   #ifndef SAT_NO_GUI
 
@@ -287,70 +309,63 @@ public: // gui -> audio
 
   #endif // no gui
 
-//------------------------------
+//----------------------------------------------------------------------
 public: // audio -> host
-//------------------------------
+//----------------------------------------------------------------------
+
+  // when a wnote has reached its end (envelope faded out, etc)
+  // we need to tell the host about it
+
+  //----------
 
   // called from [audio]
   //   todo (event processing)
 
-  void queueNoteEndFromAudioToHost(uint32_t ANoteId, int16_t APort=-1, int16_t AChannel=-1, int16_t AKey=-1) {
-    SAT_PluginQueueItem item;
-    //item.type       = CLAP_EVENT_NOTE_END;
-    item.note_id       = ANoteId;
-    //item.value      = 0.0;
-    item.note.port    = APort;
-    item.note.channel = AChannel;
-    item.note.key     = AKey;
-    // item.note.dummy   = 0;
-    //if (!MNoteEndFromAudioToHost.write(item)) {
-    if (!MNoteEndFromAudioToHost.enqueue(item)) {
-      // SAT_PRINT("couldn't write to MNoteEndFromAudioToHost queue\n");
-    }
-  }
+  // void queueNoteEndFromAudioToHost(uint32_t ANoteId, int16_t APort=-1, int16_t AChannel=-1, int16_t AKey=-1) {
+  //   SAT_PluginQueueItem item;
+  //   //item.type       = CLAP_EVENT_NOTE_END;
+  //   item.note_id       = ANoteId;
+  //   //item.value      = 0.0;
+  //   item.note.port    = APort;
+  //   item.note.channel = AChannel;
+  //   item.note.key     = AKey;
+  //   // item.note.dummy   = 0;
+  //   //if (!MNoteEndFromAudioToHost.write(item)) {
+  //   if (!MNoteEndFromAudioToHost.enqueue(item)) {
+  //     // SAT_PRINT("couldn't write to MNoteEndFromAudioToHost queue\n");
+  //   }
+  // }
 
   //----------
 
   // called from [audio]
   //   SAT_Plugin.process
 
-  void flushNoteEndsFromAudioToHost(SAT_ProcessContext* AContext) {
-    const clap_output_events_t* out_events = AContext->process->out_events;
-    uint32_t blocksize = AContext->process->frames_count;
-    uint32_t count = 0;
-    SAT_PluginQueueItem item;
-    //while (MNoteEndFromAudioToHost.read(&item)) {
-    while (MNoteEndFromAudioToHost.try_dequeue(item)) {
-      count += 1;
-      clap_event_note_t event;
-      event.header.size     = sizeof(clap_event_note_t);
-      event.header.time     = blocksize - 1;
-      event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-      event.header.type     = CLAP_EVENT_NOTE_END;
-      event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-      event.note_id         = item.note_id;
-      event.channel         = item.note.channel;
-      event.key             = item.note.key;
-      event.port_index      = item.note.port;
-      event.velocity        = 0.0;//item.value;
-      const clap_event_header_t* header = (const clap_event_header_t*)&event;
-      out_events->try_push(out_events,header);
-    }
-    SAT_GLOBAL.ANALYTICS.report_NoteEndFromAudioToHost_count(count);
+  // void flushNoteEndsFromAudioToHost(SAT_ProcessContext* AContext) {
+  //   const clap_output_events_t* out_events = AContext->process->out_events;
+  //   uint32_t blocksize = AContext->process->frames_count;
+  //   uint32_t count = 0;
+  //   SAT_PluginQueueItem item;
+  //   //while (MNoteEndFromAudioToHost.read(&item)) {
+  //   while (MNoteEndFromAudioToHost.try_dequeue(item)) {
+  //     count += 1;
+  //     clap_event_note_t event;
+  //     event.header.size     = sizeof(clap_event_note_t);
+  //     event.header.time     = blocksize - 1;
+  //     event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+  //     event.header.type     = CLAP_EVENT_NOTE_END;
+  //     event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+  //     event.note_id         = item.note_id;
+  //     event.channel         = item.note.channel;
+  //     event.key             = item.note.key;
+  //     event.port_index      = item.note.port;
+  //     event.velocity        = 0.0;//item.value;
+  //     const clap_event_header_t* header = (const clap_event_header_t*)&event;
+  //     out_events->try_push(out_events,header);
+  //   }
+  //   SAT_GLOBAL.ANALYTICS.report_NoteEndFromAudioToHost_count(count);
 
-  }
-
-//------------------------------
-public: // audio -> host
-//------------------------------
-
-  // handled in process()
-
-//------------------------------
-public: // audio -> gui
-//------------------------------
-
-  // timer?
+  // }
 
 };
 

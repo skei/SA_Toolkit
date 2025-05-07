@@ -481,6 +481,16 @@ public: // parameters
 
   //----------
 
+  //TODO
+  // setAllParameterValues(float* ABuffer) {
+  // }
+
+  //TODO
+  // setAllParameterFlags(uint32_t AFlag) {
+  // }
+
+  //----------
+
   #ifndef SAT_NO_GUI
 
   virtual void initEditorParameterValues() {
@@ -1015,7 +1025,7 @@ public: // clap plugin
     MProcessor->process(&MProcessContext);
     MProcessor->postProcessEvents(process->in_events,process->out_events);
 
-    MQueues.flushNoteEndsFromAudioToHost(&MProcessContext);
+    // MQueues.flushNoteEndsFromAudioToHost(&MProcessContext);
 
     #if !defined (SAT_NO_GUI)
       MQueues.flushParamFromGuiToHost(&MProcessContext);
