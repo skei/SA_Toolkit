@@ -303,6 +303,8 @@ public: // window
   void on_Window_resize(uint32_t AWidth, uint32_t AHeight) override {
     if (AWidth < 1) AWidth = 1;
     if (AHeight < 1) AHeight = 1;
+    SAT_Assert(AWidth < 65535);
+    SAT_Assert(AHeight < 65535);
     uint32_t value = (AHeight << 16) + AWidth;
     if (!MPendingResizeQueue.enqueue(value)) {
       SAT_PRINT("couldn't write to pending resize queue\n");

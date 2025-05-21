@@ -68,4 +68,7 @@ PLUGIN
 * tick-based dsp
 
 * setAllParameters(float* buffer)
+  see also: SAT_Plugin.state_load(), SAT_Plugin.loadPresetFromFile(), SAT_Plugin.setDefaultParameterValues()
+  
 * preChangePreset(), postChangePreset() ?
+

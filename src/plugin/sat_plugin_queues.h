@@ -54,10 +54,8 @@ class SAT_PluginQueues {
   #endif
 
   //typedef SAT_AtomicQueue<SAT_PluginQueueItem,SAT_PLUGIN_MAX_NOTE_ENDS_PER_BLOCK>   SAT_NoteEndFromAudioToHostQueue;
-  typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem> SAT_NoteEndFromAudioToHostQueue;
+  //typedef moodycamel::ReaderWriterQueue<SAT_PluginQueueItem> SAT_NoteEndFromAudioToHostQueue;
   
-
-
 //------------------------------
 private:
 //------------------------------
@@ -312,6 +310,8 @@ public: // gui -> audio
 //----------------------------------------------------------------------
 public: // audio -> host
 //----------------------------------------------------------------------
+
+  // handled in SAT_VoiceProcessor.postProcessEvents()
 
   // when a wnote has reached its end (envelope faded out, etc)
   // we need to tell the host about it

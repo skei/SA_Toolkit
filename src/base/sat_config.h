@@ -52,99 +52,124 @@
 //
 //----------------------------------------------------------------------
 
-  // enable debugging features
-  // defined by compile script
+//------------------------------
+// enable debugging features
+// defined by compile script
 
 //#define SAT_DEBUG
 
-  // enable SAT_Assert
+//------------------------------
+// enable SAT_Assert
 
 #define SAT_DEBUG_ASSERT
 
-  // enable SAT_BreakPoint
+//------------------------------
+// enable SAT_BreakPoint
   
 #define SAT_DEBUG_BREAKPOINT
 
-  // enable dumping the call stack when/if crashing
+//------------------------------
+// enable dumping the call stack when/if crashing
 
 #define SAT_DEBUG_CALLSTACK
 
-  // capture crashes.. print some info, dump call srack..
+//------------------------------
+// capture crashes.. print some info, dump call srack..
 
 #define SAT_DEBUG_CRASH_HANDLER
 
-  // enable mem leak tracker..
-  // (unreliable in a plugin, so default is disabled)
+//------------------------------
+// enable mem leak tracker..
+// (unreliable in a plugin, so default is disabled)
+// moodycamel queue is messing with the mem tracer, it seems..
+// or i don't understand how it works (the memory management)
+// i think it's a false positive..
 
 //#define SAT_DEBUG_MEMTRACE
 
-  // enable debug observers
+//------------------------------
+// enable debug observers
 
 //#define SAT_DEBUG_OBSERVER
 
-  // enable SAT_PRINT even in non-debug mode
+//------------------------------
+// enable SAT_PRINT even in non-debug mode
 
 //#define SAT_DEBUG_PRINT_ALWAYS
 
-  // enbald debug window
+//------------------------------
+// enbald debug window
 
 //#define SAT_DEBUG_WINDOW
 
-  // select embedded (editor reparented to host window)
-  // or remote (handle everything yourself) editor
+//------------------------------
+// select embedded (editor reparented to host window)
+// or remote (handle everything yourself) editor
 
 #define SAT_EDITOR_EMBEDDED
 //#define SAT_EDITOR_REMOTE
 
-  // include (debug) 'analytics'
+//------------------------------
+// include (debug) 'analytics'
 
 //#define SAT_INCLUDE_ANALYTICS
 
-  // include logging
+//------------------------------
+// include logging
 
 #define SAT_INCLUDE_LOG
 
-  // include unit testing
+//------------------------------
+// include unit testing
 
 //#define SAT_INCLUDE_TESTS
 
-  // print thread in when logging
+//------------------------------
+// print thread in when logging
 
 #define SAT_LOG_THREAD
 
-  // print time in when logging
+//------------------------------
+// print time in when logging
 
 #define SAT_LOG_TIME
 
-  // remove bitmap decoding from SAT_Bitmap
+//------------------------------
+// remove bitmap decoding from SAT_Bitmap
 
 //#define SAT_NO_BITMAP_PNG
 
-  // remove file loading & parsoing from SAT_Bitmap
+//------------------------------
+// remove file loading & parsoing from SAT_Bitmap
 
 //#define SAT_NO_BITMAP_PNG_FILE
 
-  // (not used)
-  // remove all stdlib stuff..
-  // (handle everything yourself!)
+//------------------------------
+// (not used)
+// remove all stdlib stuff..
+// (handle everything yourself!)
 
 //#define SAT_NO_STDLIB
 
-  // compiule wothout a gui
-  // removes all traces of gui code!
-  // defined by compile script
+//------------------------------
+// compiule wothout a gui
+// removes all traces of gui code!
+// defined by compile script
 
 //#define SAT_NO_GUI
 
-  // set up a default editor if you don't provide one yourself
+//------------------------------
+// set up a default editor if you don't provide one yourself
 
 #define SAT_PLUGIN_DEFAULT_EDITOR
 
-  // don't include a main() function for SAT_PLUGIN_EXE
+//------------------------------
+// don't include a main() function for SAT_PLUGIN_EXE
 
 //#define SAT_PLUGIN_EXE_NO_MAIN
 
-  // select which clap factories to include
+//------------------------------
+// select which clap factories to include
 
 //#define SAT_PLUGIN_INCLUDE_CLAP_ARA_FACTORY
 //#define SAT_PLUGIN_INCLUDE_CLAP_INVALIDATION_FACTORY
@@ -152,79 +177,94 @@
 //#define SAT_PLUGIN_INCLUDE_CLAP_PRESET_DISCOVERY_FACTORY
 //#define SAT_PLUGIN_INCLUDE_CLAP_STATE_CONVERTER_FACTORY
 
-  // disable shell plugin functionality from vst2 wrapper
-  // unreliable (need to rethink strategy)..
+//------------------------------
+// disable shell plugin functionality from vst2 wrapper
+// unreliable (need to rethink strategy)..
 
 #define SAT_PLUGIN_VST2_NO_SHELL
 
-  // use vestige header instead of vst2 sdk
+//------------------------------
+// use vestige header instead of vst2 sdk
 
 //#define SAT_PLUGIN_VST2_VESTIGE
 
-  // send SAT_PRINT output through a socked, so it can be captured
-  // in another console with 'nc -U -l -k /tmp/sat.socket'
+//------------------------------
+// send SAT_PRINT output through a socked, so it can be captured
+// in another console with 'nc -U -l -k /tmp/sat.socket'
 
 //#define SAT_PRINT_SOCKET
 
-  // print thread id with SAT_PRINT
+//------------------------------
+// print thread id with SAT_PRINT
 
 #define SAT_PRINT_THREAD
 
-  // print time with SAT_PRINT
+//------------------------------
+// print time with SAT_PRINT
 
 #define SAT_PRINT_TIME
 
-  // print function names 'prettified' in SAT_PRINT
+//------------------------------
+// print function names 'prettified' in SAT_PRINT
 
 //#define SAT_PRINT_PRETTY_FUNCTION
 
-  // unit testing will exit on failing a test
+//------------------------------
+// unit testing will exit on failing a test
 
 //#define SAT_TESTS_EXIT_ON_FAILURE
 
-  // convert midi events to note events
+//------------------------------
+// convert midi events to note events
 
 //#define SAT_VOICE_PROCESSOR_CONVERT_MIDI
 
-  // (try to) process voices using thread pool (clap ext or our own)
+//------------------------------
+// (try to) process voices using thread pool (clap ext or our own)
 
 #define SAT_VOICE_PROCESSOR_THREADED
 #define SAT_VOICE_PROCESSOR_CLAP_THREAD_POOL
 
-  // if events have no recipients (note_id, pck = -1), meaning they're global,
-  // send them (individually) to all voices
-  /* .. we always do, so not used at the moment.. (see sat_voice_processor.h) .. */
+//------------------------------
+// if events have no recipients (note_id, pck = -1), meaning they're global,
+// send them (individually) to all voices
+/* .. we always do, so not used at the moment.. (see sat_voice_processor.h) .. */
 
 // #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_MODS_TO_ALL_VOICES
 // #define SAT_VOICE_PROCESSOR_SEND_GLOBAL_PARAMS_TO_ALL_VOICES
 
-  // draw to (and keep around) a buffer, and copy from it to the screen,
-  // instead of drawing directly to the screen (or opengl backbuffer)
-  // 'retained mode' - ish
-  // todo:
-  // - check clipping
-  // - redundant redrawing
-  // - test performance
-  // (see SAT_Window.on_WidgetListener_redraw)
+//------------------------------
+// draw to (and keep around) a buffer, and copy from it to the screen,
+// instead of drawing directly to the screen (or opengl backbuffer)
+// 'retained mode' - ish
+// todo:
+// - check clipping
+// - redundant redrawing
+// - test performance
+// (see SAT_Window.on_WidgetListener_redraw)
 
 //#define SAT_WINDOW_BUFFERED
 
-  // if this is defined, double click events will be sent to the widgets
-  // (in addition to the regular single click events)
+//------------------------------
+// if this is defined, double click events will be sent to the widgets
+// (in addition to the regular single click events)
 
 #define SAT_WINDOW_SUPPORT_DBL_CLICK
 
-  // autostart the window timer
+//------------------------------
+// autostart the window timer
 
 #define SAT_WINDOW_TIMER_AUTOSTART
 
-  // if this is not defined, updated widgets will not be queued
-  // or flushed from the dirty widget queue.. not redrawn..
-  // (do we still need this?)
+//------------------------------
+// if this is not defined, updated widgets will not be queued
+// or flushed from the dirty widget queue.. not redrawn..
+// (do we still need this?)
 
 #define SAT_WINDOW_QUEUE_WIDGETS
 
-  // waits for (x11) window to actually appear on the screen
+//------------------------------
+// waits for (x11) window to actually appear on the screen
   
 #define SAT_X11_WAIT_FOR_MAPNOTIFY
 

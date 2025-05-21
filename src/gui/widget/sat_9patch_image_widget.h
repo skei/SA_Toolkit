@@ -131,12 +131,12 @@ public:
       double image_width = (double)iw;
       double image_height = (double)ih;
 
-      double left_edge = MEdgeOffset.left;
-      double right_edge = MEdgeOffset.right;
-      double top_edge = MEdgeOffset.top;
-      double bottom_edge = MEdgeOffset.bottom;
+      double left_edge    = MEdgeOffset.left;
+      double right_edge   = MEdgeOffset.right;
+      double top_edge     = MEdgeOffset.top;
+      double bottom_edge  = MEdgeOffset.bottom;
 
-      double center_width = (image_width  - left_edge - right_edge);
+      double center_width  = (image_width  - left_edge - right_edge);
       double center_height = (image_height - top_edge  - bottom_edge);
 
       double xcenter = mrect.w - ((left_edge + right_edge)  * S);
@@ -145,31 +145,27 @@ public:
       double centerxscale = xcenter / center_width;
       double centeryscale = ycenter / center_height;
 
-      double center_width_scaled = center_width * centerxscale;
+      double center_width_scaled  = center_width  * centerxscale;
       double center_height_scaled = center_height * centeryscale;
 
       SAT_Rect src,dst;
 
-      // top
+      // left
 
-      src = SAT_Rect( 0, 0, left_edge, image_height );
-      dst = SAT_Rect( mrect.x, mrect.y, left_edge * S, mrect.h );
+      src = SAT_Rect( 0,       0,       left_edge,     image_height );
+      dst = SAT_Rect( mrect.x, mrect.y, left_edge * S, mrect.h      );
       painter->drawImage(dst,MImage,src);
-
-      // src = SAT_Rect( 0, 0, left_edge, top_edge );
-      // dst = SAT_Rect( mrect.x, mrect.y, left_edge * S, top_edge * S );
-      // painter->drawImage(dst,MImage,src);
 
       // center
 
-      src = SAT_Rect( left_edge, 0, center_width, image_height );
-      dst = SAT_Rect( mrect.x + (left_edge * S), mrect.y, center_width_scaled, mrect.h );
+      src = SAT_Rect( left_edge,                 0,       center_width,        image_height );
+      dst = SAT_Rect( mrect.x + (left_edge * S), mrect.y, center_width_scaled, mrect.h      );
       painter->drawImage(dst,MImage,src);
 
-      // bottom
+      // right
 
-      src = SAT_Rect( image_width - right_edge, 0, right_edge, image_height );
-      dst = SAT_Rect( mrect.x2() - (right_edge * S), mrect.y, right_edge * S, mrect.h );
+      src = SAT_Rect( image_width - right_edge,      0,          right_edge,     image_height );
+      dst = SAT_Rect( mrect.x2() - (right_edge * S), mrect.y,    right_edge * S, mrect.h      );
       painter->drawImage(dst,MImage,src);
 
     }

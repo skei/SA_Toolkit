@@ -158,22 +158,26 @@ public:
 //------------------------------
 
   bool init() final {
-    registerDefaultExtensions();
 
+    registerDefaultExtensions();
     registerExtension(CLAP_EXT_MINI_CURVE_DISPLAY);
     registerExtension(CLAP_EXT_GAIN_ADJUSTMENT_METERING);
 
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
+
     MProcessor = new sa_demo_processor(this);
     setProcessor(MProcessor);
     sa_demo_SetupParameters(this);
+
     #ifndef SAT_NO_GUI
       setInitialEditorSize(EDITOR_WIDTH,EDITOR_HEIGHT,EDITOR_SCALE,true);
     #endif
+
     //return SAT_Plugin::init();
     bool result = SAT_Plugin::init();
     printSupportedHostExtensions();
+
     SAT_Host* host = getHost();
     if (result) {
       if (host->ext.mini_curve_display) {
@@ -181,6 +185,7 @@ public:
         //host->ext.mini_curve_display->changed(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
       }
     }
+
     return result;
   }
   

@@ -162,7 +162,7 @@ public:
           uint32_t  flag  = MMemTraceNodes[i].flag;
           void*     ptr   = MMemTraceNodes[i].ptr;
           uint32_t  size  = MMemTraceNodes[i].size;
-          MPrint->print("  %i. %s, line %i (%s): ptr %p size %i\n",i,file,line,(flag==1)?"new":"malloc",ptr,size);
+          MPrint->print("  %i. %s:%i [%s]: %i bytes at %p\n",i,file,line,(flag==1)?"new":"malloc",size,ptr);
         }
       }
     }

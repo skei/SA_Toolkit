@@ -105,7 +105,5 @@ class SAT_LinkwitzRileyFilter {
 
 };
 
-//#undef sDenorm
-
 //----------------------------------------------------------------------
 #endif

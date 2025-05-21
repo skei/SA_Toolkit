@@ -452,6 +452,9 @@ public: // parameters
 
   //----------
 
+  // called from:
+  // SAT_Plugin.init() [main-thread]
+
   virtual void setDefaultParameterValues() {
     //SAT_TRACE;
     if (MProcessor) {
@@ -514,6 +517,9 @@ public: // presets
   }
 
   //----------
+
+  // called from preset_load_from_location(), which is called by [main-thread]  
+  // (could it be called while plugin is processing?)
 
   virtual bool loadPresetFromFile(const char* ALocation, const char* AKey) {
     SAT_PRINT("location: %s, key: %s\n",ALocation,AKey);
@@ -1475,7 +1481,13 @@ public: // clap extensions
   // preset load
   //------------------------------
 
+  // [main-thread]  
+
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
+
+    // test
+    SAT_Assert(!MIsProcessing);
+
     const clap_host_t* host = getClapHost();
     const clap_host_preset_load_t* host_preset_load = (const clap_host_preset_load_t*)host->get_extension(host,CLAP_EXT_PRESET_LOAD);
     switch (location_kind) {
@@ -1539,6 +1551,10 @@ public: // clap extensions
   //------------------------------
 
   bool state_save(const clap_ostream_t *stream) override {
+
+    // test
+    SAT_TRACE;
+
     //uint32_t total = 0;
     uint32_t written = 0;
     uint32_t version = 0;
@@ -1574,7 +1590,15 @@ public: // clap extensions
 
   //----------
 
+  // [main-thread]  
+  // (while plugin is processing?)
+
   bool state_load(const clap_istream_t *stream) override {
+
+    // test
+    SAT_TRACE;
+    SAT_Assert(!MIsProcessing);
+
     //uint32_t total = 0;
     uint32_t read = 0;
     uint32_t version = 0;
@@ -1608,7 +1632,7 @@ public: // clap extensions
         return false;
       }
       //total += sizeof(double);
-      
+
       MParameters[i]->setValue(value);    // !!!!!!!!!!!!!!!!!!!!
       
       //MParameterValues[i] = value;
