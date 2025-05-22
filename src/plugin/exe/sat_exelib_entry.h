@@ -7,13 +7,13 @@
 */
 
 
-//#if 0
-
 #ifndef sat_exelib_entry_included
 #define sat_exelib_entry_included
 //----------------------------------------------------------------------
 
 // doesn't work in release builds... (?)
+// maybe i need to mark something as "not optimizable"..
+// or "don't remove unused functions, etc.."
 
 //----------
 
@@ -30,8 +30,10 @@
 //----------
 
 #if defined (__LP64__)
+  __attribute__ ((used))
   const char interp_section[] __attribute__((section(".interp"))) = "/lib64/ld-linux-x86-64.so.2";
 #else
+  __attribute__ ((used))
   const char interp_section[] __attribute__((section(".interp"))) = "/lib/ld-linux.so.2";
 #endif
 
@@ -39,8 +41,10 @@
 
 extern "C" {
 
+  __attribute__ ((used))
   int main_result;
 
+  __attribute__ ((used))
   int* main_trampoline(int argc, char** argv, char** env) {
     main_result = main(argc,argv);//,env);
     return &main_result;
@@ -48,6 +52,7 @@ extern "C" {
 
   extern int __libc_start_main(int *(main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end));
 
+  __attribute__ ((used))
   __attribute__ ((visibility ("default")))
   __attribute__((force_align_arg_pointer))
   void exelib_entry_point() {
@@ -485,6 +490,3 @@ extern "C" {
 #endif // MIP_EXECUTABLE_SHARED_LIBRARY
 #endif // MIP_PLUGIN
 #endif // 0
-
-
-//#endif // 0
