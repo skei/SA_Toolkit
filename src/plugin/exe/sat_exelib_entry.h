@@ -7,7 +7,7 @@
 */
 
 
-#if 0
+//#if 0
 
 #ifndef sat_exelib_entry_included
 #define sat_exelib_entry_included
@@ -487,4 +487,4 @@ extern "C" {
 #endif // 0
 
 
-#endif // 0
+//#endif // 0

@@ -16,9 +16,9 @@
   #include "plugin/exe/sat_exe_entry.h"
 #endif
 
-// #ifdef SAT_PLUGIN_EXELIB
-//   #include "plugin/entry/sat_exelib_entry.h"
-// #endif
+#ifdef SAT_PLUGIN_EXECUTABLE_LIBRARY
+  #include "plugin/exe/sat_exelib_entry.h"
+#endif
 
 #ifdef SAT_PLUGIN_LADSPA
   #include "plugin/ladspa/sat_ladspa_entry.h"

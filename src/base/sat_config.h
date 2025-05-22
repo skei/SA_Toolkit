@@ -362,7 +362,7 @@
     #define SAT_EXE
   #endif
 
-  #ifdef SAT_PLUGIN_EXELIB
+  #ifdef SAT_PLUGIN_EXECUTABLE_LIBRARY
     #define SAT_PLUGIN_DEFINED
     #define SAT_PLUGIN
   #endif
