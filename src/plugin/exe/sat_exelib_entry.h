@@ -1,3 +1,7 @@
+#ifndef sat_exelib_entry_included
+#define sat_exelib_entry_included
+//----------------------------------------------------------------------
+
 /*
   a 'hack' to make a .so (shared object) file directly executable from the command line.
   only tested in debug mode..
@@ -6,14 +10,7 @@
   (but i'm not sure if that's actually a good idea or not..)
 */
 
-
-#ifndef sat_exelib_entry_included
-#define sat_exelib_entry_included
-//----------------------------------------------------------------------
-
-// doesn't work in release builds... (?)
-// maybe i need to mark something as "not optimizable"..
-// or "don't remove unused functions, etc.."
+// do we need all "__attribute__ ((used))" ?
 
 //----------
 
