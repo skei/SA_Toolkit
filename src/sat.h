@@ -10,14 +10,16 @@
 #include "base/sat_types.h"
 #include "base/sat_global.h"
 
-//----------
-
-// todo -> global -> debug
+//----------------------------------------------------------------------
 //
-// #ifdef SAT_DEBUG_WINDOW
-//   #include "base/debug/sat_debug_window.h"
-//   SAT_DebugWindow SAT_GLOBAL_DEBUG_WINDOW = {};
-// #endif
+// SAT_GLOBAL
+//
+//----------------------------------------------------------------------
+
+#ifndef SAT_NO_GLOBAL
+  SAT_Global SAT_GLOBAL = {};
+  #include "base/sat_global_macros.h"
+#endif
 
 //----------------------------------------------------------------------
 #endif

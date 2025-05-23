@@ -145,7 +145,12 @@
 //#define SAT_NO_BITMAP_PNG_FILE
 
 //------------------------------
-// (not used)
+// don't include the global SAT_GLOBAL object
+// (and related macros)
+
+//#define SAT_NO_GLOBAL
+
+//------------------------------
 // remove all stdlib stuff..
 // (handle everything yourself!)
 
