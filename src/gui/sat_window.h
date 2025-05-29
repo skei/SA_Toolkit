@@ -291,9 +291,15 @@ public: // timer
         if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
       #else
         //SAT_Rect rect = MQueues.flushRedrawToPaint(MRootWidget);
-        MQueues.flushRedrawToPaint(MRootWidget);
-        SAT_Rect rect = MRootWidget->getRect();
-        invalidate(rect.x,rect.y,rect.w,rect.h);
+        if (MRootWidget) {
+          MQueues.flushRedrawToPaint(MRootWidget);
+          SAT_Rect rect = MRootWidget->getRect();
+          invalidate(rect.x,rect.y,rect.w,rect.h);
+        }
+        else {
+          SAT_Rect rect = MQueues.flushRedrawToPaint();
+          if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
+        }
       #endif
     #endif
 
