@@ -175,11 +175,12 @@ public:
     #endif
 
     //return SAT_Plugin::init();
+
     bool result = SAT_Plugin::init();
     printSupportedHostExtensions();
 
-    SAT_Host* host = getHost();
     if (result) {
+      SAT_Host* host = getHost();
       if (host->ext.mini_curve_display) {
         host->ext.mini_curve_display->set_dynamic(getClapHost(),true);
         //host->ext.mini_curve_display->changed(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
@@ -193,8 +194,34 @@ public:
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) final {
     MProcessor->setSampleRate(sample_rate);
-    return SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+    bool result = SAT_Plugin::activate(sample_rate,min_frames_count,max_frames_count);
+
+    // if (result) {
+    //   SAT_Host* host = getHost();
+    //   if (host->ext.mini_curve_display) {
+    //     host->ext.mini_curve_display->set_dynamic(getClapHost(),true);
+    //     //host->ext.mini_curve_display->changed(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
+    //   }
+    // }
+
+    return result;
   }
+
+  //----------
+
+  bool start_processing() override {
+    bool result = SAT_Plugin::start_processing();
+
+    // if (result) {
+    //   SAT_Host* host = getHost();
+    //   if (host->ext.mini_curve_display) {
+    //     host->ext.mini_curve_display->set_dynamic(getClapHost(),true);
+    //     //host->ext.mini_curve_display->changed(getClapHost(),CLAP_MINI_CURVE_DISPLAY_CURVE_CHANGED);
+    //   }
+    // }
+
+    return result;
+  }    
 
   //----------
 
@@ -259,7 +286,7 @@ public: // mini-curve-display
   //----------
 
   void mini_curve_display_set_observed(bool is_observed) final {
-    //SAT_PRINT("is_observed: %s\n",is_observed ? "true" : "false");
+    SAT_PRINT("is_observed: %s\n",is_observed ? "true" : "false");
   }
 
   //----------

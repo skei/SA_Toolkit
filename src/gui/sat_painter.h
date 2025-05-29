@@ -149,7 +149,9 @@ public: // text
     drawText(p.x,p.y,AText);
   }  
 
-  //----------
+//------------------------------
+public: // image
+//------------------------------
 
   virtual void drawImage(SAT_Rect ADst, int AImage, SAT_Rect ASrc) {
 

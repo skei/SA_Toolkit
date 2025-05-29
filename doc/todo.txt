@@ -51,10 +51,24 @@ GUI : widgets
   flags: insideParent
   update scrollbars (resize, parent.realign)
 
-* SAT_CachedWidget (draw image once to buffer, then copy, until set to dirty, then redraw)
-- SAT_MipmapImage (at runtime, find closest in size, from multiple images, and draw/scale that one)
-* SAT_ShaderWidget (glsl shader)
-* SAT_LayoutWidget (sets layout flags when appending child widgets)
+* SAT_CachedWidget
+   draw image once to buffer, then copy, until set to dirty, then redraw
+
+- SAT_MipmapImage
+  at runtime, find closest in size, from multiple images, and draw/scale that one
+
+* SAT_ShaderWidget
+  glsl shader
+
+* SAT_LayoutWidget
+  sets layout flags when appending child widgets
+
+* SAT_9PatchImage
+  (in progress)
+  don't stretch corners,
+  stretch sides horizontally/vertically only
+  stretch mid-segment to fill
+  (for drop-shadows, borders etc)
 
 ----------------------------------------------------------------------
 PLUGIN

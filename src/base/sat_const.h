@@ -249,6 +249,11 @@ const char* SAT_MONTH_NAMES[13] = { "jan", "feb", "mar", "apr", "may", "jun", "j
 #define SAT_OBSERVE_FLOAT                       4
 #define SAT_OBSERVE_DOUBLE                      5
 
+#define SAT_OS_UNKNOWN                          0
+#define SAT_OS_LINUX                            1
+#define SAT_OS_MAC                              2
+#define SAT_OS_WINDOWS                          3
+
 #define SAT_PAINTER_TYPE_NONE                   0
 #define SAT_PAINTER_TYPE_CAIRO                  1
 #define SAT_PAINTER_TYPE_NANOVG                 2

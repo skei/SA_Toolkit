@@ -31,6 +31,10 @@ char* SAT_GetHomePath(char* ABuffer) {
 
 //----------
 
+// rudimentary.. finds "~/Desktop"
+// see: xdg-user-dir
+// see also: https://github.com/endlessm/xdg-user-dirs/blob/eos5.1/xdg-user-dir-lookup.c
+
 char* SAT_GetDesktopPath(char* ABuffer) {
   ABuffer[0] = '\0';
   char* env = getenv("HOME");

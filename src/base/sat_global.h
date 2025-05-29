@@ -66,21 +66,21 @@ public:
       if (!ANALYTICS.initialize(&PRINT)) return false;
       MInitialized = true;
     }
-    LOG.print("SAT_GLOBAL initialized\n");
+    //LOG.print("SAT_GLOBAL initialized\n");
     return true;
   }
 
   //----------
 
   // cleans up everything, in the correct order..
-  // if the host just kills the process, will this be called?
+  // .. if the host just kills the process, this will not be called, will it?
 
   void cleanup() {
     if (MInitialized) {
       ANALYTICS.cleanup();
       TEST.cleanup();
       REGISTRY.cleanup();
-      LOG.cleanup();
+      //LOG.cleanup();
       DEBUG.cleanup();
       PRINT.cleanup();
       MInitialized = false;
@@ -112,7 +112,24 @@ public:
     #ifdef SAT_WIN32
       return "Windows";
     #endif
+    return "Unknown";
   }
+
+  //----------
+
+  uint32_t getOS() {
+    #ifdef SAT_LINUX
+      return SAT_OS_LINUX;
+    #endif
+    #ifdef SAT_MAC
+      return SAT_OS_MAC;
+    #endif
+    #ifdef SAT_WIN32
+      return SAT_OS_WINDOWS;
+    #endif
+    return SAT_OS_UNKNOWN;
+  }
+
 
   //----------
 
