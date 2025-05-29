@@ -2,6 +2,8 @@
 #define sat_cached_widget_included
 //----------------------------------------------------------------------
 
+// ugh.. need to rethink all of this...
+
 #include "sat.h"
 #include "gui/widget/sat_visual_widget.h"
 
@@ -20,8 +22,10 @@ class SAT_CachedWidget
 private:
 //------------------------------
 
-  void* MRenderBuffer = nullptr;
-  bool  MIsCached     = false;
+  void*     MRenderBuffer = nullptr;
+  uint32_t  MCachedWidth  = 0;
+  uint32_t  MCachedHeight = 0;
+  bool      MNeedRepaint  = true;
 
 //------------------------------
 public:
@@ -31,6 +35,11 @@ public:
   : SAT_VisualWidget(ARect) {
     setName("SAT_CachedWidget");
     setHint("SAT_CachedWidget");
+    Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
+    Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
+    setFillBackground(false);
+
+    //setBackgroundColor(SAT_Green);
   }
 
   //----------
@@ -42,35 +51,32 @@ public:
 public:
 //------------------------------
 
-  void on_Widget_open(SAT_WidgetOwner* AOwner) override {
-    SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
-    MRenderBuffer = painter->createRenderBuffer(256,256);
-    SAT_VisualWidget::on_Widget_open(AOwner);
-  }
-
-  //----------
-
-  void on_Widget_close(SAT_WidgetOwner* AOwner) override {
-    SAT_Painter* painter = AOwner->on_WidgetOwner_getPainter();
-    painter->deleteRenderBuffer(MRenderBuffer);
-    SAT_VisualWidget::on_Widget_close(AOwner);
-  }
-
-  //----------
-
-  void on_Widget_resize(uint32_t AWidth, uint32_t AHeight) override {
-    // resize/recreate render buffer
-    MIsCached = true;
-  }
-
-  //----------
-
   void on_Widget_paint(SAT_PaintContext* AContext) override {
-    if (!MIsCached) {
-      //update cached buffer
-      MIsCached = true;
+    SAT_Rect rect = getRect();
+    uint32_t width = ceil(rect.w);
+    uint32_t height = ceil(rect.h);
+    SAT_Painter* painter = AContext->painter;
+    SAT_Assert(painter);
+    if ( (width != MCachedWidth) || (height != MCachedHeight) ) {
+      SAT_PRINT("deleting render buffer\n");
+      painter->deleteRenderBuffer(MRenderBuffer);
+      SAT_PRINT("creating render buffer (%i,%i)\n",width,height);
+      MRenderBuffer = painter->createRenderBuffer(width,height);
+      SAT_Assert(MRenderBuffer);
+      MCachedWidth = width;
+      MCachedHeight = height;
+      MNeedRepaint = true;
+    }
+    if (MNeedRepaint) {
+      SAT_PRINT("repainting buffer\n");
+      painter->selectRenderBuffer(MRenderBuffer);
+      SAT_VisualWidget::on_Widget_paint(AContext);
+      painter->selectRenderBuffer(nullptr);
+      MNeedRepaint = false;
     }
     // copy buffer to window/screen
+    int32_t image = painter->getImageFromRenderBuffer(MRenderBuffer);
+    painter->drawImage(rect,image,SAT_Rect(0,0,rect.w,rect.h));
   }
 
 };
