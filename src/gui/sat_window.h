@@ -34,7 +34,7 @@ private:
   // widgets
 
   SAT_RootWidget*     MRootWidget             = nullptr;
-  SAT_OverlayWidget*  MOverlayWidget          = nullptr;
+  SAT_OverlayWidget*  MOverlayWidget          = nullptr;  
   SAT_Widget*         MHoverWidget            = nullptr;
   SAT_Widget*         MModalWidget            = nullptr;
   SAT_Widget*         MMouseCaptureWidget     = nullptr;
@@ -128,6 +128,7 @@ public: // setup
   //----------
 
   void setRootWidget(SAT_RootWidget* ARoot) {
+    //ARoot->setListener(this);
     MRootWidget = ARoot;
   }
 

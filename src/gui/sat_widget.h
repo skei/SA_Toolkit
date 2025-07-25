@@ -13,15 +13,15 @@ typedef SAT_Array<SAT_Widget*> SAT_WidgetArray;
 //----------------------------------------------------------------------
 
 struct SAT_WidgetLayout {
-  uint32_t  flags             = SAT_WIDGET_LAYOUT_DEFAULT;
-  SAT_Rect  innerBorder       = {0,0,0,0};
-  SAT_Rect  outerBorder       = {0,0,0,0};
-  SAT_Point spacing           = {0,0};
+  uint32_t  flags             = SAT_WIDGET_LAYOUT_DEFAULT;  // how widget is being laid out inside its parent
+  SAT_Rect  innerBorder       = {0,0,0,0};                  // inner widget border (for child widgets)
+  SAT_Rect  outerBorder       = {0,0,0,0};                  // additional outer border (after aligning)
+  SAT_Point spacing           = {0,0};                      // spacing between widgets
+  SAT_Rect  minSize           = {-1,-1,-1,-1};              // minimum size (when resizing/realigning)
+  SAT_Rect  maxSize           = {-1,-1,-1,-1};              // maximum size
   //uint32_t  direction         = SAT_DIRECTION_RIGHT;
   //SAT_Rect  clipOffset        = {0,0,0,0};
   //double    childScale        = 1.0;
-  SAT_Rect  minSize           = {-1,-1,-1,-1};
-  SAT_Rect  maxSize           = {-1,-1,-1,-1};
 };
 
 struct SAT_WidgetOptions {
@@ -29,9 +29,9 @@ struct SAT_WidgetOptions {
   bool      autoCapture       = false;    // mouse automatically captured
   bool      autoCursor        = true;     // mouse automatically captured
   bool      autoHint          = true;     // automatically send hint
-  bool      realignInvisible  = false;
-  bool      autoClipChildren  = true;
-  bool      wantHoverEvents   = false;
+  bool      realignInvisible  = false;    // realign children even if they are not visible (container widgets)
+  bool      autoClipChildren  = true;     // auto clip children to parent widget rect
+  bool      wantHoverEvents   = false;    // widget want hover callbacks even if not 'captured' (active)
 };
 
 struct SAT_WidgetState {
@@ -72,7 +72,7 @@ private:
   SAT_Rect          MRect                               = {0,0,0,0};      // current on-screen rect
   SAT_Rect          MBaseRect                           = {0,0,0,0};      // basis for re-alignment
   SAT_Rect          MInitialRect                        = {0,0,0,0};      // rect at creation time (unmodified)
-  SAT_Rect          MContentRect                        = {0,0,0,0};
+  SAT_Rect          MContentRect                        = {0,0,0,0};      // child widgets
 
   SAT_Rect          MManualTween                        = {0,0,0,0};
   SAT_Rect          MPrevTween                          = {0,0,0,0};

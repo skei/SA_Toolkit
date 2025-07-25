@@ -125,7 +125,7 @@ public:
         double starts[4]  = {0,0,0,0};
         double ends[4]    = {0,0,0,pos};
         SAT_TweenChain* chain = new SAT_TweenChain();
-        SAT_TweenNode* node1 = new SAT_TweenNode(this,255,1.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
+        SAT_TweenNode* node1 = new SAT_TweenNode(this,255,2.0,SAT_TWEEN_RECT,4,starts,ends,SAT_EASING_OUT_BOUNCE);
         chain->appendNode(node1);
         do_Widget_start_tween(this,chain);
       }

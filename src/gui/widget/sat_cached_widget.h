@@ -38,13 +38,19 @@ public:
     Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
     setFillBackground(false);
-
-    //setBackgroundColor(SAT_Green);
   }
 
   //----------
 
   virtual ~SAT_CachedWidget() {
+  }
+
+//------------------------------
+public:
+//------------------------------
+
+  virtual void forceRepaint(bool ARepaint=true) {
+    MNeedRepaint = ARepaint;
   }
 
 //------------------------------
@@ -58,9 +64,9 @@ public:
     SAT_Painter* painter = AContext->painter;
     SAT_Assert(painter);
     if ( (width != MCachedWidth) || (height != MCachedHeight) ) {
-      SAT_PRINT("deleting render buffer\n");
+      //SAT_PRINT("deleting render buffer\n");
       painter->deleteRenderBuffer(MRenderBuffer);
-      SAT_PRINT("creating render buffer (%i,%i)\n",width,height);
+      //SAT_PRINT("(re-) creating render buffer (%i,%i)\n",width,height);
       MRenderBuffer = painter->createRenderBuffer(width,height);
       SAT_Assert(MRenderBuffer);
       MCachedWidth = width;
@@ -68,7 +74,7 @@ public:
       MNeedRepaint = true;
     }
     if (MNeedRepaint) {
-      SAT_PRINT("repainting buffer\n");
+      //SAT_PRINT("repainting buffer\n");
       painter->selectRenderBuffer(MRenderBuffer);
       SAT_VisualWidget::on_Widget_paint(AContext);
       painter->selectRenderBuffer(nullptr);
@@ -77,6 +83,15 @@ public:
     // copy buffer to window/screen
     int32_t image = painter->getImageFromRenderBuffer(MRenderBuffer);
     painter->drawImage(rect,image,SAT_Rect(0,0,rect.w,rect.h));
+  }
+
+//------------------------------
+public: // on_widget
+//------------------------------
+
+  void do_Widget_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
+    MNeedRepaint = true;
+    SAT_VisualWidget::do_Widget_redraw(AWidget,AIndex,AMode);
   }
 
 };

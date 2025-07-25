@@ -5,7 +5,7 @@ general
 
 * un-virtualize many of the set/get methods?
 
-* see if we call (overridden?) virtual methods in ctors/dtors
+* check if we call (overridden?) virtual methods in ctors/dtors
 
 ----------------------------------------------------------------------
 BASE
@@ -13,7 +13,7 @@ BASE
 
 * SAT_GLOBAL
 
-  move system specific global stuff ingo SAT_GLOBAL
+  move system specific global stuff into SAT_GLOBAL
     SAT_GLOBAL.WIN32 - dllmain module hinstance, register window class
     SAT_GLOBAL.LINUX - xinitthreads
 
@@ -38,6 +38,10 @@ GUI
 
   xrender
 
+* painter
+  
+  draw paintsource..
+
 ----------------------------------------------------------------------
 GUI : widgets
 ----------------------------------------------------------------------
@@ -50,9 +54,6 @@ GUI : widgets
 * size/pos limits for size/move-able widgets
   flags: insideParent
   update scrollbars (resize, parent.realign)
-
-* SAT_CachedWidget
-   draw image once to buffer, then copy, until set to dirty, then redraw
 
 - SAT_MipmapImage
   at runtime, find closest in size, from multiple images, and draw/scale that one
