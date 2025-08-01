@@ -111,8 +111,13 @@ public:
       switch (AButton) {
         case SAT_BUTTON_LEFT:
           if (MMenu) {
+
+            // swap order of these?
+            // openMenu will call a do_Widget_redraw
+
             MMenu->openMenu(AXpos,AYpos);
             do_Widget_set_overlay_color(this,SAT_Color(0,0,0,0.3));
+
           }
           break;
         case SAT_BUTTON_RIGHT:

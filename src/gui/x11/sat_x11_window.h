@@ -239,10 +239,12 @@ public:
 
   xcb_connection_t* on_PainterOwner_getXcbConnection()  final { return MConnection; }
   xcb_visualid_t    on_PainterOwner_getXcbVisual()      final { return MScreenVisual; }
+
   xcb_drawable_t    on_PaintTarget_getXcbDrawable()     final { return MWindow; }
 
   Display*          on_RendererOwner_getX11Display()    final { return MDisplay; }
   xcb_drawable_t    on_RendererOwner_getXcbDrawable()   final { return MWindow; }
+  
   xcb_drawable_t    on_RenderTarget_getXcbDrawable()    final { return MWindow; }
 
 //------------------------------

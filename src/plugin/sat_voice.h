@@ -218,7 +218,7 @@ private:
     uint32_t current_time  = 0;
     uint32_t remaining     = buffer_length;
     uint32_t next_event    = 0;
-    SAT_VoiceEvent  event         = {};
+    SAT_VoiceEvent  event  = {};
     //if (events.read(&event)) {
     if (events.try_dequeue(event)) {
       next_event = event.time;

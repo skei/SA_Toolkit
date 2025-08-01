@@ -89,6 +89,8 @@ struct SAT_ProcessContext {
 
 //----------
 
+// TODO: all _get* functions to a ProcessorOwner class?
+
 class SAT_ProcessorListener {
 public:
   virtual SAT_AudioPortArray* on_ProcessorListener_getAudioInputPorts()  { return nullptr; }

@@ -298,7 +298,7 @@ public:
   virtual void          on_WidgetListener_want_timer(SAT_Widget* AWidget, bool AWantTimer=true) {}
   virtual void          on_WidgetListener_start_tween(SAT_Widget* AWidget, SAT_TweenChain* ATween) {}
   virtual void          on_WidgetListener_resize(SAT_Widget* AWidget, double ADeltaX, double ADeltaY) {}
-  virtual void          on_WidgetListener_set_overlayColor(SAT_Widget* AWidget, SAT_Color AColor) {}
+  virtual void          on_WidgetListener_set_overlayColor(SAT_Widget* AWidget, SAT_Color AColor) {} // øh.. _overlayColor, _not overlay_color ???
 };
 
 //----------

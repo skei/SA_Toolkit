@@ -145,15 +145,21 @@ public:
     registerExtension(CLAP_EXT_REMOTE_CONTROLS);
     registerExtension(CLAP_EXT_PRESET_LOAD);
     registerExtension(CLAP_EXT_TRACK_INFO);
+
     appendClapNoteInputPort("Notes");
     appendStereoAudioInputPort("In");
     appendStereoAudioOutputPort("Out");
+
     MProcessor = new sa_mael_voice_processor(this,1,4096);
     setProcessor(MProcessor);
     MProcessor->init(getClapPlugin(),getClapHost());
-    MProcessor->setProcessThreaded(true);
-    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_INTERLEAVED);
+    //#ifdef SAT_VOICE_PROCESSOR_THREADED
+      MProcessor->setProcessThreaded(true);
+    //#endif
+    MProcessor->setEventMode(SAT_VOICE_EVENT_MODE_QUANTIZED);
+
     sa_mael_setup_parameters(this);
+    
     #ifndef SAT_NO_GUI
       setInitialEditorSize(SA_MAEL_EDITOR_WIDTH,SA_MAEL_EDITOR_HEIGHT,SA_MAEL_EDITOR_SCALE,true);
     #endif

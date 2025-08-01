@@ -256,6 +256,13 @@ public:
     MPrevX = AXpos;
     MPrevY = AYpos;
     do_Widget_set_cursor(this,SAT_CURSOR_LOCK);
+
+//      if (Options.autoHideCursor) {
+//        do_Widget_set_cursor(this,SAT_CURSOR_LOCK);
+//        do_Widget_set_cursor(this,SAT_CURSOR_HIDE);
+//      }
+
+
     MDragValue = calcValue(AIndex); // starting value
   }
 
@@ -264,6 +271,13 @@ public:
   virtual void endDrag() {
     MIsDragging = false;
     do_Widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+
+//      if (Options.autoHideCursor) {
+//        do_Widget_set_cursor(this,SAT_CURSOR_UNLOCK);
+//        do_Widget_set_cursor(this,SAT_CURSOR_SHOW);
+//      }
+
+
   }
 
 

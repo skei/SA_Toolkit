@@ -288,7 +288,7 @@ clap_param_info_t sa_mael_parameters[SA_MAEL_PARAM_COUNT] = {
 bool sa_mael_setup_parameters(SAT_Plugin* APlugin) {
 
   SAT_PRINT("%i parameters\n",SA_MAEL_PARAM_COUNT);
-  uint32_t n = 0;
+  //uint32_t n = 0;
 
   APlugin->appendParameter( new SAT_Parameter(    &sa_mael_parameters[SA_MAEL_PARAM_GLOBAL_GAIN] ));
 
