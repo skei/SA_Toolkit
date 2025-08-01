@@ -919,11 +919,22 @@ public: // processor listener
 
 
 //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
 
 public: // clap plugin
 
 //----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
 
+  // Must be called after creating the plugin.
+  // If init returns false, the host must destroy the plugin instance.
+  // If init returns true, then the plugin is initialized and in the deactivated state.
+  // Unlike in `plugin-factory::create_plugin`, in init you have complete access to the host 
+  // and host extensions, so clap related setup activities should be done here rather than in
+  // create_plugin.
+  // [main-thread]
 
   bool init() override {
     //SAT_TRACE;
@@ -946,6 +957,10 @@ public: // clap plugin
 
   //----------
 
+  // Free the plugin and its resources.
+  // It is required to deactivate the plugin prior to this call.
+  // [main-thread & !active]  
+
   void destroy() override {
     //SAT_TRACE;
     if (MHost) delete MHost;
@@ -958,6 +973,15 @@ public: // clap plugin
   }
 
   //----------
+
+  // Activate and deactivate the plugin.
+  // In this call the plugin may allocate memory and prepare everything needed for the process
+  // call. The process's sample rate will be constant and process's frame count will included in
+  // the [min, max] range, which is bounded by [1, INT32_MAX].
+  // In this call the plugin may call host-provided methods marked [being-activated].
+  // Once activated the latency and port configuration must remain constant, until deactivation.
+  // Returns true on success.
+  // [main-thread & !active]  
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) override {
     //SAT_PRINT("sample_rate %.2f min_frames %i max_frames %i\n",sample_rate,min_frames_count,max_frames_count);
@@ -980,6 +1004,8 @@ public: // clap plugin
 
   //----------
 
+  // [main-thread & active]  
+
   void deactivate() override {
     //SAT_TRACE;
     MIsActivated = false;    
@@ -991,6 +1017,10 @@ public: // clap plugin
 
   //----------
 
+  // Call start processing before processing.
+  // Returns true on success.
+  // [audio-thread & active & !processing]
+
   bool start_processing() override {
     //SAT_TRACE;
     MIsProcessing = true;
@@ -999,12 +1029,22 @@ public: // clap plugin
 
   //----------
 
+  // Call stop processing before sending the plugin to sleep.
+  // [audio-thread & active & processing]  
+
   void stop_processing() override {
     //SAT_TRACE;
     MIsProcessing = false;    
   }
 
   //----------
+
+  // - Clears all buffers, performs a full reset of the processing state (filters, oscillators,
+  //   envelopes, lfo, ...) and kills all voices.
+  // - The parameter's value remain unchanged.
+  // - clap_process.steady_time may jump backward.
+  //
+  // [audio-thread & active]  
 
   void reset() override {
     //SAT_TRACE;
@@ -1013,6 +1053,11 @@ public: // clap plugin
   }
 
   //----------
+  
+  // process audio, events, ...
+  // All the pointers coming from clap_process_t and its nested attributes,
+  // are valid until process() returns.
+  // [audio-thread & active & processing]
 
   clap_process_status process(const clap_process_t *process) override {
     //SAT_TRACE;
@@ -1045,6 +1090,12 @@ public: // clap plugin
 
   //----------
 
+  // Query an extension.
+  // The returned pointer is owned by the plugin.
+  // It is forbidden to call it before plugin->init().
+  // You can call it within plugin->init() call, and after.
+  // [thread-safe]  
+
   const void* get_extension(const char *id) override {
     
     if (MSupportedExtensions.hasItem(id)) {
@@ -1068,16 +1119,30 @@ public: // clap plugin
 
   //----------
 
+  // Called by the host on the main thread in response to a previous call to:
+  //   host->request_callback(host);
+  // [main-thread]
+
   void on_main_thread() override {
     //SAT_TRACE;
   }
 
 //----------------------------------------------------------------------
-public: // clap extensions
+//----------------------------------------------------------------------
 //----------------------------------------------------------------------
 
+public: // clap extensions
+
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
+
+  //------------------------------
   // ambisonic
   //------------------------------
+
+  // Returns true if the given configuration is supported.
+  // [main-thread]  
 
   bool ambisonic_is_config_supported(const clap_ambisonic_config_t *config) override {
     return false;
@@ -1085,12 +1150,19 @@ public: // clap extensions
 
   //----------
 
+  // Returns true on success
+  // [main-thread]  
+
   bool ambisonic_get_config(bool is_input, uint32_t port_index, clap_ambisonic_config_t *config) override {
     return false;
   }
 
+  //------------------------------
   // audio ports
   //------------------------------
+
+  // Number of ports, for either input or output
+  // [main-thread]  
 
   uint32_t audio_ports_count(bool is_input) override {
     //SAT_PRINT("is_input %i\n",is_input);
@@ -1101,6 +1173,10 @@ public: // clap extensions
   }
 
   //----------
+
+  // Get info about an audio port.
+  // Returns true on success and stores the result into info.
+  // [main-thread]
 
   bool audio_ports_get(uint32_t index, bool is_input, clap_audio_port_info_t *info) override {
     //SAT_PRINT("is_input %i index %i info %p\n",is_input,index,info);
@@ -1114,8 +1190,12 @@ public: // clap extensions
     return true;
   }
 
+  //------------------------------
   // audio ports activation
   //------------------------------
+
+  // Returns true if the plugin supports activation/deactivation while processing.
+  // [main-thread]
 
   bool audio_ports_activation_can_activate_while_processing() override {
     return false;
@@ -1123,18 +1203,34 @@ public: // clap extensions
 
   //----------
 
+  // Activate the given port.
+  // It is only possible to activate and de-activate on the audio-thread if
+  // can_activate_while_processing() returns true.
+  // sample_size indicate if the host will provide 32 bit audio buffers or 64 bits one.
+  // Possible values are: 32, 64 or 0 if unspecified.
+  // returns false if failed, or invalid parameters
+  // [active ? audio-thread : main-thread]
+
   bool audio_ports_activation_set_active(bool is_input, uint32_t port_index, bool is_active, uint32_t sample_size) override {
     return false;
   }
 
+  //------------------------------
   // audio ports config
   //------------------------------
+
+  // Gets the number of available configurations
+  // [main-thread]
 
   uint32_t audio_ports_config_count() override {
     return 1;
   }
 
   //----------
+
+  // Gets information about a configuration
+  // Returns true on success and stores the result into config.
+  // [main-thread]
 
   //TODO: fix this
 
@@ -1161,12 +1257,21 @@ public: // clap extensions
 
   //----------
 
+  // Selects the configuration designated by id
+  // Returns true if the configuration could be applied.
+  // Once applied the host should scan again the audio ports.
+  // [main-thread & plugin-deactivated]
+
   bool audio_ports_config_select(clap_id config_id) override {
     return true;
   }
 
+  //------------------------------
   // configurable audio ports
   //------------------------------
+
+  // Returns true if the given configurations can be applied using apply_configuration().
+  // [main-thread && !active]
 
   bool configurable_audio_ports_can_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) override {
     return false;
@@ -1174,12 +1279,26 @@ public: // clap extensions
 
   //----------
 
+  // Submit a bunch of configuration requests which will atomically be applied together,
+  // or discarded together.
+  // Once the configuration is successfully applied, it isn't necessary for the plugin to call
+  // clap_host_audio_ports->changed(); and it isn't necessary for the host to scan the
+  // audio ports.
+  // Returns true if applied.
+  // [main-thread && !active]
+
   bool configurable_audio_ports_apply_configuration(const struct clap_audio_port_configuration_request *requests, uint32_t request_count) override {
     return false;
   }
 
+  //------------------------------
   // context menu
   //------------------------------
+
+  // Insert plugin's menu items into the menu builder.
+  // If target is null, assume global context.
+  // Returns true on success.
+  // [main-thread]
 
   bool context_menu_populate(const clap_context_menu_target_t  *target, const clap_context_menu_builder_t *builder) override {
     return false;
@@ -1187,14 +1306,26 @@ public: // clap extensions
 
   //----------
 
+  // Performs the given action, which was previously provided to the host via populate().
+  // If target is null, assume global context.
+  // Returns true on success.
+  // [main-thread]
+
   bool context_menu_perform(const clap_context_menu_target_t *target, clap_id action_id) override {
     return false;
   }
 
+  //------------------------------
   // gui
   //------------------------------
 
   #ifndef SAT_NO_GUI
+
+  //----------
+
+  // Returns true if the requested gui api is supported, either in floating (plugin-created)
+  // or non-floating (embedded) mode.
+  // [main-thread]
 
   bool gui_is_api_supported(const char *api, bool is_floating) override {
     //SAT_PRINT("api %s floating %i\n",api,is_floating);
@@ -1204,6 +1335,12 @@ public: // clap extensions
 
   //----------
 
+  // Returns true if the plugin has a preferred api.
+  // The host has no obligation to honor the plugin preference, this is just a hint.
+  // The const char **api variable should be explicitly assigned as a pointer to
+  // one of the CLAP_WINDOW_API_ constants defined above, not strcopied.
+  // [main-thread]
+
   bool gui_get_preferred_api(const char **api, bool *is_floating) override {
     //SAT_PRINT("\n");
     if (MEditor) return MEditor->getPreferredApi(api,is_floating);
@@ -1211,6 +1348,16 @@ public: // clap extensions
   }
 
   //----------
+
+  // Create and allocate all resources necessary for the gui.
+  // If is_floating is true, then the window will not be managed by the host. The plugin
+  // can set its window to stays above the parent window, see set_transient().
+  // api may be null or blank for floating window.
+  // If is_floating is false, then the plugin has to embed its window into the parent window, see
+  // set_parent().
+  // After this call, the GUI may not be visible yet; don't forget to call show().
+  // Returns true if the GUI is successfully created.
+  // [main-thread]
 
   bool gui_create(const char *api, bool is_floating) override {
     //SAT_PRINT("api %s floating %i\n",api,is_floating);
@@ -1231,6 +1378,9 @@ public: // clap extensions
 
   //----------
 
+  // Free all resources associated with the gui.
+  // [main-thread]
+
   void gui_destroy() override {
     //SAT_PRINT("\n");
     // MIsEditorClosing = true;
@@ -1240,6 +1390,15 @@ public: // clap extensions
 
   //----------
 
+  // Set the absolute GUI scaling factor, and override any OS info.
+  // Should not be used if the windowing api relies upon logical pixels.
+  // If the plugin prefers to work out the scaling factor itself by querying the OS directly,
+  // then ignore the call.
+  // scale = 2 means 200% scaling.
+  // Returns true if the scaling could be applied
+  // Returns false if the call was ignored, or the scaling could not be applied.
+  // [main-thread]
+
   bool gui_set_scale(double scale) override {
     //SAT_PRINT("scale %.3f\n",scale);
     if (MEditor) return MEditor->setScale(scale);
@@ -1247,6 +1406,11 @@ public: // clap extensions
   }
 
   //----------
+
+  // Get the current size of the plugin UI.
+  // clap_plugin_gui->create() must have been called prior to asking the size.
+  // Returns true if the plugin could get the size.
+  // [main-thread]
 
   bool gui_get_size(uint32_t *width, uint32_t *height) override {
     //SAT_PRINT("\n");
@@ -1256,6 +1420,9 @@ public: // clap extensions
 
   //----------
 
+  // Returns true if the window is resizeable (mouse drag).
+  // [main-thread & !floating]
+
   bool gui_can_resize() override {
     //SAT_PRINT("\n");
     if (MEditor) return MEditor->canResize();
@@ -1263,6 +1430,9 @@ public: // clap extensions
   }
 
   //----------
+
+  // Returns true if the plugin can provide hints on how to resize the window.
+  // [main-thread & !floating]
 
   bool gui_get_resize_hints(clap_gui_resize_hints_t *hints) override {
     //SAT_PRINT("\n");
@@ -1272,6 +1442,12 @@ public: // clap extensions
 
   //----------
 
+  // If the plugin gui is resizable, then the plugin will calculate the closest
+  // usable size which fits in the given size.
+  // This method does not change the size.
+  // Returns true if the plugin could adjust the given size.
+  // [main-thread & !floating]
+
   bool gui_adjust_size(uint32_t *width, uint32_t *height) override {
     //SAT_PRINT("*width %i *height %i\n",*width,*height);
     if (MEditor) return MEditor->adjustSize(width,height);
@@ -1280,6 +1456,10 @@ public: // clap extensions
 
   //----------
 
+  // Sets the window size.
+  // Returns true if the plugin could resize its window to the given size.
+  // [main-thread & !floating]
+
   bool gui_set_size(uint32_t width, uint32_t height) override {
     //SAT_PRINT("width %i height %i\n",width,height);
     if (MEditor) return MEditor->setSize(width,height);
@@ -1287,6 +1467,10 @@ public: // clap extensions
   }
 
   //----------
+
+  // Embeds the plugin window into the given window.
+  // Returns true on success.
+  // [main-thread & !floating]
 
   bool gui_set_parent(const clap_window_t *window) override {
     //SAT_PRINT("api %s ptr %p\n",window->api,window->ptr);
@@ -1305,6 +1489,10 @@ public: // clap extensions
 
   //----------
 
+  // Set the plugin floating window to stay above the given window.
+  // Returns true on success.
+  // [main-thread & floating]
+
   bool gui_set_transient(const clap_window_t *window) override {
     //SAT_PRINT("api %s ptr %p\n",window->api,window->ptr);
     if (MEditor) return MEditor->setTransient(window);
@@ -1313,12 +1501,19 @@ public: // clap extensions
 
   //----------
 
+  // Suggests a window title. Only for floating windows.
+  // [main-thread & floating]
+
   void gui_suggest_title(const char *title) override {
     //SAT_PRINT("title %s\n",title);
     if (MEditor) MEditor->suggestTitle(title);
   }
 
   //----------
+
+  // Show the window.
+  // Returns true on success.
+  // [main-thread]
 
   bool gui_show() override {
     //SAT_PRINT("\n");
@@ -1328,29 +1523,47 @@ public: // clap extensions
 
   //----------
 
+  // Hide the window, this method does not free the resources, it just hides
+  // the window content. Yet it may be a good idea to stop painting timers.
+  // Returns true on success.
+  // [main-thread]
+
   bool gui_hide() override {
     //SAT_PRINT("\n");
     if (MEditor) return MEditor->hide();
     return false;
   }
 
+  //----------
+
   #endif // no gui
 
+  //------------------------------
   // latency
   //------------------------------
+
+  // Returns the plugin latency in samples.
+  // [main-thread & (being-activated | active)]
 
   uint32_t latency_get() override {
     return 0;
   }
 
+  //------------------------------
   // note name
   //------------------------------
+
+  // Return the number of note names
+  // [main-thread]
 
   uint32_t note_name_count() override {
     return 0;
   }
 
   //----------
+
+  // Returns true on success and stores the result into note_name
+  // [main-thread]
 
   bool note_name_get(uint32_t index, clap_note_name_t *note_name) override {
     // note_name->port = -1;
@@ -1360,8 +1573,12 @@ public: // clap extensions
     return false;
   }
 
+  //------------------------------
   // note ports
   //------------------------------
+
+  // Number of ports, for either input or output.
+  // [main-thread]
 
   uint32_t note_ports_count(bool is_input) override {
     if (is_input) return MNoteInputPorts.size();
@@ -1369,6 +1586,10 @@ public: // clap extensions
   }
 
   //----------
+
+  // Get info about a note port.
+  // Returns true on success and stores the result into info.
+  // [main-thread]
 
   bool note_ports_get(uint32_t index, bool is_input, clap_note_port_info_t *info) override {
     uint32_t size = sizeof(clap_note_port_info_t);
@@ -1379,8 +1600,18 @@ public: // clap extensions
     return true;
   }
 
+  //------------------------------
   // param indication
   //------------------------------
+
+  // Sets or clears a mapping indication.
+  // has_mapping: does the parameter currently has a mapping?
+  // color: if set, the color to use to highlight the control in the plugin GUI
+  // label: if set, a small string to display on top of the knob which identifies the hardware
+  // controller description: if set, a string which can be used in a tooltip, which describes the
+  // current mapping
+  // Parameter indications should not be saved in the plugin context, and are off by default.
+  // [main-thread]
 
   void param_indication_set_mapping(clap_id param_id, bool has_mapping, const clap_color_t *color, const char *label, const char *description) override {
     //SAT_TRACE;
@@ -1402,6 +1633,12 @@ public: // clap extensions
 
   //----------
 
+  // Sets or clears an automation indication.
+  // automation_state: current automation state for the given parameter
+  // color: if set, the color to use to display the automation indication in the plugin GUI
+  // Parameter indications should not be saved in the plugin context, and are off by default.
+  // [main-thread]
+
   void param_indication_set_automation(clap_id param_id, uint32_t automation_state, const clap_color_t *color) override {
     //SAT_TRACE;
     SAT_Parameter* param = MParameters[param_id];
@@ -1421,14 +1658,22 @@ public: // clap extensions
     #endif
   }
 
+  //------------------------------
   // params
   //------------------------------
+
+  // Returns the number of parameters.
+  // [main-thread]
 
   uint32_t params_count() override {
     return MParameters.size();
   }
 
   //----------
+
+  // Copies the parameter's info to param_info.
+  // Returns true on success.
+  // [main-thread]
 
   bool params_get_info(uint32_t param_index, clap_param_info_t *param_info) override {
     clap_param_info_t* src = MParameters[param_index]->getInfo();
@@ -1439,6 +1684,10 @@ public: // clap extensions
 
   //----------
 
+  // Writes the parameter's current value to out_value.
+  // Returns true on success.
+  // [main-thread]
+
   bool params_get_value(clap_id param_id, double *out_value) override {
     double value = MParameters[param_id]->getValue();
     *out_value = value;
@@ -1446,6 +1695,12 @@ public: // clap extensions
   }
 
   //----------
+
+  // Fills out_buffer with a null-terminated UTF-8 string that represents the parameter at the
+  // given 'value' argument. eg: "2.3 kHz". The host should always use this to format parameter
+  // values before displaying it to the user.
+  // Returns true on success.
+  // [main-thread]
 
   bool params_value_to_text(clap_id param_id, double value, char *out_buffer, uint32_t out_buffer_capacity) override {
     const char* txt = MParameters[param_id]->valueToText(value);
@@ -1455,6 +1710,11 @@ public: // clap extensions
 
   //----------
 
+  // Converts the null-terminated UTF-8 param_value_text into a double and writes it to out_value.
+  // The host can use this to convert user input into a parameter value.
+  // Returns true on success.
+  // [main-thread]
+
   bool params_text_to_value(clap_id param_id, const char *param_value_text, double *out_value) override {
     *out_value = MParameters[param_id]->textToValue(param_value_text);
     return true;
@@ -1462,7 +1722,13 @@ public: // clap extensions
 
   //----------
 
-  // on main/gui thread?
+  // Flushes a set of parameter changes.
+  // This method must not be called concurrently to clap_plugin->process().
+  // Note: if the plugin is processing, then the process() call will already achieve the
+  // parameter update (bi-directional), so a call to flush isn't required, also be aware
+  // that the plugin may use the sample offset in process(), while this information would be
+  // lost within flush().
+  // [active ? audio-thread : main-thread]
 
   void params_flush(const clap_input_events_t *in, const clap_output_events_t *out) override {
     //processEvents(in,out);
@@ -1473,16 +1739,27 @@ public: // clap extensions
     }
   }
 
+  //------------------------------
   // posix fd support
   //------------------------------
+
+  // This callback is "level-triggered".
+  // It means that a writable fd will continuously produce "on_fd()" events;
+  // don't forget using modify_fd() to remove the write notification once you're
+  // done writing.
+  // [main-thread]
 
   void posix_fd_support_on_fd(int fd, clap_posix_fd_flags_t flags) override {
   }
 
+  //------------------------------
   // preset load
   //------------------------------
 
-  // [main-thread]  
+  // Loads a preset in the plugin native preset file format from a location.
+  // The preset discovery provider defines the location and load_key to be passed to this function.
+  // Returns true on success.
+  // [main-thread]
 
   bool preset_load_from_location(uint32_t location_kind, const char *location, const char *load_key) override {
 
@@ -1512,14 +1789,22 @@ public: // clap extensions
     return false;
   }
 
+  //------------------------------
   // remote controls
   //------------------------------
+
+  // Returns the number of pages.
+  // [main-thread]
 
   uint32_t remote_controls_count() override {
     return 1;
   }
 
   //----------
+
+  // Get a page by index.
+  // Returns true on success and stores the result into page.
+  // [main-thread]
 
   bool remote_controls_get(uint32_t page_index, clap_remote_controls_page_t *page) override {
     SAT_Strlcpy(page->page_name,"Perform",CLAP_NAME_SIZE);
@@ -1534,8 +1819,13 @@ public: // clap extensions
     return true;
   }
 
+  //------------------------------
   // render
   //------------------------------
+
+  // Returns true if the plugin has a hard requirement to process in real-time.
+  // This is especially useful for plugin acting as a proxy to an hardware device.
+  // [main-thread]
 
   bool render_has_hard_realtime_requirement() override {
     return false;
@@ -1543,13 +1833,21 @@ public: // clap extensions
 
   //----------
 
+  // Returns true if the rendering mode could be applied.
+  // [main-thread]
+
   bool render_set(clap_plugin_render_mode mode) override {
     MRenderMode = mode;
     return false;
   }
 
+  //------------------------------
   // state
   //------------------------------
+
+   // Saves the plugin state into stream.
+   // Returns true if the state was correctly saved.
+   // [main-thread]
 
   bool state_save(const clap_ostream_t *stream) override {
 
@@ -1591,8 +1889,9 @@ public: // clap extensions
 
   //----------
 
-  // [main-thread]  
-  // (while plugin is processing?)
+   // Loads the plugin state from stream.
+   // Returns true if the state was correctly restored.
+   // [main-thread]
 
   bool state_load(const clap_istream_t *stream) override {
 
@@ -1644,8 +1943,15 @@ public: // clap extensions
     return true;
   }
 
+  //------------------------------
   // state context
   //------------------------------
+
+  // Saves the plugin state into stream, according to context_type.
+  // Returns true if the state was correctly saved.
+  // Note that the result may be loaded by both clap_plugin_state.load() and
+  // clap_plugin_state_context.load().
+  // [main-thread]
 
   bool state_context_save(const clap_ostream_t *stream, uint32_t context_type) override {
     switch (context_type) {
@@ -1657,6 +1963,12 @@ public: // clap extensions
 
   //----------
 
+  // Loads the plugin state from stream, according to context_type.
+  // Returns true if the state was correctly restored.
+  // Note that the state may have been saved by clap_plugin_state.save() or
+  // clap_plugin_state_context.save() with a different context_type.
+  // [main-thread]
+
   bool state_context_load(const clap_istream_t *stream, uint32_t context_type) override {
     switch (context_type) {
       case CLAP_STATE_CONTEXT_FOR_DUPLICATE:  return state_load(stream);
@@ -1665,8 +1977,14 @@ public: // clap extensions
     return true;
   }
 
+  //------------------------------
   // surround
   //------------------------------
+
+  // Checks if a given channel mask is supported.
+  // The channel mask is a bitmask, for example:
+  //   (1 << CLAP_SURROUND_FL) | (1 << CLAP_SURROUND_FR) | ...
+  // [main-thread]
 
   bool surround_is_channel_mask_supported(uint64_t channel_mask) override {
     return false;
@@ -1674,31 +1992,51 @@ public: // clap extensions
 
   //----------
 
+  // Stores the surround identifier of each channel into the channel_map array.
+  // Returns the number of elements stored in channel_map.
+  // channel_map_capacity must be greater or equal to the channel count of the given port.
+  // [main-thread]
+
   uint32_t surround_get_channel_map(bool is_input, uint32_t port_index, uint8_t *channel_map, uint32_t channel_map_capacity) override {
     return 0;
   }
 
+  //------------------------------
   // tail
   //------------------------------
+
+  // Returns tail length in samples.
+  // Any value greater or equal to INT32_MAX implies infinite tail.
+  // [main-thread,audio-thread]
 
   uint32_t tail_get() override {
     return 0;
   }
 
+  //------------------------------
   // thread pool
   //------------------------------
+
+  // Called by the thread pool
 
   void thread_pool_exec(uint32_t task_index) override {
   }
 
+  //------------------------------
   // timer support
   //------------------------------
+
+  // [main-thread]
 
   void timer_support_on_timer(clap_id timer_id) override {
   }
 
+  //------------------------------
   // track info
   //------------------------------
+
+  // Called when the info changes.
+  // [main-thread]
 
   void track_info_changed() override {
     // const clap_host_t* host = getClapHost();
@@ -1728,8 +2066,12 @@ public: // clap extensions
     // }
   }
 
+  //------------------------------
   // voice info
   //------------------------------
+
+  // gets the voice info, returns true on success
+  // [main-thread && active]
 
   bool voice_info_get(clap_voice_info_t *info) override {
     // info->voice_count     = 16;
@@ -1743,8 +2085,15 @@ public: // clap extensions
 public: // draft extensions
 //----------------------------------------------------------------------
 
+  //------------------------------
   // extensible audio ports
   //------------------------------
+
+  // Asks the plugin to add a new port (at the end of the list), with the following settings.
+  // port_type: see clap_audio_port_info.port_type for interpretation.
+  // port_details: see clap_audio_port_configuration_request.port_details for interpretation.
+  // Returns true on success.
+  // [main-thread && !is_active]
 
   bool extensible_audio_ports_add_port(bool is_input, uint32_t channel_count, const char *port_type, const void *port_details) override {
     return false;
@@ -1752,19 +2101,42 @@ public: // draft extensions
 
   //----------
 
+  // Asks the plugin to remove a port.
+  // Returns true on success.
+  // [main-thread && !is_active]
+
   bool extensible_audio_ports_remove_port(bool is_input, uint32_t index) override {
     return false;
   }
 
+  //------------------------------
   // gain-adjustment-metering
   //------------------------------
+
+  // Returns the current gain adjustment in dB. The value is intended
+  // for informational display, for example in a host meter or tooltip.
+  // The returned value represents the gain adjustment that the plugin
+  // applied to the last sample in the most recently processed block.
+  // The returned value is in dB. Zero means the plugin is applying no gain
+  // reduction, or is not processing. A negative value means the plugin is
+  // applying gain reduction, as with a compressor or limiter. A positive
+  // value means the plugin is adding gain, as with an expander. The value
+  // represents the dynamic gain reduction or expansion applied by the
+  // plugin, before any make-up gain or other adjustment. A single value is
+  // returned for all audio channels.
+  // [audio-thread]
 
   double gain_adjustment_metering_get() override {
     return 0.0;
   }
 
+  //------------------------------
   // mini-curve-display
   //------------------------------
+
+  // Returns the number of curves the plugin wants to paint.
+  // Be aware that the space to display those curves will be small, and too much data will make
+  // the output hard to read.
 
   uint32_t mini_curve_display_get_curve_count() override {
     return 0;
@@ -1772,29 +2144,65 @@ public: // draft extensions
 
   //----------
 
+  // Renders the curve into each the curves buffer.
+  // curves is an array, and each entries (up to curves_size) contains pre-allocated
+  // values buffer that must be filled by the plugin.
+  // The host will "stack" the curves, from the first one to the last one.
+  // curves[0] is the first curve to be painted.
+  // curves[n + 1] will be painted over curves[n].
+  // Returns the number of curves rendered.
+  // [main-thread]
+
   uint32_t mini_curve_display_render(clap_mini_curve_display_curve_data_t *curves, uint32_t curves_size) override {
     return 0;
   }
 
   //----------
 
+  // Tells the plugin if the curve is currently observed or not.
+  // When it isn't observed render() can't be called.
+  // When is_obseverd becomes true, the curve content and axis name are implicitly invalidated. So
+  // the plugin don't need to call host->changed.
+  // [main-thread]
+
   void mini_curve_display_set_observed(bool is_observed) override {
   }
 
   //----------
 
+  // Retrives the axis name.
+  // x_name and y_name must not to be null.
+  // Returns true on success, if the name capacity was sufficient.
+  // [main-thread]
+
   bool mini_curve_display_get_axis_name(uint32_t curve_index, char *x_name, char *y_name, uint32_t name_capacity) override {
     return false;
   }
 
+  //------------------------------
   // project-location
   //------------------------------
+
+  // Called by the host when the location of the plugin instance changes.
+  // The last item in this array always refers to the device itself, and as
+  // such is expected to be of kind CLAP_PLUGIN_LOCATION_DEVICE.
+  // The first item in this array always refers to the project this device is in and must be of
+  // kind CLAP_PROJECT_LOCATION_PROJECT. The path is expected to be something like: PROJECT >
+  // TRACK_GROUP+ > TRACK > (DEVICE > NESTED_DEVICE_CHAIN)* > DEVICE
+  // [main-thread]
 
   void project_location_set(const clap_project_location_element_t *path, uint32_t num_elements) override {
   }
 
+  //------------------------------
   // resource directory
   //------------------------------
+
+  // Sets the directory in which the plugin can save its resources.
+  // The directory remains valid until it is overridden or the plugin is destroyed.
+  // If path is null or blank, it clears the directory location.
+  // path must be absolute.
+  // [main-thread]
 
   void resource_directory_set_directory(const char *path, bool is_shared) override {
     // MResourceDirectory = path;
@@ -1803,10 +2211,18 @@ public: // draft extensions
 
   //----------
 
+  // Asks the plugin to put its resources into the resource directory.
+  // It is not necessary to collect files which belongs to the plugin's
+  // factory content unless the param all is true.
+  // [main-thread]
+
   void resource_directory_collect(bool all) override {
   }
 
   //----------
+
+  // Returns the number of files used by the plugin in the shared resource folder.
+  // [main-thread]
 
   uint32_t resource_directory_get_files_count() override {
     return 0;
@@ -1814,12 +2230,22 @@ public: // draft extensions
 
   //----------
 
+  // Retrieves relative file path to the resource directory.
+  // path - writable memory to store the path
+  // path_size - number of available bytes in path
+  // Returns the number of bytes in the path, or -1 on error
+  // [main-thread]
+
   int32_t resource_directory_get_file_path(uint32_t index, char *path, uint32_t path_size) override {
     return 0;
   }
 
+  //------------------------------
   // triggers
   //------------------------------
+
+  // Returns the number of triggers.
+  // [main-thread]
 
   uint32_t triggers_count() override {
     return 0;
@@ -1827,18 +2253,29 @@ public: // draft extensions
 
   //----------
 
+  // Copies the trigger's info to trigger_info and returns true on success.
+  // [main-thread]
+
   bool triggers_get_info(uint32_t index, clap_trigger_info_t *trigger_info) override {
     return false;
   }
 
+  //------------------------------
   // tuning
   //------------------------------
+
+  // Called when a tuning is added or removed from the pool.
+  // [main-thread]
 
   void tuning_changed() override {
   }
 
+  //------------------------------
   // undo-context
   //------------------------------
+
+  // Indicate if it is currently possible to perform an undo or redo operation.
+  // [main-thread & plugin-subscribed-to-undo-context]
 
   void undo_context_set_can_undo(bool can_undo) override {
   }
@@ -1846,25 +2283,45 @@ public: // draft extensions
   void undo_context_set_can_redo(bool can_redo) override {
   }
 
+  // Sets the name of the next undo or redo step.
+  // name: null terminated string.
+  // [main-thread & plugin-subscribed-to-undo-context]
+
   void undo_context_set_undo_name(const char *name) override {
   }
 
   void undo_context_set_redo_name(const char *name) override {
   }
 
+  //------------------------------
   // undo-delta
   //------------------------------
 
+  // Asks the plugin the delta properties.
+  // [main-thread]
+
   void undo_delta_get_delta_properties(clap_undo_delta_properties_t *properties) override {
   }
+
+  // Asks the plugin if it can apply a delta using the given format version.
+  // Returns true if it is possible.
+  // [main-thread]
 
   bool undo_delta_can_use_delta_format_version(clap_id format_version) override {
     return false;
   }
 
+  // Undo using the delta.
+  // Returns true on success.
+  // [main-thread]
+
   bool undo_delta_undo(clap_id format_version, const void *delta, size_t delta_size) override {
     return false;
   }
+
+  // Redo using the delta.
+  // Returns true on success.
+  // [main-thread]
 
   bool undo_delta_redo(clap_id format_version, const void *delta, size_t delta_size) override {
     return false;
