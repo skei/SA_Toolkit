@@ -272,6 +272,8 @@ public:
 
     painter->setLineWidth(S);
 
+painter->pushClip(mrect);
+
     //painter->setFillColor(MBackColor);
     //painter->fillRect(mrect.x,mrect.y,mrect.w,mrect.h);
     
@@ -367,6 +369,10 @@ public:
     float cur = MPlayPos * MZoom * (PIXELS_PER_SECOND*S);
     painter->setDrawColor( SAT_LightRed );
     painter->drawLine( x2 + cur, mrect.y, x2 + cur, mrect.y2() );
+
+painter->popClip();
+
+
   }
   
 //------------------------------
