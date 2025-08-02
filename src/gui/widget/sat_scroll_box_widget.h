@@ -118,8 +118,7 @@ public:
     //MContent->setBackgroundColor(SAT_COLOR_DARK_GREEN);
 
     //MContent->Options.autoClip = true;
-
-    MContent->Options.opaque = true;
+    //MContent->Options.opaque = true;
     
   }
 

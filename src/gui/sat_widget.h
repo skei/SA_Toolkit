@@ -165,6 +165,10 @@ public:
     return MParent->isRecursivelyDisabled();
   }
 
+  // returns topmost opaque parent
+  // or no opaque parent found..
+  // or null if widget doesn't have a parent (shouldn't be possible?)
+  
   virtual SAT_Widget* findOpaqueParent() {
     //if (Options.opaque == true) return this;
     //else {

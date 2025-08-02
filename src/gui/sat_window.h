@@ -368,22 +368,28 @@ public: // widget listener
 
     #ifdef SAT_WINDOW_QUEUE_WIDGETS
 
-      MQueues.queueRedraw(AWidget);
       switch (AMode) {
+
         case SAT_WIDGET_REDRAW_SELF: {
-          //MQueues.queueRedraw(AWidget);
-          SAT_Widget* parent = AWidget->findOpaqueParent();
-          if (parent) MQueues.queueRedraw(parent);
-          else MQueues.queueRedraw(AWidget);
+
+          if (AWidget->Options.opaque) MQueues.queueRedraw(AWidget);
+          else {
+            SAT_Widget* opaque_parent = AWidget->findOpaqueParent();
+            if (opaque_parent) MQueues.queueRedraw(opaque_parent);
+            else MQueues.queueRedraw(AWidget);
+          }
           break;
         }
+
         case SAT_WIDGET_REDRAW_PARENT: {
-          SAT_Widget* parent = AWidget->getParent();
-          //if (parent) MQueues.queueRedraw(parent);
-          if (parent) {
-            SAT_Widget* opaque_parent = parent->findOpaqueParent();
-            if (opaque_parent) MQueues.queueRedraw(opaque_parent);
-            else MQueues.queueRedraw(parent);
+          SAT_Widget* widget = AWidget->getParent();
+          if (widget) {
+            if (widget->Options.opaque) MQueues.queueRedraw(widget);
+            else {
+              SAT_Widget* opaque_parent = widget->findOpaqueParent();
+              if (opaque_parent) MQueues.queueRedraw(opaque_parent);
+              else MQueues.queueRedraw(widget);
+            }
           }
           break;
         }
@@ -392,6 +398,7 @@ public: // widget listener
           MQueues.queueRedraw(MRootWidget);
           break;
         }
+
       }
 
     #else // ! SAT_WINDOW_QUEUE_WIDGETS

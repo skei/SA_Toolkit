@@ -248,7 +248,18 @@
 // - test performance
 // (see SAT_Window.on_WidgetListener_redraw)
 
-//#define SAT_WINDOW_BUFFERED
+// there's issues with clipping & redrawing...
+// in the gui demo, tweened widgets (opening, closing the group box)
+// doesn't redraw the animated splines
+// some clipping issues reveal themselves
+// and there's flashing..
+// so, a lot to go through..
+
+// look into SAT_CachedWidget instead?
+// if the entire window is a CachedWidget,
+// it would serve more or less the same purpose..
+
+#define SAT_WINDOW_BUFFERED
 
 //------------------------------
 // if this is defined, double click events will be sent to the widgets

@@ -49,6 +49,8 @@ public:
 //------------------------------
 
   void on_Widget_paint(SAT_PaintContext* AContext) override {
+
+    // skip drawing if it's fully transparent..
     if (MColor.a > 0.001) {
       //SAT_TRACE;
       SAT_Painter* painter = AContext->painter;
@@ -56,6 +58,7 @@ public:
       painter->setFillColor(MColor);
       painter->fillRect(rect.x,rect.y,rect.w,rect.h);
     }
+    // .. but draw the (visible) children..
     paintChildren(AContext);
   }
 

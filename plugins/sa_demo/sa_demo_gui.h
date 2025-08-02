@@ -72,7 +72,6 @@ public:
     edit_menu->appendItem( "fourth" );
     edit_menu->appendItem( "and a fifth one.." );
 
-
     // void on_menuListener_select(SAT_MenuWidget* AMenu, int32_t AIndex) override {
     //   if (AIndex >= 0) {
     //     //select(AIndex);
@@ -238,9 +237,6 @@ public:
     SAT_Assert(widgets_page);
     
     overlay->appendChild(widgets_page->MMenu1);
-
-    // animated = new SAT_AnimTestWidget(SAT_Rect(10,370,130,130));
-    // overlay->appendChild(animated);
 
     return true;
   }
