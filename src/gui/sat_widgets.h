@@ -6,7 +6,7 @@
 #include "gui/widget/sat_anim_test_widget.h"
 #include "gui/widget/sat_button_widget.h"
 #include "gui/widget/sat_button_grid_widget.h"
-#include "gui/widget/sat_cached_widget.h"
+#include "gui/widget/sat_buffered_widget.h"
 #include "gui/widget/sat_circular_waveform_widget.h"
 #include "gui/widget/sat_curve_widget.h"
 #include "gui/widget/sat_debug_observer_widget.h"
