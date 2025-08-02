@@ -123,8 +123,12 @@ public: // redraw
         num_queued += 1;
         // we don't care about queued redraws, we will draw the root anyway
       }
-      MPaintQueue.enqueue(ARoot);
-      rect = ARoot->getRect();
+
+if (num_queued > 0) {
+        MPaintQueue.enqueue(ARoot);
+        rect = ARoot->getRect();
+}
+
     }
     else {
       while (MRedrawQueue.try_dequeue(widget)) {
@@ -134,7 +138,6 @@ public: // redraw
       }
       // SAT_GLOBAL.ANALYTICS.report_RedrawQueue_num_queued(num_queued);
     }
-
 
     return rect;
 
@@ -175,7 +178,12 @@ public: // paint
       while (MPaintQueue.try_dequeue(widget)) {
         num_queued += 1;
       }
-      ARoot->on_Widget_paint(AContext);
+
+      //if (num_queued > 0) {
+        //SAT_TRACE;
+        ARoot->on_Widget_paint(AContext);
+      //}
+
       return num_queued; // ???
     }
     else {

@@ -291,11 +291,22 @@ public: // timer
         SAT_Rect rect = MQueues.flushRedrawToPaint();
         if (rect.isNotEmpty()) invalidate(rect.x,rect.y,rect.w,rect.h);
       #else
-        //SAT_Rect rect = MQueues.flushRedrawToPaint(MRootWidget);
+
+
         if (MRootWidget) {
-          MQueues.flushRedrawToPaint(MRootWidget);
-          SAT_Rect rect = MRootWidget->getRect();
-          invalidate(rect.x,rect.y,rect.w,rect.h);
+
+          // this will redraw continuously, won't it?
+
+          // MQueues.flushRedrawToPaint(MRootWidget);
+          // SAT_Rect rect = MRootWidget->getRect();
+          // invalidate(rect.x,rect.y,rect.w,rect.h);
+
+          SAT_Rect rect = MQueues.flushRedrawToPaint(MRootWidget);
+          if (rect.isNotEmpty()) {
+            SAT_Rect rect = MRootWidget->getRect();
+            invalidate(rect.x,rect.y,rect.w,rect.h);
+          }
+
         }
         else {
           SAT_Rect rect = MQueues.flushRedrawToPaint();
