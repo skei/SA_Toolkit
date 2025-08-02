@@ -364,6 +364,30 @@ public: // widget listener
 
   //----------
 
+  /*
+    for buffered windows, which doesn't redraw everything from the root down:
+
+    we might want to have some way to specify certain widgets that might be
+    drawn on top of all the others (see sa_demo, the animated splines)..
+    currently, the widget system is designed so that child widgets is clipped to,
+    and always inside it's parent widgets..
+    when a widget is being redrawn, we iterate upwards in the hierarchy,
+    to find the topmost widget/parent set  as opaque (entirely fills its rect),
+    ultimately reaching the root widget..
+    (if all widgets are kept as opaque (the default), the entire window will be redrawn)
+
+    if there is a widget other than the parent overlaying the widget, it is ignored..
+    animated widgets will then be redrawn next frame (when itself sends a redraw message)..
+    resulting in flickering..
+
+    and possibly:
+    because of clipping being ints, and painting being doubles (fractional pixels),
+    clipping can flicker, half-pixels being redrawn, etc..
+    needs testing and checking!
+
+    MRaisedWidget, MFrontWidget, MUpperWidget?
+  */
+
   void on_WidgetListener_redraw(SAT_Widget* AWidget, uint32_t AIndex=0, uint32_t AMode=SAT_WIDGET_REDRAW_SELF) override {
 
     #ifdef SAT_WINDOW_QUEUE_WIDGETS
@@ -400,6 +424,9 @@ public: // widget listener
         }
 
       }
+
+      // TODO: draw 'always overlay' widgets? (not SAT_OverlayWidget,
+      // which is meant for menus, etc, and is normally inactive)..
 
     #else // ! SAT_WINDOW_QUEUE_WIDGETS
 

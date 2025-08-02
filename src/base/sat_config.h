@@ -242,22 +242,7 @@
 // draw to (and keep around) a buffer, and copy from it to the screen,
 // instead of drawing directly to the screen (or opengl backbuffer)
 // 'retained mode' - ish
-// todo:
-// - check clipping
-// - redundant redrawing
-// - test performance
-// (see SAT_Window.on_WidgetListener_redraw)
-
-// there's issues with clipping & redrawing...
-// in the gui demo, tweened widgets (opening, closing the group box)
-// doesn't redraw the animated splines
-// some clipping issues reveal themselves
-// and there's flashing..
-// so, a lot to go through..
-
-// look into SAT_CachedWidget instead?
-// if the entire window is a CachedWidget,
-// it would serve more or less the same purpose..
+// see: SAT_SimpleWindow.on_Window_paint
 
 #define SAT_WINDOW_BUFFERED
 

@@ -187,6 +187,9 @@ public: // paint
       return num_queued; // ???
     }
     else {
+
+      SAT_Painter* painter = AContext->painter;
+
       SAT_Widget* widget;
       while (MPaintQueue.try_dequeue(widget)) {
         if (widget) {
@@ -201,7 +204,15 @@ public: // paint
             if (widget->MLastPaintedFrame != AContext->counter) {
               widget->MLastPaintedFrame = AContext->counter;
               num_painted += 1;
+
+              SAT_Rect cliprect = widget->findParentClipRect(widget->getRect());
+              //SAT_PRINT("x %.2f y %.2f w %.2f h %.2f\n",cliprect.x,cliprect.y,cliprect.w,cliprect.h);
+              painter->pushClip(cliprect);
+
               widget->on_Widget_paint(AContext);
+
+              painter->popClip();
+
             }
           }
         }

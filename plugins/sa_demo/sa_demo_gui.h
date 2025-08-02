@@ -205,8 +205,8 @@ public:
     //
     //------------------------------
 
-    animated = new SAT_AnimTestWidget(SAT_Rect(10,370,130,130));
-    root->appendChild(animated);
+//    animated = new SAT_AnimTestWidget(SAT_Rect(10,370,130,130));
+//    root->appendChild(animated);
 
     //------------------------------
     //

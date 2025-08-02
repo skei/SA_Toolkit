@@ -52,6 +52,8 @@ public:
     Options.wantHoverEvents = true;
     //Options.autoClip = true;
 
+    Options.opaque = false;
+
     setBackgroundColor(SAT_Color(0.5, 0.6, 0.5, 0.4)); //0.05));
 
     setMovable(true);

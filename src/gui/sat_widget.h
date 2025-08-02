@@ -114,6 +114,8 @@ public:
     MInitialRect = ARect;
     MBaseRect = ARect;
     MRect = ARect;
+
+    Options.opaque = true;
   }
 
   //----------
@@ -179,6 +181,23 @@ public:
       else return nullptr;
     //}
   }
+
+  // find clipping rectangle by traversing the hierarchy upwards,
+  // intersecting the current rect with each widget that has the autoClipChilren flag set
+
+  virtual SAT_Rect findParentClipRect(SAT_Rect ARect) {
+    SAT_Rect rect = ARect;
+    SAT_Widget* parent = MParent;
+    if (parent) {
+      if (parent->Options.autoClipChildren) {
+        SAT_Rect parent_rect = parent->getRect();
+        rect.overlap(parent_rect);
+        rect = parent->findParentClipRect(rect);
+      }
+    }
+    return rect;
+  }
+
 
 //------------------------------
 
