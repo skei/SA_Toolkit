@@ -175,7 +175,7 @@ public:
   // or null if widget doesn't have a parent (shouldn't be possible?)
   
   virtual SAT_Widget* findOpaqueParent() {
-    SAT_TRACE;
+    //SAT_TRACE;
     //if (Options.opaque == true) return this;
     //else {
       if (MParent) {
@@ -190,7 +190,7 @@ public:
   // intersecting the current rect with each widget that has the autoClipChilren flag set
 
   virtual SAT_Rect findParentClipRect(SAT_Rect ARect) {
-    SAT_TRACE;
+    //SAT_TRACE;
     SAT_Rect rect = ARect;
     SAT_Widget* parent = MParent;
     if (parent) {

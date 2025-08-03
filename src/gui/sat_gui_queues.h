@@ -123,12 +123,11 @@ public: // redraw
         num_queued += 1;
         // we don't care about queued redraws, we will draw the root anyway
       }
-
-if (num_queued > 0) {
+      // but we set the updated rect = root
+      if (num_queued > 0) {
         MPaintQueue.enqueue(ARoot);
         rect = ARoot->getRect();
-}
-
+      }
     }
     else {
       while (MRedrawQueue.try_dequeue(widget)) {
@@ -138,9 +137,7 @@ if (num_queued > 0) {
       }
       // SAT_GLOBAL.ANALYTICS.report_RedrawQueue_num_queued(num_queued);
     }
-
     return rect;
-
   }
 
   //----------
@@ -205,15 +202,18 @@ public: // paint
               widget->MLastPaintedFrame = AContext->counter;
               num_painted += 1;
 
-              // TODO: are we sure we need to do this for every widget?
-
-              SAT_Rect cliprect = widget->findParentClipRect(widget->getRect());
-              //SAT_PRINT("x %.2f y %.2f w %.2f h %.2f\n",cliprect.x,cliprect.y,cliprect.w,cliprect.h);
-              painter->pushClip(cliprect);
-
-              widget->on_Widget_paint(AContext);
-
-              painter->popClip();
+              if (ARoot) {
+                // we don't need to set the clip rect if we only paint the root..)
+                widget->on_Widget_paint(AContext);
+              }
+              else {
+                // TODO: are we sure we need to do this for every widget?
+                SAT_Rect cliprect = widget->findParentClipRect(widget->getRect());
+                //SAT_PRINT("x %.2f y %.2f w %.2f h %.2f\n",cliprect.x,cliprect.y,cliprect.w,cliprect.h);
+                painter->pushClip(cliprect);
+                widget->on_Widget_paint(AContext);
+                painter->popClip();
+              }
 
             }
           }

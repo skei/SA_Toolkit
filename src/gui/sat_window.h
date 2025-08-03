@@ -297,14 +297,21 @@ public: // timer
         if (MRootWidget) {
 
           // this will redraw continuously, won't it?
+          //  every timer tick, it invalidates everything,
+          // even if there are no widgets in the paint queue..
 
           // MQueues.flushRedrawToPaint(MRootWidget);
           // SAT_Rect rect = MRootWidget->getRect();
           // invalidate(rect.x,rect.y,rect.w,rect.h);
 
+          // only draw if there are actually some widgets to draw..
+          // in flush.., if we pass root as arg, and there are widgets in the queue,
+          // we enque only the root itself, and return its rect..
+          // else we get an empty rect back..
+          
           SAT_Rect rect = MQueues.flushRedrawToPaint(MRootWidget);
           if (rect.isNotEmpty()) {
-            SAT_Rect rect = MRootWidget->getRect();
+            //SAT_Rect rect = MRootWidget->getRect();
             invalidate(rect.x,rect.y,rect.w,rect.h);
           }
 
