@@ -243,6 +243,7 @@ public: // audio input ports
 //------------------------------
 
   void appendAudioInputPort(const clap_audio_port_info_t* APort) {
+    SAT_PRINT("TODO!\n");
   }
 
   //----------
@@ -272,6 +273,7 @@ public: // audio output ports
 //------------------------------
 
   void appendAudioOutputPort(const clap_audio_port_info_t* APort) {
+    SAT_PRINT("TODO!\n");
   }
 
   //----------
@@ -301,11 +303,13 @@ public: // note input ports
 //------------------------------
 
   void appendNoteInputPort(const clap_audio_port_info_t* APort) {
+    SAT_PRINT("TODO!\n");
   }
 
   //----------
 
   void appendNoteInputPort(SAT_AudioPort* APort) {
+    SAT_PRINT("TODO!\n");
   }
 
   //----------
@@ -318,6 +322,7 @@ public: // note input ports
   //----------
 
   void appendMidiNoteInputPort(const char* AName="Note In", uint32_t AId=0) {
+    SAT_PRINT("TODO!\n");
   }
 
   //----------
@@ -333,11 +338,13 @@ public: // note output ports
 //------------------------------
 
   void appendNoteOutputPort(const clap_audio_port_info_t* APort) {
+    SAT_PRINT("TODO!\n");
   }
 
   //----------
 
   void appendNoteOutputPort(SAT_AudioPort* APort) {
+    SAT_PRINT("TODO!\n");
   }
 
   //----------
@@ -421,7 +428,7 @@ public: // parameters
 
   //----------
 
-  SAT_Parameter* findParameter(const char* AName) {
+  SAT_Parameter* findParameter(const char* AName, const char* AModule=nullptr) {
     for (uint32_t i=0; i<getNumParameters(); i++) {
       SAT_Parameter* param = getParameter(i);
       if (param) {
@@ -429,7 +436,13 @@ public: // parameters
         const char* name = info->name;
         if (name) {
           if (strcmp(AName,name) == 0) {
-            return param;
+            if (AModule) {
+              const char* module = info->module;
+              if (strcmp(AModule,module) == 0) return param;
+            }
+            else {
+              return param;
+            }
           }
         }
       }
@@ -451,6 +464,25 @@ public: // parameters
 
   //----------
 
+  void sendParameterValueEvent(uint32_t AId, sat_param_t AValue) {
+    clap_event_param_value_t event;
+    event.header.size     = sizeof(clap_event_param_value_t);
+    event.header.time     = 0;
+    event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+    event.header.type     = CLAP_EVENT_PARAM_VALUE;
+    event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+    event.param_id        = AId;
+    event.cookie          = MParameters[AId]; // nullptr;
+    event.note_id         = -1;
+    event.port_index      = -1;
+    event.channel         = -1;
+    event.key             = -1;
+    event.value           = AValue;
+    MProcessor->processParamValueEvent(&event);
+  }
+
+  //----------
+
   // called from:
   // SAT_Plugin.init() [main-thread]
 
@@ -461,31 +493,57 @@ public: // parameters
       for (uint32_t i=0; i<num; i++) {
         double value = MParameters[i]->getDefaultValue();
         MParameters[i]->setValue(value);
-        //bool processParamValueEvent(clap_event_param_value_t* event);
-        //return paramValueEvent(event);
-        clap_event_param_value_t event;
-        event.header.size     = sizeof(clap_event_param_value_t);
-        event.header.time     = 0;
-        event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
-        event.header.type     = CLAP_EVENT_PARAM_VALUE;
-        event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
-        event.param_id        = i;
-        event.cookie          = nullptr; // set?
-        event.note_id         = -1;
-        event.port_index      = -1;
-        event.channel         = -1;
-        event.key             = -1;
-        event.value           = value;
-        MProcessor->processParamValueEvent(&event);
+        // //bool processParamValueEvent(clap_event_param_value_t* event);
+        // //return paramValueEvent(event);
+        // clap_event_param_value_t event;
+        // event.header.size     = sizeof(clap_event_param_value_t);
+        // event.header.time     = 0;
+        // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        // event.header.type     = CLAP_EVENT_PARAM_VALUE;
+        // event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+        // event.param_id        = i;
+        // event.cookie          = MParameters[i]; // nullptr;
+        // event.note_id         = -1;
+        // event.port_index      = -1;
+        // event.channel         = -1;
+        // event.key             = -1;
+        // event.value           = value;
+        // MProcessor->processParamValueEvent(&event);
+        sendParameterValueEvent(i,value);
       }
     }
   }
 
   //----------
 
-  //TODO
-  // setAllParameterValues(float* ABuffer) {
-  // }
+  virtual void setAllParameterValues(uint32_t ACount, sat_param_t* ABuffer) {
+    //SAT_TRACE;
+    SAT_Assert(ABuffer);
+    SAT_Assert(ACount > 0);
+    if (MProcessor) {
+      uint32_t num = ACount;
+      if (num > MParameters.size()) num = MParameters.size();
+      for (uint32_t i=0; i<num; i++) {
+        double value = ABuffer[i];
+        MParameters[i]->setValue(value);
+        // clap_event_param_value_t event;
+        // event.header.size     = sizeof(clap_event_param_value_t);
+        // event.header.time     = 0;
+        // event.header.space_id = CLAP_CORE_EVENT_SPACE_ID;
+        // event.header.type     = CLAP_EVENT_PARAM_VALUE;
+        // event.header.flags    = 0; // CLAP_EVENT_IS_LIVE, CLAP_EVENT_DONT_RECORD
+        // event.param_id        = i;
+        // event.cookie          = nullptr; // set?
+        // event.note_id         = -1;
+        // event.port_index      = -1;
+        // event.channel         = -1;
+        // event.key             = -1;
+        // event.value           = value;
+        // MProcessor->processParamValueEvent(&event);
+        sendParameterValueEvent(i,value);
+      }
+    }
+  }
 
   //TODO
   // setAllParameterFlags(uint32_t AFlag) {
