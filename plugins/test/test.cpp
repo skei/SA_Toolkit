@@ -9,6 +9,8 @@
 
 //----------------------------------------------------------------------
 
+// BufferedWidget doesn't work properly.. :-/
+
 int main() {
   SAT_Window* window = new SAT_Window(640,480);
 
@@ -23,8 +25,7 @@ int main() {
     buff->Layout.flags = SAT_WIDGET_LAYOUT_ANCHOR_TOP_LEFT;
     //buff->Layout.flags |= SAT_WIDGET_LAYOUT_STRETCH_ALL;
     buff->setFillBackground(true);
-    buff->setBackgroundColor(SAT_DarkBlue);
-
+    buff->setBackgroundColor(SAT_DarkRed);
 
     SAT_TextWidget* text = new SAT_TextWidget(SAT_Rect(20,20,200,100),"Hello world!");
     buff->appendChild(text);
