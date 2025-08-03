@@ -949,6 +949,8 @@ public: // processor listener
     #endif
   }
 
+  //----------
+
   // modulation has changed i process()
   // tell the editor about it
 
@@ -996,6 +998,7 @@ public: // clap plugin
 
   bool init() override {
     //SAT_TRACE;
+    //SAT_Assert(!MIsInitialized);
     MHost = new SAT_Host(getClapHost());
     setDefaultParameterValues();
     #ifndef SAT_NO_GUI
@@ -1021,6 +1024,7 @@ public: // clap plugin
 
   void destroy() override {
     //SAT_TRACE;
+    SAT_Assert(!MIsActivated);
     if (MHost) delete MHost;
     #ifndef SAT_NO_GUI
       deleteEditor(MEditor);
@@ -1043,6 +1047,7 @@ public: // clap plugin
 
   bool activate(double sample_rate, uint32_t min_frames_count, uint32_t max_frames_count) override {
     //SAT_PRINT("sample_rate %.2f min_frames %i max_frames %i\n",sample_rate,min_frames_count,max_frames_count);
+    SAT_Assert(!MIsActivated);
     MIsActivated                    = true;
     MSampleRate                     = sample_rate;
     MMinFramesCount                 = min_frames_count;
@@ -1066,6 +1071,7 @@ public: // clap plugin
 
   void deactivate() override {
     //SAT_TRACE;
+    SAT_Assert(MIsActivated);
     MIsActivated = false;    
     // #ifndef SAT_NO_GUI
     //   deleteEditor(MEditor);
@@ -1081,6 +1087,8 @@ public: // clap plugin
 
   bool start_processing() override {
     //SAT_TRACE;
+    SAT_Assert(MIsActivated);
+    SAT_Assert(!MIsProcessing);
     MIsProcessing = true;
     return true;
   }
@@ -1092,6 +1100,8 @@ public: // clap plugin
 
   void stop_processing() override {
     //SAT_TRACE;
+    SAT_Assert(MIsActivated);
+    SAT_Assert(MIsProcessing);
     MIsProcessing = false;    
   }
 
@@ -1106,6 +1116,7 @@ public: // clap plugin
 
   void reset() override {
     //SAT_TRACE;
+    SAT_Assert(MIsActivated);
     MProcessContext.process_counter = 0;
     MProcessContext.sample_counter = 0;
   }
@@ -1119,6 +1130,8 @@ public: // clap plugin
 
   clap_process_status process(const clap_process_t *process) override {
     //SAT_TRACE;
+    SAT_Assert(MIsActivated);
+    SAT_Assert(MIsProcessing);
     MProcessContext.process = process;
     MProcessContext.parameters = &MParameters;
     MProcessContext.samplerate = MSampleRate;
