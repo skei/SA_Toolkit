@@ -315,6 +315,8 @@ public:
 
 //----------
 
+// todo: pre/postPaint?
+
 class SAT_BaseWidget {
 public:
   SAT_BaseWidget() {}

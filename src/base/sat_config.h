@@ -244,7 +244,7 @@
 // 'retained mode' - ish
 // see: SAT_SimpleWindow.on_Window_paint
 
-#define SAT_WINDOW_BUFFERED
+//#define SAT_WINDOW_BUFFERED
 
 //------------------------------
 // if this is defined, double click events will be sent to the widgets

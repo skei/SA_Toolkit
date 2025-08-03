@@ -373,8 +373,8 @@ public: // window
       // :-/
 
       if (resized_window) {
-        SAT_PRINT("resized\n");
-        paintRoot(&MWindowPaintContext,true);
+        //SAT_PRINT("resized\n");
+        paintRoot(&MWindowPaintContext,true); // .. ,resized_window);
       }
       else {
         paint(&MWindowPaintContext);

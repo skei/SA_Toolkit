@@ -34,7 +34,8 @@ private:
   // widgets
 
   SAT_RootWidget*     MRootWidget             = nullptr;
-  SAT_OverlayWidget*  MOverlayWidget          = nullptr;  
+  SAT_OverlayWidget*  MOverlayWidget          = nullptr;
+    
   SAT_Widget*         MHoverWidget            = nullptr;
   SAT_Widget*         MModalWidget            = nullptr;
   SAT_Widget*         MMouseCaptureWidget     = nullptr;
@@ -392,43 +393,46 @@ public: // widget listener
 
     #ifdef SAT_WINDOW_QUEUE_WIDGETS
 
-      switch (AMode) {
+      #ifdef SAT_WINDOW_BUFFERED
 
-        case SAT_WIDGET_REDRAW_SELF: {
-
-          if (AWidget->Options.opaque) MQueues.queueRedraw(AWidget);
-          else {
-            SAT_Widget* opaque_parent = AWidget->findOpaqueParent();
-            if (opaque_parent) MQueues.queueRedraw(opaque_parent);
-            else MQueues.queueRedraw(AWidget);
-          }
-          break;
-        }
-
-        case SAT_WIDGET_REDRAW_PARENT: {
-          SAT_Widget* widget = AWidget->getParent();
-          if (widget) {
-            if (widget->Options.opaque) MQueues.queueRedraw(widget);
+        switch (AMode) {
+          case SAT_WIDGET_REDRAW_SELF: {
+            if (AWidget->Options.opaque) MQueues.queueRedraw(AWidget);
             else {
-              SAT_Widget* opaque_parent = widget->findOpaqueParent();
+              SAT_Widget* opaque_parent = AWidget->findOpaqueParent();
               if (opaque_parent) MQueues.queueRedraw(opaque_parent);
-              else MQueues.queueRedraw(widget);
+              else MQueues.queueRedraw(AWidget);
             }
+            break;
           }
-          break;
-        }
+          case SAT_WIDGET_REDRAW_PARENT: {
+            SAT_Widget* widget = AWidget->getParent();
+            if (widget) {
+              if (widget->Options.opaque) MQueues.queueRedraw(widget);
+              else {
+                SAT_Widget* opaque_parent = widget->findOpaqueParent();
+                if (opaque_parent) MQueues.queueRedraw(opaque_parent);
+                else MQueues.queueRedraw(widget);
+              }
+            }
+            break;
+          }
+          case SAT_WIDGET_REDRAW_ROOT: {
+            MQueues.queueRedraw(MRootWidget);
+            break;
+          }
+        } // switch AMode
 
-        case SAT_WIDGET_REDRAW_ROOT: {
-          MQueues.queueRedraw(MRootWidget);
-          break;
-        }
+      #else // SAT_WINDOW_BUFFERED
 
-      }
+        MQueues.queueRedraw(MRootWidget);
+
+      #endif // SAT_WINDOW_BUFFERED
 
       // TODO: draw 'always overlay' widgets? (not SAT_OverlayWidget,
       // which is meant for menus, etc, and is normally inactive)..
 
-    #else // ! SAT_WINDOW_QUEUE_WIDGETS
+    #else // SAT_WINDOW_QUEUE_WIDGETS
 
       SAT_Rect rect = AWidget->getRect();
       invalidate(rect.x,rect.y,rect.w,rect.h);
@@ -508,6 +512,11 @@ public: // widget listener
 
   void on_WidgetListener_modal(SAT_Widget* AWidget) override {
     MModalWidget = AWidget;
+    // to be sure mouse release etc doesn't mess up
+    // (redrawing menu-item widgets, etc)
+    if (!AWidget) {
+      updateHover(MMouseCurrentXpos,MMouseCurrentYpos,0);
+    }
   }
 
   //----------
